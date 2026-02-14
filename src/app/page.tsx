@@ -86,8 +86,8 @@ export default function Home() {
   const [showMiniMaps, setShowMiniMaps] = useState(true)
 
   const suburbs = useMemo(() => {
-    const uniqueSuburbs = [...new Set(typedPubs.map(pub => pub.suburb))].sort()
-    return uniqueSuburbs
+    const suburbSet = new Set(typedPubs.map(pub => pub.suburb))
+    return Array.from(suburbSet).sort()
   }, [])
 
   const filteredPubs = useMemo(() => {
