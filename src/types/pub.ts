@@ -1,10 +1,12 @@
 export interface Pub {
-  name: string;
-  address: string;
-  suburb: string;
-  price: number;
-  times: string;
-  notes?: string;
-  lat?: number;
-  lng?: number;
+  id: number
+  name: string
+  address: string
+  price: number
+  happyHour: string
+  description: string
+  lat: number
+  lng: number
+  lastUpdated: string
+  source: string
 }
