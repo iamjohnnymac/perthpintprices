@@ -22,6 +22,8 @@ const Map = dynamic(() => import('@/components/Map'), {
 
 // Check if current time is within happy hour
 function isCurrentlyHappyHour(pub: Pub): boolean {
+  if (!pub.happyHour) return false
+  
   const now = new Date()
   const day = now.getDay() // 0=Sun, 1=Mon, etc.
   const currentHour = now.getHours()
