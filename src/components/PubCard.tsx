@@ -1,40 +1,41 @@
-'use client';
-
 import { Pub } from '@/types/pub';
 
 interface PubCardProps {
   pub: Pub;
-  isHappyHourNow: boolean;
+  isHappyHour: boolean;
 }
 
-export default function PubCard({ pub, isHappyHourNow }: PubCardProps) {
+export function PubCard({ pub, isHappyHour }: PubCardProps) {
   return (
-    <div className={`bg-gray-800 rounded-xl p-4 border transition-all hover:border-beer-gold ${
-      isHappyHourNow ? 'border-beer-gold happy-hour-active' : 'border-gray-700'
+    <div className={`bg-white rounded-xl p-4 shadow-sm border-2 transition-all hover:shadow-md ${
+      isHappyHour ? 'border-green-400 bg-green-50' : 'border-amber-100'
     }`}>
       <div className="flex justify-between items-start mb-2">
-        <h3 className="font-bold text-lg text-white">{pub.name}</h3>
-        <span className="text-2xl font-bold text-beer-gold">${pub.price}</span>
+        <h3 className="font-bold text-lg text-gray-800">{pub.name}</h3>
+        <div className="text-2xl font-bold text-amber-600">${pub.price}</div>
       </div>
       
-      <p className="text-gray-400 text-sm mb-1">{pub.suburb}</p>
-      <p className="text-gray-500 text-xs mb-3">{pub.address}</p>
+      <p className="text-gray-600 text-sm mb-2">{pub.address}</p>
       
-      <div className="flex items-center gap-2 mb-2">
-        <span className="bg-gray-700 px-2 py-1 rounded text-xs text-gray-300">
-          {pub.beerType}
+      <div className="flex flex-wrap gap-2 mb-2">
+        <span className="px-2 py-1 bg-amber-100 text-amber-800 text-xs rounded-full">
+          {pub.suburb}
         </span>
-        {isHappyHourNow && (
-          <span className="bg-beer-gold text-black px-2 py-1 rounded text-xs font-semibold animate-pulse">
-            🍺 HAPPY HOUR NOW!
+        {isHappyHour && (
+          <span className="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full animate-pulse">
+            🍻 Happy Hour NOW!
           </span>
         )}
       </div>
       
-      {pub.happyHour && (
-        <p className="text-sm text-gray-400">
-          <span className="text-beer-amber">Happy Hour:</span> {pub.happyHour.days.join(', ')} {pub.happyHour.start}-{pub.happyHour.end}
-        </p>
+      <div className="text-sm text-gray-500">
+        <span className="font-medium">When:</span> {pub.times}
+      </div>
+      
+      {pub.notes && (
+        <div className="text-sm text-gray-500 mt-1">
+          <span className="font-medium">Notes:</span> {pub.notes}
+        </div>
       )}
     </div>
   );

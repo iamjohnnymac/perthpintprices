@@ -1,62 +1,47 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import { Icon } from 'leaflet';
 import { Pub } from '@/types/pub';
+import 'leaflet/dist/leaflet.css';
+
+const beerIcon = new Icon({
+  iconUrl: 'https://cdn.jsdelivr.net/npm/@mdi/svg@7.2.96/svg/glass-mug-variant.svg',
+  iconSize: [32, 32],
+  iconAnchor: [16, 32],
+  popupAnchor: [0, -32],
+});
 
 interface MapProps {
   pubs: Pub[];
-  selectedPub?: Pub | null;
-  onPubSelect: (pub: Pub) => void;
 }
 
-export default function Map({ pubs, selectedPub, onPubSelect }: MapProps) {
-  const [mapReady, setMapReady] = useState(false);
-
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-
-    const loadMap = async () => {
-      const L = (await import('leaflet')).default;
-      await import('leaflet/dist/leaflet.css');
-
-      const existingMap = document.getElementById('map');
-      if (!existingMap || existingMap.hasAttribute('data-initialized')) return;
-      existingMap.setAttribute('data-initialized', 'true');
-
-      const map = L.map('map').setView([-31.9505, 115.8605], 13);
-
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© OpenStreetMap contributors'
-      }).addTo(map);
-
-      const beerIcon = L.divIcon({
-        html: '<div style="font-size: 24px;">🍺</div>',
-        className: 'beer-marker',
-        iconSize: [30, 30],
-        iconAnchor: [15, 15]
-      });
-
-      pubs.forEach(pub => {
-        const marker = L.marker([pub.coordinates.lat, pub.coordinates.lng], { icon: beerIcon })
-          .addTo(map)
-          .bindPopup(`
-            <div style="min-width: 150px;">
-              <strong style="font-size: 14px;">${pub.name}</strong><br/>
-              <span style="color: #F4A100; font-size: 18px; font-weight: bold;">$${pub.price}</span><br/>
-              <span style="font-size: 12px; color: #9CA3AF;">${pub.beerType}</span>
-            </div>
-          `);
-        
-        marker.on('click', () => onPubSelect(pub));
-      });
-
-      setMapReady(true);
-    };
-
-    loadMap();
-  }, [pubs, onPubSelect]);
+export function Map({ pubs }: MapProps) {
+  const center = { lat: -31.9505, lng: 115.8605 }; // Perth CBD
 
   return (
-    <div id="map" className="w-full h-[400px] md:h-[600px] rounded-xl bg-gray-800" />
+    <MapContainer
+      center={[center.lat, center.lng]}
+      zoom={13}
+      className="w-full h-[400px] rounded-xl z-0"
+    >
+      <TileLayer
+        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+      />
+      {pubs.map((pub, i) => (
+        pub.lat && pub.lng && (
+          <Marker key={i} position={[pub.lat, pub.lng]} icon={beerIcon}>
+            <Popup>
+              <div className="font-sans">
+                <strong className="text-lg">{pub.name}</strong>
+                <div className="text-amber-600 font-bold text-xl">${pub.price}</div>
+                <div className="text-gray-600 text-sm">{pub.times}</div>
+              </div>
+            </Popup>
+          </Marker>
+        )
+      ))}
+    </MapContainer>
   );
 }
