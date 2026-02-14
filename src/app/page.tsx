@@ -25,34 +25,49 @@ function isCurrentlyHappyHour(pub: Pub): boolean {
   if (!pub.happyHour) return false
   
   const now = new Date()
-  const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
-  const today = dayNames[now.getDay()]
+  const day = now.getDay() // 0=Sun, 1=Mon, etc.
+  const currentHour = now.getHours()
+  const currentMinutes = now.getMinutes()
+  const currentTime = currentHour + currentMinutes / 60
+
+  const happyHour = pub.happyHour.toLowerCase()
   
-  // Check if today is included in happy hour days
-  const happyDays = pub.happyHour.days
-  if (!happyDays.some(d => d.toLowerCase().includes(today.toLowerCase()))) {
-    return false
+  // Check if today is included
+  const dayMap: Record<string, number[]> = {
+    'mon-sun': [0, 1, 2, 3, 4, 5, 6],
+    'mon-sat': [1, 2, 3, 4, 5, 6],
+    'mon-fri': [1, 2, 3, 4, 5],
+    'tue-sun': [0, 2, 3, 4, 5, 6],
+    'wed-sun': [0, 3, 4, 5, 6],
+    'wed-fri': [3, 4, 5],
+    'sat-sun': [0, 6],
   }
   
-  // Parse start and end times
-  const parseTime = (timeStr: string): number => {
-    const match = timeStr.match(/(\d{1,2})(?::(\d{2}))?\s*(am|pm)?/i)
-    if (!match) return 0
-    let hour = parseInt(match[1])
-    const min = match[2] ? parseInt(match[2]) : 0
-    const meridiem = match[3]?.toLowerCase()
-    
-    if (meridiem === 'pm' && hour < 12) hour += 12
-    if (meridiem === 'am' && hour === 12) hour = 0
-    // Assume PM for times like "4" or "6" in happy hour context
-    if (!meridiem && hour < 12 && hour >= 1 && hour <= 9) hour += 12
-    
-    return hour + min / 60
+  let todayIncluded = false
+  for (const [pattern, days] of Object.entries(dayMap)) {
+    if (happyHour.includes(pattern) && days.includes(day)) {
+      todayIncluded = true
+      break
+    }
   }
   
-  const startTime = parseTime(pub.happyHour.start)
-  const endTime = parseTime(pub.happyHour.end)
-  const currentTime = now.getHours() + now.getMinutes() / 60
+  if (!todayIncluded) return false
+  
+  // Parse time range (e.g., "4-6pm", "4:30-6:30pm", "3-6pm")
+  const timeMatch = happyHour.match(/(\d{1,2}):?(\d{2})?-(\d{1,2}):?(\d{2})?pm/)
+  if (!timeMatch) return false
+  
+  let startHour = parseInt(timeMatch[1])
+  const startMin = timeMatch[2] ? parseInt(timeMatch[2]) : 0
+  let endHour = parseInt(timeMatch[3])
+  const endMin = timeMatch[4] ? parseInt(timeMatch[4]) : 0
+  
+  // Convert to 24h (all times are PM for happy hours)
+  if (startHour < 12) startHour += 12
+  if (endHour < 12) endHour += 12
+  
+  const startTime = startHour + startMin / 60
+  const endTime = endHour + endMin / 60
   
   return currentTime >= startTime && currentTime < endTime
 }
@@ -95,12 +110,6 @@ export default function Home() {
   // Get rank for each pub
   const sortedByPrice = [...pubs].sort((a, b) => a.price - b.price)
   const getRank = (pubId: number) => sortedByPrice.findIndex(p => p.id === pubId) + 1
-
-  // Format happy hour display text
-  const formatHappyHour = (pub: Pub): string => {
-    if (!pub.happyHour) return ''
-    return `${pub.happyHour.days.join(', ')} ${pub.happyHour.start}-${pub.happyHour.end}`
-  }
 
   return (
     <main className="min-h-screen">
