@@ -1,118 +1,148 @@
 'use client';
 
 import { useState, useMemo } from 'react';
+import { pubs } from '@/data/pubs';
+import { PubCard } from '@/components/PubCard';
+import { FilterBar } from '@/components/FilterBar';
 import dynamic from 'next/dynamic';
-import PubCard from '@/components/PubCard';
-import Filters from '@/components/Filters';
-import { isHappyHourNow } from '@/utils/happyHour';
-import pubsData from '@/data/pubs.json';
-import { Pub } from '@/types/pub';
 
-const Map = dynamic(() => import('@/components/Map'), { 
+const Map = dynamic(() => import('@/components/Map').then(mod => mod.Map), {
   ssr: false,
-  loading: () => <div className="w-full h-[400px] md:h-[600px] rounded-xl bg-gray-800 animate-pulse" />
+  loading: () => (
+    <div className="w-full h-[400px] bg-amber-50 rounded-xl flex items-center justify-center">
+      <div className="text-amber-600">Loading map...</div>
+    </div>
+  ),
 });
 
 export default function Home() {
-  const pubs = pubsData as Pub[];
-  const [selectedPub, setSelectedPub] = useState<Pub | null>(null);
-  const [priceRange, setPriceRange] = useState<[number, number]>([0, 20]);
+  const [search, setSearch] = useState('');
+  const [suburb, setSuburb] = useState('');
+  const [maxPrice, setMaxPrice] = useState(20);
   const [happyHourOnly, setHappyHourOnly] = useState(false);
-  const [selectedSuburb, setSelectedSuburb] = useState('');
 
-  const suburbs = useMemo(() => 
-    [...new Set(pubs.map(p => p.suburb))].sort(),
-    [pubs]
+  const suburbs = useMemo(() =>
+    Array.from(new Set(pubs.map(p => p.suburb))).sort(),
+    []
   );
+
+  const isHappyHourNow = (times: string): boolean => {
+    const now = new Date();
+    const day = now.toLocaleDateString('en-US', { weekday: 'long' });
+    const hour = now.getHours();
+    const timesLower = times.toLowerCase();
+    
+    if (timesLower.includes('daily') || timesLower.includes('every day')) {
+      const hourMatch = timesLower.match(/(\d{1,2})(?:am|pm)?\s*[-–]\s*(\d{1,2})(?:am|pm)?/i);
+      if (hourMatch) {
+        let start = parseInt(hourMatch[1]);
+        let end = parseInt(hourMatch[2]);
+        if (timesLower.includes('pm') && start < 12) start += 12;
+        if (timesLower.includes('pm') && end < 12) end += 12;
+        return hour >= start && hour < end;
+      }
+      return true;
+    }
+    
+    return timesLower.includes(day.toLowerCase());
+  };
 
   const filteredPubs = useMemo(() => {
     return pubs.filter(pub => {
-      if (pub.price > priceRange[1]) return false;
-      if (selectedSuburb && pub.suburb !== selectedSuburb) return false;
-      if (happyHourOnly && !isHappyHourNow(pub)) return false;
-      return true;
+      const matchesSearch = !search || 
+        pub.name.toLowerCase().includes(search.toLowerCase()) ||
+        pub.address.toLowerCase().includes(search.toLowerCase());
+      const matchesSuburb = !suburb || pub.suburb === suburb;
+      const matchesPrice = pub.price <= maxPrice;
+      const matchesHappyHour = !happyHourOnly || isHappyHourNow(pub.times);
+      
+      return matchesSearch && matchesSuburb && matchesPrice && matchesHappyHour;
     }).sort((a, b) => a.price - b.price);
-  }, [pubs, priceRange, selectedSuburb, happyHourOnly]);
+  }, [search, suburb, maxPrice, happyHourOnly]);
 
-  const happyHourCount = useMemo(() => 
-    pubs.filter(p => isHappyHourNow(p)).length,
-    [pubs]
-  );
+  const pubsWithCoords = filteredPubs.filter(p => p.lat && p.lng);
 
   return (
-    <main className="min-h-screen">
+    <main className="min-h-screen bg-gradient-to-b from-amber-50 to-white">
       {/* Hero */}
-      <header className="bg-gradient-to-r from-beer-dark to-gray-900 py-8 px-4 border-b border-gray-800">
-        <div className="max-w-7xl mx-auto">
-          <h1 className="text-4xl md:text-5xl font-bold text-white mb-2">
-            🍺 Perth Pint Prices
-          </h1>
-          <p className="text-gray-400 text-lg">
-            Find the best value pints across Perth, WA
-          </p>
-          <div className="flex gap-4 mt-4 text-sm">
-            <span className="text-beer-gold font-semibold">{pubs.length} pubs</span>
-            <span className="text-gray-500">|</span>
-            <span className="text-green-400">{happyHourCount} in happy hour now</span>
-          </div>
+      <div className="bg-amber-500 text-white py-12 px-4">
+        <div className="max-w-6xl mx-auto text-center">
+          <h1 className="text-4xl md:text-6xl font-bold mb-4">🍺 Perth Pint Prices</h1>
+          <p className="text-xl md:text-2xl opacity-90">Find the cheapest pints in Perth, WA</p>
+          <p className="mt-2 text-amber-100">Tracking {pubs.length} venues • Updated regularly</p>
         </div>
-      </header>
+      </div>
 
-      <div className="max-w-7xl mx-auto px-4 py-6">
-        <Filters
-          priceRange={priceRange}
-          onPriceChange={setPriceRange}
-          happyHourOnly={happyHourOnly}
-          onHappyHourChange={setHappyHourOnly}
-          selectedSuburb={selectedSuburb}
-          onSuburbChange={setSelectedSuburb}
+      <div className="max-w-6xl mx-auto px-4 py-8">
+        {/* Filters */}
+        <FilterBar
+          search={search}
+          setSearch={setSearch}
+          suburb={suburb}
+          setSuburb={setSuburb}
           suburbs={suburbs}
+          maxPrice={maxPrice}
+          setMaxPrice={setMaxPrice}
+          happyHourOnly={happyHourOnly}
+          setHappyHourOnly={setHappyHourOnly}
         />
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Map */}
-          <div className="order-2 lg:order-1">
-            <Map 
-              pubs={filteredPubs} 
-              selectedPub={selectedPub}
-              onPubSelect={setSelectedPub}
-            />
+        {/* Stats */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+          <div className="bg-white rounded-xl p-4 shadow-sm border border-amber-100">
+            <div className="text-3xl font-bold text-amber-600">{filteredPubs.length}</div>
+            <div className="text-gray-600 text-sm">Venues</div>
           </div>
-
-          {/* Pub List */}
-          <div className="order-1 lg:order-2">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-bold text-white">
-                {filteredPubs.length} Pubs Found
-              </h2>
-              <span className="text-sm text-gray-400">
-                Sorted by price (lowest first)
-              </span>
+          <div className="bg-white rounded-xl p-4 shadow-sm border border-amber-100">
+            <div className="text-3xl font-bold text-green-600">
+              ${filteredPubs.length > 0 ? Math.min(...filteredPubs.map(p => p.price)).toFixed(0) : '0'}
             </div>
-            <div className="space-y-4 max-h-[600px] overflow-y-auto pr-2">
-              {filteredPubs.map(pub => (
-                <PubCard 
-                  key={pub.id} 
-                  pub={pub} 
-                  isHappyHourNow={isHappyHourNow(pub)}
-                />
-              ))}
-              {filteredPubs.length === 0 && (
-                <div className="text-center py-12 text-gray-500">
-                  <p className="text-4xl mb-4">🍺</p>
-                  <p>No pubs match your filters</p>
-                </div>
-              )}
+            <div className="text-gray-600 text-sm">Cheapest</div>
+          </div>
+          <div className="bg-white rounded-xl p-4 shadow-sm border border-amber-100">
+            <div className="text-3xl font-bold text-amber-600">
+              ${filteredPubs.length > 0 ? (filteredPubs.reduce((a, b) => a + b.price, 0) / filteredPubs.length).toFixed(0) : '0'}
             </div>
+            <div className="text-gray-600 text-sm">Average</div>
+          </div>
+          <div className="bg-white rounded-xl p-4 shadow-sm border border-amber-100">
+            <div className="text-3xl font-bold text-red-500">
+              ${filteredPubs.length > 0 ? Math.max(...filteredPubs.map(p => p.price)).toFixed(0) : '0'}
+            </div>
+            <div className="text-gray-600 text-sm">Priciest</div>
           </div>
         </div>
 
-        {/* Footer */}
-        <footer className="mt-12 pt-8 border-t border-gray-800 text-center text-gray-500 text-sm">
-          <p>Data sourced from eatdrinkcheap.com.au • Last updated: Feb 2025</p>
-          <p className="mt-2">Know a price that's changed? Submit an update!</p>
-        </footer>
+        {/* Map */}
+        {pubsWithCoords.length > 0 && (
+          <div className="mb-8">
+            <h2 className="text-2xl font-bold text-gray-800 mb-4">📍 Map View</h2>
+            <Map pubs={pubsWithCoords} />
+          </div>
+        )}
+
+        {/* Pub List */}
+        <h2 className="text-2xl font-bold text-gray-800 mb-4">🍻 All Venues</h2>
+        {filteredPubs.length === 0 ? (
+          <div className="text-center py-12 text-gray-500">
+            No pubs match your filters. Try adjusting your search.
+          </div>
+        ) : (
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {filteredPubs.map((pub, i) => (
+              <PubCard key={i} pub={pub} isHappyHour={isHappyHourNow(pub.times)} />
+            ))}
+          </div>
+        )}
       </div>
+
+      {/* Footer */}
+      <footer className="bg-gray-800 text-white py-8 px-4 mt-12">
+        <div className="max-w-6xl mx-auto text-center">
+          <p className="text-gray-400">Perth Pint Prices © {new Date().getFullYear()}</p>
+          <p className="text-gray-500 text-sm mt-2">Prices sourced from public venues. Always confirm with the venue.</p>
+        </div>
+      </footer>
     </main>
   );
 }
