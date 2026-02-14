@@ -1,305 +1,384 @@
 'use client'
 
-import { useState, useMemo, useEffect } from 'react'
+import { useState, useMemo } from 'react'
 import dynamic from 'next/dynamic'
-import pubsData from '@/data/pubs.json'
+import pubs from '@/data/pubs.json'
 import { Pub } from '@/types/pub'
 
-// Dynamically import Map component to avoid SSR issues with Leaflet
 const Map = dynamic(() => import('@/components/Map'), { 
   ssr: false,
   loading: () => (
-    <div className="h-[400px] bg-gray-100 animate-pulse rounded-lg flex items-center justify-center">
-      <span className="text-gray-500">Loading map...</span>
+    <div className="h-[400px] bg-gradient-to-br from-amber-50 to-orange-100 rounded-xl flex items-center justify-center">
+      <div className="flex flex-col items-center gap-3">
+        <div className="w-12 h-12 border-4 border-amber-500 border-t-transparent rounded-full animate-spin"></div>
+        <span className="text-amber-700 font-medium">Loading map...</span>
+      </div>
     </div>
   )
 })
 
-// Check if pub is currently in happy hour
-function isCurrentlyHappyHour(happyHour: string | null | undefined): boolean {
+// Mini map component for pub cards
+const MiniMap = dynamic(() => import('@/components/MiniMap'), { 
+  ssr: false,
+  loading: () => <div className="h-24 bg-gray-200 rounded-lg animate-pulse"></div>
+})
+
+const typedPubs: Pub[] = pubs as Pub[]
+
+// Check if current time falls within happy hour
+function isHappyHour(happyHour: string | null | undefined): boolean {
   if (!happyHour) return false
   
   const now = new Date()
-  const day = now.toLocaleDateString('en-US', { weekday: 'short' })
-  const hour = now.getHours()
+  const currentDay = now.toLocaleDateString('en-US', { weekday: 'short' })
+  const currentHour = now.getHours()
   
-  const happyHourLower = happyHour.toLowerCase()
+  const hhLower = happyHour.toLowerCase()
   
-  // Check if today is included
-  const days = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun']
-  const todayShort = day.toLowerCase().slice(0, 3)
+  // Check day
+  const isToday = 
+    hhLower.includes('daily') ||
+    hhLower.includes(currentDay.toLowerCase()) ||
+    (hhLower.includes('mon-fri') && ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'].includes(currentDay)) ||
+    (hhLower.includes('wed-sun') && ['Wed', 'Thu', 'Fri', 'Sat', 'Sun'].includes(currentDay)) ||
+    (hhLower.includes('tue-sat') && ['Tue', 'Wed', 'Thu', 'Fri', 'Sat'].includes(currentDay)) ||
+    (hhLower.includes('wed-sat') && ['Wed', 'Thu', 'Fri', 'Sat'].includes(currentDay)) ||
+    (hhLower.includes('thu-sat') && ['Thu', 'Fri', 'Sat'].includes(currentDay)) ||
+    (hhLower.includes('fri-sat') && ['Fri', 'Sat'].includes(currentDay))
   
-  let dayMatch = false
-  if (happyHourLower.includes('daily')) {
-    dayMatch = true
-  } else if (happyHourLower.includes(todayShort)) {
-    dayMatch = true
-  } else if (happyHourLower.includes('mon-fri') && ['mon', 'tue', 'wed', 'thu', 'fri'].includes(todayShort)) {
-    dayMatch = true
-  } else if (happyHourLower.includes('mon-sun')) {
-    dayMatch = true
-  }
+  if (!isToday) return false
   
-  if (!dayMatch) return false
+  // Parse time
+  const timeMatch = happyHour.match(/(\d{1,2})[-–](\d{1,2})(pm)?/i)
+  if (!timeMatch) return false
   
-  // Parse time range (e.g., "4-7pm", "4pm-6pm", "5-7pm")
-  const timeMatch = happyHourLower.match(/(\d{1,2})(?:pm|am)?\s*-\s*(\d{1,2})(?:pm|am)?/)
-  if (timeMatch) {
-    let startHour = parseInt(timeMatch[1])
-    let endHour = parseInt(timeMatch[2])
-    
-    // Assume PM for typical happy hour times
-    if (startHour < 12 && startHour >= 1 && startHour <= 8) startHour += 12
-    if (endHour < 12 && endHour >= 1 && endHour <= 11) endHour += 12
-    
-    return hour >= startHour && hour < endHour
-  }
+  let startHour = parseInt(timeMatch[1])
+  let endHour = parseInt(timeMatch[2])
   
-  return false
+  // Convert to 24h
+  if (startHour < 12 && (hhLower.includes('pm') || startHour < 6)) startHour += 12
+  if (endHour < 12 && (hhLower.includes('pm') || endHour <= 8)) endHour += 12
+  
+  return currentHour >= startHour && currentHour < endHour
+}
+
+// Get price color
+function getPriceColor(price: number): string {
+  if (price <= 7) return 'from-green-400 to-green-600'
+  if (price <= 8) return 'from-yellow-400 to-yellow-600'
+  if (price <= 9) return 'from-orange-400 to-orange-600'
+  return 'from-red-400 to-red-600'
+}
+
+function getPriceBgColor(price: number): string {
+  if (price <= 7) return 'bg-green-500'
+  if (price <= 8) return 'bg-yellow-500'
+  if (price <= 9) return 'bg-orange-500'
+  return 'bg-red-500'
 }
 
 export default function Home() {
   const [searchTerm, setSearchTerm] = useState('')
-  const [selectedSuburb, setSelectedSuburb] = useState<string>('all')
+  const [selectedSuburb, setSelectedSuburb] = useState('')
+  const [maxPrice, setMaxPrice] = useState(15)
   const [sortBy, setSortBy] = useState<'price' | 'name' | 'suburb'>('price')
   const [showHappyHourOnly, setShowHappyHourOnly] = useState(false)
-  const [showMap, setShowMap] = useState(true)
-  const [maxPrice, setMaxPrice] = useState<number>(15)
-  
-  const pubs: Pub[] = pubsData as Pub[]
-  
-  // Get unique suburbs
+  const [showMiniMaps, setShowMiniMaps] = useState(true)
+
   const suburbs = useMemo(() => {
-    const uniqueSuburbs = Array.from(new Set(pubs.map(pub => pub.suburb))).sort()
-    return ['all', ...uniqueSuburbs]
-  }, [pubs])
-  
-  // Filter and sort pubs
+    const uniqueSuburbs = [...new Set(typedPubs.map(pub => pub.suburb))].sort()
+    return uniqueSuburbs
+  }, [])
+
   const filteredPubs = useMemo(() => {
-    let result = pubs.filter(pub => {
-      const search = searchTerm.toLowerCase()
-      if (search) {
-        return pub.name.toLowerCase().includes(search) || 
-               pub.address.toLowerCase().includes(search) ||
-               (pub.description?.toLowerCase().includes(search) ?? false)
-      }
-      return true
-    })
-    
-    if (selectedSuburb !== 'all') {
-      result = result.filter(pub => pub.suburb === selectedSuburb)
-    }
-    
-    if (showHappyHourOnly) {
-      result = result.filter(pub => isCurrentlyHappyHour(pub.happyHour))
-    }
-    
-    result = result.filter(pub => pub.price <= maxPrice)
-    
-    // Sort
-    result.sort((a, b) => {
-      if (sortBy === 'price') return a.price - b.price
-      if (sortBy === 'name') return a.name.localeCompare(b.name)
-      if (sortBy === 'suburb') return a.suburb.localeCompare(b.suburb)
-      return 0
-    })
-    
-    return result
-  }, [pubs, searchTerm, selectedSuburb, sortBy, showHappyHourOnly, maxPrice])
-  
-  // Find cheapest pubs
-  const cheapestPrice = Math.min(...pubs.map(p => p.price))
-  const cheapestPubs = pubs.filter(p => p.price === cheapestPrice)
-  
+    return typedPubs
+      .filter(pub => {
+        const matchesSearch = 
+          pub.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          pub.address.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          (pub.description?.toLowerCase() || '').includes(searchTerm.toLowerCase())
+        const matchesSuburb = !selectedSuburb || pub.suburb === selectedSuburb
+        const matchesPrice = pub.price <= maxPrice
+        const matchesHappyHour = !showHappyHourOnly || isHappyHour(pub.happyHour)
+        return matchesSearch && matchesSuburb && matchesPrice && matchesHappyHour
+      })
+      .sort((a, b) => {
+        if (sortBy === 'price') return a.price - b.price
+        if (sortBy === 'name') return a.name.localeCompare(b.name)
+        if (sortBy === 'suburb') return a.suburb.localeCompare(b.suburb)
+        return 0
+      })
+  }, [searchTerm, selectedSuburb, maxPrice, sortBy, showHappyHourOnly])
+
+  const cheapestPub = useMemo(() => {
+    return typedPubs.reduce((min, pub) => pub.price < min.price ? pub : min, typedPubs[0])
+  }, [])
+
+  const stats = useMemo(() => ({
+    total: typedPubs.length,
+    minPrice: Math.min(...typedPubs.map(p => p.price)),
+    maxPriceValue: Math.max(...typedPubs.map(p => p.price)),
+    avgPrice: (typedPubs.reduce((sum, p) => sum + p.price, 0) / typedPubs.length).toFixed(2),
+    happyHourNow: typedPubs.filter(p => isHappyHour(p.happyHour)).length
+  }), [])
+
   return (
-    <main className="min-h-screen bg-gradient-to-br from-amber-50 to-orange-50">
+    <main className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50">
       {/* Header */}
-      <header className="bg-gradient-to-r from-amber-600 to-orange-500 text-white py-8 px-4 shadow-lg">
-        <div className="max-w-6xl mx-auto">
-          <h1 className="text-4xl md:text-5xl font-bold mb-2">🍺 Perth Pint Prices</h1>
-          <p className="text-amber-100 text-lg">Find the cheapest pints in Perth, Western Australia</p>
-          <div className="mt-4 flex flex-wrap gap-4 text-sm">
-            <span className="bg-amber-700/50 px-3 py-1 rounded-full">
-              📍 {pubs.length} venues
+      <header className="bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 text-white shadow-2xl">
+        <div className="max-w-7xl mx-auto px-4 py-8">
+          <div className="flex items-center gap-4 mb-4">
+            <div className="text-6xl animate-bounce">🍺</div>
+            <div>
+              <h1 className="text-4xl md:text-5xl font-black tracking-tight">
+                Perth Pint Prices
+              </h1>
+              <p className="text-amber-100 text-lg mt-1">
+                Find the cheapest pints in Perth, Western Australia
+              </p>
+            </div>
+          </div>
+          
+          {/* Stats Pills */}
+          <div className="flex flex-wrap gap-3 mt-6">
+            <span className="px-4 py-2 bg-white/20 backdrop-blur rounded-full font-semibold flex items-center gap-2 hover:bg-white/30 transition-all">
+              📊 {stats.total} venues
             </span>
-            <span className="bg-amber-700/50 px-3 py-1 rounded-full">
-              💰 From ${cheapestPrice.toFixed(2)}
+            <span className="px-4 py-2 bg-white/20 backdrop-blur rounded-full font-semibold flex items-center gap-2 hover:bg-white/30 transition-all">
+              💰 From ${stats.minPrice.toFixed(2)}
             </span>
-            <span className="bg-amber-700/50 px-3 py-1 rounded-full">
-              🏆 Cheapest: {cheapestPubs[0]?.name}
+            <span className="px-4 py-2 bg-white/20 backdrop-blur rounded-full font-semibold flex items-center gap-2 hover:bg-white/30 transition-all">
+              🏆 Cheapest: {cheapestPub.name}
             </span>
+            {stats.happyHourNow > 0 && (
+              <span className="px-4 py-2 bg-green-500/80 backdrop-blur rounded-full font-semibold flex items-center gap-2 animate-pulse">
+                🍻 {stats.happyHourNow} happy hours NOW!
+              </span>
+            )}
           </div>
         </div>
       </header>
 
-      <div className="max-w-6xl mx-auto px-4 py-6">
-        {/* Filters */}
-        <div className="bg-white rounded-xl shadow-md p-4 mb-6">
+      <div className="max-w-7xl mx-auto px-4 py-8">
+        {/* Filters Card */}
+        <div className="bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl p-6 mb-8 border border-white/50">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {/* Search */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Search</label>
-              <input
-                type="text"
-                placeholder="Search pubs..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent"
-              />
+              <label className="block text-sm font-semibold text-gray-700 mb-2">Search</label>
+              <div className="relative">
+                <input
+                  type="text"
+                  placeholder="Search pubs..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:border-amber-500 focus:ring-4 focus:ring-amber-100 transition-all outline-none"
+                />
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">🔍</span>
+              </div>
             </div>
-            
+
             {/* Suburb Filter */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Suburb</label>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">Suburb</label>
               <select
                 value={selectedSuburb}
                 onChange={(e) => setSelectedSuburb(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent"
+                className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-amber-500 focus:ring-4 focus:ring-amber-100 transition-all outline-none bg-white"
               >
+                <option value="">All Suburbs</option>
                 {suburbs.map(suburb => (
-                  <option key={suburb} value={suburb}>
-                    {suburb === 'all' ? 'All Suburbs' : suburb}
-                  </option>
+                  <option key={suburb} value={suburb}>{suburb}</option>
                 ))}
               </select>
             </div>
-            
-            {/* Sort */}
+
+            {/* Sort By */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Sort By</label>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">Sort By</label>
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value as 'price' | 'name' | 'suburb')}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent"
+                className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-amber-500 focus:ring-4 focus:ring-amber-100 transition-all outline-none bg-white"
               >
                 <option value="price">Price (Low to High)</option>
                 <option value="name">Name (A-Z)</option>
-                <option value="suburb">Suburb (A-Z)</option>
+                <option value="suburb">Suburb</option>
               </select>
             </div>
-            
-            {/* Max Price */}
+
+            {/* Max Price Slider */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Max Price: ${maxPrice}</label>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Max Price: <span className="text-amber-600 font-bold">${maxPrice}</span>
+              </label>
               <input
                 type="range"
-                min="5"
+                min="6"
                 max="15"
+                step="0.5"
                 value={maxPrice}
-                onChange={(e) => setMaxPrice(Number(e.target.value))}
-                className="w-full"
+                onChange={(e) => setMaxPrice(parseFloat(e.target.value))}
+                className="w-full h-3 bg-gradient-to-r from-green-400 via-yellow-400 to-red-400 rounded-full appearance-none cursor-pointer"
               />
             </div>
           </div>
-          
-          <div className="flex flex-wrap gap-4 mt-4 pt-4 border-t">
-            <label className="flex items-center gap-2 cursor-pointer">
+
+          {/* Toggle Filters */}
+          <div className="flex flex-wrap gap-4 mt-4 pt-4 border-t border-gray-100">
+            <label className="flex items-center gap-2 cursor-pointer group">
               <input
                 type="checkbox"
                 checked={showHappyHourOnly}
                 onChange={(e) => setShowHappyHourOnly(e.target.checked)}
-                className="w-4 h-4 text-amber-600 rounded focus:ring-amber-500"
+                className="w-5 h-5 rounded border-2 border-gray-300 text-amber-500 focus:ring-amber-500"
               />
-              <span className="text-sm">🕐 Happy Hour Now Only</span>
+              <span className="text-gray-700 group-hover:text-amber-600 transition-colors">
+                🕐 Happy Hour Now Only
+              </span>
             </label>
-            
-            <label className="flex items-center gap-2 cursor-pointer">
+            <label className="flex items-center gap-2 cursor-pointer group">
               <input
                 type="checkbox"
-                checked={showMap}
-                onChange={(e) => setShowMap(e.target.checked)}
-                className="w-4 h-4 text-amber-600 rounded focus:ring-amber-500"
+                checked={showMiniMaps}
+                onChange={(e) => setShowMiniMaps(e.target.checked)}
+                className="w-5 h-5 rounded border-2 border-gray-300 text-amber-500 focus:ring-amber-500"
               />
-              <span className="text-sm">🗺️ Show Map</span>
+              <span className="text-gray-700 group-hover:text-amber-600 transition-colors">
+                🗺️ Show Mini Maps
+              </span>
             </label>
           </div>
         </div>
 
-        {/* Results count */}
-        <p className="text-gray-600 mb-4">
-          Showing {filteredPubs.length} of {pubs.length} venues
-        </p>
+        {/* Results Count */}
+        <div className="flex items-center justify-between mb-4">
+          <p className="text-gray-600 font-medium">
+            Showing <span className="text-amber-600 font-bold">{filteredPubs.length}</span> of {stats.total} venues
+          </p>
+        </div>
 
-        {/* Map */}
-        {showMap && (
-          <div className="mb-6 rounded-xl overflow-hidden shadow-lg">
-            <Map pubs={filteredPubs} />
-          </div>
-        )}
+        {/* Main Map */}
+        <div className="mb-8 rounded-2xl overflow-hidden shadow-2xl border-4 border-white">
+          <Map pubs={filteredPubs} isHappyHour={isHappyHour} />
+        </div>
 
-        {/* Pub Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {/* Pub Cards Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredPubs.map((pub, index) => (
-            <div 
-              key={pub.id} 
-              className="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow p-4 relative"
+            <div
+              key={pub.id}
+              className="group relative bg-white/80 backdrop-blur-xl rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-white/50 hover:-translate-y-1"
             >
-              {/* Rank badge for top 3 */}
+              {/* Rank Badge for Top 3 */}
               {index < 3 && sortBy === 'price' && (
-                <div className={`absolute -top-2 -right-2 w-8 h-8 rounded-full flex items-center justify-center text-white font-bold ${
-                  index === 0 ? 'bg-yellow-500' : index === 1 ? 'bg-gray-400' : 'bg-amber-600'
+                <div className={`absolute -top-2 -right-2 w-12 h-12 rounded-full flex items-center justify-center text-white font-black text-lg shadow-lg z-10 ${
+                  index === 0 ? 'bg-gradient-to-br from-yellow-400 to-yellow-600' :
+                  index === 1 ? 'bg-gradient-to-br from-gray-300 to-gray-500' :
+                  'bg-gradient-to-br from-amber-600 to-amber-800'
                 }`}>
                   #{index + 1}
                 </div>
               )}
-              
-              <div className="flex justify-between items-start mb-2">
-                <h3 className="text-lg font-bold text-gray-800">{pub.name}</h3>
-                <span className={`text-2xl font-bold ${
-                  pub.price <= 7.5 ? 'text-green-600' : 
-                  pub.price <= 9 ? 'text-amber-600' : 'text-red-600'
-                }`}>
-                  ${pub.price.toFixed(2)}
-                </span>
-              </div>
-              
-              <p className="text-amber-700 font-medium mb-1">🍺 {pub.beerType}</p>
-              <p className="text-gray-500 text-sm mb-2">📍 {pub.address}</p>
-              
-              {pub.happyHour && (
-                <p className={`text-sm mb-2 ${
-                  isCurrentlyHappyHour(pub.happyHour) 
-                    ? 'text-green-600 font-semibold' 
-                    : 'text-gray-600'
-                }`}>
-                  🕐 {pub.happyHour}
-                  {isCurrentlyHappyHour(pub.happyHour) && ' ✨ NOW!'}
+
+              {/* Happy Hour Now Badge */}
+              {isHappyHour(pub.happyHour) && (
+                <div className="absolute top-3 left-3 px-3 py-1 bg-green-500 text-white text-xs font-bold rounded-full animate-pulse shadow-lg z-10">
+                  🍻 HAPPY HOUR!
+                </div>
+              )}
+
+              {/* Mini Map */}
+              {showMiniMaps && (
+                <div className="h-28 relative overflow-hidden">
+                  <MiniMap lat={pub.lat} lng={pub.lng} name={pub.name} />
+                  <div className="absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent pointer-events-none"></div>
+                </div>
+              )}
+
+              {/* Content */}
+              <div className={`p-5 ${!showMiniMaps ? 'pt-6' : ''}`}>
+                {/* Header Row */}
+                <div className="flex justify-between items-start gap-3 mb-3">
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-bold text-lg text-gray-900 truncate group-hover:text-amber-600 transition-colors">
+                      {pub.name}
+                    </h3>
+                    <p className="text-sm text-gray-500 truncate">{pub.suburb}</p>
+                  </div>
+                  <div className={`text-2xl font-black bg-gradient-to-br ${getPriceColor(pub.price)} bg-clip-text text-transparent`}>
+                    ${pub.price.toFixed(2)}
+                  </div>
+                </div>
+
+                {/* Beer Type - Prominent */}
+                <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-semibold text-white mb-3 ${getPriceBgColor(pub.price)}`}>
+                  <span className="text-base">🍺</span>
+                  {pub.beerType}
+                </div>
+
+                {/* Address */}
+                <p className="text-sm text-gray-600 mb-2 flex items-start gap-1">
+                  <span>📍</span>
+                  <span className="flex-1">{pub.address}</span>
                 </p>
-              )}
-              
-              {pub.description && (
-                <p className="text-gray-600 text-sm">{pub.description}</p>
-              )}
-              
-              {pub.website && (
-                <a 
-                  href={pub.website} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="text-amber-600 hover:text-amber-700 text-sm mt-2 inline-block"
-                >
-                  Visit website →
-                </a>
-              )}
+
+                {/* Happy Hour */}
+                {pub.happyHour && (
+                  <p className={`text-sm mb-2 flex items-center gap-1 ${
+                    isHappyHour(pub.happyHour) ? 'text-green-600 font-semibold' : 'text-gray-500'
+                  }`}>
+                    <span>🕐</span>
+                    {pub.happyHour}
+                  </p>
+                )}
+
+                {/* Description */}
+                {pub.description && (
+                  <p className="text-sm text-gray-500 mb-3 line-clamp-2 italic">
+                    "{pub.description}"
+                  </p>
+                )}
+
+                {/* Website Link */}
+                {pub.website && (
+                  <a
+                    href={pub.website}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1 text-amber-600 hover:text-amber-700 text-sm font-semibold group/link"
+                  >
+                    Visit website 
+                    <span className="group-hover/link:translate-x-1 transition-transform">→</span>
+                  </a>
+                )}
+              </div>
+
+              {/* Bottom Gradient Border */}
+              <div className={`h-1 bg-gradient-to-r ${getPriceColor(pub.price)}`}></div>
             </div>
           ))}
         </div>
-        
+
+        {/* Empty State */}
         {filteredPubs.length === 0 && (
-          <div className="text-center py-12 text-gray-500">
-            <p className="text-4xl mb-4">🍺</p>
-            <p>No pubs found matching your criteria.</p>
-            <p className="text-sm mt-2">Try adjusting your filters.</p>
+          <div className="text-center py-16 bg-white/50 rounded-2xl">
+            <div className="text-6xl mb-4">🔍</div>
+            <h3 className="text-xl font-bold text-gray-700 mb-2">No pubs found</h3>
+            <p className="text-gray-500">Try adjusting your filters</p>
           </div>
         )}
       </div>
 
       {/* Footer */}
-      <footer className="bg-gray-800 text-gray-400 py-8 px-4 mt-12">
-        <div className="max-w-6xl mx-auto text-center">
-          <p>© 2024 Perth Pint Prices</p>
-          <p className="text-sm mt-2">Prices may vary. Always drink responsibly.</p>
-          <p className="text-sm mt-2">Data sourced from public listings. Last updated: Feb 2024</p>
+      <footer className="bg-gray-900 text-white py-8 mt-12">
+        <div className="max-w-7xl mx-auto px-4 text-center">
+          <p className="text-gray-400">
+            🍺 Perth Pint Prices — Helping you find cheap drinks since 2024
+          </p>
+          <p className="text-gray-500 text-sm mt-2">
+            Prices may vary. Always drink responsibly.
+          </p>
         </div>
       </footer>
     </main>
