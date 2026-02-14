@@ -6,7 +6,7 @@ import { Pub } from '@/types/pub'
 import 'leaflet/dist/leaflet.css'
 
 // Fix for default markers in Next.js
-const icon = L.icon({
+const defaultIcon = L.icon({
   iconUrl: '/marker-icon.png',
   iconRetinaUrl: '/marker-icon-2x.png',
   shadowUrl: '/marker-shadow.png',
@@ -16,30 +16,30 @@ const icon = L.icon({
   shadowSize: [41, 41]
 })
 
-// Price-coded markers
-function getPriceIcon(price: number): L.Icon {
-  let color = 'green'
-  if (price > 9) color = 'orange'
-  else if (price > 7.5) color = 'yellow'
+// Price-coded markers using DivIcon
+function getPriceIcon(price: number): L.DivIcon {
+  let bgColor = '#22c55e' // green for cheap
+  if (price > 9) bgColor = '#f97316' // orange for expensive
+  else if (price > 7.5) bgColor = '#eab308' // yellow for mid
   
   return L.divIcon({
-    className: 'custom-marker',
+    className: 'custom-price-marker',
     html: `<div style="
-      background-color: ${color === 'green' ? '#22c55e' : color === 'yellow' ? '#eab308' : '#f97316'};
-      width: 30px;
-      height: 30px;
+      background-color: ${bgColor};
+      width: 32px;
+      height: 32px;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
       color: white;
       font-weight: bold;
-      font-size: 10px;
+      font-size: 11px;
       border: 2px solid white;
       box-shadow: 0 2px 4px rgba(0,0,0,0.3);
     ">$${price}</div>`,
-    iconSize: [30, 30],
-    iconAnchor: [15, 15],
+    iconSize: [32, 32],
+    iconAnchor: [16, 16],
   })
 }
 
