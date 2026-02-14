@@ -21,10 +21,10 @@ export default function Home() {
   const [maxPrice, setMaxPrice] = useState(20);
   const [happyHourOnly, setHappyHourOnly] = useState(false);
 
-  const suburbs = useMemo(() =>
-    Array.from(new Set(pubs.map(p => p.suburb))).sort(),
-    []
-  );
+  const suburbs = useMemo(() => {
+    const uniqueSuburbs = new Set(pubs.map(p => p.suburb));
+    return Array.from(uniqueSuburbs).sort();
+  }, []);
 
   const isHappyHourNow = (times: string): boolean => {
     const now = new Date();
