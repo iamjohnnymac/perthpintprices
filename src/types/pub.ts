@@ -2,11 +2,14 @@ export interface Pub {
   id: number
   name: string
   address: string
-  price: number
-  happyHour: string
-  description: string
+  suburb: string
   lat: number
   lng: number
-  lastUpdated: string
-  source: string
+  price: number
+  beerType: string
+  happyHour?: string | null
+  website?: string | null
+  description?: string
+  lastUpdated?: string
+  source?: string
 }
