@@ -1,12 +1,19 @@
 export interface Pub {
-  id: number
+  id: string
   name: string
   address: string
+  suburb: string
   price: number
-  happyHour: string
-  description: string
-  lat: number
-  lng: number
+  beerType: string
+  happyHour?: {
+    days: string[]
+    start: string
+    end: string
+  }
+  coordinates: {
+    lat: number
+    lng: number
+  }
   lastUpdated: string
   source: string
 }
