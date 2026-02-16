@@ -1,6 +1,6 @@
 'use client'
 
-import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet'
+import { MapContainer, TileLayer, Marker, Popup, Tooltip, useMap } from 'react-leaflet'
 import MarkerClusterGroup from 'react-leaflet-cluster'
 import L from 'leaflet'
 import { Pub } from '@/types/pub'
@@ -111,8 +111,8 @@ export default function Map({ pubs, isHappyHour }: MapProps) {
       scrollWheelZoom={true}
     >
       <TileLayer
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+        url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
       />
       
       {/* Fit bounds to filtered pubs */}
@@ -133,6 +133,16 @@ export default function Map({ pubs, isHappyHour }: MapProps) {
             position={[pub.lat, pub.lng]}
             icon={getPriceIcon(pub.price)}
           >
+            <Tooltip 
+              direction="top" 
+              offset={[0, -16]} 
+              opacity={0.95}
+              className="pub-tooltip"
+            >
+              <span style={{ fontWeight: 600, fontSize: '13px' }}>{pub.name}</span>
+              <br />
+              <span style={{ color: '#d97706', fontWeight: 500 }}>${pub.price.toFixed(2)}</span>
+            </Tooltip>
             <Popup>
               <div className="p-2">
                 <h3 className="font-bold text-lg">{pub.name}</h3>
