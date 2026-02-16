@@ -1,9 +1,11 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect, useCallback } from 'react'
 import dynamic from 'next/dynamic'
 import pubs from '@/data/pubs.json'
 import { Pub } from '@/types/pub'
+import { getCrowdLevels, CrowdReport } from '@/lib/supabase'
+import CrowdBadge, { NoCrowdBadge } from '@/components/CrowdBadge'
 
 const Map = dynamic(() => import('@/components/Map'), {
   ssr: false,
@@ -17,25 +19,27 @@ const Map = dynamic(() => import('@/components/Map'), {
   )
 })
 
-// Mini map component for pub cards
 const MiniMap = dynamic(() => import('@/components/MiniMap'), {
   ssr: false,
   loading: () => <div className="h-24 bg-gray-200 rounded-lg animate-pulse"></div>
 })
 
+const CrowdReporter = dynamic(() => import('@/components/CrowdReporter'), {
+  ssr: false
+})
+
+const SubmitPubForm = dynamic(() => import('@/components/SubmitPubForm'), {
+  ssr: false
+})
+
 const typedPubs: Pub[] = pubs as Pub[]
 
-// Check if current time falls within happy hour
 function isHappyHour(happyHour: string | null | undefined): boolean {
   if (!happyHour) return false
-
   const now = new Date()
   const currentDay = now.toLocaleDateString('en-US', { weekday: 'short' })
   const currentHour = now.getHours()
-
   const hhLower = happyHour.toLowerCase()
-
-  // Check day
   const isToday =
     hhLower.includes('daily') ||
     hhLower.includes(currentDay.toLowerCase()) ||
@@ -45,24 +49,16 @@ function isHappyHour(happyHour: string | null | undefined): boolean {
     (hhLower.includes('wed-sat') && ['Wed', 'Thu', 'Fri', 'Sat'].includes(currentDay)) ||
     (hhLower.includes('thu-sat') && ['Thu', 'Fri', 'Sat'].includes(currentDay)) ||
     (hhLower.includes('fri-sat') && ['Fri', 'Sat'].includes(currentDay))
-
   if (!isToday) return false
-
-  // Parse time
   const timeMatch = happyHour.match(/(\d{1,2})[-–](\d{1,2})(pm)?/i)
   if (!timeMatch) return false
-
   let startHour = parseInt(timeMatch[1])
   let endHour = parseInt(timeMatch[2])
-
-  // Convert to 24h
   if (startHour < 12 && (hhLower.includes('pm') || startHour < 6)) startHour += 12
   if (endHour < 12 && (hhLower.includes('pm') || endHour <= 8)) endHour += 12
-
   return currentHour >= startHour && currentHour < endHour
 }
 
-// Get price color
 function getPriceColor(price: number): string {
   if (price <= 7) return 'from-green-400 to-green-600'
   if (price <= 8) return 'from-yellow-400 to-yellow-600'
@@ -77,19 +73,9 @@ function getPriceBgColor(price: number): string {
   return 'bg-red-500'
 }
 
-// Format last updated date
 function formatLastUpdated(dateStr: string | undefined): string {
-  if (!dateStr) return 'Not verified'
-  
+  if (!dateStr) return ''
   const date = new Date(dateStr)
-  const now = new Date()
-  const diffDays = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24))
-  
-  if (diffDays === 0) return 'Today'
-  if (diffDays === 1) return 'Yesterday'
-  if (diffDays < 7) return `${diffDays} days ago`
-  if (diffDays < 30) return `${Math.floor(diffDays / 7)} week${Math.floor(diffDays / 7) > 1 ? 's' : ''} ago`
-  if (diffDays < 365) return `${Math.floor(diffDays / 30)} month${Math.floor(diffDays / 30) > 1 ? 's' : ''} ago`
   return date.toLocaleDateString('en-AU', { month: 'short', year: 'numeric' })
 }
 
@@ -100,6 +86,23 @@ export default function Home() {
   const [sortBy, setSortBy] = useState<'price' | 'name' | 'suburb'>('price')
   const [showHappyHourOnly, setShowHappyHourOnly] = useState(false)
   const [showMiniMaps, setShowMiniMaps] = useState(true)
+  const [showSubmitForm, setShowSubmitForm] = useState(false)
+  
+  // Crowd level state
+  const [crowdLevels, setCrowdLevels] = useState<Record<string, CrowdReport>>({})
+  const [reportingPub, setReportingPub] = useState<{ id: string; name: string } | null>(null)
+
+  // Fetch crowd levels on mount and every 2 minutes
+  const refreshCrowdLevels = useCallback(async () => {
+    const levels = await getCrowdLevels()
+    setCrowdLevels(levels)
+  }, [])
+
+  useEffect(() => {
+    refreshCrowdLevels()
+    const interval = setInterval(refreshCrowdLevels, 120000) // 2 minutes
+    return () => clearInterval(interval)
+  }, [refreshCrowdLevels])
 
   const suburbs = useMemo(() => {
     const suburbSet = new Set(typedPubs.map(pub => pub.suburb))
@@ -135,24 +138,33 @@ export default function Home() {
     minPrice: Math.min(...typedPubs.map(p => p.price)),
     maxPriceValue: Math.max(...typedPubs.map(p => p.price)),
     avgPrice: (typedPubs.reduce((sum, p) => sum + p.price, 0) / typedPubs.length).toFixed(2),
-    happyHourNow: typedPubs.filter(p => isHappyHour(p.happyHour)).length
-  }), [])
+    happyHourNow: typedPubs.filter(p => isHappyHour(p.happyHour)).length,
+    liveCrowdReports: Object.keys(crowdLevels).length
+  }), [crowdLevels])
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50">
       {/* Header */}
       <header className="bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 text-white shadow-2xl">
         <div className="max-w-7xl mx-auto px-4 py-8">
-          <div className="flex items-center gap-4 mb-4">
-            <div className="text-6xl animate-bounce">🍺</div>
-            <div>
-              <h1 className="text-4xl md:text-5xl font-black tracking-tight">
-                Perth Pint Prices
-              </h1>
-              <p className="text-amber-100 text-lg mt-1">
-                Find the cheapest pints in Perth, Western Australia
-              </p>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="text-6xl animate-bounce">🍺</div>
+              <div>
+                <h1 className="text-4xl md:text-5xl font-black tracking-tight">
+                  Perth Pint Prices
+                </h1>
+                <p className="text-amber-100 text-lg mt-1">
+                  Find the cheapest pints in Perth, Western Australia
+                </p>
+              </div>
             </div>
+            <button
+              onClick={() => setShowSubmitForm(true)}
+              className="hidden md:flex items-center gap-2 px-4 py-2 bg-white/20 hover:bg-white/30 backdrop-blur rounded-xl font-semibold transition-all"
+            >
+              <span>📝</span> Submit a Pub
+            </button>
           </div>
 
           {/* Stats Pills */}
@@ -169,6 +181,11 @@ export default function Home() {
             {stats.happyHourNow > 0 && (
               <span className="px-4 py-2 bg-green-500/80 backdrop-blur rounded-full font-semibold flex items-center gap-2 animate-pulse">
                 🍻 {stats.happyHourNow} happy hours NOW!
+              </span>
+            )}
+            {stats.liveCrowdReports > 0 && (
+              <span className="px-4 py-2 bg-purple-500/80 backdrop-blur rounded-full font-semibold flex items-center gap-2">
+                📡 {stats.liveCrowdReports} live crowd reports
               </span>
             )}
           </div>
@@ -327,6 +344,20 @@ export default function Home() {
                   </div>
                 </div>
 
+                {/* Crowd Level Badge */}
+                <div className="mb-3">
+                  {crowdLevels[pub.id.toString()] ? (
+                    <CrowdBadge 
+                      report={crowdLevels[pub.id.toString()]} 
+                      onClick={() => setReportingPub({ id: pub.id.toString(), name: pub.name })}
+                    />
+                  ) : (
+                    <NoCrowdBadge 
+                      onClick={() => setReportingPub({ id: pub.id.toString(), name: pub.name })}
+                    />
+                  )}
+                </div>
+
                 {/* Beer Type - Prominent */}
                 <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-semibold text-white mb-3 ${getPriceBgColor(pub.price)}`}>
                   <span className="text-base">🍺</span>
@@ -352,16 +383,19 @@ export default function Home() {
                 {/* Description */}
                 {pub.description && (
                   <p className="text-sm text-gray-500 mb-3 line-clamp-2 italic">
-                    "{pub.description}"
+                    &quot;{pub.description}&quot;
                   </p>
                 )}
 
-                {/* Last Updated Badge */}
+                {/* Footer Row */}
                 <div className="flex items-center justify-between mt-3 pt-3 border-t border-gray-100">
-                  <span className="text-xs text-gray-400 flex items-center gap-1">
-                    <span>📅</span>
-                    Updated: {formatLastUpdated(pub.lastUpdated)}
-                  </span>
+                  {/* Last Updated Badge */}
+                  {pub.lastUpdated && (
+                    <span className="text-xs text-gray-400">
+                      Updated: {formatLastUpdated(pub.lastUpdated)}
+                    </span>
+                  )}
+                  
                   {/* Website Link */}
                   {pub.website && (
                     <a
@@ -370,7 +404,7 @@ export default function Home() {
                       rel="noopener noreferrer"
                       className="inline-flex items-center gap-1 text-amber-600 hover:text-amber-700 text-sm font-semibold group/link"
                     >
-                      Visit
+                      Visit website
                       <span className="group-hover/link:translate-x-1 transition-transform">→</span>
                     </a>
                   )}
@@ -396,25 +430,43 @@ export default function Home() {
       {/* Footer */}
       <footer className="bg-gray-900 text-white py-8 mt-12">
         <div className="max-w-7xl mx-auto px-4 text-center">
-          <p className="text-gray-400">
+          <p className="text-gray-400 mb-4">
             🍺 Perth Pint Prices — Helping you find cheap drinks since 2024
           </p>
-          <p className="text-gray-500 text-sm mt-2">
-            Prices may vary. Always drink responsibly.
-          </p>
-          
-          {/* Report Wrong Price Button */}
-          <div className="mt-6">
-            <a
-              href="mailto:perthpintprices@gmail.com?subject=Price%20Correction&body=Hi%20Perth%20Pint%20Prices%2C%0A%0AI%20found%20a%20wrong%20price%20on%20your%20website%3A%0A%0APub%20Name%3A%20%0AActual%20Price%3A%20%0ABeer%20Type%3A%20%0ADate%20Checked%3A%20%0A%0AThanks!"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-amber-500 hover:bg-amber-600 text-white font-semibold rounded-full transition-all hover:scale-105 shadow-lg"
+          <div className="flex flex-wrap justify-center gap-4 mb-4">
+            <button
+              onClick={() => setShowSubmitForm(true)}
+              className="text-amber-400 hover:text-amber-300 transition-colors font-medium"
             >
-              <span>🚨</span>
-              Report Wrong Price
+              Know a cheap pint spot? Let us know! →
+            </button>
+            <a
+              href="mailto:perthpintprices@gmail.com?subject=Price%20Correction&body=Hi%20Perth%20Pint%20Prices%2C%0A%0AI%27d%20like%20to%20report%20an%20incorrect%20price%3A%0A%0APub%20Name%3A%20%0AActual%20Price%3A%20%0ADetails%3A%20"
+              className="text-red-400 hover:text-red-300 transition-colors font-medium"
+            >
+              🚨 Report Wrong Price
             </a>
           </div>
+          <p className="text-gray-500 text-sm">
+            Prices may vary. Always drink responsibly.
+          </p>
         </div>
       </footer>
+
+      {/* Submit Pub Modal */}
+      {showSubmitForm && (
+        <SubmitPubForm onClose={() => setShowSubmitForm(false)} />
+      )}
+
+      {/* Crowd Reporter Modal */}
+      {reportingPub && (
+        <CrowdReporter
+          pubId={reportingPub.id}
+          pubName={reportingPub.name}
+          onClose={() => setReportingPub(null)}
+          onReport={refreshCrowdLevels}
+        />
+      )}
     </main>
   )
 }
