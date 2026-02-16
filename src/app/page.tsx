@@ -5,7 +5,7 @@ import dynamic from 'next/dynamic'
 import pubs from '@/data/pubs.json'
 import { Pub } from '@/types/pub'
 
-const Map = dynamic(() => import('@/components/Map'), { 
+const Map = dynamic(() => import('@/components/Map'), {
   ssr: false,
   loading: () => (
     <div className="h-[400px] bg-gradient-to-br from-amber-50 to-orange-100 rounded-xl flex items-center justify-center">
@@ -18,7 +18,7 @@ const Map = dynamic(() => import('@/components/Map'), {
 })
 
 // Mini map component for pub cards
-const MiniMap = dynamic(() => import('@/components/MiniMap'), { 
+const MiniMap = dynamic(() => import('@/components/MiniMap'), {
   ssr: false,
   loading: () => <div className="h-24 bg-gray-200 rounded-lg animate-pulse"></div>
 })
@@ -28,15 +28,15 @@ const typedPubs: Pub[] = pubs as Pub[]
 // Check if current time falls within happy hour
 function isHappyHour(happyHour: string | null | undefined): boolean {
   if (!happyHour) return false
-  
+
   const now = new Date()
   const currentDay = now.toLocaleDateString('en-US', { weekday: 'short' })
   const currentHour = now.getHours()
-  
+
   const hhLower = happyHour.toLowerCase()
-  
+
   // Check day
-  const isToday = 
+  const isToday =
     hhLower.includes('daily') ||
     hhLower.includes(currentDay.toLowerCase()) ||
     (hhLower.includes('mon-fri') && ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'].includes(currentDay)) ||
@@ -45,20 +45,20 @@ function isHappyHour(happyHour: string | null | undefined): boolean {
     (hhLower.includes('wed-sat') && ['Wed', 'Thu', 'Fri', 'Sat'].includes(currentDay)) ||
     (hhLower.includes('thu-sat') && ['Thu', 'Fri', 'Sat'].includes(currentDay)) ||
     (hhLower.includes('fri-sat') && ['Fri', 'Sat'].includes(currentDay))
-  
+
   if (!isToday) return false
-  
+
   // Parse time
   const timeMatch = happyHour.match(/(\d{1,2})[-–](\d{1,2})(pm)?/i)
   if (!timeMatch) return false
-  
+
   let startHour = parseInt(timeMatch[1])
   let endHour = parseInt(timeMatch[2])
-  
+
   // Convert to 24h
   if (startHour < 12 && (hhLower.includes('pm') || startHour < 6)) startHour += 12
   if (endHour < 12 && (hhLower.includes('pm') || endHour <= 8)) endHour += 12
-  
+
   return currentHour >= startHour && currentHour < endHour
 }
 
@@ -93,7 +93,7 @@ export default function Home() {
   const filteredPubs = useMemo(() => {
     return typedPubs
       .filter(pub => {
-        const matchesSearch = 
+        const matchesSearch =
           pub.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
           pub.address.toLowerCase().includes(searchTerm.toLowerCase()) ||
           (pub.description?.toLowerCase() || '').includes(searchTerm.toLowerCase())
@@ -124,6 +124,21 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50">
+      {/* Custom styles for select options */}
+      <style jsx global>{`
+        select option {
+          background-color: white;
+          color: #1f2937;
+          padding: 8px;
+        }
+        select option:hover,
+        select option:focus,
+        select option:checked {
+          background-color: #f59e0b;
+          color: white;
+        }
+      `}</style>
+
       {/* Header */}
       <header className="bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 text-white shadow-2xl">
         <div className="max-w-7xl mx-auto px-4 py-8">
@@ -138,7 +153,7 @@ export default function Home() {
               </p>
             </div>
           </div>
-          
+
           {/* Stats Pills */}
           <div className="flex flex-wrap gap-3 mt-6">
             <span className="px-4 py-2 bg-white/20 backdrop-blur rounded-full font-semibold flex items-center gap-2 hover:bg-white/30 transition-all">
@@ -172,7 +187,7 @@ export default function Home() {
                   placeholder="Search pubs..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:border-amber-500 focus:ring-4 focus:ring-amber-100 transition-all outline-none"
+                  className="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:border-amber-500 focus:ring-4 focus:ring-amber-100 transition-all outline-none text-gray-900"
                 />
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">🔍</span>
               </div>
@@ -184,11 +199,11 @@ export default function Home() {
               <select
                 value={selectedSuburb}
                 onChange={(e) => setSelectedSuburb(e.target.value)}
-                className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-amber-500 focus:ring-4 focus:ring-amber-100 transition-all outline-none bg-white"
+                className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-amber-500 focus:ring-4 focus:ring-amber-100 transition-all outline-none bg-white text-gray-900"
               >
                 <option value="">All Suburbs</option>
                 {suburbs.map(suburb => (
-                  <option key={suburb} value={suburb}>{suburb}</option>
+                  <option key={suburb} value={suburb} className="text-gray-900 bg-white">{suburb}</option>
                 ))}
               </select>
             </div>
@@ -199,11 +214,11 @@ export default function Home() {
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value as 'price' | 'name' | 'suburb')}
-                className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-amber-500 focus:ring-4 focus:ring-amber-100 transition-all outline-none bg-white"
+                className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-amber-500 focus:ring-4 focus:ring-amber-100 transition-all outline-none bg-white text-gray-900"
               >
-                <option value="price">Price (Low to High)</option>
-                <option value="name">Name (A-Z)</option>
-                <option value="suburb">Suburb</option>
+                <option value="price" className="text-gray-900 bg-white">Price (Low to High)</option>
+                <option value="name" className="text-gray-900 bg-white">Name (A-Z)</option>
+                <option value="suburb" className="text-gray-900 bg-white">Suburb</option>
               </select>
             </div>
 
@@ -255,7 +270,16 @@ export default function Home() {
         <div className="flex items-center justify-between mb-4">
           <p className="text-gray-600 font-medium">
             Showing <span className="text-amber-600 font-bold">{filteredPubs.length}</span> of {stats.total} venues
+            {selectedSuburb && <span className="ml-2 text-amber-500">in {selectedSuburb}</span>}
           </p>
+          {selectedSuburb && (
+            <button
+              onClick={() => setSelectedSuburb('')}
+              className="text-sm text-amber-600 hover:text-amber-700 font-medium flex items-center gap-1"
+            >
+              Clear filter ✕
+            </button>
+          )}
         </div>
 
         {/* Main Map */}
@@ -348,7 +372,7 @@ export default function Home() {
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-1 text-amber-600 hover:text-amber-700 text-sm font-semibold group/link"
                   >
-                    Visit website 
+                    Visit website
                     <span className="group-hover/link:translate-x-1 transition-transform">→</span>
                   </a>
                 )}
