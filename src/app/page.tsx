@@ -116,14 +116,18 @@ export default function Home() {
       })
   }, [searchTerm, selectedSuburb, maxPrice, sortBy, showHappyHourOnly])
 
-  const cheapestPub = useMemo(() => {
-    return typedPubs.reduce((min, pub) => pub.price < min.price ? pub : min, typedPubs[0])
-  }, [])
-
   const stats = useMemo(() => ({
     total: typedPubs.length,
     minPrice: Math.min(...typedPubs.map(p => p.price)),
   }), [])
+
+  // Refresh crowd reports after a report is submitted
+  const handleCrowdReported = async () => {
+    const reports = await getCrowdLevels()
+    setCrowdReports(reports)
+    setLiveCrowdCount(Object.keys(reports).length)
+    setCrowdReportPub(null)
+  }
 
   return (
     <main className="min-h-screen bg-stone-100">
@@ -403,11 +407,10 @@ export default function Home() {
       {/* Crowd Reporter Modal */}
       {crowdReportPub && (
         <CrowdReporter
-          pub={crowdReportPub}
+          pubId={String(crowdReportPub.id)}
+          pubName={crowdReportPub.name}
           onClose={() => setCrowdReportPub(null)}
-          onReported={() => {
-            setCrowdReportPub(null)
-          }}
+          onReport={handleCrowdReported}
         />
       )}
     </main>
