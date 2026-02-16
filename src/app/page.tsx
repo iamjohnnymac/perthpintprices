@@ -4,6 +4,7 @@ import { useState, useMemo } from 'react'
 import dynamic from 'next/dynamic'
 import pubs from '@/data/pubs.json'
 import { Pub } from '@/types/pub'
+import SubmitPubForm from '@/components/SubmitPubForm'
 
 const Map = dynamic(() => import('@/components/Map'), {
   ssr: false,
@@ -84,6 +85,7 @@ export default function Home() {
   const [sortBy, setSortBy] = useState<'price' | 'name' | 'suburb'>('price')
   const [showHappyHourOnly, setShowHappyHourOnly] = useState(false)
   const [showMiniMaps, setShowMiniMaps] = useState(true)
+  const [showSubmitForm, setShowSubmitForm] = useState(false)
 
   const suburbs = useMemo(() => {
     const suburbSet = new Set(typedPubs.map(pub => pub.suburb))
@@ -124,34 +126,33 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50">
-      {/* Custom styles for select options */}
-      <style jsx global>{`
-        select option {
-          background-color: white;
-          color: #1f2937;
-          padding: 8px;
-        }
-        select option:hover,
-        select option:focus,
-        select option:checked {
-          background-color: #f59e0b;
-          color: white;
-        }
-      `}</style>
-
+      {/* Submit Pub Modal */}
+      <SubmitPubForm isOpen={showSubmitForm} onClose={() => setShowSubmitForm(false)} />
+      
       {/* Header */}
       <header className="bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 text-white shadow-2xl">
         <div className="max-w-7xl mx-auto px-4 py-8">
-          <div className="flex items-center gap-4 mb-4">
-            <div className="text-6xl animate-bounce">🍺</div>
-            <div>
-              <h1 className="text-4xl md:text-5xl font-black tracking-tight">
-                Perth Pint Prices
-              </h1>
-              <p className="text-amber-100 text-lg mt-1">
-                Find the cheapest pints in Perth, Western Australia
-              </p>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="text-6xl animate-bounce">🍺</div>
+              <div>
+                <h1 className="text-4xl md:text-5xl font-black tracking-tight">
+                  Perth Pint Prices
+                </h1>
+                <p className="text-amber-100 text-lg mt-1">
+                  Find the cheapest pints in Perth, Western Australia
+                </p>
+              </div>
             </div>
+            
+            {/* Submit Button */}
+            <button
+              onClick={() => setShowSubmitForm(true)}
+              className="hidden sm:flex items-center gap-2 px-5 py-3 bg-white/20 hover:bg-white/30 backdrop-blur rounded-xl font-semibold transition-all hover:scale-105 active:scale-95 border border-white/30"
+            >
+              <span className="text-xl">➕</span>
+              <span>Submit a Pub</span>
+            </button>
           </div>
 
           {/* Stats Pills */}
@@ -170,6 +171,13 @@ export default function Home() {
                 🍻 {stats.happyHourNow} happy hours NOW!
               </span>
             )}
+            {/* Mobile Submit Button */}
+            <button
+              onClick={() => setShowSubmitForm(true)}
+              className="sm:hidden px-4 py-2 bg-white/20 hover:bg-white/30 backdrop-blur rounded-full font-semibold flex items-center gap-2 transition-all"
+            >
+              ➕ Submit
+            </button>
           </div>
         </div>
       </header>
@@ -187,7 +195,7 @@ export default function Home() {
                   placeholder="Search pubs..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:border-amber-500 focus:ring-4 focus:ring-amber-100 transition-all outline-none text-gray-900"
+                  className="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:border-amber-500 focus:ring-4 focus:ring-amber-100 transition-all outline-none"
                 />
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">🔍</span>
               </div>
@@ -199,11 +207,11 @@ export default function Home() {
               <select
                 value={selectedSuburb}
                 onChange={(e) => setSelectedSuburb(e.target.value)}
-                className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-amber-500 focus:ring-4 focus:ring-amber-100 transition-all outline-none bg-white text-gray-900"
+                className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-amber-500 focus:ring-4 focus:ring-amber-100 transition-all outline-none bg-white"
               >
                 <option value="">All Suburbs</option>
                 {suburbs.map(suburb => (
-                  <option key={suburb} value={suburb} className="text-gray-900 bg-white">{suburb}</option>
+                  <option key={suburb} value={suburb}>{suburb}</option>
                 ))}
               </select>
             </div>
@@ -214,11 +222,11 @@ export default function Home() {
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value as 'price' | 'name' | 'suburb')}
-                className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-amber-500 focus:ring-4 focus:ring-amber-100 transition-all outline-none bg-white text-gray-900"
+                className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-amber-500 focus:ring-4 focus:ring-amber-100 transition-all outline-none bg-white"
               >
-                <option value="price" className="text-gray-900 bg-white">Price (Low to High)</option>
-                <option value="name" className="text-gray-900 bg-white">Name (A-Z)</option>
-                <option value="suburb" className="text-gray-900 bg-white">Suburb</option>
+                <option value="price">Price (Low to High)</option>
+                <option value="name">Name (A-Z)</option>
+                <option value="suburb">Suburb</option>
               </select>
             </div>
 
@@ -270,16 +278,7 @@ export default function Home() {
         <div className="flex items-center justify-between mb-4">
           <p className="text-gray-600 font-medium">
             Showing <span className="text-amber-600 font-bold">{filteredPubs.length}</span> of {stats.total} venues
-            {selectedSuburb && <span className="ml-2 text-amber-500">in {selectedSuburb}</span>}
           </p>
-          {selectedSuburb && (
-            <button
-              onClick={() => setSelectedSuburb('')}
-              className="text-sm text-amber-600 hover:text-amber-700 font-medium flex items-center gap-1"
-            >
-              Clear filter ✕
-            </button>
-          )}
         </div>
 
         {/* Main Map */}
@@ -403,6 +402,12 @@ export default function Home() {
           <p className="text-gray-500 text-sm mt-2">
             Prices may vary. Always drink responsibly.
           </p>
+          <button
+            onClick={() => setShowSubmitForm(true)}
+            className="mt-4 text-amber-400 hover:text-amber-300 font-semibold transition-colors"
+          >
+            Know a cheap pint spot? Let us know! →
+          </button>
         </div>
       </footer>
     </main>
