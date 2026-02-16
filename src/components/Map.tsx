@@ -34,17 +34,20 @@ function getPriceIcon(price: number): L.DivIcon {
   })
 }
 
-// Custom cluster icon
+// Custom cluster icon - larger and more readable
 function createClusterCustomIcon(cluster: L.MarkerCluster): L.DivIcon {
   const count = cluster.getChildCount()
-  let size = 40
+  let size = 50
+  let fontSize = 16
   let bgColor = '#f59e0b' // amber
 
   if (count > 20) {
-    size = 50
-    bgColor = '#ef4444' // red for large clusters
+    size = 70
+    fontSize = 20
+    bgColor = '#ea580c' // deeper orange for large clusters
   } else if (count > 10) {
-    size = 45
+    size = 60
+    fontSize = 18
     bgColor = '#f97316' // orange for medium
   }
 
@@ -55,14 +58,17 @@ function createClusterCustomIcon(cluster: L.MarkerCluster): L.DivIcon {
       height: ${size}px;
       border-radius: 50%;
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
       color: white;
-      font-weight: bold;
-      font-size: 14px;
+      font-weight: 800;
+      font-size: ${fontSize}px;
+      line-height: 1.1;
       border: 3px solid white;
-      box-shadow: 0 3px 6px rgba(0,0,0,0.4);
-    ">${count} pubs</div>`,
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+    "><span style="font-size: ${fontSize + 4}px;">${count}</span><span style="font-size: ${fontSize - 4}px; opacity: 0.9;">pubs</span></div>`,
     className: 'custom-cluster-icon',
     iconSize: L.point(size, size, true),
   })
