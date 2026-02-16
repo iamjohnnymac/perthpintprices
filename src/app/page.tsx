@@ -346,14 +346,14 @@ export default function Home() {
 
                 {/* Crowd Level Badge */}
                 <div className="mb-3">
-                  {crowdLevels[pub.id.toString()] ? (
+                  {crowdLevels[String(pub.id)] ? (
                     <CrowdBadge
-                      report={crowdLevels[pub.id.toString()]}
-                      onClick={() => setReportingPub({ id: pub.id.toString(), name: pub.name })}
+                      report={crowdLevels[String(pub.id)]}
+                      onClick={() => setReportingPub({ id: String(pub.id), name: pub.name })}
                     />
                   ) : (
                     <NoCrowdBadge
-                      onClick={() => setReportingPub({ id: pub.id.toString(), name: pub.name })}
+                      onClick={() => setReportingPub({ id: String(pub.id), name: pub.name })}
                     />
                   )}
                 </div>
