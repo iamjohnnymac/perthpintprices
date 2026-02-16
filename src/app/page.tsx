@@ -6,8 +6,8 @@ import pubs from '@/data/pubs.json'
 import { Pub } from '@/types/pub'
 import SubmitPubForm from '@/components/SubmitPubForm'
 import CrowdReporter from '@/components/CrowdReporter'
-import CrowdBadge from '@/components/CrowdBadge'
-import { supabase } from '@/lib/supabase'
+import CrowdBadge, { NoCrowdBadge } from '@/components/CrowdBadge'
+import { getCrowdLevels, CrowdReport } from '@/lib/supabase'
 
 const Map = dynamic(() => import('@/components/Map'), {
   ssr: false,
@@ -76,28 +76,15 @@ export default function Home() {
   const [showMiniMaps, setShowMiniMaps] = useState(true)
   const [isSubmitFormOpen, setIsSubmitFormOpen] = useState(false)
   const [crowdReportPub, setCrowdReportPub] = useState<Pub | null>(null)
-  const [crowdReports, setCrowdReports] = useState<Record<string, { level: string; time: Date }>>({})  
+  const [crowdReports, setCrowdReports] = useState<Record<string, CrowdReport>>({})  
   const [liveCrowdCount, setLiveCrowdCount] = useState(0)
 
-  // Fetch crowd reports
+  // Fetch crowd reports using the proper API
   useEffect(() => {
     async function fetchCrowdReports() {
-      const { data, error } = await supabase
-        .from('crowd_reports')
-        .select('pub_id, crowd_level, reported_at')
-        .gt('expires_at', new Date().toISOString())
-      
-      if (!error && data) {
-        const reports: Record<string, { level: string; time: Date }> = {}
-        data.forEach((report: { pub_id: string; crowd_level: string; reported_at: string }) => {
-          reports[report.pub_id] = {
-            level: report.crowd_level,
-            time: new Date(report.reported_at)
-          }
-        })
-        setCrowdReports(reports)
-        setLiveCrowdCount(Object.keys(reports).length)
-      }
+      const reports = await getCrowdLevels()
+      setCrowdReports(reports)
+      setLiveCrowdCount(Object.keys(reports).length)
     }
     fetchCrowdReports()
     const interval = setInterval(fetchCrowdReports, 60000)
@@ -273,106 +260,109 @@ export default function Home() {
 
         {/* Pub Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {filteredPubs.map((pub, index) => (
-            <div
-              key={pub.id}
-              className="bg-white rounded-xl shadow-sm border border-stone-200 overflow-hidden hover:shadow-md transition-shadow"
-            >
-              {/* Rank Badge for Top 3 */}
-              {index < 3 && sortBy === 'price' && (
-                <div className={`absolute -top-1 -right-1 w-8 h-8 rounded-full flex items-center justify-center text-white font-bold text-sm shadow z-10 ${
-                  index === 0 ? 'bg-amber-600' :
-                  index === 1 ? 'bg-stone-500' :
-                  'bg-amber-800'
-                }`}>
-                  #{index + 1}
-                </div>
-              )}
-
-              {/* Happy Hour Now Badge */}
-              {isHappyHour(pub.happyHour) && (
-                <div className="absolute top-2 left-2 px-2 py-1 bg-emerald-700 text-white text-xs font-semibold rounded-full z-10">
-                  🍻 HAPPY HOUR
-                </div>
-              )}
-
-              {/* Mini Map */}
-              {showMiniMaps && (
-                <div className="h-24 relative overflow-hidden">
-                  <MiniMap lat={pub.lat} lng={pub.lng} name={pub.name} />
-                </div>
-              )}
-
-              {/* Content */}
-              <div className="p-4">
-                {/* Header Row */}
-                <div className="flex justify-between items-start gap-2 mb-2">
-                  <div className="flex-1 min-w-0">
-                    <h3 className="font-semibold text-stone-900 truncate">
-                      {pub.name}
-                    </h3>
-                    <p className="text-xs text-stone-500">{pub.suburb}</p>
-                  </div>
-                  <div className={`text-xl font-bold ${getPriceTextColor(pub.price)}`}>
-                    ${pub.price.toFixed(2)}
-                  </div>
-                </div>
-
-                {/* Beer Type Badge */}
-                <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium text-white mb-2 ${getPriceColor(pub.price)}`}>
-                  🍺 {pub.beerType}
-                </div>
-
-                {/* Crowd Badge */}
-                <CrowdBadge 
-                  crowdLevel={crowdReports[String(pub.id)]?.level} 
-                  reportedAt={crowdReports[String(pub.id)]?.time}
-                />
-
-                {/* Address */}
-                <p className="text-xs text-stone-500 mb-1.5 flex items-start gap-1">
-                  <span>📍</span>
-                  <span className="flex-1 line-clamp-1">{pub.address}</span>
-                </p>
-
-                {/* Happy Hour */}
-                {pub.happyHour && (
-                  <p className={`text-xs mb-1.5 flex items-center gap-1 ${
-                    isHappyHour(pub.happyHour) ? 'text-emerald-700 font-medium' : 'text-stone-500'
+          {filteredPubs.map((pub, index) => {
+            const pubReport = crowdReports[String(pub.id)]
+            return (
+              <div
+                key={pub.id}
+                className="bg-white rounded-xl shadow-sm border border-stone-200 overflow-hidden hover:shadow-md transition-shadow relative"
+              >
+                {/* Rank Badge for Top 3 */}
+                {index < 3 && sortBy === 'price' && (
+                  <div className={`absolute -top-1 -right-1 w-8 h-8 rounded-full flex items-center justify-center text-white font-bold text-sm shadow z-10 ${
+                    index === 0 ? 'bg-amber-600' :
+                    index === 1 ? 'bg-stone-500' :
+                    'bg-amber-800'
                   }`}>
-                    🕐 {pub.happyHour}
-                  </p>
+                    #{index + 1}
+                  </div>
                 )}
 
-                {/* Last Updated */}
-                {pub.lastUpdated && (
-                  <p className="text-xs text-stone-400 mb-2">
-                    Updated: {new Date(pub.lastUpdated).toLocaleDateString('en-AU', { month: 'short', year: 'numeric' })}
-                  </p>
+                {/* Happy Hour Now Badge */}
+                {isHappyHour(pub.happyHour) && (
+                  <div className="absolute top-2 left-2 px-2 py-1 bg-emerald-700 text-white text-xs font-semibold rounded-full z-10">
+                    🍻 HAPPY HOUR
+                  </div>
                 )}
 
-                {/* Actions */}
-                <div className="flex items-center gap-2 mt-3 pt-3 border-t border-stone-100">
-                  <button
-                    onClick={() => setCrowdReportPub(pub)}
-                    className="flex-1 px-3 py-1.5 bg-stone-100 hover:bg-stone-200 text-stone-700 rounded-lg text-xs font-medium transition-colors"
-                  >
-                    How busy?
-                  </button>
+                {/* Mini Map */}
+                {showMiniMaps && (
+                  <div className="h-24 relative overflow-hidden">
+                    <MiniMap lat={pub.lat} lng={pub.lng} name={pub.name} />
+                  </div>
+                )}
+
+                {/* Content */}
+                <div className="p-4">
+                  {/* Header Row */}
+                  <div className="flex justify-between items-start gap-2 mb-2">
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-semibold text-stone-900 truncate">
+                        {pub.name}
+                      </h3>
+                      <p className="text-xs text-stone-500">{pub.suburb}</p>
+                    </div>
+                    <div className={`text-xl font-bold ${getPriceTextColor(pub.price)}`}>
+                      ${pub.price.toFixed(2)}
+                    </div>
+                  </div>
+
+                  {/* Beer Type Badge */}
+                  <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium text-white mb-2 ${getPriceColor(pub.price)}`}>
+                    🍺 {pub.beerType}
+                  </div>
+
+                  {/* Crowd Badge */}
+                  <div className="mb-2">
+                    {pubReport ? (
+                      <CrowdBadge 
+                        report={pubReport}
+                        onClick={() => setCrowdReportPub(pub)}
+                      />
+                    ) : (
+                      <NoCrowdBadge onClick={() => setCrowdReportPub(pub)} />
+                    )}
+                  </div>
+
+                  {/* Address */}
+                  <p className="text-xs text-stone-500 mb-1.5 flex items-start gap-1">
+                    <span>📍</span>
+                    <span className="flex-1 line-clamp-1">{pub.address}</span>
+                  </p>
+
+                  {/* Happy Hour */}
+                  {pub.happyHour && (
+                    <p className={`text-xs mb-1.5 flex items-center gap-1 ${
+                      isHappyHour(pub.happyHour) ? 'text-emerald-700 font-medium' : 'text-stone-500'
+                    }`}>
+                      🕐 {pub.happyHour}
+                    </p>
+                  )}
+
+                  {/* Last Updated */}
+                  {pub.lastUpdated && (
+                    <p className="text-xs text-stone-400 mb-2">
+                      Updated: {new Date(pub.lastUpdated).toLocaleDateString('en-AU', { month: 'short', year: 'numeric' })}
+                    </p>
+                  )}
+
+                  {/* Website Link */}
                   {pub.website && (
-                    <a
-                      href={pub.website}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="px-3 py-1.5 text-amber-700 hover:text-amber-800 text-xs font-medium"
-                    >
-                      Website →
-                    </a>
+                    <div className="mt-3 pt-3 border-t border-stone-100">
+                      <a
+                        href={pub.website}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-amber-700 hover:text-amber-800 text-xs font-medium"
+                      >
+                        Visit website →
+                      </a>
+                    </div>
                   )}
                 </div>
               </div>
-            </div>
-          ))}
+            )
+          })}
         </div>
 
         {/* Empty State */}
