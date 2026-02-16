@@ -289,103 +289,106 @@ export default function Home() {
 
         {/* Pub Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-          {filteredPubs.map((pub, index) => (
-            <div
-              key={pub.id}
-              className="group relative bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-200 overflow-hidden border border-stone-200"
-            >
-              {/* Rank Badge for Top 3 */}
-              {index < 3 && sortBy === 'price' && (
-                <div className={`absolute -top-1 -right-1 w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm shadow-md z-10 ${
-                  index === 0 ? 'bg-yellow-500' :
-                  index === 1 ? 'bg-stone-400' :
-                  'bg-amber-700'
-                }`}>
-                  #{index + 1}
-                </div>
-              )}
-
-              {/* Happy Hour Now Badge */}
-              {isHappyHour(pub.happyHour) && (
-                <div className="absolute top-2 left-2 px-2 py-1 bg-green-600 text-white text-xs font-bold rounded-full shadow z-10">
-                  🍻 HAPPY HOUR!
-                </div>
-              )}
-
-              {/* Mini Map */}
-              {showMiniMaps && (
-                <div className="h-24 relative overflow-hidden">
-                  <MiniMap lat={pub.lat} lng={pub.lng} name={pub.name} />
-                  <div className="absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent pointer-events-none"></div>
-                </div>
-              )}
-
-              {/* Content */}
-              <div className={`p-4 ${!showMiniMaps ? 'pt-5' : ''}`}>
-                {/* Header Row */}
-                <div className="flex justify-between items-start gap-2 mb-2">
-                  <div className="flex-1 min-w-0">
-                    <h3 className="font-bold text-stone-900 truncate">{pub.name}</h3>
-                    <p className="text-xs text-stone-500">{pub.suburb}</p>
+          {filteredPubs.map((pub, index) => {
+            const crowdReport = getLatestCrowdReport(pub.id)
+            return (
+              <div
+                key={pub.id}
+                className="group relative bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-200 overflow-hidden border border-stone-200"
+              >
+                {/* Rank Badge for Top 3 */}
+                {index < 3 && sortBy === 'price' && (
+                  <div className={`absolute -top-1 -right-1 w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm shadow-md z-10 ${
+                    index === 0 ? 'bg-yellow-500' :
+                    index === 1 ? 'bg-stone-400' :
+                    'bg-amber-700'
+                  }`}>
+                    #{index + 1}
                   </div>
-                  <div className={`text-xl font-bold bg-gradient-to-br ${getPriceColor(pub.price)} bg-clip-text text-transparent`}>
-                    ${pub.price.toFixed(2)}
+                )}
+
+                {/* Happy Hour Now Badge */}
+                {isHappyHour(pub.happyHour) && (
+                  <div className="absolute top-2 left-2 px-2 py-1 bg-green-600 text-white text-xs font-bold rounded-full shadow z-10">
+                    🍻 HAPPY HOUR!
                   </div>
-                </div>
-
-                {/* Crowd Badge */}
-                <CrowdBadge report={getLatestCrowdReport(pub.id)} />
-
-                {/* Beer Type Badge */}
-                <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold text-white mb-2 ${getPriceBgColor(pub.price)}`}>
-                  🍺 {pub.beerType}
-                </div>
-
-                {/* Address */}
-                <p className="text-xs text-stone-600 mb-1.5">📍 {pub.address}</p>
-
-                {/* Happy Hour */}
-                {pub.happyHour && (
-                  <p className={`text-xs mb-1.5 ${isHappyHour(pub.happyHour) ? 'text-green-600 font-semibold' : 'text-stone-500'}`}>
-                    🕐 {pub.happyHour}
-                  </p>
                 )}
 
-                {/* Description */}
-                {pub.description && (
-                  <p className="text-xs text-stone-500 mb-2 line-clamp-2 italic">"{pub.description}"</p>
+                {/* Mini Map */}
+                {showMiniMaps && (
+                  <div className="h-24 relative overflow-hidden">
+                    <MiniMap lat={pub.lat} lng={pub.lng} name={pub.name} />
+                    <div className="absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent pointer-events-none"></div>
+                  </div>
                 )}
 
-                {/* Last Updated */}
-                {pub.lastUpdated && (
-                  <p className="text-xs text-stone-400 mb-2">Updated: {formatLastUpdated(pub.lastUpdated)}</p>
-                )}
+                {/* Content */}
+                <div className={`p-4 ${!showMiniMaps ? 'pt-5' : ''}`}>
+                  {/* Header Row */}
+                  <div className="flex justify-between items-start gap-2 mb-2">
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-bold text-stone-900 truncate">{pub.name}</h3>
+                      <p className="text-xs text-stone-500">{pub.suburb}</p>
+                    </div>
+                    <div className={`text-xl font-bold bg-gradient-to-br ${getPriceColor(pub.price)} bg-clip-text text-transparent`}>
+                      ${pub.price.toFixed(2)}
+                    </div>
+                  </div>
 
-                {/* Action Buttons */}
-                <div className="flex items-center justify-between mt-3 pt-3 border-t border-stone-100">
-                  {pub.website && (
-                    <a
-                      href={pub.website}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-amber-700 hover:text-amber-800 text-xs font-semibold"
-                    >
-                      Visit website →
-                    </a>
+                  {/* Crowd Badge - only render if report exists */}
+                  {crowdReport && <CrowdBadge report={crowdReport} />}
+
+                  {/* Beer Type Badge */}
+                  <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold text-white mb-2 ${getPriceBgColor(pub.price)}`}>
+                    🍺 {pub.beerType}
+                  </div>
+
+                  {/* Address */}
+                  <p className="text-xs text-stone-600 mb-1.5">📍 {pub.address}</p>
+
+                  {/* Happy Hour */}
+                  {pub.happyHour && (
+                    <p className={`text-xs mb-1.5 ${isHappyHour(pub.happyHour) ? 'text-green-600 font-semibold' : 'text-stone-500'}`}>
+                      🕐 {pub.happyHour}
+                    </p>
                   )}
-                  <button
-                    onClick={() => setCrowdReportPub(pub)}
-                    className="px-2.5 py-1 bg-stone-100 hover:bg-stone-200 rounded-lg text-xs font-medium text-stone-700 transition-colors ml-auto"
-                  >
-                    How busy?
-                  </button>
-                </div>
-              </div>
 
-              {/* Bottom color bar */}
-              <div className={`h-1 bg-gradient-to-r ${getPriceColor(pub.price)}`}></div>
-            </div>
-          ))}
+                  {/* Description */}
+                  {pub.description && (
+                    <p className="text-xs text-stone-500 mb-2 line-clamp-2 italic">"{pub.description}"</p>
+                  )}
+
+                  {/* Last Updated */}
+                  {pub.lastUpdated && (
+                    <p className="text-xs text-stone-400 mb-2">Updated: {formatLastUpdated(pub.lastUpdated)}</p>
+                  )}
+
+                  {/* Action Buttons */}
+                  <div className="flex items-center justify-between mt-3 pt-3 border-t border-stone-100">
+                    {pub.website && (
+                      <a
+                        href={pub.website}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-amber-700 hover:text-amber-800 text-xs font-semibold"
+                      >
+                        Visit website →
+                      </a>
+                    )}
+                    <button
+                      onClick={() => setCrowdReportPub(pub)}
+                      className="px-2.5 py-1 bg-stone-100 hover:bg-stone-200 rounded-lg text-xs font-medium text-stone-700 transition-colors ml-auto"
+                    >
+                      How busy?
+                    </button>
+                  </div>
+                </div>
+
+                {/* Bottom color bar */}
+                <div className={`h-1 bg-gradient-to-r ${getPriceColor(pub.price)}`}></div>
+              </div>
+            )
+          })}
         </div>
 
         {/* Empty State */}
