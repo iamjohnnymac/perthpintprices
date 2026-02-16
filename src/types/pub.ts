@@ -7,9 +7,9 @@ export interface Pub {
   lng: number
   price: number
   beerType: string
-  happyHour?: string | null
-  website?: string | null
-  description?: string
-  lastUpdated?: string
+  happyHour: string | null
+  website: string | null
+  description: string | null
   source?: string
+  lastUpdated?: string
 }

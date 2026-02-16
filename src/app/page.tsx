@@ -4,7 +4,6 @@ import { useState, useMemo } from 'react'
 import dynamic from 'next/dynamic'
 import pubs from '@/data/pubs.json'
 import { Pub } from '@/types/pub'
-import SubmitPubForm from '@/components/SubmitPubForm'
 
 const Map = dynamic(() => import('@/components/Map'), {
   ssr: false,
@@ -78,6 +77,22 @@ function getPriceBgColor(price: number): string {
   return 'bg-red-500'
 }
 
+// Format last updated date
+function formatLastUpdated(dateStr: string | undefined): string {
+  if (!dateStr) return 'Not verified'
+  
+  const date = new Date(dateStr)
+  const now = new Date()
+  const diffDays = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24))
+  
+  if (diffDays === 0) return 'Today'
+  if (diffDays === 1) return 'Yesterday'
+  if (diffDays < 7) return `${diffDays} days ago`
+  if (diffDays < 30) return `${Math.floor(diffDays / 7)} week${Math.floor(diffDays / 7) > 1 ? 's' : ''} ago`
+  if (diffDays < 365) return `${Math.floor(diffDays / 30)} month${Math.floor(diffDays / 30) > 1 ? 's' : ''} ago`
+  return date.toLocaleDateString('en-AU', { month: 'short', year: 'numeric' })
+}
+
 export default function Home() {
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedSuburb, setSelectedSuburb] = useState('')
@@ -85,7 +100,6 @@ export default function Home() {
   const [sortBy, setSortBy] = useState<'price' | 'name' | 'suburb'>('price')
   const [showHappyHourOnly, setShowHappyHourOnly] = useState(false)
   const [showMiniMaps, setShowMiniMaps] = useState(true)
-  const [showSubmitForm, setShowSubmitForm] = useState(false)
 
   const suburbs = useMemo(() => {
     const suburbSet = new Set(typedPubs.map(pub => pub.suburb))
@@ -126,33 +140,19 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50">
-      {/* Submit Pub Modal */}
-      <SubmitPubForm isOpen={showSubmitForm} onClose={() => setShowSubmitForm(false)} />
-      
       {/* Header */}
       <header className="bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 text-white shadow-2xl">
         <div className="max-w-7xl mx-auto px-4 py-8">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <div className="text-6xl animate-bounce">🍺</div>
-              <div>
-                <h1 className="text-4xl md:text-5xl font-black tracking-tight">
-                  Perth Pint Prices
-                </h1>
-                <p className="text-amber-100 text-lg mt-1">
-                  Find the cheapest pints in Perth, Western Australia
-                </p>
-              </div>
+          <div className="flex items-center gap-4 mb-4">
+            <div className="text-6xl animate-bounce">🍺</div>
+            <div>
+              <h1 className="text-4xl md:text-5xl font-black tracking-tight">
+                Perth Pint Prices
+              </h1>
+              <p className="text-amber-100 text-lg mt-1">
+                Find the cheapest pints in Perth, Western Australia
+              </p>
             </div>
-            
-            {/* Submit Button */}
-            <button
-              onClick={() => setShowSubmitForm(true)}
-              className="hidden sm:flex items-center gap-2 px-5 py-3 bg-white/20 hover:bg-white/30 backdrop-blur rounded-xl font-semibold transition-all hover:scale-105 active:scale-95 border border-white/30"
-            >
-              <span className="text-xl">➕</span>
-              <span>Submit a Pub</span>
-            </button>
           </div>
 
           {/* Stats Pills */}
@@ -171,13 +171,6 @@ export default function Home() {
                 🍻 {stats.happyHourNow} happy hours NOW!
               </span>
             )}
-            {/* Mobile Submit Button */}
-            <button
-              onClick={() => setShowSubmitForm(true)}
-              className="sm:hidden px-4 py-2 bg-white/20 hover:bg-white/30 backdrop-blur rounded-full font-semibold flex items-center gap-2 transition-all"
-            >
-              ➕ Submit
-            </button>
           </div>
         </div>
       </header>
@@ -363,18 +356,25 @@ export default function Home() {
                   </p>
                 )}
 
-                {/* Website Link */}
-                {pub.website && (
-                  <a
-                    href={pub.website}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1 text-amber-600 hover:text-amber-700 text-sm font-semibold group/link"
-                  >
-                    Visit website
-                    <span className="group-hover/link:translate-x-1 transition-transform">→</span>
-                  </a>
-                )}
+                {/* Last Updated Badge */}
+                <div className="flex items-center justify-between mt-3 pt-3 border-t border-gray-100">
+                  <span className="text-xs text-gray-400 flex items-center gap-1">
+                    <span>📅</span>
+                    Updated: {formatLastUpdated(pub.lastUpdated)}
+                  </span>
+                  {/* Website Link */}
+                  {pub.website && (
+                    <a
+                      href={pub.website}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1 text-amber-600 hover:text-amber-700 text-sm font-semibold group/link"
+                    >
+                      Visit
+                      <span className="group-hover/link:translate-x-1 transition-transform">→</span>
+                    </a>
+                  )}
+                </div>
               </div>
 
               {/* Bottom Gradient Border */}
@@ -402,12 +402,17 @@ export default function Home() {
           <p className="text-gray-500 text-sm mt-2">
             Prices may vary. Always drink responsibly.
           </p>
-          <button
-            onClick={() => setShowSubmitForm(true)}
-            className="mt-4 text-amber-400 hover:text-amber-300 font-semibold transition-colors"
-          >
-            Know a cheap pint spot? Let us know! →
-          </button>
+          
+          {/* Report Wrong Price Button */}
+          <div className="mt-6">
+            <a
+              href="mailto:perthpintprices@gmail.com?subject=Price%20Correction&body=Hi%20Perth%20Pint%20Prices%2C%0A%0AI%20found%20a%20wrong%20price%20on%20your%20website%3A%0A%0APub%20Name%3A%20%0AActual%20Price%3A%20%0ABeer%20Type%3A%20%0ADate%20Checked%3A%20%0A%0AThanks!"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-amber-500 hover:bg-amber-600 text-white font-semibold rounded-full transition-all hover:scale-105 shadow-lg"
+            >
+              <span>🚨</span>
+              Report Wrong Price
+            </a>
+          </div>
         </div>
       </footer>
     </main>
