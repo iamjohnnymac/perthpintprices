@@ -37,8 +37,9 @@ export default function MiniMap({ lat, lng, name }: MiniMapProps) {
       zoomControl={false}
       attributionControl={false}
     >
+      {/* CartoDB Positron - soft pastel style matching main map */}
       <TileLayer
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
       />
       <Marker position={[lat, lng]} icon={miniMarkerIcon} />
     </MapContainer>
