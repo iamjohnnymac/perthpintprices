@@ -454,9 +454,7 @@ export default function Home() {
       </footer>
 
       {/* Submit Pub Modal */}
-      {showSubmitForm && (
-        <SubmitPubForm onClose={() => setShowSubmitForm(false)} />
-      )}
+      <SubmitPubForm isOpen={showSubmitForm} onClose={() => setShowSubmitForm(false)} />
 
       {/* Crowd Reporter Modal */}
       {reportingPub && (
