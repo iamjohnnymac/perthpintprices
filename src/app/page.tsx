@@ -88,11 +88,9 @@ export default function Home() {
   const [showMiniMaps, setShowMiniMaps] = useState(true)
   const [showSubmitForm, setShowSubmitForm] = useState(false)
 
-  // Crowd level state
   const [crowdLevels, setCrowdLevels] = useState<Record<string, CrowdReport>>({})
   const [reportingPub, setReportingPub] = useState<{ id: string; name: string } | null>(null)
 
-  // Fetch crowd levels on mount and every 2 minutes
   const refreshCrowdLevels = useCallback(async () => {
     const levels = await getCrowdLevels()
     setCrowdLevels(levels)
@@ -100,7 +98,7 @@ export default function Home() {
 
   useEffect(() => {
     refreshCrowdLevels()
-    const interval = setInterval(refreshCrowdLevels, 120000) // 2 minutes
+    const interval = setInterval(refreshCrowdLevels, 120000)
     return () => clearInterval(interval)
   }, [refreshCrowdLevels])
 
@@ -144,8 +142,8 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50">
-      {/* Header */}
-      <header className="bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 text-white shadow-2xl">
+      {/* Header - Muted amber/brown gradient */}
+      <header className="bg-gradient-to-r from-amber-700 via-amber-600 to-amber-700 text-white shadow-2xl">
         <div className="max-w-7xl mx-auto px-4 py-8">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
@@ -167,7 +165,6 @@ export default function Home() {
             </button>
           </div>
 
-          {/* Stats Pills */}
           <div className="flex flex-wrap gap-3 mt-6">
             <span className="px-4 py-2 bg-white/20 backdrop-blur rounded-full font-semibold flex items-center gap-2 hover:bg-white/30 transition-all">
               📊 {stats.total} venues
@@ -193,10 +190,8 @@ export default function Home() {
       </header>
 
       <div className="max-w-7xl mx-auto px-4 py-8">
-        {/* Filters Card */}
         <div className="bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl p-6 mb-8 border border-white/50">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {/* Search */}
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-2">Search</label>
               <div className="relative">
@@ -211,7 +206,6 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Suburb Filter */}
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-2">Suburb</label>
               <select
@@ -226,7 +220,6 @@ export default function Home() {
               </select>
             </div>
 
-            {/* Sort By */}
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-2">Sort By</label>
               <select
@@ -240,7 +233,6 @@ export default function Home() {
               </select>
             </div>
 
-            {/* Max Price Slider */}
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-2">
                 Max Price: <span className="text-amber-600 font-bold">${maxPrice}</span>
@@ -257,7 +249,6 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Toggle Filters */}
           <div className="flex flex-wrap gap-4 mt-4 pt-4 border-t border-gray-100">
             <label className="flex items-center gap-2 cursor-pointer group">
               <input
@@ -284,26 +275,22 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Results Count */}
         <div className="flex items-center justify-between mb-4">
           <p className="text-gray-600 font-medium">
             Showing <span className="text-amber-600 font-bold">{filteredPubs.length}</span> of {stats.total} venues
           </p>
         </div>
 
-        {/* Main Map */}
         <div className="mb-8 rounded-2xl overflow-hidden shadow-2xl border-4 border-white">
           <Map pubs={filteredPubs} isHappyHour={isHappyHour} />
         </div>
 
-        {/* Pub Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredPubs.map((pub, index) => (
             <div
               key={pub.id}
               className="group relative bg-white/80 backdrop-blur-xl rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-white/50 hover:-translate-y-1"
             >
-              {/* Rank Badge for Top 3 */}
               {index < 3 && sortBy === 'price' && (
                 <div className={`absolute -top-2 -right-2 w-12 h-12 rounded-full flex items-center justify-center text-white font-black text-lg shadow-lg z-10 ${
                   index === 0 ? 'bg-gradient-to-br from-yellow-400 to-yellow-600' :
@@ -314,14 +301,12 @@ export default function Home() {
                 </div>
               )}
 
-              {/* Happy Hour Now Badge */}
               {isHappyHour(pub.happyHour) && (
                 <div className="absolute top-3 left-3 px-3 py-1 bg-green-500 text-white text-xs font-bold rounded-full animate-pulse shadow-lg z-10">
                   🍻 HAPPY HOUR!
                 </div>
               )}
 
-              {/* Mini Map */}
               {showMiniMaps && (
                 <div className="h-28 relative overflow-hidden">
                   <MiniMap lat={pub.lat} lng={pub.lng} name={pub.name} />
@@ -329,9 +314,7 @@ export default function Home() {
                 </div>
               )}
 
-              {/* Content */}
               <div className={`p-5 ${!showMiniMaps ? 'pt-6' : ''}`}>
-                {/* Header Row */}
                 <div className="flex justify-between items-start gap-3 mb-3">
                   <div className="flex-1 min-w-0">
                     <h3 className="font-bold text-lg text-gray-900 truncate group-hover:text-amber-600 transition-colors">
@@ -344,7 +327,6 @@ export default function Home() {
                   </div>
                 </div>
 
-                {/* Crowd Level Badge */}
                 <div className="mb-3">
                   {crowdLevels[String(pub.id)] ? (
                     <CrowdBadge
@@ -358,19 +340,16 @@ export default function Home() {
                   )}
                 </div>
 
-                {/* Beer Type - Prominent */}
                 <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-semibold text-white mb-3 ${getPriceBgColor(pub.price)}`}>
                   <span className="text-base">🍺</span>
                   {pub.beerType}
                 </div>
 
-                {/* Address */}
                 <p className="text-sm text-gray-600 mb-2 flex items-start gap-1">
                   <span>📍</span>
                   <span className="flex-1">{pub.address}</span>
                 </p>
 
-                {/* Happy Hour */}
                 {pub.happyHour && (
                   <p className={`text-sm mb-2 flex items-center gap-1 ${
                     isHappyHour(pub.happyHour) ? 'text-green-600 font-semibold' : 'text-gray-500'
@@ -380,23 +359,18 @@ export default function Home() {
                   </p>
                 )}
 
-                {/* Description */}
                 {pub.description && (
                   <p className="text-sm text-gray-500 mb-3 line-clamp-2 italic">
                     &quot;{pub.description}&quot;
                   </p>
                 )}
 
-                {/* Footer Row */}
                 <div className="flex items-center justify-between mt-3 pt-3 border-t border-gray-100">
-                  {/* Last Updated Badge */}
                   {pub.lastUpdated && (
                     <span className="text-xs text-gray-400">
                       Updated: {formatLastUpdated(pub.lastUpdated)}
                     </span>
                   )}
-
-                  {/* Website Link */}
                   {pub.website && (
                     <a
                       href={pub.website}
@@ -411,13 +385,11 @@ export default function Home() {
                 </div>
               </div>
 
-              {/* Bottom Gradient Border */}
               <div className={`h-1 bg-gradient-to-r ${getPriceColor(pub.price)}`}></div>
             </div>
           ))}
         </div>
 
-        {/* Empty State */}
         {filteredPubs.length === 0 && (
           <div className="text-center py-16 bg-white/50 rounded-2xl">
             <div className="text-6xl mb-4">🔍</div>
@@ -427,7 +399,6 @@ export default function Home() {
         )}
       </div>
 
-      {/* Footer */}
       <footer className="bg-gray-900 text-white py-8 mt-12">
         <div className="max-w-7xl mx-auto px-4 text-center">
           <p className="text-gray-400 mb-4">
@@ -453,10 +424,8 @@ export default function Home() {
         </div>
       </footer>
 
-      {/* Submit Pub Modal */}
       <SubmitPubForm isOpen={showSubmitForm} onClose={() => setShowSubmitForm(false)} />
 
-      {/* Crowd Reporter Modal */}
       {reportingPub && (
         <CrowdReporter
           pubId={reportingPub.id}
