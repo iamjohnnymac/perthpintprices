@@ -144,18 +144,23 @@ export default function Map({ pubs, isHappyHour }: MapProps) {
               <span style={{ color: '#d97706', fontWeight: 500 }}>${pub.price.toFixed(2)}</span>
             </Tooltip>
             <Popup>
-              <div className="p-2">
-                <h3 className="font-bold text-lg">{pub.name}</h3>
-                <p className="text-amber-600 font-semibold">
+              <div style={{ padding: '8px', minWidth: '200px' }}>
+                <h3 style={{ fontWeight: 700, fontSize: '16px', marginBottom: '4px', color: '#1f2937' }}>
+                  {pub.name}
+                </h3>
+                <p style={{ color: '#d97706', fontWeight: 600, marginBottom: '4px' }}>
                   ${pub.price.toFixed(2)} - {pub.beerType}
                 </p>
-                <p className="text-sm text-gray-600">{pub.address}</p>
+                <p style={{ fontSize: '13px', color: '#6b7280', marginBottom: '4px' }}>
+                  {pub.address}
+                </p>
                 {pub.happyHour && (
-                  <p className={`text-sm mt-1 ${
-                    isHappyHour && isHappyHour(pub.happyHour)
-                      ? 'text-green-600 font-semibold'
-                      : 'text-gray-500'
-                  }`}>
+                  <p style={{ 
+                    fontSize: '13px', 
+                    marginTop: '4px',
+                    color: isHappyHour && isHappyHour(pub.happyHour) ? '#16a34a' : '#6b7280',
+                    fontWeight: isHappyHour && isHappyHour(pub.happyHour) ? 600 : 400
+                  }}>
                     🕐 {pub.happyHour}
                     {isHappyHour && isHappyHour(pub.happyHour) && ' - NOW!'}
                   </p>
@@ -165,7 +170,13 @@ export default function Map({ pubs, isHappyHour }: MapProps) {
                     href={pub.website}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-amber-600 hover:text-amber-700 text-sm mt-2 inline-block"
+                    style={{ 
+                      color: '#d97706', 
+                      fontSize: '13px', 
+                      marginTop: '8px', 
+                      display: 'inline-block',
+                      textDecoration: 'none'
+                    }}
                   >
                     Visit website →
                   </a>
