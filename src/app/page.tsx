@@ -362,7 +362,7 @@ export default function Home() {
                 <tr className="bg-stone-50 border-b border-stone-200">
                   <th className="text-left py-3 px-4 text-xs font-semibold text-stone-600 uppercase tracking-wide">Pub</th>
                   <th className="text-left py-3 px-4 text-xs font-semibold text-stone-600 uppercase tracking-wide hidden sm:table-cell">Suburb</th>
-                  <th className="text-left py-3 px-4 text-xs font-semibold text-stone-600 uppercase tracking-wide">Beer</th>
+                  <th className="text-left py-3 px-4 text-xs font-semibold text-stone-600 uppercase tracking-wide hidden sm:table-cell">Beer</th>
                   <th className="text-right py-3 px-4 text-xs font-semibold text-stone-600 uppercase tracking-wide">Price</th>
                   <th className="text-left py-3 px-4 text-xs font-semibold text-stone-600 uppercase tracking-wide hidden md:table-cell">Happy Hour</th>
                   <th className="text-center py-3 px-4 text-xs font-semibold text-stone-600 uppercase tracking-wide">Crowd</th>
@@ -379,7 +379,7 @@ export default function Home() {
                         index % 2 === 0 ? 'bg-white' : 'bg-stone-50/30'
                       }`}
                     >
-                      <td className="py-3 px-4">
+                      <td className="py-3 px-2 sm:px-4">
                         <div className="flex items-center gap-2">
                           {index < 3 && sortBy === 'price' && (
                             <span className={`w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-bold ${
@@ -417,12 +417,12 @@ export default function Home() {
                       <td className="py-3 px-4 text-sm text-stone-600 hidden sm:table-cell">
                         {pub.suburb}
                       </td>
-                      <td className="py-3 px-4">
+                      <td className="py-3 px-4 hidden sm:table-cell">
                         <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium text-white ${getPriceBgColor(pub.price)}`}>
                           🍺 {pub.beerType}
                         </span>
                       </td>
-                      <td className={`py-3 px-4 text-right font-bold text-lg ${getPriceTextColor(pub.price)}`}>
+                      <td className={`py-3 px-2 sm:px-4 text-right font-bold text-lg whitespace-nowrap ${getPriceTextColor(pub.price)}`}>
                         ${pub.price.toFixed(2)}
                       </td>
                       <td className="py-3 px-4 hidden md:table-cell">
