@@ -74,6 +74,7 @@ export default function Home() {
   const [crowdReportPub, setCrowdReportPub] = useState<Pub | null>(null)
   const [currentTime, setCurrentTime] = useState(new Date())
   const [viewMode, setViewMode] = useState<'cards' | 'list'>('cards')
+  const [showMoreFilters, setShowMoreFilters] = useState(false)
 
   // Update time every minute for countdown displays
   useEffect(() => {
@@ -135,6 +136,7 @@ export default function Home() {
   }), [currentTime])
 
   const liveCrowdCount = Object.keys(crowdReports).length
+  const activeFilterCount = (selectedSuburb ? 1 : 0) + (maxPrice < 15 ? 1 : 0) + (sortBy !== 'price' ? 1 : 0)
 
   return (
     <main className="min-h-screen bg-stone-100">
@@ -180,100 +182,17 @@ export default function Home() {
       </header>
 
       <div className="max-w-7xl mx-auto px-4 py-6">
-        {/* Filters Card */}
-        <div className="bg-white rounded-xl shadow-md p-5 mb-6 border border-stone-200">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {/* Search */}
-            <div>
-              <label className="block text-sm font-semibold text-stone-700 mb-1.5">Search</label>
-              <div className="relative">
-                <input
-                  type="text"
-                  placeholder="Search pubs..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-9 pr-4 py-2.5 border border-stone-300 rounded-lg focus:border-amber-600 focus:ring-2 focus:ring-amber-100 transition-all outline-none"
-                />
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-400">🔍</span>
-              </div>
-            </div>
-
-            {/* Suburb Filter */}
-            <div>
-              <label className="block text-sm font-semibold text-stone-700 mb-1.5">Suburb</label>
-              <select
-                value={selectedSuburb}
-                onChange={(e) => setSelectedSuburb(e.target.value)}
-                className="w-full px-4 py-2.5 border border-stone-300 rounded-lg focus:border-amber-600 focus:ring-2 focus:ring-amber-100 transition-all outline-none bg-white"
-              >
-                <option value="">All Suburbs</option>
-                {suburbs.map(suburb => (
-                  <option key={suburb} value={suburb}>{suburb}</option>
-                ))}
-              </select>
-            </div>
-
-            {/* Sort By */}
-            <div>
-              <label className="block text-sm font-semibold text-stone-700 mb-1.5">Sort By</label>
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value as 'price' | 'name' | 'suburb')}
-                className="w-full px-4 py-2.5 border border-stone-300 rounded-lg focus:border-amber-600 focus:ring-2 focus:ring-amber-100 transition-all outline-none bg-white"
-              >
-                <option value="price">Price (Low to High)</option>
-                <option value="name">Name (A-Z)</option>
-                <option value="suburb">Suburb</option>
-              </select>
-            </div>
-
-            {/* Max Price Slider */}
-            <div>
-              <label className="block text-sm font-semibold text-stone-700 mb-1.5">
-                Max Price: <span className="text-amber-700 font-bold">${maxPrice}</span>
-              </label>
-              <input
-                type="range"
-                min="6"
-                max="15"
-                step="0.5"
-                value={maxPrice}
-                onChange={(e) => setMaxPrice(parseFloat(e.target.value))}
-                className="w-full h-2 bg-gradient-to-r from-green-500 via-yellow-500 to-red-500 rounded-full appearance-none cursor-pointer mt-2"
-              />
-            </div>
-          </div>
-
-          {/* Toggle Filters */}
-          <div className="flex flex-wrap items-center gap-4 mt-4 pt-4 border-t border-stone-100">
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={showHappyHourOnly}
-                onChange={(e) => setShowHappyHourOnly(e.target.checked)}
-                className="w-4 h-4 rounded border-stone-300 text-amber-600 focus:ring-amber-500"
-              />
-              <span className="text-stone-700 text-sm">🕐 Happy Hour Now Only</span>
-            </label>
-            {viewMode === 'cards' && (
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={showMiniMaps}
-                  onChange={(e) => setShowMiniMaps(e.target.checked)}
-                  className="w-4 h-4 rounded border-stone-300 text-amber-600 focus:ring-amber-500"
-                />
-                <span className="text-stone-700 text-sm">🗺️ Show Mini Maps</span>
-              </label>
-            )}
-            
-            {/* View Toggle */}
-            <div className="flex items-center gap-1 ml-auto bg-stone-100 rounded-lg p-1">
+        {/* FILTERS - Cleaner Layout */}
+        <div className="bg-white rounded-xl shadow-md p-4 mb-6 border border-stone-200">
+          {/* Row 1: View Toggle + Search + Suburb */}
+          <div className="flex flex-col sm:flex-row gap-3">
+            {/* View Toggle - First and Prominent */}
+            <div className="flex bg-stone-100 rounded-lg p-1 self-start">
               <button
                 onClick={() => setViewMode('cards')}
-                className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
+                className={`px-4 py-2 rounded-md text-sm font-semibold transition-all ${
                   viewMode === 'cards'
-                    ? 'bg-white text-amber-700 shadow-sm'
+                    ? 'bg-amber-700 text-white shadow-sm'
                     : 'text-stone-600 hover:text-stone-800'
                 }`}
               >
@@ -281,16 +200,121 @@ export default function Home() {
               </button>
               <button
                 onClick={() => setViewMode('list')}
-                className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
+                className={`px-4 py-2 rounded-md text-sm font-semibold transition-all ${
                   viewMode === 'list'
-                    ? 'bg-white text-amber-700 shadow-sm'
+                    ? 'bg-amber-700 text-white shadow-sm'
                     : 'text-stone-600 hover:text-stone-800'
                 }`}
               >
                 📋 List
               </button>
             </div>
+
+            {/* Search */}
+            <div className="flex-1 relative">
+              <input
+                type="text"
+                placeholder="Search pubs or suburbs..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full pl-10 pr-4 py-2.5 border border-stone-200 rounded-lg focus:border-amber-600 focus:ring-2 focus:ring-amber-100 transition-all outline-none bg-stone-50"
+              />
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-400">🔍</span>
+            </div>
+
+            {/* Suburb Dropdown */}
+            <select
+              value={selectedSuburb}
+              onChange={(e) => setSelectedSuburb(e.target.value)}
+              className="px-4 py-2.5 border border-stone-200 rounded-lg focus:border-amber-600 focus:ring-2 focus:ring-amber-100 transition-all outline-none bg-stone-50 text-stone-700 min-w-[160px]"
+            >
+              <option value="">All Suburbs</option>
+              {suburbs.map(suburb => (
+                <option key={suburb} value={suburb}>{suburb}</option>
+              ))}
+            </select>
           </div>
+
+          {/* Row 2: Toggle Pills + More Filters */}
+          <div className="flex flex-wrap items-center gap-2 mt-3">
+            {/* Happy Hour Toggle Pill */}
+            <button
+              onClick={() => setShowHappyHourOnly(!showHappyHourOnly)}
+              className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ${
+                showHappyHourOnly
+                  ? 'bg-green-600 text-white'
+                  : 'bg-stone-100 text-stone-600 hover:bg-stone-200'
+              }`}
+            >
+              🕐 Happy Hour Now {showHappyHourOnly && '✓'}
+            </button>
+
+            {/* Mini Maps Toggle Pill - Only in Cards view */}
+            {viewMode === 'cards' && (
+              <button
+                onClick={() => setShowMiniMaps(!showMiniMaps)}
+                className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ${
+                  showMiniMaps
+                    ? 'bg-amber-600 text-white'
+                    : 'bg-stone-100 text-stone-600 hover:bg-stone-200'
+                }`}
+              >
+                🗺️ Mini Maps {showMiniMaps && '✓'}
+              </button>
+            )}
+
+            {/* More Filters Button */}
+            <button
+              onClick={() => setShowMoreFilters(!showMoreFilters)}
+              className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ml-auto ${
+                showMoreFilters || activeFilterCount > 0
+                  ? 'bg-stone-700 text-white'
+                  : 'bg-stone-100 text-stone-600 hover:bg-stone-200'
+              }`}
+            >
+              ⚙️ More Filters {activeFilterCount > 0 && `(${activeFilterCount})`}
+              <span className={`ml-1 transition-transform inline-block ${showMoreFilters ? 'rotate-180' : ''}`}>▼</span>
+            </button>
+          </div>
+
+          {/* Collapsible More Filters */}
+          {showMoreFilters && (
+            <div className="mt-4 pt-4 border-t border-stone-100 grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {/* Sort By */}
+              <div>
+                <label className="block text-xs font-semibold text-stone-500 uppercase tracking-wide mb-1.5">Sort By</label>
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value as 'price' | 'name' | 'suburb')}
+                  className="w-full px-3 py-2 border border-stone-200 rounded-lg focus:border-amber-600 focus:ring-2 focus:ring-amber-100 transition-all outline-none bg-white text-sm"
+                >
+                  <option value="price">Price (Low to High)</option>
+                  <option value="name">Name (A-Z)</option>
+                  <option value="suburb">Suburb</option>
+                </select>
+              </div>
+
+              {/* Max Price */}
+              <div>
+                <label className="block text-xs font-semibold text-stone-500 uppercase tracking-wide mb-1.5">
+                  Max Price: <span className="text-amber-700">${maxPrice}</span>
+                </label>
+                <input
+                  type="range"
+                  min="6"
+                  max="15"
+                  step="0.5"
+                  value={maxPrice}
+                  onChange={(e) => setMaxPrice(parseFloat(e.target.value))}
+                  className="w-full h-2 bg-gradient-to-r from-green-500 via-yellow-500 to-red-500 rounded-full appearance-none cursor-pointer"
+                />
+                <div className="flex justify-between text-xs text-stone-400 mt-1">
+                  <span>$6</span>
+                  <span>$15</span>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Results Count */}
