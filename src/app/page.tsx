@@ -49,6 +49,13 @@ function getPriceBgColor(price: number): string {
   return 'bg-red-700'
 }
 
+function getPriceTextColor(price: number): string {
+  if (price <= 7) return 'text-green-700'
+  if (price <= 8) return 'text-yellow-700'
+  if (price <= 9) return 'text-orange-700'
+  return 'text-red-700'
+}
+
 function formatLastUpdated(dateStr: string | undefined): string {
   if (!dateStr) return ''
   const date = new Date(dateStr)
@@ -66,6 +73,7 @@ export default function Home() {
   const [crowdReports, setCrowdReports] = useState<CrowdReport[]>([])
   const [crowdReportPub, setCrowdReportPub] = useState<Pub | null>(null)
   const [currentTime, setCurrentTime] = useState(new Date())
+  const [viewMode, setViewMode] = useState<'cards' | 'list'>('cards')
 
   // Update time every minute for countdown displays
   useEffect(() => {
@@ -131,7 +139,7 @@ export default function Home() {
     maxPriceValue: Math.max(...typedPubs.map(p => p.price)),
     avgPrice: (typedPubs.reduce((sum, p) => sum + p.price, 0) / typedPubs.length).toFixed(2),
     happyHourNow: typedPubs.filter(p => isHappyHour(p.happyHour)).length
-  }), [currentTime]) // Re-calculate when time changes
+  }), [currentTime])
 
   const liveCrowdCount = crowdReports.length
 
@@ -244,7 +252,7 @@ export default function Home() {
           </div>
 
           {/* Toggle Filters */}
-          <div className="flex flex-wrap gap-4 mt-4 pt-4 border-t border-stone-100">
+          <div className="flex flex-wrap items-center gap-4 mt-4 pt-4 border-t border-stone-100">
             <label className="flex items-center gap-2 cursor-pointer">
               <input
                 type="checkbox"
@@ -254,15 +262,41 @@ export default function Home() {
               />
               <span className="text-stone-700 text-sm">🕐 Happy Hour Now Only</span>
             </label>
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={showMiniMaps}
-                onChange={(e) => setShowMiniMaps(e.target.checked)}
-                className="w-4 h-4 rounded border-stone-300 text-amber-600 focus:ring-amber-500"
-              />
-              <span className="text-stone-700 text-sm">🗺️ Show Mini Maps</span>
-            </label>
+            {viewMode === 'cards' && (
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={showMiniMaps}
+                  onChange={(e) => setShowMiniMaps(e.target.checked)}
+                  className="w-4 h-4 rounded border-stone-300 text-amber-600 focus:ring-amber-500"
+                />
+                <span className="text-stone-700 text-sm">🗺️ Show Mini Maps</span>
+              </label>
+            )}
+            
+            {/* View Toggle */}
+            <div className="flex items-center gap-1 ml-auto bg-stone-100 rounded-lg p-1">
+              <button
+                onClick={() => setViewMode('cards')}
+                className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
+                  viewMode === 'cards'
+                    ? 'bg-white text-amber-700 shadow-sm'
+                    : 'text-stone-600 hover:text-stone-800'
+                }`}
+              >
+                🃏 Cards
+              </button>
+              <button
+                onClick={() => setViewMode('list')}
+                className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
+                  viewMode === 'list'
+                    ? 'bg-white text-amber-700 shadow-sm'
+                    : 'text-stone-600 hover:text-stone-800'
+                }`}
+              >
+                📋 List
+              </button>
+            </div>
           </div>
         </div>
 
@@ -276,118 +310,211 @@ export default function Home() {
           <Map pubs={filteredPubs} isHappyHour={isHappyHour} />
         </div>
 
-        {/* Pub Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-          {filteredPubs.map((pub, index) => {
-            const crowdReport = getLatestCrowdReport(pub.id)
-            const happyHourStatus = getHappyHourStatus(pub.happyHour)
-            return (
-              <div
-                key={pub.id}
-                className="group relative bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-200 overflow-hidden border border-stone-200"
-              >
-                {/* Rank Badge for Top 3 */}
-                {index < 3 && sortBy === 'price' && (
-                  <div className={`absolute -top-1 -right-1 w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm shadow-md z-10 ${
-                    index === 0 ? 'bg-yellow-500' :
-                    index === 1 ? 'bg-stone-400' :
-                    'bg-amber-700'
-                  }`}>
-                    #{index + 1}
-                  </div>
-                )}
-
-                {/* Happy Hour NOW Badge */}
-                {happyHourStatus.isActive && (
-                  <div className="absolute top-2 left-2 px-2 py-1 bg-green-600 text-white text-xs font-bold rounded-full shadow z-10 animate-pulse">
-                    🎉 HAPPY HOUR!
-                  </div>
-                )}
-
-                {/* Mini Map */}
-                {showMiniMaps && (
-                  <div className="h-24 relative overflow-hidden">
-                    <MiniMap lat={pub.lat} lng={pub.lng} name={pub.name} />
-                    <div className="absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent pointer-events-none"></div>
-                  </div>
-                )}
-
-                {/* Content */}
-                <div className={`p-4 ${!showMiniMaps ? 'pt-5' : ''}`}>
-                  {/* Header Row */}
-                  <div className="flex justify-between items-start gap-2 mb-2">
-                    <div className="flex-1 min-w-0">
-                      <h3 className="font-bold text-stone-900 truncate">{pub.name}</h3>
-                      <p className="text-xs text-stone-500">{pub.suburb}</p>
-                    </div>
-                    <div className={`text-xl font-bold bg-gradient-to-br ${getPriceColor(pub.price)} bg-clip-text text-transparent`}>
-                      ${pub.price.toFixed(2)}
-                    </div>
-                  </div>
-
-                  {/* Crowd Badge - only render if report exists */}
-                  {crowdReport && <CrowdBadge report={crowdReport} />}
-
-                  {/* Beer Type Badge */}
-                  <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold text-white mb-2 ${getPriceBgColor(pub.price)}`}>
-                    🍺 {pub.beerType}
-                  </div>
-
-                  {/* Address */}
-                  <p className="text-xs text-stone-600 mb-1.5">📍 {pub.address}</p>
-
-                  {/* Happy Hour Status with Countdown */}
-                  {pub.happyHour && (
-                    <div className={`text-xs mb-1.5 flex items-center gap-1 ${
-                      happyHourStatus.isActive ? 'text-green-600 font-bold' : 
-                      happyHourStatus.isToday ? 'text-amber-600 font-semibold' : 
-                      'text-stone-500'
-                    }`}>
-                      <span>{happyHourStatus.statusEmoji}</span>
-                      <span>{happyHourStatus.statusText}</span>
-                      {happyHourStatus.countdown && happyHourStatus.isActive && (
-                        <span className="text-green-500 font-normal">• {happyHourStatus.countdown}</span>
-                      )}
-                    </div>
-                  )}
-
-                  {/* Description */}
-                  {pub.description && (
-                    <p className="text-xs text-stone-500 mb-2 line-clamp-2 italic">"{pub.description}"</p>
-                  )}
-
-                  {/* Last Updated */}
-                  {pub.lastUpdated && (
-                    <p className="text-xs text-stone-400 mb-2">Updated: {formatLastUpdated(pub.lastUpdated)}</p>
-                  )}
-
-                  {/* Action Buttons */}
-                  <div className="flex items-center justify-between mt-3 pt-3 border-t border-stone-100">
-                    {pub.website && (
-                      <a
-                        href={pub.website}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-amber-700 hover:text-amber-800 text-xs font-semibold"
-                      >
-                        Visit website →
-                      </a>
-                    )}
-                    <button
-                      onClick={() => setCrowdReportPub(pub)}
-                      className="px-2.5 py-1 bg-stone-100 hover:bg-stone-200 rounded-lg text-xs font-medium text-stone-700 transition-colors ml-auto"
+        {/* LIST VIEW */}
+        {viewMode === 'list' && (
+          <div className="bg-white rounded-xl shadow-md border border-stone-200 overflow-hidden">
+            <table className="w-full">
+              <thead>
+                <tr className="bg-stone-50 border-b border-stone-200">
+                  <th className="text-left py-3 px-4 text-xs font-semibold text-stone-600 uppercase tracking-wide">Pub</th>
+                  <th className="text-left py-3 px-4 text-xs font-semibold text-stone-600 uppercase tracking-wide hidden sm:table-cell">Suburb</th>
+                  <th className="text-left py-3 px-4 text-xs font-semibold text-stone-600 uppercase tracking-wide">Beer</th>
+                  <th className="text-right py-3 px-4 text-xs font-semibold text-stone-600 uppercase tracking-wide">Price</th>
+                  <th className="text-left py-3 px-4 text-xs font-semibold text-stone-600 uppercase tracking-wide hidden md:table-cell">Happy Hour</th>
+                  <th className="text-center py-3 px-4 text-xs font-semibold text-stone-600 uppercase tracking-wide">Crowd</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredPubs.map((pub, index) => {
+                  const crowdReport = getLatestCrowdReport(pub.id)
+                  const happyHourStatus = getHappyHourStatus(pub.happyHour)
+                  return (
+                    <tr 
+                      key={pub.id} 
+                      className={`border-b border-stone-100 hover:bg-amber-50/50 transition-colors ${
+                        index % 2 === 0 ? 'bg-white' : 'bg-stone-50/30'
+                      }`}
                     >
-                      How busy?
-                    </button>
-                  </div>
-                </div>
+                      <td className="py-3 px-4">
+                        <div className="flex items-center gap-2">
+                          {index < 3 && sortBy === 'price' && (
+                            <span className={`w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-bold ${
+                              index === 0 ? 'bg-yellow-500' :
+                              index === 1 ? 'bg-stone-400' :
+                              'bg-amber-700'
+                            }`}>
+                              {index + 1}
+                            </span>
+                          )}
+                          <div>
+                            <p className="font-semibold text-stone-900 text-sm">{pub.name}</p>
+                            <p className="text-xs text-stone-500 sm:hidden">{pub.suburb}</p>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="py-3 px-4 text-sm text-stone-600 hidden sm:table-cell">
+                        {pub.suburb}
+                      </td>
+                      <td className="py-3 px-4">
+                        <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium text-white ${getPriceBgColor(pub.price)}`}>
+                          🍺 {pub.beerType}
+                        </span>
+                      </td>
+                      <td className={`py-3 px-4 text-right font-bold text-lg ${getPriceTextColor(pub.price)}`}>
+                        ${pub.price.toFixed(2)}
+                      </td>
+                      <td className="py-3 px-4 hidden md:table-cell">
+                        {pub.happyHour ? (
+                          <span className={`text-xs ${
+                            happyHourStatus.isActive ? 'text-green-600 font-bold' : 
+                            happyHourStatus.isToday ? 'text-amber-600 font-semibold' : 
+                            'text-stone-500'
+                          }`}>
+                            {happyHourStatus.statusEmoji} {happyHourStatus.statusText}
+                          </span>
+                        ) : (
+                          <span className="text-xs text-stone-400">—</span>
+                        )}
+                      </td>
+                      <td className="py-3 px-4 text-center">
+                        {crowdReport ? (
+                          <span className="text-sm" title={`Reported ${new Date(crowdReport.reported_at).toLocaleTimeString()}`}>
+                            {crowdReport.crowd_level === 'empty' && '😴'}
+                            {crowdReport.crowd_level === 'moderate' && '👥'}
+                            {crowdReport.crowd_level === 'busy' && '🍻'}
+                            {crowdReport.crowd_level === 'packed' && '🔥'}
+                          </span>
+                        ) : (
+                          <button
+                            onClick={() => setCrowdReportPub(pub)}
+                            className="text-xs text-stone-400 hover:text-amber-600"
+                          >
+                            Report
+                          </button>
+                        )}
+                      </td>
+                    </tr>
+                  )
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
 
-                {/* Bottom color bar */}
-                <div className={`h-1 bg-gradient-to-r ${getPriceColor(pub.price)}`}></div>
-              </div>
-            )
-          })}
-        </div>
+        {/* CARD VIEW */}
+        {viewMode === 'cards' && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            {filteredPubs.map((pub, index) => {
+              const crowdReport = getLatestCrowdReport(pub.id)
+              const happyHourStatus = getHappyHourStatus(pub.happyHour)
+              return (
+                <div
+                  key={pub.id}
+                  className="group relative bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-200 overflow-hidden border border-stone-200"
+                >
+                  {/* Rank Badge for Top 3 */}
+                  {index < 3 && sortBy === 'price' && (
+                    <div className={`absolute -top-1 -right-1 w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm shadow-md z-10 ${
+                      index === 0 ? 'bg-yellow-500' :
+                      index === 1 ? 'bg-stone-400' :
+                      'bg-amber-700'
+                    }`}>
+                      #{index + 1}
+                    </div>
+                  )}
+
+                  {/* Happy Hour NOW Badge */}
+                  {happyHourStatus.isActive && (
+                    <div className="absolute top-2 left-2 px-2 py-1 bg-green-600 text-white text-xs font-bold rounded-full shadow z-10 animate-pulse">
+                      🎉 HAPPY HOUR!
+                    </div>
+                  )}
+
+                  {/* Mini Map */}
+                  {showMiniMaps && (
+                    <div className="h-24 relative overflow-hidden">
+                      <MiniMap lat={pub.lat} lng={pub.lng} name={pub.name} />
+                      <div className="absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent pointer-events-none"></div>
+                    </div>
+                  )}
+
+                  {/* Content */}
+                  <div className={`p-4 ${!showMiniMaps ? 'pt-5' : ''}`}>
+                    {/* Header Row */}
+                    <div className="flex justify-between items-start gap-2 mb-2">
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-bold text-stone-900 truncate">{pub.name}</h3>
+                        <p className="text-xs text-stone-500">{pub.suburb}</p>
+                      </div>
+                      <div className={`text-xl font-bold bg-gradient-to-br ${getPriceColor(pub.price)} bg-clip-text text-transparent`}>
+                        ${pub.price.toFixed(2)}
+                      </div>
+                    </div>
+
+                    {/* Crowd Badge - only render if report exists */}
+                    {crowdReport && <CrowdBadge report={crowdReport} />}
+
+                    {/* Beer Type Badge */}
+                    <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold text-white mb-2 ${getPriceBgColor(pub.price)}`}>
+                      🍺 {pub.beerType}
+                    </div>
+
+                    {/* Address */}
+                    <p className="text-xs text-stone-600 mb-1.5">📍 {pub.address}</p>
+
+                    {/* Happy Hour Status with Countdown */}
+                    {pub.happyHour && (
+                      <div className={`text-xs mb-1.5 flex items-center gap-1 ${
+                        happyHourStatus.isActive ? 'text-green-600 font-bold' : 
+                        happyHourStatus.isToday ? 'text-amber-600 font-semibold' : 
+                        'text-stone-500'
+                      }`}>
+                        <span>{happyHourStatus.statusEmoji}</span>
+                        <span>{happyHourStatus.statusText}</span>
+                        {happyHourStatus.countdown && happyHourStatus.isActive && (
+                          <span className="text-green-500 font-normal">• {happyHourStatus.countdown}</span>
+                        )}
+                      </div>
+                    )}
+
+                    {/* Description */}
+                    {pub.description && (
+                      <p className="text-xs text-stone-500 mb-2 line-clamp-2 italic">"{pub.description}"</p>
+                    )}
+
+                    {/* Last Updated */}
+                    {pub.lastUpdated && (
+                      <p className="text-xs text-stone-400 mb-2">Updated: {formatLastUpdated(pub.lastUpdated)}</p>
+                    )}
+
+                    {/* Action Buttons */}
+                    <div className="flex items-center justify-between mt-3 pt-3 border-t border-stone-100">
+                      {pub.website && (
+                        <a
+                          href={pub.website}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-amber-700 hover:text-amber-800 text-xs font-semibold"
+                        >
+                          Visit website →
+                        </a>
+                      )}
+                      <button
+                        onClick={() => setCrowdReportPub(pub)}
+                        className="px-2.5 py-1 bg-stone-100 hover:bg-stone-200 rounded-lg text-xs font-medium text-stone-700 transition-colors ml-auto"
+                      >
+                        How busy?
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Bottom color bar */}
+                  <div className={`h-1 bg-gradient-to-r ${getPriceColor(pub.price)}`}></div>
+                </div>
+              )
+            })}
+          </div>
+        )}
 
         {/* Empty State */}
         {filteredPubs.length === 0 && (
@@ -400,16 +527,44 @@ export default function Home() {
       </div>
 
       {/* Footer */}
-      <footer className="bg-stone-800 text-white py-6 mt-8">
-        <div className="max-w-7xl mx-auto px-4 text-center">
-          <p className="text-stone-300 text-sm">🍺 Perth Pint Prices — Helping you find cheap drinks since 2024</p>
-          <p className="text-stone-500 text-xs mt-1">Prices may vary. Always drink responsibly.</p>
-          <a
-            href="mailto:perthpintprices@gmail.com?subject=Price%20Correction&body=Hi%2C%20I%20noticed%20a%20wrong%20price%20on%20the%20site.%0A%0APub%20name%3A%20%0ACorrect%20price%3A%20%0ADetails%3A%20"
-            className="inline-block mt-3 text-amber-400 hover:text-amber-300 text-xs"
-          >
-            Report Wrong Price
-          </a>
+      <footer className="bg-stone-800 text-white py-8 mt-8">
+        <div className="max-w-7xl mx-auto px-4">
+          {/* Glass Size Legend */}
+          <div className="flex flex-wrap justify-center gap-6 mb-6 pb-6 border-b border-stone-700">
+            <div className="flex items-center gap-2">
+              <span className="text-2xl">🍺</span>
+              <div>
+                <p className="font-semibold text-stone-200">Schooner</p>
+                <p className="text-xs text-stone-400">425ml</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-2xl">🍺</span>
+              <div>
+                <p className="font-semibold text-amber-400">Pint</p>
+                <p className="text-xs text-stone-400">570ml</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-2xl">🍾</span>
+              <div>
+                <p className="font-semibold text-stone-200">Long Neck</p>
+                <p className="text-xs text-stone-400">750ml</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Footer Text */}
+          <div className="text-center">
+            <p className="text-stone-300 text-sm">🍺 Perth Pint Prices — Helping you find cheap drinks since 2024</p>
+            <p className="text-stone-500 text-xs mt-1">Prices may vary. Pint prices shown. Always drink responsibly.</p>
+            <a
+              href="mailto:perthpintprices@gmail.com?subject=Price%20Correction&body=Hi%2C%20I%20noticed%20a%20wrong%20price%20on%20the%20site.%0A%0APub%20name%3A%20%0ACorrect%20price%3A%20%0ADetails%3A%20"
+              className="inline-block mt-3 text-amber-400 hover:text-amber-300 text-xs"
+            >
+              Report Wrong Price
+            </a>
+          </div>
         </div>
       </footer>
 
