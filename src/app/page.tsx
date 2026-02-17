@@ -8,6 +8,7 @@ import SubmitPubForm from '@/components/SubmitPubForm'
 import CrowdBadge from '@/components/CrowdBadge'
 import CrowdReporter from '@/components/CrowdReporter'
 import { supabase, CrowdReport } from '@/lib/supabase'
+import { getHappyHourStatus } from '@/lib/happyHour'
 
 const Map = dynamic(() => import('@/components/Map'), {
   ssr: false,
@@ -30,27 +31,8 @@ const typedPubs: Pub[] = pubs as Pub[]
 
 function isHappyHour(happyHour: string | null | undefined): boolean {
   if (!happyHour) return false
-  const now = new Date()
-  const currentDay = now.toLocaleDateString('en-US', { weekday: 'short' })
-  const currentHour = now.getHours()
-  const hhLower = happyHour.toLowerCase()
-  const isToday =
-    hhLower.includes('daily') ||
-    hhLower.includes(currentDay.toLowerCase()) ||
-    (hhLower.includes('mon-fri') && ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'].includes(currentDay)) ||
-    (hhLower.includes('wed-sun') && ['Wed', 'Thu', 'Fri', 'Sat', 'Sun'].includes(currentDay)) ||
-    (hhLower.includes('tue-sat') && ['Tue', 'Wed', 'Thu', 'Fri', 'Sat'].includes(currentDay)) ||
-    (hhLower.includes('wed-sat') && ['Wed', 'Thu', 'Fri', 'Sat'].includes(currentDay)) ||
-    (hhLower.includes('thu-sat') && ['Thu', 'Fri', 'Sat'].includes(currentDay)) ||
-    (hhLower.includes('fri-sat') && ['Fri', 'Sat'].includes(currentDay))
-  if (!isToday) return false
-  const timeMatch = happyHour.match(/(\d{1,2})[-–](\d{1,2})(pm)?/i)
-  if (!timeMatch) return false
-  let startHour = parseInt(timeMatch[1])
-  let endHour = parseInt(timeMatch[2])
-  if (startHour < 12 && (hhLower.includes('pm') || startHour < 6)) startHour += 12
-  if (endHour < 12 && (hhLower.includes('pm') || endHour <= 8)) endHour += 12
-  return currentHour >= startHour && currentHour < endHour
+  const status = getHappyHourStatus(happyHour)
+  return status.isActive
 }
 
 function getPriceColor(price: number): string {
@@ -83,6 +65,13 @@ export default function Home() {
   const [showSubmitForm, setShowSubmitForm] = useState(false)
   const [crowdReports, setCrowdReports] = useState<CrowdReport[]>([])
   const [crowdReportPub, setCrowdReportPub] = useState<Pub | null>(null)
+  const [currentTime, setCurrentTime] = useState(new Date())
+
+  // Update time every minute for countdown displays
+  useEffect(() => {
+    const interval = setInterval(() => setCurrentTime(new Date()), 60000)
+    return () => clearInterval(interval)
+  }, [])
 
   // Fetch crowd reports
   useEffect(() => {
@@ -142,7 +131,7 @@ export default function Home() {
     maxPriceValue: Math.max(...typedPubs.map(p => p.price)),
     avgPrice: (typedPubs.reduce((sum, p) => sum + p.price, 0) / typedPubs.length).toFixed(2),
     happyHourNow: typedPubs.filter(p => isHappyHour(p.happyHour)).length
-  }), [])
+  }), [currentTime]) // Re-calculate when time changes
 
   const liveCrowdCount = crowdReports.length
 
@@ -291,6 +280,7 @@ export default function Home() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {filteredPubs.map((pub, index) => {
             const crowdReport = getLatestCrowdReport(pub.id)
+            const happyHourStatus = getHappyHourStatus(pub.happyHour)
             return (
               <div
                 key={pub.id}
@@ -307,10 +297,10 @@ export default function Home() {
                   </div>
                 )}
 
-                {/* Happy Hour Now Badge */}
-                {isHappyHour(pub.happyHour) && (
-                  <div className="absolute top-2 left-2 px-2 py-1 bg-green-600 text-white text-xs font-bold rounded-full shadow z-10">
-                    🍻 HAPPY HOUR!
+                {/* Happy Hour NOW Badge */}
+                {happyHourStatus.isActive && (
+                  <div className="absolute top-2 left-2 px-2 py-1 bg-green-600 text-white text-xs font-bold rounded-full shadow z-10 animate-pulse">
+                    🎉 HAPPY HOUR!
                   </div>
                 )}
 
@@ -346,11 +336,19 @@ export default function Home() {
                   {/* Address */}
                   <p className="text-xs text-stone-600 mb-1.5">📍 {pub.address}</p>
 
-                  {/* Happy Hour */}
+                  {/* Happy Hour Status with Countdown */}
                   {pub.happyHour && (
-                    <p className={`text-xs mb-1.5 ${isHappyHour(pub.happyHour) ? 'text-green-600 font-semibold' : 'text-stone-500'}`}>
-                      🕐 {pub.happyHour}
-                    </p>
+                    <div className={`text-xs mb-1.5 flex items-center gap-1 ${
+                      happyHourStatus.isActive ? 'text-green-600 font-bold' : 
+                      happyHourStatus.isToday ? 'text-amber-600 font-semibold' : 
+                      'text-stone-500'
+                    }`}>
+                      <span>{happyHourStatus.statusEmoji}</span>
+                      <span>{happyHourStatus.statusText}</span>
+                      {happyHourStatus.countdown && happyHourStatus.isActive && (
+                        <span className="text-green-500 font-normal">• {happyHourStatus.countdown}</span>
+                      )}
+                    </div>
                   )}
 
                   {/* Description */}
