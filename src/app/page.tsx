@@ -7,6 +7,7 @@ import SubmitPubForm from '@/components/SubmitPubForm'
 import CrowdBadge from '@/components/CrowdBadge'
 import CrowdReporter from '@/components/CrowdReporter'
 import { FilterSection } from '@/components/FilterSection'
+import PubCard from '@/components/PubCard'
 import { getCrowdLevels, CrowdReport, CROWD_LEVELS, getPubs } from '@/lib/supabase'
 import { getHappyHourStatus } from '@/lib/happyHour'
 
@@ -342,114 +343,20 @@ export default function Home() {
               const crowdReport = getLatestCrowdReport(pub.id)
               const happyHourStatus = getHappyHourStatus(pub.happyHour)
               return (
-                <div
+                <PubCard
                   key={pub.id}
-                  className="group relative bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-200 overflow-hidden border border-stone-200"
-                >
-                  {index < 3 && sortBy === 'price' && (
-                    <div className={`absolute -top-1 -right-1 w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm shadow-md z-10 ${
-                      index === 0 ? 'bg-yellow-500' :
-                      index === 1 ? 'bg-stone-400' :
-                      'bg-amber-700'
-                    }`}>
-                      #{index + 1}
-                    </div>
-                  )}
-
-                  {happyHourStatus.isActive && (
-                    <div className="absolute top-2 left-2 px-2 py-1 bg-green-600 text-white text-xs font-bold rounded-full shadow z-10 animate-pulse">
-                      🎉 HAPPY HOUR!
-                    </div>
-                  )}
-
-                  {showMiniMaps && (
-                    <div className="h-24 relative overflow-hidden">
-                      <MiniMap lat={pub.lat} lng={pub.lng} name={pub.name} />
-                      <div className="absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent pointer-events-none"></div>
-                    </div>
-                  )}
-
-                  <div className={`p-4 ${!showMiniMaps ? 'pt-5' : ''}`}>
-                    <div className="flex justify-between items-start gap-2 mb-2">
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-1.5">
-                          <a 
-                            href={getDirectionsUrl(pub)}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            onClick={(e) => e.stopPropagation()}
-                            className="flex-shrink-0 hover:scale-110 transition-transform"
-                            title="Get directions in Google Maps"
-                          >
-                            <svg className="w-5 h-5" viewBox="0 0 92.3 132.3" fill="none">
-                              <path fill="#1a73e8" d="M60.2 2.2C55.8.8 51 0 46.1 0 32 0 19.3 6.4 10.8 16.5l21.8 18.3L60.2 2.2z"/>
-                              <path fill="#ea4335" d="M10.8 16.5C4.1 24.5 0 34.9 0 46.1c0 8.7 1.7 15.7 4.6 22l28-33.3-21.8-18.3z"/>
-                              <path fill="#4285f4" d="M46.1 28.5c9.8 0 17.7 7.9 17.7 17.7 0 4.3-1.6 8.3-4.2 11.4 0 0 13.9-16.6 27.5-32.7-5.6-10.8-15.3-19-27-22.7L32.6 34.8c3.7-3.9 8.8-6.3 13.5-6.3z"/>
-                              <path fill="#fbbc04" d="M46.1 63.5c-9.8 0-17.7-7.9-17.7-17.7 0-4.3 1.6-8.3 4.2-11.4L4.6 68.1C11.3 81.8 24.8 99.7 46.1 132.3c6.7-10.2 12.7-19.1 17.9-27.1L46.1 63.5z"/>
-                              <path fill="#34a853" d="M59.6 57.6c2.6-3.1 4.2-7.1 4.2-11.4 0-9.8-7.9-17.7-17.7-17.7-4.7 0-9.8 2.4-13.5 6.3L64 105.2c14.5-23.3 23.2-40.5 23.2-59.1 0-5.8-.8-11.3-2.4-16.4L59.6 57.6z"/>
-                            </svg>
-                          </a>
-                          <h3 className="font-bold text-stone-900 truncate">{pub.name}</h3>
-                        </div>
-                        <p className="text-xs text-stone-500">{pub.suburb}</p>
-                      </div>
-                      <div className={`text-xl font-bold bg-gradient-to-br ${getPriceColor(pub.price)} bg-clip-text text-transparent`}>
-                        ${pub.price.toFixed(2)}
-                      </div>
-                    </div>
-
-                    {crowdReport && <CrowdBadge report={crowdReport} />}
-
-                    <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold text-white mb-2 ${getPriceBgColor(pub.price)}`}>
-                      🍺 {pub.beerType}
-                    </div>
-
-                    <p className="text-xs text-stone-600 mb-1.5">📍 {pub.address}</p>
-
-                    {pub.happyHour && (
-                      <div className={`text-xs mb-1.5 flex items-center gap-1 ${
-                        happyHourStatus.isActive ? 'text-green-600 font-bold' : 
-                        happyHourStatus.isToday ? 'text-amber-600 font-semibold' : 
-                        'text-stone-500'
-                      }`}>
-                        <span>{happyHourStatus.statusEmoji}</span>
-                        <span>{happyHourStatus.statusText}</span>
-                        {happyHourStatus.countdown && happyHourStatus.isActive && (
-                          <span className="text-green-500 font-normal">• {happyHourStatus.countdown}</span>
-                        )}
-                      </div>
-                    )}
-
-                    {pub.description && (
-                      <p className="text-xs text-stone-500 mb-2 line-clamp-2 italic">"{pub.description}"</p>
-                    )}
-
-                    {pub.lastUpdated && (
-                      <p className="text-xs text-stone-400 mb-2">Updated: {formatLastUpdated(pub.lastUpdated)}</p>
-                    )}
-
-                    <div className="flex items-center justify-between mt-3 pt-3 border-t border-stone-100">
-                      {pub.website && (
-                        <a
-                          href={pub.website}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-amber-700 hover:text-amber-800 text-xs font-semibold"
-                        >
-                          Visit website →
-                        </a>
-                      )}
-                      <button
-                        onClick={() => setCrowdReportPub(pub)}
-                        className="px-2.5 py-1 bg-stone-100 hover:bg-stone-200 rounded-lg text-xs font-medium text-stone-700 transition-colors ml-auto"
-                      >
-                        How busy?
-                      </button>
-                    </div>
-                  </div>
-
-                  <div className={`h-1 bg-gradient-to-r ${getPriceColor(pub.price)}`}></div>
-                </div>
+                  pub={pub}
+                  index={index}
+                  sortBy={sortBy}
+                  showMiniMaps={showMiniMaps}
+                  crowdReport={crowdReport}
+                  happyHourStatus={happyHourStatus}
+                  getDirectionsUrl={getDirectionsUrl}
+                  getPriceColor={getPriceColor}
+                  getPriceBgColor={getPriceBgColor}
+                  formatLastUpdated={formatLastUpdated}
+                  onCrowdReport={setCrowdReportPub}
+                />
               )
             })}
           </div>
