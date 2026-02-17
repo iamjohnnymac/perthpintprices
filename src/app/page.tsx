@@ -6,6 +6,7 @@ import { Pub } from '@/types/pub'
 import SubmitPubForm from '@/components/SubmitPubForm'
 import CrowdBadge from '@/components/CrowdBadge'
 import CrowdReporter from '@/components/CrowdReporter'
+import { FilterSection } from '@/components/FilterSection'
 import { getCrowdLevels, CrowdReport, CROWD_LEVELS, getPubs } from '@/lib/supabase'
 import { getHappyHourStatus } from '@/lib/happyHour'
 
@@ -55,7 +56,6 @@ function getPriceTextColor(price: number): string {
 
 
 function getDirectionsUrl(pub: Pub): string {
-  // Use pub name + address for accurate directions to the specific venue
   const query = encodeURIComponent(`${pub.name}, ${pub.address}`)
   return `https://www.google.com/maps/dir/?api=1&destination=${query}`
 }
@@ -82,7 +82,6 @@ export default function Home() {
   const [viewMode, setViewMode] = useState<'cards' | 'list'>('list')
   const [showMoreFilters, setShowMoreFilters] = useState(false)
 
-  // Fetch pubs from Supabase on mount
   useEffect(() => {
     async function loadPubs() {
       const data = await getPubs()
@@ -92,13 +91,11 @@ export default function Home() {
     loadPubs()
   }, [])
 
-  // Update time every minute for countdown displays
   useEffect(() => {
     const interval = setInterval(() => setCurrentTime(new Date()), 60000)
     return () => clearInterval(interval)
   }, [])
 
-  // Fetch crowd reports
   useEffect(() => {
     fetchCrowdReports()
     const interval = setInterval(fetchCrowdReports, 60000)
@@ -126,7 +123,7 @@ export default function Home() {
           pub.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
           pub.address.toLowerCase().includes(searchTerm.toLowerCase()) ||
           (pub.description?.toLowerCase() || '').includes(searchTerm.toLowerCase())
-        const matchesSuburb = !selectedSuburb || pub.suburb === selectedSuburb
+        const matchesSuburb = !selectedSuburb || selectedSuburb === 'all' || pub.suburb === selectedSuburb
         const matchesPrice = pub.price <= maxPrice
         const matchesHappyHour = !showHappyHourOnly || isHappyHour(pub.happyHour)
         return matchesSearch && matchesSuburb && matchesPrice && matchesHappyHour
@@ -151,9 +148,7 @@ export default function Home() {
   }, [pubs, currentTime])
 
   const liveCrowdCount = Object.keys(crowdReports).length
-  const activeFilterCount = (selectedSuburb ? 1 : 0) + (maxPrice < 15 ? 1 : 0) + (sortBy !== 'price' ? 1 : 0)
 
-  // Loading state
   if (isLoading) {
     return (
       <main className="min-h-screen bg-stone-100 flex items-center justify-center">
@@ -167,7 +162,6 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-stone-100">
-      {/* Header - Flat vintage rust color */}
       <header className="bg-amber-800 text-white shadow-lg">
         <div className="max-w-7xl mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
@@ -186,7 +180,6 @@ export default function Home() {
             </button>
           </div>
 
-          {/* Stats - simpler pills */}
           <div className="flex flex-wrap gap-2 mt-4">
             <span className="px-3 py-1.5 bg-white/15 rounded-full text-sm font-medium">
               📊 {stats.total} venues
@@ -209,152 +202,35 @@ export default function Home() {
       </header>
 
       <div className="max-w-7xl mx-auto px-4 py-6">
-        {/* FILTERS - Cleaner Layout */}
-        <div className="bg-white rounded-xl shadow-md p-4 mb-6 border border-stone-200">
-          {/* Row 1: View Toggle + Search + Suburb */}
-          <div className="flex flex-col sm:flex-row gap-3">
-            {/* View Toggle - First and Prominent */}
-            <div className="flex bg-stone-100 rounded-lg p-1 self-start">
-              <button
-                onClick={() => setViewMode('cards')}
-                className={`px-4 py-2 rounded-md text-sm font-semibold transition-all ${
-                  viewMode === 'cards'
-                    ? 'bg-amber-700 text-white shadow-sm'
-                    : 'text-stone-600 hover:text-stone-800'
-                }`}
-              >
-                🃏 Cards
-              </button>
-              <button
-                onClick={() => setViewMode('list')}
-                className={`px-4 py-2 rounded-md text-sm font-semibold transition-all ${
-                  viewMode === 'list'
-                    ? 'bg-amber-700 text-white shadow-sm'
-                    : 'text-stone-600 hover:text-stone-800'
-                }`}
-              >
-                📋 List
-              </button>
-            </div>
+        <FilterSection
+          viewMode={viewMode}
+          setViewMode={setViewMode}
+          searchTerm={searchTerm}
+          setSearchTerm={setSearchTerm}
+          selectedSuburb={selectedSuburb}
+          setSelectedSuburb={setSelectedSuburb}
+          suburbs={suburbs}
+          showHappyHourOnly={showHappyHourOnly}
+          setShowHappyHourOnly={setShowHappyHourOnly}
+          showMiniMaps={showMiniMaps}
+          setShowMiniMaps={setShowMiniMaps}
+          sortBy={sortBy}
+          setSortBy={setSortBy}
+          maxPrice={maxPrice}
+          setMaxPrice={setMaxPrice}
+          showMoreFilters={showMoreFilters}
+          setShowMoreFilters={setShowMoreFilters}
+          stats={stats}
+        />
 
-            {/* Search */}
-            <div className="flex-1 relative">
-              <input
-                type="text"
-                placeholder="Search pubs or suburbs..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 border border-stone-200 rounded-lg focus:border-amber-600 focus:ring-2 focus:ring-amber-100 transition-all outline-none bg-stone-50"
-              />
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-400">🔍</span>
-            </div>
-
-            {/* Suburb Dropdown */}
-            <select
-              value={selectedSuburb}
-              onChange={(e) => setSelectedSuburb(e.target.value)}
-              className="px-4 py-2.5 border border-stone-200 rounded-lg focus:border-amber-600 focus:ring-2 focus:ring-amber-100 transition-all outline-none bg-stone-50 text-stone-700 min-w-[160px]"
-            >
-              <option value="">All Suburbs</option>
-              {suburbs.map(suburb => (
-                <option key={suburb} value={suburb}>{suburb}</option>
-              ))}
-            </select>
-          </div>
-
-          {/* Row 2: Toggle Pills + More Filters */}
-          <div className="flex flex-wrap items-center gap-2 mt-3">
-            {/* Happy Hour Toggle Pill */}
-            <button
-              onClick={() => setShowHappyHourOnly(!showHappyHourOnly)}
-              className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ${
-                showHappyHourOnly
-                  ? 'bg-green-600 text-white'
-                  : 'bg-stone-100 text-stone-600 hover:bg-stone-200'
-              }`}
-            >
-              🕐 Happy Hour Now {showHappyHourOnly && '✓'}
-            </button>
-
-            {/* Mini Maps Toggle Pill - Only in Cards view */}
-            {viewMode === 'cards' && (
-              <button
-                onClick={() => setShowMiniMaps(!showMiniMaps)}
-                className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ${
-                  showMiniMaps
-                    ? 'bg-amber-600 text-white'
-                    : 'bg-stone-100 text-stone-600 hover:bg-stone-200'
-                }`}
-              >
-                🗺️ Mini Maps {showMiniMaps && '✓'}
-              </button>
-            )}
-
-            {/* More Filters Button */}
-            <button
-              onClick={() => setShowMoreFilters(!showMoreFilters)}
-              className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ml-auto ${
-                showMoreFilters || activeFilterCount > 0
-                  ? 'bg-stone-700 text-white'
-                  : 'bg-stone-100 text-stone-600 hover:bg-stone-200'
-              }`}
-            >
-              ⚙️ More Filters {activeFilterCount > 0 && `(${activeFilterCount})`}
-              <span className={`ml-1 transition-transform inline-block ${showMoreFilters ? 'rotate-180' : ''}`}>▼</span>
-            </button>
-          </div>
-
-          {/* Collapsible More Filters */}
-          {showMoreFilters && (
-            <div className="mt-4 pt-4 border-t border-stone-100 grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {/* Sort By */}
-              <div>
-                <label className="block text-xs font-semibold text-stone-500 uppercase tracking-wide mb-1.5">Sort By</label>
-                <select
-                  value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value as 'price' | 'name' | 'suburb')}
-                  className="w-full px-3 py-2 border border-stone-200 rounded-lg focus:border-amber-600 focus:ring-2 focus:ring-amber-100 transition-all outline-none bg-white text-sm"
-                >
-                  <option value="price">Price (Low to High)</option>
-                  <option value="name">Name (A-Z)</option>
-                  <option value="suburb">Suburb</option>
-                </select>
-              </div>
-
-              {/* Max Price */}
-              <div>
-                <label className="block text-xs font-semibold text-stone-500 uppercase tracking-wide mb-1.5">
-                  Max Price: <span className="text-amber-700">${maxPrice}</span>
-                </label>
-                <input
-                  type="range"
-                  min="6"
-                  max="15"
-                  step="0.5"
-                  value={maxPrice}
-                  onChange={(e) => setMaxPrice(parseFloat(e.target.value))}
-                  className="w-full h-2 bg-gradient-to-r from-green-500 via-yellow-500 to-red-500 rounded-full appearance-none cursor-pointer"
-                />
-                <div className="flex justify-between text-xs text-stone-400 mt-1">
-                  <span>$6</span>
-                  <span>$15</span>
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* Results Count */}
         <p className="text-stone-600 text-sm mb-4">
           Showing <span className="text-amber-700 font-semibold">{filteredPubs.length}</span> of {stats.total} venues
         </p>
 
-        {/* Main Map */}
         <div className="mb-6 rounded-xl overflow-hidden shadow-lg border border-stone-200">
           <Map pubs={filteredPubs} isHappyHour={isHappyHour} />
         </div>
 
-        {/* LIST VIEW */}
         {viewMode === 'list' && (
           <div className="bg-white rounded-xl shadow-md border border-stone-200 overflow-hidden">
             <table className="w-full">
@@ -460,7 +336,6 @@ export default function Home() {
           </div>
         )}
 
-        {/* CARD VIEW */}
         {viewMode === 'cards' && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {filteredPubs.map((pub, index) => {
@@ -471,7 +346,6 @@ export default function Home() {
                   key={pub.id}
                   className="group relative bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-200 overflow-hidden border border-stone-200"
                 >
-                  {/* Rank Badge for Top 3 */}
                   {index < 3 && sortBy === 'price' && (
                     <div className={`absolute -top-1 -right-1 w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm shadow-md z-10 ${
                       index === 0 ? 'bg-yellow-500' :
@@ -482,14 +356,12 @@ export default function Home() {
                     </div>
                   )}
 
-                  {/* Happy Hour NOW Badge */}
                   {happyHourStatus.isActive && (
                     <div className="absolute top-2 left-2 px-2 py-1 bg-green-600 text-white text-xs font-bold rounded-full shadow z-10 animate-pulse">
                       🎉 HAPPY HOUR!
                     </div>
                   )}
 
-                  {/* Mini Map */}
                   {showMiniMaps && (
                     <div className="h-24 relative overflow-hidden">
                       <MiniMap lat={pub.lat} lng={pub.lng} name={pub.name} />
@@ -497,9 +369,7 @@ export default function Home() {
                     </div>
                   )}
 
-                  {/* Content */}
                   <div className={`p-4 ${!showMiniMaps ? 'pt-5' : ''}`}>
-                    {/* Header Row */}
                     <div className="flex justify-between items-start gap-2 mb-2">
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-1.5">
@@ -528,18 +398,14 @@ export default function Home() {
                       </div>
                     </div>
 
-                    {/* Crowd Badge - only render if report exists */}
                     {crowdReport && <CrowdBadge report={crowdReport} />}
 
-                    {/* Beer Type Badge */}
                     <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold text-white mb-2 ${getPriceBgColor(pub.price)}`}>
                       🍺 {pub.beerType}
                     </div>
 
-                    {/* Address */}
                     <p className="text-xs text-stone-600 mb-1.5">📍 {pub.address}</p>
 
-                    {/* Happy Hour Status with Countdown */}
                     {pub.happyHour && (
                       <div className={`text-xs mb-1.5 flex items-center gap-1 ${
                         happyHourStatus.isActive ? 'text-green-600 font-bold' : 
@@ -554,17 +420,14 @@ export default function Home() {
                       </div>
                     )}
 
-                    {/* Description */}
                     {pub.description && (
                       <p className="text-xs text-stone-500 mb-2 line-clamp-2 italic">"{pub.description}"</p>
                     )}
 
-                    {/* Last Updated */}
                     {pub.lastUpdated && (
                       <p className="text-xs text-stone-400 mb-2">Updated: {formatLastUpdated(pub.lastUpdated)}</p>
                     )}
 
-                    {/* Action Buttons */}
                     <div className="flex items-center justify-between mt-3 pt-3 border-t border-stone-100">
                       {pub.website && (
                         <a
@@ -585,7 +448,6 @@ export default function Home() {
                     </div>
                   </div>
 
-                  {/* Bottom color bar */}
                   <div className={`h-1 bg-gradient-to-r ${getPriceColor(pub.price)}`}></div>
                 </div>
               )
@@ -593,7 +455,6 @@ export default function Home() {
           </div>
         )}
 
-        {/* Empty State */}
         {filteredPubs.length === 0 && (
           <div className="text-center py-12 bg-white rounded-xl border border-stone-200">
             <div className="text-5xl mb-3">🔍</div>
@@ -603,10 +464,8 @@ export default function Home() {
         )}
       </div>
 
-      {/* Footer */}
       <footer className="bg-stone-800 text-white py-8 mt-8">
         <div className="max-w-7xl mx-auto px-4">
-          {/* Glass Size Legend */}
           <div className="flex flex-wrap justify-center gap-6 mb-6 pb-6 border-b border-stone-700">
             <div className="flex items-center gap-2">
               <span className="text-2xl">🍺</span>
@@ -631,7 +490,6 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Footer Text */}
           <div className="text-center">
             <p className="text-stone-300 text-sm">🍺 Perth Pint Prices — Helping you find cheap drinks since 2024</p>
             <p className="text-stone-500 text-xs mt-1">Prices may vary. Pint prices shown. Always drink responsibly.</p>
@@ -645,10 +503,8 @@ export default function Home() {
         </div>
       </footer>
 
-      {/* Submit Pub Form Modal */}
       <SubmitPubForm isOpen={showSubmitForm} onClose={() => setShowSubmitForm(false)} />
 
-      {/* Crowd Reporter Modal */}
       {crowdReportPub && (
         <CrowdReporter
           pubId={String(crowdReportPub.id)}
