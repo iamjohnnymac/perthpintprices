@@ -7,7 +7,7 @@ import { Pub } from '@/types/pub'
 import SubmitPubForm from '@/components/SubmitPubForm'
 import CrowdBadge from '@/components/CrowdBadge'
 import CrowdReporter from '@/components/CrowdReporter'
-import { supabase, CrowdReport } from '@/lib/supabase'
+import { getCrowdLevels, CrowdReport, CROWD_LEVELS } from '@/lib/supabase'
 import { getHappyHourStatus } from '@/lib/happyHour'
 
 const Map = dynamic(() => import('@/components/Map'), {
@@ -70,7 +70,7 @@ export default function Home() {
   const [showHappyHourOnly, setShowHappyHourOnly] = useState(false)
   const [showMiniMaps, setShowMiniMaps] = useState(true)
   const [showSubmitForm, setShowSubmitForm] = useState(false)
-  const [crowdReports, setCrowdReports] = useState<CrowdReport[]>([])
+  const [crowdReports, setCrowdReports] = useState<Record<string, CrowdReport>>({})
   const [crowdReportPub, setCrowdReportPub] = useState<Pub | null>(null)
   const [currentTime, setCurrentTime] = useState(new Date())
   const [viewMode, setViewMode] = useState<'cards' | 'list'>('cards')
@@ -89,19 +89,12 @@ export default function Home() {
   }, [])
 
   async function fetchCrowdReports() {
-    const now = new Date().toISOString()
-    const { data, error } = await supabase
-      .from('crowd_reports')
-      .select('*')
-      .gt('expires_at', now)
-      .order('reported_at', { ascending: false })
-    if (!error && data) {
-      setCrowdReports(data)
-    }
+    const reports = await getCrowdLevels()
+    setCrowdReports(reports)
   }
 
   function getLatestCrowdReport(pubId: number): CrowdReport | undefined {
-    return crowdReports.find(r => r.pub_id === String(pubId))
+    return crowdReports[String(pubId)]
   }
 
   const suburbs = useMemo(() => {
@@ -141,7 +134,7 @@ export default function Home() {
     happyHourNow: typedPubs.filter(p => isHappyHour(p.happyHour)).length
   }), [currentTime])
 
-  const liveCrowdCount = crowdReports.length
+  const liveCrowdCount = Object.keys(crowdReports).length
 
   return (
     <main className="min-h-screen bg-stone-100">
@@ -378,11 +371,8 @@ export default function Home() {
                       </td>
                       <td className="py-3 px-4 text-center">
                         {crowdReport ? (
-                          <span className="text-sm" title={`Reported ${new Date(crowdReport.reported_at).toLocaleTimeString()}`}>
-                            {crowdReport.crowd_level === 'empty' && '😴'}
-                            {crowdReport.crowd_level === 'moderate' && '👥'}
-                            {crowdReport.crowd_level === 'busy' && '🍻'}
-                            {crowdReport.crowd_level === 'packed' && '🔥'}
+                          <span className="text-sm" title={`${crowdReport.minutes_ago}m ago`}>
+                            {CROWD_LEVELS[crowdReport.crowd_level].emoji}
                           </span>
                         ) : (
                           <button
