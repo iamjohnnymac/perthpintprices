@@ -3,18 +3,7 @@
 import { useEffect, useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
-
-let _supabase: SupabaseClient | null = null;
-function getSupabase() {
-  if (!_supabase && typeof window !== 'undefined') {
-    _supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-    );
-  }
-  return _supabase;
-}
+import { supabase } from '@/lib/supabase';
 
 interface PriceSnapshot {
   snapshot_date: string;
@@ -117,9 +106,7 @@ export default function PintIndex() {
 
   useEffect(() => {
     async function fetchSnapshots() {
-      const sb = getSupabase();
-      if (!sb) return;
-      const { data, error } = await sb
+      const { data, error } = await supabase
         .from('price_snapshots')
         .select('*')
         .order('snapshot_date', { ascending: true });
