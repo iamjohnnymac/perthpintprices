@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js'
+import { Pub } from '@/types/pub'
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://ifxkoblvgttelzboenpi.supabase.co'
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlmeGtvYmx2Z3R0ZWx6Ym9lbnBpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzExODUwNjgsImV4cCI6MjA4Njc2MTA2OH0.qLy6B-VeVnMh0QSOxHK3uQEJ6iZr6xNHmfKov_7B-fY'
@@ -50,4 +51,33 @@ export async function reportCrowdLevel(pubId: string, level: CrowdLevel): Promis
     return false
   }
   return true
+}
+
+// Fetch pubs from Supabase
+export async function getPubs(): Promise<Pub[]> {
+  const { data, error } = await supabase
+    .from('pubs')
+    .select('*')
+    .order('price', { ascending: true })
+  
+  if (error) {
+    console.error('Error fetching pubs:', error)
+    return []
+  }
+  
+  // Map snake_case to camelCase
+  return (data || []).map(row => ({
+    id: row.id,
+    name: row.name,
+    suburb: row.suburb,
+    price: Number(row.price),
+    address: row.address || '',
+    website: row.website || null,
+    lat: row.lat || 0,
+    lng: row.lng || 0,
+    beerType: row.beer_type || '',
+    happyHour: row.happy_hour || null,
+    description: row.description || null,
+    lastUpdated: row.last_updated || undefined,
+  }))
 }
