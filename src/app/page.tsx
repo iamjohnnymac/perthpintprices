@@ -2,12 +2,11 @@
 
 import { useState, useMemo, useEffect } from 'react'
 import dynamic from 'next/dynamic'
-import pubs from '@/data/pubs.json'
 import { Pub } from '@/types/pub'
 import SubmitPubForm from '@/components/SubmitPubForm'
 import CrowdBadge from '@/components/CrowdBadge'
 import CrowdReporter from '@/components/CrowdReporter'
-import { getCrowdLevels, CrowdReport, CROWD_LEVELS } from '@/lib/supabase'
+import { getCrowdLevels, CrowdReport, CROWD_LEVELS, getPubs } from '@/lib/supabase'
 import { getHappyHourStatus } from '@/lib/happyHour'
 
 const Map = dynamic(() => import('@/components/Map'), {
@@ -26,8 +25,6 @@ const MiniMap = dynamic(() => import('@/components/MiniMap'), {
   ssr: false,
   loading: () => <div className="h-24 bg-stone-200 rounded-lg animate-pulse"></div>
 })
-
-const typedPubs: Pub[] = pubs as Pub[]
 
 function isHappyHour(happyHour: string | null | undefined): boolean {
   if (!happyHour) return false
@@ -70,6 +67,8 @@ function formatLastUpdated(dateStr: string | undefined): string {
 }
 
 export default function Home() {
+  const [pubs, setPubs] = useState<Pub[]>([])
+  const [isLoading, setIsLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedSuburb, setSelectedSuburb] = useState('')
   const [maxPrice, setMaxPrice] = useState(15)
@@ -82,6 +81,16 @@ export default function Home() {
   const [currentTime, setCurrentTime] = useState(new Date())
   const [viewMode, setViewMode] = useState<'cards' | 'list'>('list')
   const [showMoreFilters, setShowMoreFilters] = useState(false)
+
+  // Fetch pubs from Supabase on mount
+  useEffect(() => {
+    async function loadPubs() {
+      const data = await getPubs()
+      setPubs(data)
+      setIsLoading(false)
+    }
+    loadPubs()
+  }, [])
 
   // Update time every minute for countdown displays
   useEffect(() => {
@@ -106,12 +115,12 @@ export default function Home() {
   }
 
   const suburbs = useMemo(() => {
-    const suburbSet = new Set(typedPubs.map(pub => pub.suburb))
+    const suburbSet = new Set(pubs.map(pub => pub.suburb))
     return Array.from(suburbSet).sort()
-  }, [])
+  }, [pubs])
 
   const filteredPubs = useMemo(() => {
-    return typedPubs
+    return pubs
       .filter(pub => {
         const matchesSearch =
           pub.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -128,22 +137,33 @@ export default function Home() {
         if (sortBy === 'suburb') return a.suburb.localeCompare(b.suburb)
         return 0
       })
-  }, [searchTerm, selectedSuburb, maxPrice, sortBy, showHappyHourOnly])
+  }, [pubs, searchTerm, selectedSuburb, maxPrice, sortBy, showHappyHourOnly])
 
-  const cheapestPub = useMemo(() => {
-    return typedPubs.reduce((min, pub) => pub.price < min.price ? pub : min, typedPubs[0])
-  }, [])
-
-  const stats = useMemo(() => ({
-    total: typedPubs.length,
-    minPrice: Math.min(...typedPubs.map(p => p.price)),
-    maxPriceValue: Math.max(...typedPubs.map(p => p.price)),
-    avgPrice: (typedPubs.reduce((sum, p) => sum + p.price, 0) / typedPubs.length).toFixed(2),
-    happyHourNow: typedPubs.filter(p => isHappyHour(p.happyHour)).length
-  }), [currentTime])
+  const stats = useMemo(() => {
+    if (pubs.length === 0) return { total: 0, minPrice: 0, maxPriceValue: 0, avgPrice: '0', happyHourNow: 0 }
+    return {
+      total: pubs.length,
+      minPrice: Math.min(...pubs.map(p => p.price)),
+      maxPriceValue: Math.max(...pubs.map(p => p.price)),
+      avgPrice: (pubs.reduce((sum, p) => sum + p.price, 0) / pubs.length).toFixed(2),
+      happyHourNow: pubs.filter(p => isHappyHour(p.happyHour)).length
+    }
+  }, [pubs, currentTime])
 
   const liveCrowdCount = Object.keys(crowdReports).length
   const activeFilterCount = (selectedSuburb ? 1 : 0) + (maxPrice < 15 ? 1 : 0) + (sortBy !== 'price' ? 1 : 0)
+
+  // Loading state
+  if (isLoading) {
+    return (
+      <main className="min-h-screen bg-stone-100 flex items-center justify-center">
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-16 h-16 border-4 border-amber-700 border-t-transparent rounded-full animate-spin"></div>
+          <span className="text-amber-800 font-medium text-lg">Loading pubs...</span>
+        </div>
+      </main>
+    )
+  }
 
   return (
     <main className="min-h-screen bg-stone-100">
