@@ -56,6 +56,11 @@ function getPriceTextColor(price: number): string {
   return 'text-red-700'
 }
 
+
+function getDirectionsUrl(pub: Pub): string {
+  return `https://www.google.com/maps/dir/?api=1&destination=${pub.lat},${pub.lng}&destination_place_id=&travelmode=driving`
+}
+
 function formatLastUpdated(dateStr: string | undefined): string {
   if (!dateStr) return ''
   const date = new Date(dateStr)
@@ -73,7 +78,7 @@ export default function Home() {
   const [crowdReports, setCrowdReports] = useState<Record<string, CrowdReport>>({})
   const [crowdReportPub, setCrowdReportPub] = useState<Pub | null>(null)
   const [currentTime, setCurrentTime] = useState(new Date())
-  const [viewMode, setViewMode] = useState<'cards' | 'list'>('cards')
+  const [viewMode, setViewMode] = useState<'cards' | 'list'>('list')
   const [showMoreFilters, setShowMoreFilters] = useState(false)
 
   // Update time every minute for countdown displays
@@ -364,7 +369,21 @@ export default function Home() {
                             </span>
                           )}
                           <div>
-                            <p className="font-semibold text-stone-900 text-sm">{pub.name}</p>
+                            <div className="flex items-center gap-1.5">
+                              <a 
+                                href={getDirectionsUrl(pub)}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                onClick={(e) => e.stopPropagation()}
+                                className="text-stone-400 hover:text-blue-600 transition-colors"
+                                title="Get directions"
+                              >
+                                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                                  <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                                </svg>
+                              </a>
+                              <p className="font-semibold text-stone-900 text-sm">{pub.name}</p>
+                            </div>
                             <p className="text-xs text-stone-500 sm:hidden">{pub.suburb}</p>
                           </div>
                         </div>
@@ -457,7 +476,21 @@ export default function Home() {
                     {/* Header Row */}
                     <div className="flex justify-between items-start gap-2 mb-2">
                       <div className="flex-1 min-w-0">
-                        <h3 className="font-bold text-stone-900 truncate">{pub.name}</h3>
+                        <div className="flex items-center gap-1.5">
+                          <a 
+                            href={getDirectionsUrl(pub)}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            onClick={(e) => e.stopPropagation()}
+                            className="text-stone-400 hover:text-blue-600 transition-colors flex-shrink-0"
+                            title="Get directions"
+                          >
+                            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                              <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                            </svg>
+                          </a>
+                          <h3 className="font-bold text-stone-900 truncate">{pub.name}</h3>
+                        </div>
                         <p className="text-xs text-stone-500">{pub.suburb}</p>
                       </div>
                       <div className={`text-xl font-bold bg-gradient-to-br ${getPriceColor(pub.price)} bg-clip-text text-transparent`}>
