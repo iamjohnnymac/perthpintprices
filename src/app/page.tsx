@@ -8,6 +8,7 @@ import CrowdBadge from '@/components/CrowdBadge'
 import CrowdReporter from '@/components/CrowdReporter'
 import { FilterSection } from '@/components/FilterSection'
 import PintIndex from '@/components/PintIndex'
+import PriceTicker from '@/components/PriceTicker'
 import SunsetSippers from '@/components/SunsetSippers'
 import BeerWeather from '@/components/BeerWeather'
 import SuburbLeague from '@/components/SuburbLeague'
@@ -169,12 +170,13 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-stone-100">
+      <PriceTicker />
       <header className="bg-white border-b border-stone-200">
         <div className="max-w-7xl mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-2xl md:text-3xl font-bold text-stone-900 tracking-tight">Perth Pint Prices</h1>
-              <p className="text-stone-500 text-sm mt-0.5">Tracking {stats.total} venues across {suburbs.length} suburbs. Updated weekly.</p>
+              <p className="text-stone-500 text-sm mt-0.5">The Perth Beer Exchange {'\u2122'} {'\u00B7'} {stats.total} listed venues across {suburbs.length} suburbs {'\u00B7'} Updated weekly</p>
             </div>
             <button
               onClick={() => setShowSubmitForm(true)}
@@ -191,7 +193,7 @@ export default function Home() {
               </div>
               <div>
                 <div className="text-lg font-bold text-stone-900">{stats.total}</div>
-                <div className="text-xs text-stone-500">Venues</div>
+                <div className="text-xs text-stone-500">Listed Venues</div>
               </div>
             </div>
             <div className="flex items-center gap-3 bg-stone-50 rounded-xl px-4 py-3 border border-stone-100">
@@ -200,7 +202,7 @@ export default function Home() {
               </div>
               <div>
                 <div className="text-lg font-bold text-stone-900">${stats.minPrice.toFixed(0)}</div>
-                <div className="text-xs text-stone-500">Cheapest Pint</div>
+                <div className="text-xs text-stone-500">Market Floor</div>
               </div>
             </div>
             <div className="flex items-center gap-3 bg-stone-50 rounded-xl px-4 py-3 border border-stone-100">
@@ -209,7 +211,7 @@ export default function Home() {
               </div>
               <div>
                 <div className="text-lg font-bold text-stone-900">${stats.avgPrice}</div>
-                <div className="text-xs text-stone-500">Average Pint</div>
+                <div className="text-xs text-stone-500">Market Average</div>
               </div>
             </div>
             <div className="flex items-center gap-3 bg-stone-50 rounded-xl px-4 py-3 border border-stone-100">
@@ -218,7 +220,7 @@ export default function Home() {
               </div>
               <div>
                 <div className="text-lg font-bold text-stone-900">{stats.happyHourNow}</div>
-                <div className="text-xs text-stone-500">Happy Hours Now</div>
+                <div className="text-xs text-stone-500">Active Deals</div>
               </div>
             </div>
           </div>
