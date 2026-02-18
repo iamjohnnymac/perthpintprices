@@ -53,7 +53,7 @@ export default function PubCard({
   onCrowdReport,
 }: PubCardProps) {
   return (
-    <Card className="group relative overflow-hidden hover:shadow-lg transition-all duration-200 border-stone-200">
+    <Card className="group relative overflow-hidden hover:shadow-lg transition-all duration-200 border-stone-200 h-full flex flex-col">
       {/* Rank badge for top 3 */}
       {index < 3 && sortBy === 'price' && (
         <div className={`absolute -top-1 -right-1 w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm shadow-md z-10 ${
@@ -68,7 +68,7 @@ export default function PubCard({
       {/* Happy Hour active badge */}
       {happyHourStatus.isActive && (
         <Badge className="absolute top-2 left-2 z-10 bg-green-600 hover:bg-green-600 text-white animate-pulse">
-          🎉 HAPPY HOUR!
+          \uD83C\uDF89 HAPPY HOUR!
         </Badge>
       )}
 
@@ -104,14 +104,14 @@ export default function PubCard({
         </div>
       </CardHeader>
 
-      <CardContent className="px-4 py-2 space-y-2">
+      <CardContent className="px-4 py-2 space-y-2 flex-1">
         {crowdReport && <CrowdBadge report={crowdReport} />}
 
         <Badge className={`${getPriceBgColor(pub.price)} hover:opacity-90 text-white`}>
-          🍺 {pub.beerType}
+          \uD83C\uDF7A {pub.beerType}
         </Badge>
 
-        <p className="text-xs text-stone-600">📍 {pub.address}</p>
+        <p className="text-xs text-stone-600">\uD83D\uDCCD {pub.address}</p>
 
         {pub.happyHour && (
           <div className={`text-xs flex items-center gap-1 ${
@@ -122,13 +122,13 @@ export default function PubCard({
             <span>{happyHourStatus.statusEmoji}</span>
             <span>{happyHourStatus.statusText}</span>
             {happyHourStatus.countdown && happyHourStatus.isActive && (
-              <span className="text-green-500 font-normal">• {happyHourStatus.countdown}</span>
+              <span className="text-green-500 font-normal">\u2022 {happyHourStatus.countdown}</span>
             )}
           </div>
         )}
 
         {pub.description && (
-          <p className="text-xs text-stone-500 line-clamp-2 italic">"{pub.description}"</p>
+          <p className="text-xs text-stone-500 line-clamp-2 italic">\"{pub.description}\"</p>
         )}
 
         {pub.lastUpdated && (
@@ -144,7 +144,7 @@ export default function PubCard({
             rel="noopener noreferrer"
             className="text-amber-700 hover:text-amber-800 text-xs font-semibold"
           >
-            Visit website →
+            Visit website \u2192
           </a>
         ) : (
           <div></div>
