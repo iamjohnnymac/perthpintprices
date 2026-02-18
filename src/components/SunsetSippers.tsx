@@ -1,9 +1,15 @@
 'use client'
 
 import { useState, useEffect, useMemo } from 'react'
+import dynamic from 'next/dynamic'
 import { Pub } from '@/types/pub'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
+
+const MiniMap = dynamic(() => import('./MiniMap'), {
+  ssr: false,
+  loading: () => <div className="w-full h-full bg-amber-50 animate-pulse rounded" />,
+})
 
 interface SunsetSippersProps {
   pubs: Pub[]
@@ -65,6 +71,40 @@ function getSunPosition(now: Date, sunrise: Date, sunset: Date): number {
   return (elapsed / total) * 100
 }
 
+// Calculate sun azimuth (compass bearing in degrees, 0=North, 90=East, 180=South, 270=West)
+function getSunAzimuth(date: Date): number {
+  const dayOfYear = Math.floor((date.getTime() - new Date(date.getFullYear(), 0, 0).getTime()) / 86400000)
+  const lat = PERTH_LAT * Math.PI / 180
+  const declination = -23.45 * Math.cos((360/365) * (dayOfYear + 10) * Math.PI / 180) * Math.PI / 180
+  
+  // Hour angle (negative = morning/east, positive = afternoon/west)
+  const solarNoon = 12 - (PERTH_LNG - 120) / 15
+  const hours = date.getHours() + date.getMinutes() / 60
+  const hourAngle = (hours - solarNoon) * 15 * Math.PI / 180
+  
+  // Solar altitude
+  const sinAlt = Math.sin(lat) * Math.sin(declination) + Math.cos(lat) * Math.cos(declination) * Math.cos(hourAngle)
+  const altitude = Math.asin(sinAlt)
+  
+  // Solar azimuth
+  const cosAz = (Math.sin(declination) - Math.sin(lat) * sinAlt) / (Math.cos(lat) * Math.cos(altitude))
+  let azimuth = Math.acos(Math.max(-1, Math.min(1, cosAz))) * 180 / Math.PI
+  
+  // Afternoon = west side (azimuth > 180)
+  if (hourAngle > 0) azimuth = 360 - azimuth
+  
+  return azimuth
+}
+
+// Convert azimuth to CSS gradient direction for sun shadow effect
+function getSunShadowGradient(azimuth: number, isGolden: boolean): string {
+  // Shadow falls opposite to sun direction
+  // CSS gradient: angle where 0deg = up, 90deg = right
+  const gradientAngle = (azimuth + 180) % 360
+  const color = isGolden ? 'rgba(251,191,36,' : 'rgba(251,191,36,'
+  return `linear-gradient(${gradientAngle}deg, ${color}0.35) 0%, ${color}0.1) 40%, transparent 70%)`
+}
+
 export default function SunsetSippers({ pubs }: SunsetSippersProps) {
   const [now, setNow] = useState(new Date())
   const [isExpanded, setIsExpanded] = useState(false)
@@ -85,6 +125,8 @@ export default function SunsetSippers({ pubs }: SunsetSippersProps) {
   const isGoldenHour = now >= sunTimes.goldenHourStart && now <= sunTimes.sunset
   const isSunset = now >= new Date(sunTimes.sunset.getTime() - 15 * 60000) && now <= new Date(sunTimes.sunset.getTime() + 30 * 60000)
   const isNighttime = now > sunTimes.sunset || now < sunTimes.sunrise
+  const sunAzimuth = getSunAzimuth(now)
+  const sunShadow = getSunShadowGradient(sunAzimuth, isGoldenHour || isSunset)
   const cheapestSunset = sunsetPubs[0]
 
   // Sun arc SVG dimensions
@@ -215,23 +257,52 @@ export default function SunsetSippers({ pubs }: SunsetSippersProps) {
               )}
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
               {sunsetPubs.slice(0, isExpanded ? 12 : 6).map((pub) => (
                 <div
                   key={pub.id}
-                  className="flex items-center gap-2 p-2 rounded-lg bg-white/60 hover:bg-white/90 transition-colors"
+                  className="rounded-xl bg-white/70 hover:bg-white/95 transition-all duration-200 overflow-hidden shadow-sm hover:shadow-md border border-amber-100"
                   onClick={(e) => e.stopPropagation()}
                 >
-                  <div className="flex-shrink-0 w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center text-sm">
-                    🌅
+                  {/* Mini Map with Sun Shadow Overlay */}
+                  <div className="relative h-28 w-full">
+                    <MiniMap lat={pub.lat} lng={pub.lng} name={pub.name} />
+                    {/* Sun shadow overlay */}
+                    {!isNighttime && (
+                      <div
+                        className="absolute inset-0 pointer-events-none z-[400]"
+                        style={{ background: sunShadow }}
+                      />
+                    )}
+                    {/* Sun direction indicator */}
+                    {!isNighttime && (
+                      <div className="absolute top-1.5 right-1.5 z-[500] bg-white/85 backdrop-blur-sm rounded-full px-1.5 py-0.5 flex items-center gap-1 shadow-sm">
+                        <span className="text-xs">☀️</span>
+                        <svg width="14" height="14" viewBox="0 0 14 14" className="text-amber-500">
+                          <g transform={`rotate(${sunAzimuth}, 7, 7)`}>
+                            <line x1="7" y1="2" x2="7" y2="7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                            <polygon points="7,1 5.5,4 8.5,4" fill="currentColor" />
+                          </g>
+                        </svg>
+                      </div>
+                    )}
+                    {isNighttime && (
+                      <div className="absolute inset-0 pointer-events-none z-[400] bg-indigo-900/20" />
+                    )}
+                    {/* Price badge on map */}
+                    <div className="absolute bottom-1.5 left-1.5 z-[500] bg-white/90 backdrop-blur-sm rounded-full px-2 py-0.5 shadow-sm">
+                      <span className="text-sm font-bold text-amber-700">${pub.price.toFixed(2)}</span>
+                    </div>
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-xs font-medium text-stone-800 truncate">{pub.name}</p>
-                    <p className="text-[10px] text-stone-400">{pub.suburb}</p>
-                  </div>
-                  <div className="text-right flex-shrink-0">
-                    <span className="text-sm font-bold text-amber-700">${pub.price.toFixed(2)}</span>
-                    <p className="text-[10px] text-stone-400 truncate max-w-[60px]">{pub.beerType}</p>
+                  {/* Pub info */}
+                  <div className="p-2.5">
+                    <div className="flex items-start justify-between gap-1">
+                      <div className="min-w-0">
+                        <p className="text-xs font-semibold text-stone-800 truncate">{pub.name}</p>
+                        <p className="text-[10px] text-stone-400">{pub.suburb}</p>
+                      </div>
+                      <span className="text-[10px] text-stone-400 flex-shrink-0 truncate max-w-[70px]">{pub.beerType}</span>
+                    </div>
                   </div>
                 </div>
               ))}
