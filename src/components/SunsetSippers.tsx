@@ -143,19 +143,19 @@ export default function SunsetSippers({ pubs }: SunsetSippersProps) {
 
   // Status message
   let statusMessage = ''
-  let statusEmoji = '☀️'
+  let statusEmoji = '\u2600\uFE0F'
   if (isSunset) {
     statusMessage = 'Sunset is happening RIGHT NOW!'
-    statusEmoji = '🌅'
+    statusEmoji = '\uD83C\uDF05'
   } else if (isGoldenHour) {
     statusMessage = `Golden hour! Sunset in ${getTimeUntil(sunTimes.sunset, now)}`
-    statusEmoji = '🌇'
+    statusEmoji = '\uD83C\uDF07'
   } else if (isNighttime) {
-    statusMessage = 'After dark — plan tomorrow\'s sunset sesh'
-    statusEmoji = '🌙'
+    statusMessage = 'After dark \u2014 plan tomorrow\'s sunset sesh'
+    statusEmoji = '\uD83C\uDF19'
   } else {
     statusMessage = `Sunset in ${getTimeUntil(sunTimes.sunset, now)}`
-    statusEmoji = '☀️'
+    statusEmoji = '\u2600\uFE0F'
   }
 
   return (
@@ -226,8 +226,8 @@ export default function SunsetSippers({ pubs }: SunsetSippersProps) {
                   </>
                 )}
                 {/* Labels */}
-                <text x="5" y={arcCenterY - 6} fontSize="9" fill="#92734a" fontFamily="monospace">↑{formatTime(sunTimes.sunrise).replace(' ', '')}</text>
-                <text x={arcWidth - 75} y={arcCenterY - 6} fontSize="9" fill="#c2410c" fontFamily="monospace">↓{formatTime(sunTimes.sunset).replace(' ', '')}</text>
+                <text x="5" y={arcCenterY - 6} fontSize="9" fill="#92734a" fontFamily="monospace">\u2191{formatTime(sunTimes.sunrise).replace(' ', '')}</text>
+                <text x={arcWidth - 75} y={arcCenterY - 6} fontSize="9" fill="#c2410c" fontFamily="monospace">\u2193{formatTime(sunTimes.sunset).replace(' ', '')}</text>
               </svg>
             )}
 
@@ -248,7 +248,7 @@ export default function SunsetSippers({ pubs }: SunsetSippersProps) {
             {/* Sunset Pubs Grid */}
             <div className="flex items-center justify-between mb-3">
               <h4 className="text-sm font-semibold text-stone-700">
-                🍺 Best Sunset Spots ({sunsetPubs.length} pubs)
+                \uD83C\uDF7A Best Sunset Spots ({sunsetPubs.length} pubs)
               </h4>
               {cheapestSunset && (
                 <span className="text-xs text-emerald-600 font-medium">
@@ -261,7 +261,7 @@ export default function SunsetSippers({ pubs }: SunsetSippersProps) {
               {sunsetPubs.slice(0, isExpanded ? 12 : 6).map((pub) => (
                 <div
                   key={pub.id}
-                  className="rounded-xl bg-white/70 hover:bg-white/95 transition-all duration-200 overflow-hidden shadow-sm hover:shadow-md border border-amber-100"
+                  className="rounded-xl bg-white/70 hover:bg-white/95 transition-all duration-200 overflow-hidden shadow-sm hover:shadow-md border border-amber-100 h-full flex flex-col"
                   onClick={(e) => e.stopPropagation()}
                 >
                   {/* Mini Map with Sun Shadow Overlay */}
@@ -277,7 +277,7 @@ export default function SunsetSippers({ pubs }: SunsetSippersProps) {
                     {/* Sun direction indicator */}
                     {!isNighttime && (
                       <div className="absolute top-1.5 right-1.5 z-[500] bg-white/85 backdrop-blur-sm rounded-full px-1.5 py-0.5 flex items-center gap-1 shadow-sm">
-                        <span className="text-xs">☀️</span>
+                        <span className="text-xs">\u2600\uFE0F</span>
                         <svg width="14" height="14" viewBox="0 0 14 14" className="text-amber-500">
                           <g transform={`rotate(${sunAzimuth}, 7, 7)`}>
                             <line x1="7" y1="2" x2="7" y2="7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
@@ -295,7 +295,7 @@ export default function SunsetSippers({ pubs }: SunsetSippersProps) {
                     </div>
                   </div>
                   {/* Pub info */}
-                  <div className="p-2.5">
+                  <div className="p-2.5 flex-1">
                     <div className="flex items-start justify-between gap-1">
                       <div className="min-w-0">
                         <p className="text-xs font-semibold text-stone-800 truncate">{pub.name}</p>
@@ -322,10 +322,10 @@ export default function SunsetSippers({ pubs }: SunsetSippersProps) {
                 ? 'bg-indigo-100/60 text-indigo-700'
                 : 'bg-amber-50 text-stone-500'
             }`}>
-              {isSunset && '🌅 Quick! Grab a pint and face west!'}
-              {isGoldenHour && !isSunset && '📸 Golden hour lighting — your pint has never looked better'}
-              {!isGoldenHour && !isSunset && !isNighttime && `☀️ Golden hour starts at ${formatTime(sunTimes.goldenHourStart)} — plan your sesh`}
-              {isNighttime && '🌙 The sun will rise again tomorrow — rest up, champion'}
+              {isSunset && '\uD83C\uDF05 Quick! Grab a pint and face west!'}
+              {isGoldenHour && !isSunset && '\uD83D\uDCF8 Golden hour lighting \u2014 your pint has never looked better'}
+              {!isGoldenHour && !isSunset && !isNighttime && `\u2600\uFE0F Golden hour starts at ${formatTime(sunTimes.goldenHourStart)} \u2014 plan your sesh`}
+              {isNighttime && '\uD83C\uDF19 The sun will rise again tomorrow \u2014 rest up, champion'}
             </div>
           </div>
         )}
