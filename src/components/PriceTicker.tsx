@@ -22,7 +22,6 @@ export default function PriceTicker() {
 
       if (error || !pubs || pubs.length === 0) return;
 
-      // Group by suburb
       const suburbMap: Record<string, number[]> = {};
       for (const pub of pubs) {
         if (!pub.suburb || pub.price == null) continue;
@@ -31,14 +30,12 @@ export default function PriceTicker() {
         suburbMap[key].push(Number(pub.price));
       }
 
-      // Calculate overall average
       const allPrices = pubs
         .filter((p) => p.price != null)
         .map((p) => Number(p.price));
       const overallAvg =
         allPrices.reduce((sum, p) => sum + p, 0) / allPrices.length;
 
-      // Build ticker items: only suburbs with 2+ pubs
       const items: SuburbTicker[] = Object.entries(suburbMap)
         .filter(([, prices]) => prices.length >= 2)
         .map(([suburb, prices]) => {
@@ -60,9 +57,8 @@ export default function PriceTicker() {
 
   if (tickers.length === 0) return null;
 
-  // Duplicate for seamless infinite scroll
   const items = [...tickers, ...tickers];
-  const duration = Math.max(8, tickers.length * 0.4);
+  const duration = Math.max(5, tickers.length * 0.15);
 
   return (
     <div className="w-full bg-slate-950 text-white overflow-hidden relative select-none" style={{ height: '38px', zIndex: 50 }}>
