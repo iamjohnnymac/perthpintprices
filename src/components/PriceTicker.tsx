@@ -62,7 +62,7 @@ export default function PriceTicker() {
 
   // Duplicate for seamless infinite scroll
   const items = [...tickers, ...tickers];
-  const duration = Math.max(15, tickers.length * 1.2);
+  const duration = Math.max(8, tickers.length * 0.4);
 
   return (
     <div className="w-full bg-slate-950 text-white overflow-hidden relative select-none" style={{ height: '38px', zIndex: 50 }}>
