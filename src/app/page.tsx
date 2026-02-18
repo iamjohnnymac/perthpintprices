@@ -172,58 +172,17 @@ export default function Home() {
     <main className="min-h-screen bg-stone-100">
       <PriceTicker />
       <header className="bg-white border-b border-stone-200">
-        <div className="max-w-7xl mx-auto px-4 py-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl md:text-3xl font-bold text-stone-900 tracking-tight">Perth Pint Prices</h1>
-              <p className="text-stone-500 text-sm mt-0.5">The Perth Beer Exchange {'\u2122'} {'\u00B7'} {stats.total} listed venues across {suburbs.length} suburbs {'\u00B7'} Updated weekly</p>
-            </div>
-            <button
-              onClick={() => setShowSubmitForm(true)}
-              className="px-4 py-2 bg-stone-100 hover:bg-stone-200 text-stone-700 rounded-lg font-medium transition-colors text-sm border border-stone-200"
-            >
-              + Submit a Pub
-            </button>
+        <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+          <div>
+            <h1 className="text-xl md:text-2xl font-bold text-stone-900 tracking-tight">Perth Pint Prices</h1>
+            <p className="text-stone-400 text-xs">The Perth Beer Exchange {'\u2122'} {'\u00B7'} {stats.total} venues {'\u00B7'} {suburbs.length} suburbs</p>
           </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-5">
-            <div className="flex items-center gap-3 bg-stone-50 rounded-xl px-4 py-3 border border-stone-100">
-              <div className="w-9 h-9 rounded-lg bg-blue-50 flex items-center justify-center">
-                <span className="text-blue-500 text-sm font-bold">📊</span>
-              </div>
-              <div>
-                <div className="text-lg font-bold text-stone-900">{stats.total}</div>
-                <div className="text-xs text-stone-500">Listed Venues</div>
-              </div>
-            </div>
-            <div className="flex items-center gap-3 bg-stone-50 rounded-xl px-4 py-3 border border-stone-100">
-              <div className="w-9 h-9 rounded-lg bg-green-50 flex items-center justify-center">
-                <span className="text-green-500 text-sm font-bold">💰</span>
-              </div>
-              <div>
-                <div className="text-lg font-bold text-stone-900">${stats.minPrice.toFixed(0)}</div>
-                <div className="text-xs text-stone-500">Market Floor</div>
-              </div>
-            </div>
-            <div className="flex items-center gap-3 bg-stone-50 rounded-xl px-4 py-3 border border-stone-100">
-              <div className="w-9 h-9 rounded-lg bg-amber-50 flex items-center justify-center">
-                <span className="text-amber-500 text-sm font-bold">🍺</span>
-              </div>
-              <div>
-                <div className="text-lg font-bold text-stone-900">${stats.avgPrice}</div>
-                <div className="text-xs text-stone-500">Market Average</div>
-              </div>
-            </div>
-            <div className="flex items-center gap-3 bg-stone-50 rounded-xl px-4 py-3 border border-stone-100">
-              <div className="w-9 h-9 rounded-lg bg-emerald-50 flex items-center justify-center">
-                <span className="text-emerald-500 text-sm font-bold">🍻</span>
-              </div>
-              <div>
-                <div className="text-lg font-bold text-stone-900">{stats.happyHourNow}</div>
-                <div className="text-xs text-stone-500">Active Deals</div>
-              </div>
-            </div>
-          </div>
+          <button
+            onClick={() => setShowSubmitForm(true)}
+            className="px-3 py-1.5 bg-stone-100 hover:bg-stone-200 text-stone-600 rounded-lg font-medium transition-colors text-xs border border-stone-200"
+          >
+            + Submit a Pub
+          </button>
         </div>
       </header>
 
