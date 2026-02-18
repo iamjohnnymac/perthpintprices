@@ -62,17 +62,18 @@ export default function PriceTicker() {
 
   // Duplicate for seamless infinite scroll
   const items = [...tickers, ...tickers];
-  const duration = Math.max(20, tickers.length * 2.5);
+  const duration = Math.max(15, tickers.length * 1.2);
 
   return (
     <div className="w-full bg-slate-950 text-white overflow-hidden relative select-none" style={{ height: '38px', zIndex: 50 }}>
       <style>{`
         @keyframes ticker-scroll {
-          0% { transform: translateX(0); }
-          100% { transform: translateX(-50%); }
+          0% { transform: translate3d(0, 0, 0); }
+          100% { transform: translate3d(-50%, 0, 0); }
         }
         .ticker-track {
           animation: ticker-scroll ${duration}s linear infinite;
+          will-change: transform;
         }
         .ticker-track:hover {
           animation-play-state: paused;
