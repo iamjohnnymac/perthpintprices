@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/lib/supabase';
+import E from '@/lib/emoji'
 
 interface PriceSnapshot {
   snapshot_date: string;
@@ -140,7 +141,7 @@ export default function PintIndex() {
   const yearPct = ((yearChange / oldest.avg_price) * 100);
 
   const sparkData = snapshots.map(s => s.avg_price);
-  const trendIcon = monthChange > 0 ? '\uD83D\uDCC8' : monthChange < 0 ? '\uD83D\uDCC9' : '\u27A1\uFE0F';
+  const trendIcon = monthChange > 0 ? E.chart_up : monthChange < 0 ? E.chart_down : E.arrow_right;
   const trendColor = monthChange > 0 ? 'text-red-500' : monthChange < 0 ? 'text-green-500' : 'text-yellow-500';
 
   return (
@@ -155,7 +156,7 @@ export default function PintIndex() {
           <div className="flex items-center gap-3">
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-xs font-semibold text-stone-500 uppercase tracking-wider">Perth Pint Index\u2122</span>
+                <span className="text-xs font-semibold text-stone-500 uppercase tracking-wider">Perth Pint Index{E.tm}</span>
                 <Badge variant="outline" className="text-[10px] px-1.5 py-0 border-stone-300 text-stone-500">
                   LIVE
                 </Badge>
@@ -167,7 +168,7 @@ export default function PintIndex() {
                 </span>
               </div>
               <p className="text-xs text-stone-400 mt-0.5">
-                Average pint price across {current.total_pubs} pubs \u00B7 {current.total_suburbs} suburbs
+                Average pint price across {current.total_pubs} pubs {E.bullet} {current.total_suburbs} suburbs
               </p>
             </div>
           </div>
@@ -207,12 +208,12 @@ export default function PintIndex() {
             {/* Suburb highlights */}
             <div className="grid grid-cols-2 gap-4 mt-4">
               <div className="bg-green-50 rounded-lg p-3 h-full">
-                <div className="text-xs text-green-700 font-medium">\uD83C\uDFC6 Cheapest Suburb</div>
+                <div className="text-xs text-green-700 font-medium">{E.trophy} Cheapest Suburb</div>
                 <div className="text-sm font-bold text-green-800 mt-1">{current.cheapest_suburb}</div>
                 <div className="text-xs text-green-600">avg ${current.cheapest_suburb_avg.toFixed(2)}/pint</div>
               </div>
               <div className="bg-red-50 rounded-lg p-3 h-full">
-                <div className="text-xs text-red-700 font-medium">\uD83D\uDCB8 Priciest Suburb</div>
+                <div className="text-xs text-red-700 font-medium">{E.money_wings} Priciest Suburb</div>
                 <div className="text-sm font-bold text-red-800 mt-1">{current.most_expensive_suburb}</div>
                 <div className="text-xs text-red-600">avg ${current.most_expensive_suburb_avg.toFixed(2)}/pint</div>
               </div>
@@ -233,8 +234,8 @@ export default function PintIndex() {
             </div>
 
             <p className="text-[10px] text-stone-400 mt-3 text-center">
-              \uD83D\uDCCA The Perth Pint Index tracks average beer prices across the metro area. Updated weekly.
-              {' \u00B7 '}Click to collapse.
+              {E.chart_bar} The Perth Pint Index tracks average beer prices across the metro area. Updated weekly.
+              {' ' + E.bullet + ' '}Click to collapse.
             </p>
           </div>
         )}
@@ -242,7 +243,7 @@ export default function PintIndex() {
         {/* Collapse hint when not expanded */}
         {!expanded && (
           <p className="text-[10px] text-stone-400 mt-2 text-center">
-            Click to see full breakdown \u00B7 Cheapest suburb: {current.cheapest_suburb} (${current.cheapest_suburb_avg.toFixed(2)})
+            Click to see full breakdown {E.bullet} Cheapest suburb: {current.cheapest_suburb} (${current.cheapest_suburb_avg.toFixed(2)})
           </p>
         )}
       </CardContent>

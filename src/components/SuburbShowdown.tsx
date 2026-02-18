@@ -2,6 +2,7 @@
 
 import { useState, useMemo, useCallback } from 'react'
 import { Pub } from '@/types/pub'
+import E from '@/lib/emoji'
 
 interface SuburbStats {
   name: string
@@ -45,11 +46,11 @@ function computeSuburbStats(pubs: Pub[]): SuburbStats[] {
 }
 
 function getMatchupMessage(diff: number): string {
-  if (diff === 0) return "It's a dead heat! \uD83E\uDD1D"
-  if (diff < 0.2) return 'Neck and neck! \uD83D\uDE2C'
-  if (diff < 0.5) return 'A solid win! \uD83D\uDCAA'
-  if (diff < 1.0) return 'Comfortable victory! \uD83C\uDF89'
-  return 'Demolition! \uD83D\uDCA5'
+  if (diff === 0) return "It's a dead heat! " + E.handshake
+  if (diff < 0.2) return 'Neck and neck! ' + E.grimacing
+  if (diff < 0.5) return 'A solid win! ' + E.flexed
+  if (diff < 1.0) return 'Comfortable victory! ' + E.party
+  return 'Demolition! ' + E.boom
 }
 
 function PriceRangeBar({ min, max, globalMin, globalMax }: { min: number; max: number; globalMin: number; globalMax: number }) {
@@ -89,7 +90,7 @@ function SuburbCard({
   return (
     <div className={`rounded-xl border-2 p-4 sm:p-5 flex-1 flex flex-col transition-colors ${borderClass}`}>
       <div className="text-center mb-3">
-        {isWinner && <span className="text-2xl">\uD83C\uDFC6</span>}
+        {isWinner && <span className="text-2xl">{E.trophy}</span>}
         <h3 className="text-lg font-bold text-stone-800">{stats.name}</h3>
       </div>
 
@@ -100,23 +101,23 @@ function SuburbCard({
 
       <div className="space-y-2 text-sm text-stone-600">
         <div className="flex justify-between">
-          <span>\uD83C\uDF7A Pubs tracked</span>
+          <span>{E.beer} Pubs tracked</span>
           <span className="font-semibold text-stone-800">{stats.pubCount}</span>
         </div>
         <div className="flex justify-between">
-          <span>\uD83D\uDC9A Cheapest</span>
+          <span>{E.green_heart} Cheapest</span>
           <span className="font-semibold text-green-700 text-right text-xs max-w-[55%] truncate">
             {stats.cheapestPub.name} (${stats.cheapestPub.price.toFixed(2)})
           </span>
         </div>
         <div className="flex justify-between">
-          <span>\uD83D\uDCB8 Priciest</span>
+          <span>{E.money_wings} Priciest</span>
           <span className="font-semibold text-red-600 text-right text-xs max-w-[55%] truncate">
             {stats.mostExpensivePub.name} (${stats.mostExpensivePub.price.toFixed(2)})
           </span>
         </div>
         <div className="flex justify-between">
-          <span>\uD83D\uDD50 Happy hours</span>
+          <span>{E.clock} Happy hours</span>
           <span className="font-semibold text-stone-800">{stats.happyHourPct}%</span>
         </div>
         <div>
@@ -171,14 +172,14 @@ export default function SuburbShowdown({ pubs }: { pubs: Pub[] }) {
         className="w-full px-5 py-4 flex items-center justify-between hover:bg-amber-100/40 transition-colors"
       >
         <div className="flex items-center gap-2">
-          <span className="text-2xl">\uD83C\uDFC6</span>
+          <span className="text-2xl">{E.trophy}</span>
           <div className="text-left">
             <h2 className="text-lg font-bold text-stone-800">Suburb Showdown</h2>
             <p className="text-xs text-stone-500">Which suburb wins on price?</p>
           </div>
         </div>
         <span className="text-stone-400 text-xl transition-transform" style={{ transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}>
-          \u25BC
+          {E.down_arrow}
         </span>
       </button>
 
@@ -200,7 +201,7 @@ export default function SuburbShowdown({ pubs }: { pubs: Pub[] }) {
           {/* Result */}
           <div className="mt-4 text-center">
             <p className="text-lg font-bold text-stone-700">
-              {isTied ? "Draw! \uD83E\uDD1D" : getMatchupMessage(diff)}
+              {isTied ? "Draw! " + E.handshake : getMatchupMessage(diff)}
             </p>
             {!isTied && winnerName && (
               <p className="text-sm text-stone-500 mt-1">
@@ -209,7 +210,7 @@ export default function SuburbShowdown({ pubs }: { pubs: Pub[] }) {
             )}
             {!isTied && diff > 0 && (
               <p className="text-xs text-stone-400 mt-1">
-                Over 100 pints a year, that&apos;s ${yearSavings} saved! \uD83C\uDF7A
+                Over 100 pints a year, that&apos;s ${yearSavings} saved! {E.beer}
               </p>
             )}
           </div>
@@ -220,7 +221,7 @@ export default function SuburbShowdown({ pubs }: { pubs: Pub[] }) {
               onClick={() => setMatchupKey(k => k + 1)}
               className="bg-amber-500 hover:bg-amber-600 text-white font-semibold px-5 py-2 rounded-full shadow transition-colors text-sm"
             >
-              \uD83D\uDD04 New Matchup
+              {E.refresh} New Matchup
             </button>
           </div>
         </div>

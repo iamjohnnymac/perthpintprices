@@ -5,6 +5,7 @@ import dynamic from 'next/dynamic'
 import { Pub } from '@/types/pub'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
+import E from '@/lib/emoji'
 
 const MiniMap = dynamic(() => import('./MiniMap'), {
   ssr: false,
@@ -143,19 +144,19 @@ export default function SunsetSippers({ pubs }: SunsetSippersProps) {
 
   // Status message
   let statusMessage = ''
-  let statusEmoji = '\u2600\uFE0F'
+  let statusEmoji = E.sun
   if (isSunset) {
     statusMessage = 'Sunset is happening RIGHT NOW!'
-    statusEmoji = '\uD83C\uDF05'
+    statusEmoji = E.sunset
   } else if (isGoldenHour) {
     statusMessage = `Golden hour! Sunset in ${getTimeUntil(sunTimes.sunset, now)}`
-    statusEmoji = '\uD83C\uDF07'
+    statusEmoji = E.cityscape_dusk
   } else if (isNighttime) {
-    statusMessage = 'After dark \u2014 plan tomorrow\'s sunset sesh'
-    statusEmoji = '\uD83C\uDF19'
+    statusMessage = 'After dark ' + E.dash + ' plan tomorrow\'s sunset sesh'
+    statusEmoji = E.crescent_moon
   } else {
     statusMessage = `Sunset in ${getTimeUntil(sunTimes.sunset, now)}`
-    statusEmoji = '\u2600\uFE0F'
+    statusEmoji = E.sun
   }
 
   return (
@@ -226,8 +227,8 @@ export default function SunsetSippers({ pubs }: SunsetSippersProps) {
                   </>
                 )}
                 {/* Labels */}
-                <text x="5" y={arcCenterY - 6} fontSize="9" fill="#92734a" fontFamily="monospace">\u2191{formatTime(sunTimes.sunrise).replace(' ', '')}</text>
-                <text x={arcWidth - 75} y={arcCenterY - 6} fontSize="9" fill="#c2410c" fontFamily="monospace">\u2193{formatTime(sunTimes.sunset).replace(' ', '')}</text>
+                <text x="5" y={arcCenterY - 6} fontSize="9" fill="#92734a" fontFamily="monospace">{E.arrow_up_plain}{formatTime(sunTimes.sunrise).replace(' ', '')}</text>
+                <text x={arcWidth - 75} y={arcCenterY - 6} fontSize="9" fill="#c2410c" fontFamily="monospace">{E.arrow_down_plain}{formatTime(sunTimes.sunset).replace(' ', '')}</text>
               </svg>
             )}
 
@@ -248,7 +249,7 @@ export default function SunsetSippers({ pubs }: SunsetSippersProps) {
             {/* Sunset Pubs Grid */}
             <div className="flex items-center justify-between mb-3">
               <h4 className="text-sm font-semibold text-stone-700">
-                \uD83C\uDF7A Best Sunset Spots ({sunsetPubs.length} pubs)
+                {E.beer} Best Sunset Spots ({sunsetPubs.length} pubs)
               </h4>
               {cheapestSunset && (
                 <span className="text-xs text-emerald-600 font-medium">
@@ -277,7 +278,7 @@ export default function SunsetSippers({ pubs }: SunsetSippersProps) {
                     {/* Sun direction indicator */}
                     {!isNighttime && (
                       <div className="absolute top-1.5 right-1.5 z-[500] bg-white/85 backdrop-blur-sm rounded-full px-1.5 py-0.5 flex items-center gap-1 shadow-sm">
-                        <span className="text-xs">\u2600\uFE0F</span>
+                        <span className="text-xs">{E.sun}</span>
                         <svg width="14" height="14" viewBox="0 0 14 14" className="text-amber-500">
                           <g transform={`rotate(${sunAzimuth}, 7, 7)`}>
                             <line x1="7" y1="2" x2="7" y2="7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
@@ -322,10 +323,10 @@ export default function SunsetSippers({ pubs }: SunsetSippersProps) {
                 ? 'bg-indigo-100/60 text-indigo-700'
                 : 'bg-amber-50 text-stone-500'
             }`}>
-              {isSunset && '\uD83C\uDF05 Quick! Grab a pint and face west!'}
-              {isGoldenHour && !isSunset && '\uD83D\uDCF8 Golden hour lighting \u2014 your pint has never looked better'}
-              {!isGoldenHour && !isSunset && !isNighttime && `\u2600\uFE0F Golden hour starts at ${formatTime(sunTimes.goldenHourStart)} \u2014 plan your sesh`}
-              {isNighttime && '\uD83C\uDF19 The sun will rise again tomorrow \u2014 rest up, champion'}
+              {isSunset && E.sunset + ' Quick! Grab a pint and face west!'}
+              {isGoldenHour && !isSunset && E.camera + ' Golden hour lighting ' + E.dash + ' your pint has never looked better'}
+              {!isGoldenHour && !isSunset && !isNighttime && E.sun + ` Golden hour starts at ${formatTime(sunTimes.goldenHourStart)} ` + E.dash + ' plan your sesh'}
+              {isNighttime && E.crescent_moon + ' The sun will rise again tomorrow ' + E.dash + ' rest up, champion'}
             </div>
           </div>
         )}
