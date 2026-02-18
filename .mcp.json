@@ -7,6 +7,10 @@
     "supabase": {
       "type": "url",
       "url": "https://mcp.supabase.com/mcp?project_ref=ifxkoblvgttelzboenpi"
+    },
+    "apify": {
+      "type": "url",
+      "url": "https://mcp.apify.com"
     }
   }
 }
