@@ -12,4 +12,5 @@ export interface Pub {
   description: string | null
   source?: string
   lastUpdated?: string
+  sunsetSpot?: boolean
 }

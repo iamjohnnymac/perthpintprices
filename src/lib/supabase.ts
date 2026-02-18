@@ -79,5 +79,6 @@ export async function getPubs(): Promise<Pub[]> {
     happyHour: row.happy_hour || null,
     description: row.description || null,
     lastUpdated: row.last_updated || undefined,
+    sunsetSpot: row.sunset_spot || false,
   }))
 }

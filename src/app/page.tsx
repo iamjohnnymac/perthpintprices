@@ -8,6 +8,7 @@ import CrowdBadge from '@/components/CrowdBadge'
 import CrowdReporter from '@/components/CrowdReporter'
 import { FilterSection } from '@/components/FilterSection'
 import PintIndex from '@/components/PintIndex'
+import SunsetSippers from '@/components/SunsetSippers'
 import PubCard from '@/components/PubCard'
 import { getCrowdLevels, CrowdReport, CROWD_LEVELS, getPubs } from '@/lib/supabase'
 import { getHappyHourStatus } from '@/lib/happyHour'
@@ -205,6 +206,7 @@ export default function Home() {
 
       <div className="max-w-7xl mx-auto px-4 py-6">
         <PintIndex />
+        <SunsetSippers pubs={pubs} />
         <FilterSection
           viewMode={viewMode}
           setViewMode={setViewMode}
