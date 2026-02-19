@@ -119,7 +119,7 @@ export default function SunsetSippers({ pubs }: SunsetSippersProps) {
   const sunPosition = getSunPosition(now, sunTimes.sunrise, sunTimes.sunset)
 
   const sunsetPubs = useMemo(() =>
-    pubs.filter(p => p.sunsetSpot).sort((a, b) => a.price - b.price),
+    pubs.filter(p => p.sunsetSpot && p.price !== null).sort((a, b) => a.price! - b.price!),
     [pubs]
   )
 
@@ -253,7 +253,7 @@ export default function SunsetSippers({ pubs }: SunsetSippersProps) {
               </h4>
               {cheapestSunset && (
                 <span className="text-xs text-emerald-600 font-medium">
-                  Cheapest: ${cheapestSunset.price.toFixed(2)} at {cheapestSunset.name}
+                  Cheapest: {cheapestSunset.price !== null ? `$${cheapestSunset.price.toFixed(2)}` : 'TBC'} at {cheapestSunset.name}
                 </span>
               )}
             </div>
@@ -292,7 +292,7 @@ export default function SunsetSippers({ pubs }: SunsetSippersProps) {
                     )}
                     {/* Price badge on map */}
                     <div className="absolute bottom-1.5 left-1.5 z-[500] bg-white/90 backdrop-blur-sm rounded-full px-2 py-0.5 shadow-sm">
-                      <span className="text-sm font-bold text-amber-700">${pub.price.toFixed(2)}</span>
+                      <span className="text-sm font-bold text-amber-700">{pub.price !== null ? `$${pub.price.toFixed(2)}` : 'TBC'}</span>
                     </div>
                   </div>
                   {/* Pub info */}

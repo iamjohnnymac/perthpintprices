@@ -35,7 +35,7 @@ export default function TonightsMoves({ pubs }: TonightsMovesProps) {
   }, [])
 
   const bestBuys = useMemo(() => {
-    return [...pubs].sort((a, b) => a.price - b.price).slice(0, 5)
+    return [...pubs].filter(p => p.price !== null).sort((a, b) => a.price! - b.price!).slice(0, 5)
   }, [pubs])
 
   const activeDeals = useMemo(() => {
@@ -44,7 +44,7 @@ export default function TonightsMoves({ pubs }: TonightsMovesProps) {
         const status = getHappyHourStatus(p.happyHour)
         return status.isActive
       })
-      .sort((a, b) => a.price - b.price)
+      .filter(p => p.price !== null).sort((a, b) => a.price! - b.price!)
   }, [pubs, perthTime])
 
   const upcomingDeals = useMemo(() => {
@@ -53,7 +53,7 @@ export default function TonightsMoves({ pubs }: TonightsMovesProps) {
         const status = getHappyHourStatus(p.happyHour)
         return !status.isActive && status.isToday
       })
-      .sort((a, b) => a.price - b.price)
+      .filter(p => p.price !== null).sort((a, b) => a.price! - b.price!)
       .slice(0, 5)
   }, [pubs, perthTime])
 
@@ -63,7 +63,8 @@ export default function TonightsMoves({ pubs }: TonightsMovesProps) {
       if (!suburbMap[pub.suburb]) {
         suburbMap[pub.suburb] = { activeCount: 0, totalPrice: 0, count: 0 }
       }
-      suburbMap[pub.suburb].totalPrice += pub.price
+        if (pub.price === null) return
+      suburbMap[pub.suburb].totalPrice += pub.price!
       suburbMap[pub.suburb].count += 1
       const status = getHappyHourStatus(pub.happyHour)
       if (status.isActive) {
@@ -84,13 +85,13 @@ export default function TonightsMoves({ pubs }: TonightsMovesProps) {
   const marketTip = useMemo(() => {
     const activeHHPubs = pubs
       .filter(p => getHappyHourStatus(p.happyHour).isActive)
-      .sort((a, b) => a.price - b.price)
+      .filter(p => p.price !== null).sort((a, b) => a.price! - b.price!)
     return activeHHPubs.length > 0 ? activeHHPubs[0] : bestBuys[0] || null
   }, [pubs, bestBuys, perthTime])
 
   const summaryText = useMemo(() => {
     const bestBuy = bestBuys[0]
-    const bestBuyText = bestBuy ? `Best Buy: ${bestBuy.name} $${bestBuy.price.toFixed(2)}` : ''
+    const bestBuyText = bestBuy ? `Best Buy: ${bestBuy.name} ${bestBuy.price !== null ? `$${bestBuy.price.toFixed(2)}` : 'TBC'}` : ''
     const activeCount = activeDeals.length
     return `${bestBuyText} ${E.bullet} ${activeCount} happy hour${activeCount !== 1 ? 's' : ''} active`
   }, [bestBuys, activeDeals])
@@ -133,7 +134,7 @@ export default function TonightsMoves({ pubs }: TonightsMovesProps) {
                     <p className="text-[10px] text-stone-500">{marketTip.suburb} {E.bullet} {marketTip.beerType}</p>
                   </div>
                   <div className="text-right">
-                    <span className="text-lg font-bold text-green-700">${marketTip.price.toFixed(2)}</span>
+                    <span className="text-lg font-bold text-green-700">{marketTip.price !== null ? `$${marketTip.price.toFixed(2)}` : 'TBC'}</span>
                     {getHappyHourStatus(marketTip.happyHour).isActive && (
                       <p className="text-[9px] text-green-600 font-semibold">HH ACTIVE</p>
                     )}
@@ -157,7 +158,7 @@ export default function TonightsMoves({ pubs }: TonightsMovesProps) {
                         <p className="text-[10px] text-stone-400">{pub.suburb} {E.bullet} {pub.beerType}</p>
                       </div>
                     </div>
-                    <span className="text-sm font-bold text-green-700 flex-shrink-0">${pub.price.toFixed(2)}</span>
+                    <span className="text-sm font-bold text-green-700 flex-shrink-0">{pub.price !== null ? `$${pub.price.toFixed(2)}` : 'TBC'}</span>
                   </div>
                 ))}
               </div>
@@ -182,7 +183,7 @@ export default function TonightsMoves({ pubs }: TonightsMovesProps) {
                           <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-semibold bg-green-100 text-green-700 border border-green-200">
                             {status.countdown}
                           </span>
-                          <span className="text-sm font-bold text-green-700">${pub.price.toFixed(2)}</span>
+                          <span className="text-sm font-bold text-green-700">{pub.price !== null ? `$${pub.price.toFixed(2)}` : 'TBC'}</span>
                         </div>
                       </div>
                     )
@@ -210,7 +211,7 @@ export default function TonightsMoves({ pubs }: TonightsMovesProps) {
                           <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-medium bg-amber-100 text-amber-700 border border-amber-200">
                             {status.countdown}
                           </span>
-                          <span className="text-sm font-bold text-stone-600">${pub.price.toFixed(2)}</span>
+                          <span className="text-sm font-bold text-stone-600">{pub.price !== null ? `$${pub.price.toFixed(2)}` : 'TBC'}</span>
                         </div>
                       </div>
                     )
