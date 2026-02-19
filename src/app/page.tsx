@@ -266,31 +266,19 @@ export default function Home() {
                     >
                       <td className="py-3 px-2 sm:px-4">
                         <div className="flex items-center gap-2">
-                          {index < 3 && sortBy === 'price' && (
-                            <span className={`w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-bold ${
-                              index === 0 ? 'bg-yellow-500' :
-                              index === 1 ? 'bg-stone-400' :
-                              'bg-amber-700'
-                            }`}>
-                              {index + 1}
-                            </span>
-                          )}
+                          <span className="text-xs text-stone-300 w-5 text-right tabular-nums">{index + 1}</span>
                           <div>
                             <div className="flex items-center gap-1.5">
-                              <a 
+                              <a
                                 href={getDirectionsUrl(pub)}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 onClick={(e) => e.stopPropagation()}
-                                className="flex-shrink-0 hover:scale-110 transition-transform"
-                                title="Get directions in Google Maps"
+                                className="flex-shrink-0 text-stone-300 hover:text-amber-500 transition-colors"
+                                title="Get directions"
                               >
-                                <svg className="w-5 h-5" viewBox="0 0 92.3 132.3" fill="none">
-                                  <path fill="#1a73e8" d="M60.2 2.2C55.8.8 51 0 46.1 0 32 0 19.3 6.4 10.8 16.5l21.8 18.3L60.2 2.2z"/>
-                                  <path fill="#ea4335" d="M10.8 16.5C4.1 24.5 0 34.9 0 46.1c0 8.7 1.7 15.7 4.6 22l28-33.3-21.8-18.3z"/>
-                                  <path fill="#4285f4" d="M46.1 28.5c9.8 0 17.7 7.9 17.7 17.7 0 4.3-1.6 8.3-4.2 11.4 0 0 13.9-16.6 27.5-32.7-5.6-10.8-15.3-19-27-22.7L32.6 34.8c3.7-3.9 8.8-6.3 13.5-6.3z"/>
-                                  <path fill="#fbbc04" d="M46.1 63.5c-9.8 0-17.7-7.9-17.7-17.7 0-4.3 1.6-8.3 4.2-11.4L4.6 68.1C11.3 81.8 24.8 99.7 46.1 132.3c6.7-10.2 12.7-19.1 17.9-27.1L46.1 63.5z"/>
-                                  <path fill="#34a853" d="M59.6 57.6c2.6-3.1 4.2-7.1 4.2-11.4 0-9.8-7.9-17.7-17.7-17.7-4.7 0-9.8 2.4-13.5 6.3L64 105.2c14.5-23.3 23.2-40.5 23.2-59.1 0-5.8-.8-11.3-2.4-16.4L59.6 57.6z"/>
+                                <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
+                                  <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
                                 </svg>
                               </a>
                               <p className="font-semibold text-stone-900 text-sm">{pub.name}</p>
@@ -303,8 +291,8 @@ export default function Home() {
                         {pub.suburb}
                       </td>
                       <td className="py-3 px-4 hidden sm:table-cell">
-                        <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium text-white ${getPriceBgColor(pub.price)}`}>
-                          🍺 {pub.beerType}
+                        <span className="text-xs text-stone-500 truncate max-w-[120px] block">
+                          {pub.beerType || '—'}
                         </span>
                       </td>
                       <td className={`py-3 px-2 sm:px-4 text-right font-bold text-lg whitespace-nowrap ${getPriceTextColor(pub.price)}`}>
