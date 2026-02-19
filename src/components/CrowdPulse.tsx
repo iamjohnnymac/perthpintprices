@@ -5,6 +5,7 @@ import { Pub } from '@/types/pub'
 import { CrowdReport, CROWD_LEVELS } from '@/lib/supabase'
 import { Card, CardContent } from '@/components/ui/card'
 import E from '@/lib/emoji'
+import InfoTooltip from './InfoTooltip'
 
 interface CrowdPulseProps {
   pubs: Pub[]
@@ -90,7 +91,7 @@ export default function CrowdPulse({ pubs, crowdReports }: CrowdPulseProps) {
                 <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-stone-300 border border-white" />
               </div>
               <div>
-                <h3 className="font-bold text-stone-800 text-sm">LIVE MARKET INTEL</h3>
+                <h3 className="font-bold text-stone-800 text-sm flex items-center">LIVE MARKET INTEL<InfoTooltip text="Crowd reports submitted by users in the last 3 hours. Vibe score is a weighted average of busyness across all reporting venues." /></h3>
                 <p className="text-xs text-stone-400">No live reports yet {E.dash} be the first market analyst!</p>
               </div>
             </div>
@@ -127,7 +128,7 @@ export default function CrowdPulse({ pubs, crowdReports }: CrowdPulseProps) {
               <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-green-500 border border-white animate-pulse" />
             </div>
             <div>
-              <h3 className="font-bold text-stone-800 text-sm">LIVE MARKET INTEL</h3>
+              <h3 className="font-bold text-stone-800 text-sm flex items-center">LIVE MARKET INTEL<InfoTooltip text="Crowd reports submitted by users in the last 3 hours. Vibe score is a weighted average of busyness across all reporting venues." /></h3>
               <p className="text-xs text-stone-500">
                 {liveCount} venue{liveCount !== 1 ? 's' : ''} reporting {E.bullet} Perth Vibe: {getVibeLabel(vibeScore)}
               </p>

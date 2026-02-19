@@ -6,6 +6,7 @@ import { Pub } from '@/types/pub'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import E from '@/lib/emoji'
+import InfoTooltip from './InfoTooltip'
 
 const MiniMap = dynamic(() => import('./MiniMap'), {
   ssr: false,
@@ -177,7 +178,7 @@ export default function SunsetSippers({ pubs }: SunsetSippersProps) {
             <span className="text-2xl">{statusEmoji}</span>
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="font-bold text-stone-800 text-sm">Sunset Sippers</h3>
+                <h3 className="font-bold text-stone-800 text-sm flex items-center">Sunset Sippers<InfoTooltip text="Uses Perth's real-time sunset & golden hour times (calculated astronomically). Highlights west-facing pubs with verified prices — best spots to watch the sun go down with a pint." /></h3>
                 {isGoldenHour && (
                   <Badge className="bg-amber-500 text-white text-[10px] px-1.5 py-0 animate-pulse">
                     GOLDEN HOUR

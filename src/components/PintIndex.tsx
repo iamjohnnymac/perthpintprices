@@ -5,6 +5,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/lib/supabase';
 import E from '@/lib/emoji'
+import InfoTooltip from './InfoTooltip'
 
 interface PriceSnapshot {
   snapshot_date: string;
@@ -156,7 +157,7 @@ export default function PintIndex() {
           <div className="flex items-center gap-3">
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-xs font-semibold text-stone-500 uppercase tracking-wider">Perth Pint Index{E.tm}</span>
+                <span className="text-xs font-semibold text-stone-500 uppercase tracking-wider flex items-center">Perth Pint Index{E.tm}<InfoTooltip text="Average pint price across all verified Perth venues. Tracked weekly and stored historically so you can see if Perth beer is getting cheaper or more expensive over time." /></span>
                 <Badge variant="outline" className="text-[10px] px-1.5 py-0 border-stone-300 text-stone-500">
                   LIVE
                 </Badge>

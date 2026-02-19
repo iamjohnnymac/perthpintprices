@@ -3,6 +3,7 @@
 import { useState, useMemo, useEffect } from 'react'
 import { Pub } from '@/types/pub'
 import { getHappyHourStatus } from '@/lib/happyHour'
+import InfoTooltip from './InfoTooltip'
 import { Card, CardContent } from '@/components/ui/card'
 import E from '@/lib/emoji'
 
@@ -108,7 +109,7 @@ export default function TonightsMoves({ pubs }: TonightsMovesProps) {
             <span className="text-2xl">{E.clock}</span>
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="font-bold text-stone-800 text-sm">{`TONIGHT'S TRADING FLOOR`}</h3>
+                <h3 className="font-bold text-stone-800 text-sm flex items-center">{`TONIGHT'S TRADING FLOOR`}<InfoTooltip text="Updated in real-time based on current Perth time. Shows active happy hours, best prices right now, and our top pick of the moment." /></h3>
                 <span className="text-[10px] text-stone-400 font-mono">{formatPerthTime(perthTime)} AWST</span>
               </div>
               <p className="text-xs text-stone-500">{summaryText}</p>
@@ -127,6 +128,7 @@ export default function TonightsMoves({ pubs }: TonightsMovesProps) {
               <div className="p-3 rounded-xl bg-gradient-to-r from-amber-50 to-yellow-50 border border-amber-200">
                 <h4 className="text-xs font-semibold text-amber-700 mb-1 flex items-center gap-1">
                   {E.star} MARKET TIP
+                  <InfoTooltip text="Our algorithm picks the best value pub right now — weighing price, active happy hour bonus, beer quality, and suburb. Rescores as happy hours start and end." />
                 </h4>
                 <div className="flex items-center justify-between">
                   <div>
