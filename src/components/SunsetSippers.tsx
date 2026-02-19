@@ -110,13 +110,41 @@ function getSunShadowGradient(azimuth: number, isGolden: boolean): string {
 export default function SunsetSippers({ pubs }: SunsetSippersProps) {
   const [now, setNow] = useState(new Date())
   const [isExpanded, setIsExpanded] = useState(false)
+  const [apiSunriseHour, setApiSunriseHour] = useState<number | null>(null)
+  const [apiSunsetHour, setApiSunsetHour] = useState<number | null>(null)
 
   useEffect(() => {
     const timer = setInterval(() => setNow(new Date()), 30000) // Update every 30s
     return () => clearInterval(timer)
   }, [])
 
-  const sunTimes = useMemo(() => getSunTimes(now), [now.toDateString()])
+  // Fetch accurate sunrise/sunset from Open-Meteo
+  useEffect(() => {
+    fetch('https://api.open-meteo.com/v1/forecast?latitude=-31.9505&longitude=115.8605&daily=sunrise,sunset&timezone=Australia%2FPerth&forecast_days=1')
+      .then(r => r.json())
+      .then(data => {
+        const sunriseISO: string = data.daily.sunrise[0] // e.g. "2026-02-19T06:12"
+        const sunsetISO: string = data.daily.sunset[0]
+        const [, srTime] = sunriseISO.split('T')
+        const [, ssTime] = sunsetISO.split('T')
+        const [srH, srM] = srTime.split(':').map(Number)
+        const [ssH, ssM] = ssTime.split(':').map(Number)
+        setApiSunriseHour(srH + srM / 60)
+        setApiSunsetHour(ssH + ssM / 60)
+      })
+      .catch(() => {}) // Fall back to calculation silently
+  }, [now.toDateString()])
+
+  const sunTimes = useMemo(() => {
+    if (apiSunriseHour !== null && apiSunsetHour !== null) {
+      const sunrise = new Date(now)
+      sunrise.setHours(Math.floor(apiSunriseHour), Math.round((apiSunriseHour % 1) * 60), 0, 0)
+      const sunset = new Date(now)
+      sunset.setHours(Math.floor(apiSunsetHour), Math.round((apiSunsetHour % 1) * 60), 0, 0)
+      return { sunrise, sunset, goldenHourStart: new Date(sunset.getTime() - 60 * 60 * 1000) }
+    }
+    return getSunTimes(now)
+  }, [apiSunriseHour, apiSunsetHour, now.toDateString()])
   const sunPosition = getSunPosition(now, sunTimes.sunrise, sunTimes.sunset)
 
   const sunsetPubs = useMemo(() =>
@@ -162,7 +190,7 @@ export default function SunsetSippers({ pubs }: SunsetSippersProps) {
 
   return (
     <Card
-      className={`mb-4 border cursor-pointer transition-all duration-300 overflow-hidden ${
+      className={`mb-4 border cursor-pointer transition-all duration-300 ${
         isGoldenHour || isSunset
           ? 'border-amber-400 bg-gradient-to-r from-amber-50 via-orange-50 to-rose-50'
           : isNighttime
