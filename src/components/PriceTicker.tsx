@@ -70,9 +70,7 @@ export default function PriceTicker() {
         .ticker-track {
           animation: ticker-scroll ${duration}s linear infinite;
           will-change: transform;
-        }
-        .ticker-track:hover {
-          animation-play-state: paused;
+          pointer-events: none;
         }
       `}</style>
       <div
