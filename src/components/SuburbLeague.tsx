@@ -24,7 +24,8 @@ function seededRandom(seed: string): number {
   return Math.abs(hash % 100) / 100
 }
 
-function getFormColor(price: number): 'green' | 'yellow' | 'red' {
+function getFormColor(price: number | null): 'green' | 'yellow' | 'red' {
+  if (price === null) return 'yellow'
   if (price <= 7) return 'green'
   if (price <= 9) return 'yellow'
   return 'red'
@@ -67,13 +68,13 @@ export default function SuburbLeague({ pubs }: { pubs: Pub[] }) {
     const stats: SuburbStats[] = []
     for (const [suburb, subPubs] of Object.entries(grouped)) {
       if (subPubs.length < 2) continue
-      const prices = subPubs.map(p => p.price).filter(p => p > 0)
+      const prices = subPubs.map(p => p.price).filter((p): p is number => p !== null && p > 0)
       if (prices.length === 0) continue
 
       const avg = prices.reduce((a, b) => a + b, 0) / prices.length
       const hhCount = subPubs.filter(p => p.happyHour && p.happyHour.trim() !== '').length
       const formPubs = subPubs.slice(0, 5)
-      const form = formPubs.map(p => getFormColor(p.price))
+      const form = formPubs.filter(p => p.price !== null).map(p => getFormColor(p.price!))
 
       stats.push({
         suburb,
