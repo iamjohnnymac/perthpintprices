@@ -68,7 +68,7 @@ export default function PubCard({
       {/* Happy Hour active badge */}
       {happyHourStatus.isActive && (
         <Badge className="absolute top-2 left-2 z-10 bg-green-600 hover:bg-green-600 text-white animate-pulse">
-          \uD83C\uDF89 HAPPY HOUR!
+          🎉 HAPPY HOUR!
         </Badge>
       )}
 
@@ -108,10 +108,10 @@ export default function PubCard({
         {crowdReport && <CrowdBadge report={crowdReport} />}
 
         <Badge className={`${getPriceBgColor(pub.price)} hover:opacity-90 text-white`}>
-          \uD83C\uDF7A {pub.beerType}
+          🍺 {pub.beerType}
         </Badge>
 
-        <p className="text-xs text-stone-600">\uD83D\uDCCD {pub.address}</p>
+        <p className="text-xs text-stone-600">📍 {pub.address}</p>
 
         {pub.happyHour && (
           <div className={`text-xs flex items-center gap-1 ${
@@ -122,7 +122,7 @@ export default function PubCard({
             <span>{happyHourStatus.statusEmoji}</span>
             <span>{happyHourStatus.statusText}</span>
             {happyHourStatus.countdown && happyHourStatus.isActive && (
-              <span className="text-green-500 font-normal">\u2022 {happyHourStatus.countdown}</span>
+              <span className="text-green-500 font-normal">• {happyHourStatus.countdown}</span>
             )}
           </div>
         )}
@@ -144,7 +144,7 @@ export default function PubCard({
             rel="noopener noreferrer"
             className="text-amber-700 hover:text-amber-800 text-xs font-semibold"
           >
-            Visit website \u2192
+            Visit website →
           </a>
         ) : (
           <div></div>

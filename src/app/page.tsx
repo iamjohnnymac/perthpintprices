@@ -304,7 +304,7 @@ export default function Home() {
                       </td>
                       <td className="py-3 px-4 hidden sm:table-cell">
                         <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium text-white ${getPriceBgColor(pub.price)}`}>
-                          \uD83C\uDF7A {pub.beerType}
+                          🍺 {pub.beerType}
                         </span>
                       </td>
                       <td className={`py-3 px-2 sm:px-4 text-right font-bold text-lg whitespace-nowrap ${getPriceTextColor(pub.price)}`}>
@@ -346,7 +346,7 @@ export default function Home() {
         )}
 
         {viewMode === 'cards' && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 items-stretch">
             {(showAllPubs ? filteredPubs : filteredPubs.slice(0, INITIAL_PUB_COUNT)).map((pub, index) => {
               const crowdReport = getLatestCrowdReport(pub.id)
               const happyHourStatus = getHappyHourStatus(pub.happyHour)
@@ -372,7 +372,7 @@ export default function Home() {
 
         {filteredPubs.length === 0 && (
           <div className="text-center py-12 bg-white rounded-xl border border-stone-200">
-            <div className="text-5xl mb-3">\uD83D\uDD0D</div>
+            <div className="text-5xl mb-3">🔍</div>
             <h3 className="text-lg font-bold text-stone-700 mb-1">No pubs found</h3>
             <p className="text-stone-500 text-sm">Try adjusting your filters</p>
           </div>
@@ -383,21 +383,21 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex flex-wrap justify-center gap-6 mb-6 pb-6 border-b border-stone-700">
             <div className="flex items-center gap-2">
-              <span className="text-2xl">\uD83C\uDF7A</span>
+              <span className="text-2xl">🍺</span>
               <div>
                 <p className="font-semibold text-stone-200">Schooner</p>
                 <p className="text-xs text-stone-400">425ml</p>
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-2xl">\uD83C\uDF7A</span>
+              <span className="text-2xl">🍺</span>
               <div>
                 <p className="font-semibold text-amber-400">Pint</p>
                 <p className="text-xs text-stone-400">570ml</p>
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-2xl">\uD83C\uDF7E</span>
+              <span className="text-2xl">🍾</span>
               <div>
                 <p className="font-semibold text-stone-200">Long Neck</p>
                 <p className="text-xs text-stone-400">750ml</p>
