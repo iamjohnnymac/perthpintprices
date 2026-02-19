@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, JSX } from 'react'
 import { Pub } from '@/types/pub'
 
 interface SuburbStats {
@@ -38,10 +38,10 @@ function getMovement(suburb: string): 'up' | 'down' | 'steady' {
   return 'steady'
 }
 
-const movementIcon: Record<string, string> = {
-  up: '🔺',
-  down: '🔻',
-  steady: '➖',
+const movementIcon: Record<string, JSX.Element> = {
+  up: <svg width="10" height="10" viewBox="0 0 10 10" className="text-emerald-500 inline" fill="currentColor"><path d="M5 2l4 6H1z"/></svg>,
+  down: <svg width="10" height="10" viewBox="0 0 10 10" className="text-rose-400 inline" fill="currentColor"><path d="M5 8L1 2h8z"/></svg>,
+  steady: <svg width="10" height="6" viewBox="0 0 10 6" className="text-stone-400 inline" fill="currentColor"><rect x="0" y="2" width="10" height="2" rx="1"/></svg>,
 }
 
 const formDotColors: Record<string, string> = {
@@ -134,7 +134,7 @@ export default function SuburbLeague({ pubs }: { pubs: Pub[] }) {
         >
           <div>
             <h2 className="text-lg font-bold text-stone-800 flex items-center gap-2">
-              📊 Suburb League Table
+              <svg className="inline w-4 h-4 mr-1.5 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><rect x="3" y="12" width="4" height="8" rx="1"/><rect x="10" y="8" width="4" height="12" rx="1"/><rect x="17" y="4" width="4" height="16" rx="1"/></svg>Suburb League Table
             </h2>
             <p className="text-xs text-stone-500 mt-0.5">
               {isExpanded
@@ -204,7 +204,6 @@ export default function SuburbLeague({ pubs }: { pubs: Pub[] }) {
                 </tbody>
               </table>
             </div>
-
             <p className="text-[10px] text-stone-400 text-center mt-3">
               Updated weekly. Suburbs need 2+ tracked pubs to qualify.
             </p>
