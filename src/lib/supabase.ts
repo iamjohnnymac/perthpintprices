@@ -58,7 +58,7 @@ export async function getPubs(): Promise<Pub[]> {
   const { data, error } = await supabase
     .from('pubs')
     .select('*')
-    .order('price', { ascending: true })
+    .order('price', { ascending: true, nullsFirst: false })
   
   if (error) {
     console.error('Error fetching pubs:', error)
@@ -70,7 +70,7 @@ export async function getPubs(): Promise<Pub[]> {
     id: row.id,
     name: row.name,
     suburb: row.suburb,
-    price: Number(row.price),
+    price: row.price != null ? Number(row.price) : null,
     address: row.address || '',
     website: row.website || null,
     lat: row.lat || 0,
@@ -80,5 +80,6 @@ export async function getPubs(): Promise<Pub[]> {
     description: row.description || null,
     lastUpdated: row.last_updated || undefined,
     sunsetSpot: row.sunset_spot || false,
+    priceVerified: row.price_verified !== false,
   }))
 }

@@ -5,7 +5,7 @@ export interface Pub {
   suburb: string
   lat: number
   lng: number
-  price: number
+  price: number | null
   beerType: string
   happyHour: string | null
   website: string | null
@@ -13,4 +13,5 @@ export interface Pub {
   source?: string
   lastUpdated?: string
   sunsetSpot?: boolean
+  priceVerified: boolean
 }
