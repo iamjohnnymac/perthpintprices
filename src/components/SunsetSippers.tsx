@@ -173,7 +173,7 @@ export default function SunsetSippers({ pubs }: SunsetSippersProps) {
     >
       <CardContent className="p-4">
         {/* Compact Header */}
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between overflow-visible">
           <div className="flex items-center gap-3">
             <span className="text-2xl">{statusEmoji}</span>
             <div>
@@ -195,9 +195,9 @@ export default function SunsetSippers({ pubs }: SunsetSippersProps) {
           </div>
 
           {/* Mini Sun Dial */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 overflow-visible">
             {!isNighttime && (
-              <svg width={140} height={45} viewBox={`0 0 ${arcWidth} ${arcHeight}`} className="opacity-80">
+              <svg width={140} height={45} viewBox={`0 0 ${arcWidth} ${arcHeight}`} className="opacity-80" overflow="visible">
                 {/* Horizon line */}
                 <line x1="10" y1={arcCenterY} x2={arcWidth - 10} y2={arcCenterY} stroke="#d4a574" strokeWidth="1.5" strokeDasharray="4,3" />
                 {/* Sun arc path */}
