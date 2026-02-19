@@ -33,8 +33,8 @@ interface PubCardProps {
   crowdReport: CrowdReport | null | undefined
   happyHourStatus: HappyHourStatus
   getDirectionsUrl: (pub: Pub) => string
-  getPriceColor: (price: number) => string
-  getPriceBgColor: (price: number) => string
+  getPriceColor: (price: number | null) => string
+  getPriceBgColor: (price: number | null) => string
   formatLastUpdated: (date: string) => string
   onCrowdReport: (pub: Pub) => void
 }
@@ -99,7 +99,7 @@ export default function PubCard({
             <p className="text-xs text-stone-500">{pub.suburb}</p>
           </div>
           <div className={`text-xl font-bold bg-gradient-to-br ${getPriceColor(pub.price)} bg-clip-text text-transparent`}>
-            ${pub.price.toFixed(2)}
+            {pub.price !== null ? `$${pub.price.toFixed(2)}` : 'TBC'}
           </div>
         </div>
       </CardHeader>
