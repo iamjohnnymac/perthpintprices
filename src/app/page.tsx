@@ -320,7 +320,7 @@ export default function Home() {
                             {happyHourStatus.statusEmoji} {happyHourStatus.statusText}
                           </span>
                         ) : (
-                          <span className="text-xs text-stone-400">\u2014</span>
+                          <span className="text-xs text-stone-400">—</span>
                         )}
                       </td>
                       <td className="py-3 px-4 text-center">
@@ -406,7 +406,7 @@ export default function Home() {
           </div>
 
           <div className="text-center">
-            <p className="text-stone-300 text-sm">\uD83C\uDF7A Perth Pint Prices \u2014 Helping you find cheap drinks since 2024</p>
+            <p className="text-stone-300 text-sm">🍺 Perth Pint Prices — Helping you find cheap drinks since 2024</p>
             <p className="text-stone-500 text-xs mt-1">Prices may vary. Pint prices shown. Always drink responsibly.</p>
             <a
               href="mailto:perthpintprices@gmail.com?subject=Price%20Correction&body=Hi%2C%20I%20noticed%20a%20wrong%20price%20on%20the%20site.%0A%0APub%20name%3A%20%0ACorrect%20price%3A%20%0ADetails%3A%20"
