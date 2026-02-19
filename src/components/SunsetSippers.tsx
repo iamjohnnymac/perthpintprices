@@ -110,6 +110,7 @@ function getSunShadowGradient(azimuth: number, isGolden: boolean): string {
 export default function SunsetSippers({ pubs }: SunsetSippersProps) {
   const [now, setNow] = useState(new Date())
   const [isExpanded, setIsExpanded] = useState(false)
+  const [showAllPubs, setShowAllPubs] = useState(false)
   const [apiSunriseHour, setApiSunriseHour] = useState<number | null>(null)
   const [apiSunsetHour, setApiSunsetHour] = useState<number | null>(null)
 
@@ -288,7 +289,7 @@ export default function SunsetSippers({ pubs }: SunsetSippersProps) {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-              {sunsetPubs.slice(0, isExpanded ? 12 : 6).map((pub) => (
+              {sunsetPubs.slice(0, showAllPubs ? sunsetPubs.length : 6).map((pub) => (
                 <div
                   key={pub.id}
                   className="rounded-xl bg-white/70 hover:bg-white/95 transition-all duration-200 overflow-hidden shadow-sm hover:shadow-md border border-amber-100 h-full flex flex-col"
@@ -338,10 +339,13 @@ export default function SunsetSippers({ pubs }: SunsetSippersProps) {
               ))}
             </div>
 
-            {sunsetPubs.length > 12 && (
-              <p className="text-xs text-center text-stone-400 mt-2">
-                + {sunsetPubs.length - 12} more sunset spots
-              </p>
+            {sunsetPubs.length > 6 && (
+              <button
+                className="w-full mt-2 text-xs text-amber-700 hover:text-amber-900 font-medium py-2 border border-amber-200 rounded-lg hover:bg-amber-50 transition-colors"
+                onClick={(e) => { e.stopPropagation(); setShowAllPubs(!showAllPubs); }}
+              >
+                {showAllPubs ? '\u25b2 Show less' : `\u25bc Show all ${sunsetPubs.length} sunset spots`}
+              </button>
             )}
 
             {/* Fun footer */}
