@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/lib/supabase';
@@ -22,7 +22,24 @@ interface PriceSnapshot {
   price_distribution: Record<string, number>;
 }
 
-function Sparkline({ data, width = 280, height = 60 }: { data: number[]; width?: number; height?: number }) {
+interface TooltipState {
+  x: number;
+  y: number;
+  label: string;
+  price: number;
+  visible: boolean;
+}
+
+// SVG Sparkline component with month-by-month hover tooltip
+function Sparkline({ data, snapshots, width = 280, height = 60 }: { 
+  data: number[]; 
+  snapshots: PriceSnapshot[];
+  width?: number; 
+  height?: number 
+}) {
+  const svgRef = useRef<SVGSVGElement>(null);
+  const [tooltip, setTooltip] = useState<TooltipState>({ x: 0, y: 0, label: '', price: 0, visible: false });
+
   if (data.length < 2) return null;
   
   const min = Math.min(...data) - 0.1;
@@ -32,46 +49,118 @@ function Sparkline({ data, width = 280, height = 60 }: { data: number[]; width?:
   const points = data.map((val, i) => {
     const x = (i / (data.length - 1)) * width;
     const y = height - ((val - min) / range) * (height - 8) - 4;
-    return `${x},${y}`;
-  }).join(' ');
+    return { x, y, val };
+  });
 
-  const firstY = height - ((data[0] - min) / range) * (height - 8) - 4;
-  const lastY = height - ((data[data.length - 1] - min) / range) * (height - 8) - 4;
-  const areaPoints = `0,${height} 0,${firstY} ${points} ${width},${lastY} ${width},${height}`;
+  const polylinePoints = points.map(p => `${p.x},${p.y}`).join(' ');
+  const firstY = points[0].y;
+  const lastY = points[points.length - 1].y;
+  const areaPoints = `0,${height} 0,${firstY} ${polylinePoints} ${width},${lastY} ${width},${height}`;
 
   const trend = data[data.length - 1] - data[0];
   const color = trend > 0 ? '#ef4444' : trend < 0 ? '#22c55e' : '#eab308';
-  const gradientId = `sparkGrad-${Math.random().toString(36).slice(2, 8)}`;
+  const gradientId = 'sparkGrad-pint-index';
+
+  const handleMouseMove = useCallback((e: React.MouseEvent<SVGSVGElement>) => {
+    const svg = svgRef.current;
+    if (!svg) return;
+    const rect = svg.getBoundingClientRect();
+    const mouseX = (e.clientX - rect.left) * (width / rect.width);
+    
+    // Find closest data point
+    let closestIdx = 0;
+    let closestDist = Infinity;
+    points.forEach((p, i) => {
+      const dist = Math.abs(p.x - mouseX);
+      if (dist < closestDist) {
+        closestDist = dist;
+        closestIdx = i;
+      }
+    });
+
+    const snap = snapshots[closestIdx];
+    const date = new Date(snap.snapshot_date);
+    const label = date.toLocaleDateString('en-AU', { month: 'short', year: '2-digit' });
+    
+    setTooltip({
+      x: points[closestIdx].x,
+      y: points[closestIdx].y,
+      label,
+      price: data[closestIdx],
+      visible: true,
+    });
+  }, [points, snapshots, data, width]);
+
+  const handleMouseLeave = useCallback(() => {
+    setTooltip(t => ({ ...t, visible: false }));
+  }, []);
 
   return (
-    <svg width={width} height={height} className="overflow-visible">
-      <defs>
-        <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor={color} stopOpacity="0.3" />
-          <stop offset="100%" stopColor={color} stopOpacity="0.02" />
-        </linearGradient>
-      </defs>
-      <polygon points={areaPoints} fill={`url(#${gradientId})`} />
-      <polyline
-        points={points}
-        fill="none"
-        stroke={color}
-        strokeWidth="2.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <circle
-        cx={width}
-        cy={lastY}
-        r="4"
-        fill={color}
-        stroke="white"
-        strokeWidth="2"
-      />
-    </svg>
+    <div className="relative">
+      <svg 
+        ref={svgRef}
+        width={width} 
+        height={height} 
+        className="overflow-visible cursor-crosshair"
+        onMouseMove={handleMouseMove}
+        onMouseLeave={handleMouseLeave}
+      >
+        <defs>
+          <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor={color} stopOpacity="0.3" />
+            <stop offset="100%" stopColor={color} stopOpacity="0.02" />
+          </linearGradient>
+        </defs>
+        <polygon points={areaPoints} fill={`url(#${gradientId})`} />
+        <polyline
+          points={polylinePoints}
+          fill="none"
+          stroke={color}
+          strokeWidth="2.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        {/* Hover indicator dot */}
+        {tooltip.visible && (
+          <>
+            <line 
+              x1={tooltip.x} y1={0} x2={tooltip.x} y2={height}
+              stroke={color} strokeWidth="1" strokeDasharray="3,3" opacity="0.5"
+            />
+            <circle cx={tooltip.x} cy={tooltip.y} r="5" fill={color} stroke="white" strokeWidth="2" />
+          </>
+        )}
+        {/* End dot (when not hovering) */}
+        {!tooltip.visible && (
+          <circle
+            cx={width}
+            cy={lastY}
+            r="4"
+            fill={color}
+            stroke="white"
+            strokeWidth="2"
+          />
+        )}
+      </svg>
+      {/* Floating tooltip */}
+      {tooltip.visible && (
+        <div
+          className="absolute z-50 bg-stone-900 text-white text-xs rounded px-2 py-1 pointer-events-none whitespace-nowrap shadow-lg"
+          style={{
+            left: tooltip.x,
+            top: tooltip.y - 36,
+            transform: tooltip.x > width * 0.75 ? 'translateX(-100%)' : tooltip.x < width * 0.25 ? 'translateX(0)' : 'translateX(-50%)',
+          }}
+        >
+          <span className="font-semibold">${tooltip.price.toFixed(2)}</span>
+          <span className="text-stone-400 ml-1">{tooltip.label}</span>
+        </div>
+      )}
+    </div>
   );
 }
 
+// Mini bar chart for price distribution
 function DistributionBars({ distribution }: { distribution: Record<string, number> }) {
   const ranges = ['$6-7', '$7-8', '$8-9', '$9-10', '$10-11', '$11-12'];
   const values = ranges.map(r => distribution[r] || 0);
@@ -130,6 +219,7 @@ export default function PintIndex() {
   const previous = snapshots.length >= 2 ? snapshots[snapshots.length - 2] : null;
   const oldest = snapshots[0];
 
+  // Calculate changes
   const monthChange = previous ? current.avg_price - previous.avg_price : 0;
   const monthPct = previous ? ((monthChange / previous.avg_price) * 100) : 0;
   const yearChange = current.avg_price - oldest.avg_price;
@@ -145,7 +235,9 @@ export default function PintIndex() {
       onClick={() => setExpanded(!expanded)}
     >
       <CardContent className="p-4">
+        {/* Main ticker row */}
         <div className="flex items-center justify-between gap-4 flex-wrap">
+          {/* Left: Index title + value */}
           <div className="flex items-center gap-3">
             <div>
               <div className="flex items-center gap-2">
@@ -166,15 +258,18 @@ export default function PintIndex() {
             </div>
           </div>
           
-          <div className="hidden sm:block">
-            <div className="text-[10px] text-stone-400 mb-1 text-right">12-month trend</div>
-            <Sparkline data={sparkData} />
+          {/* Right: Sparkline with hover */}
+          <div className="hidden sm:block" onClick={e => e.stopPropagation()}>
+            <div className="text-[10px] text-stone-400 mb-1 text-right">12-month trend · hover to explore</div>
+            <Sparkline data={sparkData} snapshots={snapshots} />
           </div>
         </div>
 
+        {/* Expanded details */}
         {expanded && (
           <div className="mt-4 pt-4 border-t border-stone-200 animate-in fade-in slide-in-from-top-2 duration-200">
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+              {/* Key stats */}
               <div>
                 <div className="text-xs text-stone-500 mb-1">Cheapest Pint</div>
                 <div className="text-lg font-bold text-green-600">${current.min_price.toFixed(2)}</div>
@@ -195,6 +290,7 @@ export default function PintIndex() {
               </div>
             </div>
 
+            {/* Suburb highlights */}
             <div className="grid grid-cols-2 gap-4 mt-4">
               <div className="bg-green-50 rounded-lg p-3 h-full">
                 <div className="text-xs text-green-700 font-medium">{E.trophy} Cheapest Suburb</div>
@@ -208,6 +304,7 @@ export default function PintIndex() {
               </div>
             </div>
 
+            {/* Price distribution */}
             {current.price_distribution && (
               <div className="mt-4">
                 <div className="text-xs text-stone-500 mb-2">Price Distribution</div>
@@ -215,9 +312,10 @@ export default function PintIndex() {
               </div>
             )}
 
-            <div className="sm:hidden mt-4">
-              <div className="text-xs text-stone-400 mb-1">12-month trend</div>
-              <Sparkline data={sparkData} width={320} height={50} />
+            {/* Mobile sparkline */}
+            <div className="sm:hidden mt-4" onClick={e => e.stopPropagation()}>
+              <div className="text-xs text-stone-400 mb-1">12-month trend · hover to explore</div>
+              <Sparkline data={sparkData} snapshots={snapshots} width={320} height={50} />
             </div>
 
             <p className="text-[10px] text-stone-400 mt-3 text-center">
@@ -227,6 +325,7 @@ export default function PintIndex() {
           </div>
         )}
 
+        {/* Collapse hint when not expanded */}
         {!expanded && (
           <p className="text-[10px] text-stone-400 mt-2 text-center">
             Click to see full breakdown {E.bullet} Cheapest suburb: {current.cheapest_suburb} (${current.cheapest_suburb_avg.toFixed(2)})
