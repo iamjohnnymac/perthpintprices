@@ -1,0 +1,245 @@
+'use client'
+
+import { useState, useMemo } from 'react'
+import { Pub } from '@/types/pub'
+import { CrowdReport, CROWD_LEVELS } from '@/lib/supabase'
+import { Card, CardContent } from '@/components/ui/card'
+import E from '@/lib/emoji'
+
+interface CrowdPulseProps {
+  pubs: Pub[]
+  crowdReports: Record<string, CrowdReport>
+}
+
+function getVibeLabel(score: number): string {
+  if (score <= 1.5) return 'Dead Quiet'
+  if (score <= 2.0) return 'Chill'
+  if (score <= 2.5) return 'Moderate'
+  if (score <= 3.0) return 'Lively'
+  if (score <= 3.5) return 'Buzzing'
+  return 'Electric'
+}
+
+function getVibeColor(score: number): string {
+  if (score <= 1.5) return 'bg-blue-500'
+  if (score <= 2.0) return 'bg-green-500'
+  if (score <= 2.5) return 'bg-emerald-500'
+  if (score <= 3.0) return 'bg-yellow-500'
+  if (score <= 3.5) return 'bg-orange-500'
+  return 'bg-red-500'
+}
+
+function getConfidenceLabel(reportCount: number): { label: string; color: string } {
+  if (reportCount >= 5) return { label: 'High', color: 'text-green-600' }
+  if (reportCount >= 3) return { label: 'Medium', color: 'text-yellow-600' }
+  return { label: 'Low', color: 'text-stone-400' }
+}
+
+function formatTimeAgo(minutes: number): string {
+  if (minutes < 1) return 'just now'
+  if (minutes < 60) return `${minutes}m ago`
+  const hours = Math.floor(minutes / 60)
+  return `${hours}h ago`
+}
+
+export default function CrowdPulse({ pubs, crowdReports }: CrowdPulseProps) {
+  const [isExpanded, setIsExpanded] = useState(false)
+
+  const reportEntries = useMemo(() => {
+    return Object.entries(crowdReports).map(([pubId, report]) => {
+      const pub = pubs.find(p => String(p.id) === pubId)
+      return { pub, report }
+    }).filter((e): e is { pub: Pub; report: CrowdReport } => e.pub !== undefined)
+  }, [pubs, crowdReports])
+
+  const vibeScore = useMemo(() => {
+    if (reportEntries.length === 0) return 0
+    const totalWeight = reportEntries.reduce((sum, e) => sum + e.report.report_count, 0)
+    const weightedSum = reportEntries.reduce((sum, e) => sum + e.report.crowd_level * e.report.report_count, 0)
+    return totalWeight > 0 ? weightedSum / totalWeight : 0
+  }, [reportEntries])
+
+  const busyVenues = useMemo(() => {
+    return reportEntries
+      .filter(e => e.report.crowd_level >= 3)
+      .sort((a, b) => b.report.crowd_level - a.report.crowd_level)
+      .slice(0, 5)
+  }, [reportEntries])
+
+  const quietVenues = useMemo(() => {
+    return reportEntries
+      .filter(e => e.report.crowd_level <= 2)
+      .sort((a, b) => a.report.crowd_level - b.report.crowd_level)
+      .slice(0, 5)
+  }, [reportEntries])
+
+  const liveCount = reportEntries.length
+  const totalCount = pubs.length
+
+  if (liveCount === 0) {
+    return (
+      <Card
+        className="mb-4 border border-stone-200 bg-gradient-to-r from-stone-50 via-slate-50 to-stone-50 cursor-pointer transition-all duration-300"
+        onClick={() => setIsExpanded(!isExpanded)}
+      >
+        <CardContent className="p-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="relative">
+                <span className="text-2xl">{E.chart_up}</span>
+                <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-stone-300 border border-white" />
+              </div>
+              <div>
+                <h3 className="font-bold text-stone-800 text-sm">LIVE MARKET INTEL</h3>
+                <p className="text-xs text-stone-400">No live reports yet {E.dash} be the first market analyst!</p>
+              </div>
+            </div>
+            <svg width="16" height="16" viewBox="0 0 16 16" className={`text-stone-400 transition-transform ${isExpanded ? 'rotate-180' : ''}`}>
+              <path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+            </svg>
+          </div>
+          {isExpanded && (
+            <div className="mt-4 pt-4 border-t border-stone-200/60 text-center">
+              <p className="text-sm text-stone-500 mb-2">
+                {E.thinking} No crowd data available right now
+              </p>
+              <p className="text-xs text-stone-400">
+                Be a market analyst {E.dash} visit a pub and report the crowd level!
+              </p>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    )
+  }
+
+  return (
+    <Card
+      className="mb-4 border border-emerald-200 bg-gradient-to-r from-slate-50 via-emerald-50/30 to-slate-50 cursor-pointer transition-all duration-300"
+      onClick={() => setIsExpanded(!isExpanded)}
+    >
+      <CardContent className="p-4">
+        {/* Compact Header */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="relative">
+              <span className="text-2xl">{E.chart_up}</span>
+              <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-green-500 border border-white animate-pulse" />
+            </div>
+            <div>
+              <h3 className="font-bold text-stone-800 text-sm">LIVE MARKET INTEL</h3>
+              <p className="text-xs text-stone-500">
+                {liveCount} venue{liveCount !== 1 ? 's' : ''} reporting {E.bullet} Perth Vibe: {getVibeLabel(vibeScore)}
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="hidden sm:flex items-center gap-2">
+              <div className="w-20 h-2 rounded-full bg-stone-200 overflow-hidden">
+                <div
+                  className={`h-full rounded-full transition-all ${getVibeColor(vibeScore)}`}
+                  style={{ width: `${(vibeScore / 4) * 100}%` }}
+                />
+              </div>
+              <span className="text-xs font-semibold text-stone-600">{vibeScore.toFixed(1)}/4</span>
+            </div>
+            <svg width="16" height="16" viewBox="0 0 16 16" className={`text-stone-400 transition-transform ${isExpanded ? 'rotate-180' : ''}`}>
+              <path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+            </svg>
+          </div>
+        </div>
+
+        {/* Expanded Content */}
+        {isExpanded && (
+          <div className="mt-4 pt-4 border-t border-stone-200/60" onClick={(e) => e.stopPropagation()}>
+            {/* Vibe Meter */}
+            <div className="mb-4 p-3 rounded-xl bg-white/70 border border-stone-100">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-xs font-semibold text-stone-600">Perth Vibe Meter</span>
+                <span className="text-xs text-stone-400">{liveCount}/{totalCount} venues tracked</span>
+              </div>
+              <div className="w-full h-3 rounded-full bg-stone-200 overflow-hidden">
+                <div
+                  className={`h-full rounded-full transition-all duration-500 ${getVibeColor(vibeScore)}`}
+                  style={{ width: `${(vibeScore / 4) * 100}%` }}
+                />
+              </div>
+              <div className="flex justify-between mt-1">
+                <span className="text-[10px] text-stone-400">Dead Quiet</span>
+                <span className="text-[10px] font-medium text-stone-600">{getVibeLabel(vibeScore)}</span>
+                <span className="text-[10px] text-stone-400">Electric</span>
+              </div>
+            </div>
+
+            {/* Busiest Venues */}
+            {busyVenues.length > 0 && (
+              <div className="mb-3">
+                <h4 className="text-xs font-semibold text-red-600 mb-2 flex items-center gap-1">
+                  {E.fire} HOT TRADING {E.dash} Busiest Venues
+                </h4>
+                <div className="space-y-1.5">
+                  {busyVenues.map(({ pub, report }) => {
+                    const levelInfo = CROWD_LEVELS[report.crowd_level]
+                    const confidence = getConfidenceLabel(report.report_count)
+                    return (
+                      <div key={pub.id} className="flex items-center justify-between p-2 rounded-lg bg-red-50/60 border border-red-100">
+                        <div className="flex items-center gap-2 min-w-0">
+                          <span className="text-sm">{levelInfo.emoji}</span>
+                          <div className="min-w-0">
+                            <p className="text-xs font-semibold text-stone-800 truncate">{pub.name}</p>
+                            <p className="text-[10px] text-stone-400">{pub.suburb}</p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2 flex-shrink-0">
+                          <span className={`text-[10px] font-medium ${confidence.color}`}>{confidence.label}</span>
+                          <span className="text-[10px] text-stone-400">{formatTimeAgo(report.minutes_ago)}</span>
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* Quiet Venues - Hidden Gems */}
+            {quietVenues.length > 0 && (
+              <div className="mb-3">
+                <h4 className="text-xs font-semibold text-green-600 mb-2 flex items-center gap-1">
+                  {E.green_circle} HIDDEN GEMS {E.dash} Undervalued Venues
+                </h4>
+                <div className="space-y-1.5">
+                  {quietVenues.map(({ pub, report }) => {
+                    const levelInfo = CROWD_LEVELS[report.crowd_level]
+                    const confidence = getConfidenceLabel(report.report_count)
+                    return (
+                      <div key={pub.id} className="flex items-center justify-between p-2 rounded-lg bg-green-50/60 border border-green-100">
+                        <div className="flex items-center gap-2 min-w-0">
+                          <span className="text-sm">{levelInfo.emoji}</span>
+                          <div className="min-w-0">
+                            <p className="text-xs font-semibold text-stone-800 truncate">{pub.name}</p>
+                            <p className="text-[10px] text-stone-400">{pub.suburb} {E.bullet} ${pub.price.toFixed(2)}</p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2 flex-shrink-0">
+                          <span className={`text-[10px] font-medium ${confidence.color}`}>{confidence.label}</span>
+                          <span className="text-[10px] text-stone-400">{formatTimeAgo(report.minutes_ago)}</span>
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* CTA */}
+            {liveCount < 5 && (
+              <div className="mt-3 text-center text-xs py-2 rounded-lg bg-white/40 text-stone-400">
+                {E.chart_bar} Only {liveCount} report{liveCount !== 1 ? 's' : ''} in {E.dash} be a market analyst and report crowd levels!
+              </div>
+            )}
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  )
+}

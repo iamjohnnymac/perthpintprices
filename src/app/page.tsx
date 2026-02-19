@@ -12,6 +12,9 @@ import PriceTicker from '@/components/PriceTicker'
 import SunsetSippers from '@/components/SunsetSippers'
 import BeerWeather from '@/components/BeerWeather'
 import SuburbLeague from '@/components/SuburbLeague'
+import CrowdPulse from '@/components/CrowdPulse'
+import TonightsMoves from '@/components/TonightsMoves'
+import VenueIntel from '@/components/VenueIntel'
 import PubCard from '@/components/PubCard'
 import { getCrowdLevels, CrowdReport, CROWD_LEVELS, getPubs } from '@/lib/supabase'
 import { getHappyHourStatus } from '@/lib/happyHour'
@@ -191,6 +194,9 @@ export default function Home() {
         <SunsetSippers pubs={pubs} />
         <BeerWeather pubs={pubs} />
         <SuburbLeague pubs={pubs} />
+        <CrowdPulse pubs={pubs} crowdReports={crowdReports} />
+        <TonightsMoves pubs={pubs} />
+        <VenueIntel pubs={pubs} />
         <FilterSection
           viewMode={viewMode}
           setViewMode={setViewMode}
