@@ -61,7 +61,7 @@ function getWeatherCondition(weather: WeatherData, avgPrice: number): WeatherCon
       tagline: `Feels like a $${avgPrice.toFixed(0)} happy hour kind of day`,
       bgClass: 'bg-gradient-to-r from-slate-50 via-blue-50 to-slate-50',
       borderClass: 'border-blue-200',
-      filter: (pubs) => pubs.filter(p => p.happyHour).sort((a, b) => a.price - b.price),
+      filter: (pubs) => pubs.filter(p => p.happyHour).filter(p => p.price !== null).sort((a, b) => a.price! - b.price!),
     }
   }
 
@@ -73,7 +73,7 @@ function getWeatherCondition(weather: WeatherData, avgPrice: number): WeatherCon
       tagline: `Feels like a $${avgPrice.toFixed(0)} icy pint kind of day`,
       bgClass: 'bg-gradient-to-r from-red-50 via-orange-50 to-amber-50',
       borderClass: 'border-red-200',
-      filter: (pubs) => pubs.filter(p => p.sunsetSpot).sort((a, b) => a.price - b.price),
+      filter: (pubs) => pubs.filter(p => p.sunsetSpot).filter(p => p.price !== null).sort((a, b) => a.price! - b.price!),
     }
   }
 
@@ -85,7 +85,7 @@ function getWeatherCondition(weather: WeatherData, avgPrice: number): WeatherCon
       tagline: `Feels like a $${avgPrice.toFixed(0)} pint in the sun kind of day`,
       bgClass: 'bg-gradient-to-r from-amber-50/70 via-yellow-50/50 to-amber-50/70',
       borderClass: 'border-amber-200',
-      filter: (pubs) => pubs.filter(p => p.sunsetSpot || p.description?.toLowerCase().includes('garden')).sort((a, b) => a.price - b.price),
+      filter: (pubs) => pubs.filter(p => p.sunsetSpot || p.description?.toLowerCase().includes('garden')).filter(p => p.price !== null).sort((a, b) => a.price! - b.price!),
     }
   }
 
@@ -97,7 +97,7 @@ function getWeatherCondition(weather: WeatherData, avgPrice: number): WeatherCon
       tagline: `Feels like a $${avgPrice.toFixed(0)} easy-going pint kind of day`,
       bgClass: 'bg-gradient-to-r from-stone-50 via-amber-50/30 to-stone-50',
       borderClass: 'border-stone-200',
-      filter: (pubs) => [...pubs].sort((a, b) => a.price - b.price),
+      filter: (pubs) => [...pubs].filter(p => p.price !== null).sort((a, b) => a.price! - b.price!),
     }
   }
 
@@ -109,7 +109,7 @@ function getWeatherCondition(weather: WeatherData, avgPrice: number): WeatherCon
     tagline: `Feels like a $${avgPrice.toFixed(0)} warm-up pint kind of day`,
     bgClass: 'bg-gradient-to-r from-blue-50 via-indigo-50/30 to-blue-50',
     borderClass: 'border-blue-200',
-    filter: (pubs) => [...pubs].sort((a, b) => a.price - b.price),
+    filter: (pubs) => [...pubs].filter(p => p.price !== null).sort((a, b) => a.price! - b.price!),
   }
 }
 
@@ -144,7 +144,7 @@ export default function BeerWeather({ pubs }: BeerWeatherProps) {
 
   const avgPrice = useMemo(() => {
     if (pubs.length === 0) return 10
-    return pubs.reduce((sum, p) => sum + p.price, 0) / pubs.length
+    const priced = pubs.filter(p => p.price !== null); return priced.length > 0 ? priced.reduce((sum, p) => sum + p.price!, 0) / priced.length : 10
   }, [pubs])
 
   const condition = useMemo(() => {
@@ -155,7 +155,7 @@ export default function BeerWeather({ pubs }: BeerWeatherProps) {
   const recommendedPubs = useMemo(() => {
     if (!condition) return []
     const filtered = condition.filter(pubs)
-    return filtered.length > 0 ? filtered.slice(0, 4) : pubs.sort((a, b) => a.price - b.price).slice(0, 4)
+    return filtered.length > 0 ? filtered.slice(0, 4) : pubs.filter(p => p.price !== null).sort((a, b) => a.price! - b.price!).slice(0, 4)
   }, [condition, pubs])
 
   const isWindy = weather && weather.windSpeed > 30
@@ -276,7 +276,7 @@ export default function BeerWeather({ pubs }: BeerWeatherProps) {
                     </div>
                   </div>
                   <div className="text-right flex-shrink-0">
-                    <span className="text-sm font-bold text-amber-700">${pub.price.toFixed(2)}</span>
+                    <span className="text-sm font-bold text-amber-700">{pub.price !== null ? `$${pub.price.toFixed(2)}` : 'TBC'}</span>
                     {pub.happyHour && (
                       <p className="text-[9px] text-emerald-600 font-medium">Happy Hour</p>
                     )}

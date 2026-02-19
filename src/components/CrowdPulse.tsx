@@ -217,7 +217,7 @@ export default function CrowdPulse({ pubs, crowdReports }: CrowdPulseProps) {
                           <span className="text-sm">{levelInfo.emoji}</span>
                           <div className="min-w-0">
                             <p className="text-xs font-semibold text-stone-800 truncate">{pub.name}</p>
-                            <p className="text-[10px] text-stone-400">{pub.suburb} {E.bullet} ${pub.price.toFixed(2)}</p>
+                            <p className="text-[10px] text-stone-400">{pub.suburb} {E.bullet} {pub.price !== null ? `$${pub.price.toFixed(2)}` : 'TBC'}</p>
                           </div>
                         </div>
                         <div className="flex items-center gap-2 flex-shrink-0">
