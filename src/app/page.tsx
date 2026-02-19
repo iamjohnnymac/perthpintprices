@@ -177,7 +177,7 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-stone-100">
       <PriceTicker />
-      <header className="bg-white border-b border-stone-200">
+      <header className="bg-white border-b border-stone-200 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
           <div>
             <h1 className="text-xl md:text-2xl font-bold text-stone-900 tracking-tight">Perth Pint Prices</h1>
@@ -190,16 +190,6 @@ export default function Home() {
             + Submit a Pub
           </button>
         </div>
-      </header>
-
-      <div className="max-w-7xl mx-auto px-4 py-6">
-        <PintIndex />
-        <SunsetSippers pubs={pubs} />
-        <BeerWeather pubs={pubs} />
-        <SuburbLeague pubs={pubs} />
-        <CrowdPulse pubs={pubs} crowdReports={crowdReports} />
-        <TonightsMoves pubs={pubs} />
-        <VenueIntel pubs={pubs} />
         <FilterSection
           viewMode={viewMode}
           setViewMode={setViewMode}
@@ -220,6 +210,16 @@ export default function Home() {
           setShowMoreFilters={setShowMoreFilters}
           stats={stats}
         />
+      </header>
+
+      <div className="max-w-7xl mx-auto px-4 py-6">
+        <PintIndex />
+        <SunsetSippers pubs={pubs} />
+        <BeerWeather pubs={pubs} />
+        <SuburbLeague pubs={pubs} />
+        <CrowdPulse pubs={pubs} crowdReports={crowdReports} />
+        <TonightsMoves pubs={pubs} />
+        <VenueIntel pubs={pubs} />
 
         <div className="flex items-center justify-between mb-4">
           <p className="text-stone-600 text-sm">
