@@ -177,17 +177,29 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-stone-100">
       <PriceTicker />
-      <header className="bg-white border-b border-stone-200 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
-          <div>
-            <h1 className="text-xl md:text-2xl font-bold text-stone-900 tracking-tight">Perth Pint Prices</h1>
-            <p className="text-stone-400 text-xs">The Perth Beer Exchange {'\u2122'} {'\u00B7'} {stats.total} venues {'\u00B7'} {suburbs.length} suburbs</p>
+      <header className="bg-white border-b border-stone-200 shadow-sm sticky top-0 z-40">
+        <div className="max-w-7xl mx-auto px-4 py-2.5 flex items-center gap-3">
+          {/* Brand mark */}
+          <div className="w-8 h-8 bg-amber-600 rounded-lg flex items-center justify-center flex-shrink-0 shadow-sm">
+            <svg viewBox="0 0 24 24" fill="none" className="w-[18px] h-[18px]" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M5 3h14M5 3v16a2 2 0 002 2h10a2 2 0 002-2V3M5 3H3M19 3h2M9 3v4M15 3v4" />
+            </svg>
           </div>
+          {/* Title + tagline */}
+          <div className="flex-1 min-w-0">
+            <div className="flex items-baseline gap-2">
+              <h1 className="text-base font-bold text-stone-900 tracking-tight leading-none">Perth Pint Prices</h1>
+              <span className="text-xs text-stone-400 hidden sm:inline">The Perth Beer Exchange™</span>
+            </div>
+            <p className="text-xs text-stone-400 mt-0.5">{stats.total} venues · {suburbs.length} suburbs</p>
+          </div>
+          {/* Submit button */}
           <button
             onClick={() => setShowSubmitForm(true)}
-            className="px-3 py-1.5 bg-stone-100 hover:bg-stone-200 text-stone-600 rounded-lg font-medium transition-colors text-xs border border-stone-200"
+            className="flex-shrink-0 flex items-center gap-1.5 px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-white rounded-lg font-semibold transition-colors text-xs shadow-sm"
           >
-            + Submit a Pub
+            <span className="hidden sm:inline">+ Submit a Pub</span>
+            <span className="sm:hidden text-base leading-none">+</span>
           </button>
         </div>
         <FilterSection
