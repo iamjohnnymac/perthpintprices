@@ -116,11 +116,10 @@ export default function VenueIntel({ pubs }: VenueIntelProps) {
 
   return (
     <Card
-      className="mb-4 border border-indigo-200 bg-gradient-to-r from-stone-50 via-indigo-50/30 to-stone-50 cursor-pointer transition-all duration-300"
+      className="mb-4 border border-stone-200 bg-gradient-to-r from-stone-50 via-amber-50/20 to-stone-50 cursor-pointer transition-all duration-300"
       onClick={() => setIsExpanded(!isExpanded)}
     >
       <CardContent className="p-4">
-        {/* Compact Header */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <span className="text-2xl">{E.chart_bar}</span>
@@ -134,10 +133,8 @@ export default function VenueIntel({ pubs }: VenueIntelProps) {
           </svg>
         </div>
 
-        {/* Expanded Content */}
         {isExpanded && (
           <div className="mt-4 pt-4 border-t border-stone-200/60 space-y-4" onClick={(e) => e.stopPropagation()}>
-            {/* Price Distribution */}
             <div>
               <h4 className="text-xs font-semibold text-stone-700 mb-2 flex items-center gap-1">
                 {E.chart_bar} PRICE DISTRIBUTION
@@ -160,16 +157,13 @@ export default function VenueIntel({ pubs }: VenueIntelProps) {
               </div>
             </div>
 
-            {/* Price Percentile */}
-            <div className="p-3 rounded-xl bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-100 text-center">
+            <div className="p-3 rounded-xl bg-amber-50/60 border border-amber-100 text-center">
               <p className="text-xs text-stone-500">Median Pint Price in Perth</p>
-              <p className="text-xl font-bold text-indigo-700">${percentileData.median.toFixed(2)}</p>
+              <p className="text-xl font-bold text-amber-700">${percentileData.median.toFixed(2)}</p>
               <p className="text-[10px] text-stone-400">{percentileData.percentile}% of venues are cheaper than the median</p>
             </div>
 
-            {/* Overvalued & Undervalued */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {/* Undervalued */}
               <div>
                 <h4 className="text-xs font-semibold text-green-700 mb-2 flex items-center gap-1">
                   {E.chart_down} UNDERVALUED {E.dash} Below Market
@@ -190,7 +184,6 @@ export default function VenueIntel({ pubs }: VenueIntelProps) {
                 </div>
               </div>
 
-              {/* Overvalued */}
               <div>
                 <h4 className="text-xs font-semibold text-red-600 mb-2 flex items-center gap-1">
                   {E.chart_up} OVERVALUED {E.dash} Above Market
@@ -212,9 +205,7 @@ export default function VenueIntel({ pubs }: VenueIntelProps) {
               </div>
             </div>
 
-            {/* Suburb Rankings */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {/* Cheapest Suburbs */}
               <div>
                 <h4 className="text-xs font-semibold text-green-700 mb-2 flex items-center gap-1">
                   {E.green_circle} CHEAPEST SUBURBS
@@ -235,7 +226,6 @@ export default function VenueIntel({ pubs }: VenueIntelProps) {
                 </div>
               </div>
 
-              {/* Priciest Suburbs */}
               <div>
                 <h4 className="text-xs font-semibold text-red-600 mb-2 flex items-center gap-1">
                   {E.red_circle} PRICIEST SUBURBS
