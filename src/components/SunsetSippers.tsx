@@ -17,37 +17,23 @@ interface SunsetSippersProps {
   pubs: Pub[]
 }
 
-// Perth coordinates
 const PERTH_LAT = -31.9505
 const PERTH_LNG = 115.8605
 
-// Calculate sunrise/sunset for Perth using simplified solar calculation
 function getSunTimes(date: Date): { sunrise: Date; sunset: Date; goldenHourStart: Date } {
   const dayOfYear = Math.floor((date.getTime() - new Date(date.getFullYear(), 0, 0).getTime()) / 86400000)
   const lat = PERTH_LAT * Math.PI / 180
-
-  // Solar declination
   const declination = -23.45 * Math.cos((360/365) * (dayOfYear + 10) * Math.PI / 180) * Math.PI / 180
-
-  // Hour angle
   const cosHourAngle = (Math.cos(90.833 * Math.PI / 180) - Math.sin(lat) * Math.sin(declination)) / (Math.cos(lat) * Math.cos(declination))
   const hourAngle = Math.acos(Math.max(-1, Math.min(1, cosHourAngle))) * 180 / Math.PI
-
-  // Solar noon (Perth is UTC+8, longitude 115.86)
-  const solarNoon = 12 - (PERTH_LNG - 120) / 15 // 120 = UTC+8 reference meridian
-
+  const solarNoon = 12 - (PERTH_LNG - 120) / 15
   const sunriseHour = solarNoon - hourAngle / 15
   const sunsetHour = solarNoon + hourAngle / 15
-
   const sunrise = new Date(date)
   sunrise.setHours(Math.floor(sunriseHour), Math.round((sunriseHour % 1) * 60), 0, 0)
-
   const sunset = new Date(date)
   sunset.setHours(Math.floor(sunsetHour), Math.round((sunsetHour % 1) * 60), 0, 0)
-
-  // Golden hour starts ~1 hour before sunset
   const goldenHourStart = new Date(sunset.getTime() - 60 * 60 * 1000)
-
   return { sunrise, sunset, goldenHourStart }
 }
 
@@ -64,7 +50,6 @@ function getTimeUntil(target: Date, now: Date): string {
   return `${mins}m`
 }
 
-// Sun position as percentage through the day (0 = sunrise, 100 = sunset)
 function getSunPosition(now: Date, sunrise: Date, sunset: Date): number {
   const total = sunset.getTime() - sunrise.getTime()
   const elapsed = now.getTime() - sunrise.getTime()
@@ -73,35 +58,22 @@ function getSunPosition(now: Date, sunrise: Date, sunset: Date): number {
   return (elapsed / total) * 100
 }
 
-// Calculate sun azimuth (compass bearing in degrees, 0=North, 90=East, 180=South, 270=West)
 function getSunAzimuth(date: Date): number {
   const dayOfYear = Math.floor((date.getTime() - new Date(date.getFullYear(), 0, 0).getTime()) / 86400000)
   const lat = PERTH_LAT * Math.PI / 180
   const declination = -23.45 * Math.cos((360/365) * (dayOfYear + 10) * Math.PI / 180) * Math.PI / 180
-  
-  // Hour angle (negative = morning/east, positive = afternoon/west)
   const solarNoon = 12 - (PERTH_LNG - 120) / 15
   const hours = date.getHours() + date.getMinutes() / 60
   const hourAngle = (hours - solarNoon) * 15 * Math.PI / 180
-  
-  // Solar altitude
   const sinAlt = Math.sin(lat) * Math.sin(declination) + Math.cos(lat) * Math.cos(declination) * Math.cos(hourAngle)
   const altitude = Math.asin(sinAlt)
-  
-  // Solar azimuth
   const cosAz = (Math.sin(declination) - Math.sin(lat) * sinAlt) / (Math.cos(lat) * Math.cos(altitude))
   let azimuth = Math.acos(Math.max(-1, Math.min(1, cosAz))) * 180 / Math.PI
-  
-  // Afternoon = west side (azimuth > 180)
   if (hourAngle > 0) azimuth = 360 - azimuth
-  
   return azimuth
 }
 
-// Convert azimuth to CSS gradient direction for sun shadow effect
 function getSunShadowGradient(azimuth: number, isGolden: boolean): string {
-  // Shadow falls opposite to sun direction
-  // CSS gradient: angle where 0deg = up, 90deg = right
   const gradientAngle = (azimuth + 180) % 360
   const color = isGolden ? 'rgba(251,191,36,' : 'rgba(251,191,36,'
   return `linear-gradient(${gradientAngle}deg, ${color}0.35) 0%, ${color}0.1) 40%, transparent 70%)`
@@ -115,16 +87,15 @@ export default function SunsetSippers({ pubs }: SunsetSippersProps) {
   const [apiSunsetHour, setApiSunsetHour] = useState<number | null>(null)
 
   useEffect(() => {
-    const timer = setInterval(() => setNow(new Date()), 30000) // Update every 30s
+    const timer = setInterval(() => setNow(new Date()), 30000)
     return () => clearInterval(timer)
   }, [])
 
-  // Fetch accurate sunrise/sunset from Open-Meteo
   useEffect(() => {
     fetch('https://api.open-meteo.com/v1/forecast?latitude=-31.9505&longitude=115.8605&daily=sunrise,sunset&timezone=Australia%2FPerth&forecast_days=1')
       .then(r => r.json())
       .then(data => {
-        const sunriseISO: string = data.daily.sunrise[0] // e.g. "2026-02-19T06:12"
+        const sunriseISO: string = data.daily.sunrise[0]
         const sunsetISO: string = data.daily.sunset[0]
         const [, srTime] = sunriseISO.split('T')
         const [, ssTime] = sunsetISO.split('T')
@@ -133,7 +104,7 @@ export default function SunsetSippers({ pubs }: SunsetSippersProps) {
         setApiSunriseHour(srH + srM / 60)
         setApiSunsetHour(ssH + ssM / 60)
       })
-      .catch(() => {}) // Fall back to calculation silently
+      .catch(() => {})
   }, [now.toDateString()])
 
   const sunTimes = useMemo(() => {
@@ -146,6 +117,7 @@ export default function SunsetSippers({ pubs }: SunsetSippersProps) {
     }
     return getSunTimes(now)
   }, [apiSunriseHour, apiSunsetHour, now.toDateString()])
+
   const sunPosition = getSunPosition(now, sunTimes.sunrise, sunTimes.sunset)
 
   const sunsetPubs = useMemo(() =>
@@ -160,19 +132,16 @@ export default function SunsetSippers({ pubs }: SunsetSippersProps) {
   const sunShadow = getSunShadowGradient(sunAzimuth, isGoldenHour || isSunset)
   const cheapestSunset = sunsetPubs[0]
 
-  // Sun arc SVG dimensions
   const arcWidth = 280
   const arcHeight = 80
   const arcCenterX = arcWidth / 2
   const arcCenterY = arcHeight - 5
-
-  // Calculate sun position on arc
-  const sunAngle = Math.PI - (sunPosition / 100) * Math.PI // PI to 0 (left to right)
-  const arcRadius = 120
+  // Radius must be <= arcCenterY to keep arc within viewBox
+  const arcRadius = 68
+  const sunAngle = Math.PI - (sunPosition / 100) * Math.PI
   const sunX = arcCenterX + arcRadius * Math.cos(sunAngle)
   const sunY = arcCenterY - arcRadius * Math.sin(sunAngle)
 
-  // Status message
   let statusMessage = ''
   let statusEmoji = E.sun
   if (isSunset) {
@@ -196,13 +165,12 @@ export default function SunsetSippers({ pubs }: SunsetSippersProps) {
           ? 'border-amber-400 bg-gradient-to-r from-amber-50 via-orange-50 to-rose-50'
           : isNighttime
           ? 'border-indigo-300 bg-gradient-to-r from-indigo-50 via-slate-50 to-indigo-50'
-          : 'border-amber-200 bg-gradient-to-r from-amber-50/50 to-orange-50/50'
+          : 'border-stone-200 bg-gradient-to-r from-stone-50 via-amber-50/20 to-stone-50'
       }`}
       onClick={() => setIsExpanded(!isExpanded)}
     >
       <CardContent className="p-4">
-        {/* Compact Header */}
-        <div className="flex items-center justify-between overflow-visible">
+        <div className="flex items-center justify-between overflow-hidden">
           <div className="flex items-center gap-3">
             <span className="text-2xl">{statusEmoji}</span>
             <div>
@@ -223,13 +191,10 @@ export default function SunsetSippers({ pubs }: SunsetSippersProps) {
             </div>
           </div>
 
-          {/* Mini Sun Dial */}
-          <div className="flex items-center gap-3 overflow-visible">
+          <div className="flex items-center gap-3">
             {!isNighttime && (
-              <svg width={140} height={45} viewBox={`0 0 ${arcWidth} ${arcHeight}`} className="opacity-80" overflow="visible">
-                {/* Horizon line */}
+              <svg width={140} height={45} viewBox={`0 0 ${arcWidth} ${arcHeight}`} className="opacity-80" overflow="hidden">
                 <line x1="10" y1={arcCenterY} x2={arcWidth - 10} y2={arcCenterY} stroke="#d4a574" strokeWidth="1.5" strokeDasharray="4,3" />
-                {/* Sun arc path */}
                 <path
                   d={`M 20 ${arcCenterY} A ${arcRadius} ${arcRadius} 0 0 1 ${arcWidth - 20} ${arcCenterY}`}
                   fill="none"
@@ -238,7 +203,6 @@ export default function SunsetSippers({ pubs }: SunsetSippersProps) {
                   strokeDasharray="3,3"
                   opacity="0.4"
                 />
-                {/* Traveled path */}
                 {sunPosition > 0 && sunPosition < 100 && (
                   <path
                     d={`M 20 ${arcCenterY} A ${arcRadius} ${arcRadius} 0 0 1 ${sunX} ${sunY}`}
@@ -248,15 +212,13 @@ export default function SunsetSippers({ pubs }: SunsetSippersProps) {
                     opacity="0.7"
                   />
                 )}
-                {/* Sun glow */}
                 {sunPosition > 0 && sunPosition < 100 && (
                   <>
-                    <circle cx={sunX} cy={sunY} r="12" fill="#fbbf24" opacity="0.2" />
-                    <circle cx={sunX} cy={sunY} r="7" fill="#f59e0b" opacity="0.5" />
-                    <circle cx={sunX} cy={sunY} r="4" fill="#f59e0b" />
+                    <circle cx={sunX} cy={sunY} r="10" fill="#fbbf24" opacity="0.2" />
+                    <circle cx={sunX} cy={sunY} r="6" fill="#f59e0b" opacity="0.5" />
+                    <circle cx={sunX} cy={sunY} r="3.5" fill="#f59e0b" />
                   </>
                 )}
-                {/* Labels */}
                 <text x="5" y={arcCenterY - 6} fontSize="9" fill="#92734a" fontFamily="monospace">{E.arrow_up_plain}{formatTime(sunTimes.sunrise).replace(' ', '')}</text>
                 <text x={arcWidth - 75} y={arcCenterY - 6} fontSize="9" fill="#c2410c" fontFamily="monospace">{E.arrow_down_plain}{formatTime(sunTimes.sunset).replace(' ', '')}</text>
               </svg>
@@ -273,10 +235,8 @@ export default function SunsetSippers({ pubs }: SunsetSippersProps) {
           </div>
         </div>
 
-        {/* Expanded Content */}
         {isExpanded && (
           <div className="mt-4 pt-4 border-t border-amber-200/60">
-            {/* Sunset Pubs Grid */}
             <div className="flex items-center justify-between mb-3">
               <h4 className="text-sm font-semibold text-stone-700">
                 {E.beer} Best Sunset Spots ({sunsetPubs.length} pubs)
@@ -295,17 +255,14 @@ export default function SunsetSippers({ pubs }: SunsetSippersProps) {
                   className="rounded-xl bg-white/70 hover:bg-white/95 transition-all duration-200 overflow-hidden shadow-sm hover:shadow-md border border-amber-100 h-full flex flex-col"
                   onClick={(e) => e.stopPropagation()}
                 >
-                  {/* Mini Map with Sun Shadow Overlay */}
                   <div className="relative h-28 w-full">
                     <MiniMap lat={pub.lat} lng={pub.lng} name={pub.name} />
-                    {/* Sun shadow overlay */}
                     {!isNighttime && (
                       <div
                         className="absolute inset-0 pointer-events-none z-[400]"
                         style={{ background: sunShadow }}
                       />
                     )}
-                    {/* Sun direction indicator */}
                     {!isNighttime && (
                       <div className="absolute top-1.5 right-1.5 z-[500] bg-white/85 backdrop-blur-sm rounded-full px-1.5 py-0.5 flex items-center gap-1 shadow-sm">
                         <span className="text-xs">{E.sun}</span>
@@ -320,12 +277,10 @@ export default function SunsetSippers({ pubs }: SunsetSippersProps) {
                     {isNighttime && (
                       <div className="absolute inset-0 pointer-events-none z-[400] bg-indigo-900/20" />
                     )}
-                    {/* Price badge on map */}
                     <div className="absolute bottom-1.5 left-1.5 z-[500] bg-white/90 backdrop-blur-sm rounded-full px-2 py-0.5 shadow-sm">
                       <span className="text-sm font-bold text-amber-700">{pub.price !== null ? `$${pub.price.toFixed(2)}` : 'TBC'}</span>
                     </div>
                   </div>
-                  {/* Pub info */}
                   <div className="p-2.5 flex-1">
                     <div className="flex items-start justify-between gap-1">
                       <div className="min-w-0">
@@ -344,11 +299,10 @@ export default function SunsetSippers({ pubs }: SunsetSippersProps) {
                 className="w-full mt-2 text-xs text-amber-700 hover:text-amber-900 font-medium py-2 border border-amber-200 rounded-lg hover:bg-amber-50 transition-colors"
                 onClick={(e) => { e.stopPropagation(); setShowAllPubs(!showAllPubs); }}
               >
-                {showAllPubs ? '\u25b2 Show less' : `\u25bc Show all ${sunsetPubs.length} sunset spots`}
+                {showAllPubs ? '▲ Show less' : `▼ Show all ${sunsetPubs.length} sunset spots`}
               </button>
             )}
 
-            {/* Fun footer */}
             <div className={`mt-3 text-center text-xs py-2 rounded-lg ${
               isGoldenHour || isSunset
                 ? 'bg-amber-100/60 text-amber-800'

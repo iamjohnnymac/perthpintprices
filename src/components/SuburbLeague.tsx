@@ -127,7 +127,7 @@ export default function SuburbLeague({ pubs }: { pubs: Pub[] }) {
 
   return (
     <div className="mb-6">
-      <div className="bg-gradient-to-br from-stone-50 to-amber-50 rounded-2xl shadow-sm border border-stone-200 overflow-hidden">
+      <div className="bg-gradient-to-r from-stone-50 via-amber-50/20 to-stone-50 rounded-2xl shadow-sm border border-stone-200 overflow-hidden">
         <button
           onClick={() => setIsExpanded(!isExpanded)}
           className="w-full text-left px-5 py-4 flex items-center justify-between hover:bg-stone-100/40 transition-colors"
@@ -144,9 +144,9 @@ export default function SuburbLeague({ pubs }: { pubs: Pub[] }) {
                   : 'Ranked by average pint price — footy ladder style'}
             </p>
           </div>
-          <span className="text-stone-400 text-xl transition-transform duration-200" style={{ transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)' }}>
-            ▼
-          </span>
+          <svg width="16" height="16" viewBox="0 0 16 16" className={`text-stone-400 transition-transform ${isExpanded ? 'rotate-180' : ''}`}>
+            <path d="M4 6l4 4 4-4" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
         </button>
 
         {isExpanded && (
