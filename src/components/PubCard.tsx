@@ -14,14 +14,10 @@ import { Pub } from '@/types/pub'
 import { CrowdReport } from '@/lib/supabase'
 import { HappyHourStatus } from '@/lib/happyHour'
 
-// Google Maps icon SVG
-const GoogleMapsIcon = () => (
-  <svg className="w-5 h-5" viewBox="0 0 92.3 132.3" fill="none">
-    <path fill="#1a73e8" d="M60.2 2.2C55.8.8 51 0 46.1 0 32 0 19.3 6.4 10.8 16.5l21.8 18.3L60.2 2.2z"/>
-    <path fill="#ea4335" d="M10.8 16.5C4.1 24.5 0 34.9 0 46.1c0 8.7 1.7 15.7 4.6 22l28-33.3-21.8-18.3z"/>
-    <path fill="#4285f4" d="M46.1 28.5c9.8 0 17.7 7.9 17.7 17.7 0 4.3-1.6 8.3-4.2 11.4 0 0 13.9-16.6 27.5-32.7-5.6-10.8-15.3-19-27-22.7L32.6 34.8c3.7-3.9 8.8-6.3 13.5-6.3z"/>
-    <path fill="#fbbc04" d="M46.1 63.5c-9.8 0-17.7-7.9-17.7-17.7 0-4.3 1.6-8.3 4.2-11.4L4.6 68.1C11.3 81.8 24.8 99.7 46.1 132.3c6.7-10.2 12.7-19.1 17.9-27.1L46.1 63.5z"/>
-    <path fill="#34a853" d="M59.6 57.6c2.6-3.1 4.2-7.1 4.2-11.4 0-9.8-7.9-17.7-17.7-17.7-4.7 0-9.8 2.4-13.5 6.3L64 105.2c14.5-23.3 23.2-40.5 23.2-59.1 0-5.8-.8-11.3-2.4-16.4L59.6 57.6z"/>
+// Subtle directions pin icon
+const DirectionsIcon = () => (
+  <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
   </svg>
 )
 
@@ -54,17 +50,6 @@ export default function PubCard({
 }: PubCardProps) {
   return (
     <Card className="group relative overflow-hidden hover:shadow-lg transition-all duration-200 border-stone-200 h-full flex flex-col">
-      {/* Rank badge for top 3 */}
-      {index < 3 && sortBy === 'price' && (
-        <div className={`absolute -top-1 -right-1 w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm shadow-md z-10 ${
-          index === 0 ? 'bg-yellow-500' :
-          index === 1 ? 'bg-stone-400' :
-          'bg-amber-700'
-        }`}>
-          #{index + 1}
-        </div>
-      )}
-
       {/* Happy Hour active badge */}
       {happyHourStatus.isActive && (
         <Badge className="absolute top-2 left-2 z-10 bg-green-600 hover:bg-green-600 text-white animate-pulse">
@@ -84,15 +69,15 @@ export default function PubCard({
         <div className="flex justify-between items-start gap-2">
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-1.5">
-              <a 
+              <a
                 href={getDirectionsUrl(pub)}
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
-                className="flex-shrink-0 hover:scale-110 transition-transform"
-                title="Get directions in Google Maps"
+                className="flex-shrink-0 text-stone-300 hover:text-amber-500 transition-colors"
+                title="Get directions"
               >
-                <GoogleMapsIcon />
+                <DirectionsIcon />
               </a>
               <h3 className="font-bold text-stone-900 truncate">{pub.name}</h3>
             </div>
@@ -107,9 +92,9 @@ export default function PubCard({
       <CardContent className="px-4 py-2 space-y-2 flex-1">
         {crowdReport && <CrowdBadge report={crowdReport} />}
 
-        <Badge className={`${getPriceBgColor(pub.price)} hover:opacity-90 text-white`}>
+        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-xs text-stone-500 bg-stone-100">
           🍺 {pub.beerType}
-        </Badge>
+        </span>
 
         <p className="text-xs text-stone-600">📍 {pub.address}</p>
 
