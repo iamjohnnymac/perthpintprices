@@ -25,8 +25,8 @@ export default function VenueIntel({ pubs }: VenueIntelProps) {
   const priceRange = useMemo(() => {
     if (pubs.length === 0) return { min: 0, max: 0 }
     return {
-      min: Math.min(...pubs.map(p => p.price)),
-      max: Math.max(...pubs.map(p => p.price)),
+      min: Math.min(...pubs.filter(p => p.price !== null).map(p => p.price!)),
+      max: Math.max(...pubs.filter(p => p.price !== null).map(p => p.price!)),
     }
   }, [pubs])
 
@@ -39,7 +39,7 @@ export default function VenueIntel({ pubs }: VenueIntelProps) {
       brackets[key] = 0
     }
     for (const pub of pubs) {
-      const key = `$${Math.floor(pub.price)}`
+      if (pub.price === null) continue; const key = `$${Math.floor(pub.price)}`
       brackets[key] = (brackets[key] || 0) + 1
     }
     return Object.entries(brackets).sort((a, b) => {
@@ -57,6 +57,7 @@ export default function VenueIntel({ pubs }: VenueIntelProps) {
     const map: Record<string, { totalPrice: number; count: number }> = {}
     for (const pub of pubs) {
       if (!map[pub.suburb]) map[pub.suburb] = { totalPrice: 0, count: 0 }
+        if (pub.price === null) continue
       map[pub.suburb].totalPrice += pub.price
       map[pub.suburb].count += 1
     }
@@ -71,9 +72,10 @@ export default function VenueIntel({ pubs }: VenueIntelProps) {
     const suburbAvg: Record<string, number> = {}
     for (const s of suburbStats) suburbAvg[s.name] = s.avgPrice
     return pubs
+      .filter(pub => pub.price !== null)
       .map(pub => ({
         pub,
-        diff: pub.price - (suburbAvg[pub.suburb] || pub.price),
+        diff: (pub.price ?? 0) - (suburbAvg[pub.suburb] || (pub.price ?? 0)),
       }))
       .filter(e => e.diff > 0)
       .sort((a, b) => b.diff - a.diff)
@@ -84,9 +86,10 @@ export default function VenueIntel({ pubs }: VenueIntelProps) {
     const suburbAvg: Record<string, number> = {}
     for (const s of suburbStats) suburbAvg[s.name] = s.avgPrice
     return pubs
+      .filter(pub => pub.price !== null)
       .map(pub => ({
         pub,
-        diff: (suburbAvg[pub.suburb] || pub.price) - pub.price,
+        diff: (suburbAvg[pub.suburb] || (pub.price ?? 0)) - (pub.price ?? 0),
       }))
       .filter(e => e.diff > 0)
       .sort((a, b) => b.diff - a.diff)
@@ -102,9 +105,9 @@ export default function VenueIntel({ pubs }: VenueIntelProps) {
   }, [suburbStats])
 
   const percentileData = useMemo(() => {
-    const sorted = [...pubs].sort((a, b) => a.price - b.price)
-    const median = sorted.length > 0 ? sorted[Math.floor(sorted.length / 2)].price : 0
-    const cheaperCount = sorted.filter(p => p.price < median).length
+    const sorted = [...pubs].filter(p => p.price !== null).sort((a, b) => a.price! - b.price!)
+    const median = sorted.length > 0 ? sorted[Math.floor(sorted.length / 2)].price! : 0
+    const cheaperCount = sorted.filter(p => p.price !== null && p.price < median).length
     const percentile = pubs.length > 0 ? Math.round((cheaperCount / pubs.length) * 100) : 0
     return { median, percentile }
   }, [pubs])
@@ -179,7 +182,7 @@ export default function VenueIntel({ pubs }: VenueIntelProps) {
                         <p className="text-[10px] text-stone-400">{pub.suburb}</p>
                       </div>
                       <div className="text-right flex-shrink-0">
-                        <p className="text-xs font-bold text-green-700">${pub.price.toFixed(2)}</p>
+                        <p className="text-xs font-bold text-green-700">{pub.price !== null ? `$${pub.price.toFixed(2)}` : 'TBC'}</p>
                         <p className="text-[9px] text-green-600">{E.down_arrow}-${diff.toFixed(2)}</p>
                       </div>
                     </div>
@@ -200,7 +203,7 @@ export default function VenueIntel({ pubs }: VenueIntelProps) {
                         <p className="text-[10px] text-stone-400">{pub.suburb}</p>
                       </div>
                       <div className="text-right flex-shrink-0">
-                        <p className="text-xs font-bold text-red-600">${pub.price.toFixed(2)}</p>
+                        <p className="text-xs font-bold text-red-600">{pub.price !== null ? `$${pub.price.toFixed(2)}` : 'TBC'}</p>
                         <p className="text-[9px] text-red-500">{E.up_arrow}+${diff.toFixed(2)}</p>
                       </div>
                     </div>

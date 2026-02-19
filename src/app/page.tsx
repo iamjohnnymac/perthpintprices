@@ -42,21 +42,24 @@ function isHappyHour(happyHour: string | null | undefined): boolean {
   return status.isActive
 }
 
-function getPriceColor(price: number): string {
+function getPriceColor(price: number | null): string {
+  if (price === null) return 'from-stone-400 to-stone-500'
   if (price <= 7) return 'from-green-600 to-green-700'
   if (price <= 8) return 'from-yellow-600 to-yellow-700'
   if (price <= 9) return 'from-orange-600 to-orange-700'
   return 'from-red-600 to-red-700'
 }
 
-function getPriceBgColor(price: number): string {
+function getPriceBgColor(price: number | null): string {
+  if (price === null) return 'bg-stone-400'
   if (price <= 7) return 'bg-green-700'
   if (price <= 8) return 'bg-yellow-700'
   if (price <= 9) return 'bg-orange-700'
   return 'bg-red-700'
 }
 
-function getPriceTextColor(price: number): string {
+function getPriceTextColor(price: number | null): string {
+  if (price === null) return 'text-stone-400'
   if (price <= 7) return 'text-green-700'
   if (price <= 8) return 'text-yellow-700'
   if (price <= 9) return 'text-orange-700'
@@ -135,12 +138,12 @@ export default function Home() {
           pub.address.toLowerCase().includes(searchTerm.toLowerCase()) ||
           (pub.description?.toLowerCase() || '').includes(searchTerm.toLowerCase())
         const matchesSuburb = !selectedSuburb || selectedSuburb === 'all' || pub.suburb === selectedSuburb
-        const matchesPrice = pub.price <= maxPrice
+        const matchesPrice = pub.price === null || pub.price <= maxPrice
         const matchesHappyHour = !showHappyHourOnly || isHappyHour(pub.happyHour)
         return matchesSearch && matchesSuburb && matchesPrice && matchesHappyHour
       })
       .sort((a, b) => {
-        if (sortBy === 'price') return a.price - b.price
+        if (sortBy === 'price') { if (a.price === null && b.price === null) return 0; if (a.price === null) return 1; if (b.price === null) return -1; return a.price - b.price; }
         if (sortBy === 'name') return a.name.localeCompare(b.name)
         if (sortBy === 'suburb') return a.suburb.localeCompare(b.suburb)
         return 0
@@ -151,9 +154,9 @@ export default function Home() {
     if (pubs.length === 0) return { total: 0, minPrice: 0, maxPriceValue: 0, avgPrice: '0', happyHourNow: 0 }
     return {
       total: pubs.length,
-      minPrice: Math.min(...pubs.map(p => p.price)),
-      maxPriceValue: Math.max(...pubs.map(p => p.price)),
-      avgPrice: (pubs.reduce((sum, p) => sum + p.price, 0) / pubs.length).toFixed(2),
+      minPrice: Math.min(...pubs.filter(p => p.price !== null).map(p => p.price!)),
+      maxPriceValue: Math.max(...pubs.filter(p => p.price !== null).map(p => p.price!)),
+      avgPrice: (() => { const priced = pubs.filter(p => p.price !== null); return priced.length > 0 ? (priced.reduce((sum, p) => sum + p.price!, 0) / priced.length).toFixed(2) : '0'; })(),
       happyHourNow: pubs.filter(p => isHappyHour(p.happyHour)).length
     }
   }, [pubs, currentTime])
@@ -301,11 +304,11 @@ export default function Home() {
                       </td>
                       <td className="py-3 px-4 hidden sm:table-cell">
                         <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium text-white ${getPriceBgColor(pub.price)}`}>
-                          🍺 {pub.beerType}
+                          \uD83C\uDF7A {pub.beerType}
                         </span>
                       </td>
                       <td className={`py-3 px-2 sm:px-4 text-right font-bold text-lg whitespace-nowrap ${getPriceTextColor(pub.price)}`}>
-                        ${pub.price.toFixed(2)}
+                        {pub.price !== null ? `$${pub.price.toFixed(2)}` : 'TBC'}
                       </td>
                       <td className="py-3 px-4 hidden md:table-cell">
                         {pub.happyHour ? (
@@ -317,7 +320,7 @@ export default function Home() {
                             {happyHourStatus.statusEmoji} {happyHourStatus.statusText}
                           </span>
                         ) : (
-                          <span className="text-xs text-stone-400">—</span>
+                          <span className="text-xs text-stone-400">\u2014</span>
                         )}
                       </td>
                       <td className="py-3 px-4 text-center">
@@ -369,7 +372,7 @@ export default function Home() {
 
         {filteredPubs.length === 0 && (
           <div className="text-center py-12 bg-white rounded-xl border border-stone-200">
-            <div className="text-5xl mb-3">🔍</div>
+            <div className="text-5xl mb-3">\uD83D\uDD0D</div>
             <h3 className="text-lg font-bold text-stone-700 mb-1">No pubs found</h3>
             <p className="text-stone-500 text-sm">Try adjusting your filters</p>
           </div>
@@ -380,21 +383,21 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex flex-wrap justify-center gap-6 mb-6 pb-6 border-b border-stone-700">
             <div className="flex items-center gap-2">
-              <span className="text-2xl">🍺</span>
+              <span className="text-2xl">\uD83C\uDF7A</span>
               <div>
                 <p className="font-semibold text-stone-200">Schooner</p>
                 <p className="text-xs text-stone-400">425ml</p>
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-2xl">🍺</span>
+              <span className="text-2xl">\uD83C\uDF7A</span>
               <div>
                 <p className="font-semibold text-amber-400">Pint</p>
                 <p className="text-xs text-stone-400">570ml</p>
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-2xl">🍾</span>
+              <span className="text-2xl">\uD83C\uDF7E</span>
               <div>
                 <p className="font-semibold text-stone-200">Long Neck</p>
                 <p className="text-xs text-stone-400">750ml</p>
@@ -403,7 +406,7 @@ export default function Home() {
           </div>
 
           <div className="text-center">
-            <p className="text-stone-300 text-sm">🍺 Perth Pint Prices — Helping you find cheap drinks since 2024</p>
+            <p className="text-stone-300 text-sm">\uD83C\uDF7A Perth Pint Prices \u2014 Helping you find cheap drinks since 2024</p>
             <p className="text-stone-500 text-xs mt-1">Prices may vary. Pint prices shown. Always drink responsibly.</p>
             <a
               href="mailto:perthpintprices@gmail.com?subject=Price%20Correction&body=Hi%2C%20I%20noticed%20a%20wrong%20price%20on%20the%20site.%0A%0APub%20name%3A%20%0ACorrect%20price%3A%20%0ADetails%3A%20"
