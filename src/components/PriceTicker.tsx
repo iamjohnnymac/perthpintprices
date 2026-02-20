@@ -1,8 +1,12 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { supabase } from '@/lib/supabase';
+import { useMemo } from 'react';
+import { Pub } from '@/types/pub';
 import E from '@/lib/emoji';
+
+interface PriceTickerProps {
+  pubs: Pub[];
+}
 
 interface SuburbTicker {
   suburb: string;
@@ -11,49 +15,30 @@ interface SuburbTicker {
   diff: number;
 }
 
-export default function PriceTicker() {
-  const [tickers, setTickers] = useState<SuburbTicker[]>([]);
+export default function PriceTicker({ pubs }: PriceTickerProps) {
+  const tickers = useMemo<SuburbTicker[]>(() => {
+    if (!pubs || pubs.length === 0) return [];
 
-  useEffect(() => {
-    async function fetchTickers() {
-      const { data: pubs, error } = await supabase
-        .from('pubs')
-        .select('suburb, price');
-
-      if (error || !pubs || pubs.length === 0) return;
-
-      const suburbMap: Record<string, number[]> = {};
-      for (const pub of pubs) {
-        if (!pub.suburb || pub.price == null) continue;
-        const key = pub.suburb.trim();
-        if (!suburbMap[key]) suburbMap[key] = [];
-        suburbMap[key].push(Number(pub.price));
-      }
-
-      const allPrices = pubs
-        .filter((p) => p.price != null)
-        .map((p) => Number(p.price));
-      const overallAvg =
-        allPrices.reduce((sum, p) => sum + p, 0) / allPrices.length;
-
-      const items: SuburbTicker[] = Object.entries(suburbMap)
-        .filter(([, prices]) => prices.length >= 2)
-        .map(([suburb, prices]) => {
-          const avg = prices.reduce((s, p) => s + p, 0) / prices.length;
-          return {
-            suburb,
-            avgPrice: avg,
-            pubCount: prices.length,
-            diff: avg - overallAvg,
-          };
-        })
-        .sort((a, b) => a.suburb.localeCompare(b.suburb));
-
-      setTickers(items);
+    const suburbMap: Record<string, number[]> = {};
+    for (const pub of pubs) {
+      if (!pub.suburb || pub.price == null) continue;
+      const key = pub.suburb.trim();
+      if (!suburbMap[key]) suburbMap[key] = [];
+      suburbMap[key].push(Number(pub.price));
     }
 
-    fetchTickers();
-  }, []);
+    const allPrices = pubs.filter((p) => p.price != null).map((p) => Number(p.price));
+    if (allPrices.length === 0) return [];
+    const overallAvg = allPrices.reduce((sum, p) => sum + p, 0) / allPrices.length;
+
+    return Object.entries(suburbMap)
+      .filter(([, prices]) => prices.length >= 2)
+      .map(([suburb, prices]) => {
+        const avg = prices.reduce((s, p) => s + p, 0) / prices.length;
+        return { suburb, avgPrice: avg, pubCount: prices.length, diff: avg - overallAvg };
+      })
+      .sort((a, b) => a.suburb.localeCompare(b.suburb));
+  }, [pubs]);
 
   if (tickers.length === 0) return null;
 
@@ -73,9 +58,7 @@ export default function PriceTicker() {
           pointer-events: none;
         }
       `}</style>
-      <div
-        className="ticker-track flex items-center whitespace-nowrap h-full"
-      >
+      <div className="ticker-track flex items-center whitespace-nowrap h-full">
         {items.map((t, i) => {
           const isAboveAvg = t.diff >= 0;
           const arrow = isAboveAvg ? E.up_arrow : E.down_arrow;
