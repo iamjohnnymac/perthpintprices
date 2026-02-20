@@ -226,12 +226,12 @@ export default function PintIndex() {
   const yearPct = ((yearChange / oldest.avg_price) * 100);
 
   const sparkData = snapshots.map(s => s.avg_price);
-  const trendIcon = monthChange > 0 ? '▲' : monthChange < 0 ? '▼' : '—';
+  const trendIcon = monthChange > 0 ? '\u25b2' : monthChange < 0 ? '\u25bc' : '\u2014';
   const trendColor = monthChange > 0 ? 'text-red-500' : monthChange < 0 ? 'text-green-500' : 'text-yellow-500';
 
   return (
     <Card 
-      className="mb-4 border-stone-200 bg-gradient-to-r from-stone-50 via-amber-50/20 to-stone-50 cursor-pointer hover:shadow-md transition-shadow"
+      className="border-stone-200/60 bg-gradient-to-r from-stone-50 via-amber-50/20 to-stone-50 cursor-pointer hover:shadow-md transition-shadow shadow-[0_2px_12px_rgba(0,0,0,0.04)]"
       onClick={() => setExpanded(!expanded)}
     >
       <CardContent className="p-4">
@@ -260,7 +260,7 @@ export default function PintIndex() {
           
           {/* Right: Sparkline with hover */}
           <div className="hidden sm:block" onClick={e => e.stopPropagation()}>
-            <div className="text-[10px] text-stone-400 mb-1 text-right">12-month trend · hover to explore</div>
+            <div className="text-[10px] text-stone-400 mb-1 text-right">12-month trend \u00b7 hover to explore</div>
             <Sparkline data={sparkData} snapshots={snapshots} />
           </div>
         </div>
@@ -314,7 +314,7 @@ export default function PintIndex() {
 
             {/* Mobile sparkline */}
             <div className="sm:hidden mt-4" onClick={e => e.stopPropagation()}>
-              <div className="text-xs text-stone-400 mb-1">12-month trend · hover to explore</div>
+              <div className="text-xs text-stone-400 mb-1">12-month trend \u00b7 hover to explore</div>
               <Sparkline data={sparkData} snapshots={snapshots} width={320} height={50} />
             </div>
 
