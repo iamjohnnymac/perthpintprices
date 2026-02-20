@@ -50,7 +50,7 @@ export default function PubCard({
   onCrowdReport,
 }: PubCardProps) {
   return (
-    <Card className="group relative overflow-hidden hover:shadow-lg transition-all duration-200 border-stone-200 h-full flex flex-col">
+    <Card className="group relative overflow-hidden hover:shadow-lg transition-all duration-200 border-stone-200/60 shadow-[0_1px_8px_rgba(0,0,0,0.04)] rounded-2xl h-full flex flex-col">
       {/* Happy Hour active badge */}
       {happyHourStatus.isActive && (
         <Badge className="absolute top-2 left-2 z-10 bg-green-600 hover:bg-green-600 text-white animate-pulse">
