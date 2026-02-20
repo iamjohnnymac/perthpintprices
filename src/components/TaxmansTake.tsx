@@ -4,7 +4,7 @@ import { useState, useMemo } from 'react'
 import { Pub } from '@/types/pub'
 import InfoTooltip from './InfoTooltip'
 
-// ── Tax constants (ATO rates as of Feb 2026) ──────────────────
+// ── Tax constants (ATO rates as of Feb 2026) ──────────────────────
 const DRAUGHT_EXCISE_PER_LAL = 43.39  // $/litre of alcohol — FROZEN until Aug 2027
 const PINT_LITRES = 0.568             // 568ml
 const DEFAULT_ABV = 0.048             // 4.8% typical full-strength
@@ -13,11 +13,11 @@ const GST_RATE = 0.10
 
 // Country excise comparison (approximate AUD per pint equivalent)
 const COUNTRIES = [
-  { name: 'Australia', flag: '\u{1F1E6}\u{1F1FA}', excise: 0, color: '#d97706' },
-  { name: 'UK', flag: '\u{1F1EC}\u{1F1E7}', excise: 0.32, color: '#6b7280' },
-  { name: 'USA', flag: '\u{1F1FA}\u{1F1F8}', excise: 0.11, color: '#6b7280' },
-  { name: 'Japan', flag: '\u{1F1EF}\u{1F1F5}', excise: 0.38, color: '#6b7280' },
-  { name: 'Germany', flag: '\u{1F1E9}\u{1F1EA}', excise: 0.04, color: '#6b7280' },
+  { name: 'Australia', flag: '\ud83c\udde6\ud83c\uddfa', excise: 0, color: '#d97706' },
+  { name: 'UK', flag: '\ud83c\uddec\ud83c\udde7', excise: 0.32, color: '#6b7280' },
+  { name: 'USA', flag: '\ud83c\uddfa\ud83c\uddf8', excise: 0.11, color: '#6b7280' },
+  { name: 'Japan', flag: '\ud83c\uddef\ud83c\uddf5', excise: 0.38, color: '#6b7280' },
+  { name: 'Germany', flag: '\ud83c\udde9\ud83c\uddea', excise: 0.04, color: '#6b7280' },
 ]
 
 function calcTax(price: number) {
@@ -73,7 +73,7 @@ export default function TaxmansTake({ pubs }: { pubs: Pub[] }) {
   const maxExcise = Math.max(...countries.map(c => c.excise))
 
   return (
-    <div className="bg-gradient-to-br from-stone-50 via-amber-50/20 to-stone-50 border border-stone-200 rounded-xl p-4 mb-4">
+    <div className="bg-gradient-to-br from-stone-50 via-amber-50/20 to-stone-50 border border-stone-200/60 rounded-2xl p-4 shadow-[0_2px_12px_rgba(0,0,0,0.06)]">
       {/* Header */}
       <div className="flex items-start justify-between mb-3">
         <div className="flex items-center gap-2.5">
@@ -137,7 +137,7 @@ export default function TaxmansTake({ pubs }: { pubs: Pub[] }) {
         </div>
 
         <div className="text-center mt-2 pt-2 border-t border-dashed border-stone-200">
-          <p className="text-stone-400 text-[10px]">* Based on 4.8% ABV full-strength draught {'\u00B7'} 568ml pint</p>
+          <p className="text-stone-400 text-[10px]">* Based on 4.8% ABV full-strength draught {"\u00B7"} 568ml pint</p>
         </div>
       </div>
 
@@ -235,13 +235,13 @@ export default function TaxmansTake({ pubs }: { pubs: Pub[] }) {
               </div>
               <div className="flex items-start gap-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-red-500 flex-shrink-0 mt-1.5" />
-                <p>Good news: draught beer excise is <span className="font-bold text-emerald-700">frozen until Aug 2027</span> {'\u2014'} enjoy it while it lasts</p>
+                <p>Good news: draught beer excise is <span className="font-bold text-emerald-700">frozen until Aug 2027</span> {"\u2014"} enjoy it while it lasts</p>
               </div>
             </div>
           </div>
 
           <p className="text-[10px] text-stone-400 text-center">
-            Source: ATO Excise Duty Rates (Feb 2026) {'\u00B7'} Draught beer tariff 1.11 {'\u00B7'} Rates frozen under Excise Tariff Proposal No. 1 2025
+            Source: ATO Excise Duty Rates (Feb 2026) {"\u00B7"} Draught beer tariff 1.11 {"\u00B7"} Rates frozen under Excise Tariff Proposal No. 1 2025
           </p>
         </div>
       )}
