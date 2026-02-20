@@ -172,7 +172,7 @@ export default function VenueIntel({ pubs }: VenueIntelProps) {
                   {undervalued.map(({ pub, diff }) => (
                     <div key={pub.id} className="flex items-center justify-between p-2 rounded-lg bg-green-50/60 border border-green-100">
                       <div className="min-w-0">
-                        <p className="text-[11px] font-semibold text-stone-800 truncate">{pub.name}</p>
+                        <p className="text-xs font-semibold text-stone-800 truncate">{pub.name}</p>
                         <p className="text-[10px] text-stone-400">{pub.suburb}</p>
                       </div>
                       <div className="text-right flex-shrink-0">
@@ -192,7 +192,7 @@ export default function VenueIntel({ pubs }: VenueIntelProps) {
                   {overvalued.map(({ pub, diff }) => (
                     <div key={pub.id} className="flex items-center justify-between p-2 rounded-lg bg-red-50/60 border border-red-100">
                       <div className="min-w-0">
-                        <p className="text-[11px] font-semibold text-stone-800 truncate">{pub.name}</p>
+                        <p className="text-xs font-semibold text-stone-800 truncate">{pub.name}</p>
                         <p className="text-[10px] text-stone-400">{pub.suburb}</p>
                       </div>
                       <div className="text-right flex-shrink-0">
@@ -215,7 +215,7 @@ export default function VenueIntel({ pubs }: VenueIntelProps) {
                     <div key={suburb.name} className="flex items-center justify-between p-2 rounded-lg bg-white/70 border border-stone-100">
                       <div className="flex items-center gap-2">
                         <span className="text-[10px] font-bold text-stone-400">{i + 1}</span>
-                        <span className="text-[11px] font-semibold text-stone-800">{suburb.name}</span>
+                        <span className="text-xs font-semibold text-stone-800">{suburb.name}</span>
                       </div>
                       <div className="text-right">
                         <span className="text-xs font-bold text-green-700">${suburb.avgPrice.toFixed(2)}</span>
@@ -235,7 +235,7 @@ export default function VenueIntel({ pubs }: VenueIntelProps) {
                     <div key={suburb.name} className="flex items-center justify-between p-2 rounded-lg bg-white/70 border border-stone-100">
                       <div className="flex items-center gap-2">
                         <span className="text-[10px] font-bold text-stone-400">{i + 1}</span>
-                        <span className="text-[11px] font-semibold text-stone-800">{suburb.name}</span>
+                        <span className="text-xs font-semibold text-stone-800">{suburb.name}</span>
                       </div>
                       <div className="text-right">
                         <span className="text-xs font-bold text-red-600">${suburb.avgPrice.toFixed(2)}</span>

@@ -208,7 +208,7 @@ export default function SunsetSippers({ pubs }: SunsetSippersProps) {
             <span className="text-2xl">{statusEmoji}</span>
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="font-bold text-stone-800 text-sm flex items-center">Sunset Sippers<InfoTooltip text="Uses Perth's real-time sunset & golden hour times (calculated astronomically). Highlights west-facing pubs with verified prices — best spots to watch the sun go down with a pint." /></h3>
+                <h3 className="font-bold text-stone-800 text-sm flex items-center">SUNSET SIPPERS<InfoTooltip text="Uses Perth's real-time sunset & golden hour times (calculated astronomically). Highlights west-facing pubs with verified prices — best spots to watch the sun go down with a pint." /></h3>
                 {isGoldenHour && (
                   <Badge className="bg-amber-500 text-white text-[10px] px-1.5 py-0 animate-pulse">
                     GOLDEN HOUR
@@ -342,10 +342,13 @@ export default function SunsetSippers({ pubs }: SunsetSippersProps) {
 
             {sunsetPubs.length > 6 && (
               <button
-                className="w-full mt-2 text-xs text-amber-700 hover:text-amber-900 font-medium py-2 border border-amber-200 rounded-lg hover:bg-amber-50 transition-colors"
+                className="w-full mt-2 flex items-center justify-center gap-1 text-xs text-amber-700 hover:text-amber-900 font-medium py-2 border border-amber-200 rounded-lg hover:bg-amber-50 transition-colors"
                 onClick={(e) => { e.stopPropagation(); setShowAllPubs(!showAllPubs); }}
               >
-                {showAllPubs ? '▲ Show less' : `▼ Show all ${sunsetPubs.length} sunset spots`}
+                <span>{showAllPubs ? 'Show less' : `Show all ${sunsetPubs.length} sunset spots`}</span>
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className={`transition-transform ${showAllPubs ? 'rotate-180' : ''}`}>
+                  <path d="M4 6l4 4 4-4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                </svg>
               </button>
             )}
 

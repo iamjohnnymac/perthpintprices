@@ -189,11 +189,11 @@ export default function BeerWeather({ pubs }: BeerWeatherProps) {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="flex flex-col items-center">
-              <span className="text-3xl leading-none">{getWeatherEmoji(weather.weatherCode)}</span>
+              <span className="text-2xl leading-none">{getWeatherEmoji(weather.weatherCode)}</span>
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="font-bold text-stone-800 text-sm flex items-center">Beer Weather<InfoTooltip text="Live conditions from Open-Meteo for Perth CBD, updated on each page load. Pub recommendations are ranked by outdoor seating suitability based on temperature, wind, and UV." /></h3>
+                <h3 className="font-bold text-stone-800 text-sm flex items-center">BEER WEATHER<InfoTooltip text="Live conditions from Open-Meteo for Perth CBD, updated on each page load. Pub recommendations are ranked by outdoor seating suitability based on temperature, wind, and UV." /></h3>
                 {isWindy && (
                   <Badge className="bg-sky-100 text-sky-700 border-sky-200 text-[10px] px-1.5 py-0">
                     💨 Windy!

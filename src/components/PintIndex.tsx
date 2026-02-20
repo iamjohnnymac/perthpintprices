@@ -231,7 +231,7 @@ export default function PintIndex() {
 
   return (
     <Card 
-      className="mb-6 border-stone-200 bg-gradient-to-r from-stone-50 to-amber-50/30 cursor-pointer hover:shadow-md transition-shadow"
+      className="mb-4 border-stone-200 bg-gradient-to-r from-stone-50 via-amber-50/20 to-stone-50 cursor-pointer hover:shadow-md transition-shadow"
       onClick={() => setExpanded(!expanded)}
     >
       <CardContent className="p-4">

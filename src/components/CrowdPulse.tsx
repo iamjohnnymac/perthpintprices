@@ -80,7 +80,7 @@ export default function CrowdPulse({ pubs, crowdReports }: CrowdPulseProps) {
   if (liveCount === 0) {
     return (
       <Card
-        className="mb-4 border border-stone-200 bg-gradient-to-r from-stone-50 via-slate-50 to-stone-50 cursor-pointer transition-all duration-300"
+        className="mb-4 border border-stone-200 bg-gradient-to-r from-stone-50 via-amber-50/20 to-stone-50 cursor-pointer transition-all duration-300"
         onClick={() => setIsExpanded(!isExpanded)}
       >
         <CardContent className="p-4">
@@ -92,7 +92,7 @@ export default function CrowdPulse({ pubs, crowdReports }: CrowdPulseProps) {
               </div>
               <div>
                 <h3 className="font-bold text-stone-800 text-sm flex items-center">LIVE MARKET INTEL<InfoTooltip text="Crowd reports submitted by users in the last 3 hours. Vibe score is a weighted average of busyness across all reporting venues." /></h3>
-                <p className="text-xs text-stone-400">No live reports yet {E.dash} be the first market analyst!</p>
+                <p className="text-xs text-stone-500">No live reports yet {E.dash} be the first market analyst!</p>
               </div>
             </div>
             <svg width="16" height="16" viewBox="0 0 16 16" className={`text-stone-400 transition-transform ${isExpanded ? 'rotate-180' : ''}`}>
@@ -116,7 +116,7 @@ export default function CrowdPulse({ pubs, crowdReports }: CrowdPulseProps) {
 
   return (
     <Card
-      className="mb-4 border border-emerald-200 bg-gradient-to-r from-slate-50 via-emerald-50/30 to-slate-50 cursor-pointer transition-all duration-300"
+      className="mb-4 border border-stone-200 bg-gradient-to-r from-stone-50 via-amber-50/20 to-stone-50 cursor-pointer transition-all duration-300"
       onClick={() => setIsExpanded(!isExpanded)}
     >
       <CardContent className="p-4">
