@@ -192,7 +192,7 @@ export default function SunsetSippers({ pubs }: SunsetSippersProps) {
 
   return (
     <Card
-      className={`mb-4 border cursor-pointer transition-all duration-300 ${
+      className={`border cursor-pointer transition-all duration-300 ${
         isGoldenHour || isSunset
           ? 'border-amber-400 bg-gradient-to-r from-amber-50 via-orange-50 to-rose-50'
           : isNighttime
