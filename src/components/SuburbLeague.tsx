@@ -126,15 +126,15 @@ export default function SuburbLeague({ pubs }: { pubs: Pub[] }) {
   const total = suburbs.length
 
   return (
-    <div className="mb-6">
+    <div className="mb-4">
       <div className="bg-gradient-to-r from-stone-50 via-amber-50/20 to-stone-50 rounded-2xl shadow-sm border border-stone-200 overflow-hidden">
         <button
           onClick={() => setIsExpanded(!isExpanded)}
           className="w-full text-left px-5 py-4 flex items-center justify-between hover:bg-stone-100/40 transition-colors"
         >
           <div>
-            <h2 className="text-lg font-bold text-stone-800 flex items-center gap-2">
-              <svg className="inline w-4 h-4 mr-1.5 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><rect x="3" y="12" width="4" height="8" rx="1"/><rect x="10" y="8" width="4" height="12" rx="1"/><rect x="17" y="4" width="4" height="16" rx="1"/></svg>Suburb League Table
+            <h2 className="text-sm font-bold text-stone-800 flex items-center gap-2">
+              <svg className="inline w-4 h-4 mr-1.5 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><rect x="3" y="12" width="4" height="8" rx="1"/><rect x="10" y="8" width="4" height="12" rx="1"/><rect x="17" y="4" width="4" height="16" rx="1"/></svg>SUBURB LEAGUE TABLE
             </h2>
             <p className="text-xs text-stone-500 mt-0.5">
               {isExpanded
@@ -145,7 +145,7 @@ export default function SuburbLeague({ pubs }: { pubs: Pub[] }) {
             </p>
           </div>
           <svg width="16" height="16" viewBox="0 0 16 16" className={`text-stone-400 transition-transform ${isExpanded ? 'rotate-180' : ''}`}>
-            <path d="M4 6l4 4 4-4" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
+            <path d="M4 6l4 4 4-4" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
         </button>
 

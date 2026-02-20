@@ -13,6 +13,7 @@ import CrowdBadge from './CrowdBadge'
 import { Pub } from '@/types/pub'
 import { CrowdReport } from '@/lib/supabase'
 import { HappyHourStatus } from '@/lib/happyHour'
+import E from '@/lib/emoji'
 
 // Subtle directions pin icon
 const DirectionsIcon = () => (
@@ -53,7 +54,7 @@ export default function PubCard({
       {/* Happy Hour active badge */}
       {happyHourStatus.isActive && (
         <Badge className="absolute top-2 left-2 z-10 bg-green-600 hover:bg-green-600 text-white animate-pulse">
-          🎉 HAPPY HOUR!
+          {E.party} HAPPY HOUR!
         </Badge>
       )}
 
@@ -100,10 +101,13 @@ export default function PubCard({
         {crowdReport && <CrowdBadge report={crowdReport} />}
 
         <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-xs text-stone-500 bg-stone-100">
-          🍺 {pub.beerType}
+          {E.beer} {pub.beerType}
         </span>
 
-        <p className="text-xs text-stone-600">📍 {pub.address}</p>
+        <p className="text-xs text-stone-600 flex items-center gap-1">
+          <svg className="w-3 h-3 text-stone-400 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+          {pub.address}
+        </p>
 
         {pub.happyHour && (
           <div className={`text-xs flex items-center gap-1 ${
