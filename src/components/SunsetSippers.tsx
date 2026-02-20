@@ -160,13 +160,13 @@ export default function SunsetSippers({ pubs }: SunsetSippersProps) {
   const sunShadow = getSunShadowGradient(sunAzimuth, isGoldenHour || isSunset)
   const cheapestSunset = sunsetPubs[0]
 
-  // Sun arc SVG dimensions — flat ellipse so the full arc fits inside the card
+  // Sun arc SVG dimensions — taller arc with room for labels below
   const arcWidth = 200
-  const arcHeight = 56
+  const arcHeight = 72
   const arcCenterX = arcWidth / 2   // 100
-  const arcCenterY = arcHeight - 8  // 48 — base of arc
-  const arcRx = 88                  // wide horizontal radius
-  const arcRy = 34                  // shallow vertical radius → peak at Y=14
+  const arcCenterY = 46             // horizon line — lower gives taller visible arc
+  const arcRx = 86                  // wide horizontal radius
+  const arcRy = 42                  // taller vertical radius → more prominent arc
 
   // Sun position along the ellipse: angle goes PI (left/sunrise) → 0 (right/sunset)
   const sunAngle = Math.PI - (sunPosition / 100) * Math.PI
@@ -227,7 +227,7 @@ export default function SunsetSippers({ pubs }: SunsetSippersProps) {
           {/* Mini Sun Dial */}
           <div className="flex items-center gap-3 overflow-visible">
             {!isNighttime && (
-              <svg width={160} height={45} viewBox={`0 0 ${arcWidth} ${arcHeight}`} className="opacity-80" overflow="visible" style={{display:'block'}}>
+              <svg width={160} height={58} viewBox={`0 0 ${arcWidth} ${arcHeight}`} className="opacity-80" overflow="hidden" style={{display:'block'}}>
                 {/* Horizon line */}
                 <line x1="8" y1={arcCenterY} x2={arcWidth - 8} y2={arcCenterY} stroke="#d4a574" strokeWidth="1" strokeDasharray="3,3" opacity="0.6" />
                 {/* Full arc (dashed guide) — flat ellipse */}
@@ -257,9 +257,9 @@ export default function SunsetSippers({ pubs }: SunsetSippersProps) {
                     <circle cx={sunX} cy={sunY} r="3" fill="#f59e0b" />
                   </>
                 )}
-                {/* Labels */}
-                <text x="4" y={arcCenterY - 4} fontSize="8" fill="#92734a" fontFamily="monospace">{E.arrow_up_plain}{formatTime(sunTimes.sunrise).replace(' ', '')}</text>
-                <text x={arcWidth - 62} y={arcCenterY - 4} fontSize="8" fill="#c2410c" fontFamily="monospace">{E.arrow_down_plain}{formatTime(sunTimes.sunset).replace(' ', '')}</text>
+                {/* Labels — below horizon line, larger font, symmetric */}
+                <text x="6" y={arcCenterY + 18} fontSize="11" fill="#92734a" fontFamily="monospace" fontWeight="500">{E.arrow_up_plain}{formatTime(sunTimes.sunrise).replace(' ', '')}</text>
+                <text x={arcWidth - 70} y={arcCenterY + 18} fontSize="11" fill="#c2410c" fontFamily="monospace" fontWeight="500">{E.arrow_down_plain}{formatTime(sunTimes.sunset).replace(' ', '')}</text>
               </svg>
             )}
 
