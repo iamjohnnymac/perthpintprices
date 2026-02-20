@@ -79,7 +79,7 @@ export default function PuntNPints({ pubs }: PuntNPintsProps) {
   const displayedPairs = isExpanded ? nearbyPairs.slice(0, 10) : nearbyPairs.slice(0, 3)
 
   return (
-    <Card className="bg-gradient-to-br from-stone-50 via-amber-50/20 to-stone-50 border-stone-200 h-full">
+    <Card className="bg-gradient-to-br from-stone-50 via-amber-50/20 to-stone-50 border-stone-200/60 shadow-[0_2px_12px_rgba(0,0,0,0.06)] h-full rounded-2xl">
       <CardContent className="p-4">
         {/* Header */}
         <div className="flex items-center justify-between mb-3">

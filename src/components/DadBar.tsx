@@ -5,14 +5,14 @@ import { Pub } from '@/types/pub'
 import InfoTooltip from './InfoTooltip'
 
 const DAD_JOKES = [
-  "I told my kids I\u2019d buy them a drink at the pub. They got lemonade. I got a pint. Everyone won.",
-  "My kid asked why we go to pubs with playgrounds. I said \u201Cit\u2019s called multitasking, son.\u201D",
-  "A dad walks into a pub with a playground. He doesn\u2019t walk out for 4 hours.",
-  "What\u2019s a dad\u2019s favourite pub feature? Fenced. Play. Area.",
+  "I told my kids I’d buy them a drink at the pub. They got lemonade. I got a pint. Everyone won.",
+  "My kid asked why we go to pubs with playgrounds. I said “it’s called multitasking, son.”",
+  "A dad walks into a pub with a playground. He doesn’t walk out for 4 hours.",
+  "What’s a dad’s favourite pub feature? Fenced. Play. Area.",
   "I used to go to trendy bars. Now I rate pubs by slide height.",
-  "The Baysie has a 10m slide. My kids rate it 5 stars. I rate the beer garden 5 stars. Everyone\u2019s happy.",
+  "The Baysie has a 10m slide. My kids rate it 5 stars. I rate the beer garden 5 stars. Everyone’s happy.",
   "They say it takes a village to raise a child. In Perth, it takes a pub with a playground.",
-  "My wife said \u201Ctake the kids somewhere fun.\u201D So I took them to a pub. With a playground. Loophole.",
+  "My wife said “take the kids somewhere fun.” So I took them to a pub. With a playground. Loophole.",
 ]
 
 // Playground quality ratings based on research
@@ -22,11 +22,11 @@ const PLAYGROUND_NOTES: Record<number, string> = {
   10: 'Nature-style play area with imaginative zones',
   23: 'Huge grassy area right by the harbour',
   104: 'Vintage Land Cruiser & cray boats to climb',
-  162: 'Geoff\u2019s Smash Repairs themed playground + Mario Kart arcade',
+  162: 'Geoff’s Smash Repairs themed playground + Mario Kart arcade',
   103: 'Big sandpit & play area overlooking the water',
   167: 'Replica tractor, cubby, swings & boats + resident animals',
-  11: 'Percy\u2019s Paddock: fort, sandpit, soft-play, ball pit for toddlers',
-  118: 'Adjacent playground + optional Camfield Cr\u00E8che service',
+  11: 'Percy’s Paddock: fort, sandpit, soft-play, ball pit for toddlers',
+  118: 'Adjacent playground + optional Camfield Crèche service',
   150: 'Wooden climbing tower, slides, ropes + shade sails',
   34: 'The Park: dedicated play area with shade sails',
 }
@@ -48,7 +48,7 @@ export default function DadBar({ pubs }: { pubs: Pub[] }) {
   const displayPubs = showAll ? dadPubs : dadPubs.slice(0, 5)
 
   return (
-    <div className="bg-gradient-to-br from-stone-50 via-amber-50/20 to-stone-50 border border-stone-200 rounded-xl p-4 mb-4">
+    <div className="bg-gradient-to-br from-stone-50 via-amber-50/20 to-stone-50 border border-stone-200/60 rounded-2xl p-4 shadow-[0_2px_12px_rgba(0,0,0,0.06)]">
       {/* Header */}
       <div className="flex items-start justify-between mb-3">
         <div className="flex items-center gap-2.5">
@@ -119,7 +119,7 @@ export default function DadBar({ pubs }: { pubs: Pub[] }) {
                 <p className="text-[10px] text-stone-400 truncate">{pub.suburb}</p>
                 {PLAYGROUND_NOTES[pub.id] && (
                   <>
-                    <span className="text-stone-300 text-[10px]">{'\u00B7'}</span>
+                    <span className="text-stone-300 text-[10px]">{"·"}</span>
                     <p className="text-[10px] text-amber-600 truncate">{PLAYGROUND_NOTES[pub.id]}</p>
                   </>
                 )}
@@ -151,7 +151,7 @@ export default function DadBar({ pubs }: { pubs: Pub[] }) {
 
       {/* Footer */}
       <p className="text-[10px] text-stone-400 text-center mt-2">
-        Sources: Buggybuddys, Urban List Perth {'\u00B7'} All venues verified for playground facilities
+        Sources: Buggybuddys, Urban List Perth {"·"} All venues verified for playground facilities
       </p>
     </div>
   )
