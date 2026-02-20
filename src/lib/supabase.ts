@@ -81,5 +81,6 @@ export async function getPubs(): Promise<Pub[]> {
     lastUpdated: row.last_updated || undefined,
     sunsetSpot: row.sunset_spot || false,
     priceVerified: row.price_verified !== false,
+    hasTab: row.has_tab === true,
   }))
 }

@@ -1,0 +1,182 @@
+'use client'
+
+import { useState, useMemo, useEffect } from 'react'
+import { Pub } from '@/types/pub'
+import InfoTooltip from './InfoTooltip'
+import { Card, CardContent } from '@/components/ui/card'
+
+interface TabLocation {
+  id: number
+  name: string
+  address: string
+  suburb: string
+  lat: number
+  lng: number
+  type: string
+}
+
+interface PuntNPintsProps {
+  pubs: Pub[]
+}
+
+function haversineKm(lat1: number, lng1: number, lat2: number, lng2: number): number {
+  const R = 6371
+  const dLat = (lat2 - lat1) * Math.PI / 180
+  const dLng = (lng2 - lng1) * Math.PI / 180
+  const a = Math.sin(dLat / 2) ** 2 +
+    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+    Math.sin(dLng / 2) ** 2
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
+}
+
+export default function PuntNPints({ pubs }: PuntNPintsProps) {
+  const [isExpanded, setIsExpanded] = useState(false)
+  const [tabLocations, setTabLocations] = useState<TabLocation[]>([])
+
+  useEffect(() => {
+    async function fetchTabs() {
+      try {
+        const { supabase } = await import('@/lib/supabase')
+        const { data } = await supabase.from('tab_locations').select('*')
+        if (data) setTabLocations(data)
+      } catch { /* silent */ }
+    }
+    fetchTabs()
+  }, [])
+
+  // Pubs with TAB on-site — the holy grail: punt AND pint under one roof
+  const tabPubs = useMemo(() => {
+    return pubs
+      .filter(p => p.hasTab && p.price !== null)
+      .sort((a, b) => a.price! - b.price!)
+  }, [pubs])
+
+  // For pubs without TAB, find nearest TAB agency
+  const nearbyPairs = useMemo(() => {
+    if (tabLocations.length === 0) return []
+    
+    const nonTabPubs = pubs
+      .filter(p => !p.hasTab && p.price !== null && p.lat && p.lng)
+      .sort((a, b) => a.price! - b.price!)
+      .slice(0, 20)
+
+    return nonTabPubs.map(pub => {
+      let nearest: TabLocation | null = null
+      let minDist = Infinity
+      for (const tab of tabLocations) {
+        const d = haversineKm(pub.lat, pub.lng, tab.lat, tab.lng)
+        if (d < minDist) {
+          minDist = d
+          nearest = tab
+        }
+      }
+      return { pub, nearestTab: nearest, distance: minDist }
+    }).filter(p => p.distance < 3) // Within 3km
+      .sort((a, b) => a.pub.price! - b.pub.price!)
+  }, [pubs, tabLocations])
+
+  const displayedTabPubs = isExpanded ? tabPubs : tabPubs.slice(0, 5)
+  const displayedPairs = isExpanded ? nearbyPairs.slice(0, 10) : nearbyPairs.slice(0, 3)
+
+  return (
+    <Card className="bg-gradient-to-br from-stone-50 via-amber-50/20 to-stone-50 border-stone-200 h-full">
+      <CardContent className="p-4">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-2">
+            <div className="w-7 h-7 rounded-md bg-gradient-to-br from-emerald-500 to-emerald-700 flex items-center justify-center">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 2L2 7l10 5 10-5-10-5z" />
+                <path d="M2 17l10 5 10-5" />
+                <path d="M2 12l10 5 10-5" />
+              </svg>
+            </div>
+            <div>
+              <h3 className="text-sm font-semibold text-stone-800 leading-tight">Punt n&apos; Pints</h3>
+              <p className="text-[10px] text-stone-500">Where to bet &amp; sip</p>
+            </div>
+            <InfoTooltip text="Shows pubs with TAB betting facilities on-site, plus cheap pints near dedicated TAB agencies. Data sourced from TABtouch WA locations." />
+          </div>
+          <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-emerald-50 border border-emerald-200">
+            <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+            <span className="text-[10px] font-medium text-emerald-700">{tabPubs.length} TAB Pubs</span>
+          </div>
+        </div>
+
+        {/* TAB Pubs — Cheapest pints where you can bet on-site */}
+        <div className="mb-3">
+          <p className="text-[10px] font-semibold text-stone-500 uppercase tracking-wider mb-1.5">
+            Bet &amp; Drink Under One Roof
+          </p>
+          <div className="space-y-1">
+            {displayedTabPubs.map(pub => (
+              <div key={pub.id} className="flex items-center justify-between py-1.5 px-2 rounded-md bg-white/60 border border-stone-100 hover:border-emerald-200 transition-colors">
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-1.5">
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-emerald-600 flex-shrink-0">
+                      <path d="M12 2L2 7l10 5 10-5-10-5z" />
+                      <path d="M2 17l10 5 10-5" />
+                    </svg>
+                    <span className="text-xs font-medium text-stone-800 truncate">{pub.name}</span>
+                  </div>
+                  <div className="flex items-center gap-1.5 mt-0.5">
+                    <span className="text-[10px] text-stone-400">{pub.suburb}</span>
+                    <span className="text-[9px] px-1 py-px rounded bg-stone-100 text-stone-500">{pub.beerType || 'Tap Beer'}</span>
+                  </div>
+                </div>
+                <div className="text-right flex-shrink-0 ml-2">
+                  <span className="text-sm font-bold text-emerald-700">${pub.price?.toFixed(2)}</span>
+                  <div className="text-[9px] text-stone-400">per pint</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Nearby TAB + Cheap Pint combos */}
+        {nearbyPairs.length > 0 && (
+          <div className="mb-2">
+            <p className="text-[10px] font-semibold text-stone-500 uppercase tracking-wider mb-1.5">
+              Cheap Pints Near a TAB
+            </p>
+            <div className="space-y-1">
+              {displayedPairs.map(({ pub, nearestTab, distance }) => (
+                <div key={pub.id} className="flex items-center justify-between py-1.5 px-2 rounded-md bg-white/40 border border-stone-100">
+                  <div className="flex-1 min-w-0">
+                    <span className="text-xs font-medium text-stone-700 truncate block">{pub.name}</span>
+                    <div className="flex items-center gap-1 mt-0.5">
+                      <span className="text-[10px] text-stone-400">{pub.suburb}</span>
+                      {nearestTab && (
+                        <span className="text-[9px] text-emerald-600">
+                          {distance < 0.5 ? `${Math.round(distance * 1000)}m` : `${distance.toFixed(1)}km`} to {nearestTab.name}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                  <span className="text-sm font-bold text-stone-700 ml-2">${pub.price?.toFixed(2)}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Expand/collapse */}
+        {(tabPubs.length > 5 || nearbyPairs.length > 3) && (
+          <button
+            onClick={() => setIsExpanded(!isExpanded)}
+            className="w-full mt-1 flex items-center justify-center gap-1 py-1.5 text-[11px] font-medium text-emerald-700 hover:text-emerald-800 transition-colors"
+          >
+            <span>{isExpanded ? 'Show less' : `Show all ${tabPubs.length} TAB pubs`}</span>
+            <svg
+              width="12" height="12" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
+              className={`transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`}
+            >
+              <polyline points="6 9 12 15 18 9" />
+            </svg>
+          </button>
+        )}
+      </CardContent>
+    </Card>
+  )
+}

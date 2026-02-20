@@ -15,6 +15,7 @@ import SuburbLeague from '@/components/SuburbLeague'
 import CrowdPulse from '@/components/CrowdPulse'
 import TonightsMoves from '@/components/TonightsMoves'
 import VenueIntel from '@/components/VenueIntel'
+import PuntNPints from '@/components/PuntNPints'
 import PubCard from '@/components/PubCard'
 import { getCrowdLevels, CrowdReport, CROWD_LEVELS, getPubs } from '@/lib/supabase'
 import { getHappyHourStatus } from '@/lib/happyHour'
@@ -190,9 +191,9 @@ export default function Home() {
           <div className="flex-1 min-w-0">
             <div className="flex items-baseline gap-2">
               <h1 className="text-base font-bold text-stone-900 tracking-tight leading-none">Perth Pint Prices</h1>
-              <span className="text-xs text-stone-400 hidden sm:inline">The Perth Beer Exchange&trade;</span>
+              <span className="text-xs text-stone-400 hidden sm:inline">The Perth Beer Exchange™</span>
             </div>
-            <p className="text-xs text-stone-400 mt-0.5">{stats.total} venues &middot; {suburbs.length} suburbs</p>
+            <p className="text-xs text-stone-400 mt-0.5">{stats.total} venues · {suburbs.length} suburbs</p>
           </div>
           {/* Submit button */}
           <button
@@ -233,6 +234,7 @@ export default function Home() {
         <CrowdPulse pubs={pubs} crowdReports={crowdReports} />
         <TonightsMoves pubs={pubs} />
         <VenueIntel pubs={pubs} />
+        <PuntNPints pubs={pubs} />
 
         <div className="flex items-center justify-between mb-4">
           <p className="text-stone-600 text-sm">
@@ -373,7 +375,7 @@ export default function Home() {
 
         {filteredPubs.length === 0 && (
           <div className="text-center py-12 bg-white rounded-xl border border-stone-200">
-            <div className="text-5xl mb-3">&#128269;</div>
+            <div className="text-5xl mb-3">🔍</div>
             <h3 className="text-lg font-bold text-stone-700 mb-1">No pubs found</h3>
             <p className="text-stone-500 text-sm">Try adjusting your filters</p>
           </div>
@@ -384,21 +386,21 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex flex-wrap justify-center gap-6 mb-6 pb-6 border-b border-stone-700">
             <div className="flex items-center gap-2">
-              <span className="text-2xl">&#127866;</span>
+              <span className="text-2xl">🍺</span>
               <div>
                 <p className="font-semibold text-stone-200">Schooner</p>
                 <p className="text-xs text-stone-400">425ml</p>
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-2xl">&#127866;</span>
+              <span className="text-2xl">🍺</span>
               <div>
                 <p className="font-semibold text-amber-400">Pint</p>
                 <p className="text-xs text-stone-400">570ml</p>
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-2xl">&#127870;</span>
+              <span className="text-2xl">🍾</span>
               <div>
                 <p className="font-semibold text-stone-200">Long Neck</p>
                 <p className="text-xs text-stone-400">750ml</p>
@@ -407,7 +409,7 @@ export default function Home() {
           </div>
 
           <div className="text-center">
-            <p className="text-stone-300 text-sm">&#127866; Perth Pint Prices &mdash; Helping you find cheap drinks since 2024</p>
+            <p className="text-stone-300 text-sm">🍺 Perth Pint Prices — Helping you find cheap drinks since 2024</p>
             <p className="text-stone-500 text-xs mt-1">Prices may vary. Pint prices shown. Always drink responsibly.</p>
             <a
               href="mailto:perthpintprices@gmail.com?subject=Price%20Correction&body=Hi%2C%20I%20noticed%20a%20wrong%20price%20on%20the%20site.%0A%0APub%20name%3A%20%0ACorrect%20price%3A%20%0ADetails%3A%20"

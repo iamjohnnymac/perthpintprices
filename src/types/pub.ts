@@ -14,4 +14,5 @@ export interface Pub {
   lastUpdated?: string
   sunsetSpot?: boolean
   priceVerified: boolean
+  hasTab: boolean
 }
