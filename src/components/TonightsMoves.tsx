@@ -99,7 +99,7 @@ export default function TonightsMoves({ pubs }: TonightsMovesProps) {
 
   return (
     <Card
-      className="mb-4 border border-stone-200 bg-gradient-to-r from-stone-50 via-amber-50/20 to-stone-50 cursor-pointer transition-all duration-300"
+      className="border border-stone-200/60 bg-gradient-to-r from-stone-50 via-amber-50/20 to-stone-50 cursor-pointer transition-all duration-300 shadow-[0_2px_12px_rgba(0,0,0,0.04)]"
       onClick={() => setIsExpanded(!isExpanded)}
     >
       <CardContent className="p-4">
