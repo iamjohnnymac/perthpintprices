@@ -182,69 +182,76 @@ export default function Home() {
   }
 
   return (
-    <main className="min-h-screen bg-stone-100">
+    <main className="min-h-screen bg-[#F9F8F6]">
       <PriceTicker pubs={pubs} />
-      <header className="bg-white border-b border-stone-200 shadow-sm sticky top-0 z-40">
-        <div className="max-w-7xl mx-auto px-4 py-2.5 flex items-center gap-3">
+      <header className="bg-white sticky top-0 z-40 shadow-[0_1px_3px_rgba(0,0,0,0.06)]">
+        {/* Top bar: Brand + Submit */}
+        <div className="max-w-7xl mx-auto px-4 py-2 flex items-center gap-3">
           {/* Brand mark */}
-          <div className="w-8 h-8 bg-amber-600 rounded-lg flex items-center justify-center flex-shrink-0 shadow-sm">
-            <svg viewBox="0 0 24 24" fill="none" className="w-[18px] h-[18px]" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <div className="w-9 h-9 bg-gradient-to-br from-amber-500 to-amber-700 rounded-xl flex items-center justify-center flex-shrink-0 shadow-sm">
+            <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M5 3h14M5 3v16a2 2 0 002 2h10a2 2 0 002-2V3M5 3H3M19 3h2M9 3v4M15 3v4" />
             </svg>
           </div>
           {/* Title + tagline */}
           <div className="flex-1 min-w-0">
-            <div className="flex items-baseline gap-2">
-              <h1 className="text-base font-bold text-stone-900 tracking-tight leading-none">Perth Pint Prices</h1>
-              <span className="text-xs text-stone-400 hidden sm:inline">The Perth Beer Exchange™</span>
-            </div>
-            <p className="text-xs text-stone-400 mt-0.5">{stats.total} venues · {suburbs.length} suburbs</p>
+            <h1 className="text-[15px] font-bold text-stone-900 tracking-tight leading-none">Perth Pint Prices</h1>
+            <p className="text-[11px] text-stone-400 mt-0.5 leading-none">
+              <span className="hidden sm:inline">The Perth Beer Exchange™ · </span>
+              {stats.total} venues · {suburbs.length} suburbs
+            </p>
           </div>
           {/* Submit button */}
           <button
             onClick={() => setShowSubmitForm(true)}
-            className="flex-shrink-0 flex items-center gap-1.5 px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-white rounded-lg font-semibold transition-colors text-xs shadow-sm"
+            className="flex-shrink-0 flex items-center gap-1.5 px-3.5 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-xl font-semibold transition-colors text-xs shadow-sm"
           >
             <span className="hidden sm:inline">+ Submit a Pub</span>
             <span className="sm:hidden text-base leading-none">+</span>
           </button>
         </div>
-        <FilterSection
-          viewMode={viewMode}
-          setViewMode={setViewMode}
-          searchTerm={searchTerm}
-          setSearchTerm={setSearchTerm}
-          selectedSuburb={selectedSuburb}
-          setSelectedSuburb={setSelectedSuburb}
-          suburbs={suburbs}
-          showHappyHourOnly={showHappyHourOnly}
-          setShowHappyHourOnly={setShowHappyHourOnly}
-          showMiniMaps={showMiniMaps}
-          setShowMiniMaps={setShowMiniMaps}
-          sortBy={sortBy}
-          setSortBy={setSortBy}
-          maxPrice={maxPrice}
-          setMaxPrice={setMaxPrice}
-          showMoreFilters={showMoreFilters}
-          setShowMoreFilters={setShowMoreFilters}
-          stats={stats}
-        />
+
+        {/* Tab navigation — primary, always visible */}
         <TabBar
           activeTab={activeTab}
           onTabChange={setActiveTab}
           pubCount={filteredPubs.length}
           crowdCount={liveCrowdCount}
         />
+
+        {/* Filters — only on Pubs tab */}
+        {activeTab === 'pubs' && (
+          <FilterSection
+            viewMode={viewMode}
+            setViewMode={setViewMode}
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
+            selectedSuburb={selectedSuburb}
+            setSelectedSuburb={setSelectedSuburb}
+            suburbs={suburbs}
+            showHappyHourOnly={showHappyHourOnly}
+            setShowHappyHourOnly={setShowHappyHourOnly}
+            showMiniMaps={showMiniMaps}
+            setShowMiniMaps={setShowMiniMaps}
+            sortBy={sortBy}
+            setSortBy={setSortBy}
+            maxPrice={maxPrice}
+            setMaxPrice={setMaxPrice}
+            showMoreFilters={showMoreFilters}
+            setShowMoreFilters={setShowMoreFilters}
+            stats={stats}
+          />
+        )}
       </header>
 
-      <div className="max-w-7xl mx-auto px-4 py-6">
+      <div className="max-w-7xl mx-auto px-4 py-5">
 
         {/* ═══ PUBS TAB ═══ */}
         {activeTab === 'pubs' && (
           <>
             <PintIndexCompact pubs={pubs} onViewMore={() => setActiveTab('market')} />
 
-            <div className="mb-4 rounded-xl overflow-hidden shadow-lg border border-stone-200">
+            <div className="mb-5 rounded-2xl overflow-hidden shadow-[0_2px_12px_rgba(0,0,0,0.06)] border border-stone-200/60">
               <Map pubs={filteredPubs} isHappyHour={isHappyHour} />
             </div>
 
@@ -267,28 +274,28 @@ export default function Home() {
 
         {/* ═══ MARKET TAB ═══ */}
         {activeTab === 'market' && (
-          <>
+          <div className="space-y-4">
             <PintIndex />
             <SuburbLeague pubs={pubs} />
             <TonightsMoves pubs={pubs} />
             <VenueIntel pubs={pubs} />
             <CrowdPulse pubs={pubs} crowdReports={crowdReports} />
-          </>
+          </div>
         )}
 
         {/* ═══ EXPLORE TAB ═══ */}
         {activeTab === 'explore' && (
-          <>
+          <div className="space-y-4">
             <BeerWeather pubs={pubs} />
             <SunsetSippers pubs={pubs} />
             <PuntNPints pubs={pubs} />
             <TaxmansTake pubs={pubs} />
             <DadBar pubs={pubs} />
-          </>
+          </div>
         )}
 
         {activeTab === 'pubs' && viewMode === 'list' && (
-          <div className="bg-white rounded-xl shadow-md border border-stone-200 overflow-hidden">
+          <div className="bg-white rounded-2xl shadow-[0_2px_12px_rgba(0,0,0,0.06)] border border-stone-200/60 overflow-hidden">
             <table className="w-full">
               <thead>
                 <tr className="bg-stone-50 border-b border-stone-200">
@@ -381,7 +388,7 @@ export default function Home() {
         )}
 
         {activeTab === 'pubs' && viewMode === 'cards' && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 items-stretch">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 items-stretch">
             {(showAllPubs ? filteredPubs : filteredPubs.slice(0, INITIAL_PUB_COUNT)).map((pub, index) => {
               const crowdReport = getLatestCrowdReport(pub.id)
               const happyHourStatus = getHappyHourStatus(pub.happyHour)
@@ -414,7 +421,7 @@ export default function Home() {
         )}
       </div>
 
-      <footer className="bg-stone-800 text-white py-8 mt-8">
+      <footer className="bg-stone-900 text-white py-8 mt-8">
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex flex-wrap justify-center gap-6 mb-6 pb-6 border-b border-stone-700">
             <div className="flex items-center gap-2">
