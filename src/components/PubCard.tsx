@@ -59,7 +59,7 @@ export default function PubCard({
 
       {/* TAB badge */}
       {pub.hasTab && (
-        <Badge className={`absolute top-2 ${happyHourStatus.isActive ? 'left-32' : 'left-2'} z-10 bg-emerald-700 hover:bg-emerald-700 text-white text-[9px] px-1.5 py-0.5`}>
+        <Badge className={`absolute top-2 ${happyHourStatus.isActive ? 'left-32' : 'left-2'} z-10 text-white text-[9px] px-1.5 py-0.5`} style={{ backgroundColor: '#5B2D8E' }}>
           TAB
         </Badge>
       )}

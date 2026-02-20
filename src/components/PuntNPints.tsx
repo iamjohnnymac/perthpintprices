@@ -84,12 +84,8 @@ export default function PuntNPints({ pubs }: PuntNPintsProps) {
         {/* Header */}
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-md bg-gradient-to-br from-emerald-500 to-emerald-700 flex items-center justify-center">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M12 2L2 7l10 5 10-5-10-5z" />
-                <path d="M2 17l10 5 10-5" />
-                <path d="M2 12l10 5 10-5" />
-              </svg>
+            <div className="w-7 h-7 rounded-md flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #5B2D8E, #7B3FAE)' }}>
+              <span className="text-white font-black text-[9px] leading-none tracking-tight">TAB</span>
             </div>
             <div>
               <h3 className="text-sm font-semibold text-stone-800 leading-tight">Punt n&apos; Pints</h3>
@@ -97,9 +93,9 @@ export default function PuntNPints({ pubs }: PuntNPintsProps) {
             </div>
             <InfoTooltip text="Shows pubs with TAB betting facilities on-site, plus cheap pints near dedicated TAB agencies. Data sourced from TABtouch WA locations." />
           </div>
-          <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-emerald-50 border border-emerald-200">
-            <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-            <span className="text-[10px] font-medium text-emerald-700">{tabPubs.length} TAB Pubs</span>
+          <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full border" style={{ backgroundColor: '#F0E6F6', borderColor: '#D4B8E8' }}>
+            <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: '#5B2D8E' }} />
+            <span className="text-[10px] font-medium" style={{ color: '#5B2D8E' }}>{tabPubs.length} TAB Pubs</span>
           </div>
         </div>
 
@@ -110,13 +106,10 @@ export default function PuntNPints({ pubs }: PuntNPintsProps) {
           </p>
           <div className="space-y-1">
             {displayedTabPubs.map(pub => (
-              <div key={pub.id} className="flex items-center justify-between py-1.5 px-2 rounded-md bg-white/60 border border-stone-100 hover:border-emerald-200 transition-colors">
+              <div key={pub.id} className="flex items-center justify-between py-1.5 px-2 rounded-md bg-white/60 border border-stone-100 hover:border-purple-200 transition-colors">
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-1.5">
-                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-emerald-600 flex-shrink-0">
-                      <path d="M12 2L2 7l10 5 10-5-10-5z" />
-                      <path d="M2 17l10 5 10-5" />
-                    </svg>
+                    <span className="text-[8px] font-black px-1 py-px rounded flex-shrink-0 text-white" style={{ backgroundColor: '#5B2D8E' }}>TAB</span>
                     <span className="text-xs font-medium text-stone-800 truncate">{pub.name}</span>
                   </div>
                   <div className="flex items-center gap-1.5 mt-0.5">
@@ -125,7 +118,7 @@ export default function PuntNPints({ pubs }: PuntNPintsProps) {
                   </div>
                 </div>
                 <div className="text-right flex-shrink-0 ml-2">
-                  <span className="text-sm font-bold text-emerald-700">${pub.price?.toFixed(2)}</span>
+                  <span className="text-sm font-bold" style={{ color: '#F58220' }}>${pub.price?.toFixed(2)}</span>
                   <div className="text-[9px] text-stone-400">per pint</div>
                 </div>
               </div>
@@ -147,7 +140,7 @@ export default function PuntNPints({ pubs }: PuntNPintsProps) {
                     <div className="flex items-center gap-1 mt-0.5">
                       <span className="text-[10px] text-stone-400">{pub.suburb}</span>
                       {nearestTab && (
-                        <span className="text-[9px] text-emerald-600">
+                        <span className="text-[9px]" style={{ color: '#5B2D8E' }}>
                           {distance < 0.5 ? `${Math.round(distance * 1000)}m` : `${distance.toFixed(1)}km`} to {nearestTab.name}
                         </span>
                       )}
@@ -164,7 +157,8 @@ export default function PuntNPints({ pubs }: PuntNPintsProps) {
         {(tabPubs.length > 5 || nearbyPairs.length > 3) && (
           <button
             onClick={() => setIsExpanded(!isExpanded)}
-            className="w-full mt-1 flex items-center justify-center gap-1 py-1.5 text-[11px] font-medium text-emerald-700 hover:text-emerald-800 transition-colors"
+            className="w-full mt-1 flex items-center justify-center gap-1 py-1.5 text-[11px] font-medium transition-colors"
+            style={{ color: '#5B2D8E' }}
           >
             <span>{isExpanded ? 'Show less' : `Show all ${tabPubs.length} TAB pubs`}</span>
             <svg
