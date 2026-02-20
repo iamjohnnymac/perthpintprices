@@ -16,6 +16,8 @@ import CrowdPulse from '@/components/CrowdPulse'
 import TonightsMoves from '@/components/TonightsMoves'
 import VenueIntel from '@/components/VenueIntel'
 import PuntNPints from '@/components/PuntNPints'
+import TabBar, { TabId } from '@/components/TabBar'
+import PintIndexCompact from '@/components/PintIndexCompact'
 import PubCard from '@/components/PubCard'
 import { getCrowdLevels, CrowdReport, CROWD_LEVELS, getPubs } from '@/lib/supabase'
 import { getHappyHourStatus } from '@/lib/happyHour'
@@ -92,6 +94,7 @@ export default function Home() {
   const [crowdReports, setCrowdReports] = useState<Record<string, CrowdReport>>({})
   const [crowdReportPub, setCrowdReportPub] = useState<Pub | null>(null)
   const [currentTime, setCurrentTime] = useState(new Date())
+  const [activeTab, setActiveTab] = useState<TabId>('pubs')
   const [viewMode, setViewMode] = useState<'cards' | 'list'>('list')
   const [showMoreFilters, setShowMoreFilters] = useState(false)
   const [showAllPubs, setShowAllPubs] = useState(false)
@@ -224,38 +227,63 @@ export default function Home() {
           setShowMoreFilters={setShowMoreFilters}
           stats={stats}
         />
+        <TabBar
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+          pubCount={filteredPubs.length}
+          crowdCount={liveCrowdCount}
+        />
       </header>
 
       <div className="max-w-7xl mx-auto px-4 py-6">
-        <PintIndex />
-        <SunsetSippers pubs={pubs} />
-        <BeerWeather pubs={pubs} />
-        <SuburbLeague pubs={pubs} />
-        <CrowdPulse pubs={pubs} crowdReports={crowdReports} />
-        <TonightsMoves pubs={pubs} />
-        <VenueIntel pubs={pubs} />
-        <PuntNPints pubs={pubs} />
 
-        <div className="flex items-center justify-between mb-4">
-          <p className="text-stone-600 text-sm">
-            Showing <span className="text-amber-700 font-semibold">{showAllPubs ? filteredPubs.length : Math.min(INITIAL_PUB_COUNT, filteredPubs.length)}</span> of {filteredPubs.length} venues
-          </p>
-          {filteredPubs.length > INITIAL_PUB_COUNT && (
-            <button
-              onClick={() => setShowAllPubs(!showAllPubs)}
-              className="text-sm font-medium text-amber-700 hover:text-amber-800 transition-colors flex items-center gap-1"
-            >
-              {showAllPubs ? 'Show Less' : `Show All ${filteredPubs.length}`}
-              <span className={`inline-block transition-transform ${showAllPubs ? 'rotate-180' : ''}`}>&#9660;</span>
-            </button>
-          )}
-        </div>
+        {/* ═══ PUBS TAB ═══ */}
+        {activeTab === 'pubs' && (
+          <>
+            <PintIndexCompact pubs={pubs} onViewMore={() => setActiveTab('market')} />
 
-        <div className="mb-6 rounded-xl overflow-hidden shadow-lg border border-stone-200">
-          <Map pubs={filteredPubs} isHappyHour={isHappyHour} />
-        </div>
+            <div className="mb-4 rounded-xl overflow-hidden shadow-lg border border-stone-200">
+              <Map pubs={filteredPubs} isHappyHour={isHappyHour} />
+            </div>
 
-        {viewMode === 'list' && (
+            <div className="flex items-center justify-between mb-4">
+              <p className="text-stone-600 text-sm">
+                Showing <span className="text-amber-700 font-semibold">{showAllPubs ? filteredPubs.length : Math.min(INITIAL_PUB_COUNT, filteredPubs.length)}</span> of {filteredPubs.length} venues
+              </p>
+              {filteredPubs.length > INITIAL_PUB_COUNT && (
+                <button
+                  onClick={() => setShowAllPubs(!showAllPubs)}
+                  className="text-sm font-medium text-amber-700 hover:text-amber-800 transition-colors flex items-center gap-1"
+                >
+                  {showAllPubs ? 'Show Less' : `Show All ${filteredPubs.length}`}
+                  <span className={`inline-block transition-transform ${showAllPubs ? 'rotate-180' : ''}`}>&#9660;</span>
+                </button>
+              )}
+            </div>
+          </>
+        )}
+
+        {/* ═══ MARKET TAB ═══ */}
+        {activeTab === 'market' && (
+          <>
+            <PintIndex />
+            <SuburbLeague pubs={pubs} />
+            <TonightsMoves pubs={pubs} />
+            <VenueIntel pubs={pubs} />
+            <CrowdPulse pubs={pubs} crowdReports={crowdReports} />
+          </>
+        )}
+
+        {/* ═══ EXPLORE TAB ═══ */}
+        {activeTab === 'explore' && (
+          <>
+            <BeerWeather pubs={pubs} />
+            <SunsetSippers pubs={pubs} />
+            <PuntNPints pubs={pubs} />
+          </>
+        )}
+
+        {activeTab === 'pubs' && viewMode === 'list' && (
           <div className="bg-white rounded-xl shadow-md border border-stone-200 overflow-hidden">
             <table className="w-full">
               <thead>
@@ -348,7 +376,7 @@ export default function Home() {
           </div>
         )}
 
-        {viewMode === 'cards' && (
+        {activeTab === 'pubs' && viewMode === 'cards' && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 items-stretch">
             {(showAllPubs ? filteredPubs : filteredPubs.slice(0, INITIAL_PUB_COUNT)).map((pub, index) => {
               const crowdReport = getLatestCrowdReport(pub.id)
@@ -373,7 +401,7 @@ export default function Home() {
           </div>
         )}
 
-        {filteredPubs.length === 0 && (
+        {activeTab === 'pubs' && filteredPubs.length === 0 && (
           <div className="text-center py-12 bg-white rounded-xl border border-stone-200">
             <div className="text-5xl mb-3">🔍</div>
             <h3 className="text-lg font-bold text-stone-700 mb-1">No pubs found</h3>
