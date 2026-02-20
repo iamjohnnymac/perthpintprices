@@ -17,7 +17,7 @@ export default function PintIndexCompact({ pubs, onViewMore }: PintIndexCompactP
   const cheapest = pricedPubs.find(p => p.price === min)
 
   return (
-    <div className="bg-white rounded-xl border border-stone-200 px-4 py-3 mb-4 shadow-sm">
+    <div className="bg-white rounded-2xl border border-stone-200/60 px-4 py-3 shadow-[0_2px_12px_rgba(0,0,0,0.06)]">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4 flex-wrap">
           {/* Average price */}
