@@ -126,8 +126,8 @@ export default function SuburbLeague({ pubs }: { pubs: Pub[] }) {
   const total = suburbs.length
 
   return (
-    <div className="mb-4">
-      <div className="bg-gradient-to-r from-stone-50 via-amber-50/20 to-stone-50 rounded-2xl shadow-sm border border-stone-200 overflow-hidden">
+    <div>
+      <div className="bg-gradient-to-r from-stone-50 via-amber-50/20 to-stone-50 rounded-2xl shadow-[0_2px_12px_rgba(0,0,0,0.06)] border border-stone-200/60 overflow-hidden">
         <button
           onClick={() => setIsExpanded(!isExpanded)}
           className="w-full text-left px-5 py-4 flex items-center justify-between hover:bg-stone-100/40 transition-colors"

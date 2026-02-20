@@ -59,7 +59,7 @@ export function FilterSection({
   }, [showMoreFilters, setShowMoreFilters])
 
   return (
-    <div className="border-t border-stone-100 bg-white">
+    <div className="border-t border-stone-100/80 bg-white/95">
       {/* Row 1: Search + Suburb */}
       <div className="max-w-7xl mx-auto px-4 pt-2 pb-1.5 flex items-center gap-2">
         {/* Search — grows to fill space */}
