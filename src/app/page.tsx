@@ -159,7 +159,8 @@ export default function Home() {
       avgPrice: (() => { const priced = pubs.filter(p => p.price !== null); return priced.length > 0 ? (priced.reduce((sum, p) => sum + p.price!, 0) / priced.length).toFixed(2) : '0'; })(),
       happyHourNow: pubs.filter(p => isHappyHour(p.happyHour)).length
     }
-  }, [pubs, currentTime])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pubs, currentTime]) // currentTime triggers happyHourNow recount every minute
 
   const liveCrowdCount = Object.keys(crowdReports).length
 
@@ -176,7 +177,7 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-stone-100">
-      <PriceTicker />
+      <PriceTicker pubs={pubs} />
       <header className="bg-white border-b border-stone-200 shadow-sm sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 py-2.5 flex items-center gap-3">
           {/* Brand mark */}
@@ -189,9 +190,9 @@ export default function Home() {
           <div className="flex-1 min-w-0">
             <div className="flex items-baseline gap-2">
               <h1 className="text-base font-bold text-stone-900 tracking-tight leading-none">Perth Pint Prices</h1>
-              <span className="text-xs text-stone-400 hidden sm:inline">The Perth Beer Exchange™</span>
+              <span className="text-xs text-stone-400 hidden sm:inline">The Perth Beer Exchange&trade;</span>
             </div>
-            <p className="text-xs text-stone-400 mt-0.5">{stats.total} venues · {suburbs.length} suburbs</p>
+            <p className="text-xs text-stone-400 mt-0.5">{stats.total} venues &middot; {suburbs.length} suburbs</p>
           </div>
           {/* Submit button */}
           <button
@@ -372,7 +373,7 @@ export default function Home() {
 
         {filteredPubs.length === 0 && (
           <div className="text-center py-12 bg-white rounded-xl border border-stone-200">
-            <div className="text-5xl mb-3">🔍</div>
+            <div className="text-5xl mb-3">&#128269;</div>
             <h3 className="text-lg font-bold text-stone-700 mb-1">No pubs found</h3>
             <p className="text-stone-500 text-sm">Try adjusting your filters</p>
           </div>
@@ -383,21 +384,21 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex flex-wrap justify-center gap-6 mb-6 pb-6 border-b border-stone-700">
             <div className="flex items-center gap-2">
-              <span className="text-2xl">🍺</span>
+              <span className="text-2xl">&#127866;</span>
               <div>
                 <p className="font-semibold text-stone-200">Schooner</p>
                 <p className="text-xs text-stone-400">425ml</p>
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-2xl">🍺</span>
+              <span className="text-2xl">&#127866;</span>
               <div>
                 <p className="font-semibold text-amber-400">Pint</p>
                 <p className="text-xs text-stone-400">570ml</p>
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-2xl">🍾</span>
+              <span className="text-2xl">&#127870;</span>
               <div>
                 <p className="font-semibold text-stone-200">Long Neck</p>
                 <p className="text-xs text-stone-400">750ml</p>
@@ -406,7 +407,7 @@ export default function Home() {
           </div>
 
           <div className="text-center">
-            <p className="text-stone-300 text-sm">🍺 Perth Pint Prices — Helping you find cheap drinks since 2024</p>
+            <p className="text-stone-300 text-sm">&#127866; Perth Pint Prices &mdash; Helping you find cheap drinks since 2024</p>
             <p className="text-stone-500 text-xs mt-1">Prices may vary. Pint prices shown. Always drink responsibly.</p>
             <a
               href="mailto:perthpintprices@gmail.com?subject=Price%20Correction&body=Hi%2C%20I%20noticed%20a%20wrong%20price%20on%20the%20site.%0A%0APub%20name%3A%20%0ACorrect%20price%3A%20%0ADetails%3A%20"
