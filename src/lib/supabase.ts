@@ -82,5 +82,6 @@ export async function getPubs(): Promise<Pub[]> {
     sunsetSpot: row.sunset_spot || false,
     priceVerified: row.price_verified !== false,
     hasTab: row.has_tab === true,
+    kidFriendly: row.kid_friendly === true,
   }))
 }

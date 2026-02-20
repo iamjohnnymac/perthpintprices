@@ -16,6 +16,8 @@ import CrowdPulse from '@/components/CrowdPulse'
 import TonightsMoves from '@/components/TonightsMoves'
 import VenueIntel from '@/components/VenueIntel'
 import PuntNPints from '@/components/PuntNPints'
+import TaxmansTake from '@/components/TaxmansTake'
+import DadBar from '@/components/DadBar'
 import TabBar, { TabId } from '@/components/TabBar'
 import PintIndexCompact from '@/components/PintIndexCompact'
 import PubCard from '@/components/PubCard'
@@ -280,6 +282,8 @@ export default function Home() {
             <BeerWeather pubs={pubs} />
             <SunsetSippers pubs={pubs} />
             <PuntNPints pubs={pubs} />
+            <TaxmansTake pubs={pubs} />
+            <DadBar pubs={pubs} />
           </>
         )}
 

@@ -15,4 +15,5 @@ export interface Pub {
   sunsetSpot?: boolean
   priceVerified: boolean
   hasTab: boolean
+  kidFriendly: boolean
 }

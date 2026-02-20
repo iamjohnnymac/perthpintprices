@@ -65,6 +65,13 @@ export default function PubCard({
         </Badge>
       )}
 
+      {/* Kid-friendly badge */}
+      {pub.kidFriendly && (
+        <Badge className={`absolute top-2 ${pub.hasTab ? (happyHourStatus.isActive ? 'left-48' : 'left-20') : (happyHourStatus.isActive ? 'left-32' : 'left-2')} z-10 text-white text-[9px] px-1.5 py-0.5 bg-emerald-600`}>
+          KIDS
+        </Badge>
+      )}
+
       {/* Mini map */}
       {showMiniMaps && (
         <div className="h-24 relative overflow-hidden">
