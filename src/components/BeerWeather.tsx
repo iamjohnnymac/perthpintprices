@@ -165,7 +165,7 @@ export default function BeerWeather({ pubs }: BeerWeatherProps) {
     if (error) return null
     // Loading state
     return (
-      <Card className="mb-4 border border-stone-200 bg-stone-50">
+      <Card className="border border-stone-200/60 bg-stone-50 shadow-[0_2px_12px_rgba(0,0,0,0.06)]">
         <CardContent className="p-4">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-stone-100 animate-pulse" />
@@ -181,7 +181,7 @@ export default function BeerWeather({ pubs }: BeerWeatherProps) {
 
   return (
     <Card
-      className={`mb-4 border cursor-pointer transition-all duration-300 overflow-hidden ${condition.borderClass} ${condition.bgClass}`}
+      className={`border cursor-pointer transition-all duration-300 overflow-hidden ${condition.borderClass} ${condition.bgClass}`}
       onClick={() => setIsExpanded(!isExpanded)}
     >
       <CardContent className="p-4">
