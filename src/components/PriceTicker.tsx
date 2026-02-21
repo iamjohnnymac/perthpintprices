@@ -52,36 +52,40 @@ export default function PriceTicker({ pubs }: PriceTickerProps) {
           0% { transform: translate3d(0, 0, 0); }
           100% { transform: translate3d(-50%, 0, 0); }
         }
-        .ticker-track {
-          animation: ticker-scroll ${duration}s linear infinite;
-          will-change: transform;
+        .ticker-outer {
           pointer-events: none;
         }
+        .ticker-track {
+          display: inline-flex;
+          width: max-content;
+          animation: ticker-scroll ${duration}s linear infinite;
+          will-change: transform;
+        }
       `}</style>
-      <div className="ticker-track flex items-center whitespace-nowrap h-full">
-        {items.map((t, i) => {
-          const isAboveAvg = t.diff >= 0;
-          const arrow = isAboveAvg ? E.up_arrow : E.down_arrow;
-          const color = isAboveAvg ? 'text-coral' : 'text-teal';
-          const diffStr = Math.abs(t.diff).toFixed(2);
+      <div className="ticker-outer h-full">
+        <div className="ticker-track items-center whitespace-nowrap h-full">
+          {items.map((t, i) => {
+            const isAboveAvg = t.diff >= 0;
+            const arrow = isAboveAvg ? E.up_arrow : E.down_arrow;
+            const color = isAboveAvg ? 'text-coral' : 'text-teal';
+            const diffStr = Math.abs(t.diff).toFixed(2);
 
-          return (
-            <span key={`${t.suburb}-${i}`} className="inline-flex items-center gap-1.5 px-4 text-xs tracking-wide">
-              <span className="font-semibold text-cream uppercase text-[11px]">
-                {t.suburb}
+            return (
+              <span key={`${t.suburb}-${i}`} className="inline-flex items-center gap-1.5 px-4 text-xs tracking-wide" style={{ height: '38px' }}>
+                <span className="font-semibold text-cream uppercase text-[11px]">
+                  {t.suburb}
+                </span>
+                <span className="font-mono text-gold text-[12px]">
+                  ${t.avgPrice.toFixed(2)}
+                </span>
+                <span className={`font-mono ${color} text-[11px]`}>
+                  {arrow} {diffStr}
+                </span>
+                <span className="text-cream/30 ml-2">·</span>
               </span>
-              <span className="font-mono text-gold text-[12px]">
-                ${t.avgPrice.toFixed(2)}
-              </span>
-              <span className={`font-mono ${color} text-[11px]`}>
-                {arrow} {diffStr}
-              </span>
-              {i < items.length - 1 && (
-                <span className="text-cream/30 ml-2">{String.fromCharCode(8226)}</span>
-              )}
-            </span>
-          );
-        })}
+            );
+          })}
+        </div>
       </div>
     </div>
   );
