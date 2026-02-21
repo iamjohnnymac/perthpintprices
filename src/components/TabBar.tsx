@@ -100,12 +100,7 @@ export default function TabBar({ activeTab, onTabChange, pubCount, crowdCount }:
                   <span className="absolute top-2 right-1/4 flex items-center justify-center w-2 h-2 rounded-full bg-teal animate-pulse ring-2 ring-navy" />
                 )}
 
-                {/* Count badge for pubs */}
-                {tab.id === 'pubs' && pubCount > 0 && !isActive && (
-                  <span className="absolute top-2 right-1/4 flex items-center justify-center min-w-[16px] h-4 px-1 text-[9px] font-bold rounded-full bg-gold/20 text-gold">
-                    {pubCount}
-                  </span>
-                )}
+
 
                 {/* Active indicator — thick bottom bar */}
                 <span className={`

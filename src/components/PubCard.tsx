@@ -160,7 +160,7 @@ export default function PubCard({
         )}
 
         {pub.lastUpdated && (
-          <p className="text-xs text-stone-400">Updated {timeAgo(pub.lastUpdated)}</p>
+          <p className="text-xs text-stone-400">✓ Verified price</p>
         )}
       </CardContent>
 

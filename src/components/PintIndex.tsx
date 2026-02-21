@@ -260,7 +260,7 @@ export default function PintIndex() {
           
           {/* Right: Sparkline with hover */}
           <div className="hidden sm:block" onClick={e => e.stopPropagation()}>
-            <div className="text-[10px] text-stone-400 mb-1 text-right">12-month trend \u00b7 hover to explore</div>
+            <div className="text-[10px] text-stone-400 mb-1 text-right">12-month trend · hover to explore</div>
             <Sparkline data={sparkData} snapshots={snapshots} />
           </div>
         </div>
@@ -293,12 +293,12 @@ export default function PintIndex() {
             {/* Suburb highlights */}
             <div className="grid grid-cols-2 gap-4 mt-4">
               <div className="bg-teal/10 rounded-lg p-3 h-full">
-                <div className="text-xs text-teal font-medium">{E.trophy} Cheapest Suburb</div>
+                <div className="text-xs text-teal font-medium">▼ Cheapest Suburb</div>
                 <div className="text-sm font-bold text-navy mt-1">{current.cheapest_suburb}</div>
                 <div className="text-xs text-teal">avg ${current.cheapest_suburb_avg.toFixed(2)}/pint</div>
               </div>
               <div className="bg-coral/10 rounded-lg p-3 h-full">
-                <div className="text-xs text-coral font-medium">{E.money_wings} Priciest Suburb</div>
+                <div className="text-xs text-coral font-medium">▲ Priciest Suburb</div>
                 <div className="text-sm font-bold text-navy mt-1">{current.most_expensive_suburb}</div>
                 <div className="text-xs text-coral">avg ${current.most_expensive_suburb_avg.toFixed(2)}/pint</div>
               </div>
@@ -314,7 +314,7 @@ export default function PintIndex() {
 
             {/* Mobile sparkline */}
             <div className="sm:hidden mt-4" onClick={e => e.stopPropagation()}>
-              <div className="text-xs text-stone-400 mb-1">12-month trend \u00b7 hover to explore</div>
+              <div className="text-xs text-stone-400 mb-1">12-month trend · hover to explore</div>
               <Sparkline data={sparkData} snapshots={snapshots} width={320} height={50} />
             </div>
 

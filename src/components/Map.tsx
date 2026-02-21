@@ -88,15 +88,20 @@ function FitBounds({ pubs, userLocation }: { pubs: Pub[], userLocation?: { lat: 
       return
     }
 
-    // Otherwise fit to all pubs
-    if (pubs.length === 0) return
-    if (hasZoomedToUser.current) return // Don't override user location zoom
+    // Don't override user location zoom
+    if (hasZoomedToUser.current) return
 
-    const bounds = L.latLngBounds(pubs.map(pub => [pub.lat, pub.lng]))
-    map.fitBounds(bounds, { 
-      padding: [50, 50],
-      maxZoom: 15
-    })
+    // Fit to pubs if available, otherwise default Perth view
+    if (pubs.length > 0) {
+      const bounds = L.latLngBounds(pubs.map(pub => [pub.lat, pub.lng]))
+      map.fitBounds(bounds, { 
+        padding: [30, 30],
+        maxZoom: 14
+      })
+    } else {
+      // Default to Perth CBD while pubs load
+      map.setView([-31.9505, 115.8605], 11)
+    }
   }, [map, pubs, userLocation])
 
   return null
