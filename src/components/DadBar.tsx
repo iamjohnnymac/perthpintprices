@@ -3,6 +3,7 @@
 import { useState, useMemo } from 'react'
 import { Pub } from '@/types/pub'
 import { getDistanceKm, formatDistance } from '@/lib/location'
+import { Card, CardContent } from '@/components/ui/card'
 import InfoTooltip from './InfoTooltip'
 
 const DAD_JOKES = [
@@ -54,7 +55,8 @@ export default function DadBar({ pubs, userLocation }: { pubs: Pub[], userLocati
   const displayPubs = showAll ? dadPubs : dadPubs.slice(0, 5)
 
   return (
-    <div className="bg-white rounded-2xl shadow-[0_2px_12px_rgba(0,0,0,0.06)] border border-stone-200/40 p-4">
+    <Card className="bg-white rounded-2xl shadow-[0_2px_12px_rgba(0,0,0,0.06)] border border-stone-200/40">
+      <CardContent className="p-4">
       {/* Header */}
       <div className="flex items-start justify-between mb-3">
         <div className="flex items-center gap-2.5">
@@ -67,7 +69,7 @@ export default function DadBar({ pubs, userLocation }: { pubs: Pub[], userLocati
             </svg>
           </div>
           <div>
-            <h3 className="font-bold font-heading text-stone-800 text-sm uppercase tracking-wider flex items-center gap-1.5">
+            <h3 className="font-bold font-heading text-stone-800 text-sm flex items-center gap-1.5">
               THE DAD BAR
               <InfoTooltip text="Kid-friendly pubs verified from Buggybuddys and Urban List Perth. All venues have dedicated playgrounds or play areas, plus food menus for children. Perfect for a cheeky pint while the kids wear themselves out." />
             </h3>
@@ -159,6 +161,7 @@ export default function DadBar({ pubs, userLocation }: { pubs: Pub[], userLocati
       <p className="text-[10px] text-stone-400 text-center mt-2">
         Sources: Buggybuddys, Urban List Perth {"·"} All venues verified for playground facilities
       </p>
-    </div>
+      </CardContent>
+    </Card>
   )
 }

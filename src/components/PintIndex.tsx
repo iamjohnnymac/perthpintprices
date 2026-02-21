@@ -241,7 +241,7 @@ export default function PintIndex() {
           <div className="flex items-center gap-3">
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-xs font-semibold font-heading text-stone-500 uppercase tracking-wider flex items-center">Perth Pint Index{E.tm}<InfoTooltip text="Average pint price across all verified Perth venues. Tracked weekly and stored historically so you can see if Perth beer is getting cheaper or more expensive over time." /></span>
+                <h3 className="text-sm font-bold font-heading text-stone-800 flex items-center">PERTH PINT INDEX{E.tm}<InfoTooltip text="Average pint price across all verified Perth venues. Tracked weekly and stored historically so you can see if Perth beer is getting cheaper or more expensive over time." /></h3>
                 <Badge variant="outline" className="text-[10px] px-1.5 py-0 border-stone-300 text-stone-500">
                   LIVE
                 </Badge>
