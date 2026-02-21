@@ -59,7 +59,7 @@ function getWeatherCondition(weather: WeatherData, avgPrice: number): WeatherCon
       emoji: '🌧️',
       label: 'Rainy day',
       message: "Rainy day? Cozy up inside with a cold one",
-      tagline: `Feels like a $${avgPrice.toFixed(0)} happy hour kind of day`,
+      tagline: `${weather.temperature.toFixed(0)}° and wet — perfect happy hour weather`,
       bgClass: 'bg-gradient-to-r from-slate-50 via-blue-50 to-slate-50',
       borderClass: 'border-blue-200',
       filter: (pubs) => pubs.filter(p => p.happyHour).filter(p => p.price !== null).sort((a, b) => a.price! - b.price!),
@@ -71,7 +71,7 @@ function getWeatherCondition(weather: WeatherData, avgPrice: number): WeatherCon
       emoji: '🔥',
       label: 'Scorcher',
       message: "Scorcher! Head to the beach pubs for a cold one",
-      tagline: `Feels like a $${avgPrice.toFixed(0)} icy pint kind of day`,
+      tagline: `${weather.temperature.toFixed(0)}° scorcher — just point me to the coldest pint`,
       bgClass: 'bg-gradient-to-r from-red-50 via-orange-50 to-amber-50',
       borderClass: 'border-red-200',
       filter: (pubs) => pubs.filter(p => p.sunsetSpot).filter(p => p.price !== null).sort((a, b) => a.price! - b.price!),
@@ -83,7 +83,7 @@ function getWeatherCondition(weather: WeatherData, avgPrice: number): WeatherCon
       emoji: '☀️',
       label: 'Perfect weather',
       message: "Perfect beer garden weather — get outside!",
-      tagline: `Feels like a $${avgPrice.toFixed(0)} pint in the sun kind of day`,
+      tagline: `${weather.temperature.toFixed(0)}° and sunny — beer garden weather at its finest`,
       bgClass: 'bg-gradient-to-r from-amber-50/70 via-yellow-50/50 to-amber-50/70',
       borderClass: 'border-amber-200',
       filter: (pubs) => pubs.filter(p => p.sunsetSpot || p.description?.toLowerCase().includes('garden')).filter(p => p.price !== null).sort((a, b) => a.price! - b.price!),
@@ -95,7 +95,7 @@ function getWeatherCondition(weather: WeatherData, avgPrice: number): WeatherCon
       emoji: '🌤️',
       label: 'Great pub weather',
       message: "Great pub weather — grab a mate and a pint",
-      tagline: `Feels like a $${avgPrice.toFixed(0)} easy-going pint kind of day`,
+      tagline: `${weather.temperature.toFixed(0)}° with a breeze — grab a mate and a cold one`,
       bgClass: 'bg-gradient-to-r from-stone-50 via-amber-50/30 to-stone-50',
       borderClass: 'border-stone-200',
       filter: (pubs) => [...pubs].filter(p => p.price !== null).sort((a, b) => a.price! - b.price!),
@@ -107,7 +107,7 @@ function getWeatherCondition(weather: WeatherData, avgPrice: number): WeatherCon
     emoji: '❄️',
     label: 'Chilly',
     message: "Chilly! Warm up with a pint at a cozy pub",
-    tagline: `Feels like a $${avgPrice.toFixed(0)} warm-up pint kind of day`,
+    tagline: `${weather.temperature.toFixed(0)}° and chilly — rug up and find a cozy corner`,
     bgClass: 'bg-gradient-to-r from-blue-50 via-indigo-50/30 to-blue-50',
     borderClass: 'border-blue-200',
     filter: (pubs) => [...pubs].filter(p => p.price !== null).sort((a, b) => a.price! - b.price!),
@@ -231,12 +231,12 @@ export default function BeerWeather({ pubs }: BeerWeatherProps) {
 
         {/* Expanded Content */}
         {isExpanded && (
-          <div className="mt-4 pt-4 border-t border-stone-200/60">
+          <div className="mt-3 pt-3 border-t border-stone-200/60">
             {/* Tagline */}
-            <p className="text-sm text-stone-600 italic mb-3 text-center">{condition.tagline}</p>
+            <p className="text-xs text-stone-500 italic mb-2 text-center">{condition.tagline}</p>
 
             {/* Mobile weather pills */}
-            <div className="flex sm:hidden justify-center gap-2 mb-3">
+            <div className="flex sm:hidden justify-center gap-2 mb-2">
               <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-white/60 text-stone-500 border border-stone-100">
                 💨 {weather.windSpeed.toFixed(0)} km/h
               </span>
@@ -249,8 +249,8 @@ export default function BeerWeather({ pubs }: BeerWeatherProps) {
             </div>
 
             {/* Recommended Pubs */}
-            <div className="flex items-center justify-between mb-3">
-              <h4 className="text-sm font-semibold text-stone-700">
+            <div className="flex items-center justify-between mb-2">
+              <h4 className="text-xs font-semibold text-stone-700">
                 🍺 Recommended Right Now
               </h4>
               <span className="text-xs text-stone-400">
