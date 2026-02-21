@@ -26,7 +26,7 @@ import { getHappyHourStatus } from '@/lib/happyHour'
 const Map = dynamic(() => import('@/components/Map'), {
   ssr: false,
   loading: () => (
-    <div className="h-[400px] bg-stone-100 rounded-xl flex items-center justify-center">
+    <div className="h-[200px] sm:h-[300px] md:h-[400px] bg-stone-100 rounded-xl flex items-center justify-center">
       <div className="flex flex-col items-center gap-3">
         <div className="w-12 h-12 border-4 border-stone-300 border-t-stone-600 rounded-full animate-spin"></div>
         <span className="text-stone-600 font-medium">Loading map...</span>
@@ -183,7 +183,7 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-[#F9F8F6]">
       <PriceTicker pubs={pubs} />
-      <header className="bg-white sticky top-0 z-40 shadow-[0_1px_3px_rgba(0,0,0,0.06)]">
+      <header className="bg-white sticky top-0 z-[1000] shadow-[0_1px_3px_rgba(0,0,0,0.06)]">
         {/* Top bar: Brand + Submit */}
         <div className="max-w-7xl mx-auto px-4 py-2 flex items-center gap-3">
           {/* Brand mark */}
@@ -250,7 +250,7 @@ export default function Home() {
           <>
             <PintIndexCompact pubs={pubs} onViewMore={() => setActiveTab('market')} />
 
-            <div className="mb-5 rounded-2xl overflow-hidden shadow-[0_2px_12px_rgba(0,0,0,0.06)] border border-stone-200/60">
+            <div className="mb-5 rounded-2xl overflow-hidden shadow-[0_2px_12px_rgba(0,0,0,0.06)] border border-stone-200/60 relative z-0 isolate">
               <Map pubs={filteredPubs} isHappyHour={isHappyHour} />
             </div>
 
