@@ -6,10 +6,12 @@ import { CrowdReport, CROWD_LEVELS } from '@/lib/supabase'
 import { Card, CardContent } from '@/components/ui/card'
 import E from '@/lib/emoji'
 import InfoTooltip from './InfoTooltip'
+import { getDistanceKm, formatDistance } from '@/lib/location'
 
 interface CrowdPulseProps {
   pubs: Pub[]
   crowdReports: Record<string, CrowdReport>
+  userLocation?: { lat: number; lng: number } | null
 }
 
 function getVibeLabel(score: number): string {
@@ -43,7 +45,7 @@ function formatTimeAgo(minutes: number): string {
   return `${hours}h ago`
 }
 
-export default function CrowdPulse({ pubs, crowdReports }: CrowdPulseProps) {
+export default function CrowdPulse({ pubs, crowdReports, userLocation }: CrowdPulseProps) {
   const [isExpanded, setIsExpanded] = useState(false)
 
   const reportEntries = useMemo(() => {
@@ -63,16 +65,30 @@ export default function CrowdPulse({ pubs, crowdReports }: CrowdPulseProps) {
   const busyVenues = useMemo(() => {
     return reportEntries
       .filter(e => e.report.crowd_level >= 3)
-      .sort((a, b) => b.report.crowd_level - a.report.crowd_level)
+      .sort((a, b) => {
+        const levelDiff = b.report.crowd_level - a.report.crowd_level
+        if (levelDiff !== 0) return levelDiff
+        if (userLocation) {
+          return getDistanceKm(userLocation.lat, userLocation.lng, a.pub.lat, a.pub.lng) - getDistanceKm(userLocation.lat, userLocation.lng, b.pub.lat, b.pub.lng)
+        }
+        return 0
+      })
       .slice(0, 5)
-  }, [reportEntries])
+  }, [reportEntries, userLocation])
 
   const quietVenues = useMemo(() => {
     return reportEntries
       .filter(e => e.report.crowd_level <= 2)
-      .sort((a, b) => a.report.crowd_level - b.report.crowd_level)
+      .sort((a, b) => {
+        const levelDiff = a.report.crowd_level - b.report.crowd_level
+        if (levelDiff !== 0) return levelDiff
+        if (userLocation) {
+          return getDistanceKm(userLocation.lat, userLocation.lng, a.pub.lat, a.pub.lng) - getDistanceKm(userLocation.lat, userLocation.lng, b.pub.lat, b.pub.lng)
+        }
+        return 0
+      })
       .slice(0, 5)
-  }, [reportEntries])
+  }, [reportEntries, userLocation])
 
   const liveCount = reportEntries.length
   const totalCount = pubs.length
@@ -155,7 +171,7 @@ export default function CrowdPulse({ pubs, crowdReports }: CrowdPulseProps) {
                           <span className="text-sm">{levelInfo.emoji}</span>
                           <div className="min-w-0">
                             <p className="text-xs font-semibold text-stone-800 truncate">{pub.name}</p>
-                            <p className="text-[10px] text-stone-400">{pub.suburb}</p>
+                            <p className="text-[10px] text-stone-400">{pub.suburb}{userLocation && ` · ${formatDistance(getDistanceKm(userLocation.lat, userLocation.lng, pub.lat, pub.lng))}`}</p>
                           </div>
                         </div>
                         <div className="flex items-center gap-2 flex-shrink-0">
@@ -185,7 +201,7 @@ export default function CrowdPulse({ pubs, crowdReports }: CrowdPulseProps) {
                           <span className="text-sm">{levelInfo.emoji}</span>
                           <div className="min-w-0">
                             <p className="text-xs font-semibold text-stone-800 truncate">{pub.name}</p>
-                            <p className="text-[10px] text-stone-400">{pub.suburb} {E.bullet} {pub.price !== null ? `$${pub.price.toFixed(2)}` : 'TBC'}</p>
+                            <p className="text-[10px] text-stone-400">{pub.suburb}{userLocation && ` · ${formatDistance(getDistanceKm(userLocation.lat, userLocation.lng, pub.lat, pub.lng))}`} {E.bullet} {pub.price !== null ? `$${pub.price.toFixed(2)}` : 'TBC'}</p>
                           </div>
                         </div>
                         <div className="flex items-center gap-2 flex-shrink-0">

@@ -336,19 +336,19 @@ export default function Home() {
           <div className="space-y-4">
             <PintIndex />
             <SuburbLeague pubs={pubs} />
-            <TonightsMoves pubs={pubs} />
-            <VenueIntel pubs={pubs} />
-            <CrowdPulse pubs={pubs} crowdReports={crowdReports} />
+            <TonightsMoves pubs={pubs} userLocation={userLocation} />
+            <VenueIntel pubs={pubs} userLocation={userLocation} />
+            <CrowdPulse pubs={pubs} crowdReports={crowdReports} userLocation={userLocation} />
           </div>
         )}
 
         {/* ═══ EXPLORE TAB ═══ */}
         {activeTab === 'explore' && (
           <div className="space-y-4">
-            <BeerWeather pubs={pubs} />
-            <SunsetSippers pubs={pubs} />
-            <PuntNPints pubs={pubs} />
-            <DadBar pubs={pubs} />
+            <BeerWeather pubs={pubs} userLocation={userLocation} />
+            <SunsetSippers pubs={pubs} userLocation={userLocation} />
+            <PuntNPints pubs={pubs} userLocation={userLocation} />
+            <DadBar pubs={pubs} userLocation={userLocation} />
           </div>
         )}
 

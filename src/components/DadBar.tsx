@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from 'react'
 import { Pub } from '@/types/pub'
+import { getDistanceKm, formatDistance } from '@/lib/location'
 import InfoTooltip from './InfoTooltip'
 
 const DAD_JOKES = [
@@ -31,14 +32,19 @@ const PLAYGROUND_NOTES: Record<number, string> = {
   34: 'The Park: dedicated play area with shade sails',
 }
 
-export default function DadBar({ pubs }: { pubs: Pub[] }) {
+export default function DadBar({ pubs, userLocation }: { pubs: Pub[], userLocation?: { lat: number; lng: number } | null }) {
   const [showAll, setShowAll] = useState(false)
 
   const dadPubs = useMemo(() => {
     return pubs
       .filter(p => p.kidFriendly && p.price !== null && p.price > 0)
-      .sort((a, b) => (a.price ?? 0) - (b.price ?? 0))
-  }, [pubs])
+      .sort((a, b) => {
+        if (userLocation) {
+          return getDistanceKm(userLocation.lat, userLocation.lng, a.lat, a.lng) - getDistanceKm(userLocation.lat, userLocation.lng, b.lat, b.lng)
+        }
+        return (a.price ?? 0) - (b.price ?? 0)
+      })
+  }, [pubs, userLocation])
 
   const joke = useMemo(() => DAD_JOKES[Math.floor(Math.random() * DAD_JOKES.length)], [])
 
@@ -116,7 +122,7 @@ export default function DadBar({ pubs }: { pubs: Pub[] }) {
                 <svg width="8" height="8" viewBox="0 0 8 8" fill="none" className="flex-shrink-0">
                   <path d="M4 0C2.5 0 1 1.3 1 3c0 2.5 3 5 3 5s3-2.5 3-5c0-1.7-1.5-3-3-3z" fill="#a8a29e"/>
                 </svg>
-                <p className="text-[10px] text-stone-400 truncate">{pub.suburb}</p>
+                <p className="text-[10px] text-stone-400 truncate">{pub.suburb}{userLocation && ` · ${formatDistance(getDistanceKm(userLocation.lat, userLocation.lng, pub.lat, pub.lng))}`}</p>
                 {PLAYGROUND_NOTES[pub.id] && (
                   <>
                     <span className="text-stone-300 text-[10px]">{"·"}</span>

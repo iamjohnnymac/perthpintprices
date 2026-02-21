@@ -7,6 +7,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import E from '@/lib/emoji'
 import InfoTooltip from './InfoTooltip'
+import { getDistanceKm, formatDistance } from '@/lib/location'
 
 const MiniMap = dynamic(() => import('./MiniMap'), {
   ssr: false,
@@ -15,6 +16,7 @@ const MiniMap = dynamic(() => import('./MiniMap'), {
 
 interface SunsetSippersProps {
   pubs: Pub[]
+  userLocation?: { lat: number; lng: number } | null
 }
 
 // Perth coordinates
@@ -107,7 +109,7 @@ function getSunShadowGradient(azimuth: number, isGolden: boolean): string {
   return `linear-gradient(${gradientAngle}deg, ${color}0.35) 0%, ${color}0.1) 40%, transparent 70%)`
 }
 
-export default function SunsetSippers({ pubs }: SunsetSippersProps) {
+export default function SunsetSippers({ pubs, userLocation }: SunsetSippersProps) {
   const [now, setNow] = useState(new Date())
   const [isExpanded, setIsExpanded] = useState(false)
   const [showAllPubs, setShowAllPubs] = useState(false)
@@ -149,8 +151,13 @@ export default function SunsetSippers({ pubs }: SunsetSippersProps) {
   const sunPosition = getSunPosition(now, sunTimes.sunrise, sunTimes.sunset)
 
   const sunsetPubs = useMemo(() =>
-    pubs.filter(p => p.sunsetSpot && p.price !== null).sort((a, b) => a.price! - b.price!),
-    [pubs]
+    pubs.filter(p => p.sunsetSpot && p.price !== null).sort((a, b) => {
+      if (userLocation) {
+        return getDistanceKm(userLocation.lat, userLocation.lng, a.lat, a.lng) - getDistanceKm(userLocation.lat, userLocation.lng, b.lat, b.lng)
+      }
+      return a.price! - b.price!
+    }),
+    [pubs, userLocation]
   )
 
   const isGoldenHour = now >= sunTimes.goldenHourStart && now <= sunTimes.sunset
@@ -325,7 +332,7 @@ export default function SunsetSippers({ pubs }: SunsetSippersProps) {
                     <div className="flex items-start justify-between gap-1">
                       <div className="min-w-0">
                         <p className="text-xs font-semibold text-stone-800 truncate">{pub.name}</p>
-                        <p className="text-[10px] text-stone-400">{pub.suburb}</p>
+                        <p className="text-[10px] text-stone-400">{pub.suburb}{userLocation && ` · ${formatDistance(getDistanceKm(userLocation.lat, userLocation.lng, pub.lat, pub.lng))}`}</p>
                       </div>
                       <span className="text-[10px] text-stone-400 flex-shrink-0 truncate max-w-[70px]">{pub.beerType}</span>
                     </div>

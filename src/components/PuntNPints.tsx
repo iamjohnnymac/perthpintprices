@@ -4,6 +4,7 @@ import { useState, useMemo, useEffect } from 'react'
 import { Pub } from '@/types/pub'
 import InfoTooltip from './InfoTooltip'
 import { Card, CardContent } from '@/components/ui/card'
+import { getDistanceKm, formatDistance } from '@/lib/location'
 
 interface TabLocation {
   id: number
@@ -17,19 +18,10 @@ interface TabLocation {
 
 interface PuntNPintsProps {
   pubs: Pub[]
+  userLocation?: { lat: number; lng: number } | null
 }
 
-function haversineKm(lat1: number, lng1: number, lat2: number, lng2: number): number {
-  const R = 6371
-  const dLat = (lat2 - lat1) * Math.PI / 180
-  const dLng = (lng2 - lng1) * Math.PI / 180
-  const a = Math.sin(dLat / 2) ** 2 +
-    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-    Math.sin(dLng / 2) ** 2
-  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
-}
-
-export default function PuntNPints({ pubs }: PuntNPintsProps) {
+export default function PuntNPints({ pubs, userLocation }: PuntNPintsProps) {
   const [isExpanded, setIsExpanded] = useState(false)
   const [tabLocations, setTabLocations] = useState<TabLocation[]>([])
 
@@ -48,8 +40,13 @@ export default function PuntNPints({ pubs }: PuntNPintsProps) {
   const tabPubs = useMemo(() => {
     return pubs
       .filter(p => p.hasTab && p.price !== null)
-      .sort((a, b) => a.price! - b.price!)
-  }, [pubs])
+      .sort((a, b) => {
+        if (userLocation) {
+          return getDistanceKm(userLocation.lat, userLocation.lng, a.lat, a.lng) - getDistanceKm(userLocation.lat, userLocation.lng, b.lat, b.lng)
+        }
+        return a.price! - b.price!
+      })
+  }, [pubs, userLocation])
 
   // For pubs without TAB, find nearest TAB agency
   const nearbyPairs = useMemo(() => {
@@ -57,14 +54,19 @@ export default function PuntNPints({ pubs }: PuntNPintsProps) {
     
     const nonTabPubs = pubs
       .filter(p => !p.hasTab && p.price !== null && p.lat && p.lng)
-      .sort((a, b) => a.price! - b.price!)
+      .sort((a, b) => {
+        if (userLocation) {
+          return getDistanceKm(userLocation.lat, userLocation.lng, a.lat, a.lng) - getDistanceKm(userLocation.lat, userLocation.lng, b.lat, b.lng)
+        }
+        return a.price! - b.price!
+      })
       .slice(0, 20)
 
     return nonTabPubs.map(pub => {
       let nearest: TabLocation | null = null
       let minDist = Infinity
       for (const tab of tabLocations) {
-        const d = haversineKm(pub.lat, pub.lng, tab.lat, tab.lng)
+        const d = getDistanceKm(pub.lat, pub.lng, tab.lat, tab.lng)
         if (d < minDist) {
           minDist = d
           nearest = tab
@@ -72,8 +74,13 @@ export default function PuntNPints({ pubs }: PuntNPintsProps) {
       }
       return { pub, nearestTab: nearest, distance: minDist }
     }).filter(p => p.distance < 3) // Within 3km
-      .sort((a, b) => a.pub.price! - b.pub.price!)
-  }, [pubs, tabLocations])
+      .sort((a, b) => {
+        if (userLocation) {
+          return getDistanceKm(userLocation.lat, userLocation.lng, a.pub.lat, a.pub.lng) - getDistanceKm(userLocation.lat, userLocation.lng, b.pub.lat, b.pub.lng)
+        }
+        return a.pub.price! - b.pub.price!
+      })
+  }, [pubs, tabLocations, userLocation])
 
   const displayedTabPubs = isExpanded ? tabPubs : tabPubs.slice(0, 5)
   const displayedPairs = isExpanded ? nearbyPairs.slice(0, 10) : nearbyPairs.slice(0, 3)
@@ -113,7 +120,7 @@ export default function PuntNPints({ pubs }: PuntNPintsProps) {
                     <span className="text-xs font-semibold text-stone-800 truncate">{pub.name}</span>
                   </div>
                   <div className="flex items-center gap-1.5 mt-0.5">
-                    <span className="text-[10px] text-stone-400">{pub.suburb}</span>
+                    <span className="text-[10px] text-stone-400">{pub.suburb}{userLocation && ` · ${formatDistance(getDistanceKm(userLocation.lat, userLocation.lng, pub.lat, pub.lng))}`}</span>
                     <span className="text-[9px] px-1 py-px rounded bg-stone-100 text-stone-500">{pub.beerType || 'Tap Beer'}</span>
                   </div>
                 </div>
@@ -138,7 +145,7 @@ export default function PuntNPints({ pubs }: PuntNPintsProps) {
                   <div className="flex-1 min-w-0">
                     <span className="text-xs font-semibold text-stone-800 truncate block">{pub.name}</span>
                     <div className="flex items-center gap-1 mt-0.5">
-                      <span className="text-[10px] text-stone-400">{pub.suburb}</span>
+                      <span className="text-[10px] text-stone-400">{pub.suburb}{userLocation && ` · ${formatDistance(getDistanceKm(userLocation.lat, userLocation.lng, pub.lat, pub.lng))}`}</span>
                       {nearestTab && (
                         <span className="text-[9px]" style={{ color: '#5B2D8E' }}>
                           {distance < 0.5 ? `${Math.round(distance * 1000)}m` : `${distance.toFixed(1)}km`} to {nearestTab.name}

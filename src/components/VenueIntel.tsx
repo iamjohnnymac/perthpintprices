@@ -4,9 +4,11 @@ import { useState, useMemo } from 'react'
 import { Pub } from '@/types/pub'
 import { Card, CardContent } from '@/components/ui/card'
 import E from '@/lib/emoji'
+import { getDistanceKm, formatDistance } from '@/lib/location'
 
 interface VenueIntelProps {
   pubs: Pub[]
+  userLocation?: { lat: number; lng: number } | null
 }
 
 function getBracketColor(bracket: string): string {
@@ -19,7 +21,7 @@ function getBracketColor(bracket: string): string {
   return 'bg-red-600'
 }
 
-export default function VenueIntel({ pubs }: VenueIntelProps) {
+export default function VenueIntel({ pubs, userLocation }: VenueIntelProps) {
   const [isExpanded, setIsExpanded] = useState(false)
 
   const priceRange = useMemo(() => {
@@ -173,7 +175,7 @@ export default function VenueIntel({ pubs }: VenueIntelProps) {
                     <div key={pub.id} className="flex items-center justify-between p-2 rounded-lg bg-green-50/60 border border-green-100">
                       <div className="min-w-0">
                         <p className="text-xs font-semibold text-stone-800 truncate">{pub.name}</p>
-                        <p className="text-[10px] text-stone-400">{pub.suburb}</p>
+                        <p className="text-[10px] text-stone-400">{pub.suburb}{userLocation && ` · ${formatDistance(getDistanceKm(userLocation.lat, userLocation.lng, pub.lat, pub.lng))}`}</p>
                       </div>
                       <div className="text-right flex-shrink-0">
                         <p className="text-xs font-bold text-green-700">{pub.price !== null ? `$${pub.price.toFixed(2)}` : 'TBC'}</p>
@@ -193,7 +195,7 @@ export default function VenueIntel({ pubs }: VenueIntelProps) {
                     <div key={pub.id} className="flex items-center justify-between p-2 rounded-lg bg-red-50/60 border border-red-100">
                       <div className="min-w-0">
                         <p className="text-xs font-semibold text-stone-800 truncate">{pub.name}</p>
-                        <p className="text-[10px] text-stone-400">{pub.suburb}</p>
+                        <p className="text-[10px] text-stone-400">{pub.suburb}{userLocation && ` · ${formatDistance(getDistanceKm(userLocation.lat, userLocation.lng, pub.lat, pub.lng))}`}</p>
                       </div>
                       <div className="text-right flex-shrink-0">
                         <p className="text-xs font-bold text-red-600">{pub.price !== null ? `$${pub.price.toFixed(2)}` : 'TBC'}</p>

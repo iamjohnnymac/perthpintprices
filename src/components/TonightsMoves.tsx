@@ -6,9 +6,11 @@ import { getHappyHourStatus } from '@/lib/happyHour'
 import InfoTooltip from './InfoTooltip'
 import { Card, CardContent } from '@/components/ui/card'
 import E from '@/lib/emoji'
+import { getDistanceKm, formatDistance } from '@/lib/location'
 
 interface TonightsMovesProps {
   pubs: Pub[]
+  userLocation?: { lat: number; lng: number } | null
 }
 
 function getPerthTime(): Date {
@@ -24,7 +26,7 @@ function formatPerthTime(date: Date): string {
   return `${h}:${m} ${ampm}`
 }
 
-export default function TonightsMoves({ pubs }: TonightsMovesProps) {
+export default function TonightsMoves({ pubs, userLocation }: TonightsMovesProps) {
   const [isExpanded, setIsExpanded] = useState(false)
   const [perthTime, setPerthTime] = useState(getPerthTime)
 
@@ -36,8 +38,13 @@ export default function TonightsMoves({ pubs }: TonightsMovesProps) {
   }, [])
 
   const bestBuys = useMemo(() => {
-    return [...pubs].filter(p => p.price !== null).sort((a, b) => a.price! - b.price!).slice(0, 5)
-  }, [pubs])
+    return [...pubs].filter(p => p.price !== null).sort((a, b) => {
+        if (userLocation) {
+          return getDistanceKm(userLocation.lat, userLocation.lng, a.lat, a.lng) - getDistanceKm(userLocation.lat, userLocation.lng, b.lat, b.lng)
+        }
+        return a.price! - b.price!
+      }).slice(0, 5)
+  }, [pubs, userLocation])
 
   const activeDeals = useMemo(() => {
     return pubs
@@ -45,8 +52,13 @@ export default function TonightsMoves({ pubs }: TonightsMovesProps) {
         const status = getHappyHourStatus(p.happyHour)
         return status.isActive
       })
-      .filter(p => p.price !== null).sort((a, b) => a.price! - b.price!)
-  }, [pubs, perthTime])
+      .filter(p => p.price !== null).sort((a, b) => {
+        if (userLocation) {
+          return getDistanceKm(userLocation.lat, userLocation.lng, a.lat, a.lng) - getDistanceKm(userLocation.lat, userLocation.lng, b.lat, b.lng)
+        }
+        return a.price! - b.price!
+      })
+  }, [pubs, perthTime, userLocation])
 
   const upcomingDeals = useMemo(() => {
     return pubs
@@ -54,9 +66,14 @@ export default function TonightsMoves({ pubs }: TonightsMovesProps) {
         const status = getHappyHourStatus(p.happyHour)
         return !status.isActive && status.isToday
       })
-      .filter(p => p.price !== null).sort((a, b) => a.price! - b.price!)
+      .filter(p => p.price !== null).sort((a, b) => {
+        if (userLocation) {
+          return getDistanceKm(userLocation.lat, userLocation.lng, a.lat, a.lng) - getDistanceKm(userLocation.lat, userLocation.lng, b.lat, b.lng)
+        }
+        return a.price! - b.price!
+      })
       .slice(0, 5)
-  }, [pubs, perthTime])
+  }, [pubs, perthTime, userLocation])
 
   const hotSuburb = useMemo(() => {
     const suburbMap: Record<string, { activeCount: number; totalPrice: number; count: number }> = {}
@@ -86,9 +103,14 @@ export default function TonightsMoves({ pubs }: TonightsMovesProps) {
   const marketTip = useMemo(() => {
     const activeHHPubs = pubs
       .filter(p => getHappyHourStatus(p.happyHour).isActive)
-      .filter(p => p.price !== null).sort((a, b) => a.price! - b.price!)
+      .filter(p => p.price !== null).sort((a, b) => {
+        if (userLocation) {
+          return getDistanceKm(userLocation.lat, userLocation.lng, a.lat, a.lng) - getDistanceKm(userLocation.lat, userLocation.lng, b.lat, b.lng)
+        }
+        return a.price! - b.price!
+      })
     return activeHHPubs.length > 0 ? activeHHPubs[0] : bestBuys[0] || null
-  }, [pubs, bestBuys, perthTime])
+  }, [pubs, bestBuys, perthTime, userLocation])
 
   const summaryText = useMemo(() => {
     const bestBuy = bestBuys[0]
@@ -133,7 +155,7 @@ export default function TonightsMoves({ pubs }: TonightsMovesProps) {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm font-bold text-stone-800">{marketTip.name}</p>
-                    <p className="text-[10px] text-stone-500">{marketTip.suburb} {E.bullet} {marketTip.beerType}</p>
+                    <p className="text-[10px] text-stone-500">{marketTip.suburb}{userLocation && ` · ${formatDistance(getDistanceKm(userLocation.lat, userLocation.lng, marketTip.lat, marketTip.lng))}`} {E.bullet} {marketTip.beerType}</p>
                   </div>
                   <div className="text-right">
                     <span className="text-lg font-bold font-mono text-teal">{marketTip.price !== null ? `$${marketTip.price.toFixed(2)}` : 'TBC'}</span>
@@ -157,7 +179,7 @@ export default function TonightsMoves({ pubs }: TonightsMovesProps) {
                       <span className="text-xs font-bold text-stone-400 w-4">{i + 1}</span>
                       <div className="min-w-0">
                         <p className="text-xs font-semibold text-stone-800 truncate">{pub.name}</p>
-                        <p className="text-[10px] text-stone-400">{pub.suburb} {E.bullet} {pub.beerType}</p>
+                        <p className="text-[10px] text-stone-400">{pub.suburb}{userLocation && ` · ${formatDistance(getDistanceKm(userLocation.lat, userLocation.lng, pub.lat, pub.lng))}`} {E.bullet} {pub.beerType}</p>
                       </div>
                     </div>
                     <span className="text-sm font-bold font-mono text-teal flex-shrink-0">{pub.price !== null ? `$${pub.price.toFixed(2)}` : 'TBC'}</span>
@@ -179,7 +201,7 @@ export default function TonightsMoves({ pubs }: TonightsMovesProps) {
                       <div key={pub.id} className="flex items-center justify-between p-2 rounded-lg bg-teal/5 border border-teal/20">
                         <div className="min-w-0">
                           <p className="text-xs font-semibold text-stone-800 truncate">{pub.name}</p>
-                          <p className="text-[10px] text-stone-400">{pub.suburb}</p>
+                          <p className="text-[10px] text-stone-400">{pub.suburb}{userLocation && ` · ${formatDistance(getDistanceKm(userLocation.lat, userLocation.lng, pub.lat, pub.lng))}`}</p>
                         </div>
                         <div className="flex items-center gap-2 flex-shrink-0">
                           <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-semibold bg-teal/10 text-teal border border-teal/20">
@@ -207,7 +229,7 @@ export default function TonightsMoves({ pubs }: TonightsMovesProps) {
                       <div key={pub.id} className="flex items-center justify-between p-2 rounded-lg bg-amber-50/40 border border-amber-100">
                         <div className="min-w-0">
                           <p className="text-xs font-semibold text-stone-800 truncate">{pub.name}</p>
-                          <p className="text-[10px] text-stone-400">{pub.suburb}</p>
+                          <p className="text-[10px] text-stone-400">{pub.suburb}{userLocation && ` · ${formatDistance(getDistanceKm(userLocation.lat, userLocation.lng, pub.lat, pub.lng))}`}</p>
                         </div>
                         <div className="flex items-center gap-2 flex-shrink-0">
                           <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-medium bg-amber-100 text-amber-700 border border-amber-200">

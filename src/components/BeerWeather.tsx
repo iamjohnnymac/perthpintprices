@@ -5,6 +5,7 @@ import { Pub } from '@/types/pub'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import InfoTooltip from './InfoTooltip'
+import { getDistanceKm, formatDistance } from '@/lib/location'
 
 interface WeatherData {
   temperature: number
@@ -116,9 +117,10 @@ function getWeatherCondition(weather: WeatherData, avgPrice: number): WeatherCon
 
 interface BeerWeatherProps {
   pubs: Pub[]
+  userLocation?: { lat: number; lng: number } | null
 }
 
-export default function BeerWeather({ pubs }: BeerWeatherProps) {
+export default function BeerWeather({ pubs, userLocation }: BeerWeatherProps) {
   const [weather, setWeather] = useState<WeatherData | null>(null)
   const [isExpanded, setIsExpanded] = useState(false)
   const [error, setError] = useState(false)
@@ -155,9 +157,17 @@ export default function BeerWeather({ pubs }: BeerWeatherProps) {
 
   const recommendedPubs = useMemo(() => {
     if (!condition) return []
-    const filtered = condition.filter(pubs)
-    return filtered.length > 0 ? filtered.slice(0, 4) : pubs.filter(p => p.price !== null).sort((a, b) => a.price! - b.price!).slice(0, 4)
-  }, [condition, pubs])
+    let filtered = condition.filter(pubs)
+    if (filtered.length === 0) {
+      filtered = pubs.filter(p => p.price !== null).sort((a, b) => a.price! - b.price!)
+    }
+    if (userLocation) {
+      filtered = [...filtered].sort((a, b) =>
+        getDistanceKm(userLocation.lat, userLocation.lng, a.lat, a.lng) - getDistanceKm(userLocation.lat, userLocation.lng, b.lat, b.lng)
+      )
+    }
+    return filtered.slice(0, 4)
+  }, [condition, pubs, userLocation])
 
   const isWindy = weather && weather.windSpeed > 30
 
@@ -271,7 +281,7 @@ export default function BeerWeather({ pubs }: BeerWeatherProps) {
                   <div className="min-w-0 flex-1">
                     <p className="text-xs font-semibold text-stone-800 truncate">{pub.name}</p>
                     <div className="flex items-center gap-2 mt-0.5">
-                      <span className="text-[10px] text-stone-400">{pub.suburb}</span>
+                      <span className="text-[10px] text-stone-400">{pub.suburb}{userLocation && ` · ${formatDistance(getDistanceKm(userLocation.lat, userLocation.lng, pub.lat, pub.lng))}`}</span>
                       <span className="text-[10px] text-stone-300">·</span>
                       <span className="text-[10px] text-stone-400">{pub.beerType}</span>
                     </div>
