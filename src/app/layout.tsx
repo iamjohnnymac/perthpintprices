@@ -8,7 +8,8 @@ const jetbrainsMono = JetBrains_Mono({ subsets: ['latin'], variable: '--font-jet
 
 export const metadata: Metadata = {
   icons: {
-    icon: '/favicon.svg',
+    icon: '/favicon.ico',
+    apple: '/apple-touch-icon.png',
   },
   title: "PintDex — Perth's Beer Market | Find Cheap Pints Near You",
   description: "Track real-time pint prices across 194 Perth pubs and 89 suburbs. Find happy hours, cheap pints, and the best deals — like a stock exchange for beer.",

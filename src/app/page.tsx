@@ -214,11 +214,7 @@ export default function Home() {
           {/* Row 1: Brand + CTA */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2.5">
-              <div className="w-10 h-10 bg-gradient-to-br from-gold via-amber-500 to-amber-700 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-lg shadow-amber-900/30">
-                <svg viewBox="0 0 24 24" fill="none" className="w-5.5 h-5.5" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M5 3h14M5 3v16a2 2 0 002 2h10a2 2 0 002-2V3M5 3H3M19 3h2M9 3v4M15 3v4" />
-                </svg>
-              </div>
+              <img src="/logo.png" alt="PintDex" className="w-10 h-10 rounded-xl flex-shrink-0" />
               <div>
                 <h1 className="text-xl font-extrabold tracking-tight leading-none font-heading bg-gradient-to-r from-gold via-amber-400 to-amber-600 bg-clip-text text-transparent">PintDex</h1>
                 <p className="text-[11px] text-cream/50 mt-0.5 leading-none tracking-wide uppercase">Every pint. Every pub. Live.</p>
