@@ -82,8 +82,8 @@ function getWeatherCondition(weather: WeatherData, avgPrice: number): WeatherCon
     return {
       emoji: '☀️',
       label: 'Perfect weather',
-      message: "Perfect beer garden weather — get outside!",
-      tagline: `${weather.temperature.toFixed(0)}° and sunny — beer garden weather at its finest`,
+      message: "Mint conditions — get outside and grab a pint!",
+      tagline: `${weather.temperature.toFixed(0)}° and sunny — get outside and grab a cold one`,
       bgClass: 'bg-gradient-to-r from-amber-50/70 via-yellow-50/50 to-amber-50/70',
       borderClass: 'border-amber-200',
       filter: (pubs) => pubs.filter(p => p.sunsetSpot || p.description?.toLowerCase().includes('garden')).filter(p => p.price !== null).sort((a, b) => a.price! - b.price!),
@@ -290,7 +290,7 @@ export default function BeerWeather({ pubs }: BeerWeatherProps) {
             <div className="mt-3 text-center text-xs py-2 rounded-lg bg-white/40 text-stone-400">
               {weather.temperature >= 35 && '🥵 Stay hydrated — water between pints!'}
               {weather.temperature >= 30 && weather.temperature < 35 && '🏖️ Perfect day for a cold schooner by the water'}
-              {weather.temperature >= 22 && weather.temperature < 30 && '🌿 Beer garden season is in full swing'}
+              {weather.temperature >= 22 && weather.temperature < 30 && '🌿 Perth summer sesh weather — get amongst it'}
               {weather.temperature >= 15 && weather.temperature < 22 && '🍂 Classic pub weather — enjoy!'}
               {weather.temperature < 15 && '🧣 Bundle up and find a warm corner booth'}
               {isWindy && ' · Hold onto your hat out there!'}
