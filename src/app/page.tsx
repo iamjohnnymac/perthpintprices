@@ -209,30 +209,64 @@ export default function Home() {
     <main className="min-h-screen bg-cream">
       <PriceTicker pubs={pubs} />
       <header className="bg-navy sticky top-0 z-[1000] shadow-[0_2px_8px_rgba(0,0,0,0.3)]">
-        {/* Top bar: Brand + Submit */}
-        <div className="max-w-7xl mx-auto px-4 py-2 flex items-center gap-3">
-          {/* Brand mark */}
-          <div className="w-9 h-9 bg-gradient-to-br from-gold to-amber-700 rounded-xl flex items-center justify-center flex-shrink-0 shadow-sm">
-            <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M5 3h14M5 3v16a2 2 0 002 2h10a2 2 0 002-2V3M5 3H3M19 3h2M9 3v4M15 3v4" />
-            </svg>
+        {/* Hero header */}
+        <div className="max-w-7xl mx-auto px-4 pt-3 pb-2">
+          {/* Row 1: Brand + CTA */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2.5">
+              <div className="w-10 h-10 bg-gradient-to-br from-gold via-amber-500 to-amber-700 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-lg shadow-amber-900/30">
+                <svg viewBox="0 0 24 24" fill="none" className="w-5.5 h-5.5" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M5 3h14M5 3v16a2 2 0 002 2h10a2 2 0 002-2V3M5 3H3M19 3h2M9 3v4M15 3v4" />
+                </svg>
+              </div>
+              <div>
+                <h1 className="text-xl font-extrabold tracking-tight leading-none font-heading bg-gradient-to-r from-gold via-amber-400 to-amber-600 bg-clip-text text-transparent">PintDex</h1>
+                <p className="text-[11px] text-cream/50 mt-0.5 leading-none tracking-wide uppercase">Every pint. Every pub. Live.</p>
+              </div>
+            </div>
+            <button
+              onClick={() => setShowSubmitForm(true)}
+              className="flex-shrink-0 flex items-center gap-1.5 px-4 py-2.5 bg-gradient-to-r from-gold to-amber-600 hover:from-amber-500 hover:to-amber-700 text-navy rounded-2xl font-bold transition-all text-xs shadow-lg shadow-amber-900/20"
+            >
+              <span className="hidden sm:inline">+ Submit a Price</span>
+              <span className="sm:hidden text-base leading-none font-bold">+</span>
+            </button>
           </div>
-          {/* Title + tagline */}
-          <div className="flex-1 min-w-0">
-            <h1 className="text-[15px] font-bold text-cream tracking-tight leading-none font-heading">PintDex</h1>
-            <p className="text-[11px] text-cream/60 mt-0.5 leading-none">
-              <span className="hidden sm:inline">Perth&apos;s Beer Market · </span>
-              {stats.total} venues · {suburbs.length} suburbs
-            </p>
+
+          {/* Row 2: Live price strip — the hook */}
+          <div className="flex items-center gap-3 mt-2.5 px-1">
+            <div className="flex items-baseline gap-1">
+              <span className="text-teal font-mono font-black text-xl leading-none">${stats.minPrice}</span>
+              <span className="text-cream/40 text-[10px] uppercase tracking-wider">cheapest</span>
+            </div>
+            <div className="flex-1 relative h-1.5 rounded-full bg-cream/10 overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-r from-teal via-gold to-coral rounded-full opacity-60" />
+              {/* Average marker */}
+              <div
+                className="absolute top-1/2 -translate-y-1/2 w-2.5 h-2.5 rounded-full bg-gold border-2 border-navy shadow-sm"
+                style={{ left: `${((parseFloat(stats.avgPrice) - stats.minPrice) / (stats.maxPriceValue - stats.minPrice)) * 100}%` }}
+              />
+            </div>
+            <div className="flex items-baseline gap-1">
+              <span className="text-coral font-mono font-black text-xl leading-none">${stats.maxPriceValue}</span>
+              <span className="text-cream/40 text-[10px] uppercase tracking-wider">priciest</span>
+            </div>
           </div>
-          {/* Submit button */}
-          <button
-            onClick={() => setShowSubmitForm(true)}
-            className="flex-shrink-0 flex items-center gap-1.5 px-3.5 py-2 bg-gold hover:bg-amber-600 text-navy rounded-xl font-semibold transition-colors text-xs shadow-sm"
-          >
-            <span className="hidden sm:inline">+ Submit a Pub</span>
-            <span className="sm:hidden text-base leading-none">+</span>
-          </button>
+
+          {/* Row 3: Stats ticker */}
+          <div className="flex items-center justify-between mt-2 px-1 pb-0.5">
+            <div className="flex items-center gap-3 text-[11px] text-cream/50">
+              <span><span className="text-gold font-bold font-mono">{stats.total}</span> venues</span>
+              <span className="text-cream/20">·</span>
+              <span><span className="text-gold font-bold font-mono">{suburbs.length}</span> suburbs</span>
+              <span className="text-cream/20">·</span>
+              <span>avg <span className="text-gold font-bold font-mono">${stats.avgPrice}</span></span>
+            </div>
+            <div className="flex items-center gap-1">
+              <div className="w-1.5 h-1.5 rounded-full bg-teal animate-pulse" />
+              <span className="text-[10px] text-teal/70 uppercase tracking-wider font-medium">Live</span>
+            </div>
+          </div>
         </div>
 
         {/* Tab navigation — primary, always visible */}
