@@ -20,7 +20,6 @@ import DadBar from '@/components/DadBar'
 import TabBar, { TabId } from '@/components/TabBar'
 import PintIndexCompact from '@/components/PintIndexCompact'
 import PubCard from '@/components/PubCard'
-import LocationBanner from '@/components/LocationBanner'
 import { getDistanceKm, formatDistance } from '@/lib/location'
 import { getCrowdLevels, CrowdReport, CROWD_LEVELS, getPubs } from '@/lib/supabase'
 import { getHappyHourStatus } from '@/lib/happyHour'
@@ -125,10 +124,18 @@ export default function Home() {
     return () => clearInterval(interval)
   }, [])
 
+  // Auto-request location on load (native browser prompt, no custom UI)
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const dismissed = localStorage.getItem('ppp-location-dismissed')
-      if (dismissed) setLocationState('dismissed')
+    if (typeof window !== 'undefined' && navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          setUserLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude })
+          setLocationState('granted')
+          setSortBy('nearest')
+        },
+        () => setLocationState('denied'),
+        { enableHighAccuracy: false, timeout: 8000, maximumAge: 300000 }
+      )
     }
   }, [])
 
@@ -137,11 +144,7 @@ export default function Home() {
     setCrowdReports(reports)
   }
 
-  function handleLocationGranted(lat: number, lng: number) {
-    setUserLocation({ lat, lng })
-    setLocationState('granted')
-    setSortBy('nearest')
-  }
+
 
   function getLatestCrowdReport(pubId: number): CrowdReport | undefined {
     return crowdReports[String(pubId)]
@@ -271,11 +274,6 @@ export default function Home() {
         {/* ═══ PUBS TAB ═══ */}
         {activeTab === 'pubs' && (
           <>
-            <LocationBanner
-              onLocationGranted={handleLocationGranted}
-              locationState={locationState}
-              setLocationState={setLocationState}
-            />
             <PintIndexCompact pubs={pubs} onViewMore={() => setActiveTab('market')} />
 
             <div className="mb-5 rounded-2xl overflow-hidden shadow-[0_2px_12px_rgba(0,0,0,0.06)] border border-stone-200/60 relative z-0 isolate">

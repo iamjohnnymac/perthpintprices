@@ -5,7 +5,7 @@ import MarkerClusterGroup from 'react-leaflet-cluster'
 import L from 'leaflet'
 import { Pub } from '@/types/pub'
 import 'leaflet/dist/leaflet.css'
-import { useEffect } from 'react'
+import React, { useEffect } from 'react'
 
 // Price-coded markers using DivIcon
 function getPriceIcon(price: number | null): L.DivIcon {
@@ -76,21 +76,28 @@ function createClusterCustomIcon(cluster: L.MarkerCluster): L.DivIcon {
 }
 
 // Component to fit map bounds to visible markers
-function FitBounds({ pubs }: { pubs: Pub[] }) {
+function FitBounds({ pubs, userLocation }: { pubs: Pub[], userLocation?: { lat: number, lng: number } | null }) {
   const map = useMap()
+  const hasZoomedToUser = React.useRef(false)
 
   useEffect(() => {
-    if (pubs.length === 0) return
+    // If user location available and we haven't zoomed to them yet, center on them
+    if (userLocation && !hasZoomedToUser.current) {
+      hasZoomedToUser.current = true
+      map.setView([userLocation.lat, userLocation.lng], 14, { animate: true })
+      return
+    }
 
-    // Create bounds from all pub locations
+    // Otherwise fit to all pubs
+    if (pubs.length === 0) return
+    if (hasZoomedToUser.current) return // Don't override user location zoom
+
     const bounds = L.latLngBounds(pubs.map(pub => [pub.lat, pub.lng]))
-    
-    // Fit the map to show all markers with padding
     map.fitBounds(bounds, { 
       padding: [50, 50],
-      maxZoom: 15 // Don't zoom in too far for single/few results
+      maxZoom: 15
     })
-  }, [map, pubs])
+  }, [map, pubs, userLocation])
 
   return null
 }
@@ -120,7 +127,7 @@ export default function Map({ pubs, isHappyHour, userLocation }: MapProps) {
       />
       
       {/* Fit bounds to filtered pubs */}
-      <FitBounds pubs={pubs} />
+      <FitBounds pubs={pubs} userLocation={userLocation} />
       
       {/* Clustered markers */}
       <MarkerClusterGroup
