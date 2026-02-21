@@ -72,7 +72,7 @@ export function FilterSection({
             placeholder="Search pubs or suburbs..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-8 pr-8 py-2 text-sm bg-stone-50 border border-stone-200 rounded-xl text-stone-700 placeholder-stone-400 focus:outline-none focus:ring-1 focus:ring-amber-500 focus:border-amber-400 transition-colors"
+            className="w-full pl-8 pr-8 py-2 text-sm bg-stone-50 border border-stone-200 rounded-xl text-stone-700 placeholder-stone-400 focus:outline-none focus:ring-1 focus:ring-gold focus:border-gold transition-colors"
           />
           {searchTerm && (
             <button onClick={() => setSearchTerm('')} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-600">
@@ -85,7 +85,7 @@ export function FilterSection({
         <select
           value={selectedSuburb || 'all'}
           onChange={(e) => setSelectedSuburb(e.target.value)}
-          className="text-sm bg-stone-50 border border-stone-200 rounded-xl px-3 py-2 text-stone-600 focus:outline-none focus:ring-1 focus:ring-amber-500 focus:border-amber-400 transition-colors cursor-pointer flex-shrink-0 max-w-[130px] sm:max-w-[160px]"
+          className="text-sm bg-stone-50 border border-stone-200 rounded-xl px-3 py-2 text-stone-600 focus:outline-none focus:ring-1 focus:ring-gold focus:border-gold transition-colors cursor-pointer flex-shrink-0 max-w-[130px] sm:max-w-[160px]"
         >
           <option value="all">All Suburbs</option>
           {suburbs.map(suburb => (
@@ -131,7 +131,7 @@ export function FilterSection({
             className={cn(
               "flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all border flex-shrink-0 whitespace-nowrap",
               showHappyHourOnly
-                ? "bg-green-600 text-white border-green-600"
+                ? "bg-gold text-navy border-gold"
                 : "bg-white text-stone-500 border-stone-200 hover:border-stone-300 hover:text-stone-700"
             )}
           >
@@ -140,7 +140,7 @@ export function FilterSection({
             {stats.happyHourNow > 0 && (
               <span className={cn(
                 "text-xs rounded-full px-1.5 py-0 font-semibold",
-                showHappyHourOnly ? "bg-green-500 text-white" : "bg-stone-200 text-stone-600"
+                showHappyHourOnly ? "bg-navy/20 text-navy" : "bg-stone-200 text-stone-600"
               )}>
                 {stats.happyHourNow}
               </span>
@@ -154,7 +154,7 @@ export function FilterSection({
               className={cn(
                 "flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all border flex-shrink-0 whitespace-nowrap",
                 showMiniMaps
-                  ? "bg-amber-600 text-white border-amber-600"
+                  ? "bg-gold text-navy border-gold"
                   : "bg-white text-stone-500 border-stone-200 hover:border-stone-300 hover:text-stone-700"
               )}
             >
@@ -177,7 +177,7 @@ export function FilterSection({
               <SlidersHorizontal className="h-3 w-3" />
               Filters
               {activeFilterCount > 0 && (
-                <span className="bg-amber-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center font-bold">
+                <span className="bg-gold text-navy text-xs rounded-full w-4 h-4 flex items-center justify-center font-bold">
                   {activeFilterCount}
                 </span>
               )}
@@ -206,7 +206,7 @@ export function FilterSection({
 
                 <div>
                   <label className="block text-xs font-semibold text-stone-400 uppercase tracking-wide mb-2">
-                    Max Price: <span className="text-amber-600">${maxPrice}</span>
+                    Max Price: <span className="text-gold">${maxPrice}</span>
                   </label>
                   <input
                     type="range"
@@ -215,7 +215,7 @@ export function FilterSection({
                     step={0.5}
                     value={maxPrice}
                     onChange={(e) => setMaxPrice(Number(e.target.value))}
-                    className="w-full accent-amber-600"
+                    className="w-full accent-gold"
                   />
                   <div className="flex justify-between text-xs text-stone-400 mt-0.5">
                     <span>$6</span>

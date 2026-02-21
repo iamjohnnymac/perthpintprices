@@ -9,10 +9,19 @@ const config: Config = {
   ],
   theme: {
   	extend: {
+  		fontFamily: {
+  			heading: ['var(--font-space-grotesk)', 'sans-serif'],
+  			mono: ['var(--font-jetbrains-mono)', 'monospace'],
+  		},
   		colors: {
   			'beer-gold': '#F4A100',
   			'beer-amber': '#D97706',
   			'beer-dark': '#1E1E1E',
+  			'navy': '#1A1A2E',
+  			'gold': '#E8A317',
+  			'teal': '#00C9A7',
+  			'coral': '#FF4757',
+  			'cream': '#F5F1EB',
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',
   			card: {

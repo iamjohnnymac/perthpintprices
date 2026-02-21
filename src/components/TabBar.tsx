@@ -12,7 +12,7 @@ interface TabBarProps {
 const tabs: { id: TabId; label: string; activeIcon: JSX.Element; inactiveIcon: JSX.Element }[] = [
   {
     id: 'pubs',
-    label: 'Pubs',
+    label: 'The Floor',
     // Filled pint glass
     activeIcon: (
       <svg viewBox="0 0 24 24" className="w-[22px] h-[22px]" fill="currentColor" stroke="none">
@@ -28,7 +28,7 @@ const tabs: { id: TabId; label: string; activeIcon: JSX.Element; inactiveIcon: J
   },
   {
     id: 'market',
-    label: 'Market',
+    label: 'Market Data',
     // Filled chart
     activeIcon: (
       <svg viewBox="0 0 24 24" className="w-[22px] h-[22px]" fill="currentColor" stroke="none">
@@ -46,7 +46,7 @@ const tabs: { id: TabId; label: string; activeIcon: JSX.Element; inactiveIcon: J
   },
   {
     id: 'explore',
-    label: 'Explore',
+    label: 'Discover',
     // Filled compass
     activeIcon: (
       <svg viewBox="0 0 24 24" className="w-[22px] h-[22px]" fill="currentColor" stroke="none">
@@ -65,7 +65,7 @@ const tabs: { id: TabId; label: string; activeIcon: JSX.Element; inactiveIcon: J
 
 export default function TabBar({ activeTab, onTabChange, pubCount, crowdCount }: TabBarProps) {
   return (
-    <div className="bg-white">
+    <div className="bg-navy">
       <div className="max-w-7xl mx-auto">
         <nav className="flex" role="tablist">
           {tabs.map((tab) => {
@@ -80,8 +80,8 @@ export default function TabBar({ activeTab, onTabChange, pubCount, crowdCount }:
                   relative flex-1 flex flex-col items-center justify-center gap-1 py-3
                   transition-all duration-200 ease-out
                   ${isActive 
-                    ? 'text-amber-700' 
-                    : 'text-stone-400 hover:text-stone-500'
+                    ? 'text-gold' 
+                    : 'text-cream/70 hover:text-cream/90'
                   }
                 `}
               >
@@ -97,12 +97,12 @@ export default function TabBar({ activeTab, onTabChange, pubCount, crowdCount }:
 
                 {/* Live badge for market */}
                 {tab.id === 'market' && crowdCount > 0 && (
-                  <span className="absolute top-2 right-1/4 flex items-center justify-center w-2 h-2 rounded-full bg-green-500 animate-pulse ring-2 ring-white" />
+                  <span className="absolute top-2 right-1/4 flex items-center justify-center w-2 h-2 rounded-full bg-teal animate-pulse ring-2 ring-navy" />
                 )}
 
                 {/* Count badge for pubs */}
                 {tab.id === 'pubs' && pubCount > 0 && !isActive && (
-                  <span className="absolute top-2 right-1/4 flex items-center justify-center min-w-[16px] h-4 px-1 text-[9px] font-bold rounded-full bg-amber-100 text-amber-700">
+                  <span className="absolute top-2 right-1/4 flex items-center justify-center min-w-[16px] h-4 px-1 text-[9px] font-bold rounded-full bg-gold/20 text-gold">
                     {pubCount}
                   </span>
                 )}
@@ -111,7 +111,7 @@ export default function TabBar({ activeTab, onTabChange, pubCount, crowdCount }:
                 <span className={`
                   absolute bottom-0 left-3 right-3 h-[3px] rounded-full
                   transition-all duration-200
-                  ${isActive ? 'bg-amber-600 opacity-100' : 'bg-transparent opacity-0'}
+                  ${isActive ? 'bg-gold opacity-100' : 'bg-transparent opacity-0'}
                 `} />
               </button>
             )

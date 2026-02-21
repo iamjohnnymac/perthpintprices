@@ -99,7 +99,7 @@ export default function TonightsMoves({ pubs }: TonightsMovesProps) {
 
   return (
     <Card
-      className="border border-stone-200/60 bg-gradient-to-r from-stone-50 via-amber-50/20 to-stone-50 cursor-pointer transition-all duration-300 shadow-[0_2px_12px_rgba(0,0,0,0.04)]"
+      className="bg-white rounded-2xl shadow-[0_2px_12px_rgba(0,0,0,0.06)] border border-stone-200/40 cursor-pointer transition-all duration-300"
       onClick={() => setIsExpanded(!isExpanded)}
     >
       <CardContent className="p-4">
@@ -109,7 +109,7 @@ export default function TonightsMoves({ pubs }: TonightsMovesProps) {
             <span className="text-2xl">{E.clock}</span>
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="font-bold text-stone-800 text-sm flex items-center">{`TONIGHT'S TRADING FLOOR`}<InfoTooltip text="Updated in real-time based on current Perth time. Shows active happy hours, best prices right now, and our top pick of the moment." /></h3>
+                <h3 className="font-bold font-heading text-stone-800 text-sm flex items-center">{`TONIGHT'S TRADING FLOOR`}<InfoTooltip text="Updated in real-time based on current Perth time. Shows active happy hours, best prices right now, and our top pick of the moment." /></h3>
                 <span className="text-[10px] text-stone-400 font-mono">{formatPerthTime(perthTime)} AWST</span>
               </div>
               <p className="text-xs text-stone-500">{summaryText}</p>
@@ -136,9 +136,9 @@ export default function TonightsMoves({ pubs }: TonightsMovesProps) {
                     <p className="text-[10px] text-stone-500">{marketTip.suburb} {E.bullet} {marketTip.beerType}</p>
                   </div>
                   <div className="text-right">
-                    <span className="text-lg font-bold text-green-700">{marketTip.price !== null ? `$${marketTip.price.toFixed(2)}` : 'TBC'}</span>
+                    <span className="text-lg font-bold font-mono text-teal">{marketTip.price !== null ? `$${marketTip.price.toFixed(2)}` : 'TBC'}</span>
                     {getHappyHourStatus(marketTip.happyHour).isActive && (
-                      <p className="text-[9px] text-green-600 font-semibold">HH ACTIVE</p>
+                      <p className="text-[9px] text-teal font-semibold">HH ACTIVE</p>
                     )}
                   </div>
                 </div>
@@ -147,7 +147,7 @@ export default function TonightsMoves({ pubs }: TonightsMovesProps) {
 
             {/* Best Buys */}
             <div>
-              <h4 className="text-xs font-semibold text-green-700 mb-2 flex items-center gap-1">
+              <h4 className="text-xs font-semibold text-teal mb-2 flex items-center gap-1">
                 {E.chart_down} BEST BUYS {E.dash} Lowest Prices Right Now
               </h4>
               <div className="space-y-1.5">
@@ -160,7 +160,7 @@ export default function TonightsMoves({ pubs }: TonightsMovesProps) {
                         <p className="text-[10px] text-stone-400">{pub.suburb} {E.bullet} {pub.beerType}</p>
                       </div>
                     </div>
-                    <span className="text-sm font-bold text-green-700 flex-shrink-0">{pub.price !== null ? `$${pub.price.toFixed(2)}` : 'TBC'}</span>
+                    <span className="text-sm font-bold font-mono text-teal flex-shrink-0">{pub.price !== null ? `$${pub.price.toFixed(2)}` : 'TBC'}</span>
                   </div>
                 ))}
               </div>
@@ -169,23 +169,23 @@ export default function TonightsMoves({ pubs }: TonightsMovesProps) {
             {/* Active Deals */}
             {activeDeals.length > 0 && (
               <div>
-                <h4 className="text-xs font-semibold text-emerald-700 mb-2 flex items-center gap-1">
+                <h4 className="text-xs font-semibold text-teal mb-2 flex items-center gap-1">
                   {E.party} ACTIVE DEALS {E.dash} Happy Hour NOW ({activeDeals.length})
                 </h4>
                 <div className="space-y-1.5">
                   {activeDeals.slice(0, 5).map((pub) => {
                     const status = getHappyHourStatus(pub.happyHour)
                     return (
-                      <div key={pub.id} className="flex items-center justify-between p-2 rounded-lg bg-green-50/60 border border-green-100">
+                      <div key={pub.id} className="flex items-center justify-between p-2 rounded-lg bg-teal/5 border border-teal/20">
                         <div className="min-w-0">
                           <p className="text-xs font-semibold text-stone-800 truncate">{pub.name}</p>
                           <p className="text-[10px] text-stone-400">{pub.suburb}</p>
                         </div>
                         <div className="flex items-center gap-2 flex-shrink-0">
-                          <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-semibold bg-green-100 text-green-700 border border-green-200">
+                          <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-semibold bg-teal/10 text-teal border border-teal/20">
                             {status.countdown}
                           </span>
-                          <span className="text-sm font-bold text-green-700">{pub.price !== null ? `$${pub.price.toFixed(2)}` : 'TBC'}</span>
+                          <span className="text-sm font-bold font-mono text-teal">{pub.price !== null ? `$${pub.price.toFixed(2)}` : 'TBC'}</span>
                         </div>
                       </div>
                     )

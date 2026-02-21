@@ -192,13 +192,7 @@ export default function SunsetSippers({ pubs }: SunsetSippersProps) {
 
   return (
     <Card
-      className={`border cursor-pointer transition-all duration-300 ${
-        isGoldenHour || isSunset
-          ? 'border-amber-400 bg-gradient-to-r from-amber-50 via-orange-50 to-rose-50'
-          : isNighttime
-          ? 'border-indigo-300 bg-gradient-to-r from-indigo-50 via-slate-50 to-indigo-50'
-          : 'border-amber-200 bg-gradient-to-r from-amber-50/50 to-orange-50/50'
-      }`}
+      className="bg-white rounded-2xl shadow-[0_2px_12px_rgba(0,0,0,0.06)] border border-stone-200/40 cursor-pointer transition-all duration-300"
       onClick={() => setIsExpanded(!isExpanded)}
     >
       <CardContent className="p-4">
@@ -208,7 +202,7 @@ export default function SunsetSippers({ pubs }: SunsetSippersProps) {
             <span className="text-2xl">{statusEmoji}</span>
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="font-bold text-stone-800 text-sm flex items-center">SUNSET SIPPERS<InfoTooltip text="Uses Perth's real-time sunset & golden hour times (calculated astronomically). Highlights west-facing pubs with verified prices — best spots to watch the sun go down with a pint." /></h3>
+                <h3 className="font-bold font-heading text-stone-800 text-sm flex items-center">SUNSET SIPPERS<InfoTooltip text="Uses Perth's real-time sunset & golden hour times (calculated astronomically). Highlights west-facing pubs with verified prices — best spots to watch the sun go down with a pint." /></h3>
                 {isGoldenHour && (
                   <Badge className="bg-amber-500 text-white text-[10px] px-1.5 py-0 animate-pulse">
                     GOLDEN HOUR

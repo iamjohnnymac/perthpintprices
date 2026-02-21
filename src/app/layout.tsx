@@ -1,20 +1,27 @@
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
+import { Inter, Space_Grotesk, JetBrains_Mono } from 'next/font/google'
 import './globals.css'
 
-const inter = Inter({ subsets: ['latin'] })
+const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
+const spaceGrotesk = Space_Grotesk({ subsets: ['latin'], variable: '--font-space-grotesk' })
+const jetbrainsMono = JetBrains_Mono({ subsets: ['latin'], variable: '--font-jetbrains-mono' })
 
 export const metadata: Metadata = {
-  title: 'Perth Pint Prices | Find Cheap Beers Near You',
-  description: 'Discover the best pint prices at pubs across Perth, Western Australia. Find happy hours, compare prices, and never overpay for a beer again.',
-  keywords: 'Perth, pint prices, beer, pubs, happy hour, Western Australia, cheap drinks',
+  title: "PintDex — Perth's Beer Market | Find Cheap Pints Near You",
+  description: "Track real-time pint prices across 194 Perth pubs and 89 suburbs. Find happy hours, cheap pints, and the best deals — like a stock exchange for beer.",
+  keywords: 'Perth, pint prices, beer, pubs, happy hour, Western Australia, cheap drinks, PintDex',
   openGraph: {
-    title: 'Perth Pint Prices',
-    description: 'Find the cheapest pints in Perth',
-    url: 'https://perthpintprices.com',
-    siteName: 'Perth Pint Prices',
+    title: "PintDex — Perth's Beer Market",
+    description: "Real-time pint prices across 194 Perth pubs. Avg: $8.97. Cheapest: $6.00.",
+    url: 'https://pintdex.com.au',
+    siteName: 'PintDex',
     locale: 'en_AU',
     type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: "PintDex — Perth's Beer Market",
+    description: "Real-time pint prices across 194 Perth pubs. Find cheap pints near you.",
   },
 }
 
@@ -25,7 +32,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <body className={`${inter.variable} ${spaceGrotesk.variable} ${jetbrainsMono.variable} ${inter.className} bg-cream`}>{children}</body>
     </html>
   )
 }

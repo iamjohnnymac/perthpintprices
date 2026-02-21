@@ -39,15 +39,15 @@ function getMovement(suburb: string): 'up' | 'down' | 'steady' {
 }
 
 const movementIcon: Record<string, JSX.Element> = {
-  up: <svg width="10" height="10" viewBox="0 0 10 10" className="text-emerald-500 inline" fill="currentColor"><path d="M5 2l4 6H1z"/></svg>,
-  down: <svg width="10" height="10" viewBox="0 0 10 10" className="text-rose-400 inline" fill="currentColor"><path d="M5 8L1 2h8z"/></svg>,
+  up: <svg width="10" height="10" viewBox="0 0 10 10" className="text-teal inline" fill="currentColor"><path d="M5 2l4 6H1z"/></svg>,
+  down: <svg width="10" height="10" viewBox="0 0 10 10" className="text-coral inline" fill="currentColor"><path d="M5 8L1 2h8z"/></svg>,
   steady: <svg width="10" height="6" viewBox="0 0 10 6" className="text-stone-400 inline" fill="currentColor"><rect x="0" y="2" width="10" height="2" rx="1"/></svg>,
 }
 
 const formDotColors: Record<string, string> = {
-  green: 'bg-emerald-400',
+  green: 'bg-teal',
   yellow: 'bg-amber-400',
-  red: 'bg-rose-400',
+  red: 'bg-coral',
 }
 
 type RowItem =
@@ -101,11 +101,11 @@ export default function SuburbLeague({ pubs }: { pubs: Pub[] }) {
       const pos = i + 1
 
       if (pos === 5 && total > 5) {
-        items.push({ type: 'divider', label: '— Promotion Zone ↑ —', colorClass: 'bg-emerald-50/60 text-emerald-400 border-emerald-200' })
+        items.push({ type: 'divider', label: '— Promotion Zone ↑ —', colorClass: 'bg-teal/10 text-teal border-teal/30' })
       }
 
       if (pos === total - 2 && total > 6) {
-        items.push({ type: 'divider', label: '— Relegation Zone ↓ —', colorClass: 'bg-rose-50/60 text-rose-400 border-rose-200' })
+        items.push({ type: 'divider', label: '— Relegation Zone ↓ —', colorClass: 'bg-coral/10 text-coral border-coral/30' })
       }
 
       const isRelegation = pos > total - 3 && total > 6
@@ -113,7 +113,7 @@ export default function SuburbLeague({ pubs }: { pubs: Pub[] }) {
       if (pos === 1) rowBg = 'bg-amber-100/60'
       else if (pos === 2) rowBg = 'bg-stone-200/50'
       else if (pos === 3) rowBg = 'bg-orange-50/70'
-      else if (isRelegation) rowBg = 'bg-rose-50/50'
+      else if (isRelegation) rowBg = 'bg-coral/5'
 
       items.push({ type: 'suburb', pos, stats: s, rowBg })
       rowIdx++
@@ -127,13 +127,13 @@ export default function SuburbLeague({ pubs }: { pubs: Pub[] }) {
 
   return (
     <div>
-      <div className="bg-gradient-to-r from-stone-50 via-amber-50/20 to-stone-50 rounded-2xl shadow-[0_2px_12px_rgba(0,0,0,0.06)] border border-stone-200/60 overflow-hidden">
+      <div className="bg-white rounded-2xl shadow-[0_2px_12px_rgba(0,0,0,0.06)] border border-stone-200/40 overflow-hidden">
         <button
           onClick={() => setIsExpanded(!isExpanded)}
           className="w-full text-left px-5 py-4 flex items-center justify-between hover:bg-stone-100/40 transition-colors"
         >
           <div>
-            <h2 className="text-sm font-bold text-stone-800 flex items-center gap-2">
+            <h2 className="text-sm font-bold font-heading text-stone-800 flex items-center gap-2">
               <svg className="inline w-4 h-4 mr-1.5 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><rect x="3" y="12" width="4" height="8" rx="1"/><rect x="10" y="8" width="4" height="12" rx="1"/><rect x="17" y="4" width="4" height="16" rx="1"/></svg>SUBURB LEAGUE TABLE
             </h2>
             <p className="text-xs text-stone-500 mt-0.5">
@@ -188,8 +188,8 @@ export default function SuburbLeague({ pubs }: { pubs: Pub[] }) {
                           <span className="text-[10px] text-stone-400 ml-1">({s.pubCount} pubs)</span>
                         </td>
                         <td className="px-2 py-2 text-center font-bold text-stone-800">${s.avgPrice.toFixed(2)}</td>
-                        <td className="px-2 py-2 text-center text-emerald-600 hidden sm:table-cell">${s.minPrice.toFixed(2)}</td>
-                        <td className="px-2 py-2 text-center text-rose-500 hidden sm:table-cell">${s.maxPrice.toFixed(2)}</td>
+                        <td className="px-2 py-2 text-center text-teal hidden sm:table-cell">${s.minPrice.toFixed(2)}</td>
+                        <td className="px-2 py-2 text-center text-coral hidden sm:table-cell">${s.maxPrice.toFixed(2)}</td>
                         <td className="px-2 py-2 text-center text-stone-500 hidden md:table-cell">{s.happyHourPct}%</td>
                         <td className="px-2 py-2 hidden md:table-cell">
                           <div className="flex gap-1 justify-center">

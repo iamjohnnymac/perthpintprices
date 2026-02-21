@@ -165,7 +165,7 @@ export default function BeerWeather({ pubs }: BeerWeatherProps) {
     if (error) return null
     // Loading state
     return (
-      <Card className="border border-stone-200/60 bg-stone-50 shadow-[0_2px_12px_rgba(0,0,0,0.06)]">
+      <Card className="bg-white rounded-2xl shadow-[0_2px_12px_rgba(0,0,0,0.06)] border border-stone-200/40">
         <CardContent className="p-4">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-stone-100 animate-pulse" />
@@ -181,7 +181,7 @@ export default function BeerWeather({ pubs }: BeerWeatherProps) {
 
   return (
     <Card
-      className={`border cursor-pointer transition-all duration-300 overflow-hidden ${condition.borderClass} ${condition.bgClass}`}
+      className="bg-white rounded-2xl shadow-[0_2px_12px_rgba(0,0,0,0.06)] border border-stone-200/40 cursor-pointer transition-all duration-300 overflow-hidden"
       onClick={() => setIsExpanded(!isExpanded)}
     >
       <CardContent className="p-4">
@@ -193,7 +193,7 @@ export default function BeerWeather({ pubs }: BeerWeatherProps) {
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="font-bold text-stone-800 text-sm flex items-center">BEER WEATHER<InfoTooltip text="Live conditions from Open-Meteo for Perth CBD, updated on each page load. Pub recommendations are ranked by outdoor seating suitability based on temperature, wind, and UV." /></h3>
+                <h3 className="font-bold font-heading text-stone-800 text-sm flex items-center">BEER WEATHER<InfoTooltip text="Live conditions from Open-Meteo for Perth CBD, updated on each page load. Pub recommendations are ranked by outdoor seating suitability based on temperature, wind, and UV." /></h3>
                 {isWindy && (
                   <Badge className="bg-sky-100 text-sky-700 border-sky-200 text-[10px] px-1.5 py-0">
                     💨 Windy!

@@ -227,11 +227,11 @@ export default function PintIndex() {
 
   const sparkData = snapshots.map(s => s.avg_price);
   const trendIcon = monthChange > 0 ? '\u25b2' : monthChange < 0 ? '\u25bc' : '\u2014';
-  const trendColor = monthChange > 0 ? 'text-red-500' : monthChange < 0 ? 'text-green-500' : 'text-yellow-500';
+  const trendColor = monthChange > 0 ? 'text-coral' : monthChange < 0 ? 'text-teal' : 'text-yellow-500';
 
   return (
     <Card 
-      className="border-stone-200/60 bg-gradient-to-r from-stone-50 via-amber-50/20 to-stone-50 cursor-pointer hover:shadow-md transition-shadow shadow-[0_2px_12px_rgba(0,0,0,0.04)]"
+      className="bg-white rounded-2xl shadow-[0_2px_12px_rgba(0,0,0,0.06)] border border-stone-200/40 cursor-pointer hover:shadow-md transition-shadow"
       onClick={() => setExpanded(!expanded)}
     >
       <CardContent className="p-4">
@@ -241,13 +241,13 @@ export default function PintIndex() {
           <div className="flex items-center gap-3">
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-xs font-semibold text-stone-500 uppercase tracking-wider flex items-center">Perth Pint Index{E.tm}<InfoTooltip text="Average pint price across all verified Perth venues. Tracked weekly and stored historically so you can see if Perth beer is getting cheaper or more expensive over time." /></span>
+                <span className="text-xs font-semibold font-heading text-stone-500 uppercase tracking-wider flex items-center">Perth Pint Index{E.tm}<InfoTooltip text="Average pint price across all verified Perth venues. Tracked weekly and stored historically so you can see if Perth beer is getting cheaper or more expensive over time." /></span>
                 <Badge variant="outline" className="text-[10px] px-1.5 py-0 border-stone-300 text-stone-500">
                   LIVE
                 </Badge>
               </div>
               <div className="flex items-baseline gap-2 mt-0.5">
-                <span className="text-3xl font-bold text-stone-800">${current.avg_price.toFixed(2)}</span>
+                <span className="text-3xl font-bold font-mono text-stone-800">${current.avg_price.toFixed(2)}</span>
                 <span className={`text-sm font-semibold ${trendColor}`}>
                   {trendIcon} {monthChange >= 0 ? '+' : ''}{monthChange.toFixed(2)} ({monthPct >= 0 ? '+' : ''}{monthPct.toFixed(1)}%)
                 </span>
@@ -272,11 +272,11 @@ export default function PintIndex() {
               {/* Key stats */}
               <div>
                 <div className="text-xs text-stone-500 mb-1">Cheapest Pint</div>
-                <div className="text-lg font-bold text-green-600">${current.min_price.toFixed(2)}</div>
+                <div className="text-lg font-bold font-mono text-teal">${current.min_price.toFixed(2)}</div>
               </div>
               <div>
                 <div className="text-xs text-stone-500 mb-1">Most Expensive</div>
-                <div className="text-lg font-bold text-red-500">${current.max_price.toFixed(2)}</div>
+                <div className="text-lg font-bold font-mono text-coral">${current.max_price.toFixed(2)}</div>
               </div>
               <div>
                 <div className="text-xs text-stone-500 mb-1">Median Price</div>
@@ -284,7 +284,7 @@ export default function PintIndex() {
               </div>
               <div>
                 <div className="text-xs text-stone-500 mb-1">12-Month Change</div>
-                <div className={`text-lg font-bold ${yearChange > 0 ? 'text-red-500' : 'text-green-500'}`}>
+                <div className={`text-lg font-bold font-mono ${yearChange > 0 ? 'text-coral' : 'text-teal'}`}>
                   {yearChange >= 0 ? '+' : ''}{yearPct.toFixed(1)}%
                 </div>
               </div>
@@ -292,15 +292,15 @@ export default function PintIndex() {
 
             {/* Suburb highlights */}
             <div className="grid grid-cols-2 gap-4 mt-4">
-              <div className="bg-green-50 rounded-lg p-3 h-full">
-                <div className="text-xs text-green-700 font-medium">{E.trophy} Cheapest Suburb</div>
-                <div className="text-sm font-bold text-green-800 mt-1">{current.cheapest_suburb}</div>
-                <div className="text-xs text-green-600">avg ${current.cheapest_suburb_avg.toFixed(2)}/pint</div>
+              <div className="bg-teal/10 rounded-lg p-3 h-full">
+                <div className="text-xs text-teal font-medium">{E.trophy} Cheapest Suburb</div>
+                <div className="text-sm font-bold text-navy mt-1">{current.cheapest_suburb}</div>
+                <div className="text-xs text-teal">avg ${current.cheapest_suburb_avg.toFixed(2)}/pint</div>
               </div>
-              <div className="bg-red-50 rounded-lg p-3 h-full">
-                <div className="text-xs text-red-700 font-medium">{E.money_wings} Priciest Suburb</div>
-                <div className="text-sm font-bold text-red-800 mt-1">{current.most_expensive_suburb}</div>
-                <div className="text-xs text-red-600">avg ${current.most_expensive_suburb_avg.toFixed(2)}/pint</div>
+              <div className="bg-coral/10 rounded-lg p-3 h-full">
+                <div className="text-xs text-coral font-medium">{E.money_wings} Priciest Suburb</div>
+                <div className="text-sm font-bold text-navy mt-1">{current.most_expensive_suburb}</div>
+                <div className="text-xs text-coral">avg ${current.most_expensive_suburb_avg.toFixed(2)}/pint</div>
               </div>
             </div>
 

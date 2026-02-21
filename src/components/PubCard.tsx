@@ -15,6 +15,29 @@ import { CrowdReport } from '@/lib/supabase'
 import { HappyHourStatus } from '@/lib/happyHour'
 import E from '@/lib/emoji'
 
+function timeAgo(dateStr: string): string {
+  const date = new Date(dateStr)
+  const now = new Date()
+  const diffMs = now.getTime() - date.getTime()
+  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24))
+  if (diffDays < 1) return 'today'
+  if (diffDays < 7) return `${diffDays}d ago`
+  if (diffDays < 30) return `${Math.floor(diffDays / 7)}w ago`
+  if (diffDays < 365) return `${Math.floor(diffDays / 30)}mo ago`
+  return `${Math.floor(diffDays / 365)}y ago`
+}
+
+async function sharePub(pub: Pub) {
+  const text = `🍺 $${pub.price?.toFixed(2) ?? 'TBC'} pints at ${pub.name}, ${pub.suburb} — found on PintDex → pintdex.com.au`
+  if (navigator.share) {
+    try {
+      await navigator.share({ text })
+    } catch {}
+  } else if (navigator.clipboard) {
+    await navigator.clipboard.writeText(text)
+  }
+}
+
 // Subtle directions pin icon
 const DirectionsIcon = () => (
   <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
@@ -55,7 +78,7 @@ export default function PubCard({
     <Card className="group relative overflow-hidden hover:shadow-lg transition-all duration-200 border-stone-200/60 shadow-[0_1px_8px_rgba(0,0,0,0.04)] rounded-2xl h-full flex flex-col">
       {/* Happy Hour active badge */}
       {happyHourStatus.isActive && (
-        <Badge className="absolute top-2 left-2 z-10 bg-green-600 hover:bg-green-600 text-white animate-pulse">
+        <Badge className="absolute top-2 left-2 z-10 bg-teal hover:bg-teal text-white animate-pulse">
           {E.party} HAPPY HOUR!
         </Badge>
       )}
@@ -91,7 +114,7 @@ export default function PubCard({
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
-                className="flex-shrink-0 text-stone-300 hover:text-amber-500 transition-colors"
+                className="flex-shrink-0 text-stone-300 hover:text-gold transition-colors"
                 title="Get directions"
               >
                 <DirectionsIcon />
@@ -100,7 +123,7 @@ export default function PubCard({
             </div>
             <p className="text-xs text-stone-500">{pub.suburb}{distance && <span className="text-stone-400 text-xs"> · {distance}</span>}</p>
           </div>
-          <div className={`text-xl font-bold bg-gradient-to-br ${getPriceColor(pub.price)} bg-clip-text text-transparent`}>
+          <div className={`text-xl font-bold font-mono bg-gradient-to-br ${getPriceColor(pub.price)} bg-clip-text text-transparent`}>
             {pub.price !== null ? `$${pub.price.toFixed(2)}` : 'TBC'}
           </div>
         </div>
@@ -120,14 +143,14 @@ export default function PubCard({
 
         {pub.happyHour && (
           <div className={`text-xs flex items-center gap-1 ${
-            happyHourStatus.isActive ? 'text-green-600 font-bold' : 
-            happyHourStatus.isToday ? 'text-amber-600 font-semibold' : 
+            happyHourStatus.isActive ? 'text-teal font-bold' : 
+            happyHourStatus.isToday ? 'text-gold font-semibold' : 
             'text-stone-500'
           }`}>
             <span>{happyHourStatus.statusEmoji}</span>
             <span>{happyHourStatus.statusText}</span>
             {happyHourStatus.countdown && happyHourStatus.isActive && (
-              <span className="text-green-500 font-normal">• {happyHourStatus.countdown}</span>
+              <span className="text-teal font-normal">• {happyHourStatus.countdown}</span>
             )}
           </div>
         )}
@@ -137,7 +160,7 @@ export default function PubCard({
         )}
 
         {pub.lastUpdated && (
-          <p className="text-xs text-stone-400">Updated: {formatLastUpdated(pub.lastUpdated)}</p>
+          <p className="text-xs text-stone-400">Updated {timeAgo(pub.lastUpdated)}</p>
         )}
       </CardContent>
 
@@ -147,21 +170,32 @@ export default function PubCard({
             href={pub.website}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-amber-700 hover:text-amber-800 text-xs font-semibold"
+            className="text-gold hover:text-amber-600 text-xs font-semibold"
           >
             Visit website →
           </a>
         ) : (
           <div></div>
         )}
-        <Button
-          variant="secondary"
-          size="sm"
-          onClick={() => onCrowdReport(pub)}
-          className="text-xs h-7"
-        >
-          How busy?
-        </Button>
+        <div className="flex items-center gap-1.5">
+          <button
+            onClick={() => sharePub(pub)}
+            className="text-stone-400 hover:text-gold transition-colors p-1"
+            title="Share"
+          >
+            <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+            </svg>
+          </button>
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={() => onCrowdReport(pub)}
+            className="text-xs h-7"
+          >
+            How busy?
+          </Button>
+        </div>
       </CardFooter>
     </Card>
   )

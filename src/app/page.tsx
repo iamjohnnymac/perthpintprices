@@ -206,29 +206,29 @@ export default function Home() {
   }
 
   return (
-    <main className="min-h-screen bg-[#F9F8F6]">
+    <main className="min-h-screen bg-cream">
       <PriceTicker pubs={pubs} />
-      <header className="bg-white sticky top-0 z-[1000] shadow-[0_1px_3px_rgba(0,0,0,0.06)]">
+      <header className="bg-navy sticky top-0 z-[1000] shadow-[0_2px_8px_rgba(0,0,0,0.3)]">
         {/* Top bar: Brand + Submit */}
         <div className="max-w-7xl mx-auto px-4 py-2 flex items-center gap-3">
           {/* Brand mark */}
-          <div className="w-9 h-9 bg-gradient-to-br from-amber-500 to-amber-700 rounded-xl flex items-center justify-center flex-shrink-0 shadow-sm">
+          <div className="w-9 h-9 bg-gradient-to-br from-gold to-amber-700 rounded-xl flex items-center justify-center flex-shrink-0 shadow-sm">
             <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M5 3h14M5 3v16a2 2 0 002 2h10a2 2 0 002-2V3M5 3H3M19 3h2M9 3v4M15 3v4" />
             </svg>
           </div>
           {/* Title + tagline */}
           <div className="flex-1 min-w-0">
-            <h1 className="text-[15px] font-bold text-stone-900 tracking-tight leading-none">Perth Pint Prices</h1>
-            <p className="text-[11px] text-stone-400 mt-0.5 leading-none">
-              <span className="hidden sm:inline">The Perth Beer Exchange™ · </span>
+            <h1 className="text-[15px] font-bold text-cream tracking-tight leading-none font-heading">PintDex</h1>
+            <p className="text-[11px] text-cream/60 mt-0.5 leading-none">
+              <span className="hidden sm:inline">Perth&apos;s Beer Market · </span>
               {stats.total} venues · {suburbs.length} suburbs
             </p>
           </div>
           {/* Submit button */}
           <button
             onClick={() => setShowSubmitForm(true)}
-            className="flex-shrink-0 flex items-center gap-1.5 px-3.5 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-xl font-semibold transition-colors text-xs shadow-sm"
+            className="flex-shrink-0 flex items-center gap-1.5 px-3.5 py-2 bg-gold hover:bg-amber-600 text-navy rounded-xl font-semibold transition-colors text-xs shadow-sm"
           >
             <span className="hidden sm:inline">+ Submit a Pub</span>
             <span className="sm:hidden text-base leading-none">+</span>
@@ -282,12 +282,12 @@ export default function Home() {
 
             <div className="flex items-center justify-between mb-4">
               <p className="text-stone-600 text-sm">
-                Showing <span className="text-amber-700 font-semibold">{showAllPubs ? filteredPubs.length : Math.min(INITIAL_PUB_COUNT, filteredPubs.length)}</span> of {filteredPubs.length} venues
+                Showing <span className="text-gold font-semibold">{showAllPubs ? filteredPubs.length : Math.min(INITIAL_PUB_COUNT, filteredPubs.length)}</span> of {filteredPubs.length} venues
               </p>
               {filteredPubs.length > INITIAL_PUB_COUNT && (
                 <button
                   onClick={() => setShowAllPubs(!showAllPubs)}
-                  className="text-sm font-medium text-amber-700 hover:text-amber-800 transition-colors flex items-center gap-1"
+                  className="text-sm font-medium text-gold hover:text-amber-600 transition-colors flex items-center gap-1"
                 >
                   {showAllPubs ? 'Show Less' : `Show All ${filteredPubs.length}`}
                   <span className={`inline-block transition-transform ${showAllPubs ? 'rotate-180' : ''}`}>&#9660;</span>
@@ -338,7 +338,7 @@ export default function Home() {
                   return (
                     <tr 
                       key={pub.id} 
-                      className={`border-b border-stone-100 hover:bg-amber-50/50 transition-colors ${
+                      className={`border-b border-stone-100 hover:bg-gold/5 transition-colors ${
                         index % 2 === 0 ? 'bg-white' : 'bg-stone-50/30'
                       }`}
                     >
@@ -352,7 +352,7 @@ export default function Home() {
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 onClick={(e) => e.stopPropagation()}
-                                className="flex-shrink-0 text-stone-300 hover:text-amber-500 transition-colors"
+                                className="flex-shrink-0 text-stone-300 hover:text-gold transition-colors"
                                 title="Get directions"
                               >
                                 <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
@@ -374,14 +374,14 @@ export default function Home() {
                           {pub.beerType || '—'}
                         </span>
                       </td>
-                      <td className={`py-3 px-2 sm:px-4 text-right font-bold text-lg whitespace-nowrap ${getPriceTextColor(pub.price)}`}>
+                      <td className={`py-3 px-2 sm:px-4 text-right font-bold font-mono text-lg whitespace-nowrap ${getPriceTextColor(pub.price)}`}>
                         {pub.price !== null ? `$${pub.price.toFixed(2)}` : 'TBC'}
                       </td>
                       <td className="py-3 px-4 hidden md:table-cell">
                         {pub.happyHour ? (
                           <span className={`text-xs ${
-                            happyHourStatus.isActive ? 'text-green-600 font-bold' : 
-                            happyHourStatus.isToday ? 'text-amber-600 font-semibold' : 
+                            happyHourStatus.isActive ? 'text-teal font-bold' : 
+                            happyHourStatus.isToday ? 'text-gold font-semibold' : 
                             'text-stone-500'
                           }`}>
                             {happyHourStatus.statusEmoji} {happyHourStatus.statusText}
@@ -398,7 +398,7 @@ export default function Home() {
                         ) : (
                           <button
                             onClick={() => setCrowdReportPub(pub)}
-                            className="text-xs text-stone-400 hover:text-amber-600"
+                            className="text-xs text-stone-400 hover:text-gold"
                           >
                             Report
                           </button>
@@ -440,9 +440,9 @@ export default function Home() {
 
         {activeTab === 'pubs' && filteredPubs.length === 0 && (
           <div className="text-center py-12 bg-white rounded-xl border border-stone-200">
-            <div className="text-5xl mb-3">🔍</div>
-            <h3 className="text-lg font-bold text-stone-700 mb-1">No pubs found</h3>
-            <p className="text-stone-500 text-sm">Try adjusting your filters</p>
+            <div className="text-5xl mb-3">{showHappyHourOnly ? '🕐' : '🔍'}</div>
+            <h3 className="text-lg font-bold text-stone-700 mb-1">{showHappyHourOnly ? 'No happy hours active right now' : 'No pubs found'}</h3>
+            <p className="text-stone-500 text-sm">{showHappyHourOnly ? 'Uncheck the filter to see all venues.' : 'Try adjusting your filters'}</p>
           </div>
         )}
       </div>
@@ -460,7 +460,7 @@ export default function Home() {
             <div className="flex items-center gap-2">
               <span className="text-2xl">🍺</span>
               <div>
-                <p className="font-semibold text-amber-400">Pint</p>
+                <p className="font-semibold text-gold">Pint</p>
                 <p className="text-xs text-stone-400">570ml</p>
               </div>
             </div>
@@ -474,11 +474,11 @@ export default function Home() {
           </div>
 
           <div className="text-center">
-            <p className="text-stone-300 text-sm">🍺 Perth Pint Prices — Helping you find cheap drinks since 2024</p>
+            <p className="text-stone-300 text-sm">🍺 PintDex — Perth&apos;s Beer Market since 2024</p>
             <p className="text-stone-500 text-xs mt-1">Prices may vary. Pint prices shown. Always drink responsibly.</p>
             <a
               href="mailto:perthpintprices@gmail.com?subject=Price%20Correction&body=Hi%2C%20I%20noticed%20a%20wrong%20price%20on%20the%20site.%0A%0APub%20name%3A%20%0ACorrect%20price%3A%20%0ADetails%3A%20"
-              className="inline-block mt-3 text-amber-400 hover:text-amber-300 text-xs"
+              className="inline-block mt-3 text-gold hover:text-amber-300 text-xs"
             >
               Report Wrong Price
             </a>

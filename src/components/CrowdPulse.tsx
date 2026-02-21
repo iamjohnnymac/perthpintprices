@@ -78,45 +78,12 @@ export default function CrowdPulse({ pubs, crowdReports }: CrowdPulseProps) {
   const totalCount = pubs.length
 
   if (liveCount === 0) {
-    return (
-      <Card
-        className="border border-stone-200/60 bg-gradient-to-r from-stone-50 via-amber-50/20 to-stone-50 cursor-pointer transition-all duration-300 shadow-[0_2px_12px_rgba(0,0,0,0.04)]"
-        onClick={() => setIsExpanded(!isExpanded)}
-      >
-        <CardContent className="p-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="relative">
-                <span className="text-2xl">{E.chart_up}</span>
-                <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-stone-300 border border-white" />
-              </div>
-              <div>
-                <h3 className="font-bold text-stone-800 text-sm flex items-center">LIVE MARKET INTEL<InfoTooltip text="Crowd reports submitted by users in the last 3 hours. Vibe score is a weighted average of busyness across all reporting venues." /></h3>
-                <p className="text-xs text-stone-500">No live reports yet {E.dash} be the first market analyst!</p>
-              </div>
-            </div>
-            <svg width="16" height="16" viewBox="0 0 16 16" className={`text-stone-400 transition-transform ${isExpanded ? 'rotate-180' : ''}`}>
-              <path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-            </svg>
-          </div>
-          {isExpanded && (
-            <div className="mt-4 pt-4 border-t border-stone-200/60 text-center">
-              <p className="text-sm text-stone-500 mb-2">
-                {E.thinking} No crowd data available right now
-              </p>
-              <p className="text-xs text-stone-400">
-                Be a market analyst {E.dash} visit a pub and report the crowd level!
-              </p>
-            </div>
-          )}
-        </CardContent>
-      </Card>
-    )
+    return null
   }
 
   return (
     <Card
-      className="border border-stone-200/60 bg-gradient-to-r from-stone-50 via-amber-50/20 to-stone-50 cursor-pointer transition-all duration-300 shadow-[0_2px_12px_rgba(0,0,0,0.04)]"
+      className="bg-white rounded-2xl shadow-[0_2px_12px_rgba(0,0,0,0.06)] border border-stone-200/40 cursor-pointer transition-all duration-300"
       onClick={() => setIsExpanded(!isExpanded)}
     >
       <CardContent className="p-4">
@@ -125,10 +92,10 @@ export default function CrowdPulse({ pubs, crowdReports }: CrowdPulseProps) {
           <div className="flex items-center gap-3">
             <div className="relative">
               <span className="text-2xl">{E.chart_up}</span>
-              <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-green-500 border border-white animate-pulse" />
+              <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-teal border border-white animate-pulse" />
             </div>
             <div>
-              <h3 className="font-bold text-stone-800 text-sm flex items-center">LIVE MARKET INTEL<InfoTooltip text="Crowd reports submitted by users in the last 3 hours. Vibe score is a weighted average of busyness across all reporting venues." /></h3>
+              <h3 className="font-bold font-heading text-stone-800 text-sm flex items-center">LIVE MARKET INTEL<InfoTooltip text="Crowd reports submitted by users in the last 3 hours. Vibe score is a weighted average of busyness across all reporting venues." /></h3>
               <p className="text-xs text-stone-500">
                 {liveCount} venue{liveCount !== 1 ? 's' : ''} reporting {E.bullet} Perth Vibe: {getVibeLabel(vibeScore)}
               </p>
@@ -175,7 +142,7 @@ export default function CrowdPulse({ pubs, crowdReports }: CrowdPulseProps) {
             {/* Busiest Venues */}
             {busyVenues.length > 0 && (
               <div className="mb-3">
-                <h4 className="text-xs font-semibold text-red-600 mb-2 flex items-center gap-1">
+                <h4 className="text-xs font-semibold text-coral mb-2 flex items-center gap-1">
                   {E.fire} HOT TRADING {E.dash} Busiest Venues
                 </h4>
                 <div className="space-y-1.5">
@@ -183,7 +150,7 @@ export default function CrowdPulse({ pubs, crowdReports }: CrowdPulseProps) {
                     const levelInfo = CROWD_LEVELS[report.crowd_level]
                     const confidence = getConfidenceLabel(report.report_count)
                     return (
-                      <div key={pub.id} className="flex items-center justify-between p-2 rounded-lg bg-red-50/60 border border-red-100">
+                      <div key={pub.id} className="flex items-center justify-between p-2 rounded-lg bg-coral/5 border border-coral/20">
                         <div className="flex items-center gap-2 min-w-0">
                           <span className="text-sm">{levelInfo.emoji}</span>
                           <div className="min-w-0">
@@ -205,7 +172,7 @@ export default function CrowdPulse({ pubs, crowdReports }: CrowdPulseProps) {
             {/* Quiet Venues - Hidden Gems */}
             {quietVenues.length > 0 && (
               <div className="mb-3">
-                <h4 className="text-xs font-semibold text-green-600 mb-2 flex items-center gap-1">
+                <h4 className="text-xs font-semibold text-teal mb-2 flex items-center gap-1">
                   {E.green_circle} HIDDEN GEMS {E.dash} Undervalued Venues
                 </h4>
                 <div className="space-y-1.5">
@@ -213,7 +180,7 @@ export default function CrowdPulse({ pubs, crowdReports }: CrowdPulseProps) {
                     const levelInfo = CROWD_LEVELS[report.crowd_level]
                     const confidence = getConfidenceLabel(report.report_count)
                     return (
-                      <div key={pub.id} className="flex items-center justify-between p-2 rounded-lg bg-green-50/60 border border-green-100">
+                      <div key={pub.id} className="flex items-center justify-between p-2 rounded-lg bg-teal/5 border border-teal/20">
                         <div className="flex items-center gap-2 min-w-0">
                           <span className="text-sm">{levelInfo.emoji}</span>
                           <div className="min-w-0">

@@ -40,16 +40,16 @@ function createClusterCustomIcon(cluster: L.MarkerCluster): L.DivIcon {
   const count = cluster.getChildCount()
   let size = 50
   let fontSize = 16
-  let bgColor = '#f59e0b' // amber
+  let bgColor = '#E8A317' // gold
 
   if (count > 20) {
     size = 70
     fontSize = 20
-    bgColor = '#ea580c' // deeper orange for large clusters
+    bgColor = '#C88A0F' // deeper gold for large clusters
   } else if (count > 10) {
     size = 60
     fontSize = 18
-    bgColor = '#f97316' // orange for medium
+    bgColor = '#D99615' // mid gold for medium
   }
 
   return L.divIcon({
@@ -123,7 +123,7 @@ export default function Map({ pubs, isHappyHour, userLocation }: MapProps) {
     >
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
-        url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
+        url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
       />
       
       {/* Fit bounds to filtered pubs */}
@@ -204,7 +204,7 @@ export default function Map({ pubs, isHappyHour, userLocation }: MapProps) {
           position={[userLocation.lat, userLocation.lng]}
           icon={L.divIcon({
             className: 'user-location-marker',
-            html: `<div style="width:16px;height:16px;background:#3b82f6;border-radius:50%;border:3px solid white;box-shadow:0 0 0 3px rgba(59,130,246,0.3),0 2px 6px rgba(0,0,0,0.3)"></div>`,
+            html: `<div style="width:16px;height:16px;background:#00C9A7;border-radius:50%;border:3px solid white;box-shadow:0 0 0 3px rgba(0,201,167,0.3),0 2px 6px rgba(0,0,0,0.3)"></div>`,
             iconSize: [16, 16],
             iconAnchor: [8, 8]
           })}

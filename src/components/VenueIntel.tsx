@@ -116,7 +116,7 @@ export default function VenueIntel({ pubs }: VenueIntelProps) {
 
   return (
     <Card
-      className="border border-stone-200/60 bg-gradient-to-r from-stone-50 via-amber-50/20 to-stone-50 cursor-pointer transition-all duration-300 shadow-[0_2px_12px_rgba(0,0,0,0.04)]"
+      className="bg-white rounded-2xl shadow-[0_2px_12px_rgba(0,0,0,0.06)] border border-stone-200/40 cursor-pointer transition-all duration-300"
       onClick={() => setIsExpanded(!isExpanded)}
     >
       <CardContent className="p-4">
@@ -124,7 +124,7 @@ export default function VenueIntel({ pubs }: VenueIntelProps) {
           <div className="flex items-center gap-3">
             <span className="text-2xl">{E.chart_bar}</span>
             <div>
-              <h3 className="font-bold text-stone-800 text-sm">VENUE ANALYTICS</h3>
+              <h3 className="font-bold font-heading text-stone-800 text-sm">VENUE ANALYTICS</h3>
               <p className="text-xs text-stone-500">{summaryText}</p>
             </div>
           </div>

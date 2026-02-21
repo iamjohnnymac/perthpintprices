@@ -79,7 +79,7 @@ export default function PuntNPints({ pubs }: PuntNPintsProps) {
   const displayedPairs = isExpanded ? nearbyPairs.slice(0, 10) : nearbyPairs.slice(0, 3)
 
   return (
-    <Card className="bg-gradient-to-br from-stone-50 via-amber-50/20 to-stone-50 border-stone-200/60 shadow-[0_2px_12px_rgba(0,0,0,0.06)] h-full rounded-2xl">
+    <Card className="bg-white rounded-2xl shadow-[0_2px_12px_rgba(0,0,0,0.06)] border border-stone-200/40 h-full">
       <CardContent className="p-4">
         {/* Header */}
         <div className="flex items-center justify-between mb-3">
@@ -88,7 +88,7 @@ export default function PuntNPints({ pubs }: PuntNPintsProps) {
               <span className="text-white font-black text-[9px] leading-none tracking-tight">TAB</span>
             </div>
             <div>
-              <h3 className="text-sm font-bold text-stone-800 leading-tight">PUNT N&apos; PINTS</h3>
+              <h3 className="text-sm font-bold font-heading text-stone-800 leading-tight">PUNT N&apos; PINTS</h3>
               <p className="text-[10px] text-stone-500">Where to bet &amp; sip</p>
             </div>
             <InfoTooltip text="Shows pubs with TAB betting facilities on-site, plus cheap pints near dedicated TAB agencies. Data sourced from TABtouch WA locations." />

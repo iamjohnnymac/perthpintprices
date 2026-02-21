@@ -48,7 +48,7 @@ export default function DadBar({ pubs }: { pubs: Pub[] }) {
   const displayPubs = showAll ? dadPubs : dadPubs.slice(0, 5)
 
   return (
-    <div className="bg-gradient-to-br from-stone-50 via-amber-50/20 to-stone-50 border border-stone-200/60 rounded-2xl p-4 shadow-[0_2px_12px_rgba(0,0,0,0.06)]">
+    <div className="bg-white rounded-2xl shadow-[0_2px_12px_rgba(0,0,0,0.06)] border border-stone-200/40 p-4">
       {/* Header */}
       <div className="flex items-start justify-between mb-3">
         <div className="flex items-center gap-2.5">
@@ -61,7 +61,7 @@ export default function DadBar({ pubs }: { pubs: Pub[] }) {
             </svg>
           </div>
           <div>
-            <h3 className="font-bold text-stone-800 text-sm uppercase tracking-wider flex items-center gap-1.5">
+            <h3 className="font-bold font-heading text-stone-800 text-sm uppercase tracking-wider flex items-center gap-1.5">
               THE DAD BAR
               <InfoTooltip text="Kid-friendly pubs verified from Buggybuddys and Urban List Perth. All venues have dedicated playgrounds or play areas, plus food menus for children. Perfect for a cheeky pint while the kids wear themselves out." />
             </h3>
