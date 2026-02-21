@@ -7,6 +7,9 @@ const spaceGrotesk = Space_Grotesk({ subsets: ['latin'], variable: '--font-space
 const jetbrainsMono = JetBrains_Mono({ subsets: ['latin'], variable: '--font-jetbrains-mono' })
 
 export const metadata: Metadata = {
+  icons: {
+    icon: '/favicon.svg',
+  },
   title: "PintDex — Perth's Beer Market | Find Cheap Pints Near You",
   description: "Track real-time pint prices across 194 Perth pubs and 89 suburbs. Find happy hours, cheap pints, and the best deals — like a stock exchange for beer.",
   keywords: 'Perth, pint prices, beer, pubs, happy hour, Western Australia, cheap drinks, PintDex',

@@ -443,10 +443,20 @@ export default function Home() {
                 })}
               </tbody>
             </table>
+            {!showAllPubs && filteredPubs.length > INITIAL_PUB_COUNT && (
+              <button
+                onClick={() => setShowAllPubs(true)}
+                className="w-full py-3 text-sm font-medium text-gold hover:text-amber-600 hover:bg-amber-50/50 transition-colors flex items-center justify-center gap-1 border-t border-stone-200"
+              >
+                Show All {filteredPubs.length} Venues
+                <span className="inline-block">&#9660;</span>
+              </button>
+            )}
           </div>
         )}
 
         {activeTab === 'pubs' && viewMode === 'cards' && (
+          <>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 items-stretch">
             {(showAllPubs ? filteredPubs : filteredPubs.slice(0, INITIAL_PUB_COUNT)).map((pub, index) => {
               const crowdReport = getLatestCrowdReport(pub.id)
@@ -470,6 +480,16 @@ export default function Home() {
               )
             })}
           </div>
+          {!showAllPubs && filteredPubs.length > INITIAL_PUB_COUNT && (
+            <button
+              onClick={() => setShowAllPubs(true)}
+              className="w-full mt-4 py-3 text-sm font-medium text-gold hover:text-amber-600 bg-white hover:bg-amber-50/50 rounded-2xl shadow-[0_2px_12px_rgba(0,0,0,0.06)] border border-stone-200/60 transition-colors flex items-center justify-center gap-1"
+            >
+              Show All {filteredPubs.length} Venues
+              <span className="inline-block">&#9660;</span>
+            </button>
+          )}
+          </>
         )}
 
         {activeTab === 'pubs' && filteredPubs.length === 0 && (

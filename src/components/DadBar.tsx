@@ -92,7 +92,7 @@ export default function DadBar({ pubs }: { pubs: Pub[] }) {
           <p className="text-[10px] text-stone-500">Dad-approved</p>
         </div>
         <div className="bg-white border border-stone-200 rounded-lg p-2 text-center">
-          <p className="text-lg font-bold text-stone-800">${dadPubs[0]?.price?.toFixed(0)}</p>
+          <p className="text-lg font-bold text-stone-800">${dadPubs[0]?.price?.toFixed(2)}</p>
           <p className="text-[10px] text-stone-500">Cheapest pint</p>
         </div>
         <div className="bg-white border border-stone-200 rounded-lg p-2 text-center">
