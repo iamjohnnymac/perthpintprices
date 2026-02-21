@@ -43,7 +43,7 @@ export default function PriceTicker({ pubs }: PriceTickerProps) {
   if (tickers.length === 0) return null;
 
   const items = [...tickers, ...tickers];
-  const duration = Math.max(10, tickers.length * 0.35);
+  const duration = Math.max(15, tickers.length * 1.2);
 
   return (
     <div className="w-full bg-navy text-white overflow-hidden relative select-none" style={{ height: '38px', zIndex: 50 }}>
