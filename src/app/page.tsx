@@ -20,6 +20,8 @@ import DadBar from '@/components/DadBar'
 import TabBar, { TabId } from '@/components/TabBar'
 import PintIndexCompact from '@/components/PintIndexCompact'
 import PubCard from '@/components/PubCard'
+import LocationBanner from '@/components/LocationBanner'
+import { getDistanceKm, formatDistance } from '@/lib/location'
 import { getCrowdLevels, CrowdReport, CROWD_LEVELS, getPubs } from '@/lib/supabase'
 import { getHappyHourStatus } from '@/lib/happyHour'
 
@@ -88,7 +90,7 @@ export default function Home() {
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedSuburb, setSelectedSuburb] = useState('')
   const [maxPrice, setMaxPrice] = useState(15)
-  const [sortBy, setSortBy] = useState<'price' | 'name' | 'suburb'>('price')
+  const [sortBy, setSortBy] = useState<'price' | 'name' | 'suburb' | 'nearest'>('price')
   const [showHappyHourOnly, setShowHappyHourOnly] = useState(false)
   const [showMiniMaps, setShowMiniMaps] = useState(true)
   const [showSubmitForm, setShowSubmitForm] = useState(false)
@@ -99,6 +101,8 @@ export default function Home() {
   const [viewMode, setViewMode] = useState<'cards' | 'list'>('list')
   const [showMoreFilters, setShowMoreFilters] = useState(false)
   const [showAllPubs, setShowAllPubs] = useState(false)
+  const [userLocation, setUserLocation] = useState<{lat: number, lng: number} | null>(null)
+  const [locationState, setLocationState] = useState<'idle' | 'granted' | 'denied' | 'dismissed'>('idle')
   const INITIAL_PUB_COUNT = 20
 
   useEffect(() => {
@@ -121,9 +125,22 @@ export default function Home() {
     return () => clearInterval(interval)
   }, [])
 
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const dismissed = localStorage.getItem('ppp-location-dismissed')
+      if (dismissed) setLocationState('dismissed')
+    }
+  }, [])
+
   async function fetchCrowdReports() {
     const reports = await getCrowdLevels()
     setCrowdReports(reports)
+  }
+
+  function handleLocationGranted(lat: number, lng: number) {
+    setUserLocation({ lat, lng })
+    setLocationState('granted')
+    setSortBy('nearest')
   }
 
   function getLatestCrowdReport(pubId: number): CrowdReport | undefined {
@@ -151,9 +168,14 @@ export default function Home() {
         if (sortBy === 'price') { if (a.price === null && b.price === null) return 0; if (a.price === null) return 1; if (b.price === null) return -1; return a.price - b.price; }
         if (sortBy === 'name') return a.name.localeCompare(b.name)
         if (sortBy === 'suburb') return a.suburb.localeCompare(b.suburb)
+        if (sortBy === 'nearest' && userLocation) {
+          const distA = getDistanceKm(userLocation.lat, userLocation.lng, a.lat, a.lng)
+          const distB = getDistanceKm(userLocation.lat, userLocation.lng, b.lat, b.lng)
+          return distA - distB
+        }
         return 0
       })
-  }, [pubs, searchTerm, selectedSuburb, maxPrice, sortBy, showHappyHourOnly])
+  }, [pubs, searchTerm, selectedSuburb, maxPrice, sortBy, showHappyHourOnly, userLocation])
 
   const stats = useMemo(() => {
     if (pubs.length === 0) return { total: 0, minPrice: 0, maxPriceValue: 0, avgPrice: '0', happyHourNow: 0 }
@@ -239,6 +261,7 @@ export default function Home() {
             showMoreFilters={showMoreFilters}
             setShowMoreFilters={setShowMoreFilters}
             stats={stats}
+            hasLocation={!!userLocation}
           />
         )}
       </header>
@@ -248,10 +271,15 @@ export default function Home() {
         {/* ═══ PUBS TAB ═══ */}
         {activeTab === 'pubs' && (
           <>
+            <LocationBanner
+              onLocationGranted={handleLocationGranted}
+              locationState={locationState}
+              setLocationState={setLocationState}
+            />
             <PintIndexCompact pubs={pubs} onViewMore={() => setActiveTab('market')} />
 
             <div className="mb-5 rounded-2xl overflow-hidden shadow-[0_2px_12px_rgba(0,0,0,0.06)] border border-stone-200/60 relative z-0 isolate">
-              <Map pubs={filteredPubs} isHappyHour={isHappyHour} />
+              <Map pubs={filteredPubs} isHappyHour={isHappyHour} userLocation={userLocation} />
             </div>
 
             <div className="flex items-center justify-between mb-4">
@@ -335,12 +363,13 @@ export default function Home() {
                               </a>
                               <p className="font-semibold text-stone-900 text-sm">{pub.name}</p>
                             </div>
-                            <p className="text-xs text-stone-500 sm:hidden">{pub.suburb}</p>
+                            <p className="text-xs text-stone-500 sm:hidden">{pub.suburb}{userLocation && ` · ${formatDistance(getDistanceKm(userLocation.lat, userLocation.lng, pub.lat, pub.lng))}`}</p>
                           </div>
                         </div>
                       </td>
                       <td className="py-3 px-4 text-sm text-stone-600 hidden sm:table-cell">
                         {pub.suburb}
+                        {userLocation && <span className="text-stone-400 text-xs ml-1">· {formatDistance(getDistanceKm(userLocation.lat, userLocation.lng, pub.lat, pub.lng))}</span>}
                       </td>
                       <td className="py-3 px-4 hidden sm:table-cell">
                         <span className="text-xs text-stone-500 truncate max-w-[120px] block">
@@ -404,6 +433,7 @@ export default function Home() {
                   getPriceBgColor={getPriceBgColor}
                   formatLastUpdated={formatLastUpdated}
                   onCrowdReport={setCrowdReportPub}
+                  distance={userLocation ? formatDistance(getDistanceKm(userLocation.lat, userLocation.lng, pub.lat, pub.lng)) : undefined}
                 />
               )
             })}

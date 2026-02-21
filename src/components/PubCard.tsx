@@ -34,6 +34,7 @@ interface PubCardProps {
   getPriceBgColor: (price: number | null) => string
   formatLastUpdated: (date: string) => string
   onCrowdReport: (pub: Pub) => void
+  distance?: string
 }
 
 export default function PubCard({
@@ -48,6 +49,7 @@ export default function PubCard({
   getPriceBgColor,
   formatLastUpdated,
   onCrowdReport,
+  distance,
 }: PubCardProps) {
   return (
     <Card className="group relative overflow-hidden hover:shadow-lg transition-all duration-200 border-stone-200/60 shadow-[0_1px_8px_rgba(0,0,0,0.04)] rounded-2xl h-full flex flex-col">
@@ -96,7 +98,7 @@ export default function PubCard({
               </a>
               <h3 className="font-bold text-stone-900 truncate">{pub.name}</h3>
             </div>
-            <p className="text-xs text-stone-500">{pub.suburb}</p>
+            <p className="text-xs text-stone-500">{pub.suburb}{distance && <span className="text-stone-400 text-xs"> · {distance}</span>}</p>
           </div>
           <div className={`text-xl font-bold bg-gradient-to-br ${getPriceColor(pub.price)} bg-clip-text text-transparent`}>
             {pub.price !== null ? `$${pub.price.toFixed(2)}` : 'TBC'}

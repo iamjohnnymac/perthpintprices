@@ -98,11 +98,14 @@ function FitBounds({ pubs }: { pubs: Pub[] }) {
 interface MapProps {
   pubs: Pub[]
   isHappyHour?: (happyHour: string | null | undefined) => boolean
+  userLocation?: { lat: number, lng: number } | null
 }
 
-export default function Map({ pubs, isHappyHour }: MapProps) {
-  // Center on Perth CBD
-  const center: [number, number] = [-31.9505, 115.8605]
+export default function Map({ pubs, isHappyHour, userLocation }: MapProps) {
+  // Center on user location if available, otherwise Perth CBD
+  const center: [number, number] = userLocation
+    ? [userLocation.lat, userLocation.lng]
+    : [-31.9505, 115.8605]
 
   return (
     <MapContainer
@@ -187,6 +190,23 @@ export default function Map({ pubs, isHappyHour }: MapProps) {
           </Marker>
         ))}
       </MarkerClusterGroup>
+
+      {/* User location blue dot */}
+      {userLocation && (
+        <Marker
+          position={[userLocation.lat, userLocation.lng]}
+          icon={L.divIcon({
+            className: 'user-location-marker',
+            html: `<div style="width:16px;height:16px;background:#3b82f6;border-radius:50%;border:3px solid white;box-shadow:0 0 0 3px rgba(59,130,246,0.3),0 2px 6px rgba(0,0,0,0.3)"></div>`,
+            iconSize: [16, 16],
+            iconAnchor: [8, 8]
+          })}
+        >
+          <Tooltip direction="top" offset={[0, -12]}>
+            <span style={{ fontWeight: 600, fontSize: '12px' }}>Your location</span>
+          </Tooltip>
+        </Marker>
+      )}
     </MapContainer>
   )
 }

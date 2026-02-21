@@ -16,13 +16,14 @@ interface FilterSectionProps {
   setShowHappyHourOnly: (show: boolean) => void
   showMiniMaps: boolean
   setShowMiniMaps: (show: boolean) => void
-  sortBy: 'price' | 'name' | 'suburb'
-  setSortBy: (sort: 'price' | 'name' | 'suburb') => void
+  sortBy: 'price' | 'name' | 'suburb' | 'nearest'
+  setSortBy: (sort: 'price' | 'name' | 'suburb' | 'nearest') => void
   maxPrice: number
   setMaxPrice: (price: number) => void
   showMoreFilters: boolean
   setShowMoreFilters: (show: boolean) => void
   stats: { happyHourNow: number }
+  hasLocation?: boolean
 }
 
 export function FilterSection({
@@ -44,6 +45,7 @@ export function FilterSection({
   showMoreFilters,
   setShowMoreFilters,
   stats,
+  hasLocation,
 }: FilterSectionProps) {
   const activeFilterCount = (selectedSuburb && selectedSuburb !== 'all' ? 1 : 0) + (maxPrice < 15 ? 1 : 0) + (sortBy !== 'price' ? 1 : 0)
   const dropdownRef = useRef<HTMLDivElement>(null)
@@ -187,7 +189,7 @@ export function FilterSection({
                 <div className="mb-4">
                   <label className="block text-xs font-semibold text-stone-400 uppercase tracking-wide mb-2">Sort By</label>
                   <div className="flex gap-1.5">
-                    {(['price', 'name', 'suburb'] as const).map(option => (
+                    {([...(['price', 'name', 'suburb'] as const), ...(hasLocation ? (['nearest'] as const) : [])] as const).map(option => (
                       <button
                         key={option}
                         onClick={() => setSortBy(option)}
@@ -196,7 +198,7 @@ export function FilterSection({
                           sortBy === option ? "bg-stone-800 text-white" : "bg-stone-100 text-stone-600 hover:bg-stone-200"
                         )}
                       >
-                        {option === 'price' ? 'Price' : option === 'name' ? 'Name' : 'Suburb'}
+                        {option === 'price' ? 'Price' : option === 'name' ? 'Name' : option === 'suburb' ? 'Suburb' : 'Nearest'}
                       </button>
                     ))}
                   </div>
