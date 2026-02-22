@@ -58,7 +58,7 @@ function Sparkline({ data, snapshots, width = 280, height = 60 }: {
   const areaPoints = `0,${height} 0,${firstY} ${polylinePoints} ${width},${lastY} ${width},${height}`;
 
   const trend = data[data.length - 1] - data[0];
-  const color = trend > 0 ? '#ef4444' : trend < 0 ? '#22c55e' : '#eab308';
+  const color = trend > 0 ? '#FF4757' : trend < 0 ? '#00C9A7' : '#E8A317';
   const gradientId = 'sparkGrad-pint-index';
 
   const handleMouseMove = useCallback((e: React.MouseEvent<SVGSVGElement>) => {
@@ -174,7 +174,7 @@ function DistributionBars({ distribution }: { distribution: Record<string, numbe
             className="w-full rounded-sm transition-all duration-500"
             style={{
               height: `${Math.max((values[i] / maxVal) * 32, 2)}px`,
-              backgroundColor: i <= 1 ? '#22c55e' : i <= 3 ? '#eab308' : '#ef4444',
+              backgroundColor: i <= 1 ? '#00C9A7' : i <= 3 ? '#E8A317' : '#FF4757',
               opacity: 0.8
             }}
           />

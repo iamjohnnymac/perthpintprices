@@ -10,9 +10,9 @@ import React, { useEffect } from 'react'
 // Price-coded markers using DivIcon
 function getPriceIcon(price: number | null): L.DivIcon {
   if (price === null) { const bgColor = "#9ca3af"; return L.divIcon({ className: "custom-price-marker", html: `<div style="background:${bgColor};color:white;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:10px;box-shadow:0 2px 6px rgba(0,0,0,0.3);border:2px solid white">TBC</div>`, iconSize: [32, 32], iconAnchor: [16, 16] }); }
-  let bgColor = '#22c55e' // green for cheap
-  if (price > 9) bgColor = '#f97316' // orange for expensive
-  else if (price > 7.5) bgColor = '#eab308' // yellow for mid
+  let bgColor = '#00C9A7' // teal for cheap
+  if (price > 9) bgColor = '#FF4757' // coral for expensive
+  else if (price > 7.5) bgColor = '#E8A317' // gold for mid
 
   return L.divIcon({
     className: 'custom-price-marker',
@@ -174,7 +174,7 @@ export default function Map({ pubs, isHappyHour, userLocation }: MapProps) {
                   <p style={{ 
                     fontSize: '13px', 
                     marginTop: '4px',
-                    color: isHappyHour && isHappyHour(pub.happyHour) ? '#16a34a' : '#6b7280',
+                    color: isHappyHour && isHappyHour(pub.happyHour) ? '#00C9A7' : '#6b7280',
                     fontWeight: isHappyHour && isHappyHour(pub.happyHour) ? 600 : 400
                   }}>
                     🕐 {pub.happyHour}

@@ -235,7 +235,7 @@ export default function SunsetSippers({ pubs, userLocation }: SunsetSippersProps
                 <path
                   d={`M 12 ${arcCenterY} A ${arcRx} ${arcRy} 0 0 1 ${arcWidth - 12} ${arcCenterY}`}
                   fill="none"
-                  stroke="#f59e0b"
+                  stroke="#E8A317"
                   strokeWidth="1.5"
                   strokeDasharray="3,3"
                   opacity="0.3"
@@ -245,7 +245,7 @@ export default function SunsetSippers({ pubs, userLocation }: SunsetSippersProps
                   <path
                     d={`M 12 ${arcCenterY} A ${arcRx} ${arcRy} 0 0 1 ${sunX} ${sunY}`}
                     fill="none"
-                    stroke="#f59e0b"
+                    stroke="#E8A317"
                     strokeWidth="2"
                     opacity="0.8"
                   />
@@ -254,8 +254,8 @@ export default function SunsetSippers({ pubs, userLocation }: SunsetSippersProps
                 {sunPosition > 0 && sunPosition < 100 && (
                   <>
                     <circle cx={sunX} cy={sunY} r="10" fill="#fbbf24" opacity="0.15" />
-                    <circle cx={sunX} cy={sunY} r="5" fill="#f59e0b" opacity="0.6" />
-                    <circle cx={sunX} cy={sunY} r="3" fill="#f59e0b" />
+                    <circle cx={sunX} cy={sunY} r="5" fill="#E8A317" opacity="0.6" />
+                    <circle cx={sunX} cy={sunY} r="3" fill="#E8A317" />
                   </>
                 )}
                 {/* Labels — below horizon line, larger font, symmetric */}
