@@ -243,7 +243,7 @@ export default function Home() {
           </div>
 
           {/* CoinMarketCap-style stat pods */}
-          <div className="grid grid-cols-4 gap-2 mt-2.5 pb-2.5">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-2.5 pb-2.5">
             {/* Perth Average */}
             <div className="bg-cream/[0.04] rounded-lg px-2.5 py-1.5 border border-cream/[0.06]">
               <span className="text-cream/40 text-[9px] uppercase tracking-wider block leading-none">Perth Avg</span>
