@@ -16,4 +16,15 @@ export interface Pub {
   priceVerified: boolean
   hasTab: boolean
   kidFriendly: boolean
+  // Dynamic happy hour fields
+  happyHourPrice: number | null
+  happyHourDays: string | null
+  happyHourStart: string | null
+  happyHourEnd: string | null
+  lastVerified: string | null
+  // Computed at runtime
+  regularPrice: number | null
+  isHappyHourNow: boolean
+  happyHourLabel: string | null
+  happyHourMinutesRemaining: number | null
 }

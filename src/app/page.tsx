@@ -164,7 +164,7 @@ export default function Home() {
           (pub.description?.toLowerCase() || '').includes(searchTerm.toLowerCase())
         const matchesSuburb = !selectedSuburb || selectedSuburb === 'all' || pub.suburb === selectedSuburb
         const matchesPrice = pub.price === null || pub.price <= maxPrice
-        const matchesHappyHour = !showHappyHourOnly || isHappyHour(pub.happyHour)
+        const matchesHappyHour = !showHappyHourOnly || pub.isHappyHourNow || isHappyHour(pub.happyHour)
         return matchesSearch && matchesSuburb && matchesPrice && matchesHappyHour
       })
       .sort((a, b) => {
@@ -187,7 +187,7 @@ export default function Home() {
       minPrice: Math.min(...pubs.filter(p => p.price !== null).map(p => p.price!)),
       maxPriceValue: Math.max(...pubs.filter(p => p.price !== null).map(p => p.price!)),
       avgPrice: (() => { const priced = pubs.filter(p => p.price !== null); return priced.length > 0 ? (priced.reduce((sum, p) => sum + p.price!, 0) / priced.length).toFixed(2) : '0'; })(),
-      happyHourNow: pubs.filter(p => isHappyHour(p.happyHour)).length
+      happyHourNow: pubs.filter(p => p.isHappyHourNow || isHappyHour(p.happyHour)).length
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pubs, currentTime]) // currentTime triggers happyHourNow recount every minute
@@ -405,6 +405,9 @@ export default function Home() {
                         </span>
                       </td>
                       <td className={`py-3 px-2 sm:px-4 text-right font-bold font-mono text-lg whitespace-nowrap ${getPriceTextColor(pub.price)}`}>
+                        {pub.isHappyHourNow && pub.regularPrice !== null && pub.regularPrice !== pub.price && (
+                          <span className="text-xs text-stone-400 line-through font-normal mr-1">${pub.regularPrice.toFixed(2)}</span>
+                        )}
                         {pub.price !== null ? `$${pub.price.toFixed(2)}` : 'TBC'}
                       </td>
                       <td className="py-3 px-4 hidden md:table-cell">

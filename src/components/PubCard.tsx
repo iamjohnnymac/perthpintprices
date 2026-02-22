@@ -123,9 +123,14 @@ export default function PubCard({
             </div>
             <p className="text-xs text-stone-500">{pub.suburb}{distance && <span className="text-stone-400 text-xs"> · {distance}</span>}</p>
           </div>
-          <div className={`text-xl font-bold font-mono bg-gradient-to-br ${getPriceColor(pub.price)} bg-clip-text text-transparent`}>
-            {pub.price !== null ? `$${pub.price.toFixed(2)}` : 'TBC'}
-          </div>
+          <div className="text-right">
+              {pub.isHappyHourNow && pub.regularPrice !== null && pub.regularPrice !== pub.price && (
+                <div className="text-[10px] text-stone-400 line-through font-mono">${pub.regularPrice.toFixed(2)}</div>
+              )}
+              <div className={`text-xl font-bold font-mono bg-gradient-to-br ${getPriceColor(pub.price)} bg-clip-text text-transparent`}>
+                {pub.price !== null ? `$${pub.price.toFixed(2)}` : 'TBC'}
+              </div>
+            </div>
         </div>
       </CardHeader>
 

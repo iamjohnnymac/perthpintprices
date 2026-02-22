@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js'
 import { Pub } from '@/types/pub'
+import { getHappyHourStatus } from '@/lib/happyHourLive'
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://ifxkoblvgttelzboenpi.supabase.co'
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlmeGtvYmx2Z3R0ZWx6Ym9lbnBpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzExODUwNjgsImV4cCI6MjA4Njc2MTA2OH0.qLy6B-VeVnMh0QSOxHK3uQEJ6iZr6xNHmfKov_7B-fY'
@@ -53,7 +54,39 @@ export async function reportCrowdLevel(pubId: string, level: CrowdLevel): Promis
   return true
 }
 
-// Fetch pubs from Supabase
+/**
+ * Generate a human-readable happy hour text from structured data
+ * Returns format compatible with existing happyHour.ts parser: "Daily 4-7pm" or "Mon-Fri 5-7pm"
+ */
+function generateHappyHourText(days: string | null, start: string | null, end: string | null): string | null {
+  if (!days || !start || !end) return null
+  
+  const startH = parseInt(start.split(':')[0])
+  const endH = parseInt(end.split(':')[0])
+  
+  const fmtHour = (h: number): string => {
+    if (h === 0) return '12'
+    if (h > 12) return String(h - 12)
+    return String(h)
+  }
+  
+  const period = endH >= 12 ? 'pm' : 'am'
+  
+  // Map day strings to parser-compatible format
+  const d = days.toLowerCase().trim()
+  let dayLabel = days
+  if (d === '7 days' || d === 'daily' || d === 'everyday') {
+    dayLabel = 'Daily'
+  } else if (d.match(/^(mon|tue|wed|thu|fri|sat|sun)/i) && d.includes('-')) {
+    // Already in "Mon-Fri" format, capitalize first letters
+    const parts = d.split('-')
+    dayLabel = parts.map(p => p.charAt(0).toUpperCase() + p.slice(1, 3)).join('-')
+  }
+  
+  return `${dayLabel} ${fmtHour(startH)}-${fmtHour(endH)}${period}`
+}
+
+// Fetch pubs from Supabase with dynamic happy hour pricing
 export async function getPubs(): Promise<Pub[]> {
   const { data, error } = await supabase
     .from('pubs')
@@ -65,23 +98,52 @@ export async function getPubs(): Promise<Pub[]> {
     return []
   }
   
-  // Map snake_case to camelCase
-  return (data || []).map(row => ({
-    id: row.id,
-    name: row.name,
-    suburb: row.suburb,
-    price: row.price != null ? Number(row.price) : null,
-    address: row.address || '',
-    website: row.website || null,
-    lat: row.lat || 0,
-    lng: row.lng || 0,
-    beerType: row.beer_type || '',
-    happyHour: row.happy_hour || null,
-    description: row.description || null,
-    lastUpdated: row.last_updated || undefined,
-    sunsetSpot: row.sunset_spot || false,
-    priceVerified: row.price_verified !== false,
-    hasTab: row.has_tab === true,
-    kidFriendly: row.kid_friendly === true,
-  }))
+  return (data || []).map(row => {
+    const regularPrice = row.price != null ? Number(row.price) : null
+    const hhPrice = row.happy_hour_price != null ? Number(row.happy_hour_price) : null
+    
+    // Compute live happy hour status
+    const hhStatus = getHappyHourStatus({
+      price: regularPrice,
+      happyHourPrice: hhPrice,
+      happyHourDays: row.happy_hour_days || null,
+      happyHourStart: row.happy_hour_start || null,
+      happyHourEnd: row.happy_hour_end || null,
+    })
+    
+    // Generate happyHour text from structured data if not already set
+    const happyHourText = row.happy_hour || 
+      generateHappyHourText(row.happy_hour_days, row.happy_hour_start, row.happy_hour_end)
+    
+    return {
+      id: row.id,
+      name: row.name,
+      suburb: row.suburb,
+      // KEY: price = effective price (switches to HH price when active)
+      price: hhStatus.effectivePrice,
+      regularPrice: regularPrice,
+      address: row.address || '',
+      website: row.website || null,
+      lat: row.lat || 0,
+      lng: row.lng || 0,
+      beerType: row.beer_type || '',
+      happyHour: happyHourText,
+      description: row.description || null,
+      lastUpdated: row.last_updated || undefined,
+      sunsetSpot: row.sunset_spot || false,
+      priceVerified: row.price_verified !== false,
+      hasTab: row.has_tab === true,
+      kidFriendly: row.kid_friendly === true,
+      // Happy hour detail fields
+      happyHourPrice: hhPrice,
+      happyHourDays: row.happy_hour_days || null,
+      happyHourStart: row.happy_hour_start || null,
+      happyHourEnd: row.happy_hour_end || null,
+      lastVerified: row.last_verified || null,
+      // Computed live status
+      isHappyHourNow: hhStatus.isActive,
+      happyHourLabel: hhStatus.happyHourLabel,
+      happyHourMinutesRemaining: hhStatus.minutesRemaining,
+    }
+  })
 }
