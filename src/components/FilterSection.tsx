@@ -1,6 +1,6 @@
 "use client"
 
-import { Search, LayoutGrid, List, Clock, Map, SlidersHorizontal, ChevronDown, X } from "lucide-react"
+import { Search, LayoutGrid, List, Clock, Map, SlidersHorizontal, ChevronDown, X, MapPin } from "lucide-react"
 import { useState, useRef, useEffect } from "react"
 import { cn } from "@/lib/utils"
 
@@ -47,7 +47,8 @@ export function FilterSection({
   stats,
   hasLocation,
 }: FilterSectionProps) {
-  const activeFilterCount = (selectedSuburb && selectedSuburb !== 'all' ? 1 : 0) + (maxPrice < 15 ? 1 : 0) + (sortBy !== 'price' ? 1 : 0)
+  const activeFilterCount = (selectedSuburb && selectedSuburb !== 'all' ? 1 : 0) + (maxPrice < 15 ? 1 : 0) + (sortBy !== 'price' && sortBy !== 'nearest' ? 1 : 0)
+  const isNearestActive = sortBy === 'nearest' && hasLocation
   const dropdownRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -60,11 +61,20 @@ export function FilterSection({
     return () => document.removeEventListener('mousedown', handleClick)
   }, [showMoreFilters, setShowMoreFilters])
 
+  const handleClearAll = () => {
+    setSortBy('price')
+    setMaxPrice(15)
+    setSelectedSuburb('all')
+    setSearchTerm('')
+    setShowHappyHourOnly(false)
+  }
+
+  const totalActive = activeFilterCount + (isNearestActive ? 1 : 0)
+
   return (
     <div className="border-t border-stone-100/80 bg-white/95">
       {/* Row 1: Search + Suburb */}
       <div className="max-w-7xl mx-auto px-4 pt-2 pb-1.5 flex items-center gap-2">
-        {/* Search — grows to fill space */}
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-stone-400 pointer-events-none" />
           <input
@@ -80,8 +90,6 @@ export function FilterSection({
             </button>
           )}
         </div>
-
-        {/* Suburb dropdown — fixed width */}
         <select
           value={selectedSuburb || 'all'}
           onChange={(e) => setSelectedSuburb(e.target.value)}
@@ -94,77 +102,94 @@ export function FilterSection({
         </select>
       </div>
 
-      {/* Row 2: Pill controls — horizontally scrollable, never wraps */}
+      {/* Row 2: Pill controls + Filters button (separate containers to avoid overflow clipping) */}
       <div className="max-w-7xl mx-auto px-4 pb-2">
-        <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide">
+        <div className="flex items-center gap-2">
+          {/* Scrollable pills area */}
+          <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide flex-1 min-w-0">
+            {/* Cards / List toggle */}
+            <div className="flex items-center bg-stone-100 rounded-lg p-0.5 gap-0.5 flex-shrink-0">
+              <button
+                onClick={() => setViewMode('cards')}
+                className={cn(
+                  "flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-medium transition-all whitespace-nowrap",
+                  viewMode === 'cards' ? "bg-white text-stone-800 shadow-sm" : "text-stone-500 hover:text-stone-700"
+                )}
+              >
+                <LayoutGrid className="h-3.5 w-3.5" />
+                Cards
+              </button>
+              <button
+                onClick={() => setViewMode('list')}
+                className={cn(
+                  "flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-medium transition-all whitespace-nowrap",
+                  viewMode === 'list' ? "bg-white text-stone-800 shadow-sm" : "text-stone-500 hover:text-stone-700"
+                )}
+              >
+                <List className="h-3.5 w-3.5" />
+                List
+              </button>
+            </div>
 
-          {/* Cards / List toggle */}
-          <div className="flex items-center bg-stone-100 rounded-lg p-0.5 gap-0.5 flex-shrink-0">
+            <div className="h-5 w-px bg-stone-200 flex-shrink-0" />
+
+            {/* Happy Hour pill */}
             <button
-              onClick={() => setViewMode('cards')}
-              className={cn(
-                "flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-medium transition-all whitespace-nowrap",
-                viewMode === 'cards' ? "bg-white text-stone-800 shadow-sm" : "text-stone-500 hover:text-stone-700"
-              )}
-            >
-              <LayoutGrid className="h-3.5 w-3.5" />
-              Cards
-            </button>
-            <button
-              onClick={() => setViewMode('list')}
-              className={cn(
-                "flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-medium transition-all whitespace-nowrap",
-                viewMode === 'list' ? "bg-white text-stone-800 shadow-sm" : "text-stone-500 hover:text-stone-700"
-              )}
-            >
-              <List className="h-3.5 w-3.5" />
-              List
-            </button>
-          </div>
-
-          {/* Divider */}
-          <div className="h-5 w-px bg-stone-200 flex-shrink-0" />
-
-          {/* Happy Hour pill */}
-          <button
-            onClick={() => setShowHappyHourOnly(!showHappyHourOnly)}
-            className={cn(
-              "flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all border flex-shrink-0 whitespace-nowrap",
-              showHappyHourOnly
-                ? "bg-gold text-navy border-gold"
-                : "bg-white text-stone-500 border-stone-200 hover:border-stone-300 hover:text-stone-700"
-            )}
-          >
-            <Clock className="h-3 w-3" />
-            Happy Hour
-            {stats.happyHourNow > 0 && (
-              <span className={cn(
-                "text-xs rounded-full px-1.5 py-0 font-semibold",
-                showHappyHourOnly ? "bg-navy/20 text-navy" : "bg-stone-200 text-stone-600"
-              )}>
-                {stats.happyHourNow}
-              </span>
-            )}
-          </button>
-
-          {/* Mini Maps pill — only in Cards view */}
-          {viewMode === 'cards' && (
-            <button
-              onClick={() => setShowMiniMaps(!showMiniMaps)}
+              onClick={() => setShowHappyHourOnly(!showHappyHourOnly)}
               className={cn(
                 "flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all border flex-shrink-0 whitespace-nowrap",
-                showMiniMaps
+                showHappyHourOnly
                   ? "bg-gold text-navy border-gold"
                   : "bg-white text-stone-500 border-stone-200 hover:border-stone-300 hover:text-stone-700"
               )}
             >
-              <Map className="h-3 w-3" />
-              Mini Maps
+              <Clock className="h-3 w-3" />
+              Happy Hour
+              {stats.happyHourNow > 0 && (
+                <span className={cn(
+                  "text-xs rounded-full px-1.5 py-0 font-semibold",
+                  showHappyHourOnly ? "bg-navy/20 text-navy" : "bg-stone-200 text-stone-600"
+                )}>
+                  {stats.happyHourNow}
+                </span>
+              )}
             </button>
-          )}
 
-          {/* Filters — pushed to end */}
-          <div className="ml-auto relative flex-shrink-0" ref={dropdownRef}>
+            {/* Nearest pill — visible when location is available */}
+            {hasLocation && (
+              <button
+                onClick={() => setSortBy(sortBy === 'nearest' ? 'price' : 'nearest')}
+                className={cn(
+                  "flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all border flex-shrink-0 whitespace-nowrap",
+                  isNearestActive
+                    ? "bg-blue-500 text-white border-blue-500"
+                    : "bg-white text-stone-500 border-stone-200 hover:border-stone-300 hover:text-stone-700"
+                )}
+              >
+                <MapPin className="h-3 w-3" />
+                Nearest
+              </button>
+            )}
+
+            {/* Mini Maps pill — only in Cards view */}
+            {viewMode === 'cards' && (
+              <button
+                onClick={() => setShowMiniMaps(!showMiniMaps)}
+                className={cn(
+                  "flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all border flex-shrink-0 whitespace-nowrap",
+                  showMiniMaps
+                    ? "bg-gold text-navy border-gold"
+                    : "bg-white text-stone-500 border-stone-200 hover:border-stone-300 hover:text-stone-700"
+                )}
+              >
+                <Map className="h-3 w-3" />
+                Mini Maps
+              </button>
+            )}
+          </div>
+
+          {/* Filters button — OUTSIDE scroll container so dropdown isn't clipped */}
+          <div className="relative flex-shrink-0" ref={dropdownRef}>
             <button
               onClick={() => setShowMoreFilters(!showMoreFilters)}
               className={cn(
@@ -185,7 +210,8 @@ export function FilterSection({
             </button>
 
             {showMoreFilters && (
-              <div className="absolute right-0 top-full mt-1 w-64 bg-white rounded-xl shadow-lg border border-stone-200 p-4 z-50">
+              <div className="absolute right-0 top-full mt-1.5 w-72 bg-white rounded-xl shadow-xl border border-stone-200 p-4 z-50">
+                {/* Sort By */}
                 <div className="mb-4">
                   <label className="block text-xs font-semibold text-stone-400 uppercase tracking-wide mb-2">Sort By</label>
                   <div className="flex gap-1.5">
@@ -204,7 +230,8 @@ export function FilterSection({
                   </div>
                 </div>
 
-                <div>
+                {/* Max Price slider */}
+                <div className="mb-4">
                   <label className="block text-xs font-semibold text-stone-400 uppercase tracking-wide mb-2">
                     Max Price: <span className="text-gold">${maxPrice}</span>
                   </label>
@@ -223,13 +250,19 @@ export function FilterSection({
                   </div>
                 </div>
 
-                {maxPrice < 15 && (
-                  <button
-                    onClick={() => setMaxPrice(15)}
-                    className="mt-3 text-xs text-stone-400 hover:text-stone-600 underline"
-                  >
-                    Reset price
-                  </button>
+                {/* Active filters summary */}
+                {totalActive > 0 && (
+                  <div className="pt-3 border-t border-stone-100">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs text-stone-400">{totalActive} active filter{totalActive > 1 ? 's' : ''}</span>
+                      <button
+                        onClick={handleClearAll}
+                        className="text-xs text-coral hover:text-red-600 font-medium"
+                      >
+                        Clear All
+                      </button>
+                    </div>
+                  </div>
                 )}
               </div>
             )}
