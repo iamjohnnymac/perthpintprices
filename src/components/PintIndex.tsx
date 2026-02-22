@@ -188,7 +188,7 @@ function DistributionBars({ distribution }: { distribution: Record<string, numbe
 export default function PintIndex() {
   const [snapshots, setSnapshots] = useState<PriceSnapshot[]>([]);
   const [loading, setLoading] = useState(true);
-  const [expanded, setExpanded] = useState(false);
+  const [expanded, setExpanded] = useState(true);
 
   useEffect(() => {
     async function fetchSnapshots() {
@@ -260,7 +260,7 @@ export default function PintIndex() {
           
           {/* Right: Sparkline with hover */}
           <div className="hidden sm:block" onClick={e => e.stopPropagation()}>
-            <div className="text-[10px] text-stone-400 mb-1 text-right">12-month trend · hover to explore</div>
+            <div className="text-[10px] text-stone-400 mb-1 text-right">Price trend · hover to explore</div>
             <Sparkline data={sparkData} snapshots={snapshots} />
           </div>
         </div>
@@ -283,7 +283,7 @@ export default function PintIndex() {
                 <div className="text-lg font-bold text-stone-700">${current.median_price.toFixed(2)}</div>
               </div>
               <div>
-                <div className="text-xs text-stone-500 mb-1">12-Month Change</div>
+                <div className="text-xs text-stone-500 mb-1">Overall Change</div>
                 <div className={`text-lg font-bold font-mono ${yearChange > 0 ? 'text-coral' : 'text-teal'}`}>
                   {yearChange >= 0 ? '+' : ''}{yearPct.toFixed(1)}%
                 </div>
@@ -314,7 +314,7 @@ export default function PintIndex() {
 
             {/* Mobile sparkline */}
             <div className="sm:hidden mt-4" onClick={e => e.stopPropagation()}>
-              <div className="text-xs text-stone-400 mb-1">12-month trend · hover to explore</div>
+              <div className="text-xs text-stone-400 mb-1">Price trend · hover to explore</div>
               <Sparkline data={sparkData} snapshots={snapshots} width={320} height={50} />
             </div>
 

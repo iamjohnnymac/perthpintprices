@@ -35,21 +35,21 @@ function getPriceIcon(price: number | null): L.DivIcon {
   })
 }
 
-// Custom cluster icon - larger and more readable
+// Custom cluster icon
 function createClusterCustomIcon(cluster: L.MarkerCluster): L.DivIcon {
   const count = cluster.getChildCount()
   let size = 50
   let fontSize = 16
-  let bgColor = '#E8A317' // gold
+  let bgColor = '#E8A317'
 
   if (count > 20) {
     size = 70
     fontSize = 20
-    bgColor = '#C88A0F' // deeper gold for large clusters
+    bgColor = '#C88A0F'
   } else if (count > 10) {
     size = 60
     fontSize = 18
-    bgColor = '#D99615' // mid gold for medium
+    bgColor = '#D99615'
   }
 
   return L.divIcon({
@@ -76,33 +76,55 @@ function createClusterCustomIcon(cluster: L.MarkerCluster): L.DivIcon {
 }
 
 // Component to fit map bounds to visible markers
-function FitBounds({ pubs, userLocation }: { pubs: Pub[], userLocation?: { lat: number, lng: number } | null }) {
+function FitBounds({ pubs, userLocation, totalPubCount }: { pubs: Pub[], userLocation?: { lat: number, lng: number } | null, totalPubCount: number }) {
   const map = useMap()
-  const hasZoomedToUser = React.useRef(false)
+  const hasInitialZoom = React.useRef(false)
+  const prevPubsFingerprint = React.useRef('')
 
   useEffect(() => {
-    // If user location available and we haven't zoomed to them yet, center on them
-    if (userLocation && !hasZoomedToUser.current) {
-      hasZoomedToUser.current = true
-      map.setView([userLocation.lat, userLocation.lng], 14, { animate: true })
+    // Create a fingerprint of the current pub set to detect filter changes
+    const fingerprint = pubs.length + ':' + (pubs.length > 0 ? pubs[0].id + '_' + pubs[pubs.length - 1].id : 'empty')
+    const isFiltered = pubs.length < totalPubCount && pubs.length > 0
+
+    // Initial load: zoom to user location if available
+    if (!hasInitialZoom.current) {
+      hasInitialZoom.current = true
+      prevPubsFingerprint.current = fingerprint
+
+      if (userLocation) {
+        map.setView([userLocation.lat, userLocation.lng], 14, { animate: true })
+        return
+      }
+
+      if (pubs.length > 0) {
+        const bounds = L.latLngBounds(pubs.map(pub => [pub.lat, pub.lng]))
+        map.fitBounds(bounds, { padding: [30, 30], maxZoom: 14 })
+      } else {
+        map.setView([-31.9505, 115.8605], 11)
+      }
       return
     }
 
-    // Don't override user location zoom
-    if (hasZoomedToUser.current) return
+    // After initial load: respond to filter changes
+    if (fingerprint !== prevPubsFingerprint.current) {
+      prevPubsFingerprint.current = fingerprint
 
-    // Fit to pubs if available, otherwise default Perth view
-    if (pubs.length > 0) {
-      const bounds = L.latLngBounds(pubs.map(pub => [pub.lat, pub.lng]))
-      map.fitBounds(bounds, { 
-        padding: [30, 30],
-        maxZoom: 14
-      })
-    } else {
-      // Default to Perth CBD while pubs load
-      map.setView([-31.9505, 115.8605], 11)
+      if (pubs.length === 0) {
+        map.setView([-31.9505, 115.8605], 11)
+      } else if (isFiltered) {
+        // User is searching/filtering — zoom to filtered results
+        const bounds = L.latLngBounds(pubs.map(pub => [pub.lat, pub.lng]))
+        map.fitBounds(bounds, { padding: [30, 30], maxZoom: 15 })
+      } else if (userLocation) {
+        // Filter cleared — return to user location
+        map.setView([userLocation.lat, userLocation.lng], 14, { animate: true })
+      } else {
+        // Filter cleared, no user location — fit to all
+        const bounds = L.latLngBounds(pubs.map(pub => [pub.lat, pub.lng]))
+        map.fitBounds(bounds, { padding: [30, 30], maxZoom: 14 })
+      }
     }
-  }, [map, pubs, userLocation])
+  }, [map, pubs, userLocation, totalPubCount])
 
   return null
 }
@@ -111,10 +133,10 @@ interface MapProps {
   pubs: Pub[]
   isHappyHour?: (happyHour: string | null | undefined) => boolean
   userLocation?: { lat: number, lng: number } | null
+  totalPubCount?: number
 }
 
-export default function Map({ pubs, isHappyHour, userLocation }: MapProps) {
-  // Center on user location if available, otherwise Perth CBD
+export default function MapComponent({ pubs, isHappyHour, userLocation, totalPubCount }: MapProps) {
   const center: [number, number] = userLocation
     ? [userLocation.lat, userLocation.lng]
     : [-31.9505, 115.8605]
@@ -131,10 +153,8 @@ export default function Map({ pubs, isHappyHour, userLocation }: MapProps) {
         url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
       />
       
-      {/* Fit bounds to filtered pubs */}
-      <FitBounds pubs={pubs} userLocation={userLocation} />
+      <FitBounds pubs={pubs} userLocation={userLocation} totalPubCount={totalPubCount || pubs.length} />
       
-      {/* Clustered markers */}
       <MarkerClusterGroup
         chunkedLoading
         iconCreateFunction={createClusterCustomIcon}
@@ -177,7 +197,7 @@ export default function Map({ pubs, isHappyHour, userLocation }: MapProps) {
                     color: isHappyHour && isHappyHour(pub.happyHour) ? '#00C9A7' : '#6b7280',
                     fontWeight: isHappyHour && isHappyHour(pub.happyHour) ? 600 : 400
                   }}>
-                    🕐 {pub.happyHour}
+                    {'\u{1F550}'} {pub.happyHour}
                     {isHappyHour && isHappyHour(pub.happyHour) && ' - NOW!'}
                   </p>
                 )}
@@ -194,7 +214,7 @@ export default function Map({ pubs, isHappyHour, userLocation }: MapProps) {
                       textDecoration: 'none'
                     }}
                   >
-                    Visit website →
+                    Visit website {'\u2192'}
                   </a>
                 )}
               </div>
@@ -203,7 +223,6 @@ export default function Map({ pubs, isHappyHour, userLocation }: MapProps) {
         ))}
       </MarkerClusterGroup>
 
-      {/* User location blue dot */}
       {userLocation && (
         <Marker
           position={[userLocation.lat, userLocation.lng]}

@@ -4,11 +4,15 @@ import { Pub } from '@/types/pub'
 
 interface PintIndexCompactProps {
   pubs: Pub[]
+  filteredPubs?: Pub[]
   onViewMore: () => void
 }
 
-export default function PintIndexCompact({ pubs, onViewMore }: PintIndexCompactProps) {
-  const pricedPubs = pubs.filter(p => p.price !== null)
+export default function PintIndexCompact({ pubs, filteredPubs, onViewMore }: PintIndexCompactProps) {
+  const displayPubs = filteredPubs && filteredPubs.length < pubs.length ? filteredPubs : pubs
+  const pricedPubs = displayPubs.filter(p => p.price !== null)
+  const isFiltered = filteredPubs && filteredPubs.length < pubs.length
+  
   if (pricedPubs.length === 0) return null
 
   const avg = pricedPubs.reduce((sum, p) => sum + p.price!, 0) / pricedPubs.length
@@ -17,22 +21,24 @@ export default function PintIndexCompact({ pubs, onViewMore }: PintIndexCompactP
   const cheapest = pricedPubs.find(p => p.price === min)
 
   return (
-    <div className="bg-white rounded-2xl border border-stone-200/40 px-4 py-3 shadow-[0_2px_12px_rgba(0,0,0,0.06)]">
+    <div className="bg-white rounded-2xl border border-stone-200/40 px-4 py-3 shadow-[0_2px_12px_rgba(0,0,0,0.06)] mb-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4 flex-wrap">
-          {/* Average price */}
+          {isFiltered && (
+            <div className="flex items-center gap-1.5">
+              <span className="text-[10px] bg-gold/15 text-amber-700 px-2 py-0.5 rounded-full font-medium uppercase tracking-wide">Filtered</span>
+            </div>
+          )}
           <div className="flex items-center gap-2">
             <span className="text-xs text-stone-400 uppercase tracking-wide font-medium">Avg</span>
             <span className="text-lg font-bold font-mono text-stone-900">${avg.toFixed(2)}</span>
           </div>
-          {/* Range */}
           <div className="flex items-center gap-2">
             <span className="text-xs text-stone-400 uppercase tracking-wide font-medium">Range</span>
             <span className="text-sm font-semibold font-mono text-teal">${min.toFixed(0)}</span>
-            <span className="text-stone-300">–</span>
+            <span className="text-stone-300">{'\u2013'}</span>
             <span className="text-sm font-semibold font-mono text-coral">${max.toFixed(0)}</span>
           </div>
-          {/* Cheapest suburb */}
           {cheapest && (
             <div className="hidden sm:flex items-center gap-1.5">
               <span className="text-xs text-stone-400 uppercase tracking-wide font-medium">Cheapest</span>
@@ -40,7 +46,6 @@ export default function PintIndexCompact({ pubs, onViewMore }: PintIndexCompactP
             </div>
           )}
         </div>
-        {/* View full market link */}
         <button
           onClick={onViewMore}
           className="text-xs text-gold hover:text-amber-600 font-medium flex items-center gap-1 flex-shrink-0"

@@ -164,10 +164,16 @@ export default function Home() {
           (pub.description?.toLowerCase() || '').includes(searchTerm.toLowerCase())
         const matchesSuburb = !selectedSuburb || selectedSuburb === 'all' || pub.suburb === selectedSuburb
         const matchesPrice = pub.price === null || pub.price <= maxPrice
-        const matchesHappyHour = !showHappyHourOnly || pub.isHappyHourNow || isHappyHour(pub.happyHour)
+        const matchesHappyHour = !showHappyHourOnly || !!pub.happyHour
         return matchesSearch && matchesSuburb && matchesPrice && matchesHappyHour
       })
       .sort((a, b) => {
+        // When HH filter is on, put currently-active happy hours first
+        if (showHappyHourOnly) {
+          const aActive = a.isHappyHourNow || isHappyHour(a.happyHour) ? 1 : 0
+          const bActive = b.isHappyHourNow || isHappyHour(b.happyHour) ? 1 : 0
+          if (aActive !== bActive) return bActive - aActive
+        }
         if (sortBy === 'price') { if (a.price === null && b.price === null) return 0; if (a.price === null) return 1; if (b.price === null) return -1; return a.price - b.price; }
         if (sortBy === 'name') return a.name.localeCompare(b.name)
         if (sortBy === 'suburb') return a.suburb.localeCompare(b.suburb)
@@ -304,10 +310,10 @@ export default function Home() {
         {/* ═══ PUBS TAB ═══ */}
         {activeTab === 'pubs' && (
           <>
-            <PintIndexCompact pubs={pubs} onViewMore={() => setActiveTab('market')} />
+            <PintIndexCompact pubs={pubs} filteredPubs={filteredPubs} onViewMore={() => setActiveTab('market')} />
 
             <div className="mb-5 rounded-2xl overflow-hidden shadow-[0_2px_12px_rgba(0,0,0,0.06)] border border-stone-200/60 relative z-0 isolate">
-              <Map pubs={filteredPubs} isHappyHour={isHappyHour} userLocation={userLocation} />
+              <Map pubs={filteredPubs} isHappyHour={isHappyHour} userLocation={userLocation} totalPubCount={pubs.length} />
             </div>
 
             <div className="flex items-center justify-between mb-4">
@@ -493,9 +499,9 @@ export default function Home() {
 
         {activeTab === 'pubs' && filteredPubs.length === 0 && (
           <div className="text-center py-12 bg-white rounded-xl border border-stone-200">
-            <div className="text-5xl mb-3">{showHappyHourOnly ? '🕐' : '🔍'}</div>
-            <h3 className="text-lg font-bold text-stone-700 mb-1">{showHappyHourOnly ? 'No happy hours active right now' : 'No pubs found'}</h3>
-            <p className="text-stone-500 text-sm">{showHappyHourOnly ? 'Uncheck the filter to see all venues.' : 'Try adjusting your filters'}</p>
+            <div className="text-5xl mb-3">{showHappyHourOnly ? '\u{1F37B}' : '\u{1F50D}'}</div>
+            <h3 className="text-lg font-bold text-stone-700 mb-1">{showHappyHourOnly ? 'No pubs with happy hour info yet' : 'No pubs found'}</h3>
+            <p className="text-stone-500 text-sm">{showHappyHourOnly ? 'We\u2019re building our happy hour database \u2014 submit yours!' : 'Try adjusting your filters'}</p>
           </div>
         )}
       </div>
