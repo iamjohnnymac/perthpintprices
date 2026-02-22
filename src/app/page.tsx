@@ -214,7 +214,7 @@ export default function Home() {
           {/* Row 1: Brand + CTA */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2.5">
-              <img src="/logo.png" alt="PintDex" className="w-10 h-10 rounded-xl flex-shrink-0" />
+              <img src="/logo.png" alt="PintDex" className="w-14 h-14 rounded-xl flex-shrink-0" />
               <div>
                 <h1 className="text-xl font-extrabold tracking-tight leading-none font-heading bg-gradient-to-r from-gold via-amber-400 to-amber-600 bg-clip-text text-transparent">PintDex</h1>
                 <p className="text-[11px] text-cream/50 mt-0.5 leading-none tracking-wide uppercase">Every pint. Every pub. Live.</p>
