@@ -187,13 +187,20 @@ export default function Home() {
   }, [pubs, searchTerm, selectedSuburb, maxPrice, sortBy, showHappyHourOnly, userLocation])
 
   const stats = useMemo(() => {
-    if (pubs.length === 0) return { total: 0, minPrice: 0, maxPriceValue: 0, avgPrice: '0', happyHourNow: 0 }
+    if (pubs.length === 0) return { total: 0, minPrice: 0, maxPriceValue: 0, avgPrice: '0', happyHourNow: 0, cheapestSuburb: '', priciestSuburb: '' }
+    const priced = pubs.filter(p => p.price !== null)
+    const minP = Math.min(...priced.map(p => p.price!))
+    const maxP = Math.max(...priced.map(p => p.price!))
+    const cheapest = priced.find(p => p.price === minP)
+    const priciest = priced.find(p => p.price === maxP)
     return {
       total: pubs.length,
-      minPrice: Math.min(...pubs.filter(p => p.price !== null).map(p => p.price!)),
-      maxPriceValue: Math.max(...pubs.filter(p => p.price !== null).map(p => p.price!)),
-      avgPrice: (() => { const priced = pubs.filter(p => p.price !== null); return priced.length > 0 ? (priced.reduce((sum, p) => sum + p.price!, 0) / priced.length).toFixed(2) : '0'; })(),
-      happyHourNow: pubs.filter(p => p.isHappyHourNow || isHappyHour(p.happyHour)).length
+      minPrice: minP,
+      maxPriceValue: maxP,
+      avgPrice: priced.length > 0 ? (priced.reduce((sum, p) => sum + p.price!, 0) / priced.length).toFixed(2) : '0',
+      happyHourNow: pubs.filter(p => p.isHappyHourNow || isHappyHour(p.happyHour)).length,
+      cheapestSuburb: cheapest?.suburb || '',
+      priciestSuburb: priciest?.suburb || ''
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pubs, currentTime]) // currentTime triggers happyHourNow recount every minute
@@ -215,58 +222,51 @@ export default function Home() {
     <main className="min-h-screen bg-cream">
       <PriceTicker pubs={pubs} />
       <header className="bg-navy sticky top-0 z-[1000] shadow-[0_2px_8px_rgba(0,0,0,0.3)]">
-        {/* Hero header */}
-        <div className="max-w-7xl mx-auto px-4 pt-3 pb-2">
-          {/* Row 1: Brand + CTA */}
+        {/* Compact brand bar */}
+        <div className="max-w-7xl mx-auto px-4 pt-2.5 pb-0">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2.5">
-              <img src="/logo.png" alt="PintDex" className="w-28 h-28 rounded-xl flex-shrink-0 object-contain" />
-              <div>
-                <h1 className="text-xl font-extrabold tracking-tight leading-none font-heading bg-gradient-to-r from-gold via-amber-400 to-amber-600 bg-clip-text text-transparent">PintDex</h1>
-                <p className="text-[11px] text-cream/50 mt-0.5 leading-none tracking-wide uppercase">Every pint. Every pub. Live.</p>
+            <div className="flex items-center gap-2">
+              <img src="/logo.png" alt="PintDex" className="w-10 h-10 rounded-lg flex-shrink-0 object-contain" />
+              <h1 className="text-lg font-extrabold tracking-tight leading-none font-heading bg-gradient-to-r from-gold via-amber-400 to-amber-600 bg-clip-text text-transparent">PintDex</h1>
+              <div className="flex items-center gap-1 ml-1">
+                <div className="w-1.5 h-1.5 rounded-full bg-teal animate-pulse" />
+                <span className="text-[10px] text-teal/70 uppercase tracking-wider font-medium">Live</span>
               </div>
             </div>
             <button
               onClick={() => setShowSubmitForm(true)}
-              className="flex-shrink-0 flex items-center gap-1.5 px-4 py-2.5 bg-gradient-to-r from-gold to-amber-600 hover:from-amber-500 hover:to-amber-700 text-navy rounded-2xl font-bold transition-all text-xs shadow-lg shadow-amber-900/20"
+              className="flex-shrink-0 flex items-center gap-1.5 px-3.5 py-2 bg-gradient-to-r from-gold to-amber-600 hover:from-amber-500 hover:to-amber-700 text-navy rounded-xl font-bold transition-all text-xs shadow-lg shadow-amber-900/20"
             >
               <span className="hidden sm:inline">+ Submit a Price</span>
               <span className="sm:hidden text-base leading-none font-bold">+</span>
             </button>
           </div>
 
-          {/* Row 2: Live price strip — the hook */}
-          <div className="flex items-center gap-3 mt-2.5 px-1">
-            <div className="flex items-baseline gap-1">
-              <span className="text-teal font-mono font-black text-xl leading-none">${stats.minPrice}</span>
-              <span className="text-cream/40 text-[10px] uppercase tracking-wider">cheapest</span>
+          {/* CoinMarketCap-style stat pods */}
+          <div className="grid grid-cols-4 gap-2 mt-2.5 pb-2.5">
+            {/* Perth Average */}
+            <div className="bg-cream/[0.04] rounded-lg px-2.5 py-1.5 border border-cream/[0.06]">
+              <span className="text-cream/40 text-[9px] uppercase tracking-wider block leading-none">Perth Avg</span>
+              <span className="text-gold font-mono font-black text-base sm:text-lg leading-tight">${stats.avgPrice}</span>
+              <span className="text-cream/30 text-[9px] block leading-none mt-0.5">{stats.total} venues</span>
             </div>
-            <div className="flex-1 relative h-1.5 rounded-full bg-cream/10 overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-r from-teal via-gold to-coral rounded-full opacity-60" />
-              {/* Average marker */}
-              <div
-                className="absolute top-1/2 -translate-y-1/2 w-2.5 h-2.5 rounded-full bg-gold border-2 border-navy shadow-sm"
-                style={{ left: `${((parseFloat(stats.avgPrice) - stats.minPrice) / (stats.maxPriceValue - stats.minPrice)) * 100}%` }}
-              />
+            {/* Cheapest */}
+            <div className="bg-cream/[0.04] rounded-lg px-2.5 py-1.5 border border-cream/[0.06]">
+              <span className="text-cream/40 text-[9px] uppercase tracking-wider block leading-none">Cheapest</span>
+              <span className="text-teal font-mono font-black text-base sm:text-lg leading-tight">${stats.minPrice}</span>
+              <span className="text-cream/30 text-[9px] block leading-none mt-0.5 truncate">{stats.cheapestSuburb}</span>
             </div>
-            <div className="flex items-baseline gap-1">
-              <span className="text-coral font-mono font-black text-xl leading-none">${stats.maxPriceValue}</span>
-              <span className="text-cream/40 text-[10px] uppercase tracking-wider">priciest</span>
+            {/* Priciest */}
+            <div className="bg-cream/[0.04] rounded-lg px-2.5 py-1.5 border border-cream/[0.06]">
+              <span className="text-cream/40 text-[9px] uppercase tracking-wider block leading-none">Priciest</span>
+              <span className="text-coral font-mono font-black text-base sm:text-lg leading-tight">${stats.maxPriceValue}</span>
+              <span className="text-cream/30 text-[9px] block leading-none mt-0.5 truncate">{stats.priciestSuburb}</span>
             </div>
-          </div>
-
-          {/* Row 3: Stats ticker */}
-          <div className="flex items-center justify-between mt-2 px-1 pb-0.5">
-            <div className="flex items-center gap-3 text-[11px] text-cream/50">
-              <span><span className="text-gold font-bold font-mono">{stats.total}</span> venues</span>
-              <span className="text-cream/20">·</span>
-              <span><span className="text-gold font-bold font-mono">{suburbs.length}</span> suburbs</span>
-              <span className="text-cream/20">·</span>
-              <span>avg <span className="text-gold font-bold font-mono">${stats.avgPrice}</span></span>
-            </div>
-            <div className="flex items-center gap-1">
-              <div className="w-1.5 h-1.5 rounded-full bg-teal animate-pulse" />
-              <span className="text-[10px] text-teal/70 uppercase tracking-wider font-medium">Live</span>
+            {/* Market Status */}
+            <div className="bg-cream/[0.04] rounded-lg px-2.5 py-1.5 border border-cream/[0.06]">
+              <span className="text-cream/40 text-[9px] uppercase tracking-wider block leading-none">Happy Hour</span>
+              <span className="text-gold font-mono font-black text-base sm:text-lg leading-tight">{stats.happyHourNow}</span>
+              <span className="text-cream/30 text-[9px] block leading-none mt-0.5">{suburbs.length} suburbs</span>
             </div>
           </div>
         </div>
