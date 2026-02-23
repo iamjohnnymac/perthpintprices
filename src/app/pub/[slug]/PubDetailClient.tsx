@@ -9,6 +9,7 @@ import { Pub } from '@/types/pub'
 import E from '@/lib/emoji'
 import WatchlistButton from '@/components/WatchlistButton'
 import PriceHistory from '@/components/PriceHistory'
+import { formatHappyHourDays } from '@/lib/happyHourLive'
 
 const PubDetailMap = dynamic(() => import('@/components/PubDetailMap'), {
   ssr: false,
@@ -233,11 +234,19 @@ export default function PubDetailClient({ pub, nearbyPubs }: PubDetailClientProp
                     ${pub.happyHourPrice.toFixed(2)}
                   </p>
                 )}
-                {pub.happyHourDays && <p className="text-sm text-stone-600 mt-0.5">{pub.happyHourDays}</p>}
-                {pub.happyHourStart && pub.happyHourEnd && (
-                  <p className="text-sm text-stone-500">{formatHappyHourTime(pub.happyHourStart, pub.happyHourEnd)}</p>
+                {pub.happyHourDays && pub.happyHourStart && pub.happyHourEnd ? (
+                  <p className="text-sm text-stone-600 mt-0.5">
+                    {formatHappyHourDays(pub.happyHourDays)} · {formatHappyHourTime(pub.happyHourStart, pub.happyHourEnd)}
+                  </p>
+                ) : (
+                  <>
+                    {pub.happyHourDays && <p className="text-sm text-stone-600 mt-0.5">{formatHappyHourDays(pub.happyHourDays)}</p>}
+                    {pub.happyHourStart && pub.happyHourEnd && (
+                      <p className="text-sm text-stone-500">{formatHappyHourTime(pub.happyHourStart, pub.happyHourEnd)}</p>
+                    )}
+                    {!pub.happyHourPrice && !pub.happyHourStart && pub.happyHour && <p className="text-sm text-stone-600">{pub.happyHour}</p>}
+                  </>
                 )}
-                {!pub.happyHourPrice && pub.happyHour && <p className="text-sm text-stone-600">{pub.happyHour}</p>}
               </div>
             )}
 

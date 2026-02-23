@@ -11,6 +11,25 @@
  * - "Tue-Thu" / "Mon-Thu" etc.
  */
 
+/** Format raw postgres array days into readable string */
+export function formatHappyHourDays(days: string | null): string {
+  if (!days) return ''
+  if (days.startsWith('{') && days.endsWith('}')) {
+    const dayList = days.slice(1, -1).split(',').map(d => d.trim())
+    const allDays = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun']
+    if (dayList.length === 7) return '7 days'
+    if (dayList.length === 5 && ['Mon','Tue','Wed','Thu','Fri'].every(d => dayList.includes(d))) return 'Mon–Fri'
+    if (dayList.length === 2 && dayList.includes('Sat') && dayList.includes('Sun')) return 'Weekends'
+    const indices = dayList.map(d => allDays.indexOf(d)).filter(i => i >= 0).sort((a,b) => a-b)
+    if (indices.length > 2) {
+      const isConsecutive = indices.every((v, i) => i === 0 || v === indices[i-1] + 1)
+      if (isConsecutive) return `${allDays[indices[0]]}–${allDays[indices[indices.length-1]]}`
+    }
+    return dayList.join(', ')
+  }
+  return days
+}
+
 const DAY_MAP: Record<string, number> = {
   sun: 0, sunday: 0,
   mon: 1, monday: 1,
