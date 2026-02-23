@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react'
+import React from 'react'
 
 const STORAGE_KEY = 'pintdex_watchlist'
 const MAX_WATCHLIST = 5
@@ -12,11 +13,32 @@ export interface WatchlistItem {
   addedAt: string
 }
 
-export function useWatchlist() {
+interface WatchlistContextType {
+  watchlist: WatchlistItem[]
+  isLoaded: boolean
+  isWatched: (slug: string) => boolean
+  toggleWatch: (slug: string, name: string, suburb: string) => void
+  removeFromWatchlist: (slug: string) => void
+  clearWatchlist: () => void
+  isFull: boolean
+  count: number
+}
+
+const WatchlistContext = createContext<WatchlistContextType>({
+  watchlist: [],
+  isLoaded: false,
+  isWatched: () => false,
+  toggleWatch: () => {},
+  removeFromWatchlist: () => {},
+  clearWatchlist: () => {},
+  isFull: false,
+  count: 0,
+})
+
+export function WatchlistProvider({ children }: { children: ReactNode }) {
   const [watchlist, setWatchlist] = useState<WatchlistItem[]>([])
   const [isLoaded, setIsLoaded] = useState(false)
 
-  // Load from localStorage on mount
   useEffect(() => {
     try {
       const stored = localStorage.getItem(STORAGE_KEY)
@@ -27,7 +49,6 @@ export function useWatchlist() {
     setIsLoaded(true)
   }, [])
 
-  // Persist to localStorage on change
   useEffect(() => {
     if (isLoaded) {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(watchlist))
@@ -47,7 +68,6 @@ export function useWatchlist() {
           return prev.filter(item => item.slug !== slug)
         }
         if (prev.length >= MAX_WATCHLIST) {
-          // Remove oldest, add new
           return [...prev.slice(1), { slug, name, suburb, addedAt: new Date().toISOString() }]
         }
         return [...prev, { slug, name, suburb, addedAt: new Date().toISOString() }]
@@ -67,7 +87,7 @@ export function useWatchlist() {
     setWatchlist([])
   }, [])
 
-  return {
+  const value: WatchlistContextType = {
     watchlist,
     isLoaded,
     isWatched,
@@ -77,4 +97,10 @@ export function useWatchlist() {
     isFull: watchlist.length >= MAX_WATCHLIST,
     count: watchlist.length,
   }
+
+  return React.createElement(WatchlistContext.Provider, { value }, children)
+}
+
+export function useWatchlist(): WatchlistContextType {
+  return useContext(WatchlistContext)
 }
