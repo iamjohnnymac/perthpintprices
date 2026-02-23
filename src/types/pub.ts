@@ -28,4 +28,5 @@ export interface Pub {
   isHappyHourNow: boolean
   happyHourLabel: string | null
   happyHourMinutesRemaining: number | null
+  imageUrl: string | null
 }

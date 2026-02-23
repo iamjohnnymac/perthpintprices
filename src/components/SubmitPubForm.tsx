@@ -78,8 +78,8 @@ Notes: ${formData.notes || 'None'}
     }
   }
 
-  const inputClass = "w-full px-3 py-2.5 bg-stone-50 border border-stone-200 rounded-xl text-stone-800 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-amber focus:border-transparent transition-all text-sm";
-  const labelClass = "block text-xs font-semibold text-stone-500 uppercase tracking-wide mb-1";
+  const inputClass = "w-full px-3 py-3 h-11 bg-stone-50 border border-stone-200/60 rounded-xl text-stone-800 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-amber focus:border-transparent transition-all text-sm";
+  const labelClass = "block text-sm font-semibold text-stone-500 uppercase tracking-wide mb-1.5";
 
   return (
     <div 
@@ -90,7 +90,7 @@ Notes: ${formData.notes || 'None'}
         {/* Header */}
         <div className="px-6 py-4 border-b border-stone-100 flex items-center justify-between">
           <div>
-            <h2 className="text-lg font-bold text-stone-800">Submit a Price</h2>
+            <h2 className="text-xl font-bold text-stone-800">Submit a Price</h2>
             <p className="text-xs text-stone-400 mt-0.5">Know a cheap pint spot? Let us know!</p>
           </div>
           <button
@@ -200,7 +200,7 @@ Notes: ${formData.notes || 'None'}
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full py-3 px-4 bg-amber hover:bg-amber-700 text-white font-bold rounded-xl transition-all transform hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed shadow-md mt-2"
+              className="w-full py-3 px-4 h-12 bg-amber hover:bg-amber-700 text-white font-bold rounded-xl transition-all transform hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed shadow-md mt-2"
             >
               {isSubmitting ? 'Opening email...' : 'Submit via Email'}
             </button>
