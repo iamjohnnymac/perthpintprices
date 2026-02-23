@@ -46,7 +46,7 @@ export default function PriceTicker({ pubs }: PriceTickerProps) {
   const duration = Math.max(15, tickers.length * 1.2);
 
   return (
-    <div className="w-full bg-navy text-white overflow-hidden relative select-none" style={{ height: '38px', zIndex: 50 }}>
+    <div className="w-full bg-white border-b border-stone-200 overflow-hidden relative select-none" style={{ height: '36px', zIndex: 50 }}>
       <style>{`
         @keyframes ticker-scroll {
           0% { transform: translate3d(0, 0, 0); }
@@ -71,17 +71,17 @@ export default function PriceTicker({ pubs }: PriceTickerProps) {
             const diffStr = Math.abs(t.diff).toFixed(2);
 
             return (
-              <span key={`${t.suburb}-${i}`} className="inline-flex items-center gap-1.5 px-4 text-xs tracking-wide" style={{ height: '38px' }}>
-                <span className="font-semibold text-cream uppercase text-[11px]">
+              <span key={`${t.suburb}-${i}`} className="inline-flex items-center gap-1.5 px-4 text-xs tracking-wide" style={{ height: '36px' }}>
+                <span className="font-semibold text-stone-700 uppercase text-[11px]">
                   {t.suburb}
                 </span>
-                <span className="font-mono text-gold text-[12px]">
+                <span className="font-mono text-stone-900 font-bold text-[12px]">
                   ${t.avgPrice.toFixed(2)}
                 </span>
                 <span className={`font-mono ${color} text-[11px]`}>
                   {arrow} {diffStr}
                 </span>
-                <span className="text-cream/30 ml-2">·</span>
+                <span className="text-stone-300 ml-2">·</span>
               </span>
             );
           })}

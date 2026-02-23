@@ -221,13 +221,13 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-cream">
       <PriceTicker pubs={pubs} />
-      <header className="bg-navy sticky top-0 z-[1000] shadow-[0_2px_8px_rgba(0,0,0,0.3)]">
+      <header className="bg-white sticky top-0 z-[1000] shadow-[0_1px_4px_rgba(0,0,0,0.06)]">
         {/* Compact brand bar */}
         <div className="max-w-7xl mx-auto px-4 pt-2.5 pb-0">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <img src="/logo.png" alt="PintDex" className="w-10 h-10 rounded-lg flex-shrink-0 object-contain" />
-              <h1 className="text-lg font-extrabold tracking-tight leading-none font-heading bg-gradient-to-r from-gold via-amber-400 to-amber-600 bg-clip-text text-transparent">PintDex</h1>
+              <h1 className="text-lg font-extrabold tracking-tight leading-none font-heading text-stone-900">PintDex</h1>
               <div className="flex items-center gap-1 ml-1">
                 <div className="w-1.5 h-1.5 rounded-full bg-teal animate-pulse" />
                 <span className="text-[10px] text-teal/70 uppercase tracking-wider font-medium">Live</span>
@@ -235,7 +235,7 @@ export default function Home() {
             </div>
             <button
               onClick={() => setShowSubmitForm(true)}
-              className="flex-shrink-0 flex items-center gap-1.5 px-3.5 py-2 bg-gradient-to-r from-gold to-amber-600 hover:from-amber-500 hover:to-amber-700 text-navy rounded-xl font-bold transition-all text-xs shadow-lg shadow-amber-900/20"
+              className="flex-shrink-0 flex items-center gap-1.5 px-3.5 py-2 bg-ocean hover:bg-ocean/90 text-white rounded-xl font-bold transition-all text-xs shadow-md shadow-ocean/20"
             >
               <span className="hidden sm:inline">+ Submit a Price</span>
               <span className="sm:hidden text-base leading-none font-bold">+</span>
@@ -245,28 +245,28 @@ export default function Home() {
           {/* CoinMarketCap-style stat pods */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-2.5 pb-2.5">
             {/* Perth Average */}
-            <div className="bg-cream/[0.04] rounded-lg px-2.5 py-1.5 border border-cream/[0.06]">
-              <span className="text-cream/40 text-[9px] uppercase tracking-wider block leading-none">Perth Avg</span>
-              <span className="text-gold font-mono font-black text-base sm:text-lg leading-tight">${stats.avgPrice}</span>
-              <span className="text-cream/30 text-[9px] block leading-none mt-0.5">{stats.total} venues</span>
+            <div className="bg-stone-50 rounded-lg px-2.5 py-1.5 border border-stone-200">
+              <span className="text-stone-500 text-[9px] uppercase tracking-wider block leading-none">Perth Avg</span>
+              <span className="text-ocean font-mono font-black text-base sm:text-lg leading-tight">${stats.avgPrice}</span>
+              <span className="text-stone-400 text-[9px] block leading-none mt-0.5">{stats.total} venues</span>
             </div>
             {/* Cheapest */}
-            <div className="bg-cream/[0.04] rounded-lg px-2.5 py-1.5 border border-cream/[0.06]">
-              <span className="text-cream/40 text-[9px] uppercase tracking-wider block leading-none">Cheapest</span>
+            <div className="bg-stone-50 rounded-lg px-2.5 py-1.5 border border-stone-200">
+              <span className="text-stone-500 text-[9px] uppercase tracking-wider block leading-none">Cheapest</span>
               <span className="text-teal font-mono font-black text-base sm:text-lg leading-tight">${stats.minPrice}</span>
-              <span className="text-cream/30 text-[9px] block leading-none mt-0.5 truncate">{stats.cheapestSuburb}</span>
+              <span className="text-stone-400 text-[9px] block leading-none mt-0.5 truncate">{stats.cheapestSuburb}</span>
             </div>
             {/* Priciest */}
-            <div className="bg-cream/[0.04] rounded-lg px-2.5 py-1.5 border border-cream/[0.06]">
-              <span className="text-cream/40 text-[9px] uppercase tracking-wider block leading-none">Priciest</span>
+            <div className="bg-stone-50 rounded-lg px-2.5 py-1.5 border border-stone-200">
+              <span className="text-stone-500 text-[9px] uppercase tracking-wider block leading-none">Priciest</span>
               <span className="text-coral font-mono font-black text-base sm:text-lg leading-tight">${stats.maxPriceValue}</span>
-              <span className="text-cream/30 text-[9px] block leading-none mt-0.5 truncate">{stats.priciestSuburb}</span>
+              <span className="text-stone-400 text-[9px] block leading-none mt-0.5 truncate">{stats.priciestSuburb}</span>
             </div>
             {/* Market Status */}
-            <div className="bg-cream/[0.04] rounded-lg px-2.5 py-1.5 border border-cream/[0.06]">
-              <span className="text-cream/40 text-[9px] uppercase tracking-wider block leading-none">Happy Hour</span>
-              <span className="text-gold font-mono font-black text-base sm:text-lg leading-tight">{stats.happyHourNow}</span>
-              <span className="text-cream/30 text-[9px] block leading-none mt-0.5">{suburbs.length} suburbs</span>
+            <div className="bg-stone-50 rounded-lg px-2.5 py-1.5 border border-stone-200">
+              <span className="text-stone-500 text-[9px] uppercase tracking-wider block leading-none">Happy Hour</span>
+              <span className="text-ocean font-mono font-black text-base sm:text-lg leading-tight">{stats.happyHourNow}</span>
+              <span className="text-stone-400 text-[9px] block leading-none mt-0.5">{suburbs.length} suburbs</span>
             </div>
           </div>
         </div>
@@ -318,12 +318,12 @@ export default function Home() {
 
             <div className="flex items-center justify-between mb-4">
               <p className="text-stone-600 text-sm">
-                Showing <span className="text-gold font-semibold">{showAllPubs ? filteredPubs.length : Math.min(INITIAL_PUB_COUNT, filteredPubs.length)}</span> of {filteredPubs.length} venues
+                Showing <span className="text-ocean font-semibold">{showAllPubs ? filteredPubs.length : Math.min(INITIAL_PUB_COUNT, filteredPubs.length)}</span> of {filteredPubs.length} venues
               </p>
               {filteredPubs.length > INITIAL_PUB_COUNT && (
                 <button
                   onClick={() => setShowAllPubs(!showAllPubs)}
-                  className="text-sm font-medium text-gold hover:text-amber-600 transition-colors flex items-center gap-1"
+                  className="text-sm font-medium text-ocean hover:text-ocean/80 transition-colors flex items-center gap-1"
                 >
                   {showAllPubs ? 'Show Less' : `Show All ${filteredPubs.length}`}
                   <span className={`inline-block transition-transform ${showAllPubs ? 'rotate-180' : ''}`}>&#9660;</span>
@@ -374,7 +374,7 @@ export default function Home() {
                   return (
                     <tr 
                       key={pub.id} 
-                      className={`border-b border-stone-100 hover:bg-gold/5 transition-colors ${
+                      className={`border-b border-stone-100 hover:bg-cyan-50/50 transition-colors ${
                         index % 2 === 0 ? 'bg-white' : 'bg-stone-50/30'
                       }`}
                     >
@@ -388,7 +388,7 @@ export default function Home() {
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 onClick={(e) => e.stopPropagation()}
-                                className="flex-shrink-0 text-stone-300 hover:text-gold transition-colors"
+                                className="flex-shrink-0 text-stone-300 hover:text-ocean transition-colors"
                                 title="Get directions"
                               >
                                 <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
@@ -437,7 +437,7 @@ export default function Home() {
                         ) : (
                           <button
                             onClick={() => setCrowdReportPub(pub)}
-                            className="text-xs text-stone-400 hover:text-gold"
+                            className="text-xs text-stone-400 hover:text-ocean"
                           >
                             Report
                           </button>
@@ -451,7 +451,7 @@ export default function Home() {
             {!showAllPubs && filteredPubs.length > INITIAL_PUB_COUNT && (
               <button
                 onClick={() => setShowAllPubs(true)}
-                className="w-full py-3 text-sm font-medium text-gold hover:text-amber-600 hover:bg-amber-50/50 transition-colors flex items-center justify-center gap-1 border-t border-stone-200"
+                className="w-full py-3 text-sm font-medium text-ocean hover:text-ocean/80 hover:bg-cyan-50/50 transition-colors flex items-center justify-center gap-1 border-t border-stone-200"
               >
                 Show All {filteredPubs.length} Venues
                 <span className="inline-block">&#9660;</span>
@@ -488,7 +488,7 @@ export default function Home() {
           {!showAllPubs && filteredPubs.length > INITIAL_PUB_COUNT && (
             <button
               onClick={() => setShowAllPubs(true)}
-              className="w-full mt-4 py-3 text-sm font-medium text-gold hover:text-amber-600 bg-white hover:bg-amber-50/50 rounded-2xl shadow-[0_2px_12px_rgba(0,0,0,0.06)] border border-stone-200/60 transition-colors flex items-center justify-center gap-1"
+              className="w-full mt-4 py-3 text-sm font-medium text-ocean hover:text-ocean/80 bg-white hover:bg-cyan-50/50 rounded-2xl shadow-[0_2px_12px_rgba(0,0,0,0.06)] border border-stone-200/60 transition-colors flex items-center justify-center gap-1"
             >
               Show All {filteredPubs.length} Venues
               <span className="inline-block">&#9660;</span>

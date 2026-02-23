@@ -26,7 +26,7 @@ export default function PintIndexCompact({ pubs, filteredPubs, onViewMore }: Pin
         <div className="flex items-center gap-4 flex-wrap">
           {isFiltered && (
             <div className="flex items-center gap-1.5">
-              <span className="text-[10px] bg-gold/15 text-amber-700 px-2 py-0.5 rounded-full font-medium uppercase tracking-wide">Filtered</span>
+              <span className="text-[10px] bg-ocean/15 text-amber-700 px-2 py-0.5 rounded-full font-medium uppercase tracking-wide">Filtered</span>
             </div>
           )}
           <div className="flex items-center gap-2">
@@ -48,7 +48,7 @@ export default function PintIndexCompact({ pubs, filteredPubs, onViewMore }: Pin
         </div>
         <button
           onClick={onViewMore}
-          className="text-xs text-gold hover:text-amber-600 font-medium flex items-center gap-1 flex-shrink-0"
+          className="text-xs text-ocean hover:text-amber-600 font-medium flex items-center gap-1 flex-shrink-0"
         >
           <span className="hidden sm:inline">Full Market</span>
           <svg viewBox="0 0 24 24" fill="none" className="w-3.5 h-3.5" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">

@@ -20,6 +20,7 @@ const config: Config = {
   			'navy': '#1A1A2E',
   			'gold': '#E8A317',
   			'teal': '#00C9A7',
+			'ocean': '#0891B2',
   			'coral': '#FF4757',
   			'cream': '#F5F1EB',
   			background: 'hsl(var(--background))',

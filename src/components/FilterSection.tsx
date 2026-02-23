@@ -82,7 +82,7 @@ export function FilterSection({
             placeholder="Search pubs or suburbs..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-8 pr-8 py-2 text-sm bg-stone-50 border border-stone-200 rounded-xl text-stone-700 placeholder-stone-400 focus:outline-none focus:ring-1 focus:ring-gold focus:border-gold transition-colors"
+            className="w-full pl-8 pr-8 py-2 text-sm bg-stone-50 border border-stone-200 rounded-xl text-stone-700 placeholder-stone-400 focus:outline-none focus:ring-1 focus:ring-ocean focus:border-ocean transition-colors"
           />
           {searchTerm && (
             <button onClick={() => setSearchTerm('')} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-600">
@@ -93,7 +93,7 @@ export function FilterSection({
         <select
           value={selectedSuburb || 'all'}
           onChange={(e) => setSelectedSuburb(e.target.value)}
-          className="text-sm bg-stone-50 border border-stone-200 rounded-xl px-3 py-2 text-stone-600 focus:outline-none focus:ring-1 focus:ring-gold focus:border-gold transition-colors cursor-pointer flex-shrink-0 max-w-[130px] sm:max-w-[160px]"
+          className="text-sm bg-stone-50 border border-stone-200 rounded-xl px-3 py-2 text-stone-600 focus:outline-none focus:ring-1 focus:ring-ocean focus:border-ocean transition-colors cursor-pointer flex-shrink-0 max-w-[130px] sm:max-w-[160px]"
         >
           <option value="all">All Suburbs</option>
           {suburbs.map(suburb => (
@@ -139,7 +139,7 @@ export function FilterSection({
               className={cn(
                 "flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all border flex-shrink-0 whitespace-nowrap",
                 showHappyHourOnly
-                  ? "bg-gold text-navy border-gold"
+                  ? "bg-ocean text-white border-ocean"
                   : "bg-white text-stone-500 border-stone-200 hover:border-stone-300 hover:text-stone-700"
               )}
             >
@@ -148,7 +148,7 @@ export function FilterSection({
               {stats.happyHourNow > 0 && (
                 <span className={cn(
                   "text-xs rounded-full px-1.5 py-0 font-semibold",
-                  showHappyHourOnly ? "bg-navy/20 text-navy" : "bg-stone-200 text-stone-600"
+                  showHappyHourOnly ? "bg-white/20 text-white" : "bg-stone-200 text-stone-600"
                 )}>
                   {stats.happyHourNow}
                 </span>
@@ -178,7 +178,7 @@ export function FilterSection({
                 className={cn(
                   "flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all border flex-shrink-0 whitespace-nowrap",
                   showMiniMaps
-                    ? "bg-gold text-navy border-gold"
+                    ? "bg-ocean text-white border-ocean"
                     : "bg-white text-stone-500 border-stone-200 hover:border-stone-300 hover:text-stone-700"
                 )}
               >
@@ -202,7 +202,7 @@ export function FilterSection({
               <SlidersHorizontal className="h-3 w-3" />
               Filters
               {activeFilterCount > 0 && (
-                <span className="bg-gold text-navy text-xs rounded-full w-4 h-4 flex items-center justify-center font-bold">
+                <span className="bg-ocean text-white text-xs rounded-full w-4 h-4 flex items-center justify-center font-bold">
                   {activeFilterCount}
                 </span>
               )}
@@ -233,7 +233,7 @@ export function FilterSection({
                 {/* Max Price slider */}
                 <div className="mb-4">
                   <label className="block text-xs font-semibold text-stone-400 uppercase tracking-wide mb-2">
-                    Max Price: <span className="text-gold">${maxPrice}</span>
+                    Max Price: <span className="text-ocean">${maxPrice}</span>
                   </label>
                   <input
                     type="range"
