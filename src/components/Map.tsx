@@ -131,12 +131,11 @@ function FitBounds({ pubs, userLocation, totalPubCount }: { pubs: Pub[], userLoc
 
 interface MapProps {
   pubs: Pub[]
-  isHappyHour?: (happyHour: string | null | undefined) => boolean
   userLocation?: { lat: number, lng: number } | null
   totalPubCount?: number
 }
 
-export default function MapComponent({ pubs, isHappyHour, userLocation, totalPubCount }: MapProps) {
+export default function MapComponent({ pubs, userLocation, totalPubCount }: MapProps) {
   const center: [number, number] = userLocation
     ? [userLocation.lat, userLocation.lng]
     : [-31.9505, 115.8605]
@@ -194,11 +193,11 @@ export default function MapComponent({ pubs, isHappyHour, userLocation, totalPub
                   <p style={{ 
                     fontSize: '13px', 
                     marginTop: '4px',
-                    color: isHappyHour && isHappyHour(pub.happyHour) ? '#D4A017' : '#6b7280',
-                    fontWeight: isHappyHour && isHappyHour(pub.happyHour) ? 600 : 400
+                    color: pub.isHappyHourNow ? '#D4A017' : '#6b7280',
+                    fontWeight: pub.isHappyHourNow ? 600 : 400
                   }}>
                     {'\u{1F550}'} {pub.happyHour}
-                    {isHappyHour && isHappyHour(pub.happyHour) && ' - NOW!'}
+                    {pub.isHappyHourNow && ' - NOW!'}
                   </p>
                 )}
                 {pub.website && (

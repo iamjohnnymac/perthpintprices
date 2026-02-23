@@ -2,7 +2,7 @@
 import { useState, useMemo, useEffect, useRef } from 'react'
 import { Pub } from '@/types/pub'
 import { getPubs, getCrowdLevels, CrowdReport } from '@/lib/supabase'
-import { getHappyHourStatus } from '@/lib/happyHour'
+
 import { getDistanceKm } from '@/lib/location'
 import dynamic from 'next/dynamic'
 
@@ -42,12 +42,6 @@ const Map = dynamic(() => import('@/components/Map'), {
     </div>
   )
 })
-
-function isHappyHour(happyHour: string | null | undefined): boolean {
-  if (!happyHour) return false
-  const status = getHappyHourStatus(happyHour)
-  return status.isActive
-}
 
 const INITIAL_PUB_COUNT = 20
 
@@ -303,7 +297,7 @@ export default function Home() {
 
               {showMap && (
                 <div className="mb-5 rounded-2xl overflow-hidden shadow-[0_2px_12px_rgba(0,0,0,0.06)] border border-stone-200/60 relative z-0 isolate">
-                  <Map pubs={filteredPubs} isHappyHour={isHappyHour} userLocation={userLocation} totalPubCount={pubs.length} />
+                  <Map pubs={filteredPubs} userLocation={userLocation} totalPubCount={pubs.length} />
                 </div>
               )}
 
