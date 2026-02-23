@@ -123,6 +123,7 @@ export async function getPubs(): Promise<Pub[]> {
       // KEY: price = effective price (switches to HH price when active)
       price: hhStatus.effectivePrice,
       regularPrice: regularPrice,
+      imageUrl: row.image_url ?? null,
       address: row.address || '',
       website: row.website || null,
       lat: row.lat || 0,
@@ -184,6 +185,7 @@ export async function getPubBySlug(slug: string): Promise<Pub | null> {
     suburb: row.suburb,
     price: hhStatus.effectivePrice,
     regularPrice: regularPrice,
+      imageUrl: row.image_url ?? null,
     address: row.address || '',
     website: row.website || null,
     lat: row.lat || 0,
@@ -249,6 +251,7 @@ export async function getNearbyPubs(suburb: string, excludeId: number, limit: nu
       suburb: row.suburb,
       price: hhStatus.effectivePrice,
       regularPrice: regularPrice,
+      imageUrl: row.image_url ?? null,
       address: row.address || '',
       website: row.website || null,
       lat: row.lat || 0,
