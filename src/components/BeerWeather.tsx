@@ -272,8 +272,8 @@ export default function BeerWeather({ pubs, userLocation }: BeerWeatherProps) {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               {recommendedPubs.map((pub, index) => (
-                <div
-                  key={pub.id}
+                <Link
+                  key={pub.id} href={`/pub/${pub.slug}`}
                   className="flex items-center gap-3 rounded-xl bg-white/70 hover:bg-white/95 transition-all duration-200 p-3 border border-stone-100 shadow-sm hover:shadow-md"
                   onClick={(e) => e.stopPropagation()}
                 >
@@ -281,7 +281,7 @@ export default function BeerWeather({ pubs, userLocation }: BeerWeatherProps) {
                     {index + 1}
                   </div>
                   <div className="min-w-0 flex-1">
-                    <Link href={`/pub/${pub.slug}`} className="text-xs font-semibold text-stone-800 truncate hover:text-ocean transition-colors block">{pub.name}</Link>
+                    <span className="text-xs font-semibold text-stone-800 truncate block">{pub.name}</span>
                     <div className="flex items-center gap-2 mt-0.5">
                       <span className="text-[10px] text-stone-400">{pub.suburb}{userLocation && ` · ${formatDistance(getDistanceKm(userLocation.lat, userLocation.lng, pub.lat, pub.lng))}`}</span>
                       <span className="text-[10px] text-stone-300">·</span>
@@ -294,7 +294,7 @@ export default function BeerWeather({ pubs, userLocation }: BeerWeatherProps) {
                       <p className="text-[9px] text-emerald-600 font-medium">Happy Hour</p>
                     )}
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
 

@@ -174,16 +174,16 @@ export default function VenueIntel({ pubs, userLocation }: VenueIntelProps) {
                 </h4>
                 <div className="space-y-1">
                   {undervalued.map(({ pub, diff }) => (
-                    <div key={pub.id} className="flex items-center justify-between p-2 rounded-lg bg-green-50/60 border border-green-100">
+                    <Link key={pub.id} href={`/pub/${pub.slug}`} className="flex items-center justify-between p-2 rounded-lg bg-green-50/60 border border-green-100">
                       <div className="min-w-0">
-                        <Link href={`/pub/${pub.slug}`} className="text-xs font-semibold text-stone-800 truncate hover:text-ocean transition-colors block">{pub.name}</Link>
+                        <span className="text-xs font-semibold text-stone-800 truncate block">{pub.name}</span>
                         <p className="text-[10px] text-stone-400">{pub.suburb}{userLocation && ` · ${formatDistance(getDistanceKm(userLocation.lat, userLocation.lng, pub.lat, pub.lng))}`}</p>
                       </div>
                       <div className="text-right flex-shrink-0">
                         <p className="text-xs font-bold text-green-700">{pub.price !== null ? `$${pub.price.toFixed(2)}` : 'TBC'}</p>
                         <p className="text-[9px] text-green-600">{E.down_arrow}-${diff.toFixed(2)}</p>
                       </div>
-                    </div>
+                    </Link>
                   ))}
                 </div>
               </div>
@@ -194,16 +194,16 @@ export default function VenueIntel({ pubs, userLocation }: VenueIntelProps) {
                 </h4>
                 <div className="space-y-1">
                   {overvalued.map(({ pub, diff }) => (
-                    <div key={pub.id} className="flex items-center justify-between p-2 rounded-lg bg-red-50/60 border border-red-100">
+                    <Link key={pub.id} href={`/pub/${pub.slug}`} className="flex items-center justify-between p-2 rounded-lg bg-red-50/60 border border-red-100">
                       <div className="min-w-0">
-                        <Link href={`/pub/${pub.slug}`} className="text-xs font-semibold text-stone-800 truncate hover:text-ocean transition-colors block">{pub.name}</Link>
+                        <span className="text-xs font-semibold text-stone-800 truncate block">{pub.name}</span>
                         <p className="text-[10px] text-stone-400">{pub.suburb}{userLocation && ` · ${formatDistance(getDistanceKm(userLocation.lat, userLocation.lng, pub.lat, pub.lng))}`}</p>
                       </div>
                       <div className="text-right flex-shrink-0">
                         <p className="text-xs font-bold text-red-600">{pub.price !== null ? `$${pub.price.toFixed(2)}` : 'TBC'}</p>
                         <p className="text-[9px] text-red-500">{E.up_arrow}+${diff.toFixed(2)}</p>
                       </div>
-                    </div>
+                    </Link>
                   ))}
                 </div>
               </div>

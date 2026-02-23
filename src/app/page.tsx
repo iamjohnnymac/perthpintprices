@@ -2,6 +2,7 @@
 import Link from 'next/link'
 
 import { useState, useMemo, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import dynamic from 'next/dynamic'
 import { Pub } from '@/types/pub'
 import SubmitPubForm from '@/components/SubmitPubForm'
@@ -97,6 +98,7 @@ export default function Home() {
   const [crowdReports, setCrowdReports] = useState<Record<string, CrowdReport>>({})
   const [crowdReportPub, setCrowdReportPub] = useState<Pub | null>(null)
   const [currentTime, setCurrentTime] = useState(new Date())
+  const router = useRouter()
   const [activeTab, setActiveTab] = useState<TabId>('pubs')
   const [viewMode, setViewMode] = useState<'cards' | 'list'>('list')
   const [showMoreFilters, setShowMoreFilters] = useState(false)
@@ -375,9 +377,10 @@ export default function Home() {
                   return (
                     <tr 
                       key={pub.id} 
-                      className={`border-b border-stone-100 hover:bg-cyan-50/50 transition-colors ${
+                      className={`border-b border-stone-100 hover:bg-cyan-50/50 transition-colors cursor-pointer ${
                         index % 2 === 0 ? 'bg-white' : 'bg-stone-50/30'
                       }`}
+                      onClick={() => router.push(`/pub/${pub.slug}`)}
                     >
                       <td className="py-3 px-2 sm:px-4">
                         <div className="flex items-center gap-2">

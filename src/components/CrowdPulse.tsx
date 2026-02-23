@@ -168,11 +168,11 @@ export default function CrowdPulse({ pubs, crowdReports, userLocation }: CrowdPu
                     const levelInfo = CROWD_LEVELS[report.crowd_level]
                     const confidence = getConfidenceLabel(report.report_count)
                     return (
-                      <div key={pub.id} className="flex items-center justify-between p-2 rounded-lg bg-coral/5 border border-coral/20">
+                      <Link key={pub.id} href={`/pub/${pub.slug}`} className="flex items-center justify-between p-2 rounded-lg bg-coral/5 border border-coral/20">
                         <div className="flex items-center gap-2 min-w-0">
                           <span className="text-sm">{levelInfo.emoji}</span>
                           <div className="min-w-0">
-                            <Link href={`/pub/${pub.slug}`} className="text-xs font-semibold text-stone-800 truncate hover:text-ocean transition-colors block">{pub.name}</Link>
+                            <span className="text-xs font-semibold text-stone-800 truncate block">{pub.name}</span>
                             <p className="text-[10px] text-stone-400">{pub.suburb}{userLocation && ` · ${formatDistance(getDistanceKm(userLocation.lat, userLocation.lng, pub.lat, pub.lng))}`}</p>
                           </div>
                         </div>
@@ -180,7 +180,7 @@ export default function CrowdPulse({ pubs, crowdReports, userLocation }: CrowdPu
                           <span className={`text-[10px] font-medium ${confidence.color}`}>{confidence.label}</span>
                           <span className="text-[10px] text-stone-400">{formatTimeAgo(report.minutes_ago)}</span>
                         </div>
-                      </div>
+                      </Link>
                     )
                   })}
                 </div>
@@ -198,11 +198,11 @@ export default function CrowdPulse({ pubs, crowdReports, userLocation }: CrowdPu
                     const levelInfo = CROWD_LEVELS[report.crowd_level]
                     const confidence = getConfidenceLabel(report.report_count)
                     return (
-                      <div key={pub.id} className="flex items-center justify-between p-2 rounded-lg bg-teal/5 border border-teal/20">
+                      <Link key={pub.id} href={`/pub/${pub.slug}`} className="flex items-center justify-between p-2 rounded-lg bg-teal/5 border border-teal/20">
                         <div className="flex items-center gap-2 min-w-0">
                           <span className="text-sm">{levelInfo.emoji}</span>
                           <div className="min-w-0">
-                            <Link href={`/pub/${pub.slug}`} className="text-xs font-semibold text-stone-800 truncate hover:text-ocean transition-colors block">{pub.name}</Link>
+                            <span className="text-xs font-semibold text-stone-800 truncate block">{pub.name}</span>
                             <p className="text-[10px] text-stone-400">{pub.suburb}{userLocation && ` · ${formatDistance(getDistanceKm(userLocation.lat, userLocation.lng, pub.lat, pub.lng))}`} {E.bullet} {pub.price !== null ? `$${pub.price.toFixed(2)}` : 'TBC'}</p>
                           </div>
                         </div>
@@ -210,7 +210,7 @@ export default function CrowdPulse({ pubs, crowdReports, userLocation }: CrowdPu
                           <span className={`text-[10px] font-medium ${confidence.color}`}>{confidence.label}</span>
                           <span className="text-[10px] text-stone-400">{formatTimeAgo(report.minutes_ago)}</span>
                         </div>
-                      </div>
+                      </Link>
                     )
                   })}
                 </div>

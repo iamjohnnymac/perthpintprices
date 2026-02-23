@@ -125,11 +125,11 @@ export default function PuntNPints({ pubs, userLocation }: PuntNPintsProps) {
           </p>
           <div className="space-y-1">
             {displayedTabPubs.map(pub => (
-              <div key={pub.id} className="flex items-center justify-between p-2 rounded-lg bg-white/60 border border-stone-100 hover:border-purple-200 transition-colors">
+              <Link key={pub.id} href={`/pub/${pub.slug}`} className="flex items-center justify-between p-2 rounded-lg bg-white/60 border border-stone-100 hover:border-purple-200 transition-colors">
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-1.5">
                     <span className="text-[8px] font-black px-1 py-px rounded flex-shrink-0 text-white" style={{ backgroundColor: '#5B2D8E' }}>TAB</span>
-                    <Link href={`/pub/${pub.slug}`} className="text-xs font-semibold text-stone-800 truncate hover:text-ocean transition-colors">{pub.name}</Link>
+                    <span className="text-xs font-semibold text-stone-800 truncate">{pub.name}</span>
                   </div>
                   <div className="flex items-center gap-1.5 mt-0.5">
                     <span className="text-[10px] text-stone-400">{pub.suburb}{userLocation && ` · ${formatDistance(getDistanceKm(userLocation.lat, userLocation.lng, pub.lat, pub.lng))}`}</span>
@@ -140,7 +140,7 @@ export default function PuntNPints({ pubs, userLocation }: PuntNPintsProps) {
                   <span className="text-sm font-bold" style={{ color: '#F58220' }}>${pub.price?.toFixed(2)}</span>
                   <div className="text-[9px] text-stone-400">per pint</div>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         </div>
@@ -153,9 +153,9 @@ export default function PuntNPints({ pubs, userLocation }: PuntNPintsProps) {
             </p>
             <div className="space-y-1">
               {displayedPairs.map(({ pub, nearestTab, distance }) => (
-                <div key={pub.id} className="flex items-center justify-between p-2 rounded-lg bg-white/40 border border-stone-100">
+                <Link key={pub.id} href={`/pub/${pub.slug}`} className="flex items-center justify-between p-2 rounded-lg bg-white/40 border border-stone-100">
                   <div className="flex-1 min-w-0">
-                    <Link href={`/pub/${pub.slug}`} className="text-xs font-semibold text-stone-800 truncate block hover:text-ocean transition-colors">{pub.name}</Link>
+                    <span className="text-xs font-semibold text-stone-800 truncate block">{pub.name}</span>
                     <div className="flex items-center gap-1 mt-0.5">
                       <span className="text-[10px] text-stone-400">{pub.suburb}{userLocation && ` · ${formatDistance(getDistanceKm(userLocation.lat, userLocation.lng, pub.lat, pub.lng))}`}</span>
                       {nearestTab && (
@@ -166,7 +166,7 @@ export default function PuntNPints({ pubs, userLocation }: PuntNPintsProps) {
                     </div>
                   </div>
                   <span className="text-sm font-bold text-stone-700 ml-2">${pub.price?.toFixed(2)}</span>
-                </div>
+                </Link>
               ))}
             </div>
           </div>

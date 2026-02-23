@@ -176,16 +176,16 @@ export default function TonightsMoves({ pubs, userLocation }: TonightsMovesProps
               </h4>
               <div className="space-y-1.5">
                 {bestBuys.map((pub, i) => (
-                  <div key={pub.id} className="flex items-center justify-between p-2 rounded-lg bg-white/70 border border-stone-100">
+                  <Link key={pub.id} href={`/pub/${pub.slug}`} className="flex items-center justify-between p-2 rounded-lg bg-white/70 border border-stone-100">
                     <div className="flex items-center gap-2 min-w-0">
                       <span className="text-xs font-bold text-stone-400 w-4">{i + 1}</span>
                       <div className="min-w-0">
-                        <Link href={`/pub/${pub.slug}`} className="text-xs font-semibold text-stone-800 truncate hover:text-ocean transition-colors block">{pub.name}</Link>
+                        <span className="text-xs font-semibold text-stone-800 truncate block">{pub.name}</span>
                         <p className="text-[10px] text-stone-400">{pub.suburb}{userLocation && ` · ${formatDistance(getDistanceKm(userLocation.lat, userLocation.lng, pub.lat, pub.lng))}`} {E.bullet} {pub.beerType}</p>
                       </div>
                     </div>
                     <span className="text-sm font-bold font-mono text-teal flex-shrink-0">{pub.price !== null ? `$${pub.price.toFixed(2)}` : 'TBC'}</span>
-                  </div>
+                  </Link>
                 ))}
               </div>
             </div>
@@ -200,9 +200,9 @@ export default function TonightsMoves({ pubs, userLocation }: TonightsMovesProps
                   {activeDeals.slice(0, 5).map((pub) => {
                     const status = getHappyHourStatus(pub.happyHour)
                     return (
-                      <div key={pub.id} className="flex items-center justify-between p-2 rounded-lg bg-teal/5 border border-teal/20">
+                      <Link key={pub.id} href={`/pub/${pub.slug}`} className="flex items-center justify-between p-2 rounded-lg bg-teal/5 border border-teal/20">
                         <div className="min-w-0">
-                          <Link href={`/pub/${pub.slug}`} className="text-xs font-semibold text-stone-800 truncate hover:text-ocean transition-colors block">{pub.name}</Link>
+                          <span className="text-xs font-semibold text-stone-800 truncate block">{pub.name}</span>
                           <p className="text-[10px] text-stone-400">{pub.suburb}{userLocation && ` · ${formatDistance(getDistanceKm(userLocation.lat, userLocation.lng, pub.lat, pub.lng))}`}</p>
                         </div>
                         <div className="flex items-center gap-2 flex-shrink-0">
@@ -211,7 +211,7 @@ export default function TonightsMoves({ pubs, userLocation }: TonightsMovesProps
                           </span>
                           <span className="text-sm font-bold font-mono text-teal">{pub.price !== null ? `$${pub.price.toFixed(2)}` : 'TBC'}</span>
                         </div>
-                      </div>
+                      </Link>
                     )
                   })}
                 </div>
@@ -228,9 +228,9 @@ export default function TonightsMoves({ pubs, userLocation }: TonightsMovesProps
                   {upcomingDeals.map((pub) => {
                     const status = getHappyHourStatus(pub.happyHour)
                     return (
-                      <div key={pub.id} className="flex items-center justify-between p-2 rounded-lg bg-cyan-50/40 border border-cyan-100">
+                      <Link key={pub.id} href={`/pub/${pub.slug}`} className="flex items-center justify-between p-2 rounded-lg bg-cyan-50/40 border border-cyan-100">
                         <div className="min-w-0">
-                          <Link href={`/pub/${pub.slug}`} className="text-xs font-semibold text-stone-800 truncate hover:text-ocean transition-colors block">{pub.name}</Link>
+                          <span className="text-xs font-semibold text-stone-800 truncate block">{pub.name}</span>
                           <p className="text-[10px] text-stone-400">{pub.suburb}{userLocation && ` · ${formatDistance(getDistanceKm(userLocation.lat, userLocation.lng, pub.lat, pub.lng))}`}</p>
                         </div>
                         <div className="flex items-center gap-2 flex-shrink-0">
@@ -239,7 +239,7 @@ export default function TonightsMoves({ pubs, userLocation }: TonightsMovesProps
                           </span>
                           <span className="text-sm font-bold text-stone-600">{pub.price !== null ? `$${pub.price.toFixed(2)}` : 'TBC'}</span>
                         </div>
-                      </div>
+                      </Link>
                     )
                   })}
                 </div>

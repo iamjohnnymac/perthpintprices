@@ -294,8 +294,8 @@ export default function SunsetSippers({ pubs, userLocation }: SunsetSippersProps
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
               {sunsetPubs.slice(0, showAllPubs ? sunsetPubs.length : 6).map((pub) => (
-                <div
-                  key={pub.id}
+                <Link
+                  key={pub.id} href={`/pub/${pub.slug}`}
                   className="rounded-xl bg-white/70 hover:bg-white/95 transition-all duration-200 overflow-hidden shadow-sm hover:shadow-md border border-amber-100 h-full flex flex-col"
                   onClick={(e) => e.stopPropagation()}
                 >
@@ -333,13 +333,13 @@ export default function SunsetSippers({ pubs, userLocation }: SunsetSippersProps
                   <div className="p-2.5 flex-1">
                     <div className="flex items-start justify-between gap-1">
                       <div className="min-w-0">
-                        <Link href={`/pub/${pub.slug}`} className="text-xs font-semibold text-stone-800 truncate hover:text-ocean transition-colors block">{pub.name}</Link>
+                        <span className="text-xs font-semibold text-stone-800 truncate block">{pub.name}</span>
                         <p className="text-[10px] text-stone-400">{pub.suburb}{userLocation && ` · ${formatDistance(getDistanceKm(userLocation.lat, userLocation.lng, pub.lat, pub.lng))}`}</p>
                       </div>
                       <span className="text-[10px] text-stone-400 flex-shrink-0 truncate max-w-[70px]">{pub.beerType}</span>
                     </div>
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
 

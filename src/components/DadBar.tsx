@@ -124,13 +124,13 @@ export default function DadBar({ pubs, userLocation }: { pubs: Pub[], userLocati
       {/* Pub list */}
       <div className="space-y-1.5">
         {displayPubs.map((pub, i) => (
-          <div key={pub.id} className="flex items-center gap-2 bg-white border border-stone-200 rounded-lg p-2">
+          <Link key={pub.id} href={`/pub/${pub.slug}`} className="flex items-center gap-2 bg-white border border-stone-200 rounded-lg p-2">
             <div className="w-5 h-5 rounded-full bg-cyan-50 flex items-center justify-center flex-shrink-0">
               <span className="text-[10px] font-bold text-ocean">{i + 1}</span>
             </div>
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-1.5">
-                <Link href={`/pub/${pub.slug}`} className="text-xs font-semibold text-stone-800 truncate hover:text-ocean transition-colors block">{pub.name}</Link>
+                <span className="text-xs font-semibold text-stone-800 truncate block">{pub.name}</span>
               </div>
               <div className="flex items-center gap-1 mt-0.5">
                 <svg width="8" height="8" viewBox="0 0 8 8" fill="none" className="flex-shrink-0">
@@ -149,7 +149,7 @@ export default function DadBar({ pubs, userLocation }: { pubs: Pub[], userLocati
               <p className="text-sm font-bold text-stone-800">${pub.price?.toFixed(2)}</p>
               <p className="text-[10px] text-stone-400 truncate max-w-[60px]">{pub.beerType}</p>
             </div>
-          </div>
+          </Link>
         ))}
       </div>
 

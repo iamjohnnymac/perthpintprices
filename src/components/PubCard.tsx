@@ -1,4 +1,5 @@
 'use client'
+import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
@@ -75,8 +76,9 @@ export default function PubCard({
   onCrowdReport,
   distance,
 }: PubCardProps) {
+  const router = useRouter()
   return (
-    <Card className="group relative overflow-hidden hover:shadow-lg transition-all duration-200 border-stone-200/60 shadow-[0_1px_8px_rgba(0,0,0,0.04)] rounded-2xl h-full flex flex-col">
+    <Card className="group relative overflow-hidden hover:shadow-lg transition-all duration-200 border-stone-200/60 shadow-[0_1px_8px_rgba(0,0,0,0.04)] rounded-2xl h-full flex flex-col cursor-pointer" onClick={() => router.push(`/pub/${pub.slug}`)}>
       {/* Happy Hour active badge */}
       {happyHourStatus.isActive && (
         <Badge className="absolute top-2 left-2 z-10 bg-teal hover:bg-teal text-white animate-pulse">
