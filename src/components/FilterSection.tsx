@@ -82,7 +82,7 @@ export function FilterSection({
             placeholder="Search pubs or suburbs..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-8 pr-8 py-2 text-sm bg-stone-50 border border-stone-200 rounded-xl text-stone-700 placeholder-stone-400 focus:outline-none focus:ring-1 focus:ring-ocean focus:border-amber transition-colors"
+            className="w-full pl-8 pr-8 py-2 text-sm bg-stone-50 border border-stone-200 rounded-xl text-stone-700 placeholder-stone-400 focus:outline-none focus:ring-1 focus:ring-amber focus:border-amber transition-colors"
           />
           {searchTerm && (
             <button onClick={() => setSearchTerm('')} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-600">
@@ -93,7 +93,7 @@ export function FilterSection({
         <select
           value={selectedSuburb || 'all'}
           onChange={(e) => setSelectedSuburb(e.target.value)}
-          className="text-sm bg-stone-50 border border-stone-200 rounded-xl px-3 py-2 text-stone-600 focus:outline-none focus:ring-1 focus:ring-ocean focus:border-amber transition-colors cursor-pointer flex-shrink-0 max-w-[130px] sm:max-w-[160px]"
+          className="text-sm bg-stone-50 border border-stone-200 rounded-xl px-3 py-2 text-stone-600 focus:outline-none focus:ring-1 focus:ring-amber focus:border-amber transition-colors cursor-pointer flex-shrink-0 max-w-[130px] sm:max-w-[160px]"
         >
           <option value="all">All Suburbs</option>
           {suburbs.map(suburb => (

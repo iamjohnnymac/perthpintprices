@@ -66,7 +66,7 @@ export default function MiniMap({ lat, lng, name }: MiniMapProps) {
               height: 12,
               left: `calc(${sunPos.x}% - 6px)`,
               top: `calc(${sunPos.y}% - 6px)`,
-              background: 'radial-gradient(circle, #fde68a 0%, #D4A017 50%, #0E7490 100%)',
+              background: 'radial-gradient(circle, #fde68a 0%, #D4A017 50%, #92400E 100%)',
               boxShadow: '0 0 6px 3px rgba(251,191,36,0.55)',
             }}
           />

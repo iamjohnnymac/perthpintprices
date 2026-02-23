@@ -80,7 +80,7 @@ export default function DadBar({ pubs, userLocation }: { pubs: Pub[], userLocati
           </div>
         </div>
         <div className="flex items-center gap-2">
-            <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-50 border border-cyan-200">
+            <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-50 border border-amber-200">
               <span className="text-[10px] font-semibold text-amber">{dadPubs.length} VENUES</span>
             </div>
             {!isExpanded && dadPubs[0]?.price && (
@@ -94,7 +94,7 @@ export default function DadBar({ pubs, userLocation }: { pubs: Pub[], userLocati
 
       {isExpanded && (<>
       {/* Dad joke */}
-      <div className="bg-amber-50/60 border border-cyan-100 rounded-lg p-2.5 mb-3">
+      <div className="bg-amber-50/60 border border-amber-200 rounded-lg p-2.5 mb-3">
         <div className="flex items-start gap-2">
           <span className="text-stone-400 flex-shrink-0 mt-0.5">
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none">

@@ -10,7 +10,7 @@ import React, { useEffect } from 'react'
 // Price-coded markers using DivIcon
 function getPriceIcon(price: number | null): L.DivIcon {
   if (price === null) { const bgColor = "#9ca3af"; return L.divIcon({ className: "custom-price-marker", html: `<div style="background:${bgColor};color:white;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:10px;box-shadow:0 2px 6px rgba(0,0,0,0.3);border:2px solid white">TBC</div>`, iconSize: [32, 32], iconAnchor: [16, 16] }); }
-  let bgColor = '#D4A017' // ocean teal for cheap
+  let bgColor = '#D4A017' // amber gold for cheap
   if (price > 9) bgColor = '#DC2626' // red for expensive
   else if (price > 7.5) bgColor = '#D97706' // amber for mid
 
@@ -45,7 +45,7 @@ function createClusterCustomIcon(cluster: L.MarkerCluster): L.DivIcon {
   if (count > 20) {
     size = 70
     fontSize = 20
-    bgColor = '#0E7490'
+    bgColor = '#92400E'
   } else if (count > 10) {
     size = 60
     fontSize = 18

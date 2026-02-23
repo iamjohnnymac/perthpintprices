@@ -39,7 +39,7 @@ function formatHappyHourTime(start: string | null, end: string | null): string {
 function getPriceColor(price: number | null): string {
   if (price === null) return 'from-stone-400 to-stone-500'
   if (price <= 7) return 'from-emerald-500 to-emerald-600'
-  if (price <= 9) return 'from-teal to-cyan-600'
+  if (price <= 9) return 'from-amber-500 to-amber-600'
   if (price <= 11) return 'from-amber-500 to-amber-600'
   return 'from-red-500 to-red-600'
 }
@@ -207,7 +207,7 @@ export default function PubDetailClient({ pub, nearbyPubs }: PubDetailClientProp
 
           {/* Happy Hour */}
           {(pub.happyHour || pub.happyHourPrice) && (
-            <Card className={`border-stone-200/60 shadow-sm rounded-xl ${pub.isHappyHourNow ? 'ring-2 ring-teal/30 bg-amber/5' : ''}`}>
+            <Card className={`border-stone-200/60 shadow-sm rounded-xl ${pub.isHappyHourNow ? 'ring-2 ring-amber/30 bg-amber/5' : ''}`}>
               <CardContent className="p-4">
                 <div className="text-xs text-stone-400 uppercase tracking-wider font-semibold mb-1">Happy Hour</div>
                 {pub.happyHourPrice && (

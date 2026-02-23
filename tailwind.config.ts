@@ -22,14 +22,10 @@ const config: Config = {
   			'cream': '#F5F0E8',
   			'cream-dark': '#EDE8DC',
   			'stone-warm': '#A8A29E',
-  			// Legacy tokens mapped to new palette
   			'beer-gold': '#D4A017',
   			'beer-amber': '#B8860B',
   			'beer-dark': '#1C1917',
   			'gold': '#D4A017',
-  			'teal': '#0891B2',
-  			'ocean': '#0891B2',
-  			'coral': '#DC2626',
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',
   			card: {
