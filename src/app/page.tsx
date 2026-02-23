@@ -377,9 +377,13 @@ export default function Home() {
           )}
         </div>
 
-        <HowItWorks />
-        <SocialProof venueCount={stats.total} suburbCount={suburbs.length} avgPrice={stats.avgPrice} />
-        <FAQ />
+        {activeTab === 'pubs' && (
+          <>
+            <HowItWorks />
+            <SocialProof venueCount={stats.total} suburbCount={suburbs.length} avgPrice={stats.avgPrice} />
+            <FAQ />
+          </>
+        )}
         <Footer />
       <div className="h-9" /> {/* Spacer for fixed bottom ticker */}
       <PriceTicker pubs={pubs} />
