@@ -10,7 +10,7 @@ import React, { useEffect } from 'react'
 // Price-coded markers using DivIcon
 function getPriceIcon(price: number | null): L.DivIcon {
   if (price === null) { const bgColor = "#9ca3af"; return L.divIcon({ className: "custom-price-marker", html: `<div style="background:${bgColor};color:white;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:10px;box-shadow:0 2px 6px rgba(0,0,0,0.3);border:2px solid white">TBC</div>`, iconSize: [32, 32], iconAnchor: [16, 16] }); }
-  let bgColor = '#0891B2' // ocean teal for cheap
+  let bgColor = '#D4A017' // ocean teal for cheap
   if (price > 9) bgColor = '#DC2626' // red for expensive
   else if (price > 7.5) bgColor = '#D97706' // amber for mid
 
@@ -40,7 +40,7 @@ function createClusterCustomIcon(cluster: L.MarkerCluster): L.DivIcon {
   const count = cluster.getChildCount()
   let size = 50
   let fontSize = 16
-  let bgColor = '#0891B2'
+  let bgColor = '#D4A017'
 
   if (count > 20) {
     size = 70
@@ -49,7 +49,7 @@ function createClusterCustomIcon(cluster: L.MarkerCluster): L.DivIcon {
   } else if (count > 10) {
     size = 60
     fontSize = 18
-    bgColor = '#0891B2'
+    bgColor = '#D4A017'
   }
 
   return L.divIcon({
@@ -177,14 +177,14 @@ export default function MapComponent({ pubs, isHappyHour, userLocation, totalPub
             >
               <span style={{ fontWeight: 600, fontSize: '13px' }}>{pub.name}</span>
               <br />
-              <span style={{ color: '#0891B2', fontWeight: 500 }}>{pub.price !== null ? `$${pub.price.toFixed(2)}` : 'TBC'}</span>
+              <span style={{ color: '#D4A017', fontWeight: 500 }}>{pub.price !== null ? `$${pub.price.toFixed(2)}` : 'TBC'}</span>
             </Tooltip>
             <Popup>
               <div style={{ padding: '8px', minWidth: '200px' }}>
                 <a href={`/pub/${pub.slug}`} style={{ fontWeight: 700, fontSize: '16px', marginBottom: '4px', color: '#1f2937', textDecoration: 'none', display: 'block' }}>
                   {pub.name}
                 </a>
-                <p style={{ color: '#0891B2', fontWeight: 600, marginBottom: '4px' }}>
+                <p style={{ color: '#D4A017', fontWeight: 600, marginBottom: '4px' }}>
                   {pub.price !== null ? `$${pub.price.toFixed(2)}` : 'TBC'} - {pub.beerType}
                 </p>
                 <p style={{ fontSize: '13px', color: '#6b7280', marginBottom: '4px' }}>
@@ -194,7 +194,7 @@ export default function MapComponent({ pubs, isHappyHour, userLocation, totalPub
                   <p style={{ 
                     fontSize: '13px', 
                     marginTop: '4px',
-                    color: isHappyHour && isHappyHour(pub.happyHour) ? '#0891B2' : '#6b7280',
+                    color: isHappyHour && isHappyHour(pub.happyHour) ? '#D4A017' : '#6b7280',
                     fontWeight: isHappyHour && isHappyHour(pub.happyHour) ? 600 : 400
                   }}>
                     {'\u{1F550}'} {pub.happyHour}
@@ -207,7 +207,7 @@ export default function MapComponent({ pubs, isHappyHour, userLocation, totalPub
                     target="_blank"
                     rel="noopener noreferrer"
                     style={{ 
-                      color: '#0891B2', 
+                      color: '#D4A017', 
                       fontSize: '13px', 
                       marginTop: '8px', 
                       display: 'inline-block',
@@ -220,7 +220,7 @@ export default function MapComponent({ pubs, isHappyHour, userLocation, totalPub
                 <a
                   href={`/pub/${pub.slug}`}
                   style={{
-                    color: '#0891B2',
+                    color: '#D4A017',
                     fontSize: '13px',
                     marginTop: '4px',
                     display: 'inline-block',
@@ -242,7 +242,7 @@ export default function MapComponent({ pubs, isHappyHour, userLocation, totalPub
           position={[userLocation.lat, userLocation.lng]}
           icon={L.divIcon({
             className: 'user-location-marker',
-            html: `<div style="width:16px;height:16px;background:#0891B2;border-radius:50%;border:3px solid white;box-shadow:0 0 0 3px rgba(8,145,178,0.3),0 2px 6px rgba(0,0,0,0.3)"></div>`,
+            html: `<div style="width:16px;height:16px;background:#D4A017;border-radius:50%;border:3px solid white;box-shadow:0 0 0 3px rgba(8,145,178,0.3),0 2px 6px rgba(0,0,0,0.3)"></div>`,
             iconSize: [16, 16],
             iconAnchor: [8, 8]
           })}

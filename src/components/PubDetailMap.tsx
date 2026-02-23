@@ -7,7 +7,7 @@ import 'leaflet/dist/leaflet.css'
 function getPriceMarkerColor(price: number | null): string {
   if (price === null) return '#78716c'
   if (price <= 7) return '#059669'
-  if (price <= 9) return '#0891B2'
+  if (price <= 9) return '#D4A017'
   if (price <= 11) return '#d97706'
   return '#dc2626'
 }

@@ -67,7 +67,7 @@ export default function PriceTicker({ pubs }: PriceTickerProps) {
           {items.map((t, i) => {
             const isAboveAvg = t.diff >= 0;
             const arrow = isAboveAvg ? E.up_arrow : E.down_arrow;
-            const color = isAboveAvg ? 'text-coral' : 'text-teal';
+            const color = isAboveAvg ? 'text-coral' : 'text-green-700';
             const diffStr = Math.abs(t.diff).toFixed(2);
 
             return (

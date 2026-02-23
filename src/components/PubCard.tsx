@@ -81,7 +81,7 @@ export default function PubCard({
     <Card className="group relative overflow-hidden hover:shadow-lg transition-all duration-200 border-stone-200/60 shadow-[0_1px_8px_rgba(0,0,0,0.04)] rounded-2xl h-full flex flex-col cursor-pointer" onClick={() => router.push(`/pub/${pub.slug}`)}>
       {/* Happy Hour active badge */}
       {happyHourStatus.isActive && (
-        <Badge className="absolute top-2 left-2 z-10 bg-teal hover:bg-teal text-white animate-pulse">
+        <Badge className="absolute top-2 left-2 z-10 bg-amber hover:bg-amber text-white animate-pulse">
           {E.party} HAPPY HOUR!
         </Badge>
       )}
@@ -117,12 +117,12 @@ export default function PubCard({
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
-                className="flex-shrink-0 text-stone-300 hover:text-ocean transition-colors"
+                className="flex-shrink-0 text-stone-300 hover:text-amber transition-colors"
                 title="Get directions"
               >
                 <DirectionsIcon />
               </a>
-              <Link href={`/pub/${pub.slug}`} className="hover:text-ocean transition-colors"><h3 className="font-bold text-stone-900 truncate">{pub.name}</h3></Link>
+              <Link href={`/pub/${pub.slug}`} className="hover:text-amber transition-colors"><h3 className="font-bold text-stone-900 truncate">{pub.name}</h3></Link>
             </div>
             <p className="text-xs text-stone-500">{pub.suburb}{distance && <span className="text-stone-400 text-xs"> · {distance}</span>}</p>
           </div>
@@ -151,14 +151,14 @@ export default function PubCard({
 
         {pub.happyHour && (
           <div className={`text-xs flex items-center gap-1 ${
-            happyHourStatus.isActive ? 'text-teal font-bold' : 
-            happyHourStatus.isToday ? 'text-ocean font-semibold' : 
+            happyHourStatus.isActive ? 'text-amber font-bold' : 
+            happyHourStatus.isToday ? 'text-amber font-semibold' : 
             'text-stone-500'
           }`}>
             <span>{happyHourStatus.statusEmoji}</span>
             <span>{happyHourStatus.statusText}</span>
             {happyHourStatus.countdown && happyHourStatus.isActive && (
-              <span className="text-teal font-normal">• {happyHourStatus.countdown}</span>
+              <span className="text-amber font-normal">• {happyHourStatus.countdown}</span>
             )}
           </div>
         )}
@@ -178,7 +178,7 @@ export default function PubCard({
             href={pub.website}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-ocean hover:text-cyan-600 text-xs font-semibold"
+            className="text-amber hover:text-amber-600 text-xs font-semibold"
           >
             Visit website →
           </a>
@@ -188,7 +188,7 @@ export default function PubCard({
         <div className="flex items-center gap-1.5">
           <button
             onClick={() => sharePub(pub)}
-            className="text-stone-400 hover:text-ocean transition-colors p-1"
+            className="text-stone-400 hover:text-amber transition-colors p-1"
             title="Share"
           >
             <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

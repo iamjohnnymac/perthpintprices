@@ -277,7 +277,7 @@ export default function BeerWeather({ pubs, userLocation }: BeerWeatherProps) {
                   className="flex items-center gap-3 rounded-xl bg-white/70 hover:bg-white/95 transition-all duration-200 p-3 border border-stone-100 shadow-sm hover:shadow-md"
                   onClick={(e) => e.stopPropagation()}
                 >
-                  <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-cyan-50 text-ocean font-bold text-sm flex-shrink-0">
+                  <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-amber-50 text-amber font-bold text-sm flex-shrink-0">
                     {index + 1}
                   </div>
                   <div className="min-w-0 flex-1">
@@ -289,7 +289,7 @@ export default function BeerWeather({ pubs, userLocation }: BeerWeatherProps) {
                     </div>
                   </div>
                   <div className="text-right flex-shrink-0">
-                    <span className="text-sm font-bold text-ocean">{pub.price !== null ? `$${pub.price.toFixed(2)}` : 'TBC'}</span>
+                    <span className="text-sm font-bold text-amber">{pub.price !== null ? `$${pub.price.toFixed(2)}` : 'TBC'}</span>
                     {pub.happyHour && (
                       <p className="text-[9px] text-emerald-600 font-medium">Happy Hour</p>
                     )}

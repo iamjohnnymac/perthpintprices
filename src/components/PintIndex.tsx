@@ -227,7 +227,7 @@ export default function PintIndex() {
 
   const sparkData = snapshots.map(s => s.avg_price);
   const trendIcon = monthChange > 0 ? '\u25b2' : monthChange < 0 ? '\u25bc' : '\u2014';
-  const trendColor = monthChange > 0 ? 'text-coral' : monthChange < 0 ? 'text-teal' : 'text-yellow-500';
+  const trendColor = monthChange > 0 ? 'text-coral' : monthChange < 0 ? 'text-amber' : 'text-yellow-500';
 
   return (
     <Card 
@@ -272,7 +272,7 @@ export default function PintIndex() {
               {/* Key stats */}
               <div>
                 <div className="text-xs text-stone-500 mb-1">Cheapest Pint</div>
-                <div className="text-lg font-bold font-mono text-teal">${current.min_price.toFixed(2)}</div>
+                <div className="text-lg font-bold font-mono text-amber">${current.min_price.toFixed(2)}</div>
               </div>
               <div>
                 <div className="text-xs text-stone-500 mb-1">Most Expensive</div>
@@ -284,7 +284,7 @@ export default function PintIndex() {
               </div>
               <div>
                 <div className="text-xs text-stone-500 mb-1">Overall Change</div>
-                <div className={`text-lg font-bold font-mono ${yearChange > 0 ? 'text-coral' : 'text-teal'}`}>
+                <div className={`text-lg font-bold font-mono ${yearChange > 0 ? 'text-coral' : 'text-amber'}`}>
                   {yearChange >= 0 ? '+' : ''}{yearPct.toFixed(1)}%
                 </div>
               </div>
@@ -292,10 +292,10 @@ export default function PintIndex() {
 
             {/* Suburb highlights */}
             <div className="grid grid-cols-2 gap-4 mt-4">
-              <div className="bg-teal/10 rounded-lg p-3 h-full">
-                <div className="text-xs text-teal font-medium">▼ Cheapest Suburb</div>
+              <div className="bg-amber/10 rounded-lg p-3 h-full">
+                <div className="text-xs text-amber font-medium">▼ Cheapest Suburb</div>
                 <div className="text-sm font-bold text-stone-800 mt-1">{current.cheapest_suburb}</div>
-                <div className="text-xs text-teal">avg ${current.cheapest_suburb_avg.toFixed(2)}/pint</div>
+                <div className="text-xs text-amber">avg ${current.cheapest_suburb_avg.toFixed(2)}/pint</div>
               </div>
               <div className="bg-coral/10 rounded-lg p-3 h-full">
                 <div className="text-xs text-coral font-medium">▲ Priciest Suburb</div>

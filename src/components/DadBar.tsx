@@ -80,11 +80,11 @@ export default function DadBar({ pubs, userLocation }: { pubs: Pub[], userLocati
           </div>
         </div>
         <div className="flex items-center gap-2">
-            <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-cyan-50 border border-cyan-200">
-              <span className="text-[10px] font-semibold text-ocean">{dadPubs.length} VENUES</span>
+            <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-50 border border-cyan-200">
+              <span className="text-[10px] font-semibold text-amber">{dadPubs.length} VENUES</span>
             </div>
             {!isExpanded && dadPubs[0]?.price && (
-              <span className="text-sm font-bold text-ocean">from ${dadPubs[0].price.toFixed(2)}</span>
+              <span className="text-sm font-bold text-amber">from ${dadPubs[0].price.toFixed(2)}</span>
             )}
             <svg width="16" height="16" viewBox="0 0 16 16" className={`text-stone-400 transition-transform ${isExpanded ? 'rotate-180' : ''}`}>
               <path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
@@ -94,7 +94,7 @@ export default function DadBar({ pubs, userLocation }: { pubs: Pub[], userLocati
 
       {isExpanded && (<>
       {/* Dad joke */}
-      <div className="bg-cyan-50/60 border border-cyan-100 rounded-lg p-2.5 mb-3">
+      <div className="bg-amber-50/60 border border-cyan-100 rounded-lg p-2.5 mb-3">
         <div className="flex items-start gap-2">
           <span className="text-stone-400 flex-shrink-0 mt-0.5">
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
@@ -108,7 +108,7 @@ export default function DadBar({ pubs, userLocation }: { pubs: Pub[], userLocati
       {/* Stats row */}
       <div className="grid grid-cols-3 gap-2 mb-3">
         <div className="bg-white border border-stone-200 rounded-lg p-2 text-center">
-          <p className="text-lg font-bold text-ocean">{dadPubs.length}</p>
+          <p className="text-lg font-bold text-amber">{dadPubs.length}</p>
           <p className="text-[10px] text-stone-500">Dad-approved</p>
         </div>
         <div className="bg-white border border-stone-200 rounded-lg p-2 text-center">
@@ -125,8 +125,8 @@ export default function DadBar({ pubs, userLocation }: { pubs: Pub[], userLocati
       <div className="space-y-1.5">
         {displayPubs.map((pub, i) => (
           <Link key={pub.id} href={`/pub/${pub.slug}`} className="flex items-center gap-2 bg-white border border-stone-200 rounded-lg p-2">
-            <div className="w-5 h-5 rounded-full bg-cyan-50 flex items-center justify-center flex-shrink-0">
-              <span className="text-[10px] font-bold text-ocean">{i + 1}</span>
+            <div className="w-5 h-5 rounded-full bg-amber-50 flex items-center justify-center flex-shrink-0">
+              <span className="text-[10px] font-bold text-amber">{i + 1}</span>
             </div>
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-1.5">
@@ -140,7 +140,7 @@ export default function DadBar({ pubs, userLocation }: { pubs: Pub[], userLocati
                 {PLAYGROUND_NOTES[pub.id] && (
                   <>
                     <span className="text-stone-300 text-[10px]">{"·"}</span>
-                    <p className="text-[10px] text-ocean truncate">{PLAYGROUND_NOTES[pub.id]}</p>
+                    <p className="text-[10px] text-amber truncate">{PLAYGROUND_NOTES[pub.id]}</p>
                   </>
                 )}
               </div>

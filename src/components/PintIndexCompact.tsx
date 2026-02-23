@@ -26,7 +26,7 @@ export default function PintIndexCompact({ pubs, filteredPubs, onViewMore }: Pin
         <div className="flex items-center gap-4 flex-wrap">
           {isFiltered && (
             <div className="flex items-center gap-1.5">
-              <span className="text-[10px] bg-ocean/15 text-ocean px-2 py-0.5 rounded-full font-medium uppercase tracking-wide">Filtered</span>
+              <span className="text-[10px] bg-amber/15 text-amber px-2 py-0.5 rounded-full font-medium uppercase tracking-wide">Filtered</span>
             </div>
           )}
           <div className="flex items-center gap-2">
@@ -35,20 +35,20 @@ export default function PintIndexCompact({ pubs, filteredPubs, onViewMore }: Pin
           </div>
           <div className="flex items-center gap-2">
             <span className="text-xs text-stone-400 uppercase tracking-wide font-medium">Range</span>
-            <span className="text-sm font-semibold font-mono text-teal">${min.toFixed(0)}</span>
+            <span className="text-sm font-semibold font-mono text-amber">${min.toFixed(0)}</span>
             <span className="text-stone-300">{'\u2013'}</span>
             <span className="text-sm font-semibold font-mono text-coral">${max.toFixed(0)}</span>
           </div>
           {cheapest && (
             <div className="hidden sm:flex items-center gap-1.5">
               <span className="text-xs text-stone-400 uppercase tracking-wide font-medium">Cheapest</span>
-              <span className="text-xs font-semibold text-teal">{cheapest.suburb} ${min.toFixed(2)}</span>
+              <span className="text-xs font-semibold text-amber">{cheapest.suburb} ${min.toFixed(2)}</span>
             </div>
           )}
         </div>
         <button
           onClick={onViewMore}
-          className="text-xs text-ocean hover:text-ocean font-medium flex items-center gap-1 flex-shrink-0"
+          className="text-xs text-amber hover:text-amber font-medium flex items-center gap-1 flex-shrink-0"
         >
           <span className="hidden sm:inline">Full Market</span>
           <svg viewBox="0 0 24 24" fill="none" className="w-3.5 h-3.5" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">

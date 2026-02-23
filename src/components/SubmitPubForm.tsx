@@ -106,7 +106,7 @@ Notes: ${formData.notes || 'None'}
 
         {submitted ? (
           <div className="p-8 text-center">
-            <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-ocean/10 flex items-center justify-center"><svg className="w-6 h-6 text-ocean" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg></div>
+            <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-amber/10 flex items-center justify-center"><svg className="w-6 h-6 text-amber" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg></div>
             <h3 className="text-xl font-bold text-stone-800 mb-2">Thanks legend!</h3>
             <p className="text-stone-500 text-sm">Your email client should open with the submission details. Just hit send!</p>
           </div>
@@ -200,7 +200,7 @@ Notes: ${formData.notes || 'None'}
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full py-3 px-4 bg-ocean hover:bg-cyan-700 text-white font-bold rounded-xl transition-all transform hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed shadow-md mt-2"
+              className="w-full py-3 px-4 bg-amber hover:bg-amber-700 text-white font-bold rounded-xl transition-all transform hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed shadow-md mt-2"
             >
               {isSubmitting ? 'Opening email...' : 'Submit via Email'}
             </button>

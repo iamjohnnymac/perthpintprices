@@ -39,13 +39,13 @@ function getMovement(suburb: string): 'up' | 'down' | 'steady' {
 }
 
 const movementIcon: Record<string, JSX.Element> = {
-  up: <svg width="10" height="10" viewBox="0 0 10 10" className="text-teal inline" fill="currentColor"><path d="M5 2l4 6H1z"/></svg>,
+  up: <svg width="10" height="10" viewBox="0 0 10 10" className="text-amber inline" fill="currentColor"><path d="M5 2l4 6H1z"/></svg>,
   down: <svg width="10" height="10" viewBox="0 0 10 10" className="text-coral inline" fill="currentColor"><path d="M5 8L1 2h8z"/></svg>,
   steady: <svg width="10" height="6" viewBox="0 0 10 6" className="text-stone-400 inline" fill="currentColor"><rect x="0" y="2" width="10" height="2" rx="1"/></svg>,
 }
 
 const formDotColors: Record<string, string> = {
-  green: 'bg-teal',
+  green: 'bg-amber',
   yellow: 'bg-amber-400',
   red: 'bg-coral',
 }
@@ -101,7 +101,7 @@ export default function SuburbLeague({ pubs }: { pubs: Pub[] }) {
       const pos = i + 1
 
       if (pos === 5 && total > 5) {
-        items.push({ type: 'divider', label: '— Promotion Zone ↑ —', colorClass: 'bg-teal/10 text-teal border-teal/30' })
+        items.push({ type: 'divider', label: '— Promotion Zone ↑ —', colorClass: 'bg-amber/10 text-amber border-amber/30' })
       }
 
       if (pos === total - 2 && total > 6) {
@@ -110,7 +110,7 @@ export default function SuburbLeague({ pubs }: { pubs: Pub[] }) {
 
       const isRelegation = pos > total - 3 && total > 6
       let rowBg = rowIdx % 2 === 0 ? 'bg-white' : 'bg-stone-50/80'
-      if (pos === 1) rowBg = 'bg-cyan-50/60'
+      if (pos === 1) rowBg = 'bg-amber-50/60'
       else if (pos === 2) rowBg = 'bg-stone-200/50'
       else if (pos === 3) rowBg = 'bg-orange-50/70'
       else if (isRelegation) rowBg = 'bg-coral/5'
@@ -134,7 +134,7 @@ export default function SuburbLeague({ pubs }: { pubs: Pub[] }) {
         >
           <div>
             <h3 className="text-sm font-bold font-heading text-stone-800 flex items-center gap-2">
-              <svg className="inline w-4 h-4 mr-1.5 text-ocean" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><rect x="3" y="12" width="4" height="8" rx="1"/><rect x="10" y="8" width="4" height="12" rx="1"/><rect x="17" y="4" width="4" height="16" rx="1"/></svg>SUBURB LEAGUE TABLE
+              <svg className="inline w-4 h-4 mr-1.5 text-amber" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><rect x="3" y="12" width="4" height="8" rx="1"/><rect x="10" y="8" width="4" height="12" rx="1"/><rect x="17" y="4" width="4" height="16" rx="1"/></svg>SUBURB LEAGUE TABLE
             </h3>
             <p className="text-xs text-stone-500 mt-0.5">
               {isExpanded
@@ -188,7 +188,7 @@ export default function SuburbLeague({ pubs }: { pubs: Pub[] }) {
                           <span className="text-[10px] text-stone-400 ml-1">({s.pubCount} pubs)</span>
                         </td>
                         <td className="px-2 py-2 text-center font-bold text-stone-800">${s.avgPrice.toFixed(2)}</td>
-                        <td className="px-2 py-2 text-center text-teal hidden sm:table-cell">${s.minPrice.toFixed(2)}</td>
+                        <td className="px-2 py-2 text-center text-amber hidden sm:table-cell">${s.minPrice.toFixed(2)}</td>
                         <td className="px-2 py-2 text-center text-coral hidden sm:table-cell">${s.maxPrice.toFixed(2)}</td>
                         <td className="px-2 py-2 text-center text-stone-500 hidden md:table-cell">{s.happyHourPct}%</td>
                         <td className="px-2 py-2 hidden md:table-cell">

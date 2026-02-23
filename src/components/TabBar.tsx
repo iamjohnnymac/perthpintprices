@@ -74,7 +74,7 @@ export default function TabBar({ activeTab, onTabChange, pubCount, crowdCount }:
                   relative flex-1 flex flex-col items-center justify-center gap-1 py-3
                   transition-all duration-200 ease-out
                   ${isActive 
-                    ? 'text-ocean' 
+                    ? 'text-amber' 
                     : 'text-stone-400 hover:text-stone-600'
                   }
                 `}
@@ -88,13 +88,13 @@ export default function TabBar({ activeTab, onTabChange, pubCount, crowdCount }:
                 </span>
 
                 {tab.id === 'market' && crowdCount > 0 && (
-                  <span className="absolute top-2 right-1/4 flex items-center justify-center w-2 h-2 rounded-full bg-teal animate-pulse ring-2 ring-white" />
+                  <span className="absolute top-2 right-1/4 flex items-center justify-center w-2 h-2 rounded-full bg-amber animate-pulse ring-2 ring-white" />
                 )}
 
                 <span className={`
                   absolute bottom-0 left-3 right-3 h-[3px] rounded-full
                   transition-all duration-200
-                  ${isActive ? 'bg-ocean opacity-100' : 'bg-transparent opacity-0'}
+                  ${isActive ? 'bg-amber opacity-100' : 'bg-transparent opacity-0'}
                 `} />
               </button>
             )
