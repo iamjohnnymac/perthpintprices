@@ -1,4 +1,5 @@
 'use client'
+import { useState, useMemo } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { Pub } from '@/types/pub'
@@ -6,6 +7,9 @@ import { CrowdReport, CROWD_LEVELS } from '@/lib/supabase'
 import { getHappyHourStatus } from '@/lib/happyHour'
 import { getDistanceKm, formatDistance } from '@/lib/location'
 import { getPriceTextColor, getDirectionsUrl } from '@/lib/priceColors'
+
+type SortKey = 'name' | 'suburb' | 'price' | 'beer' | null
+type SortDir = 'asc' | 'desc'
 
 interface PubListViewProps {
   pubs: Pub[]
@@ -27,21 +31,74 @@ export default function PubListView({
   onShowAll,
 }: PubListViewProps) {
   const router = useRouter()
-  const displayPubs = showAll ? pubs : pubs.slice(0, initialCount)
+  const [sortKey, setSortKey] = useState<SortKey>(null)
+  const [sortDir, setSortDir] = useState<SortDir>('asc')
+
+  function handleSort(key: SortKey) {
+    if (sortKey === key) {
+      setSortDir(d => d === 'asc' ? 'desc' : 'asc')
+    } else {
+      setSortKey(key)
+      setSortDir(key === 'price' ? 'asc' : 'asc')
+    }
+  }
+
+  const sortedPubs = useMemo(() => {
+    if (!sortKey) return pubs
+    const sorted = [...pubs]
+    const dir = sortDir === 'asc' ? 1 : -1
+    sorted.sort((a, b) => {
+      switch (sortKey) {
+        case 'name':
+          return dir * a.name.localeCompare(b.name)
+        case 'suburb':
+          return dir * (a.suburb || '').localeCompare(b.suburb || '')
+        case 'price': {
+          const ap = a.price ?? 999
+          const bp = b.price ?? 999
+          return dir * (ap - bp)
+        }
+        case 'beer':
+          return dir * (a.beerType || '').localeCompare(b.beerType || '')
+        default:
+          return 0
+      }
+    })
+    return sorted
+  }, [pubs, sortKey, sortDir])
+
+  const displayPubs = showAll ? sortedPubs : sortedPubs.slice(0, initialCount)
 
   function getLatestCrowdReport(pubId: number): CrowdReport | undefined {
     return crowdReports[String(pubId)]
   }
 
+  function SortHeader({ label, field, className = '' }: { label: string; field: SortKey; className?: string }) {
+    const isActive = sortKey === field
+    return (
+      <th
+        className={`py-3 px-4 text-xs font-semibold uppercase tracking-wide cursor-pointer select-none hover:text-amber transition-colors ${isActive ? 'text-amber' : 'text-stone-600'} ${className}`}
+        onClick={() => handleSort(field)}
+      >
+        <span className="inline-flex items-center gap-1">
+          {label}
+          {isActive && (
+            <span className="text-[10px]">{sortDir === 'asc' ? '▲' : '▼'}</span>
+          )}
+        </span>
+      </th>
+    )
+  }
+
   return (
     <div className="bg-white rounded-2xl shadow-[0_2px_12px_rgba(0,0,0,0.06)] border border-stone-200/60 overflow-hidden">
       <table className="w-full">
-        <thead>
-          <tr className="bg-stone-50 border-b border-stone-200">
-            <th className="text-left py-3 px-4 text-xs font-semibold text-stone-600 uppercase tracking-wide">Pub</th>
-            <th className="text-left py-3 px-4 text-xs font-semibold text-stone-600 uppercase tracking-wide hidden sm:table-cell">Suburb</th>
-            <th className="text-left py-3 px-4 text-xs font-semibold text-stone-600 uppercase tracking-wide hidden sm:table-cell">Beer</th>
-            <th className="text-right py-3 px-4 text-xs font-semibold text-stone-600 uppercase tracking-wide">Price</th>
+        <thead className="sticky top-0 z-10">
+          <tr className="bg-stone-100/95 backdrop-blur-sm border-b border-stone-200 shadow-[0_1px_3px_rgba(0,0,0,0.05)]">
+            <SortHeader label="Pub" field="name" className="text-left" />
+            <SortHeader label="Suburb" field="suburb" className="text-left hidden sm:table-cell" />
+            <SortHeader label="Beer" field="beer" className="text-left hidden sm:table-cell" />
+            <SortHeader label="Price" field="price" className="text-right" />
             <th className="text-left py-3 px-4 text-xs font-semibold text-stone-600 uppercase tracking-wide hidden md:table-cell">Happy Hour</th>
             <th className="text-center py-3 px-4 text-xs font-semibold text-stone-600 uppercase tracking-wide">Crowd</th>
           </tr>

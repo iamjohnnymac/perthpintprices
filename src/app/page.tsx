@@ -149,7 +149,7 @@ export default function Home() {
   }, [pubs, searchTerm, selectedSuburb, maxPrice, sortBy, showHappyHourOnly, userLocation])
 
   const stats = useMemo(() => {
-    if (pubs.length === 0) return { total: 0, minPrice: 0, maxPriceValue: 0, avgPrice: '0', happyHourNow: 0, cheapestSuburb: '', priciestSuburb: '' }
+    if (pubs.length === 0) return { total: 0, minPrice: 0, maxPriceValue: 0, avgPrice: '0', happyHourNow: 0, cheapestSuburb: '', cheapestSlug: '', priciestSuburb: '', priciestSlug: '' }
     const priced = pubs.filter(p => p.price !== null)
     const minP = Math.min(...priced.map(p => p.price!))
     const maxP = Math.max(...priced.map(p => p.price!))
@@ -162,7 +162,9 @@ export default function Home() {
       avgPrice: priced.length > 0 ? (priced.reduce((sum, p) => sum + p.price!, 0) / priced.length).toFixed(2) : '0',
       happyHourNow: pubs.filter(p => p.isHappyHourNow || isHappyHour(p.happyHour)).length,
       cheapestSuburb: cheapest?.suburb || '',
-      priciestSuburb: priciest?.suburb || ''
+      cheapestSlug: cheapest?.slug || '',
+      priciestSuburb: priciest?.suburb || '',
+      priciestSlug: priciest?.slug || ''
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pubs, currentTime])
@@ -193,6 +195,7 @@ export default function Home() {
         <HeroSection
           avgPrice={stats.avgPrice}
           cheapestPrice={stats.minPrice}
+            cheapestSlug={stats.cheapestSlug}
           venueCount={stats.total}
           suburbCount={suburbs.length}
           happyHourCount={stats.happyHourNow}
@@ -228,8 +231,10 @@ export default function Home() {
               avgPrice={stats.avgPrice}
               cheapestPrice={stats.minPrice}
               cheapestSuburb={stats.cheapestSuburb}
+              cheapestSlug={stats.cheapestSlug}
               priciestPrice={stats.maxPriceValue}
               priciestSuburb={stats.priciestSuburb}
+              priciestSlug={stats.priciestSlug}
               happyHourCount={stats.happyHourNow}
               suburbCount={suburbs.length}
               venueCount={stats.total}

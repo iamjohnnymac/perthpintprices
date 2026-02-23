@@ -1,8 +1,11 @@
 'use client'
 
+import Link from 'next/link'
+
 interface HeroSectionProps {
   avgPrice: string
   cheapestPrice: number
+  cheapestSlug: string
   venueCount: number
   suburbCount: number
   happyHourCount: number
@@ -14,6 +17,7 @@ interface HeroSectionProps {
 export default function HeroSection({
   avgPrice,
   cheapestPrice,
+  cheapestSlug,
   venueCount,
   suburbCount,
   happyHourCount,
@@ -50,10 +54,17 @@ export default function HeroSection({
 
         {/* Hero stat highlights — EatClub-style bold numbers */}
         <div className="flex flex-wrap justify-center gap-4 sm:gap-8 mb-10">
-          <div className="bg-white rounded-2xl px-5 py-3 shadow-sm border border-stone-200/60">
-            <span className="block text-2xl sm:text-3xl font-bold font-mono text-green-700">${cheapestPrice}</span>
-            <span className="text-xs text-stone-500">Cheapest pint</span>
-          </div>
+          {cheapestSlug ? (
+            <Link href={`/pub/${cheapestSlug}`} className="bg-white rounded-2xl px-5 py-3 shadow-sm border border-stone-200/60 hover:border-amber/50 hover:shadow-md transition-all group">
+              <span className="block text-2xl sm:text-3xl font-bold font-mono text-green-700 group-hover:text-amber transition-colors">${cheapestPrice}</span>
+              <span className="text-xs text-stone-500 group-hover:text-amber transition-colors">Cheapest pint →</span>
+            </Link>
+          ) : (
+            <div className="bg-white rounded-2xl px-5 py-3 shadow-sm border border-stone-200/60">
+              <span className="block text-2xl sm:text-3xl font-bold font-mono text-green-700">${cheapestPrice}</span>
+              <span className="text-xs text-stone-500">Cheapest pint</span>
+            </div>
+          )}
           <div className="bg-white rounded-2xl px-5 py-3 shadow-sm border border-stone-200/60">
             <span className="block text-2xl sm:text-3xl font-bold font-mono text-charcoal">${avgPrice}</span>
             <span className="text-xs text-stone-500">Perth average</span>
