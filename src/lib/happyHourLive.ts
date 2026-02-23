@@ -36,6 +36,18 @@ function parseDayRange(days: string): number[] {
     return [0, 1, 2, 3, 4, 5, 6]
   }
   
+  // Postgres array format: "{Mon,Tue,Wed,Thu,Fri}" or "{Mon,Tue,Wed,Thu,Fri,Sat,Sun}"
+  if (d.startsWith('{') && d.endsWith('}')) {
+    const inner = d.slice(1, -1)
+    const dayNames = inner.split(',').map(s => s.trim().toLowerCase())
+    const result: number[] = []
+    for (const name of dayNames) {
+      const dayNum = DAY_MAP[name.substring(0, 3)]
+      if (dayNum !== undefined) result.push(dayNum)
+    }
+    return result
+  }
+  
   // Range like "Mon-Fri", "Tue-Thu", "Wed-Sat"
   const rangeMatch = d.match(/^(\w{3,})-(\w{3,})$/)
   if (rangeMatch) {
@@ -94,13 +106,13 @@ export function getHappyHourStatus(pub: {
   const hhStart = pub.happyHourStart ?? null
   const hhEnd = pub.happyHourEnd ?? null
   
-  // No happy hour data
-  if (!hhPrice || !hhDays || !hhStart || !hhEnd) {
+  // No happy hour timing data — can't determine if active
+  if (!hhDays || !hhStart || !hhEnd) {
     return {
       isActive: false,
       effectivePrice: regularPrice,
       regularPrice,
-      happyHourPrice: null,
+      happyHourPrice: hhPrice,
       happyHourLabel: null,
       minutesRemaining: null,
     }
@@ -145,7 +157,7 @@ export function getHappyHourStatus(pub: {
   
   return {
     isActive,
-    effectivePrice: isActive ? hhPrice : regularPrice,
+    effectivePrice: isActive && hhPrice ? hhPrice : regularPrice,
     regularPrice,
     happyHourPrice: hhPrice,
     happyHourLabel: label,
