@@ -7,6 +7,8 @@ import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
 import { Pub } from '@/types/pub'
 import E from '@/lib/emoji'
+import WatchlistButton from '@/components/WatchlistButton'
+import PriceHistory from '@/components/PriceHistory'
 
 const PubDetailMap = dynamic(() => import('@/components/PubDetailMap'), {
   ssr: false,
@@ -100,12 +102,15 @@ export default function PubDetailClient({ pub, nearbyPubs }: PubDetailClientProp
             </svg>
             Back to PintDex
           </Link>
-          <button onClick={sharePub} className="text-stone-400 hover:text-amber transition-colors p-2" title="Share this pub">
+          <div className="flex items-center gap-1">
+            <WatchlistButton slug={pub.slug} name={pub.name} suburb={pub.suburb} size="md" />
+            <button onClick={sharePub} className="text-stone-400 hover:text-amber transition-colors p-2" title="Share this pub">
             <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
               <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
             </svg>
           </button>
+          </div>
         </div>
       </div>
 
@@ -243,6 +248,9 @@ export default function PubDetailClient({ pub, nearbyPubs }: PubDetailClientProp
                 <p className="text-base text-stone-600 leading-relaxed">{pub.description}</p>
               </div>
             )}
+
+            {/* Price History Chart */}
+            <PriceHistory pubId={pub.id} currentPrice={pub.price} />
 
             {/* Data quality */}
             <div className="text-sm text-stone-400 space-y-0.5">

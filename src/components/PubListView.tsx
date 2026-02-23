@@ -7,6 +7,7 @@ import { CrowdReport, CROWD_LEVELS } from '@/lib/supabase'
 import { getHappyHourStatus } from '@/lib/happyHour'
 import { getDistanceKm, formatDistance } from '@/lib/location'
 import { getPriceTextColor, getDirectionsUrl } from '@/lib/priceColors'
+import WatchlistButton from '@/components/WatchlistButton'
 
 type SortKey = 'name' | 'suburb' | 'price' | 'beer' | null
 type SortDir = 'asc' | 'desc'
@@ -133,6 +134,7 @@ export default function PubListView({
                           </svg>
                         </a>
                         <Link href={`/pub/${pub.slug}`} className="font-semibold text-stone-900 text-sm hover:text-amber transition-colors">{pub.name}</Link>
+                        <WatchlistButton slug={pub.slug} name={pub.name} suburb={pub.suburb} size="sm" />
                       </div>
                       <p className="text-xs text-stone-500 sm:hidden">{pub.suburb}{userLocation && ` · ${formatDistance(getDistanceKm(userLocation.lat, userLocation.lng, pub.lat, pub.lng))}`}</p>
                     </div>

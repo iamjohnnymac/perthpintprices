@@ -7,6 +7,7 @@ import { Pub } from '@/types/pub'
 import { CrowdReport } from '@/lib/supabase'
 import { HappyHourStatus } from '@/lib/happyHour'
 import E from '@/lib/emoji'
+import WatchlistButton from '@/components/WatchlistButton'
 
 const MiniMap = dynamic(() => import('./MiniMap'), {
   ssr: false,
@@ -82,7 +83,10 @@ export default function PubCard({
         <div className="p-5 flex-1 flex flex-col">
           <div className="flex items-start justify-between gap-2">
             <div className="min-w-0 flex-1">
-              <h3 className="font-heading font-semibold text-lg text-charcoal truncate">{pub.name}</h3>
+              <h3 className="font-heading font-semibold text-lg text-charcoal truncate flex items-center gap-1.5">
+                {pub.name}
+                <WatchlistButton slug={pub.slug} name={pub.name} suburb={pub.suburb} size="sm" />
+              </h3>
               <p className="text-stone-500 text-base mt-0.5">
                 {pub.suburb}{distance ? ` · ${distance}` : ''}
               </p>

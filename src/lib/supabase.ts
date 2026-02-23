@@ -280,3 +280,35 @@ export async function getNearbyPubs(suburb: string, excludeId: number, limit: nu
     }
   })
 }
+
+// Fetch price history for a pub (for trend charts)
+export interface PriceHistoryPoint {
+  price: number | null
+  happyHourPrice: number | null
+  beerType: string | null
+  changedAt: string
+  changeType: string
+  source: string | null
+}
+
+export async function getPriceHistory(pubId: number): Promise<PriceHistoryPoint[]> {
+  const { data, error } = await supabase
+    .from('price_history')
+    .select('price, happy_hour_price, beer_type, changed_at, change_type, source')
+    .eq('pub_id', pubId)
+    .order('changed_at', { ascending: true })
+  
+  if (error || !data) {
+    console.error('Error fetching price history:', error)
+    return []
+  }
+  
+  return data.map(row => ({
+    price: row.price != null ? Number(row.price) : null,
+    happyHourPrice: row.happy_hour_price != null ? Number(row.happy_hour_price) : null,
+    beerType: row.beer_type || null,
+    changedAt: row.changed_at,
+    changeType: row.change_type,
+    source: row.source || null,
+  }))
+}

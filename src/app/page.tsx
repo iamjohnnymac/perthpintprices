@@ -28,6 +28,7 @@ import HowItWorks from '@/components/HowItWorks'
 import SocialProof from '@/components/SocialProof'
 import FAQ from '@/components/FAQ'
 import Footer from '@/components/Footer'
+import MyLocals from '@/components/MyLocals'
 import SubmitPubForm from '@/components/SubmitPubForm'
 import CrowdReporter from '@/components/CrowdReporter'
 
@@ -286,6 +287,8 @@ export default function Home() {
           {activeTab === 'pubs' && (
             <>
               <PintIndexCompact pubs={pubs} filteredPubs={filteredPubs} onViewMore={() => setActiveTab('market')} />
+
+              <MyLocals pubs={pubs} userLocation={userLocation} />
 
               <button
                 onClick={() => setShowMap(!showMap)}
