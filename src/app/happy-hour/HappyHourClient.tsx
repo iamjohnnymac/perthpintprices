@@ -14,15 +14,14 @@ export default function HappyHourClient() {
     try {
       const allPubs = await getPubs()
       const active = allPubs
-        .filter(
-          (p) =>
-            p.isHappyHourNow &&
-            p.happyHourPrice != null &&
-            p.regularPrice != null
-        )
+        .filter((p) => p.isHappyHourNow)
         .sort((a, b) => {
-          const savingsA = (a.regularPrice ?? 0) - (a.happyHourPrice ?? 0)
-          const savingsB = (b.regularPrice ?? 0) - (b.happyHourPrice ?? 0)
+          // Pubs with HH prices first (sorted by savings), then pubs without HH prices
+          const aHasPrice = a.happyHourPrice != null ? 1 : 0
+          const bHasPrice = b.happyHourPrice != null ? 1 : 0
+          if (aHasPrice !== bHasPrice) return bHasPrice - aHasPrice
+          const savingsA = (a.regularPrice ?? 0) - (a.happyHourPrice ?? a.regularPrice ?? 0)
+          const savingsB = (b.regularPrice ?? 0) - (b.happyHourPrice ?? b.regularPrice ?? 0)
           return savingsB - savingsA
         })
       setPubs(active)
@@ -159,10 +158,11 @@ export default function HappyHourClient() {
         {!loading && pubs.length > 0 && (
           <div className="grid gap-4 sm:gap-5">
             {pubs.map((pub) => {
-              const savings =
-                (pub.regularPrice ?? 0) - (pub.happyHourPrice ?? 0)
+              const savings = pub.happyHourPrice != null
+                ? (pub.regularPrice ?? 0) - pub.happyHourPrice
+                : 0
               const savingsPercent =
-                pub.regularPrice && pub.regularPrice > 0
+                pub.regularPrice && pub.regularPrice > 0 && savings > 0
                   ? Math.round((savings / pub.regularPrice) * 100)
                   : 0
 
@@ -231,21 +231,36 @@ export default function HappyHourClient() {
 
                       {/* Right: Pricing */}
                       <div className="shrink-0 text-right">
-                        <div className="text-3xl sm:text-4xl font-bold font-mono text-green-700">
-                          ${pub.happyHourPrice?.toFixed(2)}
-                        </div>
-                        {pub.regularPrice != null && (
-                          <div className="text-sm text-stone-400 line-through mt-0.5">
-                            ${pub.regularPrice.toFixed(2)}
-                          </div>
-                        )}
-                        {savings > 0 && (
-                          <div className="text-xs font-semibold text-green-600 mt-1">
-                            Save ${savings.toFixed(2)}{' '}
-                            <span className="text-green-500">
-                              ({savingsPercent}%)
-                            </span>
-                          </div>
+                        {pub.happyHourPrice != null ? (
+                          <>
+                            <div className="text-3xl sm:text-4xl font-bold font-mono text-green-700">
+                              ${pub.happyHourPrice.toFixed(2)}
+                            </div>
+                            {pub.regularPrice != null && (
+                              <div className="text-sm text-stone-400 line-through mt-0.5">
+                                ${pub.regularPrice.toFixed(2)}
+                              </div>
+                            )}
+                            {savings > 0 && (
+                              <div className="text-xs font-semibold text-green-600 mt-1">
+                                Save ${savings.toFixed(2)}{' '}
+                                <span className="text-green-500">
+                                  ({savingsPercent}%)
+                                </span>
+                              </div>
+                            )}
+                          </>
+                        ) : (
+                          <>
+                            {pub.regularPrice != null && (
+                              <div className="text-3xl sm:text-4xl font-bold font-mono text-charcoal">
+                                ${pub.regularPrice.toFixed(2)}
+                              </div>
+                            )}
+                            <div className="text-xs font-medium text-amber mt-1">
+                              HH price TBC
+                            </div>
+                          </>
                         )}
                       </div>
                     </div>
