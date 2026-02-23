@@ -25,7 +25,7 @@ export default function StatsBar({
   venueCount,
 }: StatsBarProps) {
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 sm:gap-2 mt-2 pb-2">
+    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 mt-2 pb-3">
       <div className="bg-stone-50 rounded-xl p-2.5 sm:p-4 border border-stone-200/60">
         <span className="text-stone-500 text-[10px] uppercase tracking-wider block leading-none">Perth Avg</span>
         <span className="text-charcoal font-mono font-bold text-base sm:text-lg leading-tight">${avgPrice}</span>

@@ -113,7 +113,7 @@ export default function CrowdPulse({ pubs, crowdReports, userLocation }: CrowdPu
               <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-amber border border-white animate-pulse" />
             </div>
             <div>
-              <h3 className="font-bold font-heading text-stone-800 text-sm flex items-center">LIVE MARKET INTEL<InfoTooltip text="Crowd reports submitted by users in the last 3 hours. Vibe score is a weighted average of busyness across all reporting venues." /></h3>
+              <h3 className="text-base sm:text-lg font-bold font-heading text-stone-800 flex items-center">LIVE CROWD VIBES<InfoTooltip text="Crowd reports submitted by users in the last 3 hours. Vibe score is a weighted average of busyness across all reporting venues." /></h3>
               <p className="text-xs text-stone-500">
                 {liveCount} venue{liveCount !== 1 ? 's' : ''} reporting {E.bullet} Perth Vibe: {getVibeLabel(vibeScore)}
               </p>

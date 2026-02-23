@@ -39,9 +39,9 @@ export default function MyLocals({ pubs, userLocation }: MyLocalsProps) {
   if (!isLoaded || watchedPubs.length === 0) return null
 
   return (
-    <div className="bg-gradient-to-r from-amber/5 to-amber/10 rounded-2xl border border-amber/20 p-4 sm:p-5">
+    <div className="bg-gradient-to-r from-amber/5 to-amber/10 rounded-2xl border border-amber/20 p-5 sm:p-6">
       <div className="flex items-center justify-between mb-3">
-        <h2 className="text-base font-heading font-semibold text-charcoal flex items-center gap-2">
+        <h2 className="text-base sm:text-lg font-heading font-semibold text-charcoal flex items-center gap-2">
           <span className="text-lg">⭐</span>
           My Locals
           <span className="text-xs font-normal text-stone-400 bg-stone-100 px-2 py-0.5 rounded-full">

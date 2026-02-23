@@ -211,7 +211,7 @@ export default function SunsetSippers({ pubs, userLocation }: SunsetSippersProps
             <span className="text-2xl">{statusEmoji}</span>
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="font-bold font-heading text-stone-800 text-sm flex items-center">SUNSET SIPPERS<InfoTooltip text="Uses Perth's real-time sunset & golden hour times (calculated astronomically). Highlights west-facing pubs with verified prices — best spots to watch the sun go down with a pint." /></h3>
+                <h3 className="text-base sm:text-lg font-bold font-heading text-stone-800 flex items-center">SUNSET SIPPERS<InfoTooltip text="Uses Perth's real-time sunset & golden hour times (calculated astronomically). Highlights west-facing pubs with verified prices — best spots to watch the sun go down with a pint." /></h3>
                 {isGoldenHour && (
                   <Badge className="bg-amber-500 text-white text-[10px] px-1.5 py-0 animate-pulse">
                     GOLDEN HOUR

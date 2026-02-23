@@ -92,7 +92,7 @@ export default function HeroSection({
             onClick={onDiscoverClick}
             className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white hover:bg-stone-50 text-charcoal rounded-full font-bold text-lg transition-all border border-stone-300"
           >
-            Discover features
+            See what's inside
           </button>
         </div>
       </div>

@@ -321,20 +321,20 @@ export default function Home() {
             </>
           )}
 
-          {/* ═══ MARKET TAB ═══ */}
+          {/* ═══ INSIGHTS TAB ═══ */}
           {activeTab === 'market' && (
-            <div className="space-y-5">
+            <div className="space-y-6 sm:space-y-8">
               <PintIndex />
-              <SuburbLeague pubs={pubs} />
               <TonightsMoves pubs={pubs} userLocation={userLocation} />
-              <VenueIntel pubs={pubs} userLocation={userLocation} />
+              <SuburbLeague pubs={pubs} />
               <CrowdPulse pubs={pubs} crowdReports={crowdReports} userLocation={userLocation} />
+              <VenueIntel pubs={pubs} userLocation={userLocation} />
             </div>
           )}
 
-          {/* ═══ EXPLORE TAB ═══ */}
+          {/* ═══ GUIDES TAB ═══ */}
           {activeTab === 'explore' && (
-            <div className="space-y-5">
+            <div className="space-y-6 sm:space-y-8">
               <BeerWeather pubs={pubs} userLocation={userLocation} />
               <SunsetSippers pubs={pubs} userLocation={userLocation} />
               <PuntNPints pubs={pubs} userLocation={userLocation} />

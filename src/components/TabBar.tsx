@@ -12,20 +12,20 @@ interface TabBarProps {
 const tabs: { id: TabId; label: string; subtitle: string; emoji: string }[] = [
   {
     id: 'pubs',
-    label: 'The Floor',
-    subtitle: 'Map & pub list',
+    label: 'Pubs',
+    subtitle: 'Map & prices',
     emoji: '🍺',
   },
   {
     id: 'market',
-    label: 'Market Data',
-    subtitle: 'Analytics & trends',
+    label: 'Insights',
+    subtitle: 'Trends & analytics',
     emoji: '📊',
   },
   {
     id: 'explore',
-    label: 'Discover',
-    subtitle: 'Lifestyle picks',
+    label: 'Guides',
+    subtitle: 'Curated picks',
     emoji: '🧭',
   },
 ]

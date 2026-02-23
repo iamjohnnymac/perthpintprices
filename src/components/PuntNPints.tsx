@@ -98,7 +98,7 @@ export default function PuntNPints({ pubs, userLocation }: PuntNPintsProps) {
               <span className="text-white font-black text-[9px] leading-none tracking-tight">TAB</span>
             </div>
             <div>
-              <h3 className="text-sm font-bold font-heading text-stone-800 leading-tight">PUNT N&apos; PINTS</h3>
+              <h3 className="text-base sm:text-lg font-bold font-heading text-stone-800 leading-tight">PUNT &amp; PINTS</h3>
               <p className="text-[10px] text-stone-500">Where to bet &amp; sip</p>
             </div>
             <InfoTooltip text="Shows pubs with TAB betting facilities on-site, plus cheap pints near dedicated TAB agencies. Data sourced from TABtouch WA locations." />

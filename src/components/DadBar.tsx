@@ -72,7 +72,7 @@ export default function DadBar({ pubs, userLocation }: { pubs: Pub[], userLocati
             </svg>
           </div>
           <div>
-            <h3 className="font-bold font-heading text-stone-800 text-sm flex items-center gap-1.5">
+            <h3 className="text-base sm:text-lg font-bold font-heading text-stone-800 flex items-center gap-1.5">
               THE DAD BAR
               <InfoTooltip text="Kid-friendly pubs verified from Buggybuddys and Urban List Perth. All venues have dedicated playgrounds or play areas, plus food menus for children. Perfect for a cheeky pint while the kids wear themselves out." />
             </h3>

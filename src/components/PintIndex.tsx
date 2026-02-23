@@ -234,7 +234,7 @@ export default function PintIndex() {
       className="bg-white rounded-2xl shadow-[0_2px_16px_rgba(0,0,0,0.08)] border border-stone-200/40 cursor-pointer hover:shadow-[0_4px_20px_rgba(0,0,0,0.12)] active:scale-[0.995] transition-all duration-300"
       onClick={() => setExpanded(!expanded)}
     >
-      <CardContent className="p-4 sm:p-5">
+      <CardContent className="p-5 sm:p-6">
         {/* Main ticker row */}
         <div className="flex items-center justify-between gap-4 flex-wrap">
           {/* Left: Index title + value */}

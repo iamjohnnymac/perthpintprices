@@ -126,14 +126,14 @@ export default function TonightsMoves({ pubs, userLocation }: TonightsMovesProps
       className="bg-white rounded-2xl shadow-[0_2px_16px_rgba(0,0,0,0.08)] border border-stone-200/40 cursor-pointer transition-all duration-300 hover:shadow-[0_4px_20px_rgba(0,0,0,0.12)] active:scale-[0.995]"
       onClick={() => setIsExpanded(!isExpanded)}
     >
-      <CardContent className="p-4 sm:p-5">
+      <CardContent className="p-5 sm:p-6">
         {/* Compact Header */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <span className="text-2xl">{E.clock}</span>
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="font-bold font-heading text-stone-800 text-sm flex items-center">{`TONIGHT'S TRADING FLOOR`}<InfoTooltip text="Updated in real-time based on current Perth time. Shows active happy hours, best prices right now, and our top pick of the moment." /></h3>
+                <h3 className="text-base sm:text-lg font-bold font-heading text-stone-800 flex items-center">{`TONIGHT'S BEST BETS`}<InfoTooltip text="Updated in real-time based on current Perth time. Shows active happy hours, best prices right now, and our top pick of the moment." /></h3>
                 <span className="text-[10px] text-stone-400 font-mono">{formatPerthTime(perthTime)} AWST</span>
               </div>
               <p className="text-xs text-stone-500">{summaryText}</p>
