@@ -57,11 +57,11 @@ export default function StatsBar({
           <span className="text-stone-400 text-[10px] block leading-none mt-0.5 truncate">{priciestSuburb}</span>
         </div>
       )}
-      <div className="bg-stone-50 rounded-xl p-2.5 sm:p-4 border border-stone-200/60">
+      <Link href="/happy-hour" className="bg-stone-50 rounded-xl p-2.5 sm:p-4 border border-stone-200/60 hover:border-amber/50 hover:shadow-sm transition-all group">
         <span className="text-stone-500 text-[10px] uppercase tracking-wider block leading-none">Happy Hour</span>
-        <span className="text-amber font-mono font-bold text-base sm:text-lg leading-tight">{happyHourCount}</span>
-        <span className="text-stone-400 text-[10px] block leading-none mt-0.5">active now</span>
-      </div>
+        <span className="text-amber font-mono font-bold text-base sm:text-lg leading-tight group-hover:scale-105 inline-block transition-transform">{happyHourCount}</span>
+        <span className="text-stone-400 text-[10px] block leading-none mt-0.5 group-hover:text-amber transition-colors">active now →</span>
+      </Link>
     </div>
   )
 }

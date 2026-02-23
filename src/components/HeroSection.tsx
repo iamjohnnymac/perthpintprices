@@ -70,10 +70,10 @@ export default function HeroSection({
             <span className="text-xs text-stone-500">Perth average</span>
           </div>
           {happyHourCount > 0 && (
-            <div className="bg-white rounded-2xl px-5 py-3 shadow-sm border border-amber/30 bg-amber/5">
-              <span className="block text-2xl sm:text-3xl font-bold font-mono text-amber">{happyHourCount}</span>
-              <span className="text-xs text-stone-500">Happy hours live</span>
-            </div>
+            <Link href="/happy-hour" className="bg-white rounded-2xl px-5 py-3 shadow-sm border border-amber/30 bg-amber/5 hover:border-amber hover:shadow-md transition-all group">
+              <span className="block text-2xl sm:text-3xl font-bold font-mono text-amber group-hover:scale-105 transition-transform">{happyHourCount}</span>
+              <span className="text-xs text-stone-500 group-hover:text-amber transition-colors">Happy hours live →</span>
+            </Link>
           )}
         </div>
 
