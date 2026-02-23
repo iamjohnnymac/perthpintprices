@@ -156,7 +156,7 @@ export default function Home() {
     const cheapest = priced.find(p => p.price === minP)
     const priciest = priced.find(p => p.price === maxP)
     return {
-      total: pubs.length,
+      total: priced.length,
       minPrice: minP,
       maxPriceValue: maxP,
       avgPrice: priced.length > 0 ? (priced.reduce((sum, p) => sum + p.price!, 0) / priced.length).toFixed(2) : '0',

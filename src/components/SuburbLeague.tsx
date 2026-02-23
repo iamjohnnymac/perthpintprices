@@ -56,6 +56,7 @@ type RowItem =
 
 export default function SuburbLeague({ pubs }: { pubs: Pub[] }) {
   const [isExpanded, setIsExpanded] = useState(false)
+  const [sortBy, setSortBy] = useState<'avg' | 'low' | 'high' | 'hh'>('avg')
 
   const suburbs = useMemo<SuburbStats[]>(() => {
     const grouped: Record<string, Pub[]> = {}
@@ -92,12 +93,23 @@ export default function SuburbLeague({ pubs }: { pubs: Pub[] }) {
     return stats
   }, [pubs])
 
+  const sortedSuburbs = useMemo(() => {
+    const sorted = [...suburbs]
+    switch (sortBy) {
+      case 'low': sorted.sort((a, b) => a.minPrice - b.minPrice); break
+      case 'high': sorted.sort((a, b) => b.maxPrice - a.maxPrice); break
+      case 'hh': sorted.sort((a, b) => b.happyHourPct - a.happyHourPct); break
+      default: sorted.sort((a, b) => a.avgPrice - b.avgPrice)
+    }
+    return sorted
+  }, [suburbs, sortBy])
+
   const rows = useMemo<RowItem[]>(() => {
-    const total = suburbs.length
+    const total = sortedSuburbs.length
     const items: RowItem[] = []
     let rowIdx = 0
 
-    suburbs.forEach((s, i) => {
+    sortedSuburbs.forEach((s, i) => {
       const pos = i + 1
 
       if (pos === 5 && total > 5) {
@@ -122,8 +134,8 @@ export default function SuburbLeague({ pubs }: { pubs: Pub[] }) {
     return items
   }, [suburbs])
 
-  const leader = suburbs[0]
-  const total = suburbs.length
+  const leader = sortedSuburbs[0]
+  const total = sortedSuburbs.length
 
   return (
     <div>
@@ -138,9 +150,9 @@ export default function SuburbLeague({ pubs }: { pubs: Pub[] }) {
             </h3>
             <p className="text-xs text-stone-500 mt-0.5">
               {isExpanded
-                ? `${total} suburbs ranked by average pint price — footy ladder style`
+                ? `${total} suburbs ${sortBy === 'avg' ? 'ranked by average' : sortBy === 'low' ? 'sorted by cheapest pint' : sortBy === 'high' ? 'sorted by priciest pint' : 'sorted by happy hour %'} — tap columns to re-sort`
                 : leader
-                  ? `${leader.suburb} leads the table at $${leader.avgPrice.toFixed(2)} avg`
+                  ? `${leader.suburb} leads at $${leader.avgPrice.toFixed(2)} avg — tap to explore`
                   : 'Ranked by average pint price — footy ladder style'}
             </p>
           </div>
@@ -158,10 +170,10 @@ export default function SuburbLeague({ pubs }: { pubs: Pub[] }) {
                     <th className="px-2 py-2 text-center font-semibold w-10">Pos</th>
                     <th className="px-1 py-2 text-center font-semibold w-8">↕</th>
                     <th className="px-2 py-2 text-left font-semibold">Suburb</th>
-                    <th className="px-2 py-2 text-center font-semibold">Avg</th>
-                    <th className="px-2 py-2 text-center font-semibold hidden sm:table-cell">Low</th>
-                    <th className="px-2 py-2 text-center font-semibold hidden sm:table-cell">High</th>
-                    <th className="px-2 py-2 text-center font-semibold hidden md:table-cell">HH%</th>
+                    <th className={`px-2 py-2 text-center font-semibold cursor-pointer hover:text-amber transition-colors ${sortBy === 'avg' ? 'text-amber' : ''}`} onClick={(e) => { e.stopPropagation(); setSortBy('avg') }}>Avg {sortBy === 'avg' && '▾'}</th>
+                    <th className={`px-2 py-2 text-center font-semibold cursor-pointer hover:text-amber transition-colors hidden sm:table-cell ${sortBy === 'low' ? 'text-amber' : ''}`} onClick={(e) => { e.stopPropagation(); setSortBy('low') }}>Low {sortBy === 'low' && '▾'}</th>
+                    <th className={`px-2 py-2 text-center font-semibold cursor-pointer hover:text-amber transition-colors hidden sm:table-cell ${sortBy === 'high' ? 'text-amber' : ''}`} onClick={(e) => { e.stopPropagation(); setSortBy('high') }}>High {sortBy === 'high' && '▾'}</th>
+                    <th className={`px-2 py-2 text-center font-semibold cursor-pointer hover:text-amber transition-colors hidden md:table-cell ${sortBy === 'hh' ? 'text-amber' : ''}`} onClick={(e) => { e.stopPropagation(); setSortBy('hh') }}>HH% {sortBy === 'hh' && '▾'}</th>
                     <th className="px-2 py-2 text-center font-semibold hidden md:table-cell">Form</th>
                   </tr>
                 </thead>
@@ -205,7 +217,7 @@ export default function SuburbLeague({ pubs }: { pubs: Pub[] }) {
               </table>
             </div>
             <p className="text-[10px] text-stone-400 text-center mt-3">
-              Updated weekly. Suburbs need 2+ tracked pubs to qualify.
+              Updated weekly. Suburbs with 2+ tracked pubs. Tap column headers to sort.
             </p>
           </div>
         )}

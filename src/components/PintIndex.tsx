@@ -188,7 +188,7 @@ function DistributionBars({ distribution }: { distribution: Record<string, numbe
 export default function PintIndex() {
   const [snapshots, setSnapshots] = useState<PriceSnapshot[]>([]);
   const [loading, setLoading] = useState(true);
-  const [expanded, setExpanded] = useState(true);
+  const [expanded, setExpanded] = useState(false);
 
   useEffect(() => {
     async function fetchSnapshots() {
@@ -265,62 +265,53 @@ export default function PintIndex() {
           </div>
         </div>
 
-        {/* Expanded details */}
+        {/* Expanded: Trend analysis only (stats are in the header bar) */}
         {expanded && (
           <div className="mt-4 pt-4 border-t border-stone-200 animate-in fade-in slide-in-from-top-2 duration-200">
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-              {/* Key stats */}
-              <div>
-                <div className="text-xs text-stone-500 mb-1">Cheapest Pint</div>
-                <div className="text-lg font-bold font-mono text-amber">${current.min_price.toFixed(2)}</div>
+            {/* Suburb comparison */}
+            <div className="grid grid-cols-2 gap-3">
+              <div className="bg-amber/10 rounded-xl p-3">
+                <div className="text-[10px] text-amber font-semibold uppercase tracking-wide">▼ Cheapest Suburb</div>
+                <div className="text-sm font-bold text-stone-800 mt-1">{current.cheapest_suburb}</div>
+                <div className="text-xs text-amber font-mono">avg ${current.cheapest_suburb_avg.toFixed(2)}/pint</div>
               </div>
-              <div>
-                <div className="text-xs text-stone-500 mb-1">Most Expensive</div>
-                <div className="text-lg font-bold font-mono text-coral">${current.max_price.toFixed(2)}</div>
+              <div className="bg-coral/10 rounded-xl p-3">
+                <div className="text-[10px] text-coral font-semibold uppercase tracking-wide">▲ Priciest Suburb</div>
+                <div className="text-sm font-bold text-stone-800 mt-1">{current.most_expensive_suburb}</div>
+                <div className="text-xs text-coral font-mono">avg ${current.most_expensive_suburb_avg.toFixed(2)}/pint</div>
               </div>
+            </div>
+
+            {/* Year-over-year change */}
+            <div className="flex items-center justify-between mt-4 px-1">
               <div>
-                <div className="text-xs text-stone-500 mb-1">Median Price</div>
-                <div className="text-lg font-bold text-stone-700">${current.median_price.toFixed(2)}</div>
-              </div>
-              <div>
-                <div className="text-xs text-stone-500 mb-1">Overall Change</div>
+                <div className="text-[10px] text-stone-400 uppercase tracking-wide font-medium">Overall Change</div>
                 <div className={`text-lg font-bold font-mono ${yearChange > 0 ? 'text-coral' : 'text-amber'}`}>
                   {yearChange >= 0 ? '+' : ''}{yearPct.toFixed(1)}%
                 </div>
               </div>
-            </div>
-
-            {/* Suburb highlights */}
-            <div className="grid grid-cols-2 gap-4 mt-4">
-              <div className="bg-amber/10 rounded-lg p-3 h-full">
-                <div className="text-xs text-amber font-medium">▼ Cheapest Suburb</div>
-                <div className="text-sm font-bold text-stone-800 mt-1">{current.cheapest_suburb}</div>
-                <div className="text-xs text-amber">avg ${current.cheapest_suburb_avg.toFixed(2)}/pint</div>
-              </div>
-              <div className="bg-coral/10 rounded-lg p-3 h-full">
-                <div className="text-xs text-coral font-medium">▲ Priciest Suburb</div>
-                <div className="text-sm font-bold text-stone-800 mt-1">{current.most_expensive_suburb}</div>
-                <div className="text-xs text-coral">avg ${current.most_expensive_suburb_avg.toFixed(2)}/pint</div>
+              <div className="text-right">
+                <div className="text-[10px] text-stone-400 uppercase tracking-wide font-medium">Median</div>
+                <div className="text-lg font-bold font-mono text-stone-700">${current.median_price.toFixed(2)}</div>
               </div>
             </div>
 
             {/* Price distribution */}
             {current.price_distribution && (
               <div className="mt-4">
-                <div className="text-xs text-stone-500 mb-2">Price Distribution</div>
+                <div className="text-[10px] text-stone-400 uppercase tracking-wide font-medium mb-2">Price Distribution</div>
                 <DistributionBars distribution={current.price_distribution} />
               </div>
             )}
 
             {/* Mobile sparkline */}
             <div className="sm:hidden mt-4" onClick={e => e.stopPropagation()}>
-              <div className="text-xs text-stone-400 mb-1">Price trend · hover to explore</div>
+              <div className="text-[10px] text-stone-400 mb-1">Price trend · tap to explore</div>
               <Sparkline data={sparkData} snapshots={snapshots} width={320} height={50} />
             </div>
 
             <p className="text-[10px] text-stone-400 mt-3 text-center">
-              {E.chart_bar} The Perth Pint Index tracks average beer prices across the metro area. Updated weekly.
-              {' ' + E.bullet + ' '}Click to collapse.
+              {E.chart_bar} Tracking Perth beer prices weekly. Click to collapse.
             </p>
           </div>
         )}
