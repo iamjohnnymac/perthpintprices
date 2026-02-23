@@ -133,8 +133,8 @@ export default function Home() {
       })
       .sort((a, b) => {
         if (showHappyHourOnly) {
-          const aActive = a.isHappyHourNow || isHappyHour(a.happyHour) ? 1 : 0
-          const bActive = b.isHappyHourNow || isHappyHour(b.happyHour) ? 1 : 0
+          const aActive = a.isHappyHourNow ? 1 : 0
+          const bActive = b.isHappyHourNow ? 1 : 0
           if (aActive !== bActive) return bActive - aActive
         }
         if (sortBy === 'price') { if (a.price === null && b.price === null) return 0; if (a.price === null) return 1; if (b.price === null) return -1; return a.price - b.price; }
@@ -161,7 +161,7 @@ export default function Home() {
       minPrice: minP,
       maxPriceValue: maxP,
       avgPrice: priced.length > 0 ? (priced.reduce((sum, p) => sum + p.price!, 0) / priced.length).toFixed(2) : '0',
-      happyHourNow: pubs.filter(p => p.isHappyHourNow || isHappyHour(p.happyHour)).length,
+      happyHourNow: pubs.filter(p => p.isHappyHourNow).length,
       cheapestSuburb: cheapest?.suburb || '',
       cheapestSlug: cheapest?.slug || '',
       priciestSuburb: priciest?.suburb || '',
