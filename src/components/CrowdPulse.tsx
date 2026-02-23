@@ -1,5 +1,7 @@
 'use client'
 
+import Link from 'next/link'
+
 import { useState, useMemo } from 'react'
 import { Pub } from '@/types/pub'
 import { CrowdReport, CROWD_LEVELS } from '@/lib/supabase'
@@ -170,7 +172,7 @@ export default function CrowdPulse({ pubs, crowdReports, userLocation }: CrowdPu
                         <div className="flex items-center gap-2 min-w-0">
                           <span className="text-sm">{levelInfo.emoji}</span>
                           <div className="min-w-0">
-                            <p className="text-xs font-semibold text-stone-800 truncate">{pub.name}</p>
+                            <Link href={`/pub/${pub.slug}`} className="text-xs font-semibold text-stone-800 truncate hover:text-ocean transition-colors block">{pub.name}</Link>
                             <p className="text-[10px] text-stone-400">{pub.suburb}{userLocation && ` · ${formatDistance(getDistanceKm(userLocation.lat, userLocation.lng, pub.lat, pub.lng))}`}</p>
                           </div>
                         </div>
@@ -200,7 +202,7 @@ export default function CrowdPulse({ pubs, crowdReports, userLocation }: CrowdPu
                         <div className="flex items-center gap-2 min-w-0">
                           <span className="text-sm">{levelInfo.emoji}</span>
                           <div className="min-w-0">
-                            <p className="text-xs font-semibold text-stone-800 truncate">{pub.name}</p>
+                            <Link href={`/pub/${pub.slug}`} className="text-xs font-semibold text-stone-800 truncate hover:text-ocean transition-colors block">{pub.name}</Link>
                             <p className="text-[10px] text-stone-400">{pub.suburb}{userLocation && ` · ${formatDistance(getDistanceKm(userLocation.lat, userLocation.lng, pub.lat, pub.lng))}`} {E.bullet} {pub.price !== null ? `$${pub.price.toFixed(2)}` : 'TBC'}</p>
                           </div>
                         </div>

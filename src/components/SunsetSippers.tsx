@@ -1,5 +1,7 @@
 'use client'
 
+import Link from 'next/link'
+
 import { useState, useEffect, useMemo } from 'react'
 import dynamic from 'next/dynamic'
 import { Pub } from '@/types/pub'
@@ -285,7 +287,7 @@ export default function SunsetSippers({ pubs, userLocation }: SunsetSippersProps
               </h4>
               {cheapestSunset && (
                 <span className="text-xs text-emerald-600 font-medium">
-                  Cheapest: {cheapestSunset.price !== null ? `$${cheapestSunset.price.toFixed(2)}` : 'TBC'} at {cheapestSunset.name}
+                  Cheapest: {cheapestSunset.price !== null ? `$${cheapestSunset.price.toFixed(2)}` : 'TBC'} at <Link href={`/pub/${cheapestSunset.slug}`} className="hover:text-ocean transition-colors">{cheapestSunset.name}</Link>
                 </span>
               )}
             </div>
@@ -331,7 +333,7 @@ export default function SunsetSippers({ pubs, userLocation }: SunsetSippersProps
                   <div className="p-2.5 flex-1">
                     <div className="flex items-start justify-between gap-1">
                       <div className="min-w-0">
-                        <p className="text-xs font-semibold text-stone-800 truncate">{pub.name}</p>
+                        <Link href={`/pub/${pub.slug}`} className="text-xs font-semibold text-stone-800 truncate hover:text-ocean transition-colors block">{pub.name}</Link>
                         <p className="text-[10px] text-stone-400">{pub.suburb}{userLocation && ` · ${formatDistance(getDistanceKm(userLocation.lat, userLocation.lng, pub.lat, pub.lng))}`}</p>
                       </div>
                       <span className="text-[10px] text-stone-400 flex-shrink-0 truncate max-w-[70px]">{pub.beerType}</span>

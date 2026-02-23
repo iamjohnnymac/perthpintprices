@@ -1,5 +1,7 @@
 'use client'
 
+import Link from 'next/link'
+
 import { useState, useMemo } from 'react'
 import { Pub } from '@/types/pub'
 import { Card, CardContent } from '@/components/ui/card'
@@ -174,7 +176,7 @@ export default function VenueIntel({ pubs, userLocation }: VenueIntelProps) {
                   {undervalued.map(({ pub, diff }) => (
                     <div key={pub.id} className="flex items-center justify-between p-2 rounded-lg bg-green-50/60 border border-green-100">
                       <div className="min-w-0">
-                        <p className="text-xs font-semibold text-stone-800 truncate">{pub.name}</p>
+                        <Link href={`/pub/${pub.slug}`} className="text-xs font-semibold text-stone-800 truncate hover:text-ocean transition-colors block">{pub.name}</Link>
                         <p className="text-[10px] text-stone-400">{pub.suburb}{userLocation && ` · ${formatDistance(getDistanceKm(userLocation.lat, userLocation.lng, pub.lat, pub.lng))}`}</p>
                       </div>
                       <div className="text-right flex-shrink-0">
@@ -194,7 +196,7 @@ export default function VenueIntel({ pubs, userLocation }: VenueIntelProps) {
                   {overvalued.map(({ pub, diff }) => (
                     <div key={pub.id} className="flex items-center justify-between p-2 rounded-lg bg-red-50/60 border border-red-100">
                       <div className="min-w-0">
-                        <p className="text-xs font-semibold text-stone-800 truncate">{pub.name}</p>
+                        <Link href={`/pub/${pub.slug}`} className="text-xs font-semibold text-stone-800 truncate hover:text-ocean transition-colors block">{pub.name}</Link>
                         <p className="text-[10px] text-stone-400">{pub.suburb}{userLocation && ` · ${formatDistance(getDistanceKm(userLocation.lat, userLocation.lng, pub.lat, pub.lng))}`}</p>
                       </div>
                       <div className="text-right flex-shrink-0">

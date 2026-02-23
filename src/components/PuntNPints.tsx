@@ -1,5 +1,7 @@
 'use client'
 
+import Link from 'next/link'
+
 import { useState, useMemo, useEffect } from 'react'
 import { Pub } from '@/types/pub'
 import InfoTooltip from './InfoTooltip'
@@ -127,7 +129,7 @@ export default function PuntNPints({ pubs, userLocation }: PuntNPintsProps) {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-1.5">
                     <span className="text-[8px] font-black px-1 py-px rounded flex-shrink-0 text-white" style={{ backgroundColor: '#5B2D8E' }}>TAB</span>
-                    <span className="text-xs font-semibold text-stone-800 truncate">{pub.name}</span>
+                    <Link href={`/pub/${pub.slug}`} className="text-xs font-semibold text-stone-800 truncate hover:text-ocean transition-colors">{pub.name}</Link>
                   </div>
                   <div className="flex items-center gap-1.5 mt-0.5">
                     <span className="text-[10px] text-stone-400">{pub.suburb}{userLocation && ` · ${formatDistance(getDistanceKm(userLocation.lat, userLocation.lng, pub.lat, pub.lng))}`}</span>
@@ -153,7 +155,7 @@ export default function PuntNPints({ pubs, userLocation }: PuntNPintsProps) {
               {displayedPairs.map(({ pub, nearestTab, distance }) => (
                 <div key={pub.id} className="flex items-center justify-between p-2 rounded-lg bg-white/40 border border-stone-100">
                   <div className="flex-1 min-w-0">
-                    <span className="text-xs font-semibold text-stone-800 truncate block">{pub.name}</span>
+                    <Link href={`/pub/${pub.slug}`} className="text-xs font-semibold text-stone-800 truncate block hover:text-ocean transition-colors">{pub.name}</Link>
                     <div className="flex items-center gap-1 mt-0.5">
                       <span className="text-[10px] text-stone-400">{pub.suburb}{userLocation && ` · ${formatDistance(getDistanceKm(userLocation.lat, userLocation.lng, pub.lat, pub.lng))}`}</span>
                       {nearestTab && (

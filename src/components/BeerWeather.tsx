@@ -1,5 +1,7 @@
 'use client'
 
+import Link from 'next/link'
+
 import { useState, useEffect, useMemo } from 'react'
 import { Pub } from '@/types/pub'
 import { Card, CardContent } from '@/components/ui/card'
@@ -279,7 +281,7 @@ export default function BeerWeather({ pubs, userLocation }: BeerWeatherProps) {
                     {index + 1}
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="text-xs font-semibold text-stone-800 truncate">{pub.name}</p>
+                    <Link href={`/pub/${pub.slug}`} className="text-xs font-semibold text-stone-800 truncate hover:text-ocean transition-colors block">{pub.name}</Link>
                     <div className="flex items-center gap-2 mt-0.5">
                       <span className="text-[10px] text-stone-400">{pub.suburb}{userLocation && ` · ${formatDistance(getDistanceKm(userLocation.lat, userLocation.lng, pub.lat, pub.lng))}`}</span>
                       <span className="text-[10px] text-stone-300">·</span>

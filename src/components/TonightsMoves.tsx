@@ -1,5 +1,7 @@
 'use client'
 
+import Link from 'next/link'
+
 import { useState, useMemo, useEffect } from 'react'
 import { Pub } from '@/types/pub'
 import { getHappyHourStatus } from '@/lib/happyHour'
@@ -154,7 +156,7 @@ export default function TonightsMoves({ pubs, userLocation }: TonightsMovesProps
                 </h4>
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-bold text-stone-800">{marketTip.name}</p>
+                    <Link href={`/pub/${marketTip.slug}`} className="text-sm font-bold text-stone-800 hover:text-ocean transition-colors">{marketTip.name}</Link>
                     <p className="text-[10px] text-stone-500">{marketTip.suburb}{userLocation && ` · ${formatDistance(getDistanceKm(userLocation.lat, userLocation.lng, marketTip.lat, marketTip.lng))}`} {E.bullet} {marketTip.beerType}</p>
                   </div>
                   <div className="text-right">
@@ -178,7 +180,7 @@ export default function TonightsMoves({ pubs, userLocation }: TonightsMovesProps
                     <div className="flex items-center gap-2 min-w-0">
                       <span className="text-xs font-bold text-stone-400 w-4">{i + 1}</span>
                       <div className="min-w-0">
-                        <p className="text-xs font-semibold text-stone-800 truncate">{pub.name}</p>
+                        <Link href={`/pub/${pub.slug}`} className="text-xs font-semibold text-stone-800 truncate hover:text-ocean transition-colors block">{pub.name}</Link>
                         <p className="text-[10px] text-stone-400">{pub.suburb}{userLocation && ` · ${formatDistance(getDistanceKm(userLocation.lat, userLocation.lng, pub.lat, pub.lng))}`} {E.bullet} {pub.beerType}</p>
                       </div>
                     </div>
@@ -200,7 +202,7 @@ export default function TonightsMoves({ pubs, userLocation }: TonightsMovesProps
                     return (
                       <div key={pub.id} className="flex items-center justify-between p-2 rounded-lg bg-teal/5 border border-teal/20">
                         <div className="min-w-0">
-                          <p className="text-xs font-semibold text-stone-800 truncate">{pub.name}</p>
+                          <Link href={`/pub/${pub.slug}`} className="text-xs font-semibold text-stone-800 truncate hover:text-ocean transition-colors block">{pub.name}</Link>
                           <p className="text-[10px] text-stone-400">{pub.suburb}{userLocation && ` · ${formatDistance(getDistanceKm(userLocation.lat, userLocation.lng, pub.lat, pub.lng))}`}</p>
                         </div>
                         <div className="flex items-center gap-2 flex-shrink-0">
@@ -228,7 +230,7 @@ export default function TonightsMoves({ pubs, userLocation }: TonightsMovesProps
                     return (
                       <div key={pub.id} className="flex items-center justify-between p-2 rounded-lg bg-cyan-50/40 border border-cyan-100">
                         <div className="min-w-0">
-                          <p className="text-xs font-semibold text-stone-800 truncate">{pub.name}</p>
+                          <Link href={`/pub/${pub.slug}`} className="text-xs font-semibold text-stone-800 truncate hover:text-ocean transition-colors block">{pub.name}</Link>
                           <p className="text-[10px] text-stone-400">{pub.suburb}{userLocation && ` · ${formatDistance(getDistanceKm(userLocation.lat, userLocation.lng, pub.lat, pub.lng))}`}</p>
                         </div>
                         <div className="flex items-center gap-2 flex-shrink-0">

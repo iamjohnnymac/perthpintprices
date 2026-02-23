@@ -181,9 +181,9 @@ export default function MapComponent({ pubs, isHappyHour, userLocation, totalPub
             </Tooltip>
             <Popup>
               <div style={{ padding: '8px', minWidth: '200px' }}>
-                <h3 style={{ fontWeight: 700, fontSize: '16px', marginBottom: '4px', color: '#1f2937' }}>
+                <a href={`/pub/${pub.slug}`} style={{ fontWeight: 700, fontSize: '16px', marginBottom: '4px', color: '#1f2937', textDecoration: 'none', display: 'block' }}>
                   {pub.name}
-                </h3>
+                </a>
                 <p style={{ color: '#0891B2', fontWeight: 600, marginBottom: '4px' }}>
                   {pub.price !== null ? `$${pub.price.toFixed(2)}` : 'TBC'} - {pub.beerType}
                 </p>
@@ -217,6 +217,20 @@ export default function MapComponent({ pubs, isHappyHour, userLocation, totalPub
                     Visit website {'\u2192'}
                   </a>
                 )}
+                <a
+                  href={`/pub/${pub.slug}`}
+                  style={{
+                    color: '#0891B2',
+                    fontSize: '13px',
+                    marginTop: '4px',
+                    display: 'inline-block',
+                    textDecoration: 'none',
+                    fontWeight: 600,
+                    marginLeft: pub.website ? '12px' : '0'
+                  }}
+                >
+                  View Details {'\u2192'}
+                </a>
               </div>
             </Popup>
           </Marker>

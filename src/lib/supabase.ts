@@ -116,6 +116,7 @@ export async function getPubs(): Promise<Pub[]> {
       generateHappyHourText(row.happy_hour_days, row.happy_hour_start, row.happy_hour_end)
     
     return {
+      slug: row.slug || '',
       id: row.id,
       name: row.name,
       suburb: row.suburb,
@@ -141,6 +142,130 @@ export async function getPubs(): Promise<Pub[]> {
       happyHourEnd: row.happy_hour_end || null,
       lastVerified: row.last_verified || null,
       // Computed live status
+      isHappyHourNow: hhStatus.isActive,
+      happyHourLabel: hhStatus.happyHourLabel,
+      happyHourMinutesRemaining: hhStatus.minutesRemaining,
+    }
+  })
+}
+
+// Fetch a single pub by slug
+export async function getPubBySlug(slug: string): Promise<Pub | null> {
+  const { data, error } = await supabase
+    .from('pubs')
+    .select('*')
+    .eq('slug', slug)
+    .single()
+  
+  if (error || !data) {
+    console.error('Error fetching pub:', error)
+    return null
+  }
+  
+  const row = data
+  const regularPrice = row.price != null ? Number(row.price) : null
+  const hhPrice = row.happy_hour_price != null ? Number(row.happy_hour_price) : null
+  
+  const hhStatus = getHappyHourStatus({
+    price: regularPrice,
+    happyHourPrice: hhPrice,
+    happyHourDays: row.happy_hour_days || null,
+    happyHourStart: row.happy_hour_start || null,
+    happyHourEnd: row.happy_hour_end || null,
+  })
+  
+  const happyHourText = row.happy_hour || 
+    generateHappyHourText(row.happy_hour_days, row.happy_hour_start, row.happy_hour_end)
+  
+  return {
+    id: row.id,
+    slug: row.slug || '',
+    name: row.name,
+    suburb: row.suburb,
+    price: hhStatus.effectivePrice,
+    regularPrice: regularPrice,
+    address: row.address || '',
+    website: row.website || null,
+    lat: row.lat || 0,
+    lng: row.lng || 0,
+    beerType: row.beer_type || '',
+    happyHour: happyHourText,
+    description: row.description || null,
+    lastUpdated: row.last_updated || undefined,
+    sunsetSpot: row.sunset_spot || false,
+    priceVerified: row.price_verified !== false,
+    hasTab: row.has_tab === true,
+    kidFriendly: row.kid_friendly === true,
+    happyHourPrice: hhPrice,
+    happyHourDays: row.happy_hour_days || null,
+    happyHourStart: row.happy_hour_start || null,
+    happyHourEnd: row.happy_hour_end || null,
+    lastVerified: row.last_verified || null,
+    isHappyHourNow: hhStatus.isActive,
+    happyHourLabel: hhStatus.happyHourLabel,
+    happyHourMinutesRemaining: hhStatus.minutesRemaining,
+  }
+}
+
+// Fetch all pub slugs (for generateStaticParams)
+export async function getAllPubSlugs(): Promise<string[]> {
+  const { data, error } = await supabase
+    .from('pubs')
+    .select('slug')
+    .order('slug')
+  
+  if (error || !data) return []
+  return data.map(row => row.slug).filter(Boolean)
+}
+
+// Fetch nearby pubs (same suburb, excluding current)
+export async function getNearbyPubs(suburb: string, excludeId: number, limit: number = 4): Promise<Pub[]> {
+  const { data, error } = await supabase
+    .from('pubs')
+    .select('*')
+    .eq('suburb', suburb)
+    .neq('id', excludeId)
+    .order('price', { ascending: true, nullsFirst: false })
+    .limit(limit)
+  
+  if (error || !data) return []
+  
+  return data.map(row => {
+    const regularPrice = row.price != null ? Number(row.price) : null
+    const hhPrice = row.happy_hour_price != null ? Number(row.happy_hour_price) : null
+    const hhStatus = getHappyHourStatus({
+      price: regularPrice,
+      happyHourPrice: hhPrice,
+      happyHourDays: row.happy_hour_days || null,
+      happyHourStart: row.happy_hour_start || null,
+      happyHourEnd: row.happy_hour_end || null,
+    })
+    const happyHourText = row.happy_hour || generateHappyHourText(row.happy_hour_days, row.happy_hour_start, row.happy_hour_end)
+    
+    return {
+      id: row.id,
+      slug: row.slug || '',
+      name: row.name,
+      suburb: row.suburb,
+      price: hhStatus.effectivePrice,
+      regularPrice: regularPrice,
+      address: row.address || '',
+      website: row.website || null,
+      lat: row.lat || 0,
+      lng: row.lng || 0,
+      beerType: row.beer_type || '',
+      happyHour: happyHourText,
+      description: row.description || null,
+      lastUpdated: row.last_updated || undefined,
+      sunsetSpot: row.sunset_spot || false,
+      priceVerified: row.price_verified !== false,
+      hasTab: row.has_tab === true,
+      kidFriendly: row.kid_friendly === true,
+      happyHourPrice: hhPrice,
+      happyHourDays: row.happy_hour_days || null,
+      happyHourStart: row.happy_hour_start || null,
+      happyHourEnd: row.happy_hour_end || null,
+      lastVerified: row.last_verified || null,
       isHappyHourNow: hhStatus.isActive,
       happyHourLabel: hhStatus.happyHourLabel,
       happyHourMinutesRemaining: hhStatus.minutesRemaining,

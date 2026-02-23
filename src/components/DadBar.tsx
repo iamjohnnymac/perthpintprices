@@ -1,5 +1,7 @@
 'use client'
 
+import Link from 'next/link'
+
 import { useState, useMemo } from 'react'
 import { Pub } from '@/types/pub'
 import { getDistanceKm, formatDistance } from '@/lib/location'
@@ -128,7 +130,7 @@ export default function DadBar({ pubs, userLocation }: { pubs: Pub[], userLocati
             </div>
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-1.5">
-                <p className="text-xs font-semibold text-stone-800 truncate">{pub.name}</p>
+                <Link href={`/pub/${pub.slug}`} className="text-xs font-semibold text-stone-800 truncate hover:text-ocean transition-colors block">{pub.name}</Link>
               </div>
               <div className="flex items-center gap-1 mt-0.5">
                 <svg width="8" height="8" viewBox="0 0 8 8" fill="none" className="flex-shrink-0">

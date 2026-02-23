@@ -12,11 +12,11 @@ export const metadata: Metadata = {
     apple: '/apple-touch-icon.png',
   },
   title: "PintDex — Perth's Beer Market | Find Cheap Pints Near You",
-  description: "Track real-time pint prices across 194 Perth pubs and 89 suburbs. Find happy hours, cheap pints, and the best deals — like a stock exchange for beer.",
+  description: "Track real-time pint prices across 200+ Perth pubs and 90 suburbs. Find happy hours, cheap pints, and the best deals — Perth\'s beer price tracker.",
   keywords: 'Perth, pint prices, beer, pubs, happy hour, Western Australia, cheap drinks, PintDex',
   openGraph: {
     title: "PintDex — Perth's Beer Market",
-    description: "Real-time pint prices across 194 Perth pubs. Avg: $8.97. Cheapest: $6.00.",
+    description: "Real-time pint prices across 200+ Perth pubs. Avg: $9.20. Cheapest: $6.00.",
     url: 'https://pintdex.com.au',
     siteName: 'PintDex',
     locale: 'en_AU',
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: "PintDex — Perth's Beer Market",
-    description: "Real-time pint prices across 194 Perth pubs. Find cheap pints near you.",
+    description: "Real-time pint prices across 200+ Perth pubs. Find cheap pints near you.",
   },
 }
 

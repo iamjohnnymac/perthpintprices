@@ -1,4 +1,5 @@
 'use client'
+import Link from 'next/link'
 
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -119,7 +120,7 @@ export default function PubCard({
               >
                 <DirectionsIcon />
               </a>
-              <h3 className="font-bold text-stone-900 truncate">{pub.name}</h3>
+              <Link href={`/pub/${pub.slug}`} className="hover:text-ocean transition-colors"><h3 className="font-bold text-stone-900 truncate">{pub.name}</h3></Link>
             </div>
             <p className="text-xs text-stone-500">{pub.suburb}{distance && <span className="text-stone-400 text-xs"> · {distance}</span>}</p>
           </div>

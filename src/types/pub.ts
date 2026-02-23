@@ -1,5 +1,6 @@
 export interface Pub {
   id: number
+  slug: string
   name: string
   address: string
   suburb: string
