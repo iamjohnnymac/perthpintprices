@@ -19,7 +19,7 @@ const tabs: { id: TabId; label: string; subtitle: string; emoji: string }[] = [
   {
     id: 'market',
     label: 'Insights',
-    subtitle: 'Trends & analytics',
+    subtitle: 'Trends & data',
     emoji: '📊',
   },
   {

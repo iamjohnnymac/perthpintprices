@@ -71,7 +71,7 @@ export default function PriceHistory({ pubId, currentPrice }: PriceHistoryProps)
   const maxP = Math.max(...prices) + 0.5
   const range = maxP - minP || 1
   const w = 200
-  const h = 48
+  const h = 64
   const padding = 4
 
   const points = prices.map((p, i) => {
@@ -110,7 +110,7 @@ export default function PriceHistory({ pubId, currentPrice }: PriceHistoryProps)
       </div>
 
       {/* Mini SVG chart */}
-      <svg viewBox={`0 0 ${w} ${h}`} className="w-full h-12" preserveAspectRatio="none">
+      <svg viewBox={`0 0 ${w} ${h}`} className="w-full h-16" preserveAspectRatio="none">
         <path d={fillPath} fill={fillColor} />
         <polyline points={points} fill="none" stroke={lineColor} strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" />
         {/* Current price dot */}

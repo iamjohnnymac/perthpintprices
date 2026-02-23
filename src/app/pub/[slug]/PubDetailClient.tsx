@@ -126,7 +126,7 @@ export default function PubDetailClient({ pub, nearbyPubs }: PubDetailClientProp
         </nav>
 
         {/* Two-column layout */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-start">
           {/* Left column — info */}
           <div className="space-y-6">
             <div>
@@ -210,7 +210,7 @@ export default function PubDetailClient({ pub, nearbyPubs }: PubDetailClientProp
                     <div className="flex items-center gap-3 p-3 rounded-xl border border-stone-200/50" style={{ background: 'linear-gradient(to right, #f3eef8, #f8f4fb)' }}>
                       <span className="text-2xl">🏇</span>
                       <div>
-                        <p className="text-sm font-semibold text-charcoal">Punt N Pints</p>
+                        <p className="text-sm font-semibold text-charcoal">Punt & Pints</p>
                         <p className="text-xs text-stone-500">TAB venue — watch the races with a cold one</p>
                       </div>
                     </div>
@@ -291,7 +291,7 @@ export default function PubDetailClient({ pub, nearbyPubs }: PubDetailClientProp
           </div>
 
           {/* Right column — map/visual */}
-          <div className="rounded-2xl overflow-hidden h-[350px] border border-stone-200/60 shadow-sm">
+          <div className="md:sticky md:top-24 rounded-2xl overflow-hidden h-[350px] border border-stone-200/60 shadow-sm">
             <PubDetailMap lat={pub.lat} lng={pub.lng} name={pub.name} price={pub.price} />
           </div>
         </div>

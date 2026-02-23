@@ -232,7 +232,7 @@ export default function Home() {
                 className="flex-shrink-0 flex items-center gap-1.5 px-3.5 py-2 bg-charcoal hover:bg-charcoal/90 text-white rounded-full font-bold transition-all text-xs"
               >
                 <span className="hidden sm:inline">+ Submit a Price</span>
-                <span className="sm:hidden text-base leading-none font-bold">+</span>
+                <span className="sm:hidden text-xs font-bold">+ Price</span>
               </button>
             </div>
 
@@ -282,7 +282,7 @@ export default function Home() {
           )}
         </header>
 
-        <div ref={contentRef} className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-6">
+        <div ref={contentRef} className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-6 min-h-[80vh]">
           {/* ═══ PUBS TAB ═══ */}
           {activeTab === 'pubs' && (
             <>
