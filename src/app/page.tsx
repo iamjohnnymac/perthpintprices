@@ -171,7 +171,8 @@ export default function Home() {
 
   function scrollToApp() {
     setHeroVisible(false)
-    appRef.current?.scrollIntoView({ behavior: 'smooth' })
+    // After hero unmounts, app section is at top — just scroll to 0
+    setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 50)
   }
 
   if (isLoading) {
@@ -195,7 +196,7 @@ export default function Home() {
           venueCount={stats.total}
           suburbCount={suburbs.length}
           happyHourCount={stats.happyHourNow}
-          onExploreClick={scrollToApp}
+          onExploreClick={() => { setActiveTab('pubs'); scrollToApp(); }}
           onDiscoverClick={() => { scrollToApp(); setActiveTab('explore'); }}
           onSubmitClick={() => setShowSubmitForm(true)}
         />
