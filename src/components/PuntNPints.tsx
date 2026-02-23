@@ -22,6 +22,7 @@ interface PuntNPintsProps {
 }
 
 export default function PuntNPints({ pubs, userLocation }: PuntNPintsProps) {
+  const [isSectionOpen, setIsSectionOpen] = useState(false)
   const [isExpanded, setIsExpanded] = useState(false)
   const [tabLocations, setTabLocations] = useState<TabLocation[]>([])
 
@@ -86,10 +87,10 @@ export default function PuntNPints({ pubs, userLocation }: PuntNPintsProps) {
   const displayedPairs = isExpanded ? nearbyPairs.slice(0, 10) : nearbyPairs.slice(0, 3)
 
   return (
-    <Card className="bg-white rounded-2xl shadow-[0_2px_12px_rgba(0,0,0,0.06)] border border-stone-200/40 h-full">
+    <Card className="bg-white rounded-2xl shadow-[0_2px_12px_rgba(0,0,0,0.06)] border border-stone-200/40 h-full cursor-pointer transition-all duration-300 overflow-hidden">
       <CardContent className="p-4">
         {/* Header */}
-        <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center justify-between mb-3" onClick={() => setIsSectionOpen(!isSectionOpen)}>
           <div className="flex items-center gap-2">
             <div className="w-7 h-7 rounded-md flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #5B2D8E, #7B3FAE)' }}>
               <span className="text-white font-black text-[9px] leading-none tracking-tight">TAB</span>
@@ -100,12 +101,21 @@ export default function PuntNPints({ pubs, userLocation }: PuntNPintsProps) {
             </div>
             <InfoTooltip text="Shows pubs with TAB betting facilities on-site, plus cheap pints near dedicated TAB agencies. Data sourced from TABtouch WA locations." />
           </div>
-          <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full border" style={{ backgroundColor: '#F0E6F6', borderColor: '#D4B8E8' }}>
-            <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: '#5B2D8E' }} />
-            <span className="text-[10px] font-medium" style={{ color: '#5B2D8E' }}>{tabPubs.length} TAB Pubs</span>
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full border" style={{ backgroundColor: '#F0E6F6', borderColor: '#D4B8E8' }}>
+              <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: '#5B2D8E' }} />
+              <span className="text-[10px] font-medium" style={{ color: '#5B2D8E' }}>{tabPubs.length} TAB Pubs</span>
+            </div>
+            {!isSectionOpen && tabPubs[0]?.price && (
+              <span className="text-sm font-bold" style={{ color: '#F58220' }}>from ${'{'}tabPubs[0].price.toFixed(2){'}'}</span>
+            )}
+            <svg width="16" height="16" viewBox="0 0 16 16" className={`text-stone-400 transition-transform ${'{'}isSectionOpen ? 'rotate-180' : ''{'}'}`}>
+              <path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+            </svg>
           </div>
         </div>
 
+        {isSectionOpen && (<>
         {/* TAB Pubs — Cheapest pints where you can bet on-site */}
         <div className="mb-3">
           <p className="text-[10px] font-semibold text-stone-500 uppercase tracking-wider mb-1.5">
@@ -176,6 +186,7 @@ export default function PuntNPints({ pubs, userLocation }: PuntNPintsProps) {
             </svg>
           </button>
         )}
+      </>)}
       </CardContent>
     </Card>
   )

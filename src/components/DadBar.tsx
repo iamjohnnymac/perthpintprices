@@ -34,6 +34,7 @@ const PLAYGROUND_NOTES: Record<number, string> = {
 }
 
 export default function DadBar({ pubs, userLocation }: { pubs: Pub[], userLocation?: { lat: number; lng: number } | null }) {
+  const [isExpanded, setIsExpanded] = useState(false)
   const [showAll, setShowAll] = useState(false)
 
   const dadPubs = useMemo(() => {
@@ -55,7 +56,7 @@ export default function DadBar({ pubs, userLocation }: { pubs: Pub[], userLocati
   const displayPubs = showAll ? dadPubs : dadPubs.slice(0, 5)
 
   return (
-    <Card className="bg-white rounded-2xl shadow-[0_2px_12px_rgba(0,0,0,0.06)] border border-stone-200/40">
+    <Card className="bg-white rounded-2xl shadow-[0_2px_12px_rgba(0,0,0,0.06)] border border-stone-200/40 cursor-pointer transition-all duration-300 overflow-hidden" onClick={() => setIsExpanded(!isExpanded)}>
       <CardContent className="p-4">
       {/* Header */}
       <div className="flex items-start justify-between mb-3">
@@ -76,11 +77,20 @@ export default function DadBar({ pubs, userLocation }: { pubs: Pub[], userLocati
             <p className="text-xs text-stone-500">Playgrounds for them. Pints for you.</p>
           </div>
         </div>
-        <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-50 border border-amber-200">
-          <span className="text-[10px] font-semibold text-amber-700">{dadPubs.length} VENUES</span>
-        </div>
+        <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-50 border border-amber-200">
+              <span className="text-[10px] font-semibold text-amber-700">{dadPubs.length} VENUES</span>
+            </div>
+            {!isExpanded && dadPubs[0]?.price && (
+              <span className="text-sm font-bold text-amber-700">from ${'{'}dadPubs[0].price.toFixed(2){'}'}</span>
+            )}
+            <svg width="16" height="16" viewBox="0 0 16 16" className={`text-stone-400 transition-transform ${'{'}isExpanded ? 'rotate-180' : ''{'}'}`}>
+              <path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+            </svg>
+          </div>
       </div>
 
+      {isExpanded && (<>
       {/* Dad joke */}
       <div className="bg-amber-50/60 border border-amber-100 rounded-lg p-2.5 mb-3">
         <div className="flex items-start gap-2">
@@ -161,6 +171,7 @@ export default function DadBar({ pubs, userLocation }: { pubs: Pub[], userLocati
       <p className="text-[10px] text-stone-400 text-center mt-2">
         Sources: Buggybuddys, Urban List Perth {"·"} All venues verified for playground facilities
       </p>
+      </>)}
       </CardContent>
     </Card>
   )
