@@ -59,20 +59,20 @@ export default function PubCard({
           )}
 
           {/* Price badge — bottom left, overlapping image */}
-          <span className="absolute bottom-3 left-3 font-mono font-bold text-lg bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full shadow-sm">
+          <span className="absolute bottom-3 left-3 z-[1000] font-mono font-bold text-lg bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full shadow-sm">
             {pub.price !== null ? `$${pub.price.toFixed(2)}` : 'TBC'}
           </span>
 
           {/* Happy Hour badge — top left */}
           {happyHourStatus.isActive && (
-            <Badge className="absolute top-3 left-3 bg-amber hover:bg-amber text-white animate-pulse text-xs">
+            <Badge className="absolute top-3 left-3 z-[1000] bg-amber hover:bg-amber text-white animate-pulse text-xs">
               {E.party} HAPPY HOUR
             </Badge>
           )}
 
           {/* TAB badge — top right */}
           {pub.hasTab && (
-            <Badge className="absolute top-3 right-3 text-white text-[10px] px-2 py-0.5" style={{ backgroundColor: '#5B2D8E' }}>
+            <Badge className="absolute top-3 right-3 z-[1000] text-white text-[10px] px-2 py-0.5" style={{ backgroundColor: '#5B2D8E' }}>
               TAB
             </Badge>
           )}
