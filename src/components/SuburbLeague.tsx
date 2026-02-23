@@ -111,10 +111,10 @@ export default function SuburbLeague({ pubs }: { pubs: Pub[] }) {
 
   return (
     <div>
-      <div className="bg-white rounded-2xl shadow-[0_2px_12px_rgba(0,0,0,0.06)] border border-stone-200/40 overflow-hidden">
+      <div className="bg-white rounded-2xl shadow-[0_2px_16px_rgba(0,0,0,0.08)] border border-stone-200/40 overflow-hidden">
         <button
           onClick={() => setIsExpanded(!isExpanded)}
-          className="w-full text-left p-4 flex items-center justify-between hover:bg-stone-100/40 transition-colors"
+          className="w-full text-left p-4 flex items-center justify-between hover:bg-stone-50 transition-all active:scale-[0.995]"
         >
           <div>
             <h3 className="text-sm font-bold font-heading text-stone-800 flex items-center gap-2">

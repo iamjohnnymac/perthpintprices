@@ -201,10 +201,10 @@ export default function SunsetSippers({ pubs, userLocation }: SunsetSippersProps
 
   return (
     <Card
-      className="bg-white rounded-2xl shadow-[0_2px_12px_rgba(0,0,0,0.06)] border border-stone-200/40 cursor-pointer transition-all duration-300"
+      className="bg-white rounded-2xl shadow-[0_2px_16px_rgba(0,0,0,0.08)] border border-stone-200/40 cursor-pointer transition-all duration-300 hover:shadow-[0_4px_20px_rgba(0,0,0,0.12)] active:scale-[0.995]"
       onClick={() => setIsExpanded(!isExpanded)}
     >
-      <CardContent className="p-4">
+      <CardContent className="p-4 sm:p-5">
         {/* Compact Header */}
         <div className="flex items-center justify-between overflow-visible">
           <div className="flex items-center gap-3">

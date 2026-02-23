@@ -58,8 +58,8 @@ export default function DadBar({ pubs, userLocation }: { pubs: Pub[], userLocati
   const displayPubs = showAll ? dadPubs : dadPubs.slice(0, 5)
 
   return (
-    <Card className="bg-white rounded-2xl shadow-[0_2px_12px_rgba(0,0,0,0.06)] border border-stone-200/40 cursor-pointer transition-all duration-300 overflow-hidden" onClick={() => setIsExpanded(!isExpanded)}>
-      <CardContent className="p-4">
+    <Card className="bg-white rounded-2xl shadow-[0_2px_16px_rgba(0,0,0,0.08)] border border-stone-200/40 cursor-pointer transition-all duration-300 hover:shadow-[0_4px_20px_rgba(0,0,0,0.12)] active:scale-[0.995] overflow-hidden" onClick={() => setIsExpanded(!isExpanded)}>
+      <CardContent className="p-4 sm:p-5">
       {/* Header */}
       <div className="flex items-start justify-between mb-3">
         <div className="flex items-center gap-2.5">

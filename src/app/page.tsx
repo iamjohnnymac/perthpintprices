@@ -273,7 +273,7 @@ export default function Home() {
           )}
         </header>
 
-        <div className="max-w-7xl mx-auto px-4 py-5">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
           {/* ═══ PUBS TAB ═══ */}
           {activeTab === 'pubs' && (
             <>
@@ -312,7 +312,7 @@ export default function Home() {
 
           {/* ═══ MARKET TAB ═══ */}
           {activeTab === 'market' && (
-            <div className="space-y-4">
+            <div className="space-y-5">
               <PintIndex />
               <SuburbLeague pubs={pubs} />
               <TonightsMoves pubs={pubs} userLocation={userLocation} />
@@ -323,7 +323,7 @@ export default function Home() {
 
           {/* ═══ EXPLORE TAB ═══ */}
           {activeTab === 'explore' && (
-            <div className="space-y-4">
+            <div className="space-y-5">
               <BeerWeather pubs={pubs} userLocation={userLocation} />
               <SunsetSippers pubs={pubs} userLocation={userLocation} />
               <PuntNPints pubs={pubs} userLocation={userLocation} />
