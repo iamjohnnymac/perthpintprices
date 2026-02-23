@@ -204,7 +204,6 @@ export default function Home() {
 
       {/* ═══ APP SECTION ═══ */}
       <div ref={appRef}>
-        <PriceTicker pubs={pubs} />
         <header className="bg-cream sticky top-0 z-[1000] shadow-[0_1px_4px_rgba(0,0,0,0.06)]">
           <div className="max-w-7xl mx-auto px-4 pt-2.5 pb-0">
             <div className="flex items-center justify-between">
@@ -366,6 +365,8 @@ export default function Home() {
         <SocialProof venueCount={stats.total} suburbCount={suburbs.length} avgPrice={stats.avgPrice} />
         <FAQ />
         <Footer />
+      <div className="h-9" /> {/* Spacer for fixed bottom ticker */}
+      <PriceTicker pubs={pubs} />
       </div>
 
       <SubmitPubForm isOpen={showSubmitForm} onClose={() => setShowSubmitForm(false)} />
