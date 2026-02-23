@@ -1,7 +1,7 @@
 "use client"
 
 import { Search, LayoutGrid, List, Clock, Map, SlidersHorizontal, ChevronDown, X, MapPin } from "lucide-react"
-import { useState, useRef, useEffect } from "react"
+import { useRef, useEffect } from "react"
 import { cn } from "@/lib/utils"
 
 interface FilterSectionProps {
@@ -72,20 +72,20 @@ export function FilterSection({
   const totalActive = activeFilterCount + (isNearestActive ? 1 : 0)
 
   return (
-    <div className="border-t border-stone-100/80 bg-white/95">
+    <div className="border-t border-gray-100 bg-white">
       {/* Row 1: Search + Suburb */}
-      <div className="max-w-7xl mx-auto px-4 pt-2 pb-1.5 flex items-center gap-2">
+      <div className="max-w-7xl mx-auto px-4 pt-2.5 pb-1.5 flex items-center gap-2">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-stone-400 pointer-events-none" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-gray-400 pointer-events-none" />
           <input
             type="text"
             placeholder="Search pubs or suburbs..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-8 pr-8 py-2 text-sm bg-stone-50 border border-stone-200 rounded-xl text-stone-700 placeholder-stone-400 focus:outline-none focus:ring-1 focus:ring-amber focus:border-amber transition-colors"
+            className="w-full pl-8 pr-8 py-2 text-sm bg-gray-50 border border-gray-200 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors"
           />
           {searchTerm && (
-            <button onClick={() => setSearchTerm('')} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-600">
+            <button onClick={() => setSearchTerm('')} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
               <X className="h-3.5 w-3.5" />
             </button>
           )}
@@ -93,7 +93,7 @@ export function FilterSection({
         <select
           value={selectedSuburb || 'all'}
           onChange={(e) => setSelectedSuburb(e.target.value)}
-          className="text-sm bg-stone-50 border border-stone-200 rounded-xl px-3 py-2 text-stone-600 focus:outline-none focus:ring-1 focus:ring-amber focus:border-amber transition-colors cursor-pointer flex-shrink-0 max-w-[130px] sm:max-w-[160px]"
+          className="text-sm bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-colors cursor-pointer flex-shrink-0 max-w-[130px] sm:max-w-[160px]"
         >
           <option value="all">All Suburbs</option>
           {suburbs.map(suburb => (
@@ -102,18 +102,18 @@ export function FilterSection({
         </select>
       </div>
 
-      {/* Row 2: Pill controls + Filters button (separate containers to avoid overflow clipping) */}
-      <div className="max-w-7xl mx-auto px-4 pb-2">
+      {/* Row 2: Pill controls + Filters button */}
+      <div className="max-w-7xl mx-auto px-4 pb-2.5">
         <div className="flex items-center gap-2">
           {/* Scrollable pills area */}
           <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide flex-1 min-w-0">
             {/* Cards / List toggle */}
-            <div className="flex items-center bg-stone-100 rounded-lg p-0.5 gap-0.5 flex-shrink-0">
+            <div className="flex items-center bg-gray-100 rounded-lg p-0.5 gap-0.5 flex-shrink-0">
               <button
                 onClick={() => setViewMode('cards')}
                 className={cn(
                   "flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-medium transition-all whitespace-nowrap",
-                  viewMode === 'cards' ? "bg-white text-stone-800 shadow-sm" : "text-stone-500 hover:text-stone-700"
+                  viewMode === 'cards' ? "bg-white text-gray-900 shadow-sm" : "text-gray-500 hover:text-gray-700"
                 )}
               >
                 <LayoutGrid className="h-3.5 w-3.5" />
@@ -123,7 +123,7 @@ export function FilterSection({
                 onClick={() => setViewMode('list')}
                 className={cn(
                   "flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-medium transition-all whitespace-nowrap",
-                  viewMode === 'list' ? "bg-white text-stone-800 shadow-sm" : "text-stone-500 hover:text-stone-700"
+                  viewMode === 'list' ? "bg-white text-gray-900 shadow-sm" : "text-gray-500 hover:text-gray-700"
                 )}
               >
                 <List className="h-3.5 w-3.5" />
@@ -131,7 +131,7 @@ export function FilterSection({
               </button>
             </div>
 
-            <div className="h-5 w-px bg-stone-200 flex-shrink-0" />
+            <div className="h-4 w-px bg-gray-200 flex-shrink-0" />
 
             {/* Happy Hour pill */}
             <button
@@ -139,23 +139,23 @@ export function FilterSection({
               className={cn(
                 "flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all border flex-shrink-0 whitespace-nowrap",
                 showHappyHourOnly
-                  ? "bg-amber text-white border-amber"
-                  : "bg-white text-stone-500 border-stone-200 hover:border-stone-300 hover:text-stone-700"
+                  ? "bg-brand-500 text-white border-brand-500"
+                  : "bg-white text-gray-600 border-gray-200 hover:border-gray-300 hover:text-gray-800"
               )}
             >
               <Clock className="h-3 w-3" />
               Happy Hour
               {stats.happyHourNow > 0 && (
                 <span className={cn(
-                  "text-xs rounded-full px-1.5 py-0 font-semibold",
-                  showHappyHourOnly ? "bg-white/20 text-white" : "bg-stone-200 text-stone-600"
+                  "text-[10px] rounded-full px-1.5 font-semibold",
+                  showHappyHourOnly ? "bg-white/20 text-white" : "bg-gray-100 text-gray-600"
                 )}>
                   {stats.happyHourNow}
                 </span>
               )}
             </button>
 
-            {/* Nearest pill — visible when location is available */}
+            {/* Nearest pill */}
             {hasLocation && (
               <button
                 onClick={() => setSortBy(sortBy === 'nearest' ? 'price' : 'nearest')}
@@ -163,7 +163,7 @@ export function FilterSection({
                   "flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all border flex-shrink-0 whitespace-nowrap",
                   isNearestActive
                     ? "bg-blue-500 text-white border-blue-500"
-                    : "bg-white text-stone-500 border-stone-200 hover:border-stone-300 hover:text-stone-700"
+                    : "bg-white text-gray-600 border-gray-200 hover:border-gray-300 hover:text-gray-800"
                 )}
               >
                 <MapPin className="h-3 w-3" />
@@ -178,8 +178,8 @@ export function FilterSection({
                 className={cn(
                   "flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all border flex-shrink-0 whitespace-nowrap",
                   showMiniMaps
-                    ? "bg-amber text-white border-amber"
-                    : "bg-white text-stone-500 border-stone-200 hover:border-stone-300 hover:text-stone-700"
+                    ? "bg-brand-500 text-white border-brand-500"
+                    : "bg-white text-gray-600 border-gray-200 hover:border-gray-300 hover:text-gray-800"
                 )}
               >
                 <Map className="h-3 w-3" />
@@ -188,21 +188,21 @@ export function FilterSection({
             )}
           </div>
 
-          {/* Filters button — OUTSIDE scroll container so dropdown isn't clipped */}
+          {/* Filters button */}
           <div className="relative flex-shrink-0" ref={dropdownRef}>
             <button
               onClick={() => setShowMoreFilters(!showMoreFilters)}
               className={cn(
                 "flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all border whitespace-nowrap",
                 showMoreFilters || activeFilterCount > 0
-                  ? "bg-amber text-white border-stone-800"
-                  : "bg-white text-stone-500 border-stone-200 hover:border-stone-300 hover:text-stone-700"
+                  ? "bg-gray-900 text-white border-gray-900"
+                  : "bg-white text-gray-600 border-gray-200 hover:border-gray-300 hover:text-gray-800"
               )}
             >
               <SlidersHorizontal className="h-3 w-3" />
               Filters
               {activeFilterCount > 0 && (
-                <span className="bg-amber text-white text-xs rounded-full w-4 h-4 flex items-center justify-center font-bold">
+                <span className="bg-brand-500 text-white text-[10px] rounded-full w-4 h-4 flex items-center justify-center font-bold">
                   {activeFilterCount}
                 </span>
               )}
@@ -210,10 +210,10 @@ export function FilterSection({
             </button>
 
             {showMoreFilters && (
-              <div className="absolute right-0 top-full mt-1.5 w-72 bg-white rounded-xl shadow-xl border border-stone-200 p-4 z-50">
+              <div className="absolute right-0 top-full mt-1.5 w-72 bg-white rounded-xl shadow-lg border border-gray-200 p-4 z-50">
                 {/* Sort By */}
                 <div className="mb-4">
-                  <label className="block text-xs font-semibold text-stone-400 uppercase tracking-wide mb-2">Sort By</label>
+                  <label className="block text-[11px] font-semibold text-gray-400 uppercase tracking-wider mb-2">Sort By</label>
                   <div className="flex gap-1.5">
                     {([...(['price', 'name', 'suburb'] as const), ...(hasLocation ? (['nearest'] as const) : [])] as const).map(option => (
                       <button
@@ -221,7 +221,7 @@ export function FilterSection({
                         onClick={() => setSortBy(option)}
                         className={cn(
                           "flex-1 px-2 py-1.5 rounded-lg text-xs font-medium transition-all",
-                          sortBy === option ? "bg-amber text-white" : "bg-stone-100 text-stone-600 hover:bg-stone-200"
+                          sortBy === option ? "bg-gray-900 text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"
                         )}
                       >
                         {option === 'price' ? 'Price' : option === 'name' ? 'Name' : option === 'suburb' ? 'Suburb' : 'Nearest'}
@@ -232,8 +232,8 @@ export function FilterSection({
 
                 {/* Max Price slider */}
                 <div className="mb-4">
-                  <label className="block text-xs font-semibold text-stone-400 uppercase tracking-wide mb-2">
-                    Max Price: <span className="text-amber">${maxPrice}</span>
+                  <label className="block text-[11px] font-semibold text-gray-400 uppercase tracking-wider mb-2">
+                    Max Price: <span className="text-brand-600">${maxPrice}</span>
                   </label>
                   <input
                     type="range"
@@ -242,9 +242,9 @@ export function FilterSection({
                     step={0.5}
                     value={maxPrice}
                     onChange={(e) => setMaxPrice(Number(e.target.value))}
-                    className="w-full accent-gold"
+                    className="w-full accent-brand-500"
                   />
-                  <div className="flex justify-between text-xs text-stone-400 mt-0.5">
+                  <div className="flex justify-between text-[11px] text-gray-400 mt-0.5">
                     <span>$6</span>
                     <span>$15</span>
                   </div>
@@ -252,12 +252,12 @@ export function FilterSection({
 
                 {/* Active filters summary */}
                 {totalActive > 0 && (
-                  <div className="pt-3 border-t border-stone-100">
+                  <div className="pt-3 border-t border-gray-100">
                     <div className="flex items-center justify-between">
-                      <span className="text-xs text-stone-400">{totalActive} active filter{totalActive > 1 ? 's' : ''}</span>
+                      <span className="text-xs text-gray-400">{totalActive} active filter{totalActive > 1 ? 's' : ''}</span>
                       <button
                         onClick={handleClearAll}
-                        className="text-xs text-coral hover:text-red-600 font-medium"
+                        className="text-xs text-red-500 hover:text-red-600 font-medium"
                       >
                         Clear All
                       </button>

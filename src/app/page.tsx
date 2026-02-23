@@ -29,10 +29,10 @@ import { getHappyHourStatus } from '@/lib/happyHour'
 const Map = dynamic(() => import('@/components/Map'), {
   ssr: false,
   loading: () => (
-    <div className="h-[200px] sm:h-[300px] md:h-[400px] bg-stone-100 rounded-xl flex items-center justify-center">
+    <div className="h-[200px] sm:h-[300px] md:h-[400px] bg-gray-50 rounded-xl flex items-center justify-center">
       <div className="flex flex-col items-center gap-3">
-        <div className="w-12 h-12 border-4 border-stone-300 border-t-stone-600 rounded-full animate-spin"></div>
-        <span className="text-stone-600 font-medium">Loading map...</span>
+        <div className="w-10 h-10 border-3 border-gray-200 border-t-brand-500 rounded-full animate-spin"></div>
+        <span className="text-gray-500 font-medium text-sm">Loading map...</span>
       </div>
     </div>
   )
@@ -40,7 +40,7 @@ const Map = dynamic(() => import('@/components/Map'), {
 
 const MiniMap = dynamic(() => import('@/components/MiniMap'), {
   ssr: false,
-  loading: () => <div className="h-24 bg-stone-200 rounded-lg animate-pulse"></div>
+  loading: () => <div className="h-24 bg-gray-100 rounded-lg animate-pulse"></div>
 })
 
 function isHappyHour(happyHour: string | null | undefined): boolean {
@@ -50,27 +50,27 @@ function isHappyHour(happyHour: string | null | undefined): boolean {
 }
 
 function getPriceColor(price: number | null): string {
-  if (price === null) return 'from-stone-400 to-stone-500'
-  if (price <= 7) return 'from-green-600 to-green-700'
-  if (price <= 8) return 'from-yellow-600 to-yellow-700'
-  if (price <= 9) return 'from-orange-600 to-orange-700'
-  return 'from-red-600 to-red-700'
+  if (price === null) return 'from-gray-400 to-gray-500'
+  if (price <= 7) return 'from-emerald-500 to-emerald-600'
+  if (price <= 8) return 'from-amber-500 to-amber-600'
+  if (price <= 9) return 'from-orange-500 to-orange-600'
+  return 'from-red-500 to-red-600'
 }
 
 function getPriceBgColor(price: number | null): string {
-  if (price === null) return 'bg-stone-400'
-  if (price <= 7) return 'bg-green-700'
-  if (price <= 8) return 'bg-yellow-700'
-  if (price <= 9) return 'bg-orange-700'
-  return 'bg-red-700'
+  if (price === null) return 'bg-gray-400'
+  if (price <= 7) return 'bg-emerald-600'
+  if (price <= 8) return 'bg-amber-500'
+  if (price <= 9) return 'bg-orange-500'
+  return 'bg-red-500'
 }
 
 function getPriceTextColor(price: number | null): string {
-  if (price === null) return 'text-stone-400'
-  if (price <= 7) return 'text-green-700'
-  if (price <= 8) return 'text-yellow-700'
-  if (price <= 9) return 'text-orange-700'
-  return 'text-red-700'
+  if (price === null) return 'text-gray-400'
+  if (price <= 7) return 'text-emerald-600'
+  if (price <= 8) return 'text-amber-600'
+  if (price <= 9) return 'text-orange-600'
+  return 'text-red-600'
 }
 
 
@@ -123,21 +123,21 @@ function HowItWorks() {
   ]
 
   return (
-    <section className="py-16 border-t border-stone-200">
+    <section className="py-20 border-t border-gray-200">
       <div className="max-w-4xl mx-auto px-4">
-        <h2 className="text-3xl sm:text-4xl font-bold text-charcoal font-heading text-center mb-3">
+        <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 font-heading text-center mb-3 text-balance">
           How it works
         </h2>
-        <p className="text-stone-500 text-center mb-12 text-lg">No app download. No sign-up. Just prices.</p>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 sm:gap-12">
+        <p className="text-gray-500 text-center mb-14 text-lg">No app download. No sign-up. Just prices.</p>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-10 sm:gap-12">
           {steps.map((step) => (
             <div key={step.num} className="text-center">
-              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-amber/10 text-amber mb-5">
+              <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-brand-50 text-brand-600 mb-5">
                 {step.icon}
               </div>
-              <div className="text-sm font-mono text-amber font-bold mb-2">{step.num}</div>
-              <h3 className="text-xl font-bold text-charcoal mb-2 font-heading">{step.title}</h3>
-              <p className="text-stone-500 leading-relaxed">{step.desc}</p>
+              <div className="text-sm font-mono text-gray-400 font-semibold mb-2">{step.num}</div>
+              <h3 className="text-xl font-bold text-gray-900 mb-2 font-heading">{step.title}</h3>
+              <p className="text-gray-500 leading-relaxed">{step.desc}</p>
             </div>
           ))}
         </div>
@@ -179,31 +179,31 @@ function FAQ() {
   ]
 
   return (
-    <section className="py-16 border-t border-stone-200">
+    <section className="py-20 border-t border-gray-200">
       <div className="max-w-3xl mx-auto px-4">
-        <h2 className="text-3xl sm:text-4xl font-bold text-charcoal font-heading text-center mb-3">
+        <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 font-heading text-center mb-3 text-balance">
           Questions?
         </h2>
-        <p className="text-stone-500 text-center mb-10 text-lg">Everything you need to know about PintDex.</p>
+        <p className="text-gray-500 text-center mb-12 text-lg">Everything you need to know about PintDex.</p>
         <div className="space-y-0">
           {faqs.map((faq, i) => (
-            <div key={i} className="border-b border-stone-200">
+            <div key={i} className="border-b border-gray-200 last:border-b-0">
               <button
                 onClick={() => setOpenIndex(openIndex === i ? null : i)}
                 className="w-full flex items-center justify-between py-5 text-left group"
               >
-                <span className="text-lg font-semibold text-charcoal group-hover:text-amber transition-colors pr-4">
+                <span className="text-base font-semibold text-gray-900 group-hover:text-brand-600 transition-colors pr-4">
                   {faq.q}
                 </span>
                 <svg
-                  className={`w-5 h-5 text-stone-400 flex-shrink-0 transition-transform duration-200 ${openIndex === i ? 'rotate-180' : ''}`}
+                  className={`w-5 h-5 text-gray-400 flex-shrink-0 transition-transform duration-300 ${openIndex === i ? 'rotate-180' : ''}`}
                   fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"
                 >
                   <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
                 </svg>
               </button>
               {openIndex === i && (
-                <div className="pb-5 text-stone-600 leading-relaxed -mt-1">
+                <div className="pb-5 text-gray-600 leading-relaxed -mt-1">
                   {faq.a}
                 </div>
               )}
@@ -226,13 +226,13 @@ function SocialProof({ stats }: { stats: { total: number; avgPrice: string } }) 
     { value: '100%', label: 'Verified prices' },
   ]
   return (
-    <section className="py-12 border-t border-stone-200 bg-cream-dark">
+    <section className="py-14 border-t border-gray-200 bg-gray-50">
       <div className="max-w-5xl mx-auto px-4">
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 text-center">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-8 text-center">
           {proofs.map((p) => (
             <div key={p.label}>
-              <div className="text-3xl sm:text-4xl font-black text-charcoal font-heading">{p.value}</div>
-              <div className="text-stone-500 text-sm mt-1">{p.label}</div>
+              <div className="text-3xl sm:text-4xl font-bold text-gray-900 font-heading">{p.value}</div>
+              <div className="text-gray-500 text-sm mt-1">{p.label}</div>
             </div>
           ))}
         </div>
@@ -376,62 +376,60 @@ export default function Home() {
 
   if (isLoading) {
     return (
-      <main className="min-h-screen bg-cream flex items-center justify-center">
-        <div className="flex flex-col items-center gap-3">
-          <div className="w-16 h-16 border-4 border-stone-300 border-t-amber rounded-full animate-spin"></div>
-          <span className="text-stone-600 font-medium text-lg">Loading pubs...</span>
+      <main className="min-h-screen bg-[#FAFAFA] flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-12 h-12 border-3 border-gray-200 border-t-brand-500 rounded-full animate-spin"></div>
+          <span className="text-gray-500 font-medium">Loading pubs...</span>
         </div>
       </main>
     )
   }
 
   return (
-    <main className="min-h-screen bg-cream">
+    <main className="min-h-screen bg-[#FAFAFA]">
 
-      {/* ═══════════════════════════════════════════════════════════════ */}
-      {/* ═══  HERO SECTION — EatClub-style brand-first landing       ═══ */}
-      {/* ═══════════════════════════════════════════════════════════════ */}
+      {/* ═══  HERO SECTION  ═══ */}
       {heroVisible && (
-        <section className="bg-cream relative overflow-hidden">
-          {/* Top nav bar — minimal like EatClub */}
+        <section className="bg-white relative overflow-hidden border-b border-gray-200">
+          {/* Top nav */}
           <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
             <div className="flex items-center gap-2.5">
-              <img src="/logo.png" alt="PintDex" className="w-10 h-10 rounded-lg object-contain" />
-              <span className="text-xl font-extrabold tracking-tight font-heading text-charcoal">PintDex</span>
+              <img src="/logo.png" alt="PintDex" className="w-9 h-9 rounded-lg object-contain" />
+              <span className="text-xl font-bold tracking-tight font-heading text-gray-900">PintDex</span>
             </div>
             <button
               onClick={() => setShowSubmitForm(true)}
-              className="px-5 py-2.5 bg-charcoal hover:bg-charcoal/90 text-white rounded-full font-bold transition-all text-sm"
+              className="px-5 py-2 bg-gray-900 hover:bg-gray-800 text-white rounded-full font-semibold transition-all text-sm"
             >
               Submit a Price
             </button>
           </div>
 
-          {/* Hero content — big, confident, breathing room */}
+          {/* Hero content */}
           <div className="max-w-4xl mx-auto px-4 pt-12 sm:pt-20 pb-16 sm:pb-24 text-center">
-            <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black text-charcoal font-heading leading-[1.05] mb-6">
+            <h1 className="text-4xl sm:text-6xl lg:text-7xl font-bold text-gray-900 font-heading leading-[1.05] mb-6 text-balance">
               Perth&apos;s pint prices,{' '}
-              <span className="text-amber">sorted.</span>
+              <span className="text-brand-500">sorted.</span>
             </h1>
-            <p className="text-lg sm:text-xl text-stone-500 max-w-2xl mx-auto mb-10 leading-relaxed">
+            <p className="text-lg sm:text-xl text-gray-500 max-w-2xl mx-auto mb-10 leading-relaxed">
               Real-time prices across {stats.total}+ pubs and {suburbs.length} suburbs.
               Find happy hours, compare prices, and save on your next round.
             </p>
 
-            {/* Hero stat highlights — EatClub-style bold numbers */}
-            <div className="flex flex-wrap justify-center gap-4 sm:gap-8 mb-10">
-              <div className="bg-white rounded-2xl px-5 py-3 shadow-sm border border-stone-200/60">
-                <span className="block text-2xl sm:text-3xl font-black font-mono text-green-700">${stats.minPrice}</span>
-                <span className="text-xs text-stone-500">Cheapest pint</span>
+            {/* Hero stat highlights */}
+            <div className="flex flex-wrap justify-center gap-3 sm:gap-4 mb-10">
+              <div className="bg-gray-50 rounded-xl px-5 py-3 border border-gray-200">
+                <span className="block text-2xl sm:text-3xl font-bold font-mono text-emerald-600">${stats.minPrice}</span>
+                <span className="text-xs text-gray-500">Cheapest pint</span>
               </div>
-              <div className="bg-white rounded-2xl px-5 py-3 shadow-sm border border-stone-200/60">
-                <span className="block text-2xl sm:text-3xl font-black font-mono text-charcoal">${stats.avgPrice}</span>
-                <span className="text-xs text-stone-500">Perth average</span>
+              <div className="bg-gray-50 rounded-xl px-5 py-3 border border-gray-200">
+                <span className="block text-2xl sm:text-3xl font-bold font-mono text-gray-900">${stats.avgPrice}</span>
+                <span className="text-xs text-gray-500">Perth average</span>
               </div>
               {stats.happyHourNow > 0 && (
-                <div className="bg-white rounded-2xl px-5 py-3 shadow-sm border border-amber/30 bg-amber/5">
-                  <span className="block text-2xl sm:text-3xl font-black font-mono text-amber">{stats.happyHourNow}</span>
-                  <span className="text-xs text-stone-500">Happy hours live</span>
+                <div className="bg-brand-50 rounded-xl px-5 py-3 border border-brand-200">
+                  <span className="block text-2xl sm:text-3xl font-bold font-mono text-brand-600">{stats.happyHourNow}</span>
+                  <span className="text-xs text-gray-500">Happy hours live</span>
                 </div>
               )}
             </div>
@@ -440,16 +438,16 @@ export default function Home() {
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <button
                 onClick={scrollToApp}
-                className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-charcoal hover:bg-charcoal/90 text-white rounded-full font-bold text-lg transition-all shadow-lg shadow-charcoal/10"
+                className="inline-flex items-center justify-center gap-2 px-8 py-3.5 bg-gray-900 hover:bg-gray-800 text-white rounded-full font-semibold text-base transition-all"
               >
                 Explore {stats.total} venues
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
                 </svg>
               </button>
               <button
                 onClick={() => { scrollToApp(); setActiveTab('explore'); }}
-                className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white hover:bg-stone-50 text-charcoal rounded-full font-bold text-lg transition-all border border-stone-300"
+                className="inline-flex items-center justify-center gap-2 px-8 py-3.5 bg-white hover:bg-gray-50 text-gray-900 rounded-full font-semibold text-base transition-all border border-gray-300"
               >
                 Discover features
               </button>
@@ -464,48 +462,49 @@ export default function Home() {
       {/* ═══════════════════════════════════════════════════════════════ */}
       <div ref={appRef}>
         <PriceTicker pubs={pubs} />
-        <header className="bg-white sticky top-0 z-[1000] shadow-[0_1px_4px_rgba(0,0,0,0.06)]">
+        <header className="bg-white sticky top-0 z-[1000] border-b border-gray-200/80 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
           {/* Compact brand bar */}
-          <div className="max-w-7xl mx-auto px-4 pt-2.5 pb-0">
+          <div className="max-w-7xl mx-auto px-4 pt-3 pb-0">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <img src="/logo.png" alt="PintDex" className="w-10 h-10 rounded-lg flex-shrink-0 object-contain" />
-                <h1 className="text-lg font-extrabold tracking-tight leading-none font-heading text-charcoal">PintDex</h1>
-                <div className="flex items-center gap-1 ml-1">
-                  <div className="w-1.5 h-1.5 rounded-full bg-amber animate-pulse" />
-                  <span className="text-[10px] text-amber/70 uppercase tracking-wider font-medium">Live</span>
-                </div>
+                <img src="/logo.png" alt="PintDex" className="w-8 h-8 rounded-lg flex-shrink-0 object-contain" />
+                <h1 className="text-lg font-bold tracking-tight leading-none font-heading text-gray-900">PintDex</h1>
               </div>
               <button
                 onClick={() => setShowSubmitForm(true)}
-                className="flex-shrink-0 flex items-center gap-1.5 px-3.5 py-2 bg-charcoal hover:bg-charcoal/90 text-white rounded-full font-bold transition-all text-xs"
+                className="flex-shrink-0 flex items-center gap-1.5 px-3.5 py-2 bg-gray-900 hover:bg-gray-800 text-white rounded-full font-semibold transition-all text-xs"
               >
                 <span className="hidden sm:inline">+ Submit a Price</span>
                 <span className="sm:hidden text-base leading-none font-bold">+</span>
               </button>
             </div>
 
-            {/* Stat pods — warm amber accent */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-2.5 pb-2.5">
-              <div className="bg-stone-50 rounded-lg px-2.5 py-1.5 border border-stone-200">
-                <span className="text-stone-500 text-[9px] uppercase tracking-wider block leading-none">Perth Avg</span>
-                <span className="text-charcoal font-mono font-black text-base sm:text-lg leading-tight">${stats.avgPrice}</span>
-                <span className="text-stone-400 text-[9px] block leading-none mt-0.5">{stats.total} venues</span>
+            {/* Stat pods */}
+            <div className="flex items-center gap-6 mt-3 pb-3 overflow-x-auto scrollbar-hide">
+              <div className="flex items-center gap-1.5 flex-shrink-0">
+                <span className="text-gray-400 text-xs">Avg</span>
+                <span className="text-gray-900 font-mono font-bold text-sm">${stats.avgPrice}</span>
               </div>
-              <div className="bg-stone-50 rounded-lg px-2.5 py-1.5 border border-stone-200">
-                <span className="text-stone-500 text-[9px] uppercase tracking-wider block leading-none">Cheapest</span>
-                <span className="text-green-700 font-mono font-black text-base sm:text-lg leading-tight">${stats.minPrice}</span>
-                <span className="text-stone-400 text-[9px] block leading-none mt-0.5 truncate">{stats.cheapestSuburb}</span>
+              <div className="w-px h-4 bg-gray-200 flex-shrink-0" />
+              <div className="flex items-center gap-1.5 flex-shrink-0">
+                <span className="text-gray-400 text-xs">Low</span>
+                <span className="text-emerald-600 font-mono font-bold text-sm">${stats.minPrice}</span>
               </div>
-              <div className="bg-stone-50 rounded-lg px-2.5 py-1.5 border border-stone-200">
-                <span className="text-stone-500 text-[9px] uppercase tracking-wider block leading-none">Priciest</span>
-                <span className="text-red-700 font-mono font-black text-base sm:text-lg leading-tight">${stats.maxPriceValue}</span>
-                <span className="text-stone-400 text-[9px] block leading-none mt-0.5 truncate">{stats.priciestSuburb}</span>
+              <div className="w-px h-4 bg-gray-200 flex-shrink-0" />
+              <div className="flex items-center gap-1.5 flex-shrink-0">
+                <span className="text-gray-400 text-xs">High</span>
+                <span className="text-red-500 font-mono font-bold text-sm">${stats.maxPriceValue}</span>
               </div>
-              <div className="bg-stone-50 rounded-lg px-2.5 py-1.5 border border-stone-200">
-                <span className="text-stone-500 text-[9px] uppercase tracking-wider block leading-none">Happy Hour</span>
-                <span className="text-amber font-mono font-black text-base sm:text-lg leading-tight">{stats.happyHourNow}</span>
-                <span className="text-stone-400 text-[9px] block leading-none mt-0.5">{suburbs.length} suburbs</span>
+              <div className="w-px h-4 bg-gray-200 flex-shrink-0" />
+              <div className="flex items-center gap-1.5 flex-shrink-0">
+                <span className="text-gray-400 text-xs">HH</span>
+                <span className="text-brand-600 font-mono font-bold text-sm">{stats.happyHourNow}</span>
+                <div className="w-1.5 h-1.5 rounded-full bg-brand-500 animate-pulse" />
+              </div>
+              <div className="w-px h-4 bg-gray-200 flex-shrink-0" />
+              <div className="flex items-center gap-1.5 flex-shrink-0">
+                <span className="text-gray-400 text-xs">Venues</span>
+                <span className="text-gray-900 font-mono font-bold text-sm">{stats.total}</span>
               </div>
             </div>
           </div>
@@ -551,21 +550,21 @@ export default function Home() {
             <>
               <PintIndexCompact pubs={pubs} filteredPubs={filteredPubs} onViewMore={() => setActiveTab('market')} />
 
-              <div className="mb-5 rounded-2xl overflow-hidden shadow-[0_2px_12px_rgba(0,0,0,0.06)] border border-stone-200/60 relative z-0 isolate">
+              <div className="mb-5 rounded-xl overflow-hidden border border-gray-200 relative z-0 isolate">
                 <Map pubs={filteredPubs} isHappyHour={isHappyHour} userLocation={userLocation} totalPubCount={pubs.length} />
               </div>
 
               <div className="flex items-center justify-between mb-4">
-                <p className="text-stone-600 text-sm">
-                  Showing <span className="text-amber font-semibold">{showAllPubs ? filteredPubs.length : Math.min(INITIAL_PUB_COUNT, filteredPubs.length)}</span> of {filteredPubs.length} venues
+                <p className="text-gray-500 text-sm">
+                  Showing <span className="text-gray-900 font-semibold">{showAllPubs ? filteredPubs.length : Math.min(INITIAL_PUB_COUNT, filteredPubs.length)}</span> of {filteredPubs.length} venues
                 </p>
                 {filteredPubs.length > INITIAL_PUB_COUNT && (
                   <button
                     onClick={() => setShowAllPubs(!showAllPubs)}
-                    className="text-sm font-medium text-charcoal hover:text-amber transition-colors flex items-center gap-1"
+                    className="text-sm font-medium text-gray-700 hover:text-brand-600 transition-colors flex items-center gap-1"
                   >
                     {showAllPubs ? 'Show Less' : `Show All ${filteredPubs.length}`}
-                    <span className={`inline-block transition-transform ${showAllPubs ? 'rotate-180' : ''}`}>&#9660;</span>
+                    <span className={`inline-block transition-transform text-[10px] ${showAllPubs ? 'rotate-180' : ''}`}>&#9660;</span>
                   </button>
                 )}
               </div>
@@ -594,16 +593,16 @@ export default function Home() {
           )}
 
           {activeTab === 'pubs' && viewMode === 'list' && (
-            <div className="bg-white rounded-2xl shadow-[0_2px_12px_rgba(0,0,0,0.06)] border border-stone-200/60 overflow-hidden">
+            <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
               <table className="w-full">
                 <thead>
-                  <tr className="bg-stone-50 border-b border-stone-200">
-                    <th className="text-left py-3 px-4 text-xs font-semibold text-stone-600 uppercase tracking-wide">Pub</th>
-                    <th className="text-left py-3 px-4 text-xs font-semibold text-stone-600 uppercase tracking-wide hidden sm:table-cell">Suburb</th>
-                    <th className="text-left py-3 px-4 text-xs font-semibold text-stone-600 uppercase tracking-wide hidden sm:table-cell">Beer</th>
-                    <th className="text-right py-3 px-4 text-xs font-semibold text-stone-600 uppercase tracking-wide">Price</th>
-                    <th className="text-left py-3 px-4 text-xs font-semibold text-stone-600 uppercase tracking-wide hidden md:table-cell">Happy Hour</th>
-                    <th className="text-center py-3 px-4 text-xs font-semibold text-stone-600 uppercase tracking-wide">Crowd</th>
+                  <tr className="border-b border-gray-200">
+                    <th className="text-left py-3 px-4 text-[11px] font-semibold text-gray-500 uppercase tracking-wider">Pub</th>
+                    <th className="text-left py-3 px-4 text-[11px] font-semibold text-gray-500 uppercase tracking-wider hidden sm:table-cell">Suburb</th>
+                    <th className="text-left py-3 px-4 text-[11px] font-semibold text-gray-500 uppercase tracking-wider hidden sm:table-cell">Beer</th>
+                    <th className="text-right py-3 px-4 text-[11px] font-semibold text-gray-500 uppercase tracking-wider">Price</th>
+                    <th className="text-left py-3 px-4 text-[11px] font-semibold text-gray-500 uppercase tracking-wider hidden md:table-cell">Happy Hour</th>
+                    <th className="text-center py-3 px-4 text-[11px] font-semibold text-gray-500 uppercase tracking-wider">Crowd</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -613,14 +612,12 @@ export default function Home() {
                     return (
                       <tr 
                         key={pub.id} 
-                        className={`border-b border-stone-100 hover:bg-amber/5 transition-colors cursor-pointer ${
-                          index % 2 === 0 ? 'bg-white' : 'bg-stone-50/30'
-                        }`}
+                        className="border-b border-gray-100 last:border-b-0 hover:bg-gray-50 transition-colors cursor-pointer"
                         onClick={() => router.push(`/pub/${pub.slug}`)}
                       >
                         <td className="py-3 px-2 sm:px-4">
                           <div className="flex items-center gap-2">
-                            <span className="text-xs text-stone-300 w-5 text-right tabular-nums">{index + 1}</span>
+                            <span className="text-[11px] text-gray-300 w-5 text-right tabular-nums font-mono">{index + 1}</span>
                             <div>
                               <div className="flex items-center gap-1.5">
                                 <a
@@ -628,45 +625,45 @@ export default function Home() {
                                   target="_blank"
                                   rel="noopener noreferrer"
                                   onClick={(e) => e.stopPropagation()}
-                                  className="flex-shrink-0 text-stone-300 hover:text-amber transition-colors"
+                                  className="flex-shrink-0 text-gray-300 hover:text-brand-500 transition-colors"
                                   title="Get directions"
                                 >
                                   <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
                                     <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
                                   </svg>
                                 </a>
-                                <Link href={`/pub/${pub.slug}`} className="font-semibold text-stone-900 text-sm hover:text-amber transition-colors">{pub.name}</Link>
+                                <Link href={`/pub/${pub.slug}`} className="font-semibold text-gray-900 text-sm hover:text-brand-600 transition-colors">{pub.name}</Link>
                               </div>
-                              <p className="text-xs text-stone-500 sm:hidden">{pub.suburb}{userLocation && ` · ${formatDistance(getDistanceKm(userLocation.lat, userLocation.lng, pub.lat, pub.lng))}`}</p>
+                              <p className="text-xs text-gray-500 sm:hidden">{pub.suburb}{userLocation && ` · ${formatDistance(getDistanceKm(userLocation.lat, userLocation.lng, pub.lat, pub.lng))}`}</p>
                             </div>
                           </div>
                         </td>
-                        <td className="py-3 px-4 text-sm text-stone-600 hidden sm:table-cell">
+                        <td className="py-3 px-4 text-sm text-gray-600 hidden sm:table-cell">
                           {pub.suburb}
-                          {userLocation && <span className="text-stone-400 text-xs ml-1">· {formatDistance(getDistanceKm(userLocation.lat, userLocation.lng, pub.lat, pub.lng))}</span>}
+                          {userLocation && <span className="text-gray-400 text-xs ml-1">· {formatDistance(getDistanceKm(userLocation.lat, userLocation.lng, pub.lat, pub.lng))}</span>}
                         </td>
                         <td className="py-3 px-4 hidden sm:table-cell">
-                          <span className="text-xs text-stone-500 truncate max-w-[120px] block">
+                          <span className="text-xs text-gray-500 truncate max-w-[120px] block">
                             {pub.beerType || '—'}
                           </span>
                         </td>
-                        <td className={`py-3 px-2 sm:px-4 text-right font-bold font-mono text-lg whitespace-nowrap ${getPriceTextColor(pub.price)}`}>
+                        <td className={`py-3 px-2 sm:px-4 text-right font-bold font-mono text-base whitespace-nowrap ${getPriceTextColor(pub.price)}`}>
                           {pub.isHappyHourNow && pub.regularPrice !== null && pub.regularPrice !== pub.price && (
-                            <span className="text-xs text-stone-400 line-through font-normal mr-1">${pub.regularPrice.toFixed(2)}</span>
+                            <span className="text-xs text-gray-400 line-through font-normal mr-1">${pub.regularPrice.toFixed(2)}</span>
                           )}
                           {pub.price !== null ? `$${pub.price.toFixed(2)}` : 'TBC'}
                         </td>
                         <td className="py-3 px-4 hidden md:table-cell">
                           {pub.happyHour ? (
                             <span className={`text-xs ${
-                              happyHourStatus.isActive ? 'text-amber font-bold' : 
-                              happyHourStatus.isToday ? 'text-amber-dark font-semibold' : 
-                              'text-stone-500'
+                              happyHourStatus.isActive ? 'text-brand-600 font-bold' : 
+                              happyHourStatus.isToday ? 'text-brand-700 font-semibold' : 
+                              'text-gray-500'
                             }`}>
                               {happyHourStatus.statusEmoji} {happyHourStatus.statusText}
                             </span>
                           ) : (
-                            <span className="text-xs text-stone-400">—</span>
+                            <span className="text-xs text-gray-300">—</span>
                           )}
                         </td>
                         <td className="py-3 px-4 text-center">
@@ -676,8 +673,8 @@ export default function Home() {
                             </span>
                           ) : (
                             <button
-                              onClick={() => setCrowdReportPub(pub)}
-                              className="text-xs text-stone-400 hover:text-amber"
+                              onClick={(e) => { e.stopPropagation(); setCrowdReportPub(pub); }}
+                              className="text-xs text-gray-400 hover:text-brand-500 transition-colors"
                             >
                               Report
                             </button>
@@ -691,10 +688,10 @@ export default function Home() {
               {!showAllPubs && filteredPubs.length > INITIAL_PUB_COUNT && (
                 <button
                   onClick={() => setShowAllPubs(true)}
-                  className="w-full py-3 text-sm font-medium text-charcoal hover:text-amber hover:bg-amber/5 transition-colors flex items-center justify-center gap-1 border-t border-stone-200"
+                  className="w-full py-3 text-sm font-medium text-gray-700 hover:text-brand-600 hover:bg-gray-50 transition-colors flex items-center justify-center gap-1 border-t border-gray-200"
                 >
                   Show All {filteredPubs.length} Venues
-                  <span className="inline-block">&#9660;</span>
+                  <span className="inline-block text-[10px]">&#9660;</span>
                 </button>
               )}
             </div>
@@ -728,20 +725,20 @@ export default function Home() {
             {!showAllPubs && filteredPubs.length > INITIAL_PUB_COUNT && (
               <button
                 onClick={() => setShowAllPubs(true)}
-                className="w-full mt-4 py-3 text-sm font-medium text-charcoal hover:text-amber bg-white hover:bg-amber/5 rounded-2xl shadow-[0_2px_12px_rgba(0,0,0,0.06)] border border-stone-200/60 transition-colors flex items-center justify-center gap-1"
+                className="w-full mt-4 py-3 text-sm font-medium text-gray-700 hover:text-brand-600 bg-white hover:bg-gray-50 rounded-xl border border-gray-200 transition-colors flex items-center justify-center gap-1"
               >
                 Show All {filteredPubs.length} Venues
-                <span className="inline-block">&#9660;</span>
+                <span className="inline-block text-[10px]">&#9660;</span>
               </button>
             )}
             </>
           )}
 
           {activeTab === 'pubs' && filteredPubs.length === 0 && (
-            <div className="text-center py-12 bg-white rounded-xl border border-stone-200">
-              <div className="text-5xl mb-3">{showHappyHourOnly ? '\u{1F37B}' : '\u{1F50D}'}</div>
-              <h3 className="text-lg font-bold text-stone-700 mb-1">{showHappyHourOnly ? 'No pubs with happy hour info yet' : 'No pubs found'}</h3>
-              <p className="text-stone-500 text-sm">{showHappyHourOnly ? 'We\u2019re building our happy hour database \u2014 submit yours!' : 'Try adjusting your filters'}</p>
+            <div className="text-center py-16 bg-white rounded-xl border border-gray-200">
+              <div className="text-4xl mb-3">{showHappyHourOnly ? '\u{1F37B}' : '\u{1F50D}'}</div>
+              <h3 className="text-lg font-bold text-gray-900 mb-1">{showHappyHourOnly ? 'No pubs with happy hour info yet' : 'No pubs found'}</h3>
+              <p className="text-gray-500 text-sm">{showHappyHourOnly ? 'We\u2019re building our happy hour database \u2014 submit yours!' : 'Try adjusting your filters'}</p>
             </div>
           )}
         </div>
@@ -756,45 +753,45 @@ export default function Home() {
         <FAQ />
 
         {/* ═══  FOOTER  ═══ */}
-        <footer className="bg-charcoal text-white py-12">
+        <footer className="bg-gray-900 text-white py-12">
           <div className="max-w-7xl mx-auto px-4">
             <div className="flex flex-col sm:flex-row items-center justify-between gap-6 mb-8">
               <div className="flex items-center gap-2.5">
-                <img src="/logo.png" alt="PintDex" className="w-10 h-10 rounded-lg object-contain" />
-                <span className="text-xl font-extrabold tracking-tight font-heading">PintDex</span>
+                <img src="/logo.png" alt="PintDex" className="w-8 h-8 rounded-lg object-contain" />
+                <span className="text-lg font-bold tracking-tight font-heading text-white">PintDex</span>
               </div>
-              <p className="text-stone-400 text-sm text-center">Perth&apos;s pint prices, sorted. Community-driven since 2024.</p>
+              <p className="text-gray-400 text-sm text-center">Perth&apos;s pint prices, sorted. Community-driven since 2024.</p>
             </div>
 
-            <div className="flex flex-wrap justify-center gap-6 mb-8 pb-8 border-b border-stone-700">
+            <div className="flex flex-wrap justify-center gap-8 mb-8 pb-8 border-b border-gray-800">
               <div className="flex items-center gap-2">
-                <span className="text-amber text-lg">⬡</span>
+                <div className="w-2 h-2 rounded-full bg-gray-600" />
                 <div>
-                  <p className="font-semibold text-white">Schooner</p>
-                  <p className="text-xs text-stone-400">425ml</p>
+                  <p className="font-medium text-gray-300 text-sm">Schooner</p>
+                  <p className="text-xs text-gray-500">425ml</p>
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                <span className="text-amber text-lg">⬡</span>
+                <div className="w-2 h-2 rounded-full bg-brand-500" />
                 <div>
-                  <p className="font-semibold text-amber">Pint</p>
-                  <p className="text-xs text-stone-400">570ml</p>
+                  <p className="font-medium text-brand-400 text-sm">Pint</p>
+                  <p className="text-xs text-gray-500">570ml</p>
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                <span className="text-amber text-lg">⬡</span>
+                <div className="w-2 h-2 rounded-full bg-gray-600" />
                 <div>
-                  <p className="font-semibold text-white">Long Neck</p>
-                  <p className="text-xs text-stone-400">750ml</p>
+                  <p className="font-medium text-gray-300 text-sm">Long Neck</p>
+                  <p className="text-xs text-gray-500">750ml</p>
                 </div>
               </div>
             </div>
 
             <div className="text-center">
-              <p className="text-stone-400 text-xs">Prices may vary. Pint prices shown. Always drink responsibly.</p>
+              <p className="text-gray-500 text-xs">Prices may vary. Pint prices shown. Always drink responsibly.</p>
               <a
                 href="mailto:perthpintprices@gmail.com?subject=Price%20Correction&body=Hi%2C%20I%20noticed%20a%20wrong%20price%20on%20the%20site.%0A%0APub%20name%3A%20%0ACorrect%20price%3A%20%0ADetails%3A%20"
-                className="inline-block mt-3 text-amber hover:text-amber-light text-xs"
+                className="inline-block mt-3 text-brand-400 hover:text-brand-300 text-xs transition-colors"
               >
                 Report Wrong Price
               </a>

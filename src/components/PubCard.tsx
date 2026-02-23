@@ -9,7 +9,7 @@ import dynamic from 'next/dynamic'
 
 const MiniMap = dynamic(() => import('./MiniMap'), {
   ssr: false,
-  loading: () => <div className="h-24 bg-stone-100 animate-pulse" />
+  loading: () => <div className="h-24 bg-gray-100 animate-pulse" />
 })
 import CrowdBadge from './CrowdBadge'
 import { Pub } from '@/types/pub'
@@ -30,7 +30,7 @@ function timeAgo(dateStr: string): string {
 }
 
 async function sharePub(pub: Pub) {
-  const text = `🍺 $${pub.price?.toFixed(2) ?? 'TBC'} pints at ${pub.name}, ${pub.suburb} — found on PintDex → pintdex.com.au`
+  const text = `$${pub.price?.toFixed(2) ?? 'TBC'} pints at ${pub.name}, ${pub.suburb} — found on PintDex`
   if (navigator.share) {
     try {
       await navigator.share({ text })
@@ -40,7 +40,6 @@ async function sharePub(pub: Pub) {
   }
 }
 
-// Subtle directions pin icon
 const DirectionsIcon = () => (
   <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
     <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
@@ -78,24 +77,24 @@ export default function PubCard({
 }: PubCardProps) {
   const router = useRouter()
   return (
-    <Card className="group relative overflow-hidden hover:shadow-lg transition-all duration-200 border-stone-200/60 shadow-[0_1px_8px_rgba(0,0,0,0.04)] rounded-2xl h-full flex flex-col cursor-pointer" onClick={() => router.push(`/pub/${pub.slug}`)}>
+    <Card className="group relative overflow-hidden hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 border-gray-200 shadow-sm rounded-xl h-full flex flex-col cursor-pointer bg-white" onClick={() => router.push(`/pub/${pub.slug}`)}>
       {/* Happy Hour active badge */}
       {happyHourStatus.isActive && (
-        <Badge className="absolute top-2 left-2 z-10 bg-amber hover:bg-amber text-white animate-pulse">
-          {E.party} HAPPY HOUR!
+        <Badge className="absolute top-2 left-2 z-10 bg-brand-500 hover:bg-brand-500 text-white text-[10px] font-semibold">
+          {E.party} HAPPY HOUR
         </Badge>
       )}
 
       {/* TAB badge */}
       {pub.hasTab && (
-        <Badge className={`absolute top-2 ${happyHourStatus.isActive ? 'left-32' : 'left-2'} z-10 text-white text-[9px] px-1.5 py-0.5`} style={{ backgroundColor: '#5B2D8E' }}>
+        <Badge className={`absolute top-2 ${happyHourStatus.isActive ? 'left-32' : 'left-2'} z-10 text-white text-[9px] px-1.5 py-0.5 bg-violet-600 hover:bg-violet-600`}>
           TAB
         </Badge>
       )}
 
       {/* Kid-friendly badge */}
       {pub.kidFriendly && (
-        <Badge className={`absolute top-2 ${pub.hasTab ? (happyHourStatus.isActive ? 'left-48' : 'left-20') : (happyHourStatus.isActive ? 'left-32' : 'left-2')} z-10 text-white text-[9px] px-1.5 py-0.5 bg-emerald-600`}>
+        <Badge className={`absolute top-2 ${pub.hasTab ? (happyHourStatus.isActive ? 'left-48' : 'left-20') : (happyHourStatus.isActive ? 'left-32' : 'left-2')} z-10 text-white text-[9px] px-1.5 py-0.5 bg-emerald-500 hover:bg-emerald-500`}>
           KIDS
         </Badge>
       )}
@@ -117,20 +116,26 @@ export default function PubCard({
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
-                className="flex-shrink-0 text-stone-300 hover:text-amber transition-colors"
+                className="flex-shrink-0 text-gray-300 hover:text-brand-500 transition-colors"
                 title="Get directions"
               >
                 <DirectionsIcon />
               </a>
-              <Link href={`/pub/${pub.slug}`} className="hover:text-amber transition-colors"><h3 className="font-bold text-stone-900 truncate">{pub.name}</h3></Link>
+              <Link href={`/pub/${pub.slug}`} className="hover:text-brand-600 transition-colors"><h3 className="font-bold text-gray-900 truncate">{pub.name}</h3></Link>
             </div>
-            <p className="text-xs text-stone-500">{pub.suburb}{distance && <span className="text-stone-400 text-xs"> · {distance}</span>}</p>
+            <p className="text-xs text-gray-500 mt-0.5">{pub.suburb}{distance && <span className="text-gray-400 text-xs"> · {distance}</span>}</p>
           </div>
           <div className="text-right">
               {pub.isHappyHourNow && pub.regularPrice !== null && pub.regularPrice !== pub.price && (
-                <div className="text-[10px] text-stone-400 line-through font-mono">${pub.regularPrice.toFixed(2)}</div>
+                <div className="text-[10px] text-gray-400 line-through font-mono">${pub.regularPrice.toFixed(2)}</div>
               )}
-              <div className={`text-xl font-bold font-mono bg-gradient-to-br ${getPriceColor(pub.price)} bg-clip-text text-transparent`}>
+              <div className={`text-xl font-bold font-mono ${
+                pub.price === null ? 'text-gray-400' :
+                pub.price <= 7 ? 'text-emerald-600' :
+                pub.price <= 8 ? 'text-amber-600' :
+                pub.price <= 9 ? 'text-orange-600' :
+                'text-red-600'
+              }`}>
                 {pub.price !== null ? `$${pub.price.toFixed(2)}` : 'TBC'}
               </div>
             </div>
@@ -140,55 +145,59 @@ export default function PubCard({
       <CardContent className="px-4 py-2 space-y-2 flex-1">
         {crowdReport && <CrowdBadge report={crowdReport} />}
 
-        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-xs text-stone-500 bg-stone-100">
+        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-xs text-gray-600 bg-gray-100">
           {E.beer} {pub.beerType}
         </span>
 
-        <p className="text-xs text-stone-600 flex items-center gap-1">
-          <svg className="w-3 h-3 text-stone-400 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+        <p className="text-xs text-gray-500 flex items-center gap-1">
+          <svg className="w-3 h-3 text-gray-400 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
           {pub.address}
         </p>
 
         {pub.happyHour && (
           <div className={`text-xs flex items-center gap-1 ${
-            happyHourStatus.isActive ? 'text-amber font-bold' : 
-            happyHourStatus.isToday ? 'text-amber font-semibold' : 
-            'text-stone-500'
+            happyHourStatus.isActive ? 'text-brand-600 font-bold' : 
+            happyHourStatus.isToday ? 'text-brand-700 font-semibold' : 
+            'text-gray-500'
           }`}>
             <span>{happyHourStatus.statusEmoji}</span>
             <span>{happyHourStatus.statusText}</span>
             {happyHourStatus.countdown && happyHourStatus.isActive && (
-              <span className="text-amber font-normal">• {happyHourStatus.countdown}</span>
+              <span className="text-brand-500 font-normal">· {happyHourStatus.countdown}</span>
             )}
           </div>
         )}
 
         {pub.description && (
-          <p className="text-xs text-stone-500 line-clamp-2 italic">\"{pub.description}\"</p>
+          <p className="text-xs text-gray-500 line-clamp-2 italic">&quot;{pub.description}&quot;</p>
         )}
 
         {pub.lastUpdated && (
-          <p className="text-xs text-stone-400">✓ Verified price</p>
+          <p className="text-xs text-gray-400 flex items-center gap-1">
+            <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" strokeLinecap="round" strokeLinejoin="round"/><polyline points="22 4 12 14.01 9 11.01" strokeLinecap="round" strokeLinejoin="round"/></svg>
+            Verified price
+          </p>
         )}
       </CardContent>
 
-      <CardFooter className="px-4 py-3 border-t border-stone-100 flex items-center justify-between">
+      <CardFooter className="px-4 py-3 border-t border-gray-100 flex items-center justify-between">
         {pub.website ? (
           <a
             href={pub.website}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-amber hover:text-amber-600 text-xs font-semibold"
+            onClick={(e) => e.stopPropagation()}
+            className="text-brand-600 hover:text-brand-700 text-xs font-semibold transition-colors"
           >
-            Visit website →
+            Visit website
           </a>
         ) : (
           <div></div>
         )}
         <div className="flex items-center gap-1.5">
           <button
-            onClick={() => sharePub(pub)}
-            className="text-stone-400 hover:text-amber transition-colors p-1"
+            onClick={(e) => { e.stopPropagation(); sharePub(pub); }}
+            className="text-gray-400 hover:text-brand-500 transition-colors p-1"
             title="Share"
           >
             <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -198,8 +207,8 @@ export default function PubCard({
           <Button
             variant="secondary"
             size="sm"
-            onClick={() => onCrowdReport(pub)}
-            className="text-xs h-7"
+            onClick={(e) => { e.stopPropagation(); onCrowdReport(pub); }}
+            className="text-xs h-7 bg-gray-100 hover:bg-gray-200 text-gray-700"
           >
             How busy?
           </Button>

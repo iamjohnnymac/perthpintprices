@@ -10,22 +10,36 @@ const config: Config = {
   theme: {
   	extend: {
   		fontFamily: {
+  			sans: ['var(--font-inter)', 'system-ui', 'sans-serif'],
   			heading: ['var(--font-space-grotesk)', 'sans-serif'],
   			mono: ['var(--font-jetbrains-mono)', 'monospace'],
   		},
   		colors: {
-  			// New EatClub-inspired palette
-  			'amber': '#D4A017',
-  			'amber-light': '#E8B84B',
-  			'amber-dark': '#B8860B',
-  			'charcoal': '#1C1917',
-  			'cream': '#F5F0E8',
-  			'cream-dark': '#EDE8DC',
-  			'stone-warm': '#A8A29E',
-  			'beer-gold': '#D4A017',
-  			'beer-amber': '#B8860B',
-  			'beer-dark': '#1C1917',
-  			'gold': '#D4A017',
+  			// Brand palette
+  			'brand': {
+  				50: '#FFFBEB',
+  				100: '#FEF3C7',
+  				200: '#FDE68A',
+  				300: '#FCD34D',
+  				400: '#FBBF24',
+  				500: '#F59E0B',
+  				600: '#D97706',
+  				700: '#B45309',
+  				800: '#92400E',
+  				900: '#78350F',
+  			},
+  			// Legacy aliases for compatibility
+  			'amber': '#F59E0B',
+  			'amber-light': '#FBBF24',
+  			'amber-dark': '#D97706',
+  			'charcoal': '#111827',
+  			'cream': '#FAFAFA',
+  			'cream-dark': '#F3F4F6',
+  			'stone-warm': '#9CA3AF',
+  			'beer-gold': '#F59E0B',
+  			'beer-amber': '#D97706',
+  			'beer-dark': '#111827',
+  			'gold': '#F59E0B',
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',
   			card: {
