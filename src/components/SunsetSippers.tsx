@@ -113,7 +113,7 @@ function getSunShadowGradient(azimuth: number, isGolden: boolean): string {
 
 export default function SunsetSippers({ pubs, userLocation }: SunsetSippersProps) {
   const [now, setNow] = useState(new Date())
-  const [isExpanded, setIsExpanded] = useState(true)
+  const [isExpanded, setIsExpanded] = useState(false)
   const [showAllPubs, setShowAllPubs] = useState(false)
   const [apiSunriseHour, setApiSunriseHour] = useState<number | null>(null)
   const [apiSunsetHour, setApiSunsetHour] = useState<number | null>(null)

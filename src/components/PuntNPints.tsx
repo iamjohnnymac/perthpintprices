@@ -25,7 +25,7 @@ interface PuntNPintsProps {
 
 export default function PuntNPints({ pubs, userLocation }: PuntNPintsProps) {
   const [isSectionOpen, setIsSectionOpen] = useState(false)
-  const [isExpanded, setIsExpanded] = useState(true)
+  const [isExpanded, setIsExpanded] = useState(false)
   const [tabLocations, setTabLocations] = useState<TabLocation[]>([])
 
   useEffect(() => {
