@@ -124,7 +124,7 @@ interface BeerWeatherProps {
 
 export default function BeerWeather({ pubs, userLocation }: BeerWeatherProps) {
   const [weather, setWeather] = useState<WeatherData | null>(null)
-  const [isExpanded, setIsExpanded] = useState(false)
+  const [isExpanded, setIsExpanded] = useState(true)
   const [error, setError] = useState(false)
 
   useEffect(() => {

@@ -46,7 +46,7 @@ export default function PriceTicker({ pubs }: PriceTickerProps) {
   const duration = Math.max(15, tickers.length * 1.2);
 
   return (
-    <div className="w-full bg-white border-b border-stone-200 overflow-hidden relative select-none" style={{ height: '36px', zIndex: 50 }}>
+    <div className="w-full bg-charcoal/5 border-b border-stone-200/60 overflow-hidden relative select-none" style={{ height: '36px', zIndex: 50 }}>
       <style>{`
         @keyframes ticker-scroll {
           0% { transform: translate3d(0, 0, 0); }
@@ -72,10 +72,10 @@ export default function PriceTicker({ pubs }: PriceTickerProps) {
 
             return (
               <span key={`${t.suburb}-${i}`} className="inline-flex items-center gap-1.5 px-4 text-xs tracking-wide" style={{ height: '36px' }}>
-                <span className="font-semibold text-stone-700 uppercase text-[11px]">
+                <span className="font-semibold text-stone-700 uppercase text-xs sm:text-sm">
                   {t.suburb}
                 </span>
-                <span className="font-mono text-stone-900 font-bold text-[12px]">
+                <span className="font-mono text-stone-900 font-bold text-sm">
                   ${t.avgPrice.toFixed(2)}
                 </span>
                 <span className={`font-mono ${color} text-[11px]`}>

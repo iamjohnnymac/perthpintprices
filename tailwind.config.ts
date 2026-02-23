@@ -9,6 +9,21 @@ const config: Config = {
   ],
   theme: {
   	extend: {
+  spacing: {
+  			'18': '4.5rem',
+  			'22': '5.5rem',
+  			'26': '6.5rem',
+  			'30': '7.5rem',
+  		},
+  		fontSize: {
+  			'display': ['3rem', { lineHeight: '3.25rem', fontWeight: '700' }],
+  			'title': ['2.25rem', { lineHeight: '2.75rem', fontWeight: '600' }],
+  			'subtitle': ['1.25rem', { lineHeight: '1.75rem', fontWeight: '400' }],
+  			'body-lg': ['1.125rem', { lineHeight: '1.75rem', fontWeight: '400' }],
+  		},
+  		maxWidth: {
+  			'app': '1120px',
+  		},
   		fontFamily: {
   			heading: ['var(--font-space-grotesk)', 'sans-serif'],
   			mono: ['var(--font-jetbrains-mono)', 'monospace'],

@@ -59,7 +59,7 @@ const tabs: { id: TabId; label: string; activeIcon: JSX.Element; inactiveIcon: J
 
 export default function TabBar({ activeTab, onTabChange, pubCount, crowdCount }: TabBarProps) {
   return (
-    <div className="bg-white border-b border-stone-200">
+    <div className="bg-cream border-b border-stone-200/60">
       <div className="max-w-7xl mx-auto">
         <nav className="flex" role="tablist">
           {tabs.map((tab) => {
@@ -83,7 +83,7 @@ export default function TabBar({ activeTab, onTabChange, pubCount, crowdCount }:
                   {isActive ? tab.activeIcon : tab.inactiveIcon}
                 </span>
 
-                <span className={`text-[11px] leading-none ${isActive ? 'font-semibold' : 'font-medium'}`}>
+                <span className={`text-xs leading-none ${isActive ? 'font-semibold' : 'font-medium'}`}>
                   {tab.label}
                 </span>
 
