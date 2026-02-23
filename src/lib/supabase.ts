@@ -2,6 +2,11 @@ import { createClient } from '@supabase/supabase-js'
 import { Pub } from '@/types/pub'
 import { getHappyHourStatus } from '@/lib/happyHourLive'
 
+function titleCase(str: string): string {
+  if (!str) return str
+  return str.replace(/\b\w/g, c => c.toUpperCase())
+}
+
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://ifxkoblvgttelzboenpi.supabase.co'
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlmeGtvYmx2Z3R0ZWx6Ym9lbnBpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzExODUwNjgsImV4cCI6MjA4Njc2MTA2OH0.qLy6B-VeVnMh0QSOxHK3uQEJ6iZr6xNHmfKov_7B-fY'
 
@@ -128,7 +133,7 @@ export async function getPubs(): Promise<Pub[]> {
       website: row.website || null,
       lat: row.lat || 0,
       lng: row.lng || 0,
-      beerType: row.beer_type || '',
+      beerType: titleCase(row.beer_type || ''),
       happyHour: happyHourText,
       description: row.description || null,
       lastUpdated: row.last_updated || undefined,
@@ -190,7 +195,7 @@ export async function getPubBySlug(slug: string): Promise<Pub | null> {
     website: row.website || null,
     lat: row.lat || 0,
     lng: row.lng || 0,
-    beerType: row.beer_type || '',
+    beerType: titleCase(row.beer_type || ''),
     happyHour: happyHourText,
     description: row.description || null,
     lastUpdated: row.last_updated || undefined,
@@ -256,7 +261,7 @@ export async function getNearbyPubs(suburb: string, excludeId: number, limit: nu
       website: row.website || null,
       lat: row.lat || 0,
       lng: row.lng || 0,
-      beerType: row.beer_type || '',
+      beerType: titleCase(row.beer_type || ''),
       happyHour: happyHourText,
       description: row.description || null,
       lastUpdated: row.last_updated || undefined,

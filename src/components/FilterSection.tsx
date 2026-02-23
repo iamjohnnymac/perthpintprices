@@ -52,7 +52,7 @@ export function FilterSection({
 
   const activeFilterCount =
     (selectedSuburb && selectedSuburb !== 'all' ? 1 : 0) +
-    (maxPrice < 15 ? 1 : 0) +
+    (maxPrice < 20 ? 1 : 0) +
     (sortBy !== 'price' && sortBy !== 'nearest' ? 1 : 0) +
     (showHappyHourOnly ? 1 : 0) +
     (isNearestActive ? 1 : 0)
@@ -223,7 +223,7 @@ export function FilterSection({
                 <input
                   type="range"
                   min={6}
-                  max={15}
+                  max={20}
                   step={0.5}
                   value={maxPrice}
                   onChange={(e) => setMaxPrice(Number(e.target.value))}
@@ -231,7 +231,7 @@ export function FilterSection({
                 />
                 <div className="flex justify-between text-xs text-stone-400 mt-0.5">
                   <span>$6</span>
-                  <span>$15</span>
+                  <span>$20</span>
                 </div>
               </div>
 

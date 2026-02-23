@@ -39,7 +39,7 @@ export default function StatsBar({
       <div className="bg-stone-50 rounded-xl p-3 sm:p-4 border border-stone-200/60">
         <span className="text-stone-500 text-[10px] uppercase tracking-wider block leading-none">Happy Hour</span>
         <span className="text-amber font-mono font-bold text-base sm:text-lg leading-tight">{happyHourCount}</span>
-        <span className="text-stone-400 text-[10px] block leading-none mt-0.5">{suburbCount} suburbs</span>
+        <span className="text-stone-400 text-[10px] block leading-none mt-0.5">active now</span>
       </div>
     </div>
   )

@@ -56,7 +56,7 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedSuburb, setSelectedSuburb] = useState('')
-  const [maxPrice, setMaxPrice] = useState(15)
+  const [maxPrice, setMaxPrice] = useState(20)
   const [sortBy, setSortBy] = useState<'price' | 'name' | 'suburb' | 'nearest'>('price')
   const [showHappyHourOnly, setShowHappyHourOnly] = useState(false)
   const [showMiniMaps, setShowMiniMaps] = useState(true)

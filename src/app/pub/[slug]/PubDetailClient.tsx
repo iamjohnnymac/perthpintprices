@@ -37,11 +37,11 @@ function formatHappyHourTime(start: string | null, end: string | null): string {
 }
 
 function getPriceColor(price: number | null): string {
-  if (price === null) return 'from-stone-400 to-stone-500'
-  if (price <= 7) return 'from-emerald-500 to-emerald-600'
-  if (price <= 9) return 'from-amber-500 to-amber-600'
-  if (price <= 11) return 'from-amber-500 to-amber-600'
-  return 'from-red-500 to-red-600'
+  if (price === null) return 'text-stone-400'
+  if (price <= 7) return 'text-emerald-600'
+  if (price <= 9) return 'text-amber-700'
+  if (price <= 11) return 'text-orange-600'
+  return 'text-red-600'
 }
 
 function getPriceLabel(price: number | null, avgPrice: number): string {
@@ -138,7 +138,7 @@ export default function PubDetailClient({ pub, nearbyPubs }: PubDetailClientProp
                 {pub.isHappyHourNow && pub.regularPrice !== null && pub.regularPrice !== pub.price && (
                   <div className="text-sm text-stone-400 line-through font-mono">${pub.regularPrice.toFixed(2)}</div>
                 )}
-                <div className={`text-5xl font-bold font-mono bg-gradient-to-br ${getPriceColor(pub.price)} bg-clip-text text-transparent`}>
+                <div className={`text-5xl font-bold font-mono ${getPriceColor(pub.price)}`}>
                   {pub.price !== null ? `$${pub.price.toFixed(2)}` : 'TBC'}
                 </div>
               </div>
@@ -239,7 +239,7 @@ export default function PubDetailClient({ pub, nearbyPubs }: PubDetailClientProp
                 href={directionsUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className={`${pub.website ? '' : 'flex-1'} bg-charcoal text-white text-center py-3 px-6 rounded-2xl font-semibold text-sm hover:bg-charcoal/90 transition-colors`}
+                className="flex-1 bg-charcoal text-white text-center py-3 px-6 rounded-2xl font-semibold text-sm hover:bg-charcoal/90 transition-colors"
               >
                 Directions
               </a>
@@ -270,7 +270,7 @@ export default function PubDetailClient({ pub, nearbyPubs }: PubDetailClientProp
                           <p className="text-xs text-amber font-semibold mt-0.5">{E.party} Happy Hour Live</p>
                         )}
                       </div>
-                      <div className={`text-xl font-bold font-mono bg-gradient-to-br ${getPriceColor(nearby.price)} bg-clip-text text-transparent ml-3`}>
+                      <div className={`text-xl font-bold font-mono ${getPriceColor(nearby.price)} ml-3`}>
                         {nearby.price !== null ? `$${nearby.price.toFixed(2)}` : 'TBC'}
                       </div>
                     </CardContent>

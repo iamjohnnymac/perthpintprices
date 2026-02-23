@@ -10,7 +10,7 @@ import E from '@/lib/emoji'
 
 const MiniMap = dynamic(() => import('./MiniMap'), {
   ssr: false,
-  loading: () => <div className="h-[280px] bg-stone-100 animate-pulse" />,
+  loading: () => <div className="h-[200px] bg-stone-100 animate-pulse" />,
 })
 
 interface PubCardProps {
@@ -45,9 +45,9 @@ export default function PubCard({
   const router = useRouter()
   return (
     <Link href={`/pub/${pub.slug}`} className="block h-full">
-      <div className="group relative overflow-hidden hover:shadow-lg transition-shadow duration-300 border border-stone-200/60 shadow-sm rounded-2xl h-full flex flex-col bg-white cursor-pointer">
+      <div className="group relative isolate overflow-hidden hover:shadow-lg transition-shadow duration-300 border border-stone-200/60 shadow-sm rounded-2xl h-full flex flex-col bg-white cursor-pointer">
         {/* Image area — 280px tall */}
-        <div className="relative h-[280px] bg-stone-100">
+        <div className="relative h-[200px] bg-stone-100">
           {pub.imageUrl ? (
             <img src={pub.imageUrl} alt={pub.name} className="w-full h-full object-cover" />
           ) : showMiniMaps ? (
