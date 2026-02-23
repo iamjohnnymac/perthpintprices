@@ -9,59 +9,32 @@ interface TabBarProps {
   crowdCount: number
 }
 
-const tabs: { id: TabId; label: string; activeIcon: JSX.Element; inactiveIcon: JSX.Element }[] = [
+const tabs: { id: TabId; label: string; subtitle: string; emoji: string }[] = [
   {
     id: 'pubs',
     label: 'The Floor',
-    activeIcon: (
-      <svg viewBox="0 0 24 24" className="w-[22px] h-[22px]" fill="currentColor" stroke="none">
-        <path d="M5 3a1 1 0 011-1h12a1 1 0 011 1v1H5V3zm0 2h14v14a3 3 0 01-3 3H8a3 3 0 01-3-3V5zm4-2v3h2V3H9zm4 0v3h2V3h-2z" />
-      </svg>
-    ),
-    inactiveIcon: (
-      <svg viewBox="0 0 24 24" className="w-[22px] h-[22px]" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M5 3h14M5 3v16a2 2 0 002 2h10a2 2 0 002-2V3M5 3H3M19 3h2M9 3v4M15 3v4" />
-      </svg>
-    ),
+    subtitle: 'Map & pub list',
+    emoji: '🍺',
   },
   {
     id: 'market',
     label: 'Market Data',
-    activeIcon: (
-      <svg viewBox="0 0 24 24" className="w-[22px] h-[22px]" fill="currentColor" stroke="none">
-        <path d="M3 13h2v8H3v-8zm6-5h2v13H9V8zm6-4h2v17h-2V4zm6 7h-2v10h2V11z" />
-        <path d="M2 17l5.5-5.5 3.5 3.5L22 4" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" />
-      </svg>
-    ),
-    inactiveIcon: (
-      <svg viewBox="0 0 24 24" className="w-[22px] h-[22px]" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-        <polyline points="22,7 13.5,15.5 8.5,10.5 2,17" />
-        <polyline points="16,7 22,7 22,13" />
-      </svg>
-    ),
+    subtitle: 'Analytics & trends',
+    emoji: '📊',
   },
   {
     id: 'explore',
     label: 'Discover',
-    activeIcon: (
-      <svg viewBox="0 0 24 24" className="w-[22px] h-[22px]" fill="currentColor" stroke="none">
-        <path fillRule="evenodd" d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm4.243 5.757l-2.12 6.364-6.364 2.122 2.12-6.364 6.364-2.122zM12 13a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
-      </svg>
-    ),
-    inactiveIcon: (
-      <svg viewBox="0 0 24 24" className="w-[22px] h-[22px]" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-        <circle cx="12" cy="12" r="10" />
-        <polygon points="16.24,7.76 14.12,14.12 7.76,16.24 9.88,9.88" />
-      </svg>
-    ),
+    subtitle: 'Lifestyle picks',
+    emoji: '🧭',
   },
 ]
 
-export default function TabBar({ activeTab, onTabChange, pubCount, crowdCount }: TabBarProps) {
+export default function TabBar({ activeTab, onTabChange, crowdCount }: TabBarProps) {
   return (
-    <div className="bg-cream border-b border-stone-200/60">
+    <div className="px-4 py-3">
       <div className="max-w-7xl mx-auto">
-        <nav className="flex" role="tablist">
+        <div className="flex gap-2 sm:gap-3">
           {tabs.map((tab) => {
             const isActive = activeTab === tab.id
             return (
@@ -71,35 +44,39 @@ export default function TabBar({ activeTab, onTabChange, pubCount, crowdCount }:
                 aria-selected={isActive}
                 onClick={() => onTabChange(tab.id)}
                 className={`
-                  relative flex-1 flex flex-col items-center justify-center gap-1 py-3
-                  transition-all duration-200 ease-out
-                  ${isActive 
-                    ? 'text-amber' 
-                    : 'text-stone-400 hover:text-stone-600'
+                  relative flex-1 flex items-center gap-2.5 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5
+                  rounded-xl transition-all duration-200 ease-out
+                  min-h-[56px] sm:min-h-[60px]
+                  ${isActive
+                    ? 'bg-charcoal text-white shadow-md shadow-charcoal/20'
+                    : 'bg-white text-stone-600 border border-stone-200 hover:border-stone-300 hover:shadow-sm active:scale-[0.98]'
                   }
                 `}
               >
-                <span className={`transition-transform duration-200 ${isActive ? 'scale-110' : ''}`}>
-                  {isActive ? tab.activeIcon : tab.inactiveIcon}
+                <span className={`text-lg sm:text-xl flex-shrink-0 ${isActive ? 'scale-110' : ''} transition-transform duration-200`}>
+                  {tab.emoji}
                 </span>
 
-                <span className={`text-xs leading-none ${isActive ? 'font-semibold' : 'font-medium'}`}>
-                  {tab.label}
-                </span>
+                <div className="flex flex-col items-start min-w-0">
+                  <span className={`text-xs sm:text-sm leading-tight truncate ${isActive ? 'font-bold' : 'font-semibold'}`}>
+                    {tab.label}
+                  </span>
+                  <span className={`text-[10px] sm:text-xs leading-tight truncate ${isActive ? 'text-white/60' : 'text-stone-400'}`}>
+                    {tab.subtitle}
+                  </span>
+                </div>
 
-                {tab.id === 'market' && crowdCount > 0 && (
-                  <span className="absolute top-2 right-1/4 flex items-center justify-center w-2 h-2 rounded-full bg-amber animate-pulse ring-2 ring-white" />
+                {tab.id === 'market' && crowdCount > 0 && !isActive && (
+                  <span className="absolute -top-1 -right-1 flex items-center justify-center w-2.5 h-2.5 rounded-full bg-amber animate-pulse ring-2 ring-white" />
                 )}
 
-                <span className={`
-                  absolute bottom-0 left-3 right-3 h-[3px] rounded-full
-                  transition-all duration-200
-                  ${isActive ? 'bg-amber opacity-100' : 'bg-transparent opacity-0'}
-                `} />
+                {isActive && (
+                  <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-amber" />
+                )}
               </button>
             )
           })}
-        </nav>
+        </div>
       </div>
     </div>
   )
