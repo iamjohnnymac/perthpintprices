@@ -32,9 +32,13 @@ const tabs: { id: TabId; label: string; subtitle: string; emoji: string }[] = [
 
 export default function TabBar({ activeTab, onTabChange, crowdCount }: TabBarProps) {
   return (
-    <div className="px-4 py-2 sm:py-3">
+    <div className="px-3 sm:px-4 py-2 sm:py-3">
       <div className="max-w-7xl mx-auto">
-        <div className="flex gap-1.5 sm:gap-3">
+        {/* Graceful horizontal scroll on very narrow screens, snap for native feel */}
+        <div
+          className="flex gap-1.5 sm:gap-3 overflow-x-auto snap-x snap-mandatory scrollbar-hide"
+          style={{ scrollbarWidth: 'none', msOverflowStyle: 'none', WebkitOverflowScrolling: 'touch' }}
+        >
           {tabs.map((tab) => {
             const isActive = activeTab === tab.id
             return (
@@ -44,7 +48,7 @@ export default function TabBar({ activeTab, onTabChange, crowdCount }: TabBarPro
                 aria-selected={isActive}
                 onClick={() => onTabChange(tab.id)}
                 className={`
-                  relative flex-1 flex items-center gap-2.5 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5
+                  relative flex-1 min-w-0 snap-start flex items-center gap-1.5 sm:gap-3 px-2.5 sm:px-4 py-3 sm:py-3.5
                   rounded-xl transition-all duration-200 ease-out
                   min-h-[48px] sm:min-h-[56px]
                   ${isActive
@@ -53,15 +57,15 @@ export default function TabBar({ activeTab, onTabChange, crowdCount }: TabBarPro
                   }
                 `}
               >
-                <span className={`text-lg sm:text-xl flex-shrink-0 ${isActive ? 'scale-110' : ''} transition-transform duration-200`}>
+                <span className={`text-base sm:text-xl flex-shrink-0 ${isActive ? 'scale-110' : ''} transition-transform duration-200`}>
                   {tab.emoji}
                 </span>
 
                 <div className="flex flex-col items-start min-w-0">
-                  <span className={`text-xs sm:text-sm leading-tight truncate ${isActive ? 'font-bold' : 'font-semibold'}`}>
+                  <span className={`text-[11px] sm:text-sm leading-tight truncate max-w-full ${isActive ? 'font-bold' : 'font-semibold'}`}>
                     {tab.label}
                   </span>
-                  <span className={`text-[10px] sm:text-xs leading-tight truncate ${isActive ? 'text-white/60' : 'text-stone-400'}`}>
+                  <span className={`text-[9px] sm:text-xs leading-tight truncate max-w-full ${isActive ? 'text-white/60' : 'text-stone-400'}`}>
                     {tab.subtitle}
                   </span>
                 </div>
