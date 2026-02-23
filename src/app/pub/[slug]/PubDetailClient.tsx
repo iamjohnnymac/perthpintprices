@@ -159,22 +159,13 @@ export default function PubDetailClient({ pub, nearbyPubs }: PubDetailClientProp
               </div>
             </div>
 
-            {/* Badges */}
+            {/* Status Badges */}
             <div className="flex flex-wrap gap-2">
               {pub.isHappyHourNow && (
                 <Badge className="bg-amber hover:bg-amber text-white animate-pulse">
                   {E.party} HAPPY HOUR LIVE
                   {pub.happyHourMinutesRemaining && ` · ${pub.happyHourMinutesRemaining}m left`}
                 </Badge>
-              )}
-              {pub.hasTab && (
-                <Badge className="text-white" style={{ backgroundColor: '#5B2D8E' }}>TAB Venue</Badge>
-              )}
-              {pub.kidFriendly && (
-                <Badge className="bg-emerald-600 hover:bg-emerald-600 text-white">Kid Friendly</Badge>
-              )}
-              {pub.sunsetSpot && (
-                <Badge className="bg-amber-500 hover:bg-amber-500 text-white">Sunset Spot</Badge>
               )}
               {pub.priceVerified && pub.price !== null && (
                 <Badge variant="outline" className="border-stone-300 text-stone-500">
@@ -185,6 +176,42 @@ export default function PubDetailClient({ pub, nearbyPubs }: PubDetailClientProp
                 </Badge>
               )}
             </div>
+
+            {/* Featured In — PintDex features this pub appears in */}
+            {(pub.sunsetSpot || pub.kidFriendly || pub.hasTab) && (
+              <div>
+                <div className="text-xs text-stone-400 uppercase tracking-wider font-semibold mb-2">Featured In</div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  {pub.sunsetSpot && (
+                    <div className="flex items-center gap-3 p-3 rounded-xl bg-gradient-to-r from-orange-50 to-amber-50 border border-orange-200/50">
+                      <span className="text-2xl">🌅</span>
+                      <div>
+                        <p className="text-sm font-semibold text-charcoal">Sunset Sippers</p>
+                        <p className="text-xs text-stone-500">Great spot for golden hour pints</p>
+                      </div>
+                    </div>
+                  )}
+                  {pub.kidFriendly && (
+                    <div className="flex items-center gap-3 p-3 rounded-xl bg-gradient-to-r from-emerald-50 to-green-50 border border-emerald-200/50">
+                      <span className="text-2xl">👨‍👧</span>
+                      <div>
+                        <p className="text-sm font-semibold text-charcoal">Dad Bar</p>
+                        <p className="text-xs text-stone-500">Kid-friendly with a solid pint</p>
+                      </div>
+                    </div>
+                  )}
+                  {pub.hasTab && (
+                    <div className="flex items-center gap-3 p-3 rounded-xl border border-stone-200/50" style={{ background: 'linear-gradient(to right, #f3eef8, #f8f4fb)' }}>
+                      <span className="text-2xl">🏇</span>
+                      <div>
+                        <p className="text-sm font-semibold text-charcoal">Punt N Pints</p>
+                        <p className="text-xs text-stone-500">TAB venue — watch the races with a cold one</p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
 
             {/* Beer on tap */}
             <div>
