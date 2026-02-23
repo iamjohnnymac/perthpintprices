@@ -82,9 +82,9 @@ export default function DadBar({ pubs, userLocation }: { pubs: Pub[], userLocati
               <span className="text-[10px] font-semibold text-amber-700">{dadPubs.length} VENUES</span>
             </div>
             {!isExpanded && dadPubs[0]?.price && (
-              <span className="text-sm font-bold text-amber-700">from ${'{'}dadPubs[0].price.toFixed(2){'}'}</span>
+              <span className="text-sm font-bold text-amber-700">from ${dadPubs[0].price.toFixed(2)}</span>
             )}
-            <svg width="16" height="16" viewBox="0 0 16 16" className={`text-stone-400 transition-transform ${'{'}isExpanded ? 'rotate-180' : ''{'}'}`}>
+            <svg width="16" height="16" viewBox="0 0 16 16" className={`text-stone-400 transition-transform ${isExpanded ? 'rotate-180' : ''}`}>
               <path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
             </svg>
           </div>

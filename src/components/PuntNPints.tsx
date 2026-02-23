@@ -107,9 +107,9 @@ export default function PuntNPints({ pubs, userLocation }: PuntNPintsProps) {
               <span className="text-[10px] font-medium" style={{ color: '#5B2D8E' }}>{tabPubs.length} TAB Pubs</span>
             </div>
             {!isSectionOpen && tabPubs[0]?.price && (
-              <span className="text-sm font-bold" style={{ color: '#F58220' }}>from ${'{'}tabPubs[0].price.toFixed(2){'}'}</span>
+              <span className="text-sm font-bold" style={{ color: '#F58220' }}>from ${tabPubs[0].price.toFixed(2)}</span>
             )}
-            <svg width="16" height="16" viewBox="0 0 16 16" className={`text-stone-400 transition-transform ${'{'}isSectionOpen ? 'rotate-180' : ''{'}'}`}>
+            <svg width="16" height="16" viewBox="0 0 16 16" className={`text-stone-400 transition-transform ${isSectionOpen ? 'rotate-180' : ''}`}>
               <path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
             </svg>
           </div>
