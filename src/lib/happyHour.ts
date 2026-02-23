@@ -127,7 +127,7 @@ export function getHappyHourStatus(happyHourStr: string | null | undefined): Hap
       isActive: true,
       isToday: true,
       statusText: 'Happy Hour NOW!',
-      statusEmoji: '🎉',
+      statusEmoji: '●',
       countdown
     };
   }

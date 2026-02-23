@@ -114,7 +114,7 @@ export default function PubCard({
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
-                className="flex-shrink-0 text-stone-300 hover:text-gold transition-colors"
+                className="flex-shrink-0 text-stone-300 hover:text-ocean transition-colors"
                 title="Get directions"
               >
                 <DirectionsIcon />
@@ -149,7 +149,7 @@ export default function PubCard({
         {pub.happyHour && (
           <div className={`text-xs flex items-center gap-1 ${
             happyHourStatus.isActive ? 'text-teal font-bold' : 
-            happyHourStatus.isToday ? 'text-gold font-semibold' : 
+            happyHourStatus.isToday ? 'text-ocean font-semibold' : 
             'text-stone-500'
           }`}>
             <span>{happyHourStatus.statusEmoji}</span>
@@ -175,7 +175,7 @@ export default function PubCard({
             href={pub.website}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-gold hover:text-amber-600 text-xs font-semibold"
+            className="text-ocean hover:text-cyan-600 text-xs font-semibold"
           >
             Visit website →
           </a>
@@ -185,7 +185,7 @@ export default function PubCard({
         <div className="flex items-center gap-1.5">
           <button
             onClick={() => sharePub(pub)}
-            className="text-stone-400 hover:text-gold transition-colors p-1"
+            className="text-stone-400 hover:text-ocean transition-colors p-1"
             title="Share"
           >
             <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

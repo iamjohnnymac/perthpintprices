@@ -110,7 +110,7 @@ export default function SuburbLeague({ pubs }: { pubs: Pub[] }) {
 
       const isRelegation = pos > total - 3 && total > 6
       let rowBg = rowIdx % 2 === 0 ? 'bg-white' : 'bg-stone-50/80'
-      if (pos === 1) rowBg = 'bg-amber-100/60'
+      if (pos === 1) rowBg = 'bg-cyan-50/60'
       else if (pos === 2) rowBg = 'bg-stone-200/50'
       else if (pos === 3) rowBg = 'bg-orange-50/70'
       else if (isRelegation) rowBg = 'bg-coral/5'
@@ -134,7 +134,7 @@ export default function SuburbLeague({ pubs }: { pubs: Pub[] }) {
         >
           <div>
             <h3 className="text-sm font-bold font-heading text-stone-800 flex items-center gap-2">
-              <svg className="inline w-4 h-4 mr-1.5 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><rect x="3" y="12" width="4" height="8" rx="1"/><rect x="10" y="8" width="4" height="12" rx="1"/><rect x="17" y="4" width="4" height="16" rx="1"/></svg>SUBURB LEAGUE TABLE
+              <svg className="inline w-4 h-4 mr-1.5 text-ocean" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><rect x="3" y="12" width="4" height="8" rx="1"/><rect x="10" y="8" width="4" height="12" rx="1"/><rect x="17" y="4" width="4" height="16" rx="1"/></svg>SUBURB LEAGUE TABLE
             </h3>
             <p className="text-xs text-stone-500 mt-0.5">
               {isExpanded

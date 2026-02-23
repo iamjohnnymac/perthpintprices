@@ -420,7 +420,7 @@ export default function Home() {
                         {pub.happyHour ? (
                           <span className={`text-xs ${
                             happyHourStatus.isActive ? 'text-teal font-bold' : 
-                            happyHourStatus.isToday ? 'text-gold font-semibold' : 
+                            happyHourStatus.isToday ? 'text-ocean font-semibold' : 
                             'text-stone-500'
                           }`}>
                             {happyHourStatus.statusEmoji} {happyHourStatus.statusText}
@@ -506,38 +506,38 @@ export default function Home() {
         )}
       </div>
 
-      <footer className="bg-stone-900 text-white py-8 mt-8">
+      <footer className="bg-stone-100 border-t border-stone-200 text-stone-700 py-8 mt-8">
         <div className="max-w-7xl mx-auto px-4">
-          <div className="flex flex-wrap justify-center gap-6 mb-6 pb-6 border-b border-stone-700">
+          <div className="flex flex-wrap justify-center gap-6 mb-6 pb-6 border-b border-stone-300">
             <div className="flex items-center gap-2">
-              <span className="text-2xl">🍺</span>
+              <span className="text-xl text-stone-400">⬡</span>
               <div>
-                <p className="font-semibold text-stone-200">Schooner</p>
-                <p className="text-xs text-stone-400">425ml</p>
+                <p className="font-semibold text-stone-700">Schooner</p>
+                <p className="text-xs text-stone-500">425ml</p>
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-2xl">🍺</span>
+              <span className="text-xl text-stone-400">⬡</span>
               <div>
-                <p className="font-semibold text-gold">Pint</p>
-                <p className="text-xs text-stone-400">570ml</p>
+                <p className="font-semibold text-ocean">Pint</p>
+                <p className="text-xs text-stone-500">570ml</p>
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-2xl">🍾</span>
+              <span className="text-xl text-stone-400">⬡</span>
               <div>
-                <p className="font-semibold text-stone-200">Long Neck</p>
-                <p className="text-xs text-stone-400">750ml</p>
+                <p className="font-semibold text-stone-700">Long Neck</p>
+                <p className="text-xs text-stone-500">750ml</p>
               </div>
             </div>
           </div>
 
           <div className="text-center">
-            <p className="text-stone-300 text-sm">🍺 PintDex — Perth&apos;s Beer Market since 2024</p>
-            <p className="text-stone-500 text-xs mt-1">Prices may vary. Pint prices shown. Always drink responsibly.</p>
+            <p className="text-stone-600 text-sm font-medium">PintDex — Perth&apos;s Beer Market since 2024</p>
+            <p className="text-stone-400 text-xs mt-1">Prices may vary. Pint prices shown. Always drink responsibly.</p>
             <a
               href="mailto:perthpintprices@gmail.com?subject=Price%20Correction&body=Hi%2C%20I%20noticed%20a%20wrong%20price%20on%20the%20site.%0A%0APub%20name%3A%20%0ACorrect%20price%3A%20%0ADetails%3A%20"
-              className="inline-block mt-3 text-gold hover:text-amber-300 text-xs"
+              className="inline-block mt-3 text-ocean hover:text-cyan-500 text-xs"
             >
               Report Wrong Price
             </a>

@@ -58,7 +58,7 @@ function Sparkline({ data, snapshots, width = 280, height = 60 }: {
   const areaPoints = `0,${height} 0,${firstY} ${polylinePoints} ${width},${lastY} ${width},${height}`;
 
   const trend = data[data.length - 1] - data[0];
-  const color = trend > 0 ? '#FF4757' : trend < 0 ? '#00C9A7' : '#E8A317';
+  const color = trend > 0 ? '#DC2626' : trend < 0 ? '#0891B2' : '#D97706';
   const gradientId = 'sparkGrad-pint-index';
 
   const handleMouseMove = useCallback((e: React.MouseEvent<SVGSVGElement>) => {
@@ -174,7 +174,7 @@ function DistributionBars({ distribution }: { distribution: Record<string, numbe
             className="w-full rounded-sm transition-all duration-500"
             style={{
               height: `${Math.max((values[i] / maxVal) * 32, 2)}px`,
-              backgroundColor: i <= 1 ? '#00C9A7' : i <= 3 ? '#E8A317' : '#FF4757',
+              backgroundColor: i <= 1 ? '#0891B2' : i <= 3 ? '#D97706' : '#DC2626',
               opacity: 0.8
             }}
           />
@@ -294,12 +294,12 @@ export default function PintIndex() {
             <div className="grid grid-cols-2 gap-4 mt-4">
               <div className="bg-teal/10 rounded-lg p-3 h-full">
                 <div className="text-xs text-teal font-medium">▼ Cheapest Suburb</div>
-                <div className="text-sm font-bold text-navy mt-1">{current.cheapest_suburb}</div>
+                <div className="text-sm font-bold text-stone-800 mt-1">{current.cheapest_suburb}</div>
                 <div className="text-xs text-teal">avg ${current.cheapest_suburb_avg.toFixed(2)}/pint</div>
               </div>
               <div className="bg-coral/10 rounded-lg p-3 h-full">
                 <div className="text-xs text-coral font-medium">▲ Priciest Suburb</div>
-                <div className="text-sm font-bold text-navy mt-1">{current.most_expensive_suburb}</div>
+                <div className="text-sm font-bold text-stone-800 mt-1">{current.most_expensive_suburb}</div>
                 <div className="text-xs text-coral">avg ${current.most_expensive_suburb_avg.toFixed(2)}/pint</div>
               </div>
             </div>

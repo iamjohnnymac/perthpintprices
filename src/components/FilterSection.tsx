@@ -195,7 +195,7 @@ export function FilterSection({
               className={cn(
                 "flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all border whitespace-nowrap",
                 showMoreFilters || activeFilterCount > 0
-                  ? "bg-stone-800 text-white border-stone-800"
+                  ? "bg-ocean text-white border-stone-800"
                   : "bg-white text-stone-500 border-stone-200 hover:border-stone-300 hover:text-stone-700"
               )}
             >
@@ -221,7 +221,7 @@ export function FilterSection({
                         onClick={() => setSortBy(option)}
                         className={cn(
                           "flex-1 px-2 py-1.5 rounded-lg text-xs font-medium transition-all",
-                          sortBy === option ? "bg-stone-800 text-white" : "bg-stone-100 text-stone-600 hover:bg-stone-200"
+                          sortBy === option ? "bg-ocean text-white" : "bg-stone-100 text-stone-600 hover:bg-stone-200"
                         )}
                       >
                         {option === 'price' ? 'Price' : option === 'name' ? 'Name' : option === 'suburb' ? 'Suburb' : 'Nearest'}

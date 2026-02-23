@@ -25,15 +25,15 @@ interface WeatherCondition {
 }
 
 function getWeatherEmoji(code: number): string {
-  if (code === 0) return '☀️'
-  if (code >= 1 && code <= 3) return '🌤️'
+  if (code === 0) return '○'
+  if (code >= 1 && code <= 3) return '◐'
   if (code >= 45 && code <= 48) return '🌫️'
   if (code >= 51 && code <= 57) return '🌧️'
   if (code >= 61 && code <= 67) return '🌧️'
   if (code >= 71 && code <= 77) return '❄️'
   if (code >= 80 && code <= 82) return '🌧️'
-  if (code >= 95 && code <= 99) return '⛈️'
-  return '🌤️'
+  if (code >= 95 && code <= 99) return '◉'
+  return '◐'
 }
 
 function getWeatherLabel(code: number): string {
@@ -81,7 +81,7 @@ function getWeatherCondition(weather: WeatherData, avgPrice: number): WeatherCon
 
   if (weather.temperature >= 22) {
     return {
-      emoji: '☀️',
+      emoji: '☀',
       label: 'Perfect weather',
       message: "Mint conditions — get outside and grab a pint!",
       tagline: `${weather.temperature.toFixed(0)}° and sunny — get outside and grab a cold one`,
@@ -93,7 +93,7 @@ function getWeatherCondition(weather: WeatherData, avgPrice: number): WeatherCon
 
   if (weather.temperature >= 15) {
     return {
-      emoji: '🌤️',
+      emoji: '⛅',
       label: 'Great pub weather',
       message: "Great pub weather — grab a mate and a pint",
       tagline: `${weather.temperature.toFixed(0)}° with a breeze — grab a mate and a cold one`,
@@ -206,7 +206,7 @@ export default function BeerWeather({ pubs, userLocation }: BeerWeatherProps) {
                 <h3 className="font-bold font-heading text-stone-800 text-sm flex items-center">BEER WEATHER<InfoTooltip text="Live conditions from Open-Meteo for Perth CBD, updated on each page load. Pub recommendations are ranked by outdoor seating suitability based on temperature, wind, and UV." /></h3>
                 {isWindy && (
                   <Badge className="bg-sky-100 text-sky-700 border-sky-200 text-[10px] px-1.5 py-0">
-                    💨 Windy!
+                    ⟳ Windy!
                   </Badge>
                 )}
               </div>
@@ -226,10 +226,10 @@ export default function BeerWeather({ pubs, userLocation }: BeerWeatherProps) {
             {/* Weather pills */}
             <div className="hidden sm:flex flex-col gap-1">
               <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-white/60 text-stone-500 border border-stone-100">
-                💨 {weather.windSpeed.toFixed(0)} km/h
+                ↻ {weather.windSpeed.toFixed(0)} km/h
               </span>
               <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-white/60 text-stone-500 border border-stone-100">
-                💧 {weather.humidity}%
+                ◦ {weather.humidity}%
               </span>
             </div>
 
@@ -248,10 +248,10 @@ export default function BeerWeather({ pubs, userLocation }: BeerWeatherProps) {
             {/* Mobile weather pills */}
             <div className="flex sm:hidden justify-center gap-2 mb-2">
               <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-white/60 text-stone-500 border border-stone-100">
-                💨 {weather.windSpeed.toFixed(0)} km/h
+                ↻ {weather.windSpeed.toFixed(0)} km/h
               </span>
               <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-white/60 text-stone-500 border border-stone-100">
-                💧 {weather.humidity}%
+                ◦ {weather.humidity}%
               </span>
               <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-white/60 text-stone-500 border border-stone-100">
                 🌡️ {weather.temperature.toFixed(1)}°C
@@ -261,7 +261,7 @@ export default function BeerWeather({ pubs, userLocation }: BeerWeatherProps) {
             {/* Recommended Pubs */}
             <div className="flex items-center justify-between mb-2">
               <h4 className="text-xs font-semibold text-stone-700">
-                🍺 Recommended Right Now
+                ▸ Recommended Right Now
               </h4>
               <span className="text-xs text-stone-400">
                 {condition.label} picks
@@ -275,7 +275,7 @@ export default function BeerWeather({ pubs, userLocation }: BeerWeatherProps) {
                   className="flex items-center gap-3 rounded-xl bg-white/70 hover:bg-white/95 transition-all duration-200 p-3 border border-stone-100 shadow-sm hover:shadow-md"
                   onClick={(e) => e.stopPropagation()}
                 >
-                  <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-amber-50 text-amber-600 font-bold text-sm flex-shrink-0">
+                  <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-cyan-50 text-ocean font-bold text-sm flex-shrink-0">
                     {index + 1}
                   </div>
                   <div className="min-w-0 flex-1">
@@ -287,7 +287,7 @@ export default function BeerWeather({ pubs, userLocation }: BeerWeatherProps) {
                     </div>
                   </div>
                   <div className="text-right flex-shrink-0">
-                    <span className="text-sm font-bold text-amber-700">{pub.price !== null ? `$${pub.price.toFixed(2)}` : 'TBC'}</span>
+                    <span className="text-sm font-bold text-ocean">{pub.price !== null ? `$${pub.price.toFixed(2)}` : 'TBC'}</span>
                     {pub.happyHour && (
                       <p className="text-[9px] text-emerald-600 font-medium">Happy Hour</p>
                     )}

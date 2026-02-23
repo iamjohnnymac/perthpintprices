@@ -38,7 +38,7 @@ export default function CrowdReporter({ pubId, pubName, onClose, onReport }: Cro
     >
       <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-3xl max-w-sm w-full overflow-hidden shadow-2xl border border-white/10">
         {/* Header */}
-        <div className="bg-gradient-to-r from-amber-500 to-orange-500 px-6 py-4">
+        <div className="bg-gradient-to-r from-cyan-600 to-ocean px-6 py-4">
           <div className="flex items-center justify-between">
             <div>
               <h3 className="text-white font-bold text-lg">How busy is it?</h3>
@@ -99,7 +99,7 @@ export default function CrowdReporter({ pubId, pubName, onClose, onReport }: Cro
                 className={`
                   w-full py-3 rounded-xl font-bold text-white transition-all
                   ${selectedLevel && !isSubmitting
-                    ? 'bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 shadow-lg'
+                    ? 'bg-gradient-to-r from-cyan-600 to-ocean hover:from-amber-600 hover:to-orange-600 shadow-lg'
                     : 'bg-gray-700 cursor-not-allowed opacity-50'
                   }
                 `}

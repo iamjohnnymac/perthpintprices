@@ -9,7 +9,7 @@ import { getSunPosition, sunToMapPosition } from '@/lib/sunPosition'
 const miniMarkerIcon = L.divIcon({
   className: 'mini-map-marker',
   html: `<div style="
-    background: linear-gradient(135deg, #E8A317 0%, #d4920f 100%);
+    background: linear-gradient(135deg, #0891B2 0%, #d4920f 100%);
     width: 24px;
     height: 24px;
     border-radius: 50%;
@@ -66,7 +66,7 @@ export default function MiniMap({ lat, lng, name }: MiniMapProps) {
               height: 12,
               left: `calc(${sunPos.x}% - 6px)`,
               top: `calc(${sunPos.y}% - 6px)`,
-              background: 'radial-gradient(circle, #fde68a 0%, #E8A317 50%, #d97706 100%)',
+              background: 'radial-gradient(circle, #fde68a 0%, #0891B2 50%, #0E7490 100%)',
               boxShadow: '0 0 6px 3px rgba(251,191,36,0.55)',
             }}
           />

@@ -159,9 +159,9 @@ export default function VenueIntel({ pubs, userLocation }: VenueIntelProps) {
               </div>
             </div>
 
-            <div className="p-3 rounded-xl bg-amber-50/60 border border-amber-100 text-center">
+            <div className="p-3 rounded-xl bg-cyan-50/60 border border-cyan-100 text-center">
               <p className="text-xs text-stone-500">Median Pint Price in Perth</p>
-              <p className="text-xl font-bold text-amber-700">${percentileData.median.toFixed(2)}</p>
+              <p className="text-xl font-bold text-ocean">${percentileData.median.toFixed(2)}</p>
               <p className="text-[10px] text-stone-400">{percentileData.percentile}% of venues are cheaper than the median</p>
             </div>
 
