@@ -1,30 +1,40 @@
 'use client'
 
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState, useCallback, useMemo } from 'react'
 import Link from 'next/link'
 import { getPubs } from '@/lib/supabase'
 import { Pub } from '@/types/pub'
+import { getDistanceKm, formatDistance } from '@/lib/location'
+
+type SortMode = 'price' | 'nearest'
 
 export default function HappyHourClient() {
-  const [pubs, setPubs] = useState<Pub[]>([])
+  const [allPubs, setAllPubs] = useState<Pub[]>([])
   const [loading, setLoading] = useState(true)
   const [lastRefresh, setLastRefresh] = useState<Date | null>(null)
+  const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null)
+  const [locationState, setLocationState] = useState<'pending' | 'granted' | 'denied'>('pending')
+  const [sortMode, setSortMode] = useState<SortMode>('price')
+
+  // Request geolocation on mount
+  useEffect(() => {
+    if (typeof window !== 'undefined' && navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          setUserLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude })
+          setLocationState('granted')
+          setSortMode('nearest')
+        },
+        () => setLocationState('denied'),
+        { enableHighAccuracy: false, timeout: 8000, maximumAge: 300000 }
+      )
+    }
+  }, [])
 
   const fetchPubs = useCallback(async () => {
     try {
-      const allPubs = await getPubs()
-      const active = allPubs
-        .filter((p) => p.isHappyHourNow)
-        .sort((a, b) => {
-          // Pubs with HH prices first (sorted by savings), then pubs without HH prices
-          const aHasPrice = a.happyHourPrice != null ? 1 : 0
-          const bHasPrice = b.happyHourPrice != null ? 1 : 0
-          if (aHasPrice !== bHasPrice) return bHasPrice - aHasPrice
-          const savingsA = (a.regularPrice ?? 0) - (a.happyHourPrice ?? a.regularPrice ?? 0)
-          const savingsB = (b.regularPrice ?? 0) - (b.happyHourPrice ?? b.regularPrice ?? 0)
-          return savingsB - savingsA
-        })
-      setPubs(active)
+      const pubs = await getPubs()
+      setAllPubs(pubs.filter((p) => p.isHappyHourNow))
       setLastRefresh(new Date())
     } catch (err) {
       console.error('Error fetching happy hour pubs:', err)
@@ -39,6 +49,26 @@ export default function HappyHourClient() {
     return () => clearInterval(interval)
   }, [fetchPubs])
 
+  // Sort pubs based on current mode
+  const pubs = useMemo(() => {
+    const sorted = [...allPubs]
+    if (sortMode === 'nearest' && userLocation) {
+      sorted.sort((a, b) => {
+        const distA = getDistanceKm(userLocation.lat, userLocation.lng, a.lat, a.lng)
+        const distB = getDistanceKm(userLocation.lat, userLocation.lng, b.lat, b.lng)
+        return distA - distB
+      })
+    } else {
+      // Price sort: cheapest effective price first
+      sorted.sort((a, b) => {
+        const priceA = a.happyHourPrice ?? a.price ?? a.regularPrice ?? 999
+        const priceB = b.happyHourPrice ?? b.price ?? b.regularPrice ?? 999
+        return priceA - priceB
+      })
+    }
+    return sorted
+  }, [allPubs, sortMode, userLocation])
+
   const formatMinutesRemaining = (mins: number | null): string => {
     if (mins == null) return ''
     if (mins < 1) return 'Ending soon'
@@ -48,6 +78,9 @@ export default function HappyHourClient() {
     if (remainder === 0) return `${hours}h remaining`
     return `${hours}h ${remainder}m remaining`
   }
+
+  const hasLocation = locationState === 'granted' && userLocation !== null
+  const isNearestActive = sortMode === 'nearest' && hasLocation
 
   return (
     <div className="min-h-screen bg-cream">
@@ -78,7 +111,7 @@ export default function HappyHourClient() {
 
       <div className="max-w-4xl mx-auto px-4 py-8 sm:py-12">
         {/* Page Title */}
-        <div className="text-center mb-8 sm:mb-12">
+        <div className="text-center mb-6 sm:mb-10">
           <div className="inline-flex items-center gap-2 mb-4">
             <span className="text-3xl sm:text-4xl">🍻</span>
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-charcoal font-heading">
@@ -112,6 +145,34 @@ export default function HappyHourClient() {
             </p>
           )}
         </div>
+
+        {/* Sort Controls */}
+        {!loading && pubs.length > 0 && (
+          <div className="flex items-center justify-center gap-2 mb-6">
+            <button
+              onClick={() => setSortMode('price')}
+              className={`px-4 py-2 rounded-full text-sm font-semibold transition-all ${
+                sortMode === 'price'
+                  ? 'bg-charcoal text-white shadow-md'
+                  : 'bg-white text-stone-500 border border-stone-200 hover:border-stone-300'
+              }`}
+            >
+              💰 Cheapest
+            </button>
+            {hasLocation && (
+              <button
+                onClick={() => setSortMode(sortMode === 'nearest' ? 'price' : 'nearest')}
+                className={`px-4 py-2 rounded-full text-sm font-semibold transition-all ${
+                  isNearestActive
+                    ? 'bg-blue-600 text-white shadow-md'
+                    : 'bg-white text-stone-500 border border-stone-200 hover:border-stone-300'
+                }`}
+              >
+                📍 Nearest
+              </button>
+            )}
+          </div>
+        )}
 
         {/* Loading State */}
         {loading && (
@@ -165,6 +226,9 @@ export default function HappyHourClient() {
                 pub.regularPrice && pub.regularPrice > 0 && savings > 0
                   ? Math.round((savings / pub.regularPrice) * 100)
                   : 0
+              const distance = userLocation
+                ? getDistanceKm(userLocation.lat, userLocation.lng, pub.lat, pub.lng)
+                : null
 
               return (
                 <Link
@@ -184,9 +248,14 @@ export default function HappyHourClient() {
                             HH
                           </span>
                         </div>
-                        <p className="text-sm text-stone-500 mb-3">
-                          {pub.suburb}
-                        </p>
+                        <div className="flex items-center gap-2 text-sm text-stone-500 mb-3">
+                          <span>{pub.suburb}</span>
+                          {distance != null && (
+                            <span className="text-blue-600 font-medium">
+                              · {formatDistance(distance)}
+                            </span>
+                          )}
+                        </div>
 
                         {/* Schedule & Beer */}
                         <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-stone-500">
@@ -284,7 +353,7 @@ export default function HappyHourClient() {
               href="/"
               className="inline-flex items-center gap-2 px-6 py-3 bg-charcoal hover:bg-charcoal/90 text-white rounded-full font-bold transition-all"
             >
-              View all {pubs.length > 0 ? 'pubs' : 'venues'}
+              View all pubs
               <svg
                 className="w-4 h-4"
                 fill="none"

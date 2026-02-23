@@ -151,7 +151,26 @@ export function getHappyHourStatus(pub: {
     return m > 0 ? `${hour12}:${String(m).padStart(2, '0')}${period}` : `${hour12}${period}`
   }
   
-  const label = `${hhDays} ${formatHour(startTime.hours, startTime.minutes)}-${formatHour(endTime.hours, endTime.minutes)}`
+  const formatDays = (days: string): string => {
+    // Handle postgres array format: {Mon,Tue,Wed,...}
+    if (days.startsWith('{') && days.endsWith('}')) {
+      const dayList = days.slice(1, -1).split(',').map(d => d.trim())
+      const allDays = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun']
+      if (dayList.length === 7) return '7 days'
+      if (dayList.length === 5 && ['Mon','Tue','Wed','Thu','Fri'].every(d => dayList.includes(d))) return 'Mon-Fri'
+      if (dayList.length === 2 && dayList.includes('Sat') && dayList.includes('Sun')) return 'Weekends'
+      // Check for consecutive range
+      const indices = dayList.map(d => allDays.indexOf(d)).filter(i => i >= 0).sort((a,b) => a-b)
+      if (indices.length > 2) {
+        const isConsecutive = indices.every((v, i) => i === 0 || v === indices[i-1] + 1)
+        if (isConsecutive) return `${allDays[indices[0]]}-${allDays[indices[indices.length-1]]}`
+      }
+      return dayList.join(', ')
+    }
+    return days
+  }
+
+  const label = `${formatDays(hhDays)} ${formatHour(startTime.hours, startTime.minutes)}-${formatHour(endTime.hours, endTime.minutes)}`
   
   const minutesRemaining = isActive ? endMinutes - currentMinutes : null
   
