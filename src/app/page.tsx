@@ -73,6 +73,7 @@ export default function Home() {
   const [heroVisible, setHeroVisible] = useState(true)
   const [showMap, setShowMap] = useState(true)
   const appRef = useRef<HTMLDivElement>(null)
+  const contentRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     async function loadPubs() {
@@ -171,6 +172,19 @@ export default function Home() {
 
   const liveCrowdCount = Object.keys(crowdReports).length
 
+  function handleTabChange(tab: TabId) {
+    setActiveTab(tab)
+    // Scroll content area to just below sticky header
+    setTimeout(() => {
+      if (contentRef.current) {
+        const header = contentRef.current.previousElementSibling as HTMLElement
+        const headerHeight = header?.offsetHeight || 0
+        const contentTop = contentRef.current.getBoundingClientRect().top + window.scrollY - headerHeight - 8
+        window.scrollTo({ top: contentTop, behavior: 'smooth' })
+      }
+    }, 50)
+  }
+
   function scrollToApp() {
     setHeroVisible(false)
     // After hero unmounts, app section is at top — just scroll to 0
@@ -199,8 +213,8 @@ export default function Home() {
           venueCount={stats.total}
           suburbCount={suburbs.length}
           happyHourCount={stats.happyHourNow}
-          onExploreClick={() => { setActiveTab('pubs'); scrollToApp(); }}
-          onDiscoverClick={() => { scrollToApp(); setActiveTab('explore'); }}
+          onExploreClick={() => { handleTabChange('pubs'); scrollToApp(); }}
+          onDiscoverClick={() => { scrollToApp(); handleTabChange('explore'); }}
           onSubmitClick={() => setShowSubmitForm(true)}
         />
       )}
@@ -208,7 +222,7 @@ export default function Home() {
       {/* ═══ APP SECTION ═══ */}
       <div ref={appRef}>
         <header className="bg-cream sticky top-0 z-[1000] shadow-[0_1px_4px_rgba(0,0,0,0.06)]">
-          <div className="max-w-7xl mx-auto px-4 pt-2.5 pb-0">
+          <div className="max-w-7xl mx-auto px-4 pt-2 pb-0">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <img src="/logo.png" alt="PintDex" className="w-10 h-10 rounded-lg flex-shrink-0 object-contain" />
@@ -243,7 +257,7 @@ export default function Home() {
 
           <TabBar
             activeTab={activeTab}
-            onTabChange={setActiveTab}
+            onTabChange={handleTabChange}
             pubCount={filteredPubs.length}
             crowdCount={liveCrowdCount}
           />
@@ -273,7 +287,7 @@ export default function Home() {
           )}
         </header>
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
+        <div ref={contentRef} className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-6">
           {/* ═══ PUBS TAB ═══ */}
           {activeTab === 'pubs' && (
             <>

@@ -32,9 +32,9 @@ const tabs: { id: TabId; label: string; subtitle: string; emoji: string }[] = [
 
 export default function TabBar({ activeTab, onTabChange, crowdCount }: TabBarProps) {
   return (
-    <div className="px-4 py-3">
+    <div className="px-4 py-2 sm:py-3">
       <div className="max-w-7xl mx-auto">
-        <div className="flex gap-2 sm:gap-3">
+        <div className="flex gap-1.5 sm:gap-3">
           {tabs.map((tab) => {
             const isActive = activeTab === tab.id
             return (
@@ -46,7 +46,7 @@ export default function TabBar({ activeTab, onTabChange, crowdCount }: TabBarPro
                 className={`
                   relative flex-1 flex items-center gap-2.5 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5
                   rounded-xl transition-all duration-200 ease-out
-                  min-h-[56px] sm:min-h-[60px]
+                  min-h-[48px] sm:min-h-[56px]
                   ${isActive
                     ? 'bg-charcoal text-white shadow-md shadow-charcoal/20'
                     : 'bg-white text-stone-600 border border-stone-200 hover:border-stone-300 hover:shadow-sm active:scale-[0.98]'
