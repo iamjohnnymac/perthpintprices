@@ -4,6 +4,7 @@ import { Pub } from '@/types/pub'
 import { getPubs, getCrowdLevels, CrowdReport } from '@/lib/supabase'
 
 import { getDistanceKm } from '@/lib/location'
+import Link from 'next/link'
 import dynamic from 'next/dynamic'
 
 // Extracted components
@@ -339,6 +340,19 @@ export default function Home() {
           {/* ═══ GUIDES TAB ═══ */}
           {activeTab === 'explore' && (
             <div className="space-y-3 sm:space-y-4">
+              {/* Featured: Pub Golf & Pint Crawl */}
+              <div className="grid grid-cols-2 gap-3">
+                <Link href="/pub-golf" className="bg-white rounded-2xl border border-stone-200/60 p-4 sm:p-5 hover:border-amber/40 hover:shadow-md transition-all active:scale-[0.98] group">
+                  <div className="text-2xl mb-2">⛳</div>
+                  <h3 className="font-bold font-heading text-charcoal text-sm group-hover:text-amber transition-colors">Pub Golf</h3>
+                  <p className="text-xs text-stone-500 mt-0.5">Score your crawl</p>
+                </Link>
+                <Link href="/pint-crawl" className="bg-white rounded-2xl border border-stone-200/60 p-4 sm:p-5 hover:border-amber/40 hover:shadow-md transition-all active:scale-[0.98] group">
+                  <div className="text-2xl mb-2">🗺️</div>
+                  <h3 className="font-bold font-heading text-charcoal text-sm group-hover:text-amber transition-colors">Pint Crawl</h3>
+                  <p className="text-xs text-stone-500 mt-0.5">Plan your route</p>
+                </Link>
+              </div>
               <BeerWeather pubs={pubs} userLocation={userLocation} />
               <SunsetSippers pubs={pubs} userLocation={userLocation} />
               <PuntNPints pubs={pubs} userLocation={userLocation} />
