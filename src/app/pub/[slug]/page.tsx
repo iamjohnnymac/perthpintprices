@@ -1,6 +1,6 @@
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { getPubBySlug, getAllPubSlugs, getNearbyPubs } from '@/lib/supabase'
+import { getPubBySlug, getAllPubSlugs, getNearbyPubs, getSiteStats } from '@/lib/supabase'
 import PubDetailClient from './PubDetailClient'
 
 interface PageProps {
@@ -45,7 +45,10 @@ export default async function PubPage({ params }: PageProps) {
   const pub = await getPubBySlug(params.slug)
   if (!pub) notFound()
   
-  const nearbyPubs = await getNearbyPubs(pub.suburb, pub.id, 4)
+  const [nearbyPubs, stats] = await Promise.all([
+    getNearbyPubs(pub.suburb, pub.id, 4),
+    getSiteStats(),
+  ])
   
-  return <PubDetailClient pub={pub} nearbyPubs={nearbyPubs} />
+  return <PubDetailClient pub={pub} nearbyPubs={nearbyPubs} avgPrice={Number(stats.avgPrice)} />
 }

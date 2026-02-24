@@ -61,11 +61,12 @@ function getPriceLabel(price: number | null, avgPrice: number): string {
 interface PubDetailClientProps {
   pub: Pub
   nearbyPubs: Pub[]
+  avgPrice: number
 }
 
-export default function PubDetailClient({ pub, nearbyPubs }: PubDetailClientProps) {
+export default function PubDetailClient({ pub, nearbyPubs, avgPrice }: PubDetailClientProps) {
   const [distance, setDistance] = useState<string | null>(null)
-  const perthAvg = 9.20
+  const perthAvg = avgPrice
 
   useEffect(() => {
     if ('geolocation' in navigator) {
