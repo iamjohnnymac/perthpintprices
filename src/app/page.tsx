@@ -31,6 +31,7 @@ import Footer from '@/components/Footer'
 import MyLocals from '@/components/MyLocals'
 import SubmitPubForm from '@/components/SubmitPubForm'
 import CrowdReporter from '@/components/CrowdReporter'
+import NotificationBell from '@/components/NotificationBell'
 
 const Map = dynamic(() => import('@/components/Map'), {
   ssr: false,
@@ -227,13 +228,16 @@ export default function Home() {
                   <span className="text-[10px] text-amber/70 uppercase tracking-wider font-medium">Live</span>
                 </div>
               </div>
-              <button
-                onClick={() => setShowSubmitForm(true)}
-                className="flex-shrink-0 flex items-center gap-1.5 px-3.5 py-2 bg-charcoal hover:bg-charcoal/90 text-white rounded-full font-bold transition-all text-xs"
-              >
-                <span className="hidden sm:inline">+ Submit a Price</span>
-                <span className="sm:hidden text-xs font-bold">+ Price</span>
-              </button>
+              <div className="flex items-center gap-1.5">
+                <NotificationBell />
+                <button
+                  onClick={() => setShowSubmitForm(true)}
+                  className="flex-shrink-0 flex items-center gap-1.5 px-3.5 py-2 bg-charcoal hover:bg-charcoal/90 text-white rounded-full font-bold transition-all text-xs"
+                >
+                  <span className="hidden sm:inline">+ Submit a Price</span>
+                  <span className="sm:hidden text-xs font-bold">+ Price</span>
+                </button>
+              </div>
             </div>
 
             <StatsBar
