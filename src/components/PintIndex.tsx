@@ -169,7 +169,7 @@ function DistributionBars({ distribution }: { distribution: Record<string, numbe
   return (
     <div className="flex items-end gap-1 h-10">
       {ranges.map((range, i) => (
-        <div key={range} className="flex flex-col items-center gap-0.5 flex-1">
+        <div key={range} className="flex flex-col items-center gap-1 flex-1">
           <div
             className="w-full rounded-sm transition-all duration-500"
             style={{

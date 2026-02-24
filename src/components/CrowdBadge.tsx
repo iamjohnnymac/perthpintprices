@@ -22,7 +22,7 @@ export default function CrowdBadge({ report, onClick }: CrowdBadgeProps) {
     <button
       onClick={onClick}
       className={`
-        inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold
+        inline-flex items-center gap-2 px-2.5 py-1 rounded-full text-xs font-semibold
         ${info.color} text-white shadow-sm
         hover:opacity-90 transition-opacity cursor-pointer
       `}
@@ -41,7 +41,7 @@ export function NoCrowdBadge({ onClick }: { onClick?: () => void }) {
     <button
       onClick={onClick}
       className="
-        inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium
+        inline-flex items-center gap-2 px-2.5 py-1 rounded-full text-xs font-medium
         bg-gray-200 text-gray-600 hover:bg-gray-300 transition-colors cursor-pointer
       "
       title="No recent reports - Click to report"

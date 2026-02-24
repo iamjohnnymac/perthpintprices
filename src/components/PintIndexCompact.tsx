@@ -25,7 +25,7 @@ export default function PintIndexCompact({ pubs, filteredPubs, onViewMore }: Pin
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4 flex-wrap">
           {isFiltered && (
-            <div className="flex items-center gap-1.5">
+            <div className="flex items-center gap-2">
               <span className="text-[10px] bg-amber/15 text-amber px-2 py-0.5 rounded-full font-medium uppercase tracking-wide">Filtered</span>
             </div>
           )}
@@ -40,7 +40,7 @@ export default function PintIndexCompact({ pubs, filteredPubs, onViewMore }: Pin
             <span className="text-sm font-semibold font-mono text-coral">${max.toFixed(0)}</span>
           </div>
           {cheapest && (
-            <div className="hidden sm:flex items-center gap-1.5">
+            <div className="hidden sm:flex items-center gap-2">
               <span className="text-xs text-stone-400 uppercase tracking-wide font-medium">Cheapest</span>
               <span className="text-xs font-semibold text-amber">{cheapest.suburb} ${min.toFixed(2)}</span>
             </div>

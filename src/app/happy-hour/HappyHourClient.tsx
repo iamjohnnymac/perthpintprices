@@ -89,7 +89,7 @@ export default function HappyHourClient() {
         <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
           <Link
             href="/"
-            className="flex items-center gap-2.5 hover:opacity-80 transition-opacity"
+            className="flex items-center gap-3 hover:opacity-80 transition-opacity"
           >
             <img
               src="/logo.png"
@@ -288,7 +288,7 @@ export default function HappyHourClient() {
                         {/* Countdown */}
                         {pub.happyHourMinutesRemaining != null && (
                           <div className="mt-3">
-                            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-green-50 text-green-700 text-xs font-medium border border-green-200/60">
+                            <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-50 text-green-700 text-xs font-medium border border-green-200/60">
                               <span>⏱</span>
                               {formatMinutesRemaining(
                                 pub.happyHourMinutesRemaining

@@ -29,7 +29,7 @@ export default function HeroSection({
     <section className="bg-cream relative overflow-hidden">
       {/* Top nav bar — minimal like EatClub */}
       <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-center gap-3">
           <img src="/logo.png" alt="PintDex" className="w-10 h-10 rounded-lg object-contain" />
           <span className="text-xl font-bold tracking-tight font-heading text-charcoal">PintDex</span>
         </div>

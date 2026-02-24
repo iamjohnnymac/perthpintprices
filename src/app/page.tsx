@@ -228,11 +228,11 @@ export default function Home() {
                   <span className="text-[10px] text-amber/70 uppercase tracking-wider font-medium">Live</span>
                 </div>
               </div>
-              <div className="flex items-center gap-1.5">
+              <div className="flex items-center gap-2">
                 <NotificationBell />
                 <button
                   onClick={() => setShowSubmitForm(true)}
-                  className="flex-shrink-0 flex items-center gap-1.5 px-3.5 py-2 bg-charcoal hover:bg-charcoal/90 text-white rounded-full font-bold transition-all text-xs"
+                  className="flex-shrink-0 flex items-center gap-2 px-4 py-2 bg-charcoal hover:bg-charcoal/90 text-white rounded-full font-bold transition-all text-xs"
                 >
                   <span className="hidden sm:inline">+ Submit a Price</span>
                   <span className="sm:hidden text-xs font-bold">+ Price</span>
@@ -375,7 +375,7 @@ export default function Home() {
           {activeTab === 'pubs' && filteredPubs.length === 0 && (
             <div className="text-center py-12 bg-white rounded-2xl border border-stone-200/60">
               <div className="text-5xl mb-3">{showHappyHourOnly ? '\u{1F37B}' : '\u{1F50D}'}</div>
-              <h3 className="text-lg font-bold text-stone-700 mb-1">{showHappyHourOnly ? 'No pubs with happy hour info yet' : 'No pubs found'}</h3>
+              <h3 className="text-lg font-bold text-stone-700 mb-2">{showHappyHourOnly ? 'No pubs with happy hour info yet' : 'No pubs found'}</h3>
               <p className="text-stone-500 text-sm">{showHappyHourOnly ? 'We\u2019re building our happy hour database \u2014 submit yours!' : 'Try adjusting your filters'}</p>
             </div>
           )}

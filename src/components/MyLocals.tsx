@@ -50,7 +50,7 @@ export default function MyLocals({ pubs, userLocation }: MyLocalsProps) {
         </h2>
       </div>
 
-      <div className="grid grid-cols-1 gap-2.5">
+      <div className="grid grid-cols-1 gap-3">
         {watchedPubs.map(pub => (
           <Link
             key={pub.slug}

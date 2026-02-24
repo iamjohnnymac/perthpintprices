@@ -94,10 +94,10 @@ export default function PriceHistory({ pubId, currentPrice }: PriceHistoryProps)
   return (
     <div className="bg-stone-50/80 rounded-xl border border-stone-200/60 p-4">
       <div className="flex items-center justify-between mb-2">
-        <h3 className="text-sm font-heading font-semibold text-charcoal flex items-center gap-1.5">
+        <h3 className="text-sm font-heading font-semibold text-charcoal flex items-center gap-2">
           📈 Price History
         </h3>
-        <div className="flex items-center gap-1.5">
+        <div className="flex items-center gap-2">
           {!trendFlat && (
             <span className={`text-xs font-medium ${trendUp ? 'text-red-500' : 'text-emerald-600'}`}>
               {trendUp ? '▲' : '▼'} {changePercent}%
@@ -125,7 +125,7 @@ export default function PriceHistory({ pubId, currentPrice }: PriceHistoryProps)
       </svg>
 
       {/* Timeline labels */}
-      <div className="flex items-center justify-between mt-1.5">
+      <div className="flex items-center justify-between mt-2">
         <span className="text-[10px] text-stone-400">
           {formatDate(pricePoints[0].changedAt)}
         </span>
@@ -138,7 +138,7 @@ export default function PriceHistory({ pubId, currentPrice }: PriceHistoryProps)
 
       {/* Price history entries (last 3) */}
       {pricePoints.length > 1 && (
-        <div className="mt-3 space-y-1.5 border-t border-stone-200/60 pt-3">
+        <div className="mt-3 space-y-2 border-t border-stone-200/60 pt-3">
           {pricePoints.slice(-3).reverse().map((point, i) => (
             <div key={i} className="flex items-center justify-between text-xs">
               <span className="text-stone-500">{formatDateFull(point.changedAt)}</span>

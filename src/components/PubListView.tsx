@@ -120,7 +120,7 @@ export default function PubListView({
                   <div className="flex items-center gap-2">
                     <span className="text-xs text-stone-300 w-5 text-right tabular-nums">{index + 1}</span>
                     <div>
-                      <div className="flex items-center gap-1.5">
+                      <div className="flex items-center gap-2">
                         <a
                           href={getDirectionsUrl(pub)}
                           target="_blank"

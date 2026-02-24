@@ -79,7 +79,7 @@ Notes: ${formData.notes || 'None'}
   }
 
   const inputClass = "w-full px-3 py-3 h-11 bg-stone-50 border border-stone-200/60 rounded-xl text-stone-800 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-amber focus:border-transparent transition-all text-sm";
-  const labelClass = "block text-sm font-semibold text-stone-500 uppercase tracking-wide mb-1.5";
+  const labelClass = "block text-sm font-semibold text-stone-500 uppercase tracking-wide mb-2";
 
   return (
     <div 

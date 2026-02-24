@@ -71,7 +71,7 @@ export default function PriceTicker({ pubs }: PriceTickerProps) {
             const diffStr = Math.abs(t.diff).toFixed(2);
 
             return (
-              <span key={`${t.suburb}-${i}`} className="inline-flex items-center gap-1.5 px-4 text-xs tracking-wide" style={{ height: '36px' }}>
+              <span key={`${t.suburb}-${i}`} className="inline-flex items-center gap-2 px-4 text-xs tracking-wide" style={{ height: '36px' }}>
                 <span className="font-semibold text-stone-300 uppercase text-xs sm:text-sm">
                   {t.suburb}
                 </span>

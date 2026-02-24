@@ -36,7 +36,7 @@ export default function TabBar({ activeTab, onTabChange, crowdCount }: TabBarPro
       <div className="max-w-7xl mx-auto">
         {/* Graceful horizontal scroll on very narrow screens, snap for native feel */}
         <div
-          className="flex gap-1.5 sm:gap-3 overflow-x-auto snap-x snap-mandatory scrollbar-hide"
+          className="flex gap-2 sm:gap-3 overflow-x-auto snap-x snap-mandatory scrollbar-hide"
           style={{ scrollbarWidth: 'none', msOverflowStyle: 'none', WebkitOverflowScrolling: 'touch' }}
         >
           {tabs.map((tab) => {
@@ -48,7 +48,7 @@ export default function TabBar({ activeTab, onTabChange, crowdCount }: TabBarPro
                 aria-selected={isActive}
                 onClick={() => onTabChange(tab.id)}
                 className={`
-                  relative flex-1 min-w-0 snap-start flex items-center gap-1.5 sm:gap-3 px-2.5 sm:px-4 py-3 sm:py-3.5
+                  relative flex-1 min-w-0 snap-start flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 sm:py-4
                   rounded-xl transition-all duration-200 ease-out
                   min-h-[48px] sm:min-h-[56px]
                   ${isActive

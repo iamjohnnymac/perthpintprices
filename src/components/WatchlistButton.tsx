@@ -36,7 +36,7 @@ export default function WatchlistButton({ slug, name, suburb, size = 'md', showL
       title={watched ? 'Remove from My Locals' : disabled ? 'Watchlist full (5 max)' : 'Add to My Locals'}
       className={`
         ${sizeClasses[size]}
-        inline-flex items-center justify-center gap-1.5 rounded-full
+        inline-flex items-center justify-center gap-2 rounded-full
         transition-all duration-200 active:scale-90
         ${watched
           ? 'bg-amber/15 text-amber hover:bg-amber/25'

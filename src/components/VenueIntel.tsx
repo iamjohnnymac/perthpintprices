@@ -144,7 +144,7 @@ export default function VenueIntel({ pubs, userLocation }: VenueIntelProps) {
                 {E.chart_bar} PRICE DISTRIBUTION
               </h4>
               <div className="p-3 rounded-xl bg-white/70 border border-stone-100">
-                <div className="space-y-1.5">
+                <div className="space-y-2">
                   {priceBrackets.map(([bracket, count]) => (
                     <div key={bracket} className="flex items-center gap-2">
                       <span className="text-[10px] font-mono text-stone-500 w-10 text-right">{bracket}</span>

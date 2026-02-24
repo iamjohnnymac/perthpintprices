@@ -262,7 +262,7 @@ export default function PubDetailClient({ pub, nearbyPubs }: PubDetailClientProp
             <PriceHistory pubId={pub.id} currentPrice={pub.price} />
 
             {/* Data quality */}
-            <div className="text-sm text-stone-400 space-y-0.5">
+            <div className="text-sm text-stone-400 space-y-1">
               {pub.lastVerified && <p>Verified {timeAgo(pub.lastVerified)}</p>}
               {pub.lastUpdated && <p>Updated: {new Date(pub.lastUpdated).toLocaleDateString('en-AU')}</p>}
             </div>

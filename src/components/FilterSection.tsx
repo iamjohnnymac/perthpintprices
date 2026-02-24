@@ -78,7 +78,7 @@ export function FilterSection({
   return (
     <div className="border-t border-stone-100/80 bg-cream">
       {/* One clean row: Search + Suburbs + Filters */}
-      <div className="max-w-7xl mx-auto px-4 py-2.5 flex items-center gap-2">
+      <div className="max-w-7xl mx-auto px-4 py-3 flex items-center gap-2">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-stone-400 pointer-events-none" />
           <input
@@ -86,7 +86,7 @@ export function FilterSection({
             placeholder="Search pubs or suburbs..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-8 pr-8 py-2.5 text-sm bg-stone-50 border border-stone-200/60 rounded-xl text-stone-700 placeholder-stone-400 focus:outline-none focus:ring-1 focus:ring-amber focus:border-amber transition-colors"
+            className="w-full pl-8 pr-8 py-3 text-sm bg-stone-50 border border-stone-200/60 rounded-xl text-stone-700 placeholder-stone-400 focus:outline-none focus:ring-1 focus:ring-amber focus:border-amber transition-colors"
           />
           {searchTerm && (
             <button onClick={() => setSearchTerm('')} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-600">
@@ -97,7 +97,7 @@ export function FilterSection({
         <select
           value={selectedSuburb || 'all'}
           onChange={(e) => setSelectedSuburb(e.target.value)}
-          className="text-sm bg-stone-50 border border-stone-200/60 rounded-xl px-3 py-2.5 text-stone-600 focus:outline-none focus:ring-1 focus:ring-amber focus:border-amber transition-colors cursor-pointer flex-shrink-0 max-w-[130px] sm:max-w-[160px]"
+          className="text-sm bg-stone-50 border border-stone-200/60 rounded-xl px-3 py-3 text-stone-600 focus:outline-none focus:ring-1 focus:ring-amber focus:border-amber transition-colors cursor-pointer flex-shrink-0 max-w-[130px] sm:max-w-[160px]"
         >
           <option value="all">All Suburbs</option>
           {suburbs.map(suburb => (
@@ -110,7 +110,7 @@ export function FilterSection({
           <button
             onClick={() => setShowMoreFilters(!showMoreFilters)}
             className={cn(
-              "flex items-center gap-1.5 px-3 py-2.5 rounded-xl text-sm font-medium transition-all border whitespace-nowrap",
+              "flex items-center gap-2 px-3 py-3 rounded-xl text-sm font-medium transition-all border whitespace-nowrap",
               showMoreFilters || activeFilterCount > 0
                 ? "bg-amber text-white border-amber"
                 : "bg-stone-50 text-stone-500 border-stone-200/60 hover:border-stone-300 hover:text-stone-700"
@@ -127,15 +127,15 @@ export function FilterSection({
           </button>
 
           {showMoreFilters && (
-            <div className="absolute right-0 top-full mt-1.5 w-80 bg-white rounded-2xl shadow-xl border border-stone-200/60 p-5 z-50">
+            <div className="absolute right-0 top-full mt-2 w-80 bg-white rounded-2xl shadow-xl border border-stone-200/60 p-5 z-50">
               {/* View Mode */}
               <div className="mb-4">
                 <label className="block text-xs font-semibold text-stone-400 uppercase tracking-wide mb-2">View</label>
-                <div className="flex gap-1.5">
+                <div className="flex gap-2">
                   <button
                     onClick={() => setViewMode('cards')}
                     className={cn(
-                      "flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium transition-all",
+                      "flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-xl text-xs font-medium transition-all",
                       viewMode === 'cards' ? "bg-amber text-white" : "bg-stone-100 text-stone-600 hover:bg-stone-200"
                     )}
                   >
@@ -144,7 +144,7 @@ export function FilterSection({
                   <button
                     onClick={() => setViewMode('list')}
                     className={cn(
-                      "flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium transition-all",
+                      "flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-xl text-xs font-medium transition-all",
                       viewMode === 'list' ? "bg-amber text-white" : "bg-stone-100 text-stone-600 hover:bg-stone-200"
                     )}
                   >
@@ -199,7 +199,7 @@ export function FilterSection({
               {/* Sort By */}
               <div className="mb-4">
                 <label className="block text-xs font-semibold text-stone-400 uppercase tracking-wide mb-2">Sort By</label>
-                <div className="flex gap-1.5">
+                <div className="flex gap-2">
                   {(['price', 'name', 'suburb'] as const).map(option => (
                     <button
                       key={option}

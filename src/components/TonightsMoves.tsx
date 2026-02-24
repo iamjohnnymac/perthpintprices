@@ -150,7 +150,7 @@ export default function TonightsMoves({ pubs, userLocation }: TonightsMovesProps
             {/* Market Tip */}
             {marketTip && (
               <div className="p-3 rounded-xl bg-gradient-to-r from-amber-50 to-yellow-50 border border-amber-200">
-                <h4 className="text-xs font-semibold text-amber mb-1 flex items-center gap-1">
+                <h4 className="text-xs font-semibold text-amber mb-2 flex items-center gap-1">
                   {E.star} MARKET TIP
                   <InfoTooltip text="Our algorithm picks the best value pub right now — weighing price, active happy hour bonus, beer quality, and suburb. Rescores as happy hours start and end." />
                 </h4>
@@ -174,7 +174,7 @@ export default function TonightsMoves({ pubs, userLocation }: TonightsMovesProps
               <h4 className="text-xs font-semibold text-amber mb-2 flex items-center gap-1">
                 {E.chart_down} BEST BUYS {E.dash} Lowest Prices Right Now
               </h4>
-              <div className="space-y-1.5">
+              <div className="space-y-2">
                 {bestBuys.map((pub, i) => (
                   <Link key={pub.id} href={`/pub/${pub.slug}`} className="flex items-center justify-between p-2 rounded-lg bg-white/70 border border-stone-100">
                     <div className="flex items-center gap-2 min-w-0">
@@ -196,7 +196,7 @@ export default function TonightsMoves({ pubs, userLocation }: TonightsMovesProps
                 <h4 className="text-xs font-semibold text-amber mb-2 flex items-center gap-1">
                   {E.party} ACTIVE DEALS {E.dash} Happy Hour NOW ({activeDeals.length})
                 </h4>
-                <div className="space-y-1.5">
+                <div className="space-y-2">
                   {activeDeals.slice(0, 5).map((pub) => {
                     const status = getHappyHourStatus(pub.happyHour)
                     return (
@@ -224,7 +224,7 @@ export default function TonightsMoves({ pubs, userLocation }: TonightsMovesProps
                 <h4 className="text-xs font-semibold text-amber mb-2 flex items-center gap-1">
                   {E.clock} UPCOMING {E.dash} Happy Hours Starting Soon
                 </h4>
-                <div className="space-y-1.5">
+                <div className="space-y-2">
                   {upcomingDeals.map((pub) => {
                     const status = getHappyHourStatus(pub.happyHour)
                     return (
@@ -249,7 +249,7 @@ export default function TonightsMoves({ pubs, userLocation }: TonightsMovesProps
             {/* Hot Suburb */}
             {hotSuburb && (
               <div className="p-3 rounded-xl bg-white/70 border border-stone-100 text-center">
-                <h4 className="text-xs font-semibold text-stone-600 mb-1">{E.fire} HOT SUBURB</h4>
+                <h4 className="text-xs font-semibold text-stone-600 mb-2">{E.fire} HOT SUBURB</h4>
                 <p className="text-sm font-bold text-stone-800">{hotSuburb.name}</p>
                 <p className="text-[10px] text-stone-400">
                   {hotSuburb.activeCount} active deal{hotSuburb.activeCount !== 1 ? 's' : ''} {E.bullet} Avg ${hotSuburb.avgPrice.toFixed(2)}

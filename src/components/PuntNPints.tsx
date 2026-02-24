@@ -90,7 +90,7 @@ export default function PuntNPints({ pubs, userLocation }: PuntNPintsProps) {
 
   return (
     <Card className="bg-white rounded-2xl shadow-[0_2px_16px_rgba(0,0,0,0.08)] border border-stone-200/40 h-full cursor-pointer transition-all duration-300 hover:shadow-[0_4px_20px_rgba(0,0,0,0.12)] active:scale-[0.995] overflow-hidden">
-      <CardContent className="p-4 sm:p-5">
+      <CardContent className="p-5 sm:p-6">
         {/* Header */}
         <div className="flex items-center justify-between mb-3" onClick={() => setIsSectionOpen(!isSectionOpen)}>
           <div className="flex items-center gap-2">
@@ -104,7 +104,7 @@ export default function PuntNPints({ pubs, userLocation }: PuntNPintsProps) {
             <InfoTooltip text="Shows pubs with TAB betting facilities on-site, plus cheap pints near dedicated TAB agencies. Data sourced from TABtouch WA locations." />
           </div>
           <div className="flex items-center gap-2">
-            <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full border" style={{ backgroundColor: '#F0E6F6', borderColor: '#D4B8E8' }}>
+            <div className="flex items-center gap-2 px-2 py-0.5 rounded-full border" style={{ backgroundColor: '#F0E6F6', borderColor: '#D4B8E8' }}>
               <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: '#5B2D8E' }} />
               <span className="text-[10px] font-medium" style={{ color: '#5B2D8E' }}>{tabPubs.length} TAB Pubs</span>
             </div>
@@ -120,18 +120,18 @@ export default function PuntNPints({ pubs, userLocation }: PuntNPintsProps) {
         {isSectionOpen && (<>
         {/* TAB Pubs — Cheapest pints where you can bet on-site */}
         <div className="mb-3">
-          <p className="text-[10px] font-semibold text-stone-500 uppercase tracking-wider mb-1.5">
+          <p className="text-[10px] font-semibold text-stone-500 uppercase tracking-wider mb-2">
             Bet &amp; Drink Under One Roof
           </p>
           <div className="space-y-1">
             {displayedTabPubs.map(pub => (
               <Link key={pub.id} href={`/pub/${pub.slug}`} className="flex items-center justify-between p-2 rounded-lg bg-white/60 border border-stone-100 hover:border-purple-200 transition-colors">
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-1.5">
+                  <div className="flex items-center gap-2">
                     <span className="text-[8px] font-black px-1 py-px rounded flex-shrink-0 text-white" style={{ backgroundColor: '#5B2D8E' }}>TAB</span>
                     <span className="text-xs font-semibold text-stone-800 truncate">{pub.name}</span>
                   </div>
-                  <div className="flex items-center gap-1.5 mt-0.5">
+                  <div className="flex items-center gap-2 mt-0.5">
                     <span className="text-[10px] text-stone-400">{pub.suburb}{userLocation && ` · ${formatDistance(getDistanceKm(userLocation.lat, userLocation.lng, pub.lat, pub.lng))}`}</span>
                     <span className="text-[9px] px-1 py-px rounded bg-stone-100 text-stone-500">{pub.beerType || 'Tap Beer'}</span>
                   </div>
@@ -148,7 +148,7 @@ export default function PuntNPints({ pubs, userLocation }: PuntNPintsProps) {
         {/* Nearby TAB + Cheap Pint combos */}
         {nearbyPairs.length > 0 && (
           <div className="mb-2">
-            <p className="text-[10px] font-semibold text-stone-500 uppercase tracking-wider mb-1.5">
+            <p className="text-[10px] font-semibold text-stone-500 uppercase tracking-wider mb-2">
               Cheap Pints Near a TAB
             </p>
             <div className="space-y-1">

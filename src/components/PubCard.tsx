@@ -83,7 +83,7 @@ export default function PubCard({
         <div className="p-5 flex-1 flex flex-col">
           <div className="flex items-start justify-between gap-2">
             <div className="min-w-0 flex-1">
-              <h3 className="font-heading font-semibold text-lg text-charcoal truncate flex items-center gap-1.5">
+              <h3 className="font-heading font-semibold text-lg text-charcoal truncate flex items-center gap-2">
                 {pub.name}
                 <WatchlistButton slug={pub.slug} name={pub.name} suburb={pub.suburb} size="sm" />
               </h3>
