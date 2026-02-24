@@ -20,6 +20,7 @@ import SuburbLeague from '@/components/SuburbLeague'
 import TonightsMoves from '@/components/TonightsMoves'
 import VenueIntel from '@/components/VenueIntel'
 import CrowdPulse from '@/components/CrowdPulse'
+import PintOfTheDay from '@/components/PintOfTheDay'
 import BeerWeather from '@/components/BeerWeather'
 import SunsetSippers from '@/components/SunsetSippers'
 import PuntNPints from '@/components/PuntNPints'
@@ -329,6 +330,7 @@ export default function Home() {
           {/* ═══ INSIGHTS TAB ═══ */}
           {activeTab === 'market' && (
             <div className="space-y-3 sm:space-y-4">
+              <PintOfTheDay />
               <PintIndex />
               <TonightsMoves pubs={pubs} userLocation={userLocation} />
               <SuburbLeague pubs={pubs} />
@@ -340,17 +342,22 @@ export default function Home() {
           {/* ═══ GUIDES TAB ═══ */}
           {activeTab === 'explore' && (
             <div className="space-y-3 sm:space-y-4">
-              {/* Featured: Pub Golf & Pint Crawl */}
-              <div className="grid grid-cols-2 gap-3">
-                <Link href="/pub-golf" className="bg-white rounded-2xl border border-stone-200/60 p-4 sm:p-5 hover:border-amber/40 hover:shadow-md transition-all active:scale-[0.98] group">
-                  <div className="text-2xl mb-2">⛳</div>
-                  <h3 className="font-bold font-heading text-charcoal text-sm group-hover:text-amber transition-colors">Pub Golf</h3>
-                  <p className="text-xs text-stone-500 mt-0.5">Score your crawl</p>
+              {/* Featured: Pub Golf, Pint Crawl, Leaderboard */}
+              <div className="grid grid-cols-3 gap-2 sm:gap-3">
+                <Link href="/pub-golf" className="bg-white rounded-2xl border border-stone-200/60 p-3 sm:p-4 hover:border-amber/40 hover:shadow-md transition-all active:scale-[0.98] group">
+                  <div className="text-xl sm:text-2xl mb-1.5">⛳</div>
+                  <h3 className="font-bold font-heading text-charcoal text-xs sm:text-sm group-hover:text-amber transition-colors">Pub Golf</h3>
+                  <p className="text-[10px] sm:text-xs text-stone-500 mt-0.5">Score your crawl</p>
                 </Link>
-                <Link href="/pint-crawl" className="bg-white rounded-2xl border border-stone-200/60 p-4 sm:p-5 hover:border-amber/40 hover:shadow-md transition-all active:scale-[0.98] group">
-                  <div className="text-2xl mb-2">🗺️</div>
-                  <h3 className="font-bold font-heading text-charcoal text-sm group-hover:text-amber transition-colors">Pint Crawl</h3>
-                  <p className="text-xs text-stone-500 mt-0.5">Plan your route</p>
+                <Link href="/pint-crawl" className="bg-white rounded-2xl border border-stone-200/60 p-3 sm:p-4 hover:border-amber/40 hover:shadow-md transition-all active:scale-[0.98] group">
+                  <div className="text-xl sm:text-2xl mb-1.5">🗺️</div>
+                  <h3 className="font-bold font-heading text-charcoal text-xs sm:text-sm group-hover:text-amber transition-colors">Pint Crawl</h3>
+                  <p className="text-[10px] sm:text-xs text-stone-500 mt-0.5">Plan your route</p>
+                </Link>
+                <Link href="/leaderboard" className="bg-white rounded-2xl border border-stone-200/60 p-3 sm:p-4 hover:border-amber/40 hover:shadow-md transition-all active:scale-[0.98] group">
+                  <div className="text-xl sm:text-2xl mb-1.5">🏆</div>
+                  <h3 className="font-bold font-heading text-charcoal text-xs sm:text-sm group-hover:text-amber transition-colors">Leaderboard</h3>
+                  <p className="text-[10px] sm:text-xs text-stone-500 mt-0.5">Top scouts</p>
                 </Link>
               </div>
               <BeerWeather pubs={pubs} userLocation={userLocation} />
