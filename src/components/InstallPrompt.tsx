@@ -21,6 +21,10 @@ export default function InstallPrompt() {
     // Already installed or dismissed — bail
     if (isStandalone || dismissed) return
 
+    // Only show on mobile devices (skip desktop)
+    const isMobile = window.innerWidth < 768 || 'ontouchstart' in window
+    if (!isMobile) return
+
     const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent) && !(window as any).MSStream
     
     if (isIOS) {
