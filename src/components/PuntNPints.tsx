@@ -99,16 +99,14 @@ export default function PuntNPints({ pubs, userLocation }: PuntNPintsProps) {
             </div>
             <div>
               <h3 className="text-base sm:text-lg font-bold font-heading text-stone-800 leading-tight flex items-center">PUNT &amp; PINTS<InfoTooltip text="Shows pubs with TAB betting facilities on-site, plus cheap pints near dedicated TAB agencies. Data sourced from TABtouch WA locations." /></h3>
-              <p className="text-xs text-stone-500">Where to bet &amp; sip</p>
+              <p className="text-xs text-stone-500">{tabPubs.length} TAB venues nearby</p>
             </div>
           </div>
-          <div className="flex items-center gap-2">
-            <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full border" style={{ backgroundColor: '#F0E6F6', borderColor: '#D4B8E8' }}>
-              <span className="text-[10px] font-medium" style={{ color: '#5B2D8E' }}>{tabPubs.length} TAB Pubs</span>
+          <div className="flex items-center gap-3">
+            <div className="text-right">
+              <div className="text-lg font-bold" style={{ color: '#F58220' }}>{tabPubs[0]?.price ? `$${tabPubs[0].price.toFixed(2)}` : 'TBC'}</div>
+              <div className="text-[10px] text-stone-400">cheapest pint</div>
             </div>
-            {!isSectionOpen && tabPubs[0]?.price && (
-              <span className="text-sm font-bold" style={{ color: '#F58220' }}>from ${tabPubs[0].price.toFixed(2)}</span>
-            )}
             <svg width="16" height="16" viewBox="0 0 16 16" className={`text-stone-400 transition-transform ${isSectionOpen ? 'rotate-180' : ''}`}>
               <path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
             </svg>

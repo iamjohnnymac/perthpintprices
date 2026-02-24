@@ -75,16 +75,14 @@ export default function DadBar({ pubs, userLocation }: { pubs: Pub[], userLocati
             <h3 className="text-base sm:text-lg font-bold font-heading text-stone-800 flex items-center">
               THE DAD BAR<InfoTooltip text="Kid-friendly pubs verified from Buggybuddys and Urban List Perth. All venues have dedicated playgrounds or play areas, plus food menus for children. Perfect for a cheeky pint while the kids wear themselves out." />
             </h3>
-            <p className="text-xs text-stone-500">Kids play. Dads sip.</p>
+            <p className="text-xs text-stone-500">{dadPubs.length} kid-friendly venues</p>
           </div>
         </div>
-        <div className="flex items-center gap-2">
-            <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-amber-50 border border-amber-200">
-              <span className="text-[10px] font-semibold text-amber">{dadPubs.length} VENUES</span>
+        <div className="flex items-center gap-3">
+            <div className="text-right">
+              <div className="text-lg font-bold text-amber">{dadPubs[0]?.price ? `$${dadPubs[0].price.toFixed(2)}` : 'TBC'}</div>
+              <div className="text-[10px] text-stone-400">cheapest pint</div>
             </div>
-            {!isExpanded && dadPubs[0]?.price && (
-              <span className="text-sm font-bold text-amber">from ${dadPubs[0].price.toFixed(2)}</span>
-            )}
             <svg width="16" height="16" viewBox="0 0 16 16" className={`text-stone-400 transition-transform ${isExpanded ? 'rotate-180' : ''}`}>
               <path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
             </svg>
