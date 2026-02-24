@@ -29,4 +29,6 @@ export interface Pub {
   happyHourLabel: string | null
   happyHourMinutesRemaining: number | null
   imageUrl: string | null
+  vibeTag: string | null
+  effectivePrice: number | null
 }

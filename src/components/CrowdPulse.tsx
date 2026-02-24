@@ -163,7 +163,7 @@ export default function CrowdPulse({ pubs, crowdReports, userLocation }: CrowdPu
                 <h4 className="text-xs font-semibold text-coral mb-2 flex items-center gap-1">
                   {E.fire} HOT TRADING {E.dash} Busiest Venues
                 </h4>
-                <div className="space-y-2">
+                <div className="space-y-1.5">
                   {busyVenues.map(({ pub, report }) => {
                     const levelInfo = CROWD_LEVELS[report.crowd_level]
                     const confidence = getConfidenceLabel(report.report_count)
@@ -193,7 +193,7 @@ export default function CrowdPulse({ pubs, crowdReports, userLocation }: CrowdPu
                 <h4 className="text-xs font-semibold text-amber mb-2 flex items-center gap-1">
                   {E.green_circle} HIDDEN GEMS {E.dash} Undervalued Venues
                 </h4>
-                <div className="space-y-2">
+                <div className="space-y-1.5">
                   {quietVenues.map(({ pub, report }) => {
                     const levelInfo = CROWD_LEVELS[report.crowd_level]
                     const confidence = getConfidenceLabel(report.report_count)

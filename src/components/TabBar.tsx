@@ -9,10 +9,10 @@ interface TabBarProps {
   crowdCount: number
 }
 
-const tabs: { id: TabId; label: string; emoji: string }[] = [
-  { id: 'pubs', label: 'Pubs', emoji: '🍺' },
-  { id: 'market', label: 'Insights', emoji: '📊' },
-  { id: 'explore', label: 'Guides', emoji: '🧭' },
+const tabs: { id: TabId; label: string }[] = [
+  { id: 'pubs', label: 'Pubs' },
+  { id: 'market', label: 'Insights' },
+  { id: 'explore', label: 'Guides' },
 ]
 
 export default function TabBar({ activeTab, onTabChange }: TabBarProps) {
@@ -28,9 +28,9 @@ export default function TabBar({ activeTab, onTabChange }: TabBarProps) {
               aria-selected={isActive}
               onClick={() => onTabChange(tab.id)}
               className={`
-                flex-1 flex items-center justify-center gap-1.5
+                flex-1 flex items-center justify-center
                 py-2.5 sm:py-3 rounded-lg
-                text-sm sm:text-base font-medium
+                text-sm sm:text-base font-semibold
                 transition-all duration-200
                 outline-none focus:outline-none focus-visible:ring-2 focus-visible:ring-amber/50
                 ${isActive
@@ -39,8 +39,7 @@ export default function TabBar({ activeTab, onTabChange }: TabBarProps) {
                 }
               `}
             >
-              <span className="text-sm sm:text-base">{tab.emoji}</span>
-              <span>{tab.label}</span>
+              {tab.label}
             </button>
           )
         })}

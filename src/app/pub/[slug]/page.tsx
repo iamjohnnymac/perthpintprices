@@ -9,11 +9,11 @@ interface PageProps {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const pub = await getPubBySlug(params.slug)
-  if (!pub) return { title: 'Pub Not Found — PintDex' }
+  if (!pub) return { title: 'Pub Not Found — Arvo' }
   
   const priceText = pub.price !== null ? `$${pub.price.toFixed(2)} pints` : 'Price TBC'
-  const title = `${pub.name}, ${pub.suburb} — ${priceText} | PintDex`
-  const description = `${priceText} at ${pub.name} in ${pub.suburb}, Perth WA.${pub.happyHour ? ` Happy Hour: ${pub.happyHour}.` : ''} ${pub.beerType ? `Serving ${pub.beerType}.` : ''} Find the best pint prices on PintDex.`
+  const title = `${pub.name}, ${pub.suburb} — ${priceText} | Arvo`
+  const description = `${priceText} at ${pub.name} in ${pub.suburb}, Perth WA.${pub.happyHour ? ` Happy Hour: ${pub.happyHour}.` : ''} ${pub.beerType ? `Serving ${pub.beerType}.` : ''} Find the best pint prices on Arvo.`
   
   return {
     title,
@@ -22,7 +22,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       title: `${pub.name} — ${priceText}`,
       description,
       url: `https://perthpintprices.vercel.app/pub/${params.slug}`,
-      siteName: 'PintDex',
+      siteName: 'Arvo',
       locale: 'en_AU',
       type: 'website',
     },

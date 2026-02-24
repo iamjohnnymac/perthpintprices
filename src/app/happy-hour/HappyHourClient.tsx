@@ -91,13 +91,9 @@ export default function HappyHourClient() {
             href="/"
             className="flex items-center gap-3 hover:opacity-80 transition-opacity"
           >
-            <img
-              src="/logo.png"
-              alt="PintDex"
-              className="w-10 h-10 rounded-lg object-contain"
-            />
+            <div className="w-8 h-8 bg-amber rounded-lg flex items-center justify-center"><span className="text-white text-lg">☀</span></div>
             <span className="text-xl font-bold tracking-tight font-heading text-charcoal">
-              PintDex
+              arvo
             </span>
           </Link>
           <Link

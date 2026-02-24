@@ -83,7 +83,7 @@ export default function InstallPrompt() {
               </div>
               <div>
                 <h3 className="font-semibold text-charcoal text-base">
-                  {platform === 'ios' ? 'Add PintDex to Home Screen' : 'Install PintDex'}
+                  {platform === 'ios' ? 'Add Arvo to Home Screen' : 'Install Arvo'}
                 </h3>
                 <p className="text-sm text-charcoal/60">Get price alerts & the full app experience</p>
               </div>
@@ -134,7 +134,7 @@ export default function InstallPrompt() {
                 className="w-full py-3 px-4 bg-charcoal text-white font-semibold rounded-xl 
                            hover:bg-charcoal/90 active:scale-[0.98] transition-all text-sm"
               >
-                Install PintDex
+                Install Arvo
               </button>
             </div>
           )}

@@ -3,7 +3,7 @@
 import { createContext, useContext, useState, useEffect, useCallback, useRef, ReactNode } from 'react'
 import React from 'react'
 
-const STORAGE_KEY = 'pintdex_watchlist'
+const STORAGE_KEY = 'arvo_watchlist'
 const MAX_WATCHLIST = 5
 
 export interface WatchlistItem {

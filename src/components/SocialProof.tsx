@@ -14,6 +14,8 @@ export default function SocialProof({ venueCount, suburbCount, avgPrice }: Socia
   return (
     <section className="py-16 sm:py-20 border-t border-stone-200/60 bg-cream-dark">
       <div className="max-w-5xl mx-auto px-4 sm:px-6">
+        <p className="text-center text-sm font-semibold text-amber uppercase tracking-wider mb-2">Community-driven since 2024</p>
+        <p className="text-center text-stone-500 mb-10 text-lg">Every price on Arvo comes from someone who was actually there.</p>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 text-center">
           {proofs.map((p) => (
             <div key={p.label}>

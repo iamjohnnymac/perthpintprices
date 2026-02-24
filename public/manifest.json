@@ -1,11 +1,11 @@
 {
-  "name": "PintDex — Perth's Pint Prices",
-  "short_name": "PintDex",
-  "description": "Track real-time pint prices across 200+ Perth pubs. Find happy hours, cheap pints, and the best deals.",
+  "name": "Arvo \u2014 Perth's Pint Prices",
+  "short_name": "Arvo",
+  "description": "Perth's pint prices, sorted. Real prices from real people.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#F5F1EB",
-  "theme_color": "#D4A017",
+  "background_color": "#FAF7F2",
+  "theme_color": "#E8792B",
   "orientation": "portrait",
   "icons": [
     {

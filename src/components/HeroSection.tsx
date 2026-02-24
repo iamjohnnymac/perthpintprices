@@ -1,6 +1,9 @@
 'use client'
 
+import { useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
+import { Pub } from '@/types/pub'
+import HappyHourPreview from './HappyHourPreview'
 
 interface HeroSectionProps {
   avgPrice: string
@@ -9,9 +12,11 @@ interface HeroSectionProps {
   venueCount: number
   suburbCount: number
   happyHourCount: number
+  pubs: Pub[]
   onExploreClick: () => void
   onDiscoverClick: () => void
   onSubmitClick: () => void
+  onSearch: (term: string) => void
 }
 
 export default function HeroSection({
@@ -21,17 +26,55 @@ export default function HeroSection({
   venueCount,
   suburbCount,
   happyHourCount,
+  pubs,
   onExploreClick,
   onDiscoverClick,
   onSubmitClick,
+  onSearch,
 }: HeroSectionProps) {
+  const [query, setQuery] = useState('')
+  const [results, setResults] = useState<Pub[]>([])
+  const [showResults, setShowResults] = useState(false)
+  const searchRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (query.length < 2) { setResults([]); return }
+    const q = query.toLowerCase()
+    const matches = pubs
+      .filter(p => 
+        p.name.toLowerCase().includes(q) || 
+        p.suburb.toLowerCase().includes(q) ||
+        (p.beerType && p.beerType.toLowerCase().includes(q))
+      )
+      .slice(0, 6)
+    setResults(matches)
+  }, [query, pubs])
+
+  useEffect(() => {
+    const handleClick = (e: MouseEvent) => {
+      if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
+        setShowResults(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClick)
+    return () => document.removeEventListener('mousedown', handleClick)
+  }, [])
+
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (query.trim()) {
+      onSearch(query.trim())
+      setShowResults(false)
+    }
+  }
+
   return (
     <section className="bg-cream relative overflow-hidden">
-      {/* Top nav bar — minimal like EatClub */}
+      {/* Top nav bar */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <img src="/logo.png" alt="PintDex" className="w-10 h-10 rounded-lg object-contain" />
-          <span className="text-xl font-bold tracking-tight font-heading text-charcoal">PintDex</span>
+          <div className="w-8 h-8 bg-amber rounded-lg flex items-center justify-center"><span className="text-white text-lg">☀</span></div>
+          <span className="text-xl font-bold tracking-tight font-heading text-charcoal">arvo</span>
         </div>
         <button
           onClick={onSubmitClick}
@@ -41,60 +84,59 @@ export default function HeroSection({
         </button>
       </div>
 
-      {/* Hero content — big, confident, breathing room */}
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 pt-16 sm:pt-24 pb-20 sm:pb-28 text-center">
-        <h1 className="text-4xl sm:text-6xl lg:text-7xl font-bold text-charcoal font-heading leading-[1.05] mb-6">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 pt-12 sm:pt-20 pb-12 sm:pb-16 text-center">
+        <h1 className="text-4xl sm:text-6xl lg:text-7xl font-bold text-charcoal font-heading leading-[1.05] mb-4">
           Perth&apos;s pint prices,{' '}
           <span className="text-amber">sorted.</span>
         </h1>
-        <p className="text-lg sm:text-xl text-stone-500 max-w-2xl mx-auto mb-10 leading-relaxed">
-          Real-time prices across {venueCount}+ pubs and {suburbCount} suburbs.
-          Find happy hours, compare prices, and save on your next round.
+        <p className="text-base sm:text-lg text-stone-500 max-w-2xl mx-auto mb-8 leading-relaxed">
+          {venueCount}+ venues. {suburbCount} suburbs. Real prices from real people.
+          <br className="hidden sm:block" />
+          Find your next cheap pint in 10 seconds.
         </p>
 
-        {/* Hero stat highlights — EatClub-style bold numbers */}
-        <div className="flex flex-wrap justify-center gap-4 sm:gap-8 mb-10">
-          {cheapestSlug ? (
-            <Link href={`/pub/${cheapestSlug}`} className="bg-white rounded-2xl px-5 py-3 shadow-sm border border-stone-200/60 hover:border-amber/50 hover:shadow-md transition-all group">
-              <span className="block text-2xl sm:text-3xl font-bold font-mono text-green-700 group-hover:text-amber transition-colors">${cheapestPrice}</span>
-              <span className="text-xs text-stone-500 group-hover:text-amber transition-colors">Cheapest pint →</span>
-            </Link>
-          ) : (
-            <div className="bg-white rounded-2xl px-5 py-3 shadow-sm border border-stone-200/60">
-              <span className="block text-2xl sm:text-3xl font-bold font-mono text-green-700">${cheapestPrice}</span>
-              <span className="text-xs text-stone-500">Cheapest pint</span>
+        {/* Search bar */}
+        <div ref={searchRef} className="relative max-w-xl mx-auto mb-8">
+          <form onSubmit={handleSearchSubmit}>
+            <div className="relative">
+              <svg className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-stone-400" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+              </svg>
+              <input
+                type="text"
+                placeholder="Search pubs, suburbs, or beers..."
+                value={query}
+                onChange={(e) => { setQuery(e.target.value); setShowResults(true) }}
+                onFocus={() => setShowResults(true)}
+                className="w-full pl-12 pr-4 py-4 bg-white border border-stone-200 rounded-2xl text-charcoal placeholder-stone-400 focus:outline-none focus:border-amber focus:ring-2 focus:ring-amber/20 text-base shadow-sm"
+              />
             </div>
-          )}
-          <div className="bg-white rounded-2xl px-5 py-3 shadow-sm border border-stone-200/60">
-            <span className="block text-2xl sm:text-3xl font-bold font-mono text-charcoal">${avgPrice}</span>
-            <span className="text-xs text-stone-500">Perth average</span>
-          </div>
-          {happyHourCount > 0 && (
-            <Link href="/happy-hour" className="bg-white rounded-2xl px-5 py-3 shadow-sm border border-amber/30 bg-amber/5 hover:border-amber hover:shadow-md transition-all group">
-              <span className="block text-2xl sm:text-3xl font-bold font-mono text-amber group-hover:scale-105 transition-transform">{happyHourCount}</span>
-              <span className="text-xs text-stone-500 group-hover:text-amber transition-colors">Happy hours live →</span>
-            </Link>
+          </form>
+          
+          {/* Search results dropdown */}
+          {showResults && results.length > 0 && (
+            <div className="absolute top-full mt-2 w-full bg-white rounded-xl shadow-lg border border-stone-200 overflow-hidden z-50">
+              {results.map(pub => (
+                <Link
+                  key={pub.slug}
+                  href={`/pub/${pub.slug}`}
+                  className="flex items-center justify-between px-4 py-3 hover:bg-cream transition-colors border-b border-stone-100 last:border-0"
+                >
+                  <div className="text-left">
+                    <p className="font-bold text-charcoal text-sm">{pub.name}</p>
+                    <p className="text-stone-400 text-xs">{pub.suburb}{pub.beerType ? ` · ${pub.beerType}` : ''}</p>
+                  </div>
+                  <span className="font-mono font-bold text-charcoal text-sm">
+                    {pub.effectivePrice ? `$${pub.effectivePrice.toFixed(2)}` : 'TBC'}
+                  </span>
+                </Link>
+              ))}
+            </div>
           )}
         </div>
 
-        {/* CTA buttons */}
-        <div className="flex flex-col sm:flex-row gap-3 justify-center">
-          <button
-            onClick={onExploreClick}
-            className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-charcoal hover:bg-charcoal/90 text-white rounded-full font-bold text-lg transition-all shadow-lg shadow-charcoal/10"
-          >
-            Explore {venueCount} venues
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-            </svg>
-          </button>
-          <button
-            onClick={onDiscoverClick}
-            className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white hover:bg-stone-50 text-charcoal rounded-full font-bold text-lg transition-all border border-stone-300"
-          >
-            See what's inside
-          </button>
-        </div>
+        {/* Happy Hour Countdown Carousel */}
+        <HappyHourPreview pubs={pubs} />
       </div>
     </section>
   )

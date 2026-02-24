@@ -24,55 +24,28 @@ export default function StatsBar({
   happyHourCount,
   venueCount,
 }: StatsBarProps) {
-  const cell = 'p-3 sm:p-4 bg-white transition-colors'
-
   return (
-    <div className="rounded-xl border border-stone-200/50 overflow-hidden mt-3">
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-px bg-stone-200/50">
-        {/* Perth Average */}
-        <div className={cell}>
-          <span className="text-[10px] sm:text-xs text-stone-400 uppercase tracking-wider leading-none block">Perth Avg</span>
-          <span className="text-charcoal font-mono font-bold text-lg sm:text-xl leading-tight block mt-0.5">${avgPrice}</span>
-          <span className="text-[10px] sm:text-xs text-stone-400 leading-none block mt-0.5">{venueCount} venues</span>
-        </div>
+    <div className="grid grid-cols-3 gap-3 mt-3">
+      {/* Cheapest */}
+      <Link href={`/pub/${cheapestSlug}`} className="bg-white rounded-2xl p-4 border border-stone-200/60 hover:border-amber/40 hover:shadow-sm transition-all text-center">
+        <span className="text-[10px] sm:text-xs text-stone-400 uppercase tracking-wider block">Cheapest right now</span>
+        <span className="text-green-700 font-mono font-bold text-2xl sm:text-3xl block mt-1">${cheapestPrice}</span>
+        <span className="text-[11px] text-stone-400 block mt-1">A bloody good deal</span>
+      </Link>
 
-        {/* Cheapest */}
-        {cheapestSlug ? (
-          <Link href={`/pub/${cheapestSlug}`} className={`${cell} hover:bg-stone-50`}>
-            <span className="text-[10px] sm:text-xs text-stone-400 uppercase tracking-wider leading-none block">Cheapest</span>
-            <span className="text-green-700 font-mono font-bold text-lg sm:text-xl leading-tight block mt-0.5">${cheapestPrice}</span>
-            <span className="text-[10px] sm:text-xs text-stone-400 leading-none block mt-0.5 truncate">{cheapestSuburb}</span>
-          </Link>
-        ) : (
-          <div className={cell}>
-            <span className="text-[10px] sm:text-xs text-stone-400 uppercase tracking-wider leading-none block">Cheapest</span>
-            <span className="text-green-700 font-mono font-bold text-lg sm:text-xl leading-tight block mt-0.5">${cheapestPrice}</span>
-            <span className="text-[10px] sm:text-xs text-stone-400 leading-none block mt-0.5 truncate">{cheapestSuburb}</span>
-          </div>
-        )}
-
-        {/* Priciest */}
-        {priciestSlug ? (
-          <Link href={`/pub/${priciestSlug}`} className={`${cell} hover:bg-stone-50`}>
-            <span className="text-[10px] sm:text-xs text-stone-400 uppercase tracking-wider leading-none block">Priciest</span>
-            <span className="text-red-700 font-mono font-bold text-lg sm:text-xl leading-tight block mt-0.5">${priciestPrice}</span>
-            <span className="text-[10px] sm:text-xs text-stone-400 leading-none block mt-0.5 truncate">{priciestSuburb}</span>
-          </Link>
-        ) : (
-          <div className={cell}>
-            <span className="text-[10px] sm:text-xs text-stone-400 uppercase tracking-wider leading-none block">Priciest</span>
-            <span className="text-red-700 font-mono font-bold text-lg sm:text-xl leading-tight block mt-0.5">${priciestPrice}</span>
-            <span className="text-[10px] sm:text-xs text-stone-400 leading-none block mt-0.5 truncate">{priciestSuburb}</span>
-          </div>
-        )}
-
-        {/* Happy Hour */}
-        <Link href="/happy-hour" className={`${cell} hover:bg-stone-50`}>
-          <span className="text-[10px] sm:text-xs text-stone-400 uppercase tracking-wider leading-none block">Happy Hour</span>
-          <span className="text-amber font-mono font-bold text-lg sm:text-xl leading-tight block mt-0.5">{happyHourCount}</span>
-          <span className="text-[10px] sm:text-xs text-stone-400 leading-none block mt-0.5">active now</span>
-        </Link>
+      {/* Perth Average */}
+      <div className="bg-white rounded-2xl p-4 border border-stone-200/60 text-center">
+        <span className="text-[10px] sm:text-xs text-stone-400 uppercase tracking-wider block">Perth average</span>
+        <span className="text-charcoal font-mono font-bold text-2xl sm:text-3xl block mt-1">${avgPrice}</span>
+        <span className="text-[11px] text-stone-400 block mt-1">Based on {venueCount} venues</span>
       </div>
+
+      {/* Priciest */}
+      <Link href={`/pub/${priciestSlug}`} className="bg-white rounded-2xl p-4 border border-stone-200/60 hover:border-amber/40 hover:shadow-sm transition-all text-center">
+        <span className="text-[10px] sm:text-xs text-stone-400 uppercase tracking-wider block">Most expensive</span>
+        <span className="text-red-600 font-mono font-bold text-2xl sm:text-3xl block mt-1">${priciestPrice}</span>
+        <span className="text-[11px] text-stone-400 block mt-1">Some craft places, yeah</span>
+      </Link>
     </div>
   )
 }

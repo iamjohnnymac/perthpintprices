@@ -207,13 +207,15 @@ export default function Home() {
         <HeroSection
           avgPrice={stats.avgPrice}
           cheapestPrice={stats.minPrice}
-            cheapestSlug={stats.cheapestSlug}
+          cheapestSlug={stats.cheapestSlug}
           venueCount={stats.total}
           suburbCount={suburbs.length}
           happyHourCount={stats.happyHourNow}
+          pubs={pubs}
           onExploreClick={() => { handleTabChange('pubs'); scrollToApp(); }}
           onDiscoverClick={() => { scrollToApp(); handleTabChange('explore'); }}
           onSubmitClick={() => setShowSubmitForm(true)}
+          onSearch={(term) => { setSearchTerm(term); setActiveTab('pubs'); setHeroVisible(false) }}
         />
       )}
 
@@ -223,12 +225,10 @@ export default function Home() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-2 pb-2">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <img src="/logo.png" alt="PintDex" className="w-10 h-10 rounded-lg flex-shrink-0 object-contain" />
-                <h1 className="text-lg font-bold tracking-tight leading-none font-heading text-charcoal">PintDex</h1>
-                <div className="flex items-center gap-1 ml-1">
-                  <div className="w-1.5 h-1.5 rounded-full bg-amber animate-pulse" />
-                  <span className="text-[10px] text-amber/70 uppercase tracking-wider font-medium">Live</span>
+                <div className="w-8 h-8 bg-amber rounded-lg flex items-center justify-center">
+                  <span className="text-white text-lg">☀</span>
                 </div>
+                <h1 className="text-lg font-bold tracking-tight leading-none font-heading text-charcoal">arvo</h1>
               </div>
               <div className="flex items-center gap-2">
                 <NotificationBell />
@@ -382,11 +382,7 @@ export default function Home() {
           {activeTab === 'pubs' && viewMode === 'cards' && (
             <PubCardsView
               pubs={filteredPubs}
-              crowdReports={crowdReports}
-              showMiniMaps={showMiniMaps}
               userLocation={userLocation}
-              sortBy={sortBy}
-              onCrowdReport={setCrowdReportPub}
               showAll={showAllPubs}
               initialCount={INITIAL_PUB_COUNT}
               onShowAll={() => setShowAllPubs(true)}

@@ -69,7 +69,7 @@ export async function POST(request: NextRequest) {
       title,
       body,
       url: url || '/',
-      tag: tag || 'pintdex',
+      tag: tag || 'arvo',
       renotify: renotify || false,
     })
 

@@ -43,7 +43,7 @@ export default function PriceReporter({ pubSlug, pubName, currentPrice }: PriceR
         setStatus('success')
         // Save reporter name for future use
         if (name) {
-          try { localStorage.setItem('pintdex-reporter-name', name) } catch {}
+          try { localStorage.setItem('arvo-reporter-name', name) } catch {}
         }
       }
     } catch {
@@ -56,7 +56,7 @@ export default function PriceReporter({ pubSlug, pubName, currentPrice }: PriceR
   function handleOpen() {
     setIsOpen(true)
     try {
-      const saved = localStorage.getItem('pintdex-reporter-name')
+      const saved = localStorage.getItem('arvo-reporter-name')
       if (saved && !name) setName(saved)
     } catch {}
   }
@@ -68,7 +68,7 @@ export default function PriceReporter({ pubSlug, pubName, currentPrice }: PriceR
           <span className="text-green-600 text-lg">✅</span>
           <div>
             <p className="text-sm font-semibold text-green-800">Price reported!</p>
-            <p className="text-xs text-green-600">Thanks for helping keep PintDex accurate.</p>
+            <p className="text-xs text-green-600">Thanks for helping keep Arvo accurate.</p>
           </div>
         </div>
       </div>
@@ -134,7 +134,7 @@ export default function PriceReporter({ pubSlug, pubName, currentPrice }: PriceR
             maxLength={30}
             className="w-full px-3 py-2.5 border border-stone-200 rounded-lg text-sm focus:outline-none focus:border-amber focus:ring-1 focus:ring-amber/30"
           />
-          <p className="text-[10px] text-stone-400 mt-1">Show your name on the PintDex leaderboard</p>
+          <p className="text-[10px] text-stone-400 mt-1">Show your name on the Arvo leaderboard</p>
         </div>
 
         {(status === 'error' || status === 'ratelimit') && (

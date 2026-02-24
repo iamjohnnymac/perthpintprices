@@ -1,4 +1,4 @@
-// PintDex Service Worker — Push Notifications
+// Arvo Service Worker — Push Notifications
 // This file MUST be served from root (public/sw.js → /sw.js)
 
 self.addEventListener('install', () => {
@@ -17,21 +17,21 @@ self.addEventListener('push', (event) => {
   try {
     data = event.data.json()
   } catch {
-    data = { title: 'PintDex', body: event.data.text() }
+    data = { title: 'Arvo', body: event.data.text() }
   }
 
   const options = {
-    body: data.body || 'Something changed at PintDex!',
+    body: data.body || 'Something changed at Arvo!',
     icon: '/icon-192.png',
     badge: '/icon-192.png',
     vibrate: [100, 50, 100],
     data: { url: data.url || '/' },
-    tag: data.tag || 'pintdex',
+    tag: data.tag || 'arvo',
     renotify: !!data.renotify,
   }
 
   event.waitUntil(
-    self.registration.showNotification(data.title || 'PintDex', options)
+    self.registration.showNotification(data.title || 'Arvo', options)
   )
 })
 

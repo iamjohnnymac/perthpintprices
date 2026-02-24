@@ -139,33 +139,33 @@ export default function SuburbLeague({ pubs }: { pubs: Pub[] }) {
               <table className="w-full text-sm">
                 <thead className="sticky top-0 z-10">
                   <tr className="bg-stone-200/95 backdrop-blur-sm text-stone-600 text-xs uppercase tracking-wide shadow-[0_1px_3px_rgba(0,0,0,0.08)]">
-                    <th className="px-2 py-3 text-center font-semibold w-10">Pos</th>
-                    <th className="px-2 py-3 text-left font-semibold">Suburb</th>
+                    <th className="px-2 py-2.5 text-center font-semibold w-10">Pos</th>
+                    <th className="px-2 py-2.5 text-left font-semibold">Suburb</th>
                     <th
-                      className={`px-2 py-3 text-center font-semibold cursor-pointer hover:text-amber transition-colors select-none ${sortBy === 'avg' ? 'text-amber' : ''}`}
+                      className={`px-2 py-2.5 text-center font-semibold cursor-pointer hover:text-amber transition-colors select-none ${sortBy === 'avg' ? 'text-amber' : ''}`}
                       onClick={(e) => { e.stopPropagation(); setSortBy('avg') }}
                     >
                       Avg {sortBy === 'avg' && '▾'}
                     </th>
                     <th
-                      className={`px-2 py-3 text-center font-semibold cursor-pointer hover:text-amber transition-colors select-none hidden sm:table-cell ${sortBy === 'low' ? 'text-amber' : ''}`}
+                      className={`px-2 py-2.5 text-center font-semibold cursor-pointer hover:text-amber transition-colors select-none hidden sm:table-cell ${sortBy === 'low' ? 'text-amber' : ''}`}
                       onClick={(e) => { e.stopPropagation(); setSortBy('low') }}
                     >
                       Low {sortBy === 'low' && '▾'}
                     </th>
                     <th
-                      className={`px-2 py-3 text-center font-semibold cursor-pointer hover:text-amber transition-colors select-none hidden sm:table-cell ${sortBy === 'high' ? 'text-amber' : ''}`}
+                      className={`px-2 py-2.5 text-center font-semibold cursor-pointer hover:text-amber transition-colors select-none hidden sm:table-cell ${sortBy === 'high' ? 'text-amber' : ''}`}
                       onClick={(e) => { e.stopPropagation(); setSortBy('high') }}
                     >
                       High {sortBy === 'high' && '▾'}
                     </th>
                     <th
-                      className={`px-2 py-3 text-center font-semibold cursor-pointer hover:text-amber transition-colors select-none hidden md:table-cell ${sortBy === 'hh' ? 'text-amber' : ''}`}
+                      className={`px-2 py-2.5 text-center font-semibold cursor-pointer hover:text-amber transition-colors select-none hidden md:table-cell ${sortBy === 'hh' ? 'text-amber' : ''}`}
                       onClick={(e) => { e.stopPropagation(); setSortBy('hh') }}
                     >
                       HH% {sortBy === 'hh' && '▾'}
                     </th>
-                    <th className="px-2 py-3 text-center font-semibold hidden md:table-cell w-24">Spread</th>
+                    <th className="px-2 py-2.5 text-center font-semibold hidden md:table-cell w-24">Spread</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -194,7 +194,7 @@ export default function SuburbLeague({ pubs }: { pubs: Pub[] }) {
                         <td className="px-2 py-2 text-center text-red-500 font-medium hidden sm:table-cell">${s.maxPrice.toFixed(2)}</td>
                         <td className="px-2 py-2 text-center text-stone-500 hidden md:table-cell">{s.happyHourPct}%</td>
                         <td className="px-2 py-2 hidden md:table-cell">
-                          <div className="flex items-center gap-1 justify-center" title={`${s.spread.cheap}% under $8 · ${s.spread.mid}% $8-$11 · ${s.spread.pricey}% over $11`}>
+                          <div className="flex items-center gap-0.5 justify-center" title={`${s.spread.cheap}% under $8 · ${s.spread.mid}% $8-$11 · ${s.spread.pricey}% over $11`}>
                             <div className="flex h-2.5 w-16 rounded-full overflow-hidden bg-stone-100">
                               {s.spread.cheap > 0 && (
                                 <div
@@ -224,20 +224,20 @@ export default function SuburbLeague({ pubs }: { pubs: Pub[] }) {
               </table>
             </div>
             <div className="flex items-center justify-center gap-4 mt-3">
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5">
                 <span className="inline-block w-2.5 h-2.5 rounded-full bg-emerald-400" />
                 <span className="text-[10px] text-stone-400">Under $8</span>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5">
                 <span className="inline-block w-2.5 h-2.5 rounded-full bg-amber" />
                 <span className="text-[10px] text-stone-400">$8–$11</span>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5">
                 <span className="inline-block w-2.5 h-2.5 rounded-full bg-red-400" />
                 <span className="text-[10px] text-stone-400">Over $11</span>
               </div>
             </div>
-            <p className="text-[10px] text-stone-400 text-center mt-2">
+            <p className="text-[10px] text-stone-400 text-center mt-1.5">
               Suburbs with 2+ tracked pubs. Tap column headers to sort.
             </p>
           </div>

@@ -33,7 +33,7 @@ export default function PintOfTheDay() {
   useEffect(() => {
     // Check cache first
     try {
-      const cached = localStorage.getItem('pintdex-potd')
+      const cached = localStorage.getItem('arvo-potd')
       if (cached) {
         const parsed = JSON.parse(cached)
         const today = new Date().toLocaleDateString('en-CA', { timeZone: 'Australia/Perth' })
@@ -50,7 +50,7 @@ export default function PintOfTheDay() {
       .then(result => {
         if (result.pub) {
           setData(result)
-          try { localStorage.setItem('pintdex-potd', JSON.stringify(result)) } catch {}
+          try { localStorage.setItem('arvo-potd', JSON.stringify(result)) } catch {}
         }
         setLoading(false)
       })
@@ -59,7 +59,7 @@ export default function PintOfTheDay() {
 
   async function handleShare() {
     if (!data) return
-    const text = `🍺 PintDex Pint of the Day\n\n${data.pub.name} — ${data.pub.suburb}\n$${data.pub.effectivePrice.toFixed(2)} pint${data.pub.beerType ? ` (${data.pub.beerType})` : ''}\n${data.reason}\n\npintdex.com.au/pub/${data.pub.slug}`
+    const text = `🍺 Arvo Pint of the Day\n\n${data.pub.name} — ${data.pub.suburb}\n$${data.pub.effectivePrice.toFixed(2)} pint${data.pub.beerType ? ` (${data.pub.beerType})` : ''}\n${data.reason}\n\narvo.pub/pub/${data.pub.slug}`
     
     try {
       await navigator.clipboard.writeText(text)

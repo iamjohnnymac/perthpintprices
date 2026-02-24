@@ -38,18 +38,22 @@ const config: Config = {
   			mono: ['var(--font-jetbrains-mono)', 'monospace'],
   		},
   		colors: {
-  			// New EatClub-inspired palette
-  			'amber': '#D4A017',
-  			'amber-light': '#E8B84B',
-  			'amber-dark': '#B8860B',
-  			'charcoal': '#1C1917',
-  			'cream': '#F5F0E8',
-  			'cream-dark': '#EDE8DC',
+  			// Arvo warm orange palette
+  			'amber': '#E8792B',
+  			'amber-light': '#F2A05C',
+  			'amber-dark': '#D06820',
+  			'charcoal': '#1A1A1A',
+  			'cream': '#FAF7F2',
+  			'cream-dark': '#F0EBE1',
   			'stone-warm': '#A8A29E',
-  			'beer-gold': '#D4A017',
-  			'beer-amber': '#B8860B',
-  			'beer-dark': '#1C1917',
-  			'gold': '#D4A017',
+  			'beer-gold': '#E8792B',
+  			'beer-amber': '#D06820',
+  			'beer-dark': '#1A1A1A',
+  			'gold': '#E8792B',
+			// Price label colors
+			'bargain': '#22C55E',
+			'fair': '#F59E0B',
+			'pricey': '#EF4444',
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',
   			card: {

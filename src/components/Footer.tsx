@@ -4,8 +4,8 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <div className="flex flex-col sm:flex-row items-center justify-between gap-6 mb-8">
           <div className="flex items-center gap-3">
-            <img src="/logo.png" alt="PintDex" className="w-10 h-10 rounded-lg object-contain" />
-            <span className="text-xl font-bold tracking-tight font-heading">PintDex</span>
+            <img src="/logo.png" alt="Arvo" className="w-10 h-10 rounded-lg object-contain" />
+            <span className="text-xl font-bold tracking-tight font-heading">Arvo</span>
           </div>
           <p className="text-stone-400 text-sm text-center">Perth&apos;s pint prices, sorted. Community-driven since 2024.</p>
         </div>

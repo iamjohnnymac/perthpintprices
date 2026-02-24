@@ -123,7 +123,7 @@ export default function VenueIntel({ pubs, userLocation }: VenueIntelProps) {
       className="bg-white rounded-2xl shadow-[0_2px_16px_rgba(0,0,0,0.08)] border border-stone-200/40 cursor-pointer transition-all duration-300 hover:shadow-[0_4px_20px_rgba(0,0,0,0.12)] active:scale-[0.995]"
       onClick={() => setIsExpanded(!isExpanded)}
     >
-      <CardContent className="p-4 sm:p-5">
+      <CardContent className="p-5 sm:p-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <span className="text-2xl">{E.chart_bar}</span>
@@ -138,13 +138,13 @@ export default function VenueIntel({ pubs, userLocation }: VenueIntelProps) {
         </div>
 
         {isExpanded && (
-          <div className="mt-3 pt-3 border-t border-stone-200/60 space-y-4" onClick={(e) => e.stopPropagation()}>
+          <div className="mt-4 pt-4 border-t border-stone-200/60 space-y-4" onClick={(e) => e.stopPropagation()}>
             <div>
               <h4 className="text-xs font-semibold text-stone-700 mb-2 flex items-center gap-1">
                 {E.chart_bar} PRICE DISTRIBUTION
               </h4>
               <div className="p-3 rounded-xl bg-white/70 border border-stone-100">
-                <div className="space-y-2">
+                <div className="space-y-1.5">
                   {priceBrackets.map(([bracket, count]) => (
                     <div key={bracket} className="flex items-center gap-2">
                       <span className="text-[10px] font-mono text-stone-500 w-10 text-right">{bracket}</span>

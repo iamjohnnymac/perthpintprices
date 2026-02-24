@@ -18,29 +18,29 @@ export const viewport: Viewport = {
 
 export async function generateMetadata(): Promise<Metadata> {
   const stats = await getSiteStats()
-  const desc = `Track real-time pint prices across ${stats.venueCount}+ Perth pubs and ${stats.suburbCount} suburbs. Find happy hours, cheap pints, and the best deals — Perth's beer price tracker.`
-  const ogDesc = `Real-time pint prices across ${stats.venueCount}+ Perth pubs. Avg: $${stats.avgPrice}. Cheapest: $${stats.cheapestPrice}.`
+  const desc = `Perth's pint prices, sorted. Real prices from real people across ${stats.venueCount}+ venues and ${stats.suburbCount} suburbs.`
+  const ogDesc = `Perth's pint prices, sorted. ${stats.venueCount}+ venues. Avg: $${stats.avgPrice}. Cheapest: $${stats.cheapestPrice}.`
 
   return {
     icons: {
       icon: '/favicon.ico',
       apple: '/apple-touch-icon.png',
     },
-    title: "PintDex — Perth's pint prices, sorted.",
+    title: "Arvo — Perth's pint prices, sorted.",
     description: desc,
-    keywords: 'Perth, pint prices, beer, pubs, happy hour, Western Australia, cheap drinks, PintDex',
+    keywords: 'Perth, pint prices, beer, pubs, happy hour, Western Australia, cheap drinks, Arvo',
     openGraph: {
-      title: "PintDex — Perth's pint prices, sorted.",
+      title: "Arvo — Perth's pint prices, sorted.",
       description: ogDesc,
-      url: 'https://pintdex.com.au',
-      siteName: 'PintDex',
+      url: 'https://arvo.pub',
+      siteName: 'Arvo',
       locale: 'en_AU',
       type: 'website',
     },
     twitter: {
       card: 'summary_large_image',
-      title: "PintDex — Perth's pint prices, sorted.",
-      description: `Real-time pint prices across ${stats.venueCount}+ Perth pubs. Find cheap pints near you.`,
+      title: "Arvo — Perth's pint prices, sorted.",
+      description: `Perth's pint prices, sorted. ${stats.venueCount}+ venues — find cheap pints near you.`,
     },
   }
 }
@@ -54,7 +54,7 @@ export default function RootLayout({
     <html lang="en">
       <head>
         <link rel="manifest" href="/manifest.json" />
-        <meta name="theme-color" content="#D4A017" />
+        <meta name="theme-color" content="#E8792B" />
       </head>
       <body className={`${inter.variable} ${spaceGrotesk.variable} ${jetbrainsMono.variable} ${inter.className} bg-cream`}><Providers>{children}</Providers><Analytics /></body>
     </html>

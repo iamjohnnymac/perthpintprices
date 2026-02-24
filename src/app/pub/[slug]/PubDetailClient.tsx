@@ -86,7 +86,7 @@ export default function PubDetailClient({ pub, nearbyPubs, avgPrice }: PubDetail
   const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${pub.lat},${pub.lng}`
 
   async function sharePub() {
-    const text = `🍺 $${pub.price?.toFixed(2) ?? 'TBC'} pints at ${pub.name}, ${pub.suburb} — found on PintDex → perthpintprices.vercel.app/pub/${pub.slug}`
+    const text = `🍺 $${pub.price?.toFixed(2) ?? 'TBC'} pints at ${pub.name}, ${pub.suburb} — found on Arvo → arvo.pub/pub/${pub.slug}`
     if (navigator.share) {
       try { await navigator.share({ text, url: window.location.href }) } catch {}
     } else if (navigator.clipboard) {
@@ -103,7 +103,7 @@ export default function PubDetailClient({ pub, nearbyPubs, avgPrice }: PubDetail
             <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <path d="M19 12H5M12 19l-7-7 7-7"/>
             </svg>
-            Back to PintDex
+            Back to Arvo
           </Link>
           <div className="flex items-center gap-1">
             <WatchlistButton slug={pub.slug} name={pub.name} suburb={pub.suburb} size="md" />
@@ -150,19 +150,18 @@ export default function PubDetailClient({ pub, nearbyPubs, avgPrice }: PubDetail
                   {pub.price !== null ? `$${pub.price.toFixed(2)}` : 'TBC'}
                 </div>
               </div>
-              <div className="pb-1">
+              <div className="pb-1 space-y-1.5">
                 <p className="text-sm text-stone-400">
                   {pub.price !== null ? getPriceLabel(pub.price, perthAvg) : 'Unverified'}
                 </p>
-                {pub.price !== null && (
-                  <p className="text-xs text-stone-400 mt-0.5">
-                    {pub.price < perthAvg
-                      ? `$${(perthAvg - pub.price).toFixed(2)} below Perth avg`
-                      : pub.price > perthAvg
-                      ? `$${(pub.price - perthAvg).toFixed(2)} above Perth avg`
-                      : 'At Perth average'
-                    }
-                  </p>
+                {pub.effectivePrice && perthAvg && Math.abs(pub.effectivePrice - perthAvg) >= 0.05 && (
+                  <span className={`inline-block text-xs font-medium px-2 py-0.5 rounded-full ${
+                    pub.effectivePrice < perthAvg 
+                      ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' 
+                      : 'bg-red-50 text-red-600 border border-red-200'
+                  }`}>
+                    ${Math.abs(pub.effectivePrice - perthAvg).toFixed(2)} {pub.effectivePrice < perthAvg ? 'below' : 'above'} avg
+                  </span>
                 )}
               </div>
             </div>
@@ -185,7 +184,7 @@ export default function PubDetailClient({ pub, nearbyPubs, avgPrice }: PubDetail
               )}
             </div>
 
-            {/* Featured In — PintDex features this pub appears in */}
+            {/* Featured In — Arvo features this pub appears in */}
             {(pub.sunsetSpot || pub.kidFriendly || pub.hasTab) && (
               <div>
                 <div className="text-xs text-stone-400 uppercase tracking-wider font-semibold mb-2">Featured In</div>
@@ -264,7 +263,9 @@ export default function PubDetailClient({ pub, nearbyPubs, avgPrice }: PubDetail
             <PriceHistory pubId={pub.id} currentPrice={pub.price} />
 
             {/* Report a Price */}
-            <PriceReporter pubSlug={pub.slug} pubName={pub.name} currentPrice={pub.price} />
+            <div id="report-price">
+              <PriceReporter pubSlug={pub.slug} pubName={pub.name} currentPrice={pub.price} />
+            </div>
 
             {/* Data quality */}
             <div className="text-sm text-stone-400 space-y-1">
@@ -291,6 +292,11 @@ export default function PubDetailClient({ pub, nearbyPubs, avgPrice }: PubDetail
                 className="flex-1 bg-charcoal text-white text-center py-3 px-6 rounded-2xl font-semibold text-sm hover:bg-charcoal/90 transition-colors"
               >
                 Directions
+              </a>
+            </div>
+            <div className="text-center">
+              <a href="#report-price" className="text-stone-400 hover:text-amber text-sm transition-colors">
+                Wrong price?
               </a>
             </div>
           </div>
@@ -336,7 +342,7 @@ export default function PubDetailClient({ pub, nearbyPubs, avgPrice }: PubDetail
           <p className="mt-1">
             Wrong price?{' '}
             <Link href="/" className="text-amber hover:text-amber-dark font-semibold">
-              Report it on PintDex
+              Report it on Arvo
             </Link>
           </p>
         </div>

@@ -5,28 +5,28 @@ export default function FAQ() {
   const [openIndex, setOpenIndex] = useState<number | null>(null)
   const faqs = [
     {
-      q: 'How are prices verified?',
-      a: 'Every price on PintDex is manually verified through pub menus, direct calls, and community submissions. We never estimate or guess — if we don\'t have a verified price, we show "Price TBC" until we confirm it.',
+      q: 'How accurate are the prices?',
+      a: 'Real prices from real people. Every price is verified through menus, direct calls, or community submissions. No scraping, no guessing — if we don\'t have a confirmed price, you\'ll see \"Price TBC\".',
     },
     {
-      q: 'How often is the data updated?',
-      a: 'We run automated checks weekly and accept community submissions around the clock. Every price includes a "last verified" date so you know how fresh it is.',
+      q: 'How often are prices updated?',
+      a: 'Arvo runs automated checks weekly and accepts community submissions around the clock. Every price includes a "last verified" date so you know how fresh it is.',
     },
     {
       q: 'What does the price represent?',
       a: 'All prices shown are for a standard pint (570ml) of the cheapest tap beer available at each venue. Happy hour prices are shown when they\'re currently active.',
     },
     {
-      q: 'How can I submit a price?',
-      a: 'Tap the "Submit a Price" button at the top of the page. Tell us the pub name, suburb, and the pint price you paid. We\'ll verify and add it to the database.',
+      q: 'Can I submit a price?',
+      a: 'Absolutely. Hit "Submit a Price" in the top nav or use the Report button on any pub page. You\'ll earn points on our leaderboard too.',
     },
     {
       q: 'Why is a pub showing "Price TBC"?',
       a: 'We only display prices we\'ve confirmed. "Price TBC" means we know the pub exists but haven\'t verified its current pint price yet. You can help by submitting it!',
     },
     {
-      q: 'Is PintDex free?',
-      a: 'Yep — completely free. No app download, no sign-up, no ads. Just Perth pint prices, sorted.',
+      q: 'Is Arvo free?',
+      a: '100%. No app download. No sign-up. Just prices. Simple as.',
     },
   ]
 
@@ -36,7 +36,7 @@ export default function FAQ() {
         <h2 className="text-title text-charcoal font-heading text-center mb-4">
           Questions?
         </h2>
-        <p className="text-stone-500 text-center mb-10 text-lg">Everything you need to know about PintDex.</p>
+        <p className="text-stone-500 text-center mb-10 text-lg">Got questions? We've got answers.</p>
         <div className="space-y-0">
           {faqs.map((faq, i) => (
             <div key={i} className="border-b border-stone-200/60">

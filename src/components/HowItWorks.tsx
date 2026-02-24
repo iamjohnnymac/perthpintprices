@@ -7,8 +7,8 @@ export default function HowItWorks({ venueCount = 200, suburbCount = 90 }: HowIt
   const steps = [
     {
       num: '01',
-      title: 'Find pubs near you',
-      desc: `Browse ${venueCount}+ pubs across ${suburbCount} Perth suburbs with real-time prices and happy hour info.`,
+      title: 'Find your pub',
+      desc: `Search or browse ${venueCount}+ venues across ${suburbCount} Perth suburbs.`,
       icon: (
         <svg className="w-8 h-8" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
@@ -18,7 +18,7 @@ export default function HowItWorks({ venueCount = 200, suburbCount = 90 }: HowIt
     {
       num: '02',
       title: 'Compare prices',
-      desc: 'See how every pub stacks up against the Perth average. Track happy hours and price changes.',
+      desc: 'See who\'s cheapest, who\'s on happy hour, and what\'s nearby.',
       icon: (
         <svg className="w-8 h-8" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
@@ -27,8 +27,8 @@ export default function HowItWorks({ venueCount = 200, suburbCount = 90 }: HowIt
     },
     {
       num: '03',
-      title: 'Go enjoy your pint',
-      desc: 'Get directions, check the vibe, and save money on your next round. Simple as.',
+      title: 'Go enjoy',
+      desc: 'Get directions, grab a pint, save a few bucks.',
       icon: (
         <svg className="w-8 h-8" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" d="M15.182 15.182a4.5 4.5 0 01-6.364 0M21 12a9 9 0 11-18 0 9 9 0 0118 0zM9.75 9.75c0 .414-.168.75-.375.75S9 10.164 9 9.75 9.168 9 9.375 9s.375.336.375.75zm-.375 0h.008v.015h-.008V9.75zm5.625 0c0 .414-.168.75-.375.75s-.375-.336-.375-.75.168-.75.375-.75.375.336.375.75zm-.375 0h.008v.015h-.008V9.75z" />
@@ -41,7 +41,7 @@ export default function HowItWorks({ venueCount = 200, suburbCount = 90 }: HowIt
     <section className="py-16 sm:py-20 border-t border-stone-200/60">
       <div className="max-w-4xl mx-auto px-4 sm:px-6">
         <h2 className="text-title text-charcoal font-heading text-center mb-4">
-          How it works
+          How Arvo works
         </h2>
         <p className="text-stone-500 text-center mb-12 text-lg">No app download. No sign-up. Just prices.</p>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 sm:gap-12">

@@ -97,7 +97,7 @@ export async function GET(req: NextRequest) {
 
 async function hashString(str: string): Promise<string> {
   const encoder = new TextEncoder()
-  const data = encoder.encode(str + 'pintdex-salt-2025')
+  const data = encoder.encode(str + 'arvo-salt-2025')
   const hashBuffer = await crypto.subtle.digest('SHA-256', data)
   const hashArray = Array.from(new Uint8Array(hashBuffer))
   return hashArray.map(b => b.toString(16).padStart(2, '0')).join('').slice(0, 16)

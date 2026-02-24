@@ -3,10 +3,10 @@ import PubGolfClient from './PubGolfClient'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: "Pub Golf — PintDex",
+  title: "Pub Golf — Arvo",
   description: "Play pub golf across Perth's best pubs. Pick a course, track your scores, and see how much your round costs.",
   openGraph: {
-    title: "Pub Golf — PintDex",
+    title: "Pub Golf — Arvo",
     description: "Play pub golf across Perth's best pubs with real pint prices.",
   }
 }

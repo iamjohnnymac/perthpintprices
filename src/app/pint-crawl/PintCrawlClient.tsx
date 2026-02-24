@@ -310,7 +310,7 @@ export default function PintCrawlClient({ pubs }: { pubs: Pub[] }) {
             : area === 'fremantle'
               ? 'Fremantle'
               : 'Perth CBD'
-    return `🗺️ PintDex Pint Crawl\n\nRoute: ${pubNames}\nArea: ${areaLabel}\nTotal: $${totalCost.toFixed(2)} for ${route.length} pints\nWalking: ~${totalDistance.toFixed(1)}km (${totalWalkMin}min)\n\nPlan yours at pintdex.com.au/pint-crawl`
+    return `🗺️ Arvo Pint Crawl\n\nRoute: ${pubNames}\nArea: ${areaLabel}\nTotal: $${totalCost.toFixed(2)} for ${route.length} pints\nWalking: ~${totalDistance.toFixed(1)}km (${totalWalkMin}min)\n\nPlan yours at arvo.pub/pint-crawl`
   }
 
   const copyRoute = async () => {
@@ -332,33 +332,39 @@ export default function PintCrawlClient({ pubs }: { pubs: Pub[] }) {
       {/* Header */}
       <header className="bg-cream border-b border-stone-200/60">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4">
-          <div className="flex items-center gap-3">
-            <Link
-              href="/"
-              className="text-stone-400 hover:text-charcoal transition-colors"
-            >
-              <svg
-                className="w-5 h-5"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={2}
-                stroke="currentColor"
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <Link
+                href="/"
+                className="text-stone-400 hover:text-charcoal transition-colors"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M15.75 19.5L8.25 12l7.5-7.5"
-                />
-              </svg>
-            </Link>
-            <div>
-              <h1 className="text-xl font-bold font-heading text-charcoal">
-                🗺️ Pint Crawl
-              </h1>
-              <p className="text-xs text-stone-500">
-                Set your budget, pick your area, let&apos;s go.
-              </p>
+                <svg
+                  className="w-5 h-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={2}
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M15.75 19.5L8.25 12l7.5-7.5"
+                  />
+                </svg>
+              </Link>
+              <div>
+                <h1 className="text-xl font-bold font-heading text-charcoal">
+                  🗺️ Pint Crawl
+                </h1>
+                <p className="text-xs text-stone-500">
+                  Set your budget, pick your area, let&apos;s go.
+                </p>
+              </div>
             </div>
+            <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+              <div className="w-7 h-7 bg-amber rounded-lg flex items-center justify-center"><span className="text-white text-sm">☀</span></div>
+              <span className="text-sm font-bold font-heading text-charcoal">arvo</span>
+            </Link>
           </div>
         </div>
       </header>
