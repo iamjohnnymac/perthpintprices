@@ -327,7 +327,7 @@ export default function Home() {
 
           {/* ═══ INSIGHTS TAB ═══ */}
           {activeTab === 'market' && (
-            <div className="space-y-6 sm:space-y-8">
+            <div className="space-y-4 sm:space-y-5">
               <PintIndex />
               <TonightsMoves pubs={pubs} userLocation={userLocation} />
               <SuburbLeague pubs={pubs} />
@@ -338,7 +338,7 @@ export default function Home() {
 
           {/* ═══ GUIDES TAB ═══ */}
           {activeTab === 'explore' && (
-            <div className="space-y-6 sm:space-y-8">
+            <div className="space-y-4 sm:space-y-5">
               <BeerWeather pubs={pubs} userLocation={userLocation} />
               <SunsetSippers pubs={pubs} userLocation={userLocation} />
               <PuntNPints pubs={pubs} userLocation={userLocation} />

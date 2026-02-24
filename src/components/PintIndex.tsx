@@ -234,7 +234,7 @@ export default function PintIndex() {
       className="bg-white rounded-2xl shadow-[0_2px_16px_rgba(0,0,0,0.08)] border border-stone-200/40 cursor-pointer hover:shadow-[0_4px_20px_rgba(0,0,0,0.12)] active:scale-[0.995] transition-all duration-300"
       onClick={() => setExpanded(!expanded)}
     >
-      <CardContent className="p-5 sm:p-6">
+      <CardContent className="p-4 sm:p-5">
         {/* Main ticker row */}
         <div className="flex items-center justify-between gap-4 flex-wrap">
           {/* Left: Index title + value */}
@@ -267,7 +267,7 @@ export default function PintIndex() {
 
         {/* Expanded: Trend analysis only (stats are in the header bar) */}
         {expanded && (
-          <div className="mt-4 pt-4 border-t border-stone-200 animate-in fade-in slide-in-from-top-2 duration-200">
+          <div className="mt-3 pt-3 border-t border-stone-200 animate-in fade-in slide-in-from-top-2 duration-200">
             {/* Suburb comparison */}
             <div className="grid grid-cols-2 gap-3">
               <div className="bg-amber/10 rounded-xl p-3">
