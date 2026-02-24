@@ -286,7 +286,7 @@ export default function Home() {
           )}
         </header>
 
-        <div ref={contentRef} className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-6 min-h-[80vh]">
+        <div ref={contentRef} className="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-5">
           {/* ═══ PUBS TAB ═══ */}
           {activeTab === 'pubs' && (
             <>
@@ -327,7 +327,7 @@ export default function Home() {
 
           {/* ═══ INSIGHTS TAB ═══ */}
           {activeTab === 'market' && (
-            <div className="space-y-4 sm:space-y-5">
+            <div className="space-y-3 sm:space-y-4">
               <PintIndex />
               <TonightsMoves pubs={pubs} userLocation={userLocation} />
               <SuburbLeague pubs={pubs} />
@@ -338,7 +338,7 @@ export default function Home() {
 
           {/* ═══ GUIDES TAB ═══ */}
           {activeTab === 'explore' && (
-            <div className="space-y-4 sm:space-y-5">
+            <div className="space-y-3 sm:space-y-4">
               <BeerWeather pubs={pubs} userLocation={userLocation} />
               <SunsetSippers pubs={pubs} userLocation={userLocation} />
               <PuntNPints pubs={pubs} userLocation={userLocation} />
