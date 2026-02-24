@@ -9,7 +9,16 @@ const config: Config = {
   ],
   theme: {
   	extend: {
-  spacing: {
+  keyframes: {
+  			'slide-up': {
+  				'0%': { transform: 'translateY(100%)', opacity: '0' },
+  				'100%': { transform: 'translateY(0)', opacity: '1' },
+  			},
+  		},
+  		animation: {
+  			'slide-up': 'slide-up 0.4s ease-out',
+  		},
+  		spacing: {
   			'18': '4.5rem',
   			'22': '5.5rem',
   			'26': '6.5rem',
