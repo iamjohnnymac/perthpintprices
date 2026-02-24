@@ -34,7 +34,7 @@ export default function HowItWorks() {
 
   return (
     <section className="py-16 sm:py-20 border-t border-stone-200/60">
-      <div className="max-w-4xl mx-auto px-4">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6">
         <h2 className="text-title text-charcoal font-heading text-center mb-4">
           How it works
         </h2>

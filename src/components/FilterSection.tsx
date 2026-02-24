@@ -78,7 +78,7 @@ export function FilterSection({
   return (
     <div className="border-t border-stone-100/80 bg-cream">
       {/* One clean row: Search + Suburbs + Filters */}
-      <div className="max-w-7xl mx-auto px-4 py-3 flex items-center gap-2">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center gap-2">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-stone-400 pointer-events-none" />
           <input

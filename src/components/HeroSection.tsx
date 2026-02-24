@@ -28,7 +28,7 @@ export default function HeroSection({
   return (
     <section className="bg-cream relative overflow-hidden">
       {/* Top nav bar — minimal like EatClub */}
-      <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <img src="/logo.png" alt="PintDex" className="w-10 h-10 rounded-lg object-contain" />
           <span className="text-xl font-bold tracking-tight font-heading text-charcoal">PintDex</span>
@@ -42,7 +42,7 @@ export default function HeroSection({
       </div>
 
       {/* Hero content — big, confident, breathing room */}
-      <div className="max-w-4xl mx-auto px-4 pt-16 sm:pt-24 pb-20 sm:pb-28 text-center">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 pt-16 sm:pt-24 pb-20 sm:pb-28 text-center">
         <h1 className="text-4xl sm:text-6xl lg:text-7xl font-bold text-charcoal font-heading leading-[1.05] mb-6">
           Perth&apos;s pint prices,{' '}
           <span className="text-amber">sorted.</span>

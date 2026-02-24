@@ -86,7 +86,7 @@ export default function HappyHourClient() {
     <div className="min-h-screen bg-cream">
       {/* Header */}
       <div className="bg-white border-b border-stone-200/60">
-        <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
           <Link
             href="/"
             className="flex items-center gap-3 hover:opacity-80 transition-opacity"
@@ -109,7 +109,7 @@ export default function HappyHourClient() {
         </div>
       </div>
 
-      <div className="max-w-4xl mx-auto px-4 py-8 sm:py-12">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
         {/* Page Title */}
         <div className="text-center mb-6 sm:mb-10">
           <div className="inline-flex items-center gap-2 mb-4">

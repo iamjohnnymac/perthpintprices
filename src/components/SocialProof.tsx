@@ -13,7 +13,7 @@ export default function SocialProof({ venueCount, suburbCount, avgPrice }: Socia
   ]
   return (
     <section className="py-16 sm:py-20 border-t border-stone-200/60 bg-cream-dark">
-      <div className="max-w-5xl mx-auto px-4">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6">
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 text-center">
           {proofs.map((p) => (
             <div key={p.label}>
