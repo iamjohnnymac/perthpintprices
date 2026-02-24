@@ -61,9 +61,12 @@
 @layer base {
   html {
     font-size: 16px;
+    overflow-x: hidden;
   }
   body {
     @apply text-[17px] leading-relaxed;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
   }
 }
 

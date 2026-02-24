@@ -32,6 +32,7 @@ export default function TabBar({ activeTab, onTabChange }: TabBarProps) {
                 py-2.5 sm:py-3 rounded-lg
                 text-sm sm:text-base font-medium
                 transition-all duration-200
+                outline-none focus:outline-none focus-visible:ring-2 focus-visible:ring-amber/50
                 ${isActive
                   ? 'bg-white text-charcoal shadow-sm'
                   : 'text-stone-400 hover:text-stone-600 active:scale-[0.98]'
