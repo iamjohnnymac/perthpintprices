@@ -9,6 +9,7 @@ import { Pub } from '@/types/pub'
 import E from '@/lib/emoji'
 import WatchlistButton from '@/components/WatchlistButton'
 import PriceHistory from '@/components/PriceHistory'
+import PriceReporter from '@/components/PriceReporter'
 import { formatHappyHourDays } from '@/lib/happyHourLive'
 
 const PubDetailMap = dynamic(() => import('@/components/PubDetailMap'), {
@@ -260,6 +261,9 @@ export default function PubDetailClient({ pub, nearbyPubs }: PubDetailClientProp
 
             {/* Price History Chart */}
             <PriceHistory pubId={pub.id} currentPrice={pub.price} />
+
+            {/* Report a Price */}
+            <PriceReporter pubSlug={pub.slug} pubName={pub.name} currentPrice={pub.price} />
 
             {/* Data quality */}
             <div className="text-sm text-stone-400 space-y-1">
