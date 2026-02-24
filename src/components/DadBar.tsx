@@ -61,9 +61,9 @@ export default function DadBar({ pubs, userLocation }: { pubs: Pub[], userLocati
     <Card className="bg-white rounded-2xl shadow-[0_2px_16px_rgba(0,0,0,0.08)] border border-stone-200/40 cursor-pointer transition-all duration-300 hover:shadow-[0_4px_20px_rgba(0,0,0,0.12)] active:scale-[0.995] overflow-hidden" onClick={() => setIsExpanded(!isExpanded)}>
       <CardContent className="p-4 sm:p-5">
       {/* Header */}
-      <div className="flex items-start justify-between mb-3">
+      <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-7 h-7 rounded-md bg-gradient-to-br from-amber-500 to-amber-700 flex items-center justify-center flex-shrink-0">
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-500 to-amber-700 flex items-center justify-center flex-shrink-0">
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
               <circle cx="8" cy="5" r="3" fill="white" opacity="0.9"/>
               <path d="M3 14c0-2.8 2.2-5 5-5s5 2.2 5 5" fill="white" opacity="0.9"/>
@@ -72,15 +72,14 @@ export default function DadBar({ pubs, userLocation }: { pubs: Pub[], userLocati
             </svg>
           </div>
           <div>
-            <h3 className="text-base sm:text-lg font-bold font-heading text-stone-800 flex items-center gap-2">
-              THE DAD BAR
-              <InfoTooltip text="Kid-friendly pubs verified from Buggybuddys and Urban List Perth. All venues have dedicated playgrounds or play areas, plus food menus for children. Perfect for a cheeky pint while the kids wear themselves out." />
+            <h3 className="text-base sm:text-lg font-bold font-heading text-stone-800 flex items-center">
+              THE DAD BAR<InfoTooltip text="Kid-friendly pubs verified from Buggybuddys and Urban List Perth. All venues have dedicated playgrounds or play areas, plus food menus for children. Perfect for a cheeky pint while the kids wear themselves out." />
             </h3>
-            <p className="text-xs text-stone-500">Playgrounds for them. Pints for you.</p>
+            <p className="text-xs text-stone-500">Kids play. Dads sip.</p>
           </div>
         </div>
         <div className="flex items-center gap-2">
-            <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-50 border border-amber-200">
+            <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-amber-50 border border-amber-200">
               <span className="text-[10px] font-semibold text-amber">{dadPubs.length} VENUES</span>
             </div>
             {!isExpanded && dadPubs[0]?.price && (
@@ -93,6 +92,7 @@ export default function DadBar({ pubs, userLocation }: { pubs: Pub[], userLocati
       </div>
 
       {isExpanded && (<>
+      <div className="mt-3 pt-3 border-t border-stone-200/60" />
       {/* Dad joke */}
       <div className="bg-amber-50/60 border border-amber-200 rounded-lg p-3 mb-3">
         <div className="flex items-start gap-2">

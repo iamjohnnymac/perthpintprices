@@ -208,7 +208,9 @@ export default function SunsetSippers({ pubs, userLocation }: SunsetSippersProps
         {/* Compact Header */}
         <div className="flex items-center justify-between overflow-visible">
           <div className="flex items-center gap-3">
-            <span className="text-2xl">{statusEmoji}</span>
+            <div className="w-8 h-8 rounded-lg bg-amber-50 flex items-center justify-center flex-shrink-0">
+              <span className="text-lg leading-none">{statusEmoji}</span>
+            </div>
             <div>
               <div className="flex items-center gap-2">
                 <h3 className="text-base sm:text-lg font-bold font-heading text-stone-800 flex items-center">SUNSET SIPPERS<InfoTooltip text="Uses Perth's real-time sunset & golden hour times (calculated astronomically). Highlights west-facing pubs with verified prices — best spots to watch the sun go down with a pint." /></h3>
@@ -227,45 +229,7 @@ export default function SunsetSippers({ pubs, userLocation }: SunsetSippersProps
             </div>
           </div>
 
-          {/* Mini Sun Dial */}
-          <div className="flex items-center gap-3 overflow-visible">
-            {!isNighttime && (
-              <svg width={160} height={58} viewBox={`0 0 ${arcWidth} ${arcHeight}`} className="opacity-80" overflow="hidden" style={{display:'block'}}>
-                {/* Horizon line */}
-                <line x1="8" y1={arcCenterY} x2={arcWidth - 8} y2={arcCenterY} stroke="#d4a574" strokeWidth="1" strokeDasharray="3,3" opacity="0.6" />
-                {/* Full arc (dashed guide) — flat ellipse */}
-                <path
-                  d={`M 12 ${arcCenterY} A ${arcRx} ${arcRy} 0 0 1 ${arcWidth - 12} ${arcCenterY}`}
-                  fill="none"
-                  stroke="#D97706"
-                  strokeWidth="1.5"
-                  strokeDasharray="3,3"
-                  opacity="0.3"
-                />
-                {/* Traveled path — flat ellipse */}
-                {sunPosition > 0 && sunPosition < 100 && (
-                  <path
-                    d={`M 12 ${arcCenterY} A ${arcRx} ${arcRy} 0 0 1 ${sunX} ${sunY}`}
-                    fill="none"
-                    stroke="#D97706"
-                    strokeWidth="2"
-                    opacity="0.8"
-                  />
-                )}
-                {/* Sun dot */}
-                {sunPosition > 0 && sunPosition < 100 && (
-                  <>
-                    <circle cx={sunX} cy={sunY} r="10" fill="#fbbf24" opacity="0.15" />
-                    <circle cx={sunX} cy={sunY} r="5" fill="#D97706" opacity="0.6" />
-                    <circle cx={sunX} cy={sunY} r="3" fill="#D97706" />
-                  </>
-                )}
-                {/* Labels — below horizon line, larger font, symmetric */}
-                <text x="6" y={arcCenterY + 18} fontSize="11" fill="#92734a" fontFamily="monospace" fontWeight="500">{E.arrow_up_plain}{formatTime(sunTimes.sunrise).replace(' ', '')}</text>
-                <text x={arcWidth - 70} y={arcCenterY + 18} fontSize="11" fill="#c2410c" fontFamily="monospace" fontWeight="500">{E.arrow_down_plain}{formatTime(sunTimes.sunset).replace(' ', '')}</text>
-              </svg>
-            )}
-
+          <div className="flex items-center gap-3">
             <div className="text-right">
               <div className="text-lg font-bold text-amber-700">{formatTime(sunTimes.sunset)}</div>
               <div className="text-[10px] text-stone-400">sunset today</div>
@@ -280,6 +244,28 @@ export default function SunsetSippers({ pubs, userLocation }: SunsetSippersProps
         {/* Expanded Content */}
         {isExpanded && (
           <div className="mt-3 pt-3 border-t border-amber-200/60">
+            {/* Sun Arc */}
+            {!isNighttime && (
+              <div className="flex justify-center mb-3">
+                <svg width={220} height={72} viewBox={`0 0 ${arcWidth} ${arcHeight}`} className="opacity-80" overflow="hidden" style={{display:'block'}}>
+                  <line x1="8" y1={arcCenterY} x2={arcWidth - 8} y2={arcCenterY} stroke="#d4a574" strokeWidth="1" strokeDasharray="3,3" opacity="0.6" />
+                  <path d={`M 12 ${arcCenterY} A ${arcRx} ${arcRy} 0 0 1 ${arcWidth - 12} ${arcCenterY}`} fill="none" stroke="#D97706" strokeWidth="1.5" strokeDasharray="3,3" opacity="0.3" />
+                  {sunPosition > 0 && sunPosition < 100 && (
+                    <path d={`M 12 ${arcCenterY} A ${arcRx} ${arcRy} 0 0 1 ${sunX} ${sunY}`} fill="none" stroke="#D97706" strokeWidth="2" opacity="0.8" />
+                  )}
+                  {sunPosition > 0 && sunPosition < 100 && (
+                    <>
+                      <circle cx={sunX} cy={sunY} r="10" fill="#fbbf24" opacity="0.15" />
+                      <circle cx={sunX} cy={sunY} r="5" fill="#D97706" opacity="0.6" />
+                      <circle cx={sunX} cy={sunY} r="3" fill="#D97706" />
+                    </>
+                  )}
+                  <text x="6" y={arcCenterY + 18} fontSize="11" fill="#92734a" fontFamily="monospace" fontWeight="500">{E.arrow_up_plain}{formatTime(sunTimes.sunrise).replace(' ', '')}</text>
+                  <text x={arcWidth - 70} y={arcCenterY + 18} fontSize="11" fill="#c2410c" fontFamily="monospace" fontWeight="500">{E.arrow_down_plain}{formatTime(sunTimes.sunset).replace(' ', '')}</text>
+                </svg>
+              </div>
+            )}
+
             {/* Sunset Pubs Grid */}
             <div className="flex items-center justify-between mb-3">
               <h4 className="text-sm font-semibold text-stone-700">
