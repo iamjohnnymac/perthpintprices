@@ -90,7 +90,7 @@ export default function HeroSection({
           <span className="text-amber">sorted.</span>
         </h1>
         <p className="text-base sm:text-lg text-stone-500 max-w-2xl mx-auto mb-8 leading-relaxed">
-          {venueCount}+ venues. {suburbCount} suburbs. Real prices from real people.
+          {venueCount}+ venues. {suburbCount} suburbs. Real prices from real people.{' '}
           <br className="hidden sm:block" />
           Find your next cheap pint in 10 seconds.
         </p>
