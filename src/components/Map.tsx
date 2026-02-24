@@ -179,7 +179,7 @@ export default function MapComponent({ pubs, userLocation, totalPubCount }: MapP
               <span style={{ color: '#D4A017', fontWeight: 500 }}>{pub.price !== null ? `$${pub.price.toFixed(2)}` : 'TBC'}</span>
             </Tooltip>
             <Popup>
-              <div style={{ padding: '8px', minWidth: '200px' }}>
+              <div style={{ padding: '8px 8px 14px 8px', minWidth: '200px' }}>
                 <a href={`/pub/${pub.slug}`} style={{ fontWeight: 700, fontSize: '16px', marginBottom: '4px', color: '#1f2937', textDecoration: 'none', display: 'block' }}>
                   {pub.name}
                 </a>
