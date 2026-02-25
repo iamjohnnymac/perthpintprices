@@ -37,8 +37,8 @@ export default function PubDetailMap({ lat, lng, name, price }: PubDetailMapProp
       box-shadow: 0 2px 8px rgba(0,0,0,0.3);
       white-space: nowrap;
     ">${priceLabel}</div>`,
-    iconSize: [40, 28],
-    iconAnchor: [20, 14],
+    iconSize: [64, 28],
+    iconAnchor: [32, 14],
   })
 
   return (

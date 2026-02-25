@@ -29,7 +29,7 @@ function getPriceIcon(price: number | null): L.DivIcon {
       font-size: 11px;
       border: 2px solid white;
       box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-    ">$${price % 1 === 0 ? price : price.toFixed(2)}</div>`,
+    ">$${Math.floor(price)}</div>`,
     iconSize: [32, 32],
     iconAnchor: [16, 16],
   })
