@@ -21,7 +21,7 @@ interface PubDetailMapProps {
 
 export default function PubDetailMap({ lat, lng, name, price }: PubDetailMapProps) {
   const color = getPriceMarkerColor(price)
-  const priceLabel = price !== null ? `$${price.toFixed(0)}` : '?'
+  const priceLabel = price !== null ? `$${price % 1 === 0 ? price.toFixed(0) : price.toFixed(2)}` : '?'
 
   const markerIcon = L.divIcon({
     className: 'custom-marker',
