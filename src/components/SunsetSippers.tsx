@@ -13,7 +13,7 @@ import { getDistanceKm, formatDistance } from '@/lib/location'
 
 const MiniMap = dynamic(() => import('./MiniMap'), {
   ssr: false,
-  loading: () => <div className="w-full h-full bg-amber-50 animate-pulse rounded" />,
+  loading: () => <div className="w-full h-full bg-orange-50 animate-pulse rounded" />,
 })
 
 interface SunsetSippersProps {
@@ -213,7 +213,7 @@ export default function SunsetSippers({ pubs, userLocation }: SunsetSippersProps
               <div className="flex items-center gap-2">
                 <h3 className="text-base sm:text-lg font-bold font-heading text-stone-800 flex items-center">SUNSET SIPPERS<InfoTooltip text="Uses Perth's real-time sunset & golden hour times (calculated astronomically). Highlights west-facing pubs with verified prices — best spots to watch the sun go down with a pint." /></h3>
                 {isGoldenHour && (
-                  <Badge className="bg-amber-500 text-white text-[10px] px-1.5 py-0 animate-pulse">
+                  <Badge className="bg-orange-500 text-white text-[10px] px-1.5 py-0 animate-pulse">
                     GOLDEN HOUR
                   </Badge>
                 )}
@@ -267,7 +267,7 @@ export default function SunsetSippers({ pubs, userLocation }: SunsetSippersProps
             )}
 
             <div className="text-right">
-              <div className="text-lg font-bold text-amber-700">{formatTime(sunTimes.sunset)}</div>
+              <div className="text-lg font-bold text-orange-700">{formatTime(sunTimes.sunset)}</div>
               <div className="text-[10px] text-stone-400">sunset today</div>
             </div>
 
@@ -279,7 +279,7 @@ export default function SunsetSippers({ pubs, userLocation }: SunsetSippersProps
 
         {/* Expanded Content */}
         {isExpanded && (
-          <div className="mt-4 pt-4 border-t border-amber-200/60">
+          <div className="mt-4 pt-4 border-t border-orange-200/60">
             {/* Sunset Pubs Grid */}
             <div className="flex items-center justify-between mb-3">
               <h4 className="text-sm font-semibold text-stone-700">
@@ -287,7 +287,7 @@ export default function SunsetSippers({ pubs, userLocation }: SunsetSippersProps
               </h4>
               {cheapestSunset && (
                 <span className="text-xs text-emerald-600 font-medium">
-                  Cheapest: {cheapestSunset.price !== null ? `$${cheapestSunset.price.toFixed(2)}` : 'TBC'} at <Link href={`/pub/${cheapestSunset.slug}`} className="hover:text-amber transition-colors">{cheapestSunset.name}</Link>
+                  Cheapest: {cheapestSunset.price !== null ? `$${cheapestSunset.price.toFixed(2)}` : 'TBC'} at <Link href={`/pub/${cheapestSunset.slug}`} className="hover:text-orange transition-colors">{cheapestSunset.name}</Link>
                 </span>
               )}
             </div>
@@ -296,7 +296,7 @@ export default function SunsetSippers({ pubs, userLocation }: SunsetSippersProps
               {sunsetPubs.slice(0, showAllPubs ? sunsetPubs.length : 6).map((pub) => (
                 <Link
                   key={pub.id} href={`/pub/${pub.slug}`}
-                  className="rounded-xl bg-white/70 hover:bg-white/95 transition-all duration-200 overflow-hidden shadow-sm hover:shadow-md border border-amber-100 h-full flex flex-col"
+                  className="rounded-xl bg-white/70 hover:bg-white/95 transition-all duration-200 overflow-hidden shadow-sm hover:shadow-md border border-orange-100 h-full flex flex-col"
                   onClick={(e) => e.stopPropagation()}
                 >
                   {/* Mini Map with Sun Shadow Overlay */}
@@ -313,7 +313,7 @@ export default function SunsetSippers({ pubs, userLocation }: SunsetSippersProps
                     {!isNighttime && (
                       <div className="absolute top-1.5 right-1.5 z-[500] bg-white/85 backdrop-blur-sm rounded-full px-1.5 py-0.5 flex items-center gap-1 shadow-sm">
                         <span className="text-xs">{E.sun}</span>
-                        <svg width="14" height="14" viewBox="0 0 14 14" className="text-amber-500">
+                        <svg width="14" height="14" viewBox="0 0 14 14" className="text-orange-500">
                           <g transform={`rotate(${sunAzimuth}, 7, 7)`}>
                             <line x1="7" y1="2" x2="7" y2="7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
                             <polygon points="7,1 5.5,4 8.5,4" fill="currentColor" />
@@ -326,7 +326,7 @@ export default function SunsetSippers({ pubs, userLocation }: SunsetSippersProps
                     )}
                     {/* Price badge on map */}
                     <div className="absolute bottom-1.5 left-1.5 z-[500] bg-white/90 backdrop-blur-sm rounded-full px-2 py-0.5 shadow-sm">
-                      <span className="text-sm font-bold text-amber-700">{pub.price !== null ? `$${pub.price.toFixed(2)}` : 'TBC'}</span>
+                      <span className="text-sm font-bold text-orange-700">{pub.price !== null ? `$${pub.price.toFixed(2)}` : 'TBC'}</span>
                     </div>
                   </div>
                   {/* Pub info */}
@@ -345,7 +345,7 @@ export default function SunsetSippers({ pubs, userLocation }: SunsetSippersProps
 
             {sunsetPubs.length > 6 && (
               <button
-                className="w-full mt-2 flex items-center justify-center gap-1 text-xs text-amber-700 hover:text-amber-900 font-medium py-2 border border-amber-200 rounded-lg hover:bg-amber-50 transition-colors"
+                className="w-full mt-2 flex items-center justify-center gap-1 text-xs text-orange-700 hover:text-orange-900 font-medium py-2 border border-orange-200 rounded-xl hover:bg-orange-50 transition-colors"
                 onClick={(e) => { e.stopPropagation(); setShowAllPubs(!showAllPubs); }}
               >
                 <span>{showAllPubs ? 'Show less' : `Show all ${sunsetPubs.length} sunset spots`}</span>
@@ -356,12 +356,12 @@ export default function SunsetSippers({ pubs, userLocation }: SunsetSippersProps
             )}
 
             {/* Fun footer */}
-            <div className={`mt-3 text-center text-xs py-2 rounded-lg ${
+            <div className={`mt-3 text-center text-xs py-2 rounded-xl ${
               isGoldenHour || isSunset
-                ? 'bg-amber-100/60 text-amber-800'
+                ? 'bg-orange-100/60 text-orange-800'
                 : isNighttime
                 ? 'bg-indigo-100/60 text-indigo-700'
-                : 'bg-amber-50 text-stone-500'
+                : 'bg-orange-50 text-stone-500'
             }`}>
               {isSunset && E.sunset + ' Quick! Grab a pint and face west!'}
               {isGoldenHour && !isSunset && E.camera + ' Golden hour lighting ' + E.dash + ' your pint has never looked better'}

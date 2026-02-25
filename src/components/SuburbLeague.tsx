@@ -83,7 +83,7 @@ export default function SuburbLeague({ pubs }: { pubs: Pub[] }) {
       const pos = i + 1
 
       if (pos === 5 && total > 5) {
-        items.push({ type: 'divider', label: '— Promotion Zone ↑ —', colorClass: 'bg-amber/10 text-amber border-amber/30' })
+        items.push({ type: 'divider', label: '— Promotion Zone ↑ —', colorClass: 'bg-orange/10 text-orange border-orange/30' })
       }
 
       if (pos === total - 2 && total > 6) {
@@ -92,7 +92,7 @@ export default function SuburbLeague({ pubs }: { pubs: Pub[] }) {
 
       const isRelegation = pos > total - 3 && total > 6
       let rowBg = rowIdx % 2 === 0 ? 'bg-white' : 'bg-stone-50/80'
-      if (pos === 1) rowBg = 'bg-amber-50/60'
+      if (pos === 1) rowBg = 'bg-orange-50/60'
       else if (pos === 2) rowBg = 'bg-stone-200/50'
       else if (pos === 3) rowBg = 'bg-orange-50/70'
       else if (isRelegation) rowBg = 'bg-coral/5'
@@ -118,7 +118,7 @@ export default function SuburbLeague({ pubs }: { pubs: Pub[] }) {
         >
           <div>
             <h3 className="text-base sm:text-lg font-bold font-heading text-stone-800 flex items-center gap-2">
-              <svg className="inline w-4 h-4 mr-1.5 text-amber" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><rect x="3" y="12" width="4" height="8" rx="1"/><rect x="10" y="8" width="4" height="12" rx="1"/><rect x="17" y="4" width="4" height="16" rx="1"/></svg>SUBURB RANKINGS
+              <svg className="inline w-4 h-4 mr-1.5 text-orange" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><rect x="3" y="12" width="4" height="8" rx="1"/><rect x="10" y="8" width="4" height="12" rx="1"/><rect x="17" y="4" width="4" height="16" rx="1"/></svg>SUBURB RANKINGS
             </h3>
             <p className="text-xs text-stone-500 mt-0.5">
               {isExpanded
@@ -142,25 +142,25 @@ export default function SuburbLeague({ pubs }: { pubs: Pub[] }) {
                     <th className="px-2 py-2.5 text-center font-semibold w-10">Pos</th>
                     <th className="px-2 py-2.5 text-left font-semibold">Suburb</th>
                     <th
-                      className={`px-2 py-2.5 text-center font-semibold cursor-pointer hover:text-amber transition-colors select-none ${sortBy === 'avg' ? 'text-amber' : ''}`}
+                      className={`px-2 py-2.5 text-center font-semibold cursor-pointer hover:text-orange transition-colors select-none ${sortBy === 'avg' ? 'text-orange' : ''}`}
                       onClick={(e) => { e.stopPropagation(); setSortBy('avg') }}
                     >
                       Avg {sortBy === 'avg' && '▾'}
                     </th>
                     <th
-                      className={`px-2 py-2.5 text-center font-semibold cursor-pointer hover:text-amber transition-colors select-none hidden sm:table-cell ${sortBy === 'low' ? 'text-amber' : ''}`}
+                      className={`px-2 py-2.5 text-center font-semibold cursor-pointer hover:text-orange transition-colors select-none hidden sm:table-cell ${sortBy === 'low' ? 'text-orange' : ''}`}
                       onClick={(e) => { e.stopPropagation(); setSortBy('low') }}
                     >
                       Low {sortBy === 'low' && '▾'}
                     </th>
                     <th
-                      className={`px-2 py-2.5 text-center font-semibold cursor-pointer hover:text-amber transition-colors select-none hidden sm:table-cell ${sortBy === 'high' ? 'text-amber' : ''}`}
+                      className={`px-2 py-2.5 text-center font-semibold cursor-pointer hover:text-orange transition-colors select-none hidden sm:table-cell ${sortBy === 'high' ? 'text-orange' : ''}`}
                       onClick={(e) => { e.stopPropagation(); setSortBy('high') }}
                     >
                       High {sortBy === 'high' && '▾'}
                     </th>
                     <th
-                      className={`px-2 py-2.5 text-center font-semibold cursor-pointer hover:text-amber transition-colors select-none hidden md:table-cell ${sortBy === 'hh' ? 'text-amber' : ''}`}
+                      className={`px-2 py-2.5 text-center font-semibold cursor-pointer hover:text-orange transition-colors select-none hidden md:table-cell ${sortBy === 'hh' ? 'text-orange' : ''}`}
                       onClick={(e) => { e.stopPropagation(); setSortBy('hh') }}
                     >
                       HH% {sortBy === 'hh' && '▾'}
@@ -204,7 +204,7 @@ export default function SuburbLeague({ pubs }: { pubs: Pub[] }) {
                               )}
                               {s.spread.mid > 0 && (
                                 <div
-                                  className="bg-amber h-full"
+                                  className="bg-orange h-full"
                                   style={{ width: `${s.spread.mid}%` }}
                                 />
                               )}
@@ -229,7 +229,7 @@ export default function SuburbLeague({ pubs }: { pubs: Pub[] }) {
                 <span className="text-[10px] text-stone-400">Under $8</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <span className="inline-block w-2.5 h-2.5 rounded-full bg-amber" />
+                <span className="inline-block w-2.5 h-2.5 rounded-full bg-orange" />
                 <span className="text-[10px] text-stone-400">$8–$11</span>
               </div>
               <div className="flex items-center gap-1.5">

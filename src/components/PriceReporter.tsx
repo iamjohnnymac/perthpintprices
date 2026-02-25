@@ -79,7 +79,7 @@ export default function PriceReporter({ pubSlug, pubName, currentPrice }: PriceR
     return (
       <button
         onClick={handleOpen}
-        className="w-full flex items-center justify-center gap-2 py-3 px-4 bg-amber/10 hover:bg-amber/20 border border-amber/30 rounded-xl text-sm font-semibold text-amber-dark transition-all active:scale-[0.98]"
+        className="w-full flex items-center justify-center gap-2 py-3 px-4 bg-orange/10 hover:bg-orange/20 border border-orange/30 rounded-xl text-sm font-semibold text-orange-dark transition-all active:scale-[0.98]"
       >
         <span>📝</span>
         <span>Report Current Price</span>
@@ -109,7 +109,7 @@ export default function PriceReporter({ pubSlug, pubName, currentPrice }: PriceR
               value={price}
               onChange={(e) => setPrice(e.target.value)}
               placeholder="9.00"
-              className="w-full pl-7 pr-3 py-2.5 border border-stone-200 rounded-lg text-sm focus:outline-none focus:border-amber focus:ring-1 focus:ring-amber/30"
+              className="w-full pl-7 pr-3 py-2.5 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-orange focus:ring-1 focus:ring-orange/30"
               required
             />
           </div>
@@ -121,7 +121,7 @@ export default function PriceReporter({ pubSlug, pubName, currentPrice }: PriceR
             value={beerType}
             onChange={(e) => setBeerType(e.target.value)}
             placeholder="e.g. Swan Draught, Emu Export"
-            className="w-full px-3 py-2.5 border border-stone-200 rounded-lg text-sm focus:outline-none focus:border-amber focus:ring-1 focus:ring-amber/30"
+            className="w-full px-3 py-2.5 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-orange focus:ring-1 focus:ring-orange/30"
           />
         </div>
         <div>
@@ -132,13 +132,13 @@ export default function PriceReporter({ pubSlug, pubName, currentPrice }: PriceR
             onChange={(e) => setName(e.target.value)}
             placeholder="Anonymous"
             maxLength={30}
-            className="w-full px-3 py-2.5 border border-stone-200 rounded-lg text-sm focus:outline-none focus:border-amber focus:ring-1 focus:ring-amber/30"
+            className="w-full px-3 py-2.5 border border-stone-200 rounded-xl text-sm focus:outline-none focus:border-orange focus:ring-1 focus:ring-orange/30"
           />
           <p className="text-[10px] text-stone-400 mt-1">Show your name on the Arvo leaderboard</p>
         </div>
 
         {(status === 'error' || status === 'ratelimit') && (
-          <div className="bg-red-50 border border-red-200 rounded-lg px-3 py-2">
+          <div className="bg-red-50 border border-red-200 rounded-xl px-3 py-2">
             <p className="text-xs text-red-600">{errorMsg}</p>
           </div>
         )}
@@ -146,7 +146,7 @@ export default function PriceReporter({ pubSlug, pubName, currentPrice }: PriceR
         <button
           type="submit"
           disabled={status === 'submitting' || !price}
-          className="w-full py-3 bg-charcoal hover:bg-charcoal/90 text-white rounded-lg font-bold text-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98]"
+          className="w-full py-3 bg-charcoal hover:bg-charcoal/90 text-white rounded-xl font-bold text-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98]"
         >
           {status === 'submitting' ? 'Submitting...' : '🍺 Submit Price Report'}
         </button>

@@ -48,13 +48,13 @@ function getPar(price: number | null): number {
 
 function getScoreColor(sips: number, par: number): string {
   if (sips < par) return 'text-green-600'
-  if (sips === par) return 'text-amber-600'
+  if (sips === par) return 'text-orange-600'
   return 'text-red-600'
 }
 
 function getScoreBg(sips: number, par: number): string {
   if (sips < par) return 'bg-green-50 border-green-200'
-  if (sips === par) return 'bg-amber-50 border-amber-200'
+  if (sips === par) return 'bg-orange-50 border-orange-200'
   return 'bg-red-50 border-red-200'
 }
 
@@ -367,7 +367,7 @@ export default function PubGolfClient({ pubs }: { pubs: Pub[] }) {
             </div>
           </div>
           <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-            <div className="w-7 h-7 bg-amber rounded-lg flex items-center justify-center"><span className="text-white text-sm">☀</span></div>
+            <div className="w-7 h-7 bg-orange rounded-xl flex items-center justify-center"><span className="text-white text-sm">☀</span></div>
             <span className="text-sm font-bold font-heading text-charcoal">arvo</span>
           </Link>
         </div>
@@ -399,12 +399,12 @@ export default function PubGolfClient({ pubs }: { pubs: Pub[] }) {
                 onKeyDown={(e) => { if (e.key === 'Enter') addPlayer() }}
                 placeholder="Player name"
                 maxLength={20}
-                className="flex-1 min-w-0 px-3 py-2.5 rounded-xl border border-stone-200 bg-stone-50 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400/50 focus:border-amber-400 transition-all duration-200"
+                className="flex-1 min-w-0 px-3 py-2.5 rounded-xl border border-stone-200 bg-stone-50 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400/50 focus:border-orange-400 transition-all duration-200"
               />
               <button
                 onClick={addPlayer}
                 disabled={!playerInput.trim() || players.length >= 8}
-                className="px-4 py-2.5 bg-amber-500 text-white text-sm font-semibold rounded-xl hover:bg-amber-600 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200"
+                className="px-4 py-2.5 bg-orange-500 text-white text-sm font-semibold rounded-xl hover:bg-orange-600 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200"
               >
                 <Plus className="w-4 h-4" />
               </button>
@@ -416,10 +416,10 @@ export default function PubGolfClient({ pubs }: { pubs: Pub[] }) {
                 {players.map((name: string) => (
                   <span
                     key={name}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-amber-50 text-amber-800 border border-amber-200 rounded-full text-sm font-medium"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-orange-50 text-orange-800 border border-orange-200 rounded-full text-sm font-medium"
                   >
                     {name}
-                    <button onClick={() => removePlayer(name)} className="text-amber-400 hover:text-amber-700 transition-colors">
+                    <button onClick={() => removePlayer(name)} className="text-orange-400 hover:text-orange-700 transition-colors">
                       <X className="w-3.5 h-3.5" />
                     </button>
                   </span>
@@ -468,7 +468,7 @@ export default function PubGolfClient({ pubs }: { pubs: Pub[] }) {
                     }}
                     className={`w-full text-left p-3 sm:p-4 rounded-xl border transition-all duration-200 ${
                       isSelected
-                        ? 'border-amber-400 bg-amber-50 ring-2 ring-amber-400/30'
+                        ? 'border-orange-400 bg-orange-50 ring-2 ring-orange-400/30'
                         : 'border-stone-200 bg-stone-50 hover:border-stone-300'
                     }`}
                   >
@@ -506,14 +506,14 @@ export default function PubGolfClient({ pubs }: { pubs: Pub[] }) {
                   {customPubs.map((pub: Pub, idx: number) => (
                     <div
                       key={pub.id}
-                      className="flex items-center gap-2 px-3 py-2 bg-amber-50 border border-amber-200 rounded-xl text-sm"
+                      className="flex items-center gap-2 px-3 py-2 bg-orange-50 border border-orange-200 rounded-xl text-sm"
                     >
-                      <span className="font-bold text-amber-700 w-5 text-center flex-shrink-0">{idx + 1}</span>
+                      <span className="font-bold text-orange-700 w-5 text-center flex-shrink-0">{idx + 1}</span>
                       <span className="truncate flex-1 text-charcoal font-medium">{pub.name}</span>
                       <span className="text-xs text-stone-400 flex-shrink-0">{pub.suburb}</span>
                       <button
                         onClick={() => removeCustomPub(pub.id)}
-                        className="text-amber-400 hover:text-red-500 flex-shrink-0 transition-colors"
+                        className="text-orange-400 hover:text-red-500 flex-shrink-0 transition-colors"
                       >
                         <X className="w-4 h-4" />
                       </button>
@@ -531,7 +531,7 @@ export default function PubGolfClient({ pubs }: { pubs: Pub[] }) {
                     value={customSearch}
                     onChange={(e) => setCustomSearch(e.target.value)}
                     placeholder="Search pubs..."
-                    className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-stone-200 bg-stone-50 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400/50 focus:border-amber-400 transition-all duration-200"
+                    className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-stone-200 bg-stone-50 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400/50 focus:border-orange-400 transition-all duration-200"
                   />
                 </div>
               )}
@@ -543,7 +543,7 @@ export default function PubGolfClient({ pubs }: { pubs: Pub[] }) {
                     <button
                       key={pub.id}
                       onClick={() => addCustomPub(pub)}
-                      className="w-full text-left px-3 py-2.5 hover:bg-amber-50 transition-colors text-sm flex items-center justify-between gap-2"
+                      className="w-full text-left px-3 py-2.5 hover:bg-orange-50 transition-colors text-sm flex items-center justify-between gap-2"
                     >
                       <span className="truncate font-medium text-charcoal">{pub.name}</span>
                       <span className="text-xs text-stone-400 flex-shrink-0">
@@ -560,7 +560,7 @@ export default function PubGolfClient({ pubs }: { pubs: Pub[] }) {
           <button
             onClick={startGame}
             disabled={!canStart}
-            className="w-full py-4 bg-charcoal text-white text-lg font-bold font-heading rounded-2xl hover:bg-stone-800 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 shadow-md"
+            className="w-full py-4 bg-charcoal text-white text-lg font-bold font-heading rounded-2xl hover:bg-charcoal/90 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 shadow-md"
           >
             🏌️ Tee Off!
           </button>
@@ -593,7 +593,7 @@ export default function PubGolfClient({ pubs }: { pubs: Pub[] }) {
             </div>
             <div className="w-full h-2 bg-stone-100 rounded-full overflow-hidden">
               <div
-                className="h-full bg-amber-500 rounded-full transition-all duration-500 ease-out"
+                className="h-full bg-orange-500 rounded-full transition-all duration-500 ease-out"
                 style={{ width: `${progress}%` }}
               />
             </div>
@@ -606,13 +606,13 @@ export default function PubGolfClient({ pubs }: { pubs: Pub[] }) {
                 <p className="text-3xl sm:text-4xl font-black font-heading text-charcoal leading-none">HOLE {currentHole + 1}</p>
                 <Link
                   href={`/pub/${pub.slug}`}
-                  className="text-lg font-bold text-charcoal hover:text-amber-600 transition-colors mt-1 block truncate"
+                  className="text-lg font-bold text-charcoal hover:text-orange-600 transition-colors mt-1 block truncate"
                 >
                   {pub.name}
                 </Link>
                 <p className="text-xs text-stone-500 truncate">{pub.suburb} · {pub.address}</p>
               </div>
-              <span className="flex-shrink-0 inline-flex items-center px-3 py-1.5 bg-amber-100 text-amber-800 text-xs font-bold rounded-full border border-amber-200">
+              <span className="flex-shrink-0 inline-flex items-center px-3 py-1.5 bg-orange-100 text-orange-800 text-xs font-bold rounded-full border border-orange-200">
                 PAR {par}
               </span>
             </div>
@@ -620,7 +620,7 @@ export default function PubGolfClient({ pubs }: { pubs: Pub[] }) {
             <div className="flex items-end justify-between border-t border-stone-100 pt-3">
               <div>
                 {pub.price ? (
-                  <p className="text-3xl font-black text-amber-600 font-heading">${pub.price.toFixed(2)}</p>
+                  <p className="text-3xl font-black text-orange-600 font-heading">${pub.price.toFixed(2)}</p>
                 ) : (
                   <p className="text-lg font-semibold text-stone-400">Price TBC</p>
                 )}
@@ -667,7 +667,7 @@ export default function PubGolfClient({ pubs }: { pubs: Pub[] }) {
           {/* Next Hole / Finish */}
           <button
             onClick={nextHole}
-            className="w-full py-4 bg-charcoal text-white text-lg font-bold font-heading rounded-2xl hover:bg-stone-800 transition-all duration-200 shadow-md flex items-center justify-center gap-2"
+            className="w-full py-4 bg-charcoal text-white text-lg font-bold font-heading rounded-2xl hover:bg-charcoal/90 transition-all duration-200 shadow-md flex items-center justify-center gap-2"
           >
             {isLastHole ? '🏁 Finish Round' : (
               <>Next Hole <ArrowRight className="w-5 h-5" /></>
@@ -703,7 +703,7 @@ export default function PubGolfClient({ pubs }: { pubs: Pub[] }) {
                         <tr key={i} className="border-b border-stone-100">
                           <td className="py-1.5 pr-2 font-bold text-charcoal">{i + 1}</td>
                           <td className="py-1.5 pr-2 truncate max-w-[100px] text-stone-600">{cp.name}</td>
-                          <td className="py-1.5 pr-2 text-center text-amber-600 font-bold">{holePar}</td>
+                          <td className="py-1.5 pr-2 text-center text-orange-600 font-bold">{holePar}</td>
                           {players.map((p: string) => {
                             const s = scores[p]?.[i]
                             const display = s !== undefined ? s : '-'
@@ -719,7 +719,7 @@ export default function PubGolfClient({ pubs }: { pubs: Pub[] }) {
                     {/* Running totals */}
                     <tr className="border-t-2 border-stone-300">
                       <td className="py-2 pr-2 font-black text-charcoal" colSpan={2}>TOTAL</td>
-                      <td className="py-2 pr-2 text-center font-black text-amber-600">
+                      <td className="py-2 pr-2 text-center font-black text-orange-600">
                         {coursePubs.slice(0, currentHole + 1).reduce((s: number, cp: Pub) => s + getPar(cp.price), 0)}
                       </td>
                       {players.map((p: string) => {
@@ -758,12 +758,12 @@ export default function PubGolfClient({ pubs }: { pubs: Pub[] }) {
             <p className="text-4xl mb-2">🏆</p>
             <h2 className="text-2xl sm:text-3xl font-black font-heading text-charcoal mb-1">Round Complete!</h2>
             {winner && players.length > 1 && (
-              <p className="text-lg font-bold text-amber-600">
+              <p className="text-lg font-bold text-orange-600">
                 🎉 {winner.name} wins with {winner.total}! ({formatDiff(winner.total, totalPar)} par)
               </p>
             )}
             {players.length === 1 && winner && (
-              <p className="text-lg font-bold text-amber-600">
+              <p className="text-lg font-bold text-orange-600">
                 🎉 {winner.name} finished with {winner.total}! ({formatDiff(winner.total, totalPar)} par)
               </p>
             )}
@@ -790,11 +790,11 @@ export default function PubGolfClient({ pubs }: { pubs: Pub[] }) {
                     <tr key={i} className="border-b border-stone-100">
                       <td className="py-1.5 pr-2 font-bold text-charcoal">{i + 1}</td>
                       <td className="py-1.5 pr-2 truncate max-w-[100px]">
-                        <Link href={`/pub/${pub.slug}`} className="text-stone-600 hover:text-amber-600 transition-colors">
+                        <Link href={`/pub/${pub.slug}`} className="text-stone-600 hover:text-orange-600 transition-colors">
                           {pub.name}
                         </Link>
                       </td>
-                      <td className="py-1.5 pr-2 text-center text-amber-600 font-bold">{holePar}</td>
+                      <td className="py-1.5 pr-2 text-center text-orange-600 font-bold">{holePar}</td>
                       {players.map((p: string) => {
                         const s = scores[p]?.[i] ?? holePar
                         const diff = s - holePar
@@ -813,10 +813,10 @@ export default function PubGolfClient({ pubs }: { pubs: Pub[] }) {
                 {/* Total row */}
                 <tr className="border-t-2 border-stone-300">
                   <td className="py-2 pr-2 font-black text-charcoal" colSpan={2}>TOTAL</td>
-                  <td className="py-2 pr-2 text-center font-black text-amber-600">{totalPar}</td>
+                  <td className="py-2 pr-2 text-center font-black text-orange-600">{totalPar}</td>
                   {playerTotals.map((pt: { name: string; total: number }) => (
                     <td key={pt.name} className={`py-2 text-center font-black ${
-                      pt.total < totalPar ? 'text-green-600' : pt.total === totalPar ? 'text-amber-600' : 'text-red-600'
+                      pt.total < totalPar ? 'text-green-600' : pt.total === totalPar ? 'text-orange-600' : 'text-red-600'
                     }`}>
                       {pt.total}
                       <span className="text-[10px] ml-0.5 opacity-60">({formatDiff(pt.total, totalPar)})</span>
@@ -832,11 +832,11 @@ export default function PubGolfClient({ pubs }: { pubs: Pub[] }) {
             <h3 className="text-sm font-bold text-charcoal mb-3 font-heading">📊 ROUND STATS</h3>
             <div className="grid grid-cols-2 gap-3">
               <div className="bg-stone-50 rounded-xl p-3 text-center">
-                <p className="text-2xl font-black text-amber-600 font-heading">${totalSpend.toFixed(0)}</p>
+                <p className="text-2xl font-black text-orange-600 font-heading">${totalSpend.toFixed(0)}</p>
                 <p className="text-xs text-stone-500 mt-0.5">Total Spend</p>
               </div>
               <div className="bg-stone-50 rounded-xl p-3 text-center">
-                <p className={`text-2xl font-black font-heading ${avgVsPar < 0 ? 'text-green-600' : avgVsPar === 0 ? 'text-amber-600' : 'text-red-600'}`}>
+                <p className={`text-2xl font-black font-heading ${avgVsPar < 0 ? 'text-green-600' : avgVsPar === 0 ? 'text-orange-600' : 'text-red-600'}`}>
                   {avgVsPar > 0 ? '+' : ''}{avgVsPar.toFixed(1)}
                 </p>
                 <p className="text-xs text-stone-500 mt-0.5">Avg vs Par</p>
@@ -859,7 +859,7 @@ export default function PubGolfClient({ pubs }: { pubs: Pub[] }) {
           {/* Share Results */}
           <button
             onClick={copyResults}
-            className="w-full py-4 bg-amber-500 text-white text-lg font-bold font-heading rounded-2xl hover:bg-amber-600 transition-all duration-200 shadow-md flex items-center justify-center gap-2"
+            className="w-full py-4 bg-orange-500 text-white text-lg font-bold font-heading rounded-2xl hover:bg-orange-600 transition-all duration-200 shadow-md flex items-center justify-center gap-2"
           >
             {copied ? (
               <><Check className="w-5 h-5" /> Copied!</>
@@ -872,7 +872,7 @@ export default function PubGolfClient({ pubs }: { pubs: Pub[] }) {
           <div className="flex gap-3">
             <button
               onClick={resetGame}
-              className="flex-1 py-3 bg-charcoal text-white font-bold font-heading rounded-2xl hover:bg-stone-800 transition-all duration-200 flex items-center justify-center gap-2 text-sm"
+              className="flex-1 py-3 bg-charcoal text-white font-bold font-heading rounded-2xl hover:bg-charcoal/90 transition-all duration-200 flex items-center justify-center gap-2 text-sm"
             >
               <RotateCcw className="w-4 h-4" /> Play Again
             </button>

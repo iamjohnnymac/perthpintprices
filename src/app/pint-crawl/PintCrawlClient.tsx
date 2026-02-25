@@ -362,7 +362,7 @@ export default function PintCrawlClient({ pubs }: { pubs: Pub[] }) {
               </div>
             </div>
             <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-              <div className="w-7 h-7 bg-amber rounded-lg flex items-center justify-center"><span className="text-white text-sm">☀</span></div>
+              <div className="w-7 h-7 bg-orange rounded-xl flex items-center justify-center"><span className="text-white text-sm">☀</span></div>
               <span className="text-sm font-bold font-heading text-charcoal">arvo</span>
             </Link>
           </div>
@@ -390,7 +390,7 @@ export default function PintCrawlClient({ pubs }: { pubs: Pub[] }) {
                 step={5}
                 value={budget}
                 onChange={(e) => setBudget(Number(e.target.value))}
-                className="w-full h-2 bg-stone-200 rounded-full appearance-none cursor-pointer accent-amber-500"
+                className="w-full h-2 bg-stone-200 rounded-full appearance-none cursor-pointer accent-orange"
               />
               <div className="flex items-center justify-between mt-2 text-xs text-stone-500">
                 <span>$20</span>
@@ -423,7 +423,7 @@ export default function PintCrawlClient({ pubs }: { pubs: Pub[] }) {
                 ))}
               </div>
               {tightBudget && filteredPubs.length > 0 && (
-                <p className="text-xs text-amber-600 mt-2 font-medium">
+                <p className="text-xs text-orange-600 mt-2 font-medium">
                   ⚠️ Tight budget for {stops} stops!
                 </p>
               )}
@@ -518,7 +518,7 @@ export default function PintCrawlClient({ pubs }: { pubs: Pub[] }) {
         {phase === 'route' && (
           <div className="space-y-3 sm:space-y-4">
             {routeMessage && (
-              <div className="bg-amber-50 border border-amber-200 rounded-2xl p-3 text-sm text-amber-800">
+              <div className="bg-orange-50 border border-orange-200 rounded-2xl p-3 text-sm text-orange-800">
                 {routeMessage}
               </div>
             )}
@@ -585,10 +585,10 @@ export default function PintCrawlClient({ pubs }: { pubs: Pub[] }) {
                           )}
                         </p>
                         {seg.pub.isHappyHourNow && seg.pub.happyHourLabel && (
-                          <span className="inline-flex items-center gap-1 mt-1 px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 text-[10px] font-semibold">
+                          <span className="inline-flex items-center gap-1 mt-1 px-2 py-0.5 rounded-full bg-orange-100 text-orange-800 text-[10px] font-semibold">
                             <span className="relative flex h-1.5 w-1.5">
-                              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-500 opacity-75" />
-                              <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-amber-500" />
+                              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-500 opacity-75" />
+                              <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-orange-500" />
                             </span>
                             NOW! {seg.pub.happyHourLabel}
                           </span>
@@ -760,7 +760,7 @@ export default function PintCrawlClient({ pubs }: { pubs: Pub[] }) {
                   </div>
                   <div className="w-full bg-stone-100 rounded-full h-2">
                     <div
-                      className="bg-amber-500 h-2 rounded-full transition-all duration-500"
+                      className="bg-orange-500 h-2 rounded-full transition-all duration-500"
                       style={{
                         width: `${((currentStop + 1) / route.length) * 100}%`,
                       }}
@@ -810,10 +810,10 @@ export default function PintCrawlClient({ pubs }: { pubs: Pub[] }) {
                   {route[currentStop].pub.isHappyHourNow &&
                     route[currentStop].pub.happyHourLabel && (
                       <div className="mt-3 text-center">
-                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-100 text-amber-800 text-xs font-semibold">
+                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-orange-100 text-orange-800 text-xs font-semibold">
                           <span className="relative flex h-2 w-2">
-                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-500 opacity-75" />
-                            <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500" />
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-500 opacity-75" />
+                            <span className="relative inline-flex rounded-full h-2 w-2 bg-orange-500" />
                           </span>
                           NOW! {route[currentStop].pub.happyHourLabel}
                         </span>
@@ -853,7 +853,7 @@ export default function PintCrawlClient({ pubs }: { pubs: Pub[] }) {
                         completedStops.has(i)
                           ? 'bg-emerald-500'
                           : i === currentStop
-                            ? 'bg-amber-500 scale-125'
+                            ? 'bg-orange-500 scale-125'
                             : 'bg-stone-200'
                       }`}
                     />
@@ -905,7 +905,7 @@ function ToggleRow({
         aria-checked={checked}
         onClick={() => onChange(!checked)}
         className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-          checked ? 'bg-amber-500' : 'bg-stone-200'
+          checked ? 'bg-orange-500' : 'bg-stone-200'
         }`}
       >
         <span

@@ -8,8 +8,6 @@ interface HappyHourPreviewProps {
 }
 
 export default function HappyHourPreview({ pubs }: HappyHourPreviewProps) {
-  // Filter pubs that have happy hour data (any HH timing, not just active right now)
-  // Sort: active first, then by minutes until start
   const hhPubs = pubs
     .filter(p => p.happyHourStart && p.happyHourEnd)
     .map(pub => {
@@ -24,7 +22,7 @@ export default function HappyHourPreview({ pubs }: HappyHourPreviewProps) {
       
       const isActive = pub.isHappyHourNow
       let minutesUntil = startMinutes - currentMinutes
-      if (minutesUntil < 0) minutesUntil += 1440 // next day
+      if (minutesUntil < 0) minutesUntil += 1440
       
       return { pub, isActive, minutesUntil, startTime: `${startH}:${(startM||0).toString().padStart(2,'0')}`, endMinutes }
     })
@@ -47,15 +45,15 @@ export default function HappyHourPreview({ pubs }: HappyHourPreviewProps) {
   }
 
   return (
-    <div className="w-full max-w-4xl mx-auto mt-8">
-      <div className="bg-amber/5 border border-amber/20 rounded-2xl px-4 py-3">
+    <div className="w-full max-w-4xl mx-auto mt-6">
+      <div className="bg-white/80 border border-stone-200/60 rounded-2xl px-4 py-3">
         <div className="flex items-center gap-2 mb-3 px-1">
-          <span className="text-amber text-lg">🔥</span>
-          <span className="text-amber font-bold text-sm">
+          <span className="text-lg">⚡</span>
+          <span className="text-charcoal font-semibold text-sm">
             {activeCount > 0 ? `${activeCount} happy hours live` : "Happy hour's coming up"}
           </span>
-          <span className="text-stone-400 text-sm">
-            — {hhPubs.length} pubs counting down
+          <span className="text-stone-400 text-xs">
+            · {hhPubs.length} venues counting down
           </span>
         </div>
         <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide snap-x snap-mandatory">
@@ -63,14 +61,16 @@ export default function HappyHourPreview({ pubs }: HappyHourPreviewProps) {
             <Link
               key={pub.slug}
               href={`/pub/${pub.slug}`}
-              className="flex-shrink-0 snap-start bg-white rounded-xl px-4 py-3 border border-stone-200/60 hover:border-amber/40 hover:shadow-sm transition-all min-w-[180px]"
+              className="flex-shrink-0 snap-start bg-cream rounded-xl px-4 py-3 border border-stone-200/40 hover:border-orange/30 hover:shadow-sm transition-all min-w-[180px] group"
             >
-              <p className="font-bold text-charcoal text-sm truncate">{pub.name}</p>
-              <div className="flex items-center gap-2 mt-1">
+              <p className="font-semibold text-charcoal text-sm truncate group-hover:text-orange transition-colors">{pub.name}</p>
+              <div className="flex items-center gap-2 mt-1.5">
                 <span className="text-stone-400 text-xs">{pub.suburb}</span>
-                <span className={`text-xs font-mono font-bold ${isActive ? 'text-green-600' : 'text-amber'}`}>
-                  {isActive ? '🟢 NOW!' : `⏱ ${formatCountdown(minutesUntil)}`}
-                </span>
+                {isActive ? (
+                  <span className="text-xs font-medium text-green-600 bg-green-50 px-2 py-0.5 rounded-full">LIVE</span>
+                ) : (
+                  <span className="text-xs font-mono text-stone-500">⏱ {formatCountdown(minutesUntil)}</span>
+                )}
               </div>
             </Link>
           ))}

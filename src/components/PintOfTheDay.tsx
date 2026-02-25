@@ -72,10 +72,10 @@ export default function PintOfTheDay() {
 
   if (loading) {
     return (
-      <div className="bg-gradient-to-br from-amber/5 to-amber/10 rounded-2xl border border-amber/20 p-4 sm:p-5 animate-pulse">
-        <div className="h-4 bg-amber/10 rounded w-32 mb-3" />
-        <div className="h-6 bg-amber/10 rounded w-48 mb-2" />
-        <div className="h-4 bg-amber/10 rounded w-24" />
+      <div className="bg-gradient-to-br from-orange/5 to-orange/10 rounded-2xl border border-orange/20 p-4 sm:p-5 animate-pulse">
+        <div className="h-4 bg-orange/10 rounded w-32 mb-3" />
+        <div className="h-6 bg-orange/10 rounded w-48 mb-2" />
+        <div className="h-4 bg-orange/10 rounded w-24" />
       </div>
     )
   }
@@ -83,19 +83,19 @@ export default function PintOfTheDay() {
   if (!data) return null
 
   return (
-    <div className="bg-gradient-to-br from-amber/5 via-white to-amber/10 rounded-2xl border border-amber/30 overflow-hidden">
+    <div className="bg-gradient-to-br from-orange/5 via-white to-orange/10 rounded-2xl border border-orange/30 overflow-hidden">
       {/* Header strip */}
       <div className="px-4 sm:px-5 pt-3 sm:pt-4 pb-2 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <span className="text-lg">🍺</span>
           <div>
-            <h3 className="text-xs font-bold text-amber-dark uppercase tracking-wider">Pint of the Day</h3>
+            <h3 className="text-xs font-bold text-orange-dark uppercase tracking-wider">Pint of the Day</h3>
             <p className="text-[10px] text-stone-400">{new Date(data.date + 'T00:00:00+08:00').toLocaleDateString('en-AU', { weekday: 'long', day: 'numeric', month: 'short' })}</p>
           </div>
         </div>
         <button
           onClick={handleShare}
-          className="flex items-center gap-1 px-2.5 py-1 text-[11px] font-medium text-stone-500 hover:text-amber-dark hover:bg-amber/10 rounded-full transition-all"
+          className="flex items-center gap-1 px-2.5 py-1 text-[11px] font-medium text-stone-500 hover:text-orange-dark hover:bg-orange/10 rounded-full transition-all"
         >
           {shared ? '✅ Copied!' : '📋 Share'}
         </button>
@@ -105,15 +105,15 @@ export default function PintOfTheDay() {
       <Link href={`/pub/${data.pub.slug}`} className="block px-4 sm:px-5 pb-4 sm:pb-5 group">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0 flex-1">
-            <h4 className="text-lg font-bold font-heading text-charcoal group-hover:text-amber transition-colors truncate">{data.pub.name}</h4>
+            <h4 className="text-lg font-bold font-heading text-charcoal group-hover:text-orange transition-colors truncate">{data.pub.name}</h4>
             <p className="text-xs text-stone-500 mt-0.5">{data.pub.suburb} · {data.pub.address}</p>
             {data.pub.beerType && (
               <p className="text-xs text-stone-400 mt-0.5">{data.pub.beerType}</p>
             )}
-            <p className="text-xs text-amber-dark/80 font-medium mt-1.5">💡 {data.reason}</p>
+            <p className="text-xs text-orange-dark/80 font-medium mt-1.5">💡 {data.reason}</p>
           </div>
           <div className="text-right flex-shrink-0">
-            <div className={`text-2xl font-bold font-mono ${data.pub.isHappyHourNow ? 'text-emerald-600' : 'text-amber'}`}>
+            <div className={`text-2xl font-bold font-mono ${data.pub.isHappyHourNow ? 'text-emerald-600' : 'text-orange'}`}>
               ${data.pub.effectivePrice.toFixed(2)}
             </div>
             {data.pub.isHappyHourNow && data.pub.effectivePrice < data.pub.price && (

@@ -12,8 +12,8 @@ interface Reporter {
 const BADGES = [
   { min: 1, label: '🔰 Rookie Scout', color: 'bg-stone-100 text-stone-600' },
   { min: 5, label: '🍺 Price Spotter', color: 'bg-blue-100 text-blue-700' },
-  { min: 10, label: '🎯 Price Scout', color: 'bg-amber/10 text-amber-dark' },
-  { min: 25, label: '⭐ Price Pro', color: 'bg-amber/20 text-amber-dark' },
+  { min: 10, label: '🎯 Price Scout', color: 'bg-orange/10 text-orange-dark' },
+  { min: 25, label: '⭐ Price Pro', color: 'bg-orange/20 text-orange-dark' },
   { min: 50, label: '🏆 Perth Legend', color: 'bg-yellow-100 text-yellow-800' },
 ]
 
@@ -65,7 +65,7 @@ export default function LeaderboardClient() {
               </div>
             </div>
             <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-              <div className="w-7 h-7 bg-amber rounded-lg flex items-center justify-center"><span className="text-white text-sm">☀</span></div>
+              <div className="w-7 h-7 bg-orange rounded-xl flex items-center justify-center"><span className="text-white text-sm">☀</span></div>
               <span className="text-sm font-bold font-heading text-charcoal">arvo</span>
             </Link>
           </div>
@@ -74,7 +74,7 @@ export default function LeaderboardClient() {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-6 space-y-4">
         {/* How it works */}
-        <div className="bg-amber/5 border border-amber/20 rounded-2xl p-4 sm:p-5">
+        <div className="bg-orange/5 border border-orange/20 rounded-2xl p-4 sm:p-5">
           <h2 className="text-sm font-bold text-charcoal mb-2">How to climb the leaderboard</h2>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div className="flex items-start gap-2">
@@ -105,7 +105,7 @@ export default function LeaderboardClient() {
         <div className="bg-white rounded-2xl border border-stone-200/60 overflow-hidden">
           {loading ? (
             <div className="p-8 text-center">
-              <div className="w-10 h-10 border-3 border-stone-200 border-t-amber rounded-full animate-spin mx-auto mb-2" />
+              <div className="w-10 h-10 border-3 border-stone-200 border-t-orange rounded-full animate-spin mx-auto mb-2" />
               <p className="text-sm text-stone-500">Loading leaderboard...</p>
             </div>
           ) : reporters.length === 0 ? (
@@ -131,7 +131,7 @@ export default function LeaderboardClient() {
                 const badge = getBadge(r.total_reports)
                 return (
                   <div key={r.reporter_name} className="grid grid-cols-[40px_1fr_80px_60px] sm:grid-cols-[50px_1fr_120px_100px_80px] gap-2 px-4 py-3 border-b border-stone-100 last:border-0 items-center hover:bg-stone-50/50 transition-colors">
-                    <span className={`text-sm font-bold ${i === 0 ? 'text-amber' : i === 1 ? 'text-stone-400' : i === 2 ? 'text-amber-dark' : 'text-stone-500'}`}>
+                    <span className={`text-sm font-bold ${i === 0 ? 'text-orange' : i === 1 ? 'text-stone-400' : i === 2 ? 'text-orange-dark' : 'text-stone-500'}`}>
                       {i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `${i + 1}`}
                     </span>
                     <div className="min-w-0">

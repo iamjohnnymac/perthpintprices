@@ -161,9 +161,9 @@ export default function VenueIntel({ pubs, userLocation }: VenueIntelProps) {
               </div>
             </div>
 
-            <div className="p-3 rounded-xl bg-amber-50/60 border border-amber-200 text-center">
+            <div className="p-3 rounded-xl bg-orange-50/60 border border-orange-200 text-center">
               <p className="text-xs text-stone-500">Median Pint Price in Perth</p>
-              <p className="text-xl font-bold text-amber">${percentileData.median.toFixed(2)}</p>
+              <p className="text-xl font-bold text-orange">${percentileData.median.toFixed(2)}</p>
               <p className="text-[10px] text-stone-400">{percentileData.percentile}% of venues are cheaper than the median</p>
             </div>
 
@@ -174,7 +174,7 @@ export default function VenueIntel({ pubs, userLocation }: VenueIntelProps) {
                 </h4>
                 <div className="space-y-1">
                   {undervalued.map(({ pub, diff }) => (
-                    <Link key={pub.id} href={`/pub/${pub.slug}`} className="flex items-center justify-between p-2 rounded-lg bg-green-50/60 border border-green-100">
+                    <Link key={pub.id} href={`/pub/${pub.slug}`} className="flex items-center justify-between p-2 rounded-xl bg-green-50/60 border border-green-100">
                       <div className="min-w-0">
                         <span className="text-xs font-semibold text-stone-800 truncate block">{pub.name}</span>
                         <p className="text-[10px] text-stone-400">{pub.suburb}{userLocation && ` · ${formatDistance(getDistanceKm(userLocation.lat, userLocation.lng, pub.lat, pub.lng))}`}</p>
@@ -194,7 +194,7 @@ export default function VenueIntel({ pubs, userLocation }: VenueIntelProps) {
                 </h4>
                 <div className="space-y-1">
                   {overvalued.map(({ pub, diff }) => (
-                    <Link key={pub.id} href={`/pub/${pub.slug}`} className="flex items-center justify-between p-2 rounded-lg bg-red-50/60 border border-red-100">
+                    <Link key={pub.id} href={`/pub/${pub.slug}`} className="flex items-center justify-between p-2 rounded-xl bg-red-50/60 border border-red-100">
                       <div className="min-w-0">
                         <span className="text-xs font-semibold text-stone-800 truncate block">{pub.name}</span>
                         <p className="text-[10px] text-stone-400">{pub.suburb}{userLocation && ` · ${formatDistance(getDistanceKm(userLocation.lat, userLocation.lng, pub.lat, pub.lng))}`}</p>
@@ -216,7 +216,7 @@ export default function VenueIntel({ pubs, userLocation }: VenueIntelProps) {
                 </h4>
                 <div className="space-y-1">
                   {cheapestSuburbs.map((suburb, i) => (
-                    <div key={suburb.name} className="flex items-center justify-between p-2 rounded-lg bg-white/70 border border-stone-100">
+                    <div key={suburb.name} className="flex items-center justify-between p-2 rounded-xl bg-white/70 border border-stone-100">
                       <div className="flex items-center gap-2">
                         <span className="text-[10px] font-bold text-stone-400">{i + 1}</span>
                         <span className="text-xs font-semibold text-stone-800">{suburb.name}</span>
@@ -236,7 +236,7 @@ export default function VenueIntel({ pubs, userLocation }: VenueIntelProps) {
                 </h4>
                 <div className="space-y-1">
                   {priciestSuburbs.map((suburb, i) => (
-                    <div key={suburb.name} className="flex items-center justify-between p-2 rounded-lg bg-white/70 border border-stone-100">
+                    <div key={suburb.name} className="flex items-center justify-between p-2 rounded-xl bg-white/70 border border-stone-100">
                       <div className="flex items-center gap-2">
                         <span className="text-[10px] font-bold text-stone-400">{i + 1}</span>
                         <span className="text-xs font-semibold text-stone-800">{suburb.name}</span>

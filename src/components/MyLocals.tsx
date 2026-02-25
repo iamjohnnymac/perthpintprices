@@ -39,7 +39,7 @@ export default function MyLocals({ pubs, userLocation }: MyLocalsProps) {
   if (!isLoaded || watchedPubs.length === 0) return null
 
   return (
-    <div className="bg-gradient-to-r from-amber/5 to-amber/10 rounded-2xl border border-amber/20 p-5 sm:p-6">
+    <div className="bg-gradient-to-r from-orange/5 to-orange/10 rounded-2xl border border-orange/20 p-5 sm:p-6">
       <div className="flex items-center justify-between mb-3">
         <h2 className="text-base sm:text-lg font-heading font-semibold text-charcoal flex items-center gap-2">
           <span className="text-lg">⭐</span>
@@ -55,7 +55,7 @@ export default function MyLocals({ pubs, userLocation }: MyLocalsProps) {
           <Link
             key={pub.slug}
             href={`/pub/${pub.slug}`}
-            className="group flex items-center gap-3 bg-white/80 hover:bg-white rounded-xl p-3 transition-all duration-200 border border-stone-200/60 hover:border-amber/30 hover:shadow-sm"
+            className="group flex items-center gap-3 bg-white/80 hover:bg-white rounded-xl p-3 transition-all duration-200 border border-stone-200/60 hover:border-orange/30 hover:shadow-sm"
           >
             {/* Price badge */}
             <div className={`
@@ -76,7 +76,7 @@ export default function MyLocals({ pubs, userLocation }: MyLocalsProps) {
             {/* Pub info */}
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2">
-                <span className="font-medium text-charcoal text-sm truncate group-hover:text-amber transition-colors">
+                <span className="font-medium text-charcoal text-sm truncate group-hover:text-orange transition-colors">
                   {pub.name}
                 </span>
                 {pub.isHappyHourNow && pub.happyHourMinutesRemaining && (

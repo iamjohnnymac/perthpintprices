@@ -94,7 +94,7 @@ export default function PuntNPints({ pubs, userLocation }: PuntNPintsProps) {
         {/* Header */}
         <div className="flex items-center justify-between mb-3" onClick={() => setIsSectionOpen(!isSectionOpen)}>
           <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-md flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #5B2D8E, #7B3FAE)' }}>
+            <div className="w-7 h-7 rounded-xl flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #5B2D8E, #7B3FAE)' }}>
               <span className="text-white font-black text-[9px] leading-none tracking-tight">TAB</span>
             </div>
             <div>
@@ -125,7 +125,7 @@ export default function PuntNPints({ pubs, userLocation }: PuntNPintsProps) {
           </p>
           <div className="space-y-1">
             {displayedTabPubs.map(pub => (
-              <Link key={pub.id} href={`/pub/${pub.slug}`} className="flex items-center justify-between p-2 rounded-lg bg-white/60 border border-stone-100 hover:border-purple-200 transition-colors">
+              <Link key={pub.id} href={`/pub/${pub.slug}`} className="flex items-center justify-between p-2 rounded-xl bg-white/60 border border-stone-100 hover:border-purple-200 transition-colors">
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-1.5">
                     <span className="text-[8px] font-black px-1 py-px rounded flex-shrink-0 text-white" style={{ backgroundColor: '#5B2D8E' }}>TAB</span>
@@ -153,7 +153,7 @@ export default function PuntNPints({ pubs, userLocation }: PuntNPintsProps) {
             </p>
             <div className="space-y-1">
               {displayedPairs.map(({ pub, nearestTab, distance }) => (
-                <Link key={pub.id} href={`/pub/${pub.slug}`} className="flex items-center justify-between p-2 rounded-lg bg-white/40 border border-stone-100">
+                <Link key={pub.id} href={`/pub/${pub.slug}`} className="flex items-center justify-between p-2 rounded-xl bg-white/40 border border-stone-100">
                   <div className="flex-1 min-w-0">
                     <span className="text-xs font-semibold text-stone-800 truncate block">{pub.name}</span>
                     <div className="flex items-center gap-1 mt-0.5">

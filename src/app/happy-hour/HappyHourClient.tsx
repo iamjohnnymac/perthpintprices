@@ -91,14 +91,14 @@ export default function HappyHourClient() {
             href="/"
             className="flex items-center gap-3 hover:opacity-80 transition-opacity"
           >
-            <div className="w-8 h-8 bg-amber rounded-lg flex items-center justify-center"><span className="text-white text-lg">☀</span></div>
+            <div className="w-8 h-8 bg-orange rounded-xl flex items-center justify-center"><span className="text-white text-lg">☀</span></div>
             <span className="text-xl font-bold tracking-tight font-heading text-charcoal">
               arvo
             </span>
           </Link>
           <Link
             href="/"
-            className="px-4 py-2 text-sm font-medium text-charcoal hover:text-amber transition-colors"
+            className="px-4 py-2 text-sm font-medium text-charcoal hover:text-orange transition-colors"
           >
             ← Back to all pubs
           </Link>
@@ -173,7 +173,7 @@ export default function HappyHourClient() {
         {/* Loading State */}
         {loading && (
           <div className="flex flex-col items-center justify-center py-20 gap-4">
-            <div className="w-10 h-10 border-4 border-amber/30 border-t-amber rounded-full animate-spin"></div>
+            <div className="w-10 h-10 border-4 border-orange/30 border-t-orange rounded-full animate-spin"></div>
             <p className="text-stone-400 text-sm">Loading happy hours...</p>
           </div>
         )}
@@ -230,17 +230,17 @@ export default function HappyHourClient() {
                 <Link
                   key={pub.id}
                   href={`/pub/${pub.slug}`}
-                  className="block bg-white rounded-2xl shadow-[0_2px_16px_rgba(0,0,0,0.08)] border border-stone-200/60 hover:border-amber/50 hover:shadow-[0_4px_24px_rgba(0,0,0,0.12)] transition-all group overflow-hidden"
+                  className="block bg-white rounded-2xl shadow-[0_2px_16px_rgba(0,0,0,0.08)] border border-stone-200/60 hover:border-orange/50 hover:shadow-[0_4px_24px_rgba(0,0,0,0.12)] transition-all group overflow-hidden"
                 >
                   <div className="p-5 sm:p-6">
                     <div className="flex items-start justify-between gap-4">
                       {/* Left: Pub info */}
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-1">
-                          <h2 className="text-lg sm:text-xl font-bold text-charcoal group-hover:text-amber transition-colors truncate">
+                          <h2 className="text-lg sm:text-xl font-bold text-charcoal group-hover:text-orange transition-colors truncate">
                             {pub.name}
                           </h2>
-                          <span className="shrink-0 inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-amber/15 text-amber border border-amber/30">
+                          <span className="shrink-0 inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-orange/15 text-orange border border-orange/30">
                             HH
                           </span>
                         </div>
@@ -322,7 +322,7 @@ export default function HappyHourClient() {
                                 ${pub.regularPrice.toFixed(2)}
                               </div>
                             )}
-                            <div className="text-xs font-medium text-amber mt-1">
+                            <div className="text-xs font-medium text-orange mt-1">
                               HH price TBC
                             </div>
                           </>
@@ -332,7 +332,7 @@ export default function HappyHourClient() {
                   </div>
 
                   {/* Bottom accent bar */}
-                  <div className="h-1 bg-gradient-to-r from-green-400 via-amber to-green-400 opacity-60 group-hover:opacity-100 transition-opacity"></div>
+                  <div className="h-1 bg-gradient-to-r from-green-400 via-orange to-green-400 opacity-60 group-hover:opacity-100 transition-opacity"></div>
                 </Link>
               )
             })}

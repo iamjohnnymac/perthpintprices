@@ -110,7 +110,7 @@ export default function CrowdPulse({ pubs, crowdReports, userLocation }: CrowdPu
           <div className="flex items-center gap-3">
             <div className="relative">
               <span className="text-2xl">{E.chart_up}</span>
-              <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-amber border border-white animate-pulse" />
+              <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-orange border border-white animate-pulse" />
             </div>
             <div>
               <h3 className="text-base sm:text-lg font-bold font-heading text-stone-800 flex items-center">LIVE CROWD VIBES<InfoTooltip text="Crowd reports submitted by users in the last 3 hours. Vibe score is a weighted average of busyness across all reporting venues." /></h3>
@@ -168,7 +168,7 @@ export default function CrowdPulse({ pubs, crowdReports, userLocation }: CrowdPu
                     const levelInfo = CROWD_LEVELS[report.crowd_level]
                     const confidence = getConfidenceLabel(report.report_count)
                     return (
-                      <Link key={pub.id} href={`/pub/${pub.slug}`} className="flex items-center justify-between p-2 rounded-lg bg-coral/5 border border-coral/20">
+                      <Link key={pub.id} href={`/pub/${pub.slug}`} className="flex items-center justify-between p-2 rounded-xl bg-coral/5 border border-coral/20">
                         <div className="flex items-center gap-2 min-w-0">
                           <span className="text-sm">{levelInfo.emoji}</span>
                           <div className="min-w-0">
@@ -190,7 +190,7 @@ export default function CrowdPulse({ pubs, crowdReports, userLocation }: CrowdPu
             {/* Quiet Venues - Hidden Gems */}
             {quietVenues.length > 0 && (
               <div className="mb-3">
-                <h4 className="text-xs font-semibold text-amber mb-2 flex items-center gap-1">
+                <h4 className="text-xs font-semibold text-orange mb-2 flex items-center gap-1">
                   {E.green_circle} HIDDEN GEMS {E.dash} Undervalued Venues
                 </h4>
                 <div className="space-y-1.5">
@@ -198,7 +198,7 @@ export default function CrowdPulse({ pubs, crowdReports, userLocation }: CrowdPu
                     const levelInfo = CROWD_LEVELS[report.crowd_level]
                     const confidence = getConfidenceLabel(report.report_count)
                     return (
-                      <Link key={pub.id} href={`/pub/${pub.slug}`} className="flex items-center justify-between p-2 rounded-lg bg-amber/5 border border-amber/20">
+                      <Link key={pub.id} href={`/pub/${pub.slug}`} className="flex items-center justify-between p-2 rounded-xl bg-orange/5 border border-orange/20">
                         <div className="flex items-center gap-2 min-w-0">
                           <span className="text-sm">{levelInfo.emoji}</span>
                           <div className="min-w-0">
@@ -219,7 +219,7 @@ export default function CrowdPulse({ pubs, crowdReports, userLocation }: CrowdPu
 
             {/* CTA */}
             {liveCount < 5 && (
-              <div className="mt-3 text-center text-xs py-2 rounded-lg bg-white/40 text-stone-400">
+              <div className="mt-3 text-center text-xs py-2 rounded-xl bg-white/40 text-stone-400">
                 {E.chart_bar} Only {liveCount} report{liveCount !== 1 ? 's' : ''} in {E.dash} be a market analyst and report crowd levels!
               </div>
             )}

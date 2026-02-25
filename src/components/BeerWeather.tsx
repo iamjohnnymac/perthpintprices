@@ -75,7 +75,7 @@ function getWeatherCondition(weather: WeatherData, avgPrice: number): WeatherCon
       label: 'Scorcher',
       message: "Scorcher! Head to the beach pubs for a cold one",
       tagline: `${weather.temperature.toFixed(0)}° scorcher — just point me to the coldest pint`,
-      bgClass: 'bg-gradient-to-r from-red-50 via-orange-50 to-amber-50',
+      bgClass: 'bg-gradient-to-r from-red-50 via-orange-50 to-orange-50',
       borderClass: 'border-red-200',
       filter: (pubs) => pubs.filter(p => p.sunsetSpot).filter(p => p.price !== null).sort((a, b) => a.price! - b.price!),
     }
@@ -87,8 +87,8 @@ function getWeatherCondition(weather: WeatherData, avgPrice: number): WeatherCon
       label: 'Perfect weather',
       message: "Mint conditions — get outside and grab a pint!",
       tagline: `${weather.temperature.toFixed(0)}° and sunny — get outside and grab a cold one`,
-      bgClass: 'bg-gradient-to-r from-amber-50/70 via-yellow-50/50 to-amber-50/70',
-      borderClass: 'border-amber-200',
+      bgClass: 'bg-gradient-to-r from-orange-50/70 via-yellow-50/50 to-orange-50/70',
+      borderClass: 'border-orange-200',
       filter: (pubs) => pubs.filter(p => p.sunsetSpot || p.description?.toLowerCase().includes('garden')).filter(p => p.price !== null).sort((a, b) => a.price! - b.price!),
     }
   }
@@ -99,7 +99,7 @@ function getWeatherCondition(weather: WeatherData, avgPrice: number): WeatherCon
       label: 'Great pub weather',
       message: "Great pub weather — grab a mate and a pint",
       tagline: `${weather.temperature.toFixed(0)}° with a breeze — grab a mate and a cold one`,
-      bgClass: 'bg-gradient-to-r from-stone-50 via-amber-50/30 to-stone-50',
+      bgClass: 'bg-gradient-to-r from-stone-50 via-orange-50/30 to-stone-50',
       borderClass: 'border-stone-200',
       filter: (pubs) => [...pubs].filter(p => p.price !== null).sort((a, b) => a.price! - b.price!),
     }
@@ -277,7 +277,7 @@ export default function BeerWeather({ pubs, userLocation }: BeerWeatherProps) {
                   className="flex items-center gap-3 rounded-xl bg-white/70 hover:bg-white/95 transition-all duration-200 p-3 border border-stone-100 shadow-sm hover:shadow-md"
                   onClick={(e) => e.stopPropagation()}
                 >
-                  <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-amber-50 text-amber font-bold text-sm flex-shrink-0">
+                  <div className="flex items-center justify-center w-8 h-8 rounded-xl bg-orange-50 text-orange font-bold text-sm flex-shrink-0">
                     {index + 1}
                   </div>
                   <div className="min-w-0 flex-1">
@@ -289,7 +289,7 @@ export default function BeerWeather({ pubs, userLocation }: BeerWeatherProps) {
                     </div>
                   </div>
                   <div className="text-right flex-shrink-0">
-                    <span className="text-sm font-bold text-amber">{pub.price !== null ? `$${pub.price.toFixed(2)}` : 'TBC'}</span>
+                    <span className="text-sm font-bold text-orange">{pub.price !== null ? `$${pub.price.toFixed(2)}` : 'TBC'}</span>
                     {pub.happyHour && (
                       <p className="text-[9px] text-emerald-600 font-medium">Happy Hour</p>
                     )}
@@ -299,7 +299,7 @@ export default function BeerWeather({ pubs, userLocation }: BeerWeatherProps) {
             </div>
 
             {/* Fun footer */}
-            <div className="mt-3 text-center text-xs py-2 rounded-lg bg-white/40 text-stone-400">
+            <div className="mt-3 text-center text-xs py-2 rounded-xl bg-white/40 text-stone-400">
               {weather.temperature >= 35 && '🥵 Stay hydrated — water between pints!'}
               {weather.temperature >= 30 && weather.temperature < 35 && '🏖️ Perfect day for a cold schooner by the water'}
               {weather.temperature >= 22 && weather.temperature < 30 && '🌿 Perth summer sesh weather — get amongst it'}

@@ -70,15 +70,15 @@ export default function InstallPrompt() {
       <div className="fixed inset-0 bg-black/20 backdrop-blur-sm" onClick={dismiss} />
       
       {/* Banner */}
-      <div className="relative mx-3 mb-3 rounded-2xl bg-white shadow-2xl border border-amber/20 overflow-hidden">
+      <div className="relative mx-3 mb-3 rounded-2xl bg-white shadow-2xl border border-orange/20 overflow-hidden">
         {/* Amber accent bar */}
-        <div className="h-1 bg-gradient-to-r from-amber via-amber/80 to-amber/60" />
+        <div className="h-1 bg-gradient-to-r from-orange via-orange/80 to-orange/60" />
         
         <div className="p-5">
           {/* Header */}
           <div className="flex items-start justify-between mb-3">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-xl bg-amber/10 flex items-center justify-center text-2xl">
+              <div className="w-12 h-12 rounded-xl bg-orange/10 flex items-center justify-center text-2xl">
                 🍺
               </div>
               <div>
@@ -103,7 +103,7 @@ export default function InstallPrompt() {
           {platform === 'ios' ? (
             <div className="space-y-3 mb-4">
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center flex-shrink-0">
+                <div className="w-8 h-8 rounded-xl bg-blue-50 flex items-center justify-center flex-shrink-0">
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#007AFF" strokeWidth="2">
                     <path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8" strokeLinecap="round" strokeLinejoin="round"/>
                     <polyline points="16,6 12,2 8,6" strokeLinecap="round" strokeLinejoin="round"/>
@@ -115,7 +115,7 @@ export default function InstallPrompt() {
                 </p>
               </div>
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center flex-shrink-0">
+                <div className="w-8 h-8 rounded-xl bg-blue-50 flex items-center justify-center flex-shrink-0">
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#007AFF" strokeWidth="2">
                     <rect x="3" y="3" width="18" height="18" rx="2" strokeLinecap="round" strokeLinejoin="round"/>
                     <line x1="12" y1="8" x2="12" y2="16" strokeLinecap="round"/>
@@ -141,9 +141,9 @@ export default function InstallPrompt() {
           
           {/* Benefits */}
           <div className="flex gap-2 flex-wrap">
-            <span className="text-xs bg-amber/10 text-amber px-2.5 py-1 rounded-full font-medium">🔔 Price alerts</span>
-            <span className="text-xs bg-amber/10 text-amber px-2.5 py-1 rounded-full font-medium">⚡ Instant access</span>
-            <span className="text-xs bg-amber/10 text-amber px-2.5 py-1 rounded-full font-medium">📱 Full screen</span>
+            <span className="text-xs bg-orange/10 text-orange px-2.5 py-1 rounded-full font-medium">🔔 Price alerts</span>
+            <span className="text-xs bg-orange/10 text-orange px-2.5 py-1 rounded-full font-medium">⚡ Instant access</span>
+            <span className="text-xs bg-orange/10 text-orange px-2.5 py-1 rounded-full font-medium">📱 Full screen</span>
           </div>
         </div>
       </div>
