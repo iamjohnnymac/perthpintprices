@@ -153,8 +153,8 @@ export async function GET(request: NextRequest) {
   if (!process.env.ADMIN_PASSWORD || !safeCompare(password, process.env.ADMIN_PASSWORD)) {
     recordFailedAttempt(ip)
 
-    // Log failed attempt to database (async, non-blocking)
-    logFailedAttempt(ip)
+    // Log failed attempt to database (await to ensure it completes before lambda terminates)
+    await logFailedAttempt(ip)
 
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
