@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
+import { timingSafeEqual } from 'crypto'
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://ifxkoblvgttelzboenpi.supabase.co',
@@ -9,12 +10,152 @@ const supabase = createClient(
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
 
+// ============================================================
+// RATE LIMITING — In-memory store (resets on cold start, fine for serverless)
+// Blocks an IP after 5 failed attempts for 15 minutes
+// ============================================================
+interface RateLimitEntry {
+  attempts: number
+  firstAttempt: number
+  blockedUntil: number | null
+}
+
+const rateLimitMap = new Map<string, RateLimitEntry>()
+const MAX_ATTEMPTS = 5
+const WINDOW_MS = 15 * 60 * 1000 // 15 minutes
+const BLOCK_DURATION_MS = 15 * 60 * 1000 // 15 minutes
+
+function getClientIP(request: NextRequest): string {
+  return (
+    request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
+    request.headers.get('x-real-ip') ||
+    'unknown'
+  )
+}
+
+function checkRateLimit(ip: string): { allowed: boolean; retryAfterSeconds?: number } {
+  const now = Date.now()
+  const entry = rateLimitMap.get(ip)
+
+  if (!entry) return { allowed: true }
+
+  // If blocked, check if block has expired
+  if (entry.blockedUntil) {
+    if (now < entry.blockedUntil) {
+      return { allowed: false, retryAfterSeconds: Math.ceil((entry.blockedUntil - now) / 1000) }
+    }
+    // Block expired, reset
+    rateLimitMap.delete(ip)
+    return { allowed: true }
+  }
+
+  // If window has expired, reset
+  if (now - entry.firstAttempt > WINDOW_MS) {
+    rateLimitMap.delete(ip)
+    return { allowed: true }
+  }
+
+  return { allowed: true }
+}
+
+function recordFailedAttempt(ip: string): void {
+  const now = Date.now()
+  const entry = rateLimitMap.get(ip)
+
+  if (!entry) {
+    rateLimitMap.set(ip, { attempts: 1, firstAttempt: now, blockedUntil: null })
+    return
+  }
+
+  // Reset if window expired
+  if (now - entry.firstAttempt > WINDOW_MS) {
+    rateLimitMap.set(ip, { attempts: 1, firstAttempt: now, blockedUntil: null })
+    return
+  }
+
+  entry.attempts++
+  if (entry.attempts >= MAX_ATTEMPTS) {
+    entry.blockedUntil = now + BLOCK_DURATION_MS
+  }
+}
+
+// Cleanup stale entries every 5 minutes
+setInterval(() => {
+  const now = Date.now()
+  const keys = Array.from(rateLimitMap.keys())
+  keys.forEach(ip => {
+    const entry = rateLimitMap.get(ip)
+    if (!entry) return
+    if (entry.blockedUntil && now > entry.blockedUntil) {
+      rateLimitMap.delete(ip)
+    } else if (now - entry.firstAttempt > WINDOW_MS) {
+      rateLimitMap.delete(ip)
+    }
+  })
+}, 5 * 60 * 1000)
+
+// ============================================================
+// TIMING-SAFE PASSWORD COMPARISON
+// Prevents timing attacks that could leak password length/chars
+// ============================================================
+function safeCompare(a: string, b: string): boolean {
+  try {
+    const bufA = Buffer.from(a, 'utf-8')
+    const bufB = Buffer.from(b, 'utf-8')
+    if (bufA.length !== bufB.length) {
+      // Still do a comparison to maintain constant time
+      timingSafeEqual(bufA, Buffer.alloc(bufA.length))
+      return false
+    }
+    return timingSafeEqual(bufA, bufB)
+  } catch {
+    return false
+  }
+}
+
+// ============================================================
+// LOG FAILED AUTH ATTEMPT TO DATABASE
+// ============================================================
+async function logFailedAttempt(ip: string): Promise<void> {
+  try {
+    await supabase.from('agent_activity').insert({
+      action: `Failed admin login attempt from ${ip}`,
+      category: 'security',
+      status: 'warning',
+      details: { ip, timestamp: new Date().toISOString() },
+    })
+  } catch {
+    // Don't let logging failures break the response
+  }
+}
+
 export async function GET(request: NextRequest) {
+  const ip = getClientIP(request)
+
+  // Check rate limit FIRST
+  const rateCheck = checkRateLimit(ip)
+  if (!rateCheck.allowed) {
+    return NextResponse.json(
+      { error: 'Too many failed attempts. Try again later.' },
+      {
+        status: 429,
+        headers: {
+          'Retry-After': String(rateCheck.retryAfterSeconds || 900),
+        },
+      }
+    )
+  }
+
   // Verify password from Authorization header
   const authHeader = request.headers.get('authorization')
-  const password = authHeader?.replace('Bearer ', '')
-  
-  if (!process.env.ADMIN_PASSWORD || password !== process.env.ADMIN_PASSWORD) {
+  const password = authHeader?.replace('Bearer ', '') || ''
+
+  if (!process.env.ADMIN_PASSWORD || !safeCompare(password, process.env.ADMIN_PASSWORD)) {
+    recordFailedAttempt(ip)
+
+    // Log failed attempt to database (async, non-blocking)
+    logFailedAttempt(ip)
+
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
@@ -44,7 +185,7 @@ export async function GET(request: NextRequest) {
       supabase.from('price_reports').select('*', { count: 'exact' }).order('created_at', { ascending: false }).limit(10),
       // Push subscriptions
       supabase.from('push_subscriptions').select('*', { count: 'exact' }),
-      // Agent activity
+      // Agent activity (now readable by anon with RLS policy)
       supabase.from('agent_activity').select('*').order('created_at', { ascending: false }).limit(20),
       // Recently updated pubs
       supabase.from('pubs').select('name, suburb, price, last_updated').order('last_updated', { ascending: false }).limit(5),

@@ -120,6 +120,12 @@ export default function AdminDashboard() {
         headers: { Authorization: `Bearer ${token}` },
         cache: 'no-store',
       })
+      if (res.status === 429) {
+        const json = await res.json()
+        setError(json.error || 'Too many failed attempts. Try again later.')
+        setLoading(false)
+        return
+      }
       if (res.status === 401) {
         setAuthed(false)
         sessionStorage.removeItem('admin_pw')
@@ -526,6 +532,24 @@ export default function AdminDashboard() {
               </div>
             )}
 
+            {/* Security Monitor */}
+            {data.agentActivity.filter(a => a.category === 'security').length > 0 && (
+              <div className="bg-[#1A1A1A] border border-red-900/50 rounded-lg p-4">
+                <h2 className="text-sm font-semibold text-red-400 uppercase tracking-wider mb-3">🔒 Security Events</h2>
+                <div className="space-y-2">
+                  {data.agentActivity.filter(a => a.category === 'security').slice(0, 5).map((event, i) => (
+                    <div key={i} className="flex items-center justify-between py-2 border-b border-[#222] last:border-0">
+                      <div className="flex items-center gap-2">
+                        <span className="w-2 h-2 bg-red-400 rounded-full" />
+                        <span className="text-white text-sm">{event.action}</span>
+                      </div>
+                      <span className="text-gray-600 text-xs">{timeAgo(event.createdAt)}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {/* System Status */}
             <div className="bg-[#1A1A1A] border border-[#333] rounded-lg p-4">
               <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-3">System Status</h2>
@@ -533,6 +557,14 @@ export default function AdminDashboard() {
                 <div className="flex items-center justify-between">
                   <span className="text-gray-400">Dashboard data</span>
                   <span className="text-green-400 flex items-center gap-1"><span className="w-2 h-2 bg-green-400 rounded-full inline-block" /> Live</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-gray-400">Rate limiting</span>
+                  <span className="text-green-400 flex items-center gap-1"><span className="w-2 h-2 bg-green-400 rounded-full inline-block" /> Active (5 attempts / 15min)</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-gray-400">Auth protection</span>
+                  <span className="text-green-400 flex items-center gap-1"><span className="w-2 h-2 bg-green-400 rounded-full inline-block" /> Timing-safe</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-gray-400">Auto-refresh</span>
