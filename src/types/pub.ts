@@ -30,5 +30,6 @@ export interface Pub {
   happyHourMinutesRemaining: number | null
   imageUrl: string | null
   vibeTag: string | null
+  cozyPub: boolean
   effectivePrice: number | null
 }

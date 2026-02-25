@@ -143,6 +143,7 @@ export async function getPubs(): Promise<Pub[]> {
       priceVerified: row.price_verified !== false,
       hasTab: row.has_tab === true,
       kidFriendly: row.kid_friendly === true,
+      cozyPub: row.cozy_pub === true,
       // Happy hour detail fields
       happyHourPrice: hhPrice,
       happyHourDays: row.happy_hour_days || null,
@@ -207,6 +208,7 @@ export async function getPubBySlug(slug: string): Promise<Pub | null> {
     priceVerified: row.price_verified !== false,
     hasTab: row.has_tab === true,
     kidFriendly: row.kid_friendly === true,
+    cozyPub: row.cozy_pub === true,
     happyHourPrice: hhPrice,
     happyHourDays: row.happy_hour_days || null,
     happyHourStart: row.happy_hour_start || null,
@@ -275,6 +277,7 @@ export async function getNearbyPubs(suburb: string, excludeId: number, limit: nu
       priceVerified: row.price_verified !== false,
       hasTab: row.has_tab === true,
       kidFriendly: row.kid_friendly === true,
+      cozyPub: row.cozy_pub === true,
       happyHourPrice: hhPrice,
       happyHourDays: row.happy_hour_days || null,
       happyHourStart: row.happy_hour_start || null,

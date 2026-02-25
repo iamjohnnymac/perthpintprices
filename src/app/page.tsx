@@ -22,6 +22,7 @@ import VenueIntel from '@/components/VenueIntel'
 import CrowdPulse from '@/components/CrowdPulse'
 import PintOfTheDay from '@/components/PintOfTheDay'
 import BeerWeather from '@/components/BeerWeather'
+import RainyDay from '@/components/RainyDay'
 import SunsetSippers from '@/components/SunsetSippers'
 import PuntNPints from '@/components/PuntNPints'
 import DadBar from '@/components/DadBar'
@@ -361,6 +362,7 @@ export default function Home() {
                 </Link>
               </div>
               <BeerWeather pubs={pubs} userLocation={userLocation} />
+              <RainyDay pubs={pubs} userLocation={userLocation} />
               <SunsetSippers pubs={pubs} userLocation={userLocation} />
               <PuntNPints pubs={pubs} userLocation={userLocation} />
               <DadBar pubs={pubs} userLocation={userLocation} />
