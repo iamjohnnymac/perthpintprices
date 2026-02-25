@@ -31,9 +31,9 @@ export default function FAQ() {
   ]
 
   return (
-    <section className="py-16 sm:py-20">
+    <section className="py-8">
       <div className="max-w-2xl mx-auto px-4 sm:px-6">
-        <h2 className="font-serif text-3xl sm:text-4xl text-charcoal text-center mb-10">
+        <h2 className="font-serif text-3xl sm:text-4xl text-charcoal text-center mb-6">
           Questions?
         </h2>
         <div className="space-y-0">
@@ -41,7 +41,7 @@ export default function FAQ() {
             <div key={i} className="border-b border-stone-200/60">
               <button
                 onClick={() => setOpenIndex(openIndex === i ? null : i)}
-                className="w-full flex items-center justify-between py-5 text-left group"
+                className="w-full flex items-center justify-between py-3.5 text-left group"
               >
                 <span className="text-base sm:text-lg font-semibold text-charcoal group-hover:text-amber transition-colors pr-4">
                   {faq.q}
@@ -54,7 +54,7 @@ export default function FAQ() {
                 </svg>
               </button>
               {openIndex === i && (
-                <div className="pb-5 text-stone-warm leading-relaxed text-sm -mt-1">
+                <div className="pb-3 text-stone-warm leading-relaxed text-sm -mt-1">
                   {faq.a}
                 </div>
               )}

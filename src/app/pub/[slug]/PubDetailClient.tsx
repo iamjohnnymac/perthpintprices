@@ -106,7 +106,7 @@ export default function PubDetailClient({ pub, nearbyPubs, avgPrice }: PubDetail
         </div>
       </div>
 
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6 space-y-8">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-4 space-y-4">
         {/* Breadcrumb */}
         <nav className="flex items-center gap-2 text-sm text-stone-warm">
           <Link href="/" className="hover:text-amber transition-colors">Home</Link>
@@ -117,9 +117,9 @@ export default function PubDetailClient({ pub, nearbyPubs, avgPrice }: PubDetail
         </nav>
 
         {/* Two-column layout */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-start">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 items-start">
           {/* Left column — info */}
-          <div className="space-y-6">
+          <div className="space-y-4">
             {/* Name + vibe */}
             <div>
               <h1 className="font-serif text-3xl sm:text-4xl text-charcoal leading-tight">
@@ -296,7 +296,7 @@ export default function PubDetailClient({ pub, nearbyPubs, avgPrice }: PubDetail
 
         {/* Nearby Pubs */}
         {nearbyPubs.length > 0 && (
-          <div className="space-y-4 mt-16">
+          <div className="space-y-3 mt-8">
             <h2 className="font-serif text-2xl text-charcoal">
               More in {pub.suburb}
             </h2>
@@ -329,7 +329,7 @@ export default function PubDetailClient({ pub, nearbyPubs, avgPrice }: PubDetail
         )}
 
         {/* Footer note */}
-        <div className="text-center py-8 text-xs text-stone-400">
+        <div className="text-center py-4 text-xs text-stone-400">
           <p>Data sourced from verified pub menus and community reports.</p>
           <p className="mt-1">
             Wrong price?{' '}

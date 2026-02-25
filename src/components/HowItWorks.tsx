@@ -11,19 +11,19 @@ export default function HowItWorks({ venueCount = 200, suburbCount = 90 }: HowIt
   ]
 
   return (
-    <section className="py-16 sm:py-20">
+    <section className="py-8">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 text-center">
-        <h2 className="font-serif text-3xl sm:text-4xl text-charcoal mb-3">
+        <h2 className="font-serif text-3xl sm:text-4xl text-charcoal mb-2">
           How it works
         </h2>
-        <p className="text-stone-warm mb-12 text-lg">No app download. No sign-up. Just prices.</p>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-10">
+        <p className="text-stone-warm mb-6 text-base">No app download. No sign-up. Just prices.</p>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
           {steps.map((step) => (
             <div key={step.num} className="text-center">
-              <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-amber/10 text-amber font-mono font-bold text-sm mb-4">
+              <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-amber/10 text-amber font-mono font-bold text-sm mb-3">
                 {step.num}
               </div>
-              <h3 className="font-serif text-xl text-charcoal mb-2">{step.title}</h3>
+              <h3 className="font-serif text-lg text-charcoal mb-1">{step.title}</h3>
               <p className="text-stone-warm leading-relaxed text-sm">{step.desc}</p>
             </div>
           ))}

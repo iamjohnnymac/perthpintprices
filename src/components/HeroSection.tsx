@@ -71,7 +71,7 @@ export default function HeroSection({
   return (
     <section className="relative overflow-hidden">
       {/* Top nav bar */}
-      <nav className="max-w-5xl mx-auto px-4 sm:px-6 py-5 flex items-center justify-between">
+      <nav className="max-w-5xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
         <div className="flex items-center gap-2.5">
           <span className="text-amber text-2xl">✳</span>
           <span className="font-serif text-2xl text-charcoal">arvo</span>
@@ -85,18 +85,18 @@ export default function HeroSection({
       </nav>
 
       {/* Hero content */}
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 pt-8 sm:pt-16 pb-12 sm:pb-20 text-center">
-        <h1 className="font-serif text-[2.5rem] sm:text-[3.5rem] lg:text-[4.25rem] text-charcoal leading-[1.08] mb-5">
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 pt-4 sm:pt-6 pb-4 sm:pb-6 text-center">
+        <h1 className="font-serif text-[2.5rem] sm:text-[3.5rem] lg:text-[4.25rem] text-charcoal leading-[1.08] mb-2">
           Perth&apos;s pint prices,{' '}
           <span className="text-amber">sorted.</span>
         </h1>
-        <p className="text-base sm:text-lg text-stone-warm max-w-lg mx-auto mb-10 leading-relaxed">
+        <p className="text-base sm:text-lg text-stone-warm max-w-lg mx-auto mb-3 leading-relaxed">
           Discover {venueCount}+ venues across {suburbCount} suburbs.
           Real prices from real people.
         </p>
 
         {/* Search bar — EatClub-style clean input */}
-        <div ref={searchRef} className="relative max-w-md mx-auto mb-10">
+        <div ref={searchRef} className="relative max-w-md mx-auto mb-3">
           <form onSubmit={handleSearchSubmit}>
             <div className="relative">
               <svg className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-stone-400" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
@@ -136,7 +136,7 @@ export default function HeroSection({
         </div>
 
         {/* CTA buttons */}
-        <div className="flex items-center justify-center gap-3 mb-10">
+        <div className="flex items-center justify-center gap-3 mb-4">
           <button
             onClick={onExploreClick}
             className="px-7 py-3.5 bg-amber hover:bg-amber-dark text-white rounded-full font-semibold text-base transition-all inline-flex items-center gap-2"
@@ -155,20 +155,7 @@ export default function HeroSection({
         {/* Happy Hour Countdown Carousel */}
         <HappyHourPreview pubs={pubs} />
 
-        {/* Stat pills */}
-        <div className="flex flex-wrap items-center justify-center gap-3 mt-8">
-          <span className="px-4 py-2 bg-white rounded-full text-sm text-stone-warm shadow-sm border border-stone-200/40">
-            Avg pint: <span className="font-bold text-charcoal">${avgPrice}</span>
-          </span>
-          <Link href={`/pub/${cheapestSlug}`} className="px-4 py-2 bg-white rounded-full text-sm text-stone-warm shadow-sm border border-stone-200/40 hover:border-amber/40 transition-colors">
-            Cheapest: <span className="font-bold text-bargain">${cheapestPrice.toFixed(2)}</span>
-          </Link>
-          {happyHourCount > 0 && (
-            <Link href="/happy-hour" className="px-4 py-2 bg-amber/10 rounded-full text-sm text-amber font-semibold shadow-sm border border-amber/20 hover:bg-amber/20 transition-colors">
-              🍻 {happyHourCount} happy hours live
-            </Link>
-          )}
-        </div>
+
       </div>
     </section>
   )

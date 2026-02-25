@@ -105,10 +105,10 @@ export default function HappyHourClient() {
         </div>
       </div>
 
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
         {/* Page Title */}
-        <div className="text-center mb-6 sm:mb-10">
-          <div className="inline-flex items-center gap-2 mb-4">
+        <div className="text-center mb-4">
+          <div className="inline-flex items-center gap-2 mb-2">
             <span className="text-3xl sm:text-4xl">🍻</span>
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-charcoal font-heading">
               Happy Hours Live
@@ -144,7 +144,7 @@ export default function HappyHourClient() {
 
         {/* Sort Controls */}
         {!loading && pubs.length > 0 && (
-          <div className="flex items-center justify-center gap-2 mb-6">
+          <div className="flex items-center justify-center gap-2 mb-4">
             <button
               onClick={() => setSortMode('price')}
               className={`px-4 py-2 rounded-full text-sm font-semibold transition-all ${
@@ -180,12 +180,12 @@ export default function HappyHourClient() {
 
         {/* Empty State */}
         {!loading && pubs.length === 0 && (
-          <div className="text-center py-16 sm:py-20">
-            <div className="text-6xl mb-6">🕐</div>
+          <div className="text-center py-8 sm:py-10">
+            <div className="text-5xl mb-4">🕐</div>
             <h2 className="text-xl sm:text-2xl font-bold text-charcoal mb-3 font-heading">
               No happy hours running right now
             </h2>
-            <p className="text-stone-500 max-w-md mx-auto mb-8 leading-relaxed">
+            <p className="text-stone-500 max-w-md mx-auto mb-4 leading-relaxed">
               Check back during the week — most kick off between 4–6pm!
               We&apos;ll show live deals as soon as they start.
             </p>
@@ -213,7 +213,7 @@ export default function HappyHourClient() {
 
         {/* Active Happy Hour Cards */}
         {!loading && pubs.length > 0 && (
-          <div className="grid gap-4 sm:gap-5">
+          <div className="grid gap-3">
             {pubs.map((pub) => {
               const savings = pub.happyHourPrice != null
                 ? (pub.regularPrice ?? 0) - pub.happyHourPrice
@@ -232,7 +232,7 @@ export default function HappyHourClient() {
                   href={`/pub/${pub.slug}`}
                   className="block bg-white rounded-2xl shadow-[0_2px_16px_rgba(0,0,0,0.08)] border border-stone-200/60 hover:border-orange/50 hover:shadow-[0_4px_24px_rgba(0,0,0,0.12)] transition-all group overflow-hidden"
                 >
-                  <div className="p-5 sm:p-6">
+                  <div className="p-4">
                     <div className="flex items-start justify-between gap-4">
                       {/* Left: Pub info */}
                       <div className="flex-1 min-w-0">
@@ -341,7 +341,7 @@ export default function HappyHourClient() {
 
         {/* Footer CTA */}
         {!loading && pubs.length > 0 && (
-          <div className="text-center mt-10 sm:mt-14">
+          <div className="text-center mt-6">
             <p className="text-stone-400 text-sm mb-4">
               Want to see all venues and compare prices?
             </p>

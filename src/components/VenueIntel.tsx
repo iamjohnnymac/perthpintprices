@@ -138,7 +138,7 @@ export default function VenueIntel({ pubs, userLocation }: VenueIntelProps) {
         </div>
 
         {isExpanded && (
-          <div className="mt-4 pt-4 border-t border-stone-200/60 space-y-4" onClick={(e) => e.stopPropagation()}>
+          <div className="mt-3 pt-3 border-t border-stone-200/60 space-y-3" onClick={(e) => e.stopPropagation()}>
             <div>
               <h4 className="text-xs font-semibold text-stone-700 mb-2 flex items-center gap-1">
                 {E.chart_bar} PRICE DISTRIBUTION

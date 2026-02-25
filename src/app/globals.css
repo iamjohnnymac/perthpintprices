@@ -51,10 +51,10 @@
 
 @layer components {
   .section-gap {
-    @apply py-12 sm:py-16 md:py-20;
+    @apply py-6 sm:py-8;
   }
   .section-gap-sm {
-    @apply py-8 sm:py-12;
+    @apply py-4 sm:py-6;
   }
   /* EatClub-style card */
   .ec-card {

@@ -146,7 +146,7 @@ export default function TonightsMoves({ pubs, userLocation }: TonightsMovesProps
 
         {/* Expanded Content */}
         {isExpanded && (
-          <div className="mt-4 pt-4 border-t border-stone-200/60 space-y-4" onClick={(e) => e.stopPropagation()}>
+          <div className="mt-3 pt-3 border-t border-stone-200/60 space-y-3" onClick={(e) => e.stopPropagation()}>
             {/* Market Tip */}
             {marketTip && (
               <div className="p-3 rounded-xl bg-gradient-to-r from-orange-50 to-yellow-50 border border-orange-200">

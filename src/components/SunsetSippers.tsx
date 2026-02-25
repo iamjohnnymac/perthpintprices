@@ -279,7 +279,7 @@ export default function SunsetSippers({ pubs, userLocation }: SunsetSippersProps
 
         {/* Expanded Content */}
         {isExpanded && (
-          <div className="mt-4 pt-4 border-t border-orange-200/60">
+          <div className="mt-3 pt-3 border-t border-orange-200/60">
             {/* Sunset Pubs Grid */}
             <div className="flex items-center justify-between mb-3">
               <h4 className="text-sm font-semibold text-stone-700">

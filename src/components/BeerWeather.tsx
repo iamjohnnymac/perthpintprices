@@ -243,7 +243,7 @@ export default function BeerWeather({ pubs, userLocation }: BeerWeatherProps) {
 
         {/* Expanded Content */}
         {isExpanded && (
-          <div className="mt-3 pt-3 border-t border-stone-200/60">
+          <div className="mt-2 pt-2 border-t border-stone-200/60">
             {/* Tagline */}
             <p className="text-xs text-stone-500 italic mb-2 text-center">{condition.tagline}</p>
 
