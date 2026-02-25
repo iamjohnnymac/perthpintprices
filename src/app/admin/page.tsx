@@ -41,8 +41,11 @@ interface DashboardData {
     totalChanges: number
     recent: Array<{
       pubSlug: string
-      oldPrice: number
-      newPrice: number
+      pubName: string
+      price: number
+      happyHourPrice: number | null
+      changeType: string
+      source: string | null
       changedAt: string
     }>
   }
@@ -391,7 +394,7 @@ export default function AdminDashboard() {
                   {data.priceReports.recent.map((report, i) => (
                     <div key={i} className="flex items-center justify-between py-2 border-b border-[#222] last:border-0">
                       <div className="flex-1 min-w-0">
-                        <span className="text-white font-medium text-sm">{report.pubSlug.replace(/-/g, ' ')}</span>
+                        <span className="text-white font-medium text-sm capitalize">{(report.pubSlug || 'unknown').replace(/-/g, ' ')}</span>
                         {report.beerType && <span className="text-gray-500 text-xs ml-2">({report.beerType})</span>}
                         <p className="text-gray-600 text-xs">by {report.reporter}</p>
                       </div>
@@ -420,13 +423,19 @@ export default function AdminDashboard() {
                 <div className="space-y-2">
                   {data.priceHistory.recent.map((change, i) => (
                     <div key={i} className="flex items-center justify-between py-2 border-b border-[#222] last:border-0">
-                      <span className="text-white text-sm">{change.pubSlug.replace(/-/g, ' ')}</span>
+                      <div className="flex-1 min-w-0">
+                        <span className="text-white text-sm capitalize">{change.pubName || (change.pubSlug || 'unknown').replace(/-/g, ' ')}</span>
+                        <span className={`ml-2 text-xs px-1.5 py-0.5 rounded ${
+                          change.changeType === 'initial' ? 'bg-blue-900/30 text-blue-400' :
+                          change.changeType === 'update' ? 'bg-yellow-900/30 text-yellow-400' :
+                          'bg-gray-800 text-gray-400'
+                        }`}>{change.changeType}</span>
+                      </div>
                       <div className="flex items-center gap-2">
-                        <span className="text-gray-500 font-mono text-sm">${change.oldPrice?.toFixed(2)}</span>
-                        <span className="text-gray-600">→</span>
-                        <span className={`font-mono font-bold text-sm ${
-                          (change.newPrice || 0) < (change.oldPrice || 0) ? 'text-green-400' : 'text-red-400'
-                        }`}>${change.newPrice?.toFixed(2)}</span>
+                        <span className="text-[#E8820C] font-mono font-bold text-sm">${change.price?.toFixed(2) || 'TBC'}</span>
+                        {change.happyHourPrice && (
+                          <span className="text-green-400 font-mono text-xs">HH ${change.happyHourPrice.toFixed(2)}</span>
+                        )}
                         <span className="text-gray-600 text-xs">{timeAgo(change.changedAt)}</span>
                       </div>
                     </div>

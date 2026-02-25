@@ -176,7 +176,7 @@ export async function GET(request: NextRequest) {
       tabResult,
     ] = await Promise.all([
       // Total pubs and breakdown
-      supabase.from('pubs').select('name, price, suburb, price_verified, last_verified, last_updated, cozy_pub, sunset_spot, kid_friendly, has_tab, happy_hour_price, happy_hour_days, vibe_tag', { count: 'exact' }),
+      supabase.from('pubs').select('id, slug, name, price, suburb, price_verified, last_verified, last_updated, cozy_pub, sunset_spot, kid_friendly, has_tab, happy_hour_price, happy_hour_days, vibe_tag', { count: 'exact' }),
       // Latest snapshot
       supabase.from('price_snapshots').select('*').order('snapshot_date', { ascending: false }).limit(1),
       // Recent price changes
@@ -209,6 +209,10 @@ export async function GET(request: NextRequest) {
     const maxPrice = prices.length > 0 ? Math.max(...prices) : 0
     const suburbs = Array.from(new Set(pubs.map(p => p.suburb))).filter(Boolean)
     const vibeTagged = pubs.filter(p => p.vibe_tag).length
+
+    // Build pub ID → name/slug lookup for price_history resolution
+    const pubLookup = new Map<number, { name: string; slug: string }>()
+    pubs.forEach((p: any) => { if (p.id) pubLookup.set(p.id, { name: p.name, slug: p.slug }) })
 
     // Pubs without prices
     const unpriced = pubs.filter(p => !p.price || p.price === 0)
@@ -250,12 +254,18 @@ export async function GET(request: NextRequest) {
       snapshot: snapshotResult.data?.[0] || null,
       priceHistory: {
         totalChanges: priceHistoryResult.count || 0,
-        recent: (priceHistoryResult.data || []).map((h: any) => ({
-          pubSlug: h.pub_slug,
-          oldPrice: h.old_price,
-          newPrice: h.new_price,
-          changedAt: h.changed_at,
-        })),
+        recent: (priceHistoryResult.data || []).map((h: any) => {
+          const pub = pubLookup.get(h.pub_id)
+          return {
+            pubSlug: pub?.slug || `pub-${h.pub_id}`,
+            pubName: pub?.name || `Pub #${h.pub_id}`,
+            price: h.price,
+            happyHourPrice: h.happy_hour_price,
+            changeType: h.change_type || 'initial',
+            source: h.source,
+            changedAt: h.changed_at,
+          }
+        }),
       },
       recentlyUpdated: (recentPubsResult.data || []).map((p: any) => ({
         name: p.name,
