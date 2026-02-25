@@ -76,67 +76,73 @@ export function FilterSection({
   }
 
   return (
-    <div className="border-t border-stone-100/80 bg-cream">
-      {/* One clean row: Search + Suburbs + Filters */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center gap-2">
+    <div className="border-t border-stone-200/60 bg-white/95 backdrop-blur-sm">
+      {/* EatClub-style toolbar: SEARCH | NEARBY | FILTER */}
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-3 flex items-center gap-2">
+        {/* Search */}
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-stone-400 pointer-events-none" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-stone-400 pointer-events-none" />
           <input
             type="text"
             placeholder="Search pubs or suburbs..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-8 pr-8 py-3 text-sm bg-stone-50 border border-stone-200/60 rounded-xl text-stone-700 placeholder-stone-400 focus:outline-none focus:ring-1 focus:ring-amber focus:border-amber transition-colors"
+            className="w-full pl-9 pr-8 py-2.5 text-sm bg-cream border border-stone-200/60 rounded-full text-charcoal placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-amber/20 focus:border-amber transition-colors"
           />
           {searchTerm && (
-            <button onClick={() => setSearchTerm('')} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-600">
+            <button onClick={() => setSearchTerm('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-600">
               <X className="h-3.5 w-3.5" />
             </button>
           )}
         </div>
-        <select
-          value={selectedSuburb || 'all'}
-          onChange={(e) => setSelectedSuburb(e.target.value)}
-          className="text-sm bg-stone-50 border border-stone-200/60 rounded-xl px-3 py-3 text-stone-600 focus:outline-none focus:ring-1 focus:ring-amber focus:border-amber transition-colors cursor-pointer flex-shrink-0 max-w-[130px] sm:max-w-[160px]"
-        >
-          <option value="all">All Suburbs</option>
-          {suburbs.map(suburb => (
-            <option key={suburb} value={suburb}>{suburb}</option>
-          ))}
-        </select>
 
-        {/* Filters button with expanded dropdown */}
+        {/* Nearby toggle pill */}
+        {hasLocation && (
+          <button
+            onClick={() => setSortBy(sortBy === 'nearest' ? 'price' : 'nearest')}
+            className={cn(
+              "flex items-center gap-1.5 px-3 py-2.5 rounded-full text-xs font-semibold uppercase tracking-wider transition-all whitespace-nowrap border",
+              isNearestActive
+                ? "bg-amber text-white border-amber"
+                : "bg-cream text-stone-warm border-stone-200/60 hover:border-stone-300"
+            )}
+          >
+            <MapPin className="h-3 w-3" />
+            Nearby{isNearestActive ? ': on' : ''}
+          </button>
+        )}
+
+        {/* Filter button */}
         <div className="relative flex-shrink-0" ref={dropdownRef}>
           <button
             onClick={() => setShowMoreFilters(!showMoreFilters)}
             className={cn(
-              "flex items-center gap-2 px-3 py-3 rounded-xl text-sm font-medium transition-all border whitespace-nowrap",
+              "flex items-center gap-1.5 px-3 py-2.5 rounded-full text-xs font-semibold uppercase tracking-wider transition-all border whitespace-nowrap",
               showMoreFilters || activeFilterCount > 0
                 ? "bg-amber text-white border-amber"
-                : "bg-stone-50 text-stone-500 border-stone-200/60 hover:border-stone-300 hover:text-stone-700"
+                : "bg-cream text-stone-warm border-stone-200/60 hover:border-stone-300"
             )}
           >
-            <SlidersHorizontal className="h-3.5 w-3.5" />
-            <span className="hidden sm:inline">Filters</span>
+            <SlidersHorizontal className="h-3 w-3" />
+            Filter
             {activeFilterCount > 0 && (
-              <span className="bg-white/20 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">
+              <span className="bg-white/25 text-white text-[10px] rounded-full w-4 h-4 flex items-center justify-center font-bold">
                 {activeFilterCount}
               </span>
             )}
-            <ChevronDown className={cn("h-3 w-3 transition-transform", showMoreFilters && "rotate-180")} />
           </button>
 
           {showMoreFilters && (
-            <div className="absolute right-0 top-full mt-2 w-80 bg-white rounded-2xl shadow-xl border border-stone-200/60 p-5 z-50">
+            <div className="absolute right-0 top-full mt-2 w-80 bg-white rounded-xl shadow-lg border border-stone-200/40 p-5 z-50">
               {/* View Mode */}
-              <div className="mb-4">
-                <label className="block text-xs font-semibold text-stone-400 uppercase tracking-wide mb-2">View</label>
+              <div className="mb-5">
+                <label className="block text-[11px] font-semibold text-stone-warm uppercase tracking-wider mb-2">View</label>
                 <div className="flex gap-2">
                   <button
                     onClick={() => setViewMode('cards')}
                     className={cn(
-                      "flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-xl text-xs font-medium transition-all",
-                      viewMode === 'cards' ? "bg-amber text-white" : "bg-stone-100 text-stone-600 hover:bg-stone-200"
+                      "flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-xs font-medium transition-all",
+                      viewMode === 'cards' ? "bg-amber text-white" : "bg-cream text-stone-warm hover:bg-cream-dark"
                     )}
                   >
                     <LayoutGrid className="h-3.5 w-3.5" /> Cards
@@ -144,8 +150,8 @@ export function FilterSection({
                   <button
                     onClick={() => setViewMode('list')}
                     className={cn(
-                      "flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-xl text-xs font-medium transition-all",
-                      viewMode === 'list' ? "bg-amber text-white" : "bg-stone-100 text-stone-600 hover:bg-stone-200"
+                      "flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-xs font-medium transition-all",
+                      viewMode === 'list' ? "bg-amber text-white" : "bg-cream text-stone-warm hover:bg-cream-dark"
                     )}
                   >
                     <List className="h-3.5 w-3.5" /> List
@@ -153,42 +159,44 @@ export function FilterSection({
                 </div>
               </div>
 
+              {/* Suburb */}
+              <div className="mb-5">
+                <label className="block text-[11px] font-semibold text-stone-warm uppercase tracking-wider mb-2">Suburb</label>
+                <select
+                  value={selectedSuburb || 'all'}
+                  onChange={(e) => setSelectedSuburb(e.target.value)}
+                  className="w-full text-sm bg-cream border border-stone-200/60 rounded-lg px-3 py-2.5 text-charcoal focus:outline-none focus:ring-2 focus:ring-amber/20 focus:border-amber transition-colors cursor-pointer"
+                >
+                  <option value="all">All Suburbs</option>
+                  {suburbs.map(suburb => (
+                    <option key={suburb} value={suburb}>{suburb}</option>
+                  ))}
+                </select>
+              </div>
+
               {/* Toggles */}
-              <div className="mb-4 space-y-2">
-                <label className="block text-xs font-semibold text-stone-400 uppercase tracking-wide mb-2">Toggles</label>
+              <div className="mb-5 space-y-2">
+                <label className="block text-[11px] font-semibold text-stone-warm uppercase tracking-wider mb-2">Toggles</label>
                 <button
                   onClick={() => setShowHappyHourOnly(!showHappyHourOnly)}
                   className={cn(
-                    "w-full flex items-center justify-between px-3 py-2 rounded-xl text-sm transition-all border",
+                    "w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-sm transition-all border",
                     showHappyHourOnly
                       ? "bg-amber/10 text-amber border-amber/30 font-medium"
-                      : "bg-stone-50 text-stone-600 border-stone-200/60 hover:bg-stone-100"
+                      : "bg-cream text-stone-warm border-stone-200/60 hover:bg-cream-dark"
                   )}
                 >
                   <span className="flex items-center gap-2"><Clock className="h-3.5 w-3.5" /> Happy Hour Only</span>
                   {stats.happyHourNow > 0 && <span className="text-xs bg-amber/20 text-amber px-1.5 py-0.5 rounded-full font-semibold">{stats.happyHourNow}</span>}
                 </button>
-                {hasLocation && (
-                  <button
-                    onClick={() => setSortBy(sortBy === 'nearest' ? 'price' : 'nearest')}
-                    className={cn(
-                      "w-full flex items-center justify-between px-3 py-2 rounded-xl text-sm transition-all border",
-                      isNearestActive
-                        ? "bg-amber/10 text-amber border-amber/30 font-medium"
-                        : "bg-stone-50 text-stone-600 border-stone-200/60 hover:bg-stone-100"
-                    )}
-                  >
-                    <span className="flex items-center gap-2"><MapPin className="h-3.5 w-3.5" /> Sort by Nearest</span>
-                  </button>
-                )}
                 {viewMode === 'cards' && (
                   <button
                     onClick={() => setShowMiniMaps(!showMiniMaps)}
                     className={cn(
-                      "w-full flex items-center justify-between px-3 py-2 rounded-xl text-sm transition-all border",
+                      "w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-sm transition-all border",
                       showMiniMaps
                         ? "bg-amber/10 text-amber border-amber/30 font-medium"
-                        : "bg-stone-50 text-stone-600 border-stone-200/60 hover:bg-stone-100"
+                        : "bg-cream text-stone-warm border-stone-200/60 hover:bg-cream-dark"
                     )}
                   >
                     <span className="flex items-center gap-2"><MapIcon className="h-3.5 w-3.5" /> Show Maps on Cards</span>
@@ -197,16 +205,16 @@ export function FilterSection({
               </div>
 
               {/* Sort By */}
-              <div className="mb-4">
-                <label className="block text-xs font-semibold text-stone-400 uppercase tracking-wide mb-2">Sort By</label>
+              <div className="mb-5">
+                <label className="block text-[11px] font-semibold text-stone-warm uppercase tracking-wider mb-2">Sort By</label>
                 <div className="flex gap-2">
                   {(['price', 'name', 'suburb'] as const).map(option => (
                     <button
                       key={option}
                       onClick={() => setSortBy(option)}
                       className={cn(
-                        "flex-1 px-2 py-2 rounded-xl text-xs font-medium transition-all",
-                        sortBy === option ? "bg-amber text-white" : "bg-stone-100 text-stone-600 hover:bg-stone-200"
+                        "flex-1 px-2 py-2 rounded-lg text-xs font-medium transition-all",
+                        sortBy === option ? "bg-amber text-white" : "bg-cream text-stone-warm hover:bg-cream-dark"
                       )}
                     >
                       {option === 'price' ? 'Price' : option === 'name' ? 'Name' : 'Suburb'}
@@ -217,8 +225,8 @@ export function FilterSection({
 
               {/* Max Price slider */}
               <div className="mb-4">
-                <label className="block text-xs font-semibold text-stone-400 uppercase tracking-wide mb-2">
-                  Max Price: <span className="text-amber">${maxPrice}</span>
+                <label className="block text-[11px] font-semibold text-stone-warm uppercase tracking-wider mb-2">
+                  Max Price: <span className="text-amber font-bold">${maxPrice}</span>
                 </label>
                 <input
                   type="range"
@@ -229,7 +237,7 @@ export function FilterSection({
                   onChange={(e) => setMaxPrice(Number(e.target.value))}
                   className="w-full accent-amber"
                 />
-                <div className="flex justify-between text-xs text-stone-400 mt-0.5">
+                <div className="flex justify-between text-[11px] text-stone-400 mt-0.5">
                   <span>$6</span>
                   <span>$20</span>
                 </div>

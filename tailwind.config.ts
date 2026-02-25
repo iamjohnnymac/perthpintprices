@@ -34,22 +34,23 @@ const config: Config = {
   			'app': '1120px',
   		},
   		fontFamily: {
-  			heading: ['var(--font-space-grotesk)', 'sans-serif'],
+  			serif: ['var(--font-dm-serif)', 'Georgia', 'serif'],
+  			heading: ['var(--font-dm-serif)', 'Georgia', 'serif'],
   			mono: ['var(--font-jetbrains-mono)', 'monospace'],
   		},
   		colors: {
-  			// Arvo warm orange palette
-  			'amber': '#E8792B',
-  			'amber-light': '#F2A05C',
+  			// Arvo × EatClub palette
+  			'amber': '#E8820C',
+  			'amber-light': '#F5A94D',
   			'amber-dark': '#D06820',
   			'charcoal': '#1A1A1A',
-  			'cream': '#FAF7F2',
-  			'cream-dark': '#F0EBE1',
-  			'stone-warm': '#A8A29E',
-  			'beer-gold': '#E8792B',
+  			'cream': '#FDF8F0',
+  			'cream-dark': '#F5EFE4',
+  			'stone-warm': '#6B6B6B',
+  			'beer-gold': '#E8820C',
   			'beer-amber': '#D06820',
   			'beer-dark': '#1A1A1A',
-  			'gold': '#E8792B',
+  			'gold': '#E8820C',
 			// Price label colors
 			'bargain': '#22C55E',
 			'fair': '#F59E0B',

@@ -6,7 +6,7 @@ export default function FAQ() {
   const faqs = [
     {
       q: 'How accurate are the prices?',
-      a: 'Real prices from real people. Every price is verified through menus, direct calls, or community submissions. No scraping, no guessing — if we don\'t have a confirmed price, you\'ll see \"Price TBC\".',
+      a: 'Real prices from real people. Every price is verified through menus, direct calls, or community submissions. No scraping, no guessing — if we don\'t have a confirmed price, you\'ll see "Price TBC".',
     },
     {
       q: 'How often are prices updated?',
@@ -31,12 +31,11 @@ export default function FAQ() {
   ]
 
   return (
-    <section className="py-16 sm:py-20 border-t border-stone-200/60">
-      <div className="max-w-3xl mx-auto px-4 sm:px-6">
-        <h2 className="text-title text-charcoal font-heading text-center mb-4">
+    <section className="py-16 sm:py-20">
+      <div className="max-w-2xl mx-auto px-4 sm:px-6">
+        <h2 className="font-serif text-3xl sm:text-4xl text-charcoal text-center mb-10">
           Questions?
         </h2>
-        <p className="text-stone-500 text-center mb-10 text-lg">Got questions? We've got answers.</p>
         <div className="space-y-0">
           {faqs.map((faq, i) => (
             <div key={i} className="border-b border-stone-200/60">
@@ -44,7 +43,7 @@ export default function FAQ() {
                 onClick={() => setOpenIndex(openIndex === i ? null : i)}
                 className="w-full flex items-center justify-between py-5 text-left group"
               >
-                <span className="text-lg font-semibold text-charcoal group-hover:text-amber transition-colors pr-4">
+                <span className="text-base sm:text-lg font-semibold text-charcoal group-hover:text-amber transition-colors pr-4">
                   {faq.q}
                 </span>
                 <svg
@@ -55,7 +54,7 @@ export default function FAQ() {
                 </svg>
               </button>
               {openIndex === i && (
-                <div className="pb-5 text-stone-600 leading-relaxed -mt-1">
+                <div className="pb-5 text-stone-warm leading-relaxed text-sm -mt-1">
                   {faq.a}
                 </div>
               )}

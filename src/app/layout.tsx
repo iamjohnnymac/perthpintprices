@@ -1,12 +1,12 @@
 import type { Metadata, Viewport } from 'next'
-import { Inter, Space_Grotesk, JetBrains_Mono } from 'next/font/google'
+import { Inter, DM_Serif_Display, JetBrains_Mono } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import Providers from './Providers'
 import { getSiteStats } from '@/lib/supabase'
 import './globals.css'
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
-const spaceGrotesk = Space_Grotesk({ subsets: ['latin'], variable: '--font-space-grotesk' })
+const dmSerif = DM_Serif_Display({ weight: '400', subsets: ['latin'], variable: '--font-dm-serif' })
 const jetbrainsMono = JetBrains_Mono({ subsets: ['latin'], variable: '--font-jetbrains-mono' })
 
 export const viewport: Viewport = {
@@ -54,9 +54,9 @@ export default function RootLayout({
     <html lang="en">
       <head>
         <link rel="manifest" href="/manifest.json" />
-        <meta name="theme-color" content="#E8792B" />
+        <meta name="theme-color" content="#E8820C" />
       </head>
-      <body className={`${inter.variable} ${spaceGrotesk.variable} ${jetbrainsMono.variable} ${inter.className} bg-cream`}><Providers>{children}</Providers><Analytics /></body>
+      <body className={`${inter.variable} ${dmSerif.variable} ${jetbrainsMono.variable} ${inter.className}`}><Providers>{children}</Providers><Analytics /></body>
     </html>
   )
 }

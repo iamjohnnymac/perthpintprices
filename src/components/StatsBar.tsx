@@ -16,36 +16,29 @@ interface StatsBarProps {
 export default function StatsBar({
   avgPrice,
   cheapestPrice,
-  cheapestSuburb,
   cheapestSlug,
-  priciestPrice,
-  priciestSuburb,
-  priciestSlug,
   happyHourCount,
   venueCount,
 }: StatsBarProps) {
   return (
-    <div className="grid grid-cols-3 gap-3 mt-3">
-      {/* Cheapest */}
-      <Link href={`/pub/${cheapestSlug}`} className="bg-white rounded-2xl p-4 border border-stone-200/60 hover:border-amber/40 hover:shadow-sm transition-all text-center">
-        <span className="text-[10px] sm:text-xs text-stone-400 uppercase tracking-wider block">Cheapest right now</span>
-        <span className="text-green-700 font-mono font-bold text-2xl sm:text-3xl block mt-1">${cheapestPrice}</span>
-        <span className="text-[11px] text-stone-400 block mt-1">A bloody good deal</span>
-      </Link>
-
-      {/* Perth Average */}
-      <div className="bg-white rounded-2xl p-4 border border-stone-200/60 text-center">
-        <span className="text-[10px] sm:text-xs text-stone-400 uppercase tracking-wider block">Perth average</span>
-        <span className="text-charcoal font-mono font-bold text-2xl sm:text-3xl block mt-1">${avgPrice}</span>
-        <span className="text-[11px] text-stone-400 block mt-1">Based on {venueCount} venues</span>
+    <div className="flex items-center gap-3 mt-3 overflow-x-auto scrollbar-hide py-1">
+      <div className="flex items-center gap-1.5 px-3 py-1.5 bg-white rounded-full border border-stone-200/60 text-sm whitespace-nowrap shadow-sm">
+        <span className="text-stone-warm">Avg</span>
+        <span className="font-bold text-charcoal font-mono">${avgPrice}</span>
       </div>
-
-      {/* Priciest */}
-      <Link href={`/pub/${priciestSlug}`} className="bg-white rounded-2xl p-4 border border-stone-200/60 hover:border-amber/40 hover:shadow-sm transition-all text-center">
-        <span className="text-[10px] sm:text-xs text-stone-400 uppercase tracking-wider block">Most expensive</span>
-        <span className="text-red-600 font-mono font-bold text-2xl sm:text-3xl block mt-1">${priciestPrice}</span>
-        <span className="text-[11px] text-stone-400 block mt-1">Some craft places, yeah</span>
+      <Link href={`/pub/${cheapestSlug}`} className="flex items-center gap-1.5 px-3 py-1.5 bg-white rounded-full border border-stone-200/60 text-sm whitespace-nowrap shadow-sm hover:border-amber/40 transition-colors">
+        <span className="text-stone-warm">Low</span>
+        <span className="font-bold text-bargain font-mono">${cheapestPrice}</span>
       </Link>
+      <div className="flex items-center gap-1.5 px-3 py-1.5 bg-white rounded-full border border-stone-200/60 text-sm whitespace-nowrap shadow-sm">
+        <span className="text-stone-warm">Venues</span>
+        <span className="font-bold text-charcoal">{venueCount}</span>
+      </div>
+      {happyHourCount > 0 && (
+        <Link href="/happy-hour" className="flex items-center gap-1.5 px-3 py-1.5 bg-amber/10 rounded-full border border-amber/20 text-sm whitespace-nowrap hover:bg-amber/20 transition-colors">
+          <span className="text-amber font-semibold">🍻 {happyHourCount} live</span>
+        </Link>
+      )}
     </div>
   )
 }

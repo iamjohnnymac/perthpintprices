@@ -222,23 +222,21 @@ export default function Home() {
 
       {/* ═══ APP SECTION ═══ */}
       <div ref={appRef}>
-        <header className="bg-cream sticky top-0 z-[1000] shadow-[0_1px_4px_rgba(0,0,0,0.06)]">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-2 pb-2">
+        <header className="bg-white/95 backdrop-blur-sm sticky top-0 z-[1000] border-b border-stone-200/60">
+          <div className="max-w-5xl mx-auto px-4 sm:px-6 pt-3 pb-2">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 bg-amber rounded-lg flex items-center justify-center">
-                  <span className="text-white text-lg">☀</span>
-                </div>
-                <h1 className="text-lg font-bold tracking-tight leading-none font-heading text-charcoal">arvo</h1>
+                <span className="text-amber text-xl">✳</span>
+                <h1 className="font-serif text-xl text-charcoal">arvo</h1>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-3">
                 <NotificationBell />
                 <button
                   onClick={() => setShowSubmitForm(true)}
-                  className="flex-shrink-0 flex items-center gap-2 px-4 py-2 bg-charcoal hover:bg-charcoal/90 text-white rounded-full font-bold transition-all text-xs"
+                  className="flex-shrink-0 px-4 py-2 bg-charcoal hover:bg-charcoal/90 text-white rounded-full font-semibold transition-all text-xs"
                 >
-                  <span className="hidden sm:inline">+ Submit a Price</span>
-                  <span className="sm:hidden text-xs font-bold">+ Price</span>
+                  <span className="hidden sm:inline">Submit a Price</span>
+                  <span className="sm:hidden text-xs">+ Price</span>
                 </button>
               </div>
             </div>
@@ -289,7 +287,7 @@ export default function Home() {
           )}
         </header>
 
-        <div ref={contentRef} className="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-5">
+        <div ref={contentRef} className="max-w-5xl mx-auto px-4 sm:px-6 py-4 sm:py-6">
           {/* ═══ PUBS TAB ═══ */}
           {activeTab === 'pubs' && (
             <>
@@ -306,22 +304,22 @@ export default function Home() {
               </button>
 
               {showMap && (
-                <div className="mb-5 rounded-2xl overflow-hidden shadow-[0_2px_12px_rgba(0,0,0,0.06)] border border-stone-200/60 relative z-0 isolate">
+                <div className="mb-5 rounded-xl overflow-hidden shadow-sm relative z-0 isolate">
                   <Map pubs={filteredPubs} userLocation={userLocation} totalPubCount={pubs.length} />
                 </div>
               )}
 
               <div className="flex items-center justify-between mb-4">
-                <p className="text-stone-600 text-sm">
-                  Showing <span className="text-amber font-semibold">{showAllPubs ? filteredPubs.length : Math.min(INITIAL_PUB_COUNT, filteredPubs.length)}</span> of {filteredPubs.length} venues
+                <p className="text-stone-warm text-sm">
+                  Displaying <span className="font-semibold text-charcoal">{showAllPubs ? filteredPubs.length : Math.min(INITIAL_PUB_COUNT, filteredPubs.length)}</span> of {filteredPubs.length} venues
                 </p>
                 {filteredPubs.length > INITIAL_PUB_COUNT && (
                   <button
                     onClick={() => setShowAllPubs(!showAllPubs)}
-                    className="text-sm font-medium text-charcoal hover:text-amber transition-colors flex items-center gap-1"
+                    className="text-sm font-semibold text-charcoal hover:text-amber transition-colors flex items-center gap-1"
                   >
-                    {showAllPubs ? 'Show Less' : `Show All ${filteredPubs.length}`}
-                    <span className={`inline-block transition-transform ${showAllPubs ? 'rotate-180' : ''}`}>&#9660;</span>
+                    {showAllPubs ? 'Show Less' : `View All`}
+                    <svg className={`w-4 h-4 transition-transform ${showAllPubs ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" /></svg>
                   </button>
                 )}
               </div>
@@ -344,21 +342,21 @@ export default function Home() {
           {activeTab === 'explore' && (
             <div className="space-y-3 sm:space-y-4">
               {/* Featured: Pub Golf, Pint Crawl, Leaderboard */}
-              <div className="grid grid-cols-3 gap-2 sm:gap-3">
-                <Link href="/pub-golf" className="bg-white rounded-2xl border border-stone-200/60 p-3 sm:p-4 hover:border-amber/40 hover:shadow-md transition-all active:scale-[0.98] group">
-                  <div className="text-xl sm:text-2xl mb-1.5">⛳</div>
-                  <h3 className="font-bold font-heading text-charcoal text-xs sm:text-sm group-hover:text-amber transition-colors">Pub Golf</h3>
-                  <p className="text-[10px] sm:text-xs text-stone-500 mt-0.5">Score your crawl</p>
+              <div className="grid grid-cols-3 gap-3 sm:gap-4">
+                <Link href="/pub-golf" className="bg-white rounded-xl p-4 sm:p-5 shadow-sm hover:shadow-md transition-all active:scale-[0.98] group text-center">
+                  <div className="text-2xl sm:text-3xl mb-2">⛳</div>
+                  <h3 className="font-serif text-charcoal text-sm sm:text-base group-hover:text-amber transition-colors">Pub Golf</h3>
+                  <p className="text-[11px] text-stone-warm mt-1">Score your crawl</p>
                 </Link>
-                <Link href="/pint-crawl" className="bg-white rounded-2xl border border-stone-200/60 p-3 sm:p-4 hover:border-amber/40 hover:shadow-md transition-all active:scale-[0.98] group">
-                  <div className="text-xl sm:text-2xl mb-1.5">🗺️</div>
-                  <h3 className="font-bold font-heading text-charcoal text-xs sm:text-sm group-hover:text-amber transition-colors">Pint Crawl</h3>
-                  <p className="text-[10px] sm:text-xs text-stone-500 mt-0.5">Plan your route</p>
+                <Link href="/pint-crawl" className="bg-white rounded-xl p-4 sm:p-5 shadow-sm hover:shadow-md transition-all active:scale-[0.98] group text-center">
+                  <div className="text-2xl sm:text-3xl mb-2">🗺️</div>
+                  <h3 className="font-serif text-charcoal text-sm sm:text-base group-hover:text-amber transition-colors">Pint Crawl</h3>
+                  <p className="text-[11px] text-stone-warm mt-1">Plan your route</p>
                 </Link>
-                <Link href="/leaderboard" className="bg-white rounded-2xl border border-stone-200/60 p-3 sm:p-4 hover:border-amber/40 hover:shadow-md transition-all active:scale-[0.98] group">
-                  <div className="text-xl sm:text-2xl mb-1.5">🏆</div>
-                  <h3 className="font-bold font-heading text-charcoal text-xs sm:text-sm group-hover:text-amber transition-colors">Leaderboard</h3>
-                  <p className="text-[10px] sm:text-xs text-stone-500 mt-0.5">Top scouts</p>
+                <Link href="/leaderboard" className="bg-white rounded-xl p-4 sm:p-5 shadow-sm hover:shadow-md transition-all active:scale-[0.98] group text-center">
+                  <div className="text-2xl sm:text-3xl mb-2">🏆</div>
+                  <h3 className="font-serif text-charcoal text-sm sm:text-base group-hover:text-amber transition-colors">Leaderboard</h3>
+                  <p className="text-[11px] text-stone-warm mt-1">Top scouts</p>
                 </Link>
               </div>
               <BeerWeather pubs={pubs} userLocation={userLocation} />
@@ -392,10 +390,10 @@ export default function Home() {
           )}
 
           {activeTab === 'pubs' && filteredPubs.length === 0 && (
-            <div className="text-center py-12 bg-white rounded-2xl border border-stone-200/60">
-              <div className="text-5xl mb-3">{showHappyHourOnly ? '\u{1F37B}' : '\u{1F50D}'}</div>
-              <h3 className="text-lg font-bold text-stone-700 mb-2">{showHappyHourOnly ? 'No pubs with happy hour info yet' : 'No pubs found'}</h3>
-              <p className="text-stone-500 text-sm">{showHappyHourOnly ? 'We\u2019re building our happy hour database \u2014 submit yours!' : 'Try adjusting your filters'}</p>
+            <div className="text-center py-16 bg-white rounded-xl shadow-sm">
+              <div className="text-5xl mb-4">{showHappyHourOnly ? '\u{1F37B}' : '\u{1F50D}'}</div>
+              <h3 className="font-serif text-xl text-charcoal mb-2">{showHappyHourOnly ? 'No pubs with happy hour info yet' : 'No pubs found'}</h3>
+              <p className="text-stone-warm text-sm">{showHappyHourOnly ? 'We\u2019re building our happy hour database \u2014 submit yours!' : 'Try adjusting your filters'}</p>
             </div>
           )}
         </div>

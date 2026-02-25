@@ -12,15 +12,15 @@ export default function SocialProof({ venueCount, suburbCount, avgPrice }: Socia
     { value: '100%', label: 'Verified prices' },
   ]
   return (
-    <section className="py-16 sm:py-20 border-t border-stone-200/60 bg-cream-dark">
-      <div className="max-w-5xl mx-auto px-4 sm:px-6">
-        <p className="text-center text-sm font-semibold text-amber uppercase tracking-wider mb-2">Community-driven since 2024</p>
-        <p className="text-center text-stone-500 mb-10 text-lg">Every price on Arvo comes from someone who was actually there.</p>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 text-center">
+    <section className="py-16 sm:py-20 bg-charcoal text-white">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
+        <p className="text-amber text-sm font-semibold uppercase tracking-wider mb-2">Community-driven since 2024</p>
+        <p className="text-stone-400 mb-12 text-lg">Every price on Arvo comes from someone who was actually there.</p>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-8">
           {proofs.map((p) => (
             <div key={p.label}>
-              <div className="text-3xl sm:text-4xl font-bold text-charcoal font-heading">{p.value}</div>
-              <div className="text-stone-500 text-sm mt-1">{p.label}</div>
+              <div className="font-serif text-3xl sm:text-4xl text-white mb-1">{p.value}</div>
+              <div className="text-stone-400 text-sm">{p.label}</div>
             </div>
           ))}
         </div>
