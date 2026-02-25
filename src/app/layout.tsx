@@ -1,11 +1,11 @@
 import type { Metadata, Viewport } from 'next'
-import { Inter, DM_Serif_Display, JetBrains_Mono } from 'next/font/google'
+import { Plus_Jakarta_Sans, DM_Serif_Display, JetBrains_Mono } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import Providers from './Providers'
 import { getSiteStats } from '@/lib/supabase'
 import './globals.css'
 
-const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
+const plusJakarta = Plus_Jakarta_Sans({ subsets: ['latin'], variable: '--font-plus-jakarta', weight: ['300', '400', '500', '600', '700', '800'] })
 const dmSerif = DM_Serif_Display({ weight: '400', subsets: ['latin'], variable: '--font-dm-serif' })
 const jetbrainsMono = JetBrains_Mono({ subsets: ['latin'], variable: '--font-jetbrains-mono' })
 
@@ -56,7 +56,7 @@ export default function RootLayout({
         <link rel="manifest" href="/manifest.json" />
         <meta name="theme-color" content="#E8820C" />
       </head>
-      <body className={`${inter.variable} ${dmSerif.variable} ${jetbrainsMono.variable} ${inter.className}`}><Providers>{children}</Providers><Analytics /></body>
+      <body className={`${plusJakarta.variable} ${dmSerif.variable} ${jetbrainsMono.variable} ${plusJakarta.className}`}><Providers>{children}</Providers><Analytics /></body>
     </html>
   )
 }

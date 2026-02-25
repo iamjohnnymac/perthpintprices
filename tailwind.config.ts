@@ -34,8 +34,9 @@ const config: Config = {
   			'app': '1120px',
   		},
   		fontFamily: {
+  			sans: ['var(--font-plus-jakarta)', 'system-ui', 'sans-serif'],
   			serif: ['var(--font-dm-serif)', 'Georgia', 'serif'],
-  			heading: ['var(--font-dm-serif)', 'Georgia', 'serif'],
+  			heading: ['var(--font-plus-jakarta)', 'system-ui', 'sans-serif'],
   			mono: ['var(--font-jetbrains-mono)', 'monospace'],
   		},
   		colors: {
