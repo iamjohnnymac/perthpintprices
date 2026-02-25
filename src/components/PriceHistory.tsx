@@ -88,7 +88,7 @@ export default function PriceHistory({ pubId, currentPrice }: PriceHistoryProps)
   })
   const fillPath = `M${padding},${h - padding} L${fillPoints.join(' L')} L${w - padding},${h - padding} Z`
 
-  const lineColor = trendUp ? '#dc2626' : trendFlat ? '#D4A017' : '#16a34a'
+  const lineColor = trendUp ? '#dc2626' : trendFlat ? '#E8820C' : '#16a34a'
   const fillColor = trendUp ? 'rgba(220,38,38,0.08)' : trendFlat ? 'rgba(212,160,23,0.08)' : 'rgba(22,163,74,0.08)'
 
   return (
