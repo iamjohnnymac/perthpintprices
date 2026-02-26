@@ -130,15 +130,15 @@ export default function BeerWeather({ pubs, userLocation }: BeerWeatherProps) {
   useEffect(() => {
     async function fetchWeather() {
       try {
-        const res = await fetch(
-          'https://api.open-meteo.com/v1/forecast?latitude=-31.9505&longitude=115.8605&current=temperature_2m,weathercode,windspeed_10m,relative_humidity_2m&timezone=Australia%2FPerth'
-        )
+        // Fetch from our BOM proxy API (Bureau of Meteorology data)
+        const res = await fetch('/api/weather')
         const data = await res.json()
+        if (data.error) throw new Error(data.error)
         setWeather({
-          temperature: data.current.temperature_2m,
-          weatherCode: data.current.weathercode,
-          windSpeed: data.current.windspeed_10m,
-          humidity: data.current.relative_humidity_2m,
+          temperature: data.temperature,
+          weatherCode: data.weatherCode,
+          windSpeed: data.windSpeed,
+          humidity: data.humidity,
         })
       } catch {
         setError(true)
@@ -205,7 +205,7 @@ export default function BeerWeather({ pubs, userLocation }: BeerWeatherProps) {
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="text-base sm:text-lg font-bold font-heading text-stone-800 flex items-center">BEER WEATHER<InfoTooltip text="Live conditions from Open-Meteo for Perth CBD, updated on each page load. Pub recommendations are ranked by outdoor seating suitability based on temperature, wind, and UV." /></h3>
+                <h3 className="text-base sm:text-lg font-bold font-heading text-stone-800 flex items-center">BEER WEATHER<InfoTooltip text="Live conditions from the Bureau of Meteorology (BOM) for Perth, updated every 30 minutes. Pub recommendations are ranked by outdoor suitability based on temperature, wind, and conditions." /></h3>
                 {isWindy && (
                   <Badge className="bg-sky-100 text-sky-700 border-sky-200 text-[10px] px-1.5 py-0">
                     ⟳ Windy!
