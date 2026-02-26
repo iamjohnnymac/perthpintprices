@@ -71,6 +71,7 @@ export default function Home() {
   const [scrolledPastHero, setScrolledPastHero] = useState(false)
   const [showMap, setShowMap] = useState(true)
   const heroRef = useRef<HTMLDivElement>(null)
+  const headerRef = useRef<HTMLElement>(null)
   const contentRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -107,20 +108,36 @@ export default function Home() {
     }
   }, [])
 
-  // Unified nav: expand when scrolled past hero
+  // Unified nav: expand when scrolled past hero (LATCHES — never collapses back)
   useEffect(() => {
     const handleScroll = () => {
-      if (heroRef.current) {
+      if (heroRef.current && !scrolledPastHero) {
         const heroBottom = heroRef.current.getBoundingClientRect().bottom
-        setScrolledPastHero(heroBottom <= 64)
+        if (heroBottom <= 64) setScrolledPastHero(true)
       }
     }
     window.addEventListener('scroll', handleScroll, { passive: true })
     handleScroll()
     return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
+  }, [scrolledPastHero])
 
   const isNavExpanded = scrolledPastHero
+
+  // Dynamically set --nav-height for FilterSection positioning
+  useEffect(() => {
+    const updateNavHeight = () => {
+      if (headerRef.current) {
+        document.documentElement.style.setProperty(
+          '--nav-height',
+          `${headerRef.current.offsetHeight}px`
+        )
+      }
+    }
+    updateNavHeight()
+    const observer = new ResizeObserver(updateNavHeight)
+    if (headerRef.current) observer.observe(headerRef.current)
+    return () => observer.disconnect()
+  }, [isNavExpanded])
 
   async function fetchCrowdReports() {
     const reports = await getCrowdLevels()
@@ -210,7 +227,7 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-cream">
       {/* ═══ UNIFIED NAV — one component, expands on scroll ═══ */}
-      <header className="bg-white/95 backdrop-blur-sm sticky top-0 z-[1000] border-b border-stone-200/60 transition-all duration-200">
+      <header ref={headerRef} className="bg-white/95 backdrop-blur-sm sticky top-0 z-[1000] border-b border-stone-200/60 transition-all duration-200">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 pt-2 pb-1">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
