@@ -1,6 +1,7 @@
 'use client'
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import SubPageNav from '@/components/SubPageNav'
 
 interface Reporter {
   reporter_name: string
@@ -50,27 +51,7 @@ export default function LeaderboardClient() {
 
   return (
     <div className="min-h-screen bg-cream">
-      <header className="bg-cream border-b border-stone-200/60">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <Link href="/" className="text-stone-400 hover:text-charcoal transition-colors">
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
-                </svg>
-              </Link>
-              <div>
-                <h1 className="text-xl font-bold font-heading text-charcoal">🏆 Price Scout Leaderboard</h1>
-                <p className="text-xs text-stone-500">Perth&apos;s top price reporters</p>
-              </div>
-            </div>
-            <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-              <div className="w-7 h-7 bg-orange rounded-xl flex items-center justify-center"><span className="text-white text-sm">☀</span></div>
-              <span className="text-sm font-bold font-heading text-charcoal">arvo</span>
-            </Link>
-          </div>
-        </div>
-      </header>
+      <SubPageNav title="Leaderboard" subtitle="Perth's top price reporters" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-6 space-y-4">
         {/* How it works */}

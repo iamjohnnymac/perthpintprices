@@ -78,7 +78,7 @@ export default function PubListView({
     const isActive = sortKey === field
     return (
       <th
-        className={`py-3 px-3 sm:px-4 text-[11px] font-semibold uppercase tracking-wider cursor-pointer select-none hover:text-amber transition-colors ${isActive ? 'text-amber' : 'text-stone-500'} ${className}`}
+        className={`py-2.5 px-3 sm:px-4 text-[11px] font-semibold uppercase tracking-wider cursor-pointer select-none hover:text-amber transition-colors ${isActive ? 'text-amber' : 'text-stone-500'} ${className}`}
         onClick={() => handleSort(field)}
       >
         <span className="inline-flex items-center gap-1">
@@ -101,7 +101,7 @@ export default function PubListView({
             <SortHeader label="Beer" field="beer" className="text-left hidden sm:table-cell" />
             <SortHeader label="Price" field="price" className="text-right" />
             <th className="text-left py-3 px-3 text-[11px] font-semibold text-stone-500 uppercase tracking-wider hidden md:table-cell">Happy Hour</th>
-            <th className="text-center py-3 px-3 text-[11px] font-semibold text-stone-500 uppercase tracking-wider">Crowd</th>
+            <th className="text-center py-2.5 px-3 text-[11px] font-semibold text-stone-500 uppercase tracking-wider w-12"></th>
           </tr>
         </thead>
         <tbody>
@@ -114,9 +114,9 @@ export default function PubListView({
                 className="border-b border-stone-100/80 hover:bg-cream/50 transition-colors cursor-pointer"
                 onClick={() => router.push(`/pub/${pub.slug}`)}
               >
-                <td className="py-3 px-2 sm:px-3">
+                <td className="py-2.5 px-2 sm:px-3">
                   <div className="flex items-center gap-2">
-                    <span className="text-[11px] text-stone-300 w-5 text-right tabular-nums">{index + 1}</span>
+                    <span className="text-xs font-medium text-stone-400 w-5 text-right tabular-nums">{index + 1}</span>
                     <div>
                       <div className="flex items-center gap-2">
                         <a
@@ -131,31 +131,31 @@ export default function PubListView({
                             <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
                           </svg>
                         </a>
-                        <Link href={`/pub/${pub.slug}`} className="font-semibold text-charcoal text-sm hover:text-amber transition-colors">{pub.name}</Link>
+                        <Link href={`/pub/${pub.slug}`} className="font-semibold text-charcoal text-base hover:text-amber transition-colors">{pub.name}</Link>
                         <WatchlistButton slug={pub.slug} name={pub.name} suburb={pub.suburb} size="sm" />
                       </div>
                       <p className="text-xs text-stone-warm sm:hidden">{pub.suburb}{userLocation && ` · ${formatDistance(getDistanceKm(userLocation.lat, userLocation.lng, pub.lat, pub.lng))}`}</p>
                     </div>
                   </div>
                 </td>
-                <td className="py-3 px-3 text-sm text-stone-warm hidden sm:table-cell">
+                <td className="py-2.5 px-3 text-sm text-stone-warm hidden sm:table-cell">
                   {pub.suburb}
                   {userLocation && <span className="text-stone-400 text-xs ml-1">· {formatDistance(getDistanceKm(userLocation.lat, userLocation.lng, pub.lat, pub.lng))}</span>}
                 </td>
-                <td className="py-3 px-3 hidden sm:table-cell">
+                <td className="py-2.5 px-3 hidden sm:table-cell">
                   <span className="text-xs text-stone-warm truncate max-w-[120px] block">
                     {pub.beerType || '—'}
                   </span>
                 </td>
-                <td className={`py-3 px-2 sm:px-3 text-right font-bold font-mono text-lg whitespace-nowrap ${getPriceTextColor(pub.price)}`}>
+                <td className={`py-2.5 px-2 sm:px-3 text-right font-bold font-mono text-lg whitespace-nowrap ${getPriceTextColor(pub.price)}`}>
                   {pub.isHappyHourNow && pub.regularPrice !== null && pub.regularPrice !== pub.price && (
                     <span className="text-xs text-stone-400 line-through font-normal mr-1">${pub.regularPrice.toFixed(2)}</span>
                   )}
                   {pub.price !== null ? `$${pub.price.toFixed(2)}` : 'TBC'}
                 </td>
-                <td className="py-3 px-3 hidden md:table-cell">
+                <td className="py-2.5 px-3 hidden md:table-cell">
                   {pub.happyHour ? (
-                    <span className={`text-xs ${
+                    <span className={`text-sm ${
                       happyHourStatus.isActive ? 'text-amber font-bold' :
                       happyHourStatus.isToday ? 'text-amber-dark font-semibold' :
                       'text-stone-warm'
@@ -166,7 +166,7 @@ export default function PubListView({
                     <span className="text-xs text-stone-400">—</span>
                   )}
                 </td>
-                <td className="py-3 px-3 text-center">
+                <td className="py-2.5 px-3 text-center">
                   {crowdReport ? (
                     <span className="text-sm" title={`${crowdReport.minutes_ago}m ago`}>
                       {CROWD_LEVELS[crowdReport.crowd_level].emoji}
@@ -174,9 +174,10 @@ export default function PubListView({
                   ) : (
                     <button
                       onClick={(e) => { e.stopPropagation(); onCrowdReport(pub); }}
-                      className="text-xs text-stone-400 hover:text-amber"
+                      className="text-stone-300 hover:text-amber transition-colors"
+                      title="Report crowd level"
                     >
-                      Report
+                      <svg className="w-4 h-4 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5"><path strokeLinecap="round" strokeLinejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128H5.228A2 2 0 013 17.208V4.792a2 2 0 012.228-1.92L15 4.792m0 14.336V4.792" /></svg>
                     </button>
                   )}
                 </td>

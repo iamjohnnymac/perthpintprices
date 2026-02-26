@@ -17,7 +17,7 @@ const tabs: { id: TabId; label: string }[] = [
 
 export default function TabBar({ activeTab, onTabChange }: TabBarProps) {
   return (
-    <div className="mt-3 mb-1">
+    <div className="mt-2 mb-1">
       <div className="flex gap-1">
         {tabs.map((tab) => {
           const isActive = activeTab === tab.id

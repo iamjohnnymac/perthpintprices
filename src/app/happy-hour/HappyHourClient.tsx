@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback, useMemo } from 'react'
 import Link from 'next/link'
+import SubPageNav from '@/components/SubPageNav'
 import { getPubs } from '@/lib/supabase'
 import { Pub } from '@/types/pub'
 import { getDistanceKm, formatDistance } from '@/lib/location'
@@ -84,33 +85,14 @@ export default function HappyHourClient() {
 
   return (
     <div className="min-h-screen bg-cream">
-      {/* Header */}
-      <div className="bg-white border-b border-stone-200/60">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
-          <Link
-            href="/"
-            className="flex items-center gap-3 hover:opacity-80 transition-opacity"
-          >
-            <div className="w-8 h-8 bg-orange rounded-xl flex items-center justify-center"><span className="text-white text-lg">☀</span></div>
-            <span className="text-xl font-bold tracking-tight font-heading text-charcoal">
-              arvo
-            </span>
-          </Link>
-          <Link
-            href="/"
-            className="px-4 py-2 text-sm font-medium text-charcoal hover:text-orange transition-colors"
-          >
-            ← Back to all pubs
-          </Link>
-        </div>
-      </div>
+      <SubPageNav title="Happy Hours" />
 
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4 sm:py-5">
         {/* Page Title */}
-        <div className="text-center mb-4">
+        <div className="text-center mb-3">
           <div className="inline-flex items-center gap-2 mb-2">
             <span className="text-3xl sm:text-4xl">🍻</span>
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-charcoal font-heading">
+            <h1 className="text-3xl sm:text-4xl font-bold text-charcoal font-heading">
               Happy Hours Live
             </h1>
           </div>
@@ -180,7 +162,7 @@ export default function HappyHourClient() {
 
         {/* Empty State */}
         {!loading && pubs.length === 0 && (
-          <div className="text-center py-8 sm:py-10">
+          <div className="text-center py-6 sm:py-8">
             <div className="text-5xl mb-4">🕐</div>
             <h2 className="text-xl sm:text-2xl font-bold text-charcoal mb-3 font-heading">
               No happy hours running right now
@@ -341,7 +323,7 @@ export default function HappyHourClient() {
 
         {/* Footer CTA */}
         {!loading && pubs.length > 0 && (
-          <div className="text-center mt-6">
+          <div className="text-center mt-4">
             <p className="text-stone-400 text-sm mb-4">
               Want to see all venues and compare prices?
             </p>

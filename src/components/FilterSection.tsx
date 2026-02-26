@@ -76,7 +76,7 @@ export function FilterSection({
   }
 
   return (
-    <div className="border-t border-stone-200/60 bg-white/95 backdrop-blur-sm">
+    <div className="sticky top-[var(--nav-height,120px)] z-[999] border-t border-stone-200/60 bg-white/95 backdrop-blur-sm">
       {/* EatClub-style toolbar: SEARCH | NEARBY | FILTER */}
       <div className="max-w-5xl mx-auto px-4 sm:px-6 py-3 flex items-center gap-2">
         {/* Search */}

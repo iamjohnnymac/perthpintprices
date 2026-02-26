@@ -45,9 +45,9 @@ export default function HappyHourPreview({ pubs }: HappyHourPreviewProps) {
   }
 
   return (
-    <div className="w-full max-w-4xl mx-auto mt-3">
-      <div className="bg-white/80 border border-stone-200/60 rounded-2xl px-4 py-3">
-        <div className="flex items-center gap-2 mb-3 px-1">
+    <div className="w-full max-w-4xl mx-auto mt-2">
+      <div className="bg-white/80 border border-stone-200/60 rounded-2xl px-3 py-2.5">
+        <div className="flex items-center gap-2 mb-2 px-1">
           <span className="text-lg">⚡</span>
           <span className="text-charcoal font-semibold text-sm">
             {activeCount > 0 ? `${activeCount} happy hours live` : "Happy hour's coming up"}
@@ -56,12 +56,12 @@ export default function HappyHourPreview({ pubs }: HappyHourPreviewProps) {
             · {hhPubs.length} venues counting down
           </span>
         </div>
-        <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide snap-x snap-mandatory">
+        <div className="flex gap-3 overflow-x-auto pb-1.5 scrollbar-hide snap-x snap-mandatory">
           {hhPubs.map(({ pub, isActive, minutesUntil }) => (
             <Link
               key={pub.slug}
               href={`/pub/${pub.slug}`}
-              className="flex-shrink-0 snap-start bg-cream rounded-xl px-4 py-3 border border-stone-200/40 hover:border-orange/30 hover:shadow-sm transition-all min-w-[180px] group"
+              className="flex-shrink-0 snap-start bg-cream rounded-xl px-3 py-2.5 border border-stone-200/40 hover:border-orange/30 hover:shadow-sm transition-all min-w-[180px] group"
             >
               <p className="font-semibold text-charcoal text-sm truncate group-hover:text-orange transition-colors">{pub.name}</p>
               <div className="flex items-center gap-2 mt-1.5">

@@ -14,7 +14,6 @@ import TabBar, { TabId } from '@/components/TabBar'
 import { FilterSection } from '@/components/FilterSection'
 import PubListView from '@/components/PubListView'
 import PubCardsView from '@/components/PubCardsView'
-import PintIndexCompact from '@/components/PintIndexCompact'
 import PintIndex from '@/components/PintIndex'
 import SuburbLeague from '@/components/SuburbLeague'
 import TonightsMoves from '@/components/TonightsMoves'
@@ -212,7 +211,7 @@ export default function Home() {
     <main className="min-h-screen bg-cream">
       {/* ═══ UNIFIED NAV — one component, expands on scroll ═══ */}
       <header className="bg-white/95 backdrop-blur-sm sticky top-0 z-[1000] border-b border-stone-200/60 transition-all duration-200">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 pt-3 pb-2">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 pt-2 pb-1">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <span className="text-amber text-xl">✳</span>
@@ -254,29 +253,6 @@ export default function Home() {
           )}
         </div>
 
-        {isNavExpanded && activeTab === 'pubs' && (
-          <FilterSection
-            viewMode={viewMode}
-            setViewMode={setViewMode}
-            searchTerm={searchTerm}
-            setSearchTerm={setSearchTerm}
-            selectedSuburb={selectedSuburb}
-            setSelectedSuburb={setSelectedSuburb}
-            suburbs={suburbs}
-            showHappyHourOnly={showHappyHourOnly}
-            setShowHappyHourOnly={setShowHappyHourOnly}
-            showMiniMaps={showMiniMaps}
-            setShowMiniMaps={setShowMiniMaps}
-            sortBy={sortBy}
-            setSortBy={setSortBy}
-            maxPrice={maxPrice}
-            setMaxPrice={setMaxPrice}
-            showMoreFilters={showMoreFilters}
-            setShowMoreFilters={setShowMoreFilters}
-            stats={stats}
-            hasLocation={!!userLocation}
-          />
-        )}
       </header>
 
       {/* ═══ HERO — compact branding moment ═══ */}
@@ -284,13 +260,36 @@ export default function Home() {
         <HeroSection pubs={pubs} />
       </div>
 
+      {/* ═══ FILTER BAR — below header, above content ═══ */}
+      {activeTab === 'pubs' && (
+        <FilterSection
+          viewMode={viewMode}
+          setViewMode={setViewMode}
+          searchTerm={searchTerm}
+          setSearchTerm={setSearchTerm}
+          selectedSuburb={selectedSuburb}
+          setSelectedSuburb={setSelectedSuburb}
+          suburbs={suburbs}
+          showHappyHourOnly={showHappyHourOnly}
+          setShowHappyHourOnly={setShowHappyHourOnly}
+          showMiniMaps={showMiniMaps}
+          setShowMiniMaps={setShowMiniMaps}
+          sortBy={sortBy}
+          setSortBy={setSortBy}
+          maxPrice={maxPrice}
+          setMaxPrice={setMaxPrice}
+          showMoreFilters={showMoreFilters}
+          setShowMoreFilters={setShowMoreFilters}
+          stats={stats}
+          hasLocation={!!userLocation}
+        />
+      )}
+
       {/* ═══ CONTENT ═══ */}
       <div ref={contentRef} className="max-w-5xl mx-auto px-4 sm:px-6 py-3 sm:py-4">
         {/* ═══ PUBS TAB ═══ */}
         {activeTab === 'pubs' && (
           <>
-            <PintIndexCompact pubs={pubs} filteredPubs={filteredPubs} onViewMore={() => setActiveTab('market')} />
-
             <MyLocals pubs={pubs} userLocation={userLocation} />
 
             <button
@@ -302,7 +301,7 @@ export default function Home() {
             </button>
 
             {showMap && (
-              <div className="mb-4 rounded-xl overflow-hidden shadow-sm relative z-0 isolate">
+              <div className="mb-3 rounded-xl overflow-hidden shadow-sm relative z-0 isolate">
                 <Map pubs={filteredPubs} userLocation={userLocation} totalPubCount={pubs.length} />
               </div>
             )}

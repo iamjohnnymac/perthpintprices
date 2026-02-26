@@ -21,7 +21,7 @@ export default function StatsBar({
   venueCount,
 }: StatsBarProps) {
   return (
-    <div className="flex items-center gap-3 mt-3 overflow-x-auto scrollbar-hide py-1">
+    <div className="flex items-center justify-center gap-3 mt-2 overflow-x-auto scrollbar-hide py-1">
       <div className="flex items-center gap-1.5 px-3 py-1.5 bg-white rounded-full border border-stone-200/60 text-sm whitespace-nowrap shadow-sm">
         <span className="text-stone-warm">Avg</span>
         <span className="font-bold text-charcoal font-mono">${avgPrice}</span>

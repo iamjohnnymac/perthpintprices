@@ -87,13 +87,18 @@ export default function PubDetailClient({ pub, nearbyPubs, avgPrice }: PubDetail
     <div className="min-h-screen bg-cream">
       {/* Navigation */}
       <div className="bg-white/95 backdrop-blur-sm border-b border-stone-200/60 sticky top-0 z-50">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2 text-stone-warm hover:text-charcoal transition-colors text-sm">
-            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M19 12H5M12 19l-7-7 7-7"/>
-            </svg>
-            Back
-          </Link>
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 py-2.5 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <Link href="/" className="flex items-center gap-1.5 text-stone-warm hover:text-charcoal transition-colors text-sm">
+              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M19 12H5M12 19l-7-7 7-7"/>
+              </svg>
+            </Link>
+            <Link href="/" className="flex items-center gap-1.5">
+              <span className="text-amber text-lg">✳</span>
+              <span className="font-serif text-lg text-charcoal">arvo</span>
+            </Link>
+          </div>
           <div className="flex items-center gap-1">
             <WatchlistButton slug={pub.slug} name={pub.name} suburb={pub.suburb} size="md" />
             <button onClick={sharePub} className="text-stone-400 hover:text-amber transition-colors p-2" title="Share this pub">
@@ -106,7 +111,7 @@ export default function PubDetailClient({ pub, nearbyPubs, avgPrice }: PubDetail
         </div>
       </div>
 
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-4 space-y-4">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-3 space-y-3">
         {/* Breadcrumb */}
         <nav className="flex items-center gap-2 text-sm text-stone-warm">
           <Link href="/" className="hover:text-amber transition-colors">Home</Link>
@@ -117,9 +122,9 @@ export default function PubDetailClient({ pub, nearbyPubs, avgPrice }: PubDetail
         </nav>
 
         {/* Two-column layout */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 items-start">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 items-start">
           {/* Left column — info */}
-          <div className="space-y-4">
+          <div className="space-y-3">
             {/* Name + vibe */}
             <div>
               <h1 className="font-serif text-3xl sm:text-4xl text-charcoal leading-tight">
@@ -136,7 +141,7 @@ export default function PubDetailClient({ pub, nearbyPubs, avgPrice }: PubDetail
             </div>
 
             {/* Price block — EatClub style */}
-            <div className="bg-white rounded-xl p-5 shadow-sm">
+            <div className="bg-white rounded-xl p-4 shadow-sm">
               <div className="flex items-end justify-between">
                 <div>
                   <p className="text-[11px] font-semibold text-stone-warm uppercase tracking-wider mb-1">Pint Price</p>
@@ -292,7 +297,7 @@ export default function PubDetailClient({ pub, nearbyPubs, avgPrice }: PubDetail
 
         {/* Nearby Pubs */}
         {nearbyPubs.length > 0 && (
-          <div className="space-y-3 mt-8">
+          <div className="space-y-3 mt-5">
             <h2 className="font-serif text-2xl text-charcoal">
               More in {pub.suburb}
             </h2>
@@ -325,7 +330,7 @@ export default function PubDetailClient({ pub, nearbyPubs, avgPrice }: PubDetail
         )}
 
         {/* Footer note */}
-        <div className="text-center py-4 text-xs text-stone-400">
+        <div className="text-center py-3 text-xs text-stone-400">
           <p>Data sourced from verified pub menus and community reports.</p>
 
         </div>
