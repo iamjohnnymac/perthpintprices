@@ -182,21 +182,35 @@ export default function SunsetSippers({ pubs, userLocation }: SunsetSippersProps
   const sunX = arcCenterX + arcRx * Math.cos(sunAngle)
   const sunY = arcCenterY - arcRy * Math.sin(sunAngle)
 
+  // Status icons as clean SVGs (emojis render pixelated on some platforms)
+  const SunIcon = () => (
+    <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="14" cy="14" r="6" fill="#F59E0B"/>{[0,45,90,135,180,225,270,315].map(a=><line key={a} x1="14" y1="3" x2="14" y2="6" stroke="#F59E0B" strokeWidth="2" strokeLinecap="round" transform={`rotate(${a} 14 14)`}/>)}</svg>
+  )
+  const SunsetIcon = () => (
+    <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><defs><linearGradient id="ss" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#F59E0B"/><stop offset="100%" stopColor="#EA580C"/></linearGradient></defs><path d="M4 18h20" stroke="#D97706" strokeWidth="1.5" strokeLinecap="round"/><path d="M7 18a7 7 0 0114 0" fill="url(#ss)" opacity="0.3"/><circle cx="14" cy="14" r="4.5" fill="url(#ss)"/>{[0,45,90,135].map(a=><line key={a} x1="14" y1="6" x2="14" y2="8.5" stroke="#F59E0B" strokeWidth="1.5" strokeLinecap="round" transform={`rotate(${a} 14 14)`}/>)}</svg>
+  )
+  const DuskIcon = () => (
+    <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><defs><linearGradient id="dk" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#F97316"/><stop offset="100%" stopColor="#DC2626"/></linearGradient></defs><path d="M4 20h20" stroke="#9A3412" strokeWidth="1.5" strokeLinecap="round"/><path d="M8 20a6 6 0 0112 0" fill="url(#dk)" opacity="0.25"/><circle cx="14" cy="17" r="3.5" fill="url(#dk)"/><line x1="14" y1="10" x2="14" y2="12" stroke="#F97316" strokeWidth="1.5" strokeLinecap="round"/><line x1="9" y1="12" x2="10.5" y2="13.5" stroke="#F97316" strokeWidth="1.5" strokeLinecap="round"/><line x1="19" y1="12" x2="17.5" y2="13.5" stroke="#F97316" strokeWidth="1.5" strokeLinecap="round"/></svg>
+  )
+  const MoonIcon = () => (
+    <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><path d="M18.5 6.5a8 8 0 11-9 13 8 8 0 009-13z" fill="#7C3AED" opacity="0.15"/><path d="M18 7a7 7 0 11-8 11.5A5.5 5.5 0 0018 7z" fill="#A78BFA"/></svg>
+  )
+
   // Status message
   let statusMessage = ''
-  let statusEmoji = E.sun
+  let StatusIcon = SunIcon
   if (isSunset) {
     statusMessage = 'Sunset is happening RIGHT NOW!'
-    statusEmoji = E.sunset
+    StatusIcon = SunsetIcon
   } else if (isGoldenHour) {
     statusMessage = `Golden hour! Sunset in ${getTimeUntil(sunTimes.sunset, now)}`
-    statusEmoji = E.cityscape_dusk
+    StatusIcon = DuskIcon
   } else if (isNighttime) {
     statusMessage = 'After dark ' + E.dash + ' plan tomorrow\'s sunset sesh'
-    statusEmoji = E.crescent_moon
+    StatusIcon = MoonIcon
   } else {
     statusMessage = `Sunset in ${getTimeUntil(sunTimes.sunset, now)}`
-    statusEmoji = E.sun
+    StatusIcon = SunIcon
   }
 
   return (
@@ -208,7 +222,7 @@ export default function SunsetSippers({ pubs, userLocation }: SunsetSippersProps
         {/* Compact Header */}
         <div className="flex items-center justify-between overflow-visible">
           <div className="flex items-center gap-3">
-            <span className="text-2xl">{statusEmoji}</span>
+            <StatusIcon />
             <div>
               <div className="flex items-center gap-2">
                 <h3 className="text-base sm:text-lg font-bold font-heading text-stone-800 flex items-center">SUNSET SIPPERS<InfoTooltip text="Uses Perth's real-time sunset & golden hour times (calculated astronomically). Highlights west-facing pubs with verified prices — best spots to watch the sun go down with a pint." /></h3>
