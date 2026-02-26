@@ -45,7 +45,7 @@ export default function HappyHourPreview({ pubs }: HappyHourPreviewProps) {
   }
 
   return (
-    <div className="w-full max-w-4xl mx-auto mt-6">
+    <div className="w-full max-w-4xl mx-auto mt-3">
       <div className="bg-white/80 border border-stone-200/60 rounded-2xl px-4 py-3">
         <div className="flex items-center gap-2 mb-3 px-1">
           <span className="text-lg">⚡</span>

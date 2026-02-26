@@ -5,7 +5,7 @@ export default function Footer() {
     <footer className="bg-charcoal text-white">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
         {/* Top row: Logo + tagline */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-5">
           <div className="flex items-center gap-2.5">
             <span className="text-amber text-2xl">✳</span>
             <span className="font-serif text-2xl">arvo</span>
@@ -14,7 +14,7 @@ export default function Footer() {
         </div>
 
         {/* Link columns */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 mb-6 pb-6 border-b border-stone-700/60">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-5 mb-5 pb-5 border-b border-stone-700/60">
           <div>
             <h4 className="text-xs font-semibold text-stone-400 uppercase tracking-wider mb-3">Explore</h4>
             <ul className="space-y-2">

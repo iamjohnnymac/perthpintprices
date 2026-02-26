@@ -281,11 +281,7 @@ export default function PubDetailClient({ pub, nearbyPubs, avgPrice }: PubDetail
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" /></svg>
               </a>
             </div>
-            <div className="text-center">
-              <a href="#report-price" className="text-stone-400 hover:text-amber text-sm transition-colors">
-                Wrong price? Let us know →
-              </a>
-            </div>
+
           </div>
 
           {/* Right column — map */}
@@ -331,12 +327,7 @@ export default function PubDetailClient({ pub, nearbyPubs, avgPrice }: PubDetail
         {/* Footer note */}
         <div className="text-center py-4 text-xs text-stone-400">
           <p>Data sourced from verified pub menus and community reports.</p>
-          <p className="mt-1">
-            Wrong price?{' '}
-            <Link href="/" className="text-amber hover:text-amber-dark font-semibold">
-              Report it on Arvo
-            </Link>
-          </p>
+
         </div>
       </div>
     </div>

@@ -13,10 +13,10 @@ export default function HowItWorks({ venueCount = 200, suburbCount = 90 }: HowIt
   return (
     <section className="py-8">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 text-center">
-        <h2 className="font-serif text-3xl sm:text-4xl text-charcoal mb-2">
+        <h2 className="font-serif text-3xl sm:text-4xl text-charcoal mb-1">
           How it works
         </h2>
-        <p className="text-stone-warm mb-6 text-base">No app download. No sign-up. Just prices.</p>
+        <p className="text-stone-warm mb-4 text-base">No app download. No sign-up. Just prices.</p>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
           {steps.map((step) => (
             <div key={step.num} className="text-center">
