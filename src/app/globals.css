@@ -35,12 +35,10 @@
 @layer base {
   html {
     font-size: 16px;
-    overflow-x: hidden;
   }
   body {
     @apply text-base leading-relaxed text-charcoal antialiased;
     background-color: #FDF8F0;
-    overflow-x: hidden;
     -webkit-overflow-scrolling: touch;
   }
   h1, h2, h3 {
