@@ -59,7 +59,7 @@ export default function SubPageNav({ breadcrumbs, title, subtitle, showSubmit = 
             className="px-3 py-1.5 bg-charcoal hover:bg-charcoal/90 text-white rounded-full font-semibold transition-all text-xs flex-shrink-0"
           >
             <span className="hidden sm:inline">Submit a Price</span>
-            <span className="sm:hidden">+ Price</span>
+            <span className="sm:hidden">Submit</span>
           </Link>
         )}
       </div>

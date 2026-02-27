@@ -202,39 +202,32 @@ export default function Home() {
     <main className="min-h-screen bg-cream">
       {/* ═══ UNIFIED NAV — one component, expands on scroll ═══ */}
       <header ref={headerRef} className="bg-white/95 backdrop-blur-sm sticky top-0 z-[1000] border-b border-stone-200/60 transition-all duration-200">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 pt-2 pb-1">
-          <div className="flex items-center justify-between">
-            <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 py-2.5">
+          <div className="flex items-center justify-between gap-2">
+            <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity flex-shrink-0">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" className="flex-shrink-0"><path d="M12 2v20M2 12h20M4.93 4.93l14.14 14.14M19.07 4.93L4.93 19.07" stroke="#E8820C" strokeWidth="2.5" strokeLinecap="round"/></svg>
               <h1 className="font-serif text-xl text-charcoal">arvo</h1>
             </Link>
-            <div className="flex items-center gap-3">
+            <nav className="flex items-center gap-1.5 sm:gap-2">
+              <Link href="/insights" className="px-2.5 sm:px-3 py-1 text-xs sm:text-sm font-semibold text-charcoal bg-cream-dark hover:bg-amber/10 hover:text-amber rounded-full transition-all">
+                Insights
+              </Link>
+              <Link href="/guides" className="px-2.5 sm:px-3 py-1 text-xs sm:text-sm font-semibold text-charcoal bg-cream-dark hover:bg-amber/10 hover:text-amber rounded-full transition-all">
+                Guides
+              </Link>
+            </nav>
+            <div className="flex items-center gap-2 flex-shrink-0">
               {isNavExpanded && <NotificationBell />}
               <button
                 onClick={() => setShowSubmitForm(true)}
-                className="flex-shrink-0 px-4 py-2 bg-charcoal hover:bg-charcoal/90 text-white rounded-full font-semibold transition-all text-xs"
+                className="flex-shrink-0 px-3 sm:px-4 py-1.5 sm:py-2 bg-charcoal hover:bg-charcoal/90 text-white rounded-full font-semibold transition-all text-xs"
               >
                 <span className="hidden sm:inline">Submit a Price</span>
-                <span className="sm:hidden text-xs">+ Price</span>
+                <span className="sm:hidden">Submit</span>
               </button>
             </div>
           </div>
-
-          {isNavExpanded && (
-            <>
-              <div className="flex items-center justify-center gap-2 mt-2">
-                  <Link href="/insights" className="px-3 py-1 text-sm font-semibold text-charcoal bg-cream-dark hover:bg-amber/10 hover:text-amber rounded-full transition-all">
-                    Insights
-                  </Link>
-                  <Link href="/guides" className="px-3 py-1 text-sm font-semibold text-charcoal bg-cream-dark hover:bg-amber/10 hover:text-amber rounded-full transition-all">
-                    Guides
-                  </Link>
-                </div>
-              
-            </>
-          )}
         </div>
-
       </header>
 
       {/* ═══ HERO — compact branding moment ═══ */}
