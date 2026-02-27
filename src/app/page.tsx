@@ -10,21 +10,9 @@ import dynamic from 'next/dynamic'
 // Extracted components
 import HeroSection from '@/components/HeroSection'
 import StatsBar from '@/components/StatsBar'
-import TabBar, { TabId } from '@/components/TabBar'
 import { FilterSection } from '@/components/FilterSection'
 import PubListView from '@/components/PubListView'
 import PubCardsView from '@/components/PubCardsView'
-import PintIndex from '@/components/PintIndex'
-import SuburbLeague from '@/components/SuburbLeague'
-import TonightsMoves from '@/components/TonightsMoves'
-import VenueIntel from '@/components/VenueIntel'
-import CrowdPulse from '@/components/CrowdPulse'
-import PintOfTheDay from '@/components/PintOfTheDay'
-import BeerWeather from '@/components/BeerWeather'
-import RainyDay from '@/components/RainyDay'
-import SunsetSippers from '@/components/SunsetSippers'
-import PuntNPints from '@/components/PuntNPints'
-import DadBar from '@/components/DadBar'
 import PriceTicker from '@/components/PriceTicker'
 import HowItWorks from '@/components/HowItWorks'
 import SocialProof from '@/components/SocialProof'
@@ -62,7 +50,6 @@ export default function Home() {
   const [crowdReports, setCrowdReports] = useState<Record<string, CrowdReport>>({})
   const [crowdReportPub, setCrowdReportPub] = useState<Pub | null>(null)
   const [currentTime, setCurrentTime] = useState(new Date())
-  const [activeTab, setActiveTab] = useState<TabId>('pubs')
   const [viewMode, setViewMode] = useState<'cards' | 'list'>('list')
   const [showMoreFilters, setShowMoreFilters] = useState(false)
   const [showAllPubs, setShowAllPubs] = useState(false)
@@ -200,19 +187,6 @@ export default function Home() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pubs, currentTime])
 
-  const liveCrowdCount = Object.keys(crowdReports).length
-
-  function handleTabChange(tab: TabId) {
-    setActiveTab(tab)
-    setTimeout(() => {
-      if (contentRef.current) {
-        const rect = contentRef.current.getBoundingClientRect()
-        const scrollTarget = rect.top + window.scrollY - 180
-        window.scrollTo({ top: Math.max(0, scrollTarget), behavior: 'smooth' })
-      }
-    }, 50)
-  }
-
   if (isLoading) {
     return (
       <main className="min-h-screen bg-cream flex items-center justify-center">
@@ -248,6 +222,12 @@ export default function Home() {
 
           {isNavExpanded && (
             <>
+              <div className="flex items-center justify-between mt-2">
+                <div className="flex gap-3">
+                  <Link href="/insights" className="text-sm font-semibold text-stone-warm hover:text-charcoal transition-colors">Insights</Link>
+                  <Link href="/guides" className="text-sm font-semibold text-stone-warm hover:text-charcoal transition-colors">Guides</Link>
+                </div>
+              </div>
               <StatsBar
                 avgPrice={stats.avgPrice}
                 cheapestPrice={stats.minPrice}
@@ -259,12 +239,6 @@ export default function Home() {
                 happyHourCount={stats.happyHourNow}
                 suburbCount={suburbs.length}
                 venueCount={stats.total}
-              />
-              <TabBar
-                activeTab={activeTab}
-                onTabChange={handleTabChange}
-                pubCount={filteredPubs.length}
-                crowdCount={liveCrowdCount}
               />
             </>
           )}
@@ -278,96 +252,48 @@ export default function Home() {
       </div>
 
       {/* ═══ FILTER BAR — below header, above content ═══ */}
-      {activeTab === 'pubs' && (
-        <FilterSection
-          viewMode={viewMode}
-          setViewMode={setViewMode}
-          searchTerm={searchTerm}
-          setSearchTerm={setSearchTerm}
-          selectedSuburb={selectedSuburb}
-          setSelectedSuburb={setSelectedSuburb}
-          suburbs={suburbs}
-          showHappyHourOnly={showHappyHourOnly}
-          setShowHappyHourOnly={setShowHappyHourOnly}
-          showMiniMaps={showMiniMaps}
-          setShowMiniMaps={setShowMiniMaps}
-          sortBy={sortBy}
-          setSortBy={setSortBy}
-          maxPrice={maxPrice}
-          setMaxPrice={setMaxPrice}
-          showMoreFilters={showMoreFilters}
-          setShowMoreFilters={setShowMoreFilters}
-          stats={stats}
-          hasLocation={!!userLocation}
-        />
-      )}
+      <FilterSection
+        viewMode={viewMode}
+        setViewMode={setViewMode}
+        searchTerm={searchTerm}
+        setSearchTerm={setSearchTerm}
+        selectedSuburb={selectedSuburb}
+        setSelectedSuburb={setSelectedSuburb}
+        suburbs={suburbs}
+        showHappyHourOnly={showHappyHourOnly}
+        setShowHappyHourOnly={setShowHappyHourOnly}
+        showMiniMaps={showMiniMaps}
+        setShowMiniMaps={setShowMiniMaps}
+        sortBy={sortBy}
+        setSortBy={setSortBy}
+        maxPrice={maxPrice}
+        setMaxPrice={setMaxPrice}
+        showMoreFilters={showMoreFilters}
+        setShowMoreFilters={setShowMoreFilters}
+        stats={stats}
+        hasLocation={!!userLocation}
+      />
 
       {/* ═══ CONTENT ═══ */}
       <div ref={contentRef} className="max-w-5xl mx-auto px-4 sm:px-6 py-4 sm:py-6">
-        {/* ═══ PUBS TAB ═══ */}
-        {activeTab === 'pubs' && (
-          <>
-            <MyLocals pubs={pubs} userLocation={userLocation} />
+        <MyLocals pubs={pubs} userLocation={userLocation} />
 
-            <div className="flex items-center justify-between mb-3">
-              <p className="text-stone-warm text-sm">
-                Displaying <span className="font-semibold text-charcoal">{showAllPubs ? filteredPubs.length : Math.min(INITIAL_PUB_COUNT, filteredPubs.length)}</span> of {filteredPubs.length} venues
-              </p>
-              {filteredPubs.length > INITIAL_PUB_COUNT && (
-                <button
-                  onClick={() => setShowAllPubs(!showAllPubs)}
-                  className="text-sm font-semibold text-charcoal hover:text-amber transition-colors flex items-center gap-1"
-                >
-                  {showAllPubs ? 'Show Less' : `View All`}
-                  <svg className={`w-4 h-4 transition-transform ${showAllPubs ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" /></svg>
-                </button>
-              )}
-            </div>
-          </>
-        )}
+        <div className="flex items-center justify-between mb-3">
+          <p className="text-stone-warm text-sm">
+            Displaying <span className="font-semibold text-charcoal">{showAllPubs ? filteredPubs.length : Math.min(INITIAL_PUB_COUNT, filteredPubs.length)}</span> of {filteredPubs.length} venues
+          </p>
+          {filteredPubs.length > INITIAL_PUB_COUNT && (
+            <button
+              onClick={() => setShowAllPubs(!showAllPubs)}
+              className="text-sm font-semibold text-charcoal hover:text-amber transition-colors flex items-center gap-1"
+            >
+              {showAllPubs ? 'Show Less' : `View All`}
+              <svg className={`w-4 h-4 transition-transform ${showAllPubs ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" /></svg>
+            </button>
+          )}
+        </div>
 
-        {/* ═══ INSIGHTS TAB ═══ */}
-        {activeTab === 'market' && (
-          <div className="space-y-4 sm:space-y-6">
-            <PintOfTheDay />
-            <PintIndex />
-            <TonightsMoves pubs={pubs} userLocation={userLocation} />
-            <SuburbLeague pubs={pubs} />
-            <CrowdPulse pubs={pubs} crowdReports={crowdReports} userLocation={userLocation} />
-            <VenueIntel pubs={pubs} userLocation={userLocation} />
-          </div>
-        )}
-
-        {/* ═══ GUIDES TAB ═══ */}
-        {activeTab === 'explore' && (
-          <div className="space-y-4 sm:space-y-6">
-            {/* Featured: Pub Golf, Pint Crawl, Leaderboard */}
-            <div className="grid grid-cols-3 gap-3 sm:gap-4">
-              <Link href="/pub-golf" className="bg-white rounded-xl p-4 sm:p-5 shadow-sm hover:shadow-md transition-all active:scale-[0.98] group text-center">
-                <div className="text-2xl sm:text-3xl mb-2">⛳</div>
-                <h3 className="font-serif text-charcoal text-sm sm:text-base group-hover:text-amber transition-colors">Pub Golf</h3>
-                <p className="text-[11px] text-stone-warm mt-1">Score your crawl</p>
-              </Link>
-              <Link href="/pint-crawl" className="bg-white rounded-xl p-4 sm:p-5 shadow-sm hover:shadow-md transition-all active:scale-[0.98] group text-center">
-                <div className="text-2xl sm:text-3xl mb-2">🗺️</div>
-                <h3 className="font-serif text-charcoal text-sm sm:text-base group-hover:text-amber transition-colors">Pint Crawl</h3>
-                <p className="text-[11px] text-stone-warm mt-1">Plan your route</p>
-              </Link>
-              <Link href="/leaderboard" className="bg-white rounded-xl p-4 sm:p-5 shadow-sm hover:shadow-md transition-all active:scale-[0.98] group text-center">
-                <div className="text-2xl sm:text-3xl mb-2">🏆</div>
-                <h3 className="font-serif text-charcoal text-sm sm:text-base group-hover:text-amber transition-colors">Leaderboard</h3>
-                <p className="text-[11px] text-stone-warm mt-1">Top scouts</p>
-              </Link>
-            </div>
-            <BeerWeather pubs={pubs} userLocation={userLocation} />
-            <RainyDay pubs={pubs} userLocation={userLocation} />
-            <SunsetSippers pubs={pubs} userLocation={userLocation} />
-            <PuntNPints pubs={pubs} userLocation={userLocation} />
-            <DadBar pubs={pubs} userLocation={userLocation} />
-          </div>
-        )}
-
-        {activeTab === 'pubs' && viewMode === 'list' && (
+        {viewMode === 'list' && (
           <PubListView
             pubs={filteredPubs}
             crowdReports={crowdReports}
@@ -379,7 +305,7 @@ export default function Home() {
           />
         )}
 
-        {activeTab === 'pubs' && viewMode === 'cards' && (
+        {viewMode === 'cards' && (
           <PubCardsView
             pubs={filteredPubs}
             userLocation={userLocation}
@@ -389,7 +315,7 @@ export default function Home() {
           />
         )}
 
-        {activeTab === 'pubs' && filteredPubs.length === 0 && (
+        {filteredPubs.length === 0 && (
           <div className="text-center py-16 bg-white rounded-xl shadow-sm">
             <div className="text-5xl mb-4">{showHappyHourOnly ? '\u{1F37B}' : '\u{1F50D}'}</div>
             <h3 className="font-serif text-xl text-charcoal mb-2">{showHappyHourOnly ? 'No pubs with happy hour info yet' : 'No pubs found'}</h3>
@@ -398,32 +324,24 @@ export default function Home() {
         )}
 
         {/* ═══ MAP — after pub list ═══ */}
-        {activeTab === 'pubs' && (
-          <>
-            <button
-              onClick={() => setShowMap(!showMap)}
-              className="flex items-center gap-2 text-sm text-stone-500 hover:text-charcoal transition-colors mb-3 mt-4"
-            >
-              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
-              {showMap ? 'Hide map' : 'Show map'}
-            </button>
+        <button
+          onClick={() => setShowMap(!showMap)}
+          className="flex items-center gap-2 text-sm text-stone-500 hover:text-charcoal transition-colors mb-3 mt-4"
+        >
+          <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+          {showMap ? 'Hide map' : 'Show map'}
+        </button>
 
-            {showMap && (
-              <div className="mb-3 rounded-xl overflow-hidden shadow-sm relative z-0 isolate">
-                <Map pubs={filteredPubs} userLocation={userLocation} totalPubCount={pubs.length} />
-              </div>
-            )}
-          </>
+        {showMap && (
+          <div className="mb-3 rounded-xl overflow-hidden shadow-sm relative z-0 isolate">
+            <Map pubs={filteredPubs} userLocation={userLocation} totalPubCount={pubs.length} />
+          </div>
         )}
       </div>
 
-      {activeTab === 'pubs' && (
-        <>
-          <HowItWorks />
-          <SocialProof venueCount={stats.total} suburbCount={suburbs.length} avgPrice={stats.avgPrice} />
-          <FAQ />
-        </>
-      )}
+      <HowItWorks />
+      <SocialProof venueCount={stats.total} suburbCount={suburbs.length} avgPrice={stats.avgPrice} />
+      <FAQ />
       <Footer />
       <div className="h-9" /> {/* Spacer for fixed bottom ticker */}
       <PriceTicker pubs={pubs} />
