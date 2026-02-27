@@ -47,7 +47,7 @@ const Map = dynamic(() => import('@/components/Map'), {
   )
 })
 
-const INITIAL_PUB_COUNT = 20
+const INITIAL_PUB_COUNT = 10
 
 export default function Home() {
   const [pubs, setPubs] = useState<Pub[]>([])
@@ -230,10 +230,10 @@ export default function Home() {
       <header ref={headerRef} className="bg-white/95 backdrop-blur-sm sticky top-0 z-[1000] border-b border-stone-200/60 transition-all duration-200">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 pt-2 pb-1">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
+            <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
               <span className="text-amber text-xl">✳</span>
               <h1 className="font-serif text-xl text-charcoal">arvo</h1>
-            </div>
+            </Link>
             <div className="flex items-center gap-3">
               {isNavExpanded && <NotificationBell />}
               <button
@@ -308,20 +308,6 @@ export default function Home() {
         {activeTab === 'pubs' && (
           <>
             <MyLocals pubs={pubs} userLocation={userLocation} />
-
-            <button
-              onClick={() => setShowMap(!showMap)}
-              className="flex items-center gap-2 text-sm text-stone-500 hover:text-charcoal transition-colors mb-3"
-            >
-              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
-              {showMap ? 'Hide map' : 'Show map'}
-            </button>
-
-            {showMap && (
-              <div className="mb-3 rounded-xl overflow-hidden shadow-sm relative z-0 isolate">
-                <Map pubs={filteredPubs} userLocation={userLocation} totalPubCount={pubs.length} />
-              </div>
-            )}
 
             <div className="flex items-center justify-between mb-3">
               <p className="text-stone-warm text-sm">
@@ -409,6 +395,25 @@ export default function Home() {
             <h3 className="font-serif text-xl text-charcoal mb-2">{showHappyHourOnly ? 'No pubs with happy hour info yet' : 'No pubs found'}</h3>
             <p className="text-stone-warm text-sm">{showHappyHourOnly ? 'We\u2019re building our happy hour database \u2014 submit yours!' : 'Try adjusting your filters'}</p>
           </div>
+        )}
+
+        {/* ═══ MAP — after pub list ═══ */}
+        {activeTab === 'pubs' && (
+          <>
+            <button
+              onClick={() => setShowMap(!showMap)}
+              className="flex items-center gap-2 text-sm text-stone-500 hover:text-charcoal transition-colors mb-3 mt-4"
+            >
+              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+              {showMap ? 'Hide map' : 'Show map'}
+            </button>
+
+            {showMap && (
+              <div className="mb-3 rounded-xl overflow-hidden shadow-sm relative z-0 isolate">
+                <Map pubs={filteredPubs} userLocation={userLocation} totalPubCount={pubs.length} />
+              </div>
+            )}
+          </>
         )}
       </div>
 
