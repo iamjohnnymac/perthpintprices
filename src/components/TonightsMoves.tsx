@@ -45,7 +45,7 @@ export default function TonightsMoves({ pubs, userLocation }: TonightsMovesProps
           return getDistanceKm(userLocation.lat, userLocation.lng, a.lat, a.lng) - getDistanceKm(userLocation.lat, userLocation.lng, b.lat, b.lng)
         }
         return a.price! - b.price!
-      }).slice(0, 5)
+      }).slice(0, 10)
   }, [pubs, userLocation])
 
   const activeDeals = useMemo(() => {
@@ -74,7 +74,7 @@ export default function TonightsMoves({ pubs, userLocation }: TonightsMovesProps
         }
         return a.price! - b.price!
       })
-      .slice(0, 5)
+      .slice(0, 10)
   }, [pubs, perthTime, userLocation])
 
   const hotSuburb = useMemo(() => {
@@ -197,7 +197,7 @@ export default function TonightsMoves({ pubs, userLocation }: TonightsMovesProps
                   {E.party} Active Deals {E.dash} Happy Hour Now ({activeDeals.length})
                 </h4>
                 <div className="space-y-1.5">
-                  {activeDeals.slice(0, 5).map((pub) => {
+                  {activeDeals.slice(0, 10).map((pub) => {
                     const status = getHappyHourStatus(pub.happyHour)
                     return (
                       <Link key={pub.id} href={`/pub/${pub.slug}`} className="flex items-center justify-between p-2 rounded-xl bg-orange/5 border border-orange/20">

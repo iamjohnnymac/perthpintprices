@@ -307,7 +307,7 @@ export default function SunsetSippers({ pubs, userLocation }: SunsetSippersProps
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-              {sunsetPubs.slice(0, showAllPubs ? sunsetPubs.length : 6).map((pub) => (
+              {sunsetPubs.slice(0, showAllPubs ? sunsetPubs.length : 10).map((pub) => (
                 <Link
                   key={pub.id} href={`/pub/${pub.slug}`}
                   className="rounded-xl bg-white/70 hover:bg-white/95 transition-all duration-200 overflow-hidden shadow-sm hover:shadow-md border border-orange-100 h-full flex flex-col"

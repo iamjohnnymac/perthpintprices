@@ -192,7 +192,7 @@ function DistributionBars({ distribution }: { distribution: Record<string, numbe
 export default function PintIndex() {
   const [snapshots, setSnapshots] = useState<PriceSnapshot[]>([]);
   const [loading, setLoading] = useState(true);
-  const [expanded, setExpanded] = useState(false);
+  const [expanded, setExpanded] = useState(true);
 
   useEffect(() => {
     async function fetchSnapshots() {

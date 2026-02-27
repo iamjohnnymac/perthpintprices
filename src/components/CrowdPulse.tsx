@@ -48,7 +48,7 @@ function formatTimeAgo(minutes: number): string {
 }
 
 export default function CrowdPulse({ pubs, crowdReports, userLocation }: CrowdPulseProps) {
-  const [isExpanded, setIsExpanded] = useState(false)
+  const [isExpanded, setIsExpanded] = useState(true)
 
   const reportEntries = useMemo(() => {
     return Object.entries(crowdReports).map(([pubId, report]) => {
@@ -75,7 +75,7 @@ export default function CrowdPulse({ pubs, crowdReports, userLocation }: CrowdPu
         }
         return 0
       })
-      .slice(0, 5)
+      .slice(0, 10)
   }, [reportEntries, userLocation])
 
   const quietVenues = useMemo(() => {
@@ -89,7 +89,7 @@ export default function CrowdPulse({ pubs, crowdReports, userLocation }: CrowdPu
         }
         return 0
       })
-      .slice(0, 5)
+      .slice(0, 10)
   }, [reportEntries, userLocation])
 
   const liveCount = reportEntries.length

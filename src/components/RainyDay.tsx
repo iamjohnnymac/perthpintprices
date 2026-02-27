@@ -50,7 +50,7 @@ const DRY_QUIPS = [
 
 export default function RainyDay({ pubs, userLocation }: RainyDayProps) {
   const [weather, setWeather] = useState<RainWeather | null>(null)
-  const [isExpanded, setIsExpanded] = useState(false)
+  const [isExpanded, setIsExpanded] = useState(true)
   const [error, setError] = useState(false)
 
   useEffect(() => {
@@ -94,7 +94,7 @@ export default function RainyDay({ pubs, userLocation }: RainyDayProps) {
       })
     }
 
-    return filtered.slice(0, 4)
+    return filtered.slice(0, 10)
   }, [pubs, userLocation])
 
   const quip = useMemo(() => {

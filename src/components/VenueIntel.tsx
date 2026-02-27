@@ -83,7 +83,7 @@ export default function VenueIntel({ pubs, userLocation }: VenueIntelProps) {
       }))
       .filter(e => e.diff > 0)
       .sort((a, b) => b.diff - a.diff)
-      .slice(0, 5)
+      .slice(0, 10)
   }, [pubs, suburbStats])
 
   const undervalued = useMemo(() => {
@@ -97,15 +97,15 @@ export default function VenueIntel({ pubs, userLocation }: VenueIntelProps) {
       }))
       .filter(e => e.diff > 0)
       .sort((a, b) => b.diff - a.diff)
-      .slice(0, 5)
+      .slice(0, 10)
   }, [pubs, suburbStats])
 
   const cheapestSuburbs = useMemo(() => {
-    return [...suburbStats].filter(s => s.count >= 2).sort((a, b) => a.avgPrice - b.avgPrice).slice(0, 5)
+    return [...suburbStats].filter(s => s.count >= 2).sort((a, b) => a.avgPrice - b.avgPrice).slice(0, 10)
   }, [suburbStats])
 
   const priciestSuburbs = useMemo(() => {
-    return [...suburbStats].filter(s => s.count >= 2).sort((a, b) => b.avgPrice - a.avgPrice).slice(0, 5)
+    return [...suburbStats].filter(s => s.count >= 2).sort((a, b) => b.avgPrice - a.avgPrice).slice(0, 10)
   }, [suburbStats])
 
   const percentileData = useMemo(() => {

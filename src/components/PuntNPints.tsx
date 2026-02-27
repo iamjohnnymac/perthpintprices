@@ -24,8 +24,8 @@ interface PuntNPintsProps {
 }
 
 export default function PuntNPints({ pubs, userLocation }: PuntNPintsProps) {
-  const [isSectionOpen, setIsSectionOpen] = useState(false)
-  const [isExpanded, setIsExpanded] = useState(false)
+  const [isSectionOpen, setIsSectionOpen] = useState(true)
+  const [isExpanded, setIsExpanded] = useState(true)
   const [tabLocations, setTabLocations] = useState<TabLocation[]>([])
 
   useEffect(() => {
@@ -85,8 +85,8 @@ export default function PuntNPints({ pubs, userLocation }: PuntNPintsProps) {
       })
   }, [pubs, tabLocations, userLocation])
 
-  const displayedTabPubs = isExpanded ? tabPubs : tabPubs.slice(0, 5)
-  const displayedPairs = isExpanded ? nearbyPairs.slice(0, 10) : nearbyPairs.slice(0, 3)
+  const displayedTabPubs = isExpanded ? tabPubs : tabPubs.slice(0, 10)
+  const displayedPairs = isExpanded ? nearbyPairs.slice(0, 10) : nearbyPairs.slice(0, 10)
 
   return (
     <Card className="bg-white rounded-2xl shadow-[0_2px_16px_rgba(0,0,0,0.08)] border border-stone-200/40 h-full cursor-pointer transition-all duration-300 hover:shadow-[0_4px_20px_rgba(0,0,0,0.12)] active:scale-[0.995] overflow-hidden">

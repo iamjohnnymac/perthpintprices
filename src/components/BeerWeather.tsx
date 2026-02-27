@@ -124,7 +124,7 @@ interface BeerWeatherProps {
 
 export default function BeerWeather({ pubs, userLocation }: BeerWeatherProps) {
   const [weather, setWeather] = useState<WeatherData | null>(null)
-  const [isExpanded, setIsExpanded] = useState(false)
+  const [isExpanded, setIsExpanded] = useState(true)
   const [error, setError] = useState(false)
 
   useEffect(() => {
@@ -168,7 +168,7 @@ export default function BeerWeather({ pubs, userLocation }: BeerWeatherProps) {
         getDistanceKm(userLocation.lat, userLocation.lng, a.lat, a.lng) - getDistanceKm(userLocation.lat, userLocation.lng, b.lat, b.lng)
       )
     }
-    return filtered.slice(0, 4)
+    return filtered.slice(0, 10)
   }, [condition, pubs, userLocation])
 
   const isWindy = weather && weather.windSpeed > 30
