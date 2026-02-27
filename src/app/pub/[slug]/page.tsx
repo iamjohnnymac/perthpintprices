@@ -50,5 +50,35 @@ export default async function PubPage({ params }: PageProps) {
     getSiteStats(),
   ])
   
-  return <PubDetailClient pub={pub} nearbyPubs={nearbyPubs} avgPrice={Number(stats.avgPrice)} />
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BarOrPub',
+    name: pub.name,
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: pub.address,
+      addressLocality: pub.suburb,
+      addressRegion: 'WA',
+      addressCountry: 'AU',
+    },
+    geo: {
+      '@type': 'GeoCoordinates',
+      latitude: pub.lat,
+      longitude: pub.lng,
+    },
+    ...(pub.website ? { url: pub.website } : {}),
+    ...(pub.price ? {
+      priceRange: `$${pub.price.toFixed(2)} per pint`,
+    } : {}),
+  }
+
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <PubDetailClient pub={pub} nearbyPubs={nearbyPubs} avgPrice={Number(stats.avgPrice)} />
+    </>
+  )
 }
