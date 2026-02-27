@@ -7,7 +7,7 @@ export default function Footer() {
         {/* Top row: Logo + tagline */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4">
           <div className="flex items-center gap-2.5">
-            <span className="text-amber text-2xl">✳</span>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="flex-shrink-0"><path d="M12 2v20M2 12h20M4.93 4.93l14.14 14.14M19.07 4.93L4.93 19.07" stroke="#E8820C" strokeWidth="2.5" strokeLinecap="round"/></svg>
             <span className="font-serif text-2xl">arvo</span>
           </div>
           <p className="text-stone-400 text-sm">Perth&apos;s pint prices, sorted.</p>

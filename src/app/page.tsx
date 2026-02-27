@@ -204,7 +204,7 @@ export default function Home() {
         <div className="max-w-5xl mx-auto px-4 sm:px-6 pt-2 pb-1">
           <div className="flex items-center justify-between">
             <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-              <span className="text-amber text-xl">✳</span>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" className="flex-shrink-0"><path d="M12 2v20M2 12h20M4.93 4.93l14.14 14.14M19.07 4.93L4.93 19.07" stroke="#E8820C" strokeWidth="2.5" strokeLinecap="round"/></svg>
               <h1 className="font-serif text-xl text-charcoal">arvo</h1>
             </Link>
             <div className="flex items-center gap-3">
@@ -221,7 +221,7 @@ export default function Home() {
 
           {isNavExpanded && (
             <>
-              <div className="flex items-center gap-2 mt-2">
+              <div className="flex items-center justify-center gap-2 mt-2">
                   <Link href="/insights" className="px-3 py-1 text-sm font-semibold text-charcoal bg-cream-dark hover:bg-amber/10 hover:text-amber rounded-full transition-all">
                     Insights
                   </Link>

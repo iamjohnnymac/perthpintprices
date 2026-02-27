@@ -42,7 +42,7 @@ export default function PriceTicker({ pubs }: PriceTickerProps) {
 
   if (tickers.length === 0) return (
     <div className="fixed bottom-0 left-0 right-0 bg-charcoal text-white/70 text-xs py-2 text-center z-50">
-      Perth pint prices, sorted. ✳ arvo
+      Perth pint prices, sorted. arvo
     </div>
   );
 

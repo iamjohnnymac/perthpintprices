@@ -19,7 +19,7 @@ export default function SubPageNav({ title, subtitle, showSubmit = true }: SubPa
             </svg>
           </Link>
           <Link href="/" className="flex items-center gap-1.5">
-            <span className="text-amber text-lg">✳</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className="flex-shrink-0"><path d="M12 2v20M2 12h20M4.93 4.93l14.14 14.14M19.07 4.93L4.93 19.07" stroke="#E8820C" strokeWidth="2.5" strokeLinecap="round"/></svg>
             <span className="font-serif text-lg text-charcoal">arvo</span>
           </Link>
           {title && (
