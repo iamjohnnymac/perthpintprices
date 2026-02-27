@@ -1,83 +1,116 @@
-'use client'
-import { useState, useEffect } from 'react'
-import { Pub } from '@/types/pub'
-import { getPubs } from '@/lib/supabase'
 import SubPageNav from '@/components/SubPageNav'
-import BeerWeather from '@/components/BeerWeather'
 import Footer from '@/components/Footer'
-import { ErrorBoundary } from '@/components/ErrorBoundary'
 import Link from 'next/link'
 
 const guideCards = [
-  { href: '/guides/beer-weather', icon: '🌤', title: 'Beer Weather', desc: 'Weather-matched pub picks' },
-  { href: '/guides/sunset-sippers', icon: '🌅', title: 'Sunset Sippers', desc: 'Golden hour spots' },
-  { href: '/guides/punt-and-pints', icon: '🏇', title: 'Punt & Pints', desc: 'TAB-equipped pubs' },
-  { href: '/guides/dad-bar', icon: '👨', title: 'The Dad Bar', desc: 'Classic dad pubs' },
-  { href: '/guides/cozy-corners', icon: '☔', title: 'Cozy Corners', desc: 'Rainy day refuges' },
-  { href: '/happy-hour', icon: '⏰', title: 'Happy Hour', desc: 'Live deals right now' },
-  { href: '/pub-golf', icon: '⛳', title: 'Pub Golf', desc: 'Score your crawl' },
-  { href: '/pint-crawl', icon: '🗺️', title: 'Pint Crawl', desc: 'Plan your route' },
-  { href: '/leaderboard', icon: '🏆', title: 'Leaderboard', desc: 'Top scouts' },
+  {
+    href: '/guides/beer-weather',
+    icon: '🌤',
+    title: 'Beer Weather',
+    tagline: "Is it beer garden weather? We'll check the Bureau of Meteorology so you don't have to.",
+    color: 'from-sky-50 to-cyan-50',
+    accent: 'border-sky-200/60',
+  },
+  {
+    href: '/guides/sunset-sippers',
+    icon: '🌅',
+    title: 'Sunset Sippers',
+    tagline: 'West-facing patios and rooftop bars for golden hour pints.',
+    color: 'from-orange-50 to-amber-50',
+    accent: 'border-orange-200/60',
+  },
+  {
+    href: '/guides/punt-and-pints',
+    icon: '🏇',
+    title: 'Punt & Pints',
+    tagline: 'TAB screens, cold pints, and a flutter on the trots. The classic combo.',
+    color: 'from-emerald-50 to-green-50',
+    accent: 'border-emerald-200/60',
+  },
+  {
+    href: '/guides/dad-bar',
+    icon: '👨',
+    title: 'The Dad Bar',
+    tagline: "No fairy lights, no craft beer menu. Just honest pints and the footy on.",
+    color: 'from-stone-100 to-stone-50',
+    accent: 'border-stone-300/60',
+  },
+  {
+    href: '/guides/cozy-corners',
+    icon: '☔',
+    title: 'Cozy Corners',
+    tagline: "When it's bucketing down, these spots have fireplaces, booths, and warmth.",
+    color: 'from-violet-50 to-purple-50',
+    accent: 'border-violet-200/60',
+  },
+  {
+    href: '/happy-hour',
+    icon: '⏰',
+    title: 'Happy Hour',
+    tagline: "Live happy hour deals happening right now across Perth. Don't miss out.",
+    color: 'from-yellow-50 to-amber-50',
+    accent: 'border-yellow-200/60',
+  },
+  {
+    href: '/pub-golf',
+    icon: '⛳',
+    title: 'Pub Golf',
+    tagline: '9 holes. 9 pubs. Score your round and settle the debate.',
+    color: 'from-green-50 to-lime-50',
+    accent: 'border-green-200/60',
+  },
+  {
+    href: '/pint-crawl',
+    icon: '🗺️',
+    title: 'Pint Crawl',
+    tagline: 'Plot your route, pick your pubs, and share the plan with your mates.',
+    color: 'from-blue-50 to-indigo-50',
+    accent: 'border-blue-200/60',
+  },
+  {
+    href: '/leaderboard',
+    icon: '🏆',
+    title: 'Leaderboard',
+    tagline: 'The legends keeping Perth pint prices honest. Top scouts ranked.',
+    color: 'from-amber-50 to-yellow-50',
+    accent: 'border-amber-200/60',
+  },
 ]
 
 export default function GuidesPage() {
-  const [pubs, setPubs] = useState<Pub[]>([])
-  const [userLocation, setUserLocation] = useState<{lat: number, lng: number} | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
-
-  useEffect(() => {
-    async function load() {
-      const data = await getPubs()
-      setPubs(data)
-      setIsLoading(false)
-    }
-    load()
-  }, [])
-
-  useEffect(() => {
-    if (typeof window !== 'undefined' && navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (pos) => setUserLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
-        () => {},
-        { enableHighAccuracy: false, timeout: 8000, maximumAge: 300000 }
-      )
-    }
-  }, [])
-
-  if (isLoading) {
-    return (
-      <main className="min-h-screen bg-cream">
-        <SubPageNav breadcrumbs={[{ label: 'Guides' }]} />
-        <div className="flex items-center justify-center py-20">
-          <div className="w-12 h-12 border-4 border-stone-300 border-t-amber rounded-full animate-spin" />
-        </div>
-      </main>
-    )
-  }
-
   return (
     <main className="min-h-screen bg-cream">
       <SubPageNav breadcrumbs={[{ label: 'Guides' }]} />
 
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
-        {/* Card grid — all link to dedicated pages */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 mb-8">
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 py-10 sm:py-14">
+        <div className="text-center mb-8 sm:mb-10">
+          <h1 className="text-2xl sm:text-3xl font-bold text-charcoal">Guides</h1>
+          <p className="text-stone-warm mt-2 text-sm sm:text-base">
+            Curated pub picks for every mood, every season, every excuse to go out.
+          </p>
+        </div>
+
+        <div className="space-y-4">
           {guideCards.map(card => (
             <Link
               key={card.href}
               href={card.href}
-              className="bg-white rounded-2xl p-5 border border-stone-200/40 hover:shadow-md hover:border-amber/30 transition-all group text-center"
+              className={`block bg-gradient-to-r ${card.color} rounded-2xl p-5 sm:p-6 border ${card.accent} hover:shadow-lg hover:scale-[1.01] transition-all group`}
             >
-              <div className="text-3xl mb-2">{card.icon}</div>
-              <h3 className="font-semibold text-charcoal text-sm group-hover:text-amber transition-colors">{card.title}</h3>
-              <p className="text-[11px] text-stone-warm mt-1">{card.desc}</p>
+              <div className="flex items-start gap-4">
+                <span className="text-3xl sm:text-4xl flex-shrink-0">{card.icon}</span>
+                <div className="min-w-0">
+                  <h2 className="font-semibold text-charcoal text-base sm:text-lg group-hover:text-amber transition-colors">
+                    {card.title}
+                  </h2>
+                  <p className="text-sm text-charcoal/60 mt-0.5">{card.tagline}</p>
+                </div>
+                <svg className="w-5 h-5 text-stone-400 group-hover:text-amber flex-shrink-0 mt-1 ml-auto transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                </svg>
+              </div>
             </Link>
           ))}
-        </div>
-
-        {/* Featured: Beer Weather (always shown as the hero guide) */}
-        <div className="space-y-6">
-          <ErrorBoundary><BeerWeather pubs={pubs} userLocation={userLocation} /></ErrorBoundary>
         </div>
       </div>
 
