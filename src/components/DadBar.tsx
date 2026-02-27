@@ -52,7 +52,11 @@ export default function DadBar({ pubs, userLocation }: { pubs: Pub[], userLocati
 
   const joke = useMemo(() => DAD_JOKES[Math.floor(Math.random() * DAD_JOKES.length)], [])
 
-  if (dadPubs.length === 0) return null
+  if (dadPubs.length === 0) return (
+    <div className="bg-white rounded-2xl border border-stone-200/40 p-6 text-center">
+      <p className="text-stone-400 text-sm">No dad-friendly pubs found nearby.</p>
+    </div>
+  )
 
   const avgPrice = dadPubs.reduce((sum, p) => sum + (p.price ?? 0), 0) / dadPubs.length
   const displayPubs = showAll ? dadPubs : dadPubs.slice(0, 5)

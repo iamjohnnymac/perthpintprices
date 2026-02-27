@@ -40,7 +40,11 @@ export default function PriceTicker({ pubs }: PriceTickerProps) {
       .sort((a, b) => a.suburb.localeCompare(b.suburb));
   }, [pubs]);
 
-  if (tickers.length === 0) return null;
+  if (tickers.length === 0) return (
+    <div className="fixed bottom-0 left-0 right-0 bg-charcoal text-white/70 text-xs py-2 text-center z-50">
+      Perth pint prices, sorted. ✳ arvo
+    </div>
+  );
 
   const items = [...tickers, ...tickers];
   const duration = Math.max(30, tickers.length * 2.5);

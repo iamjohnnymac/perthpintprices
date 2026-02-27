@@ -9,6 +9,7 @@ import SunsetSippers from '@/components/SunsetSippers'
 import PuntNPints from '@/components/PuntNPints'
 import DadBar from '@/components/DadBar'
 import Footer from '@/components/Footer'
+import { ErrorBoundary } from '@/components/ErrorBoundary'
 import Link from 'next/link'
 
 const guideCards = [
@@ -93,11 +94,11 @@ export default function GuidesPage() {
 
         {/* Active guide content */}
         <div className="space-y-6">
-          {(activeGuide === 'beer-weather' || !activeGuide) && <BeerWeather pubs={pubs} userLocation={userLocation} />}
-          {activeGuide === 'sunset' && <SunsetSippers pubs={pubs} userLocation={userLocation} />}
-          {activeGuide === 'punt' && <PuntNPints pubs={pubs} userLocation={userLocation} />}
-          {activeGuide === 'dad-bar' && <DadBar pubs={pubs} userLocation={userLocation} />}
-          {activeGuide === 'cozy' && <RainyDay pubs={pubs} userLocation={userLocation} />}
+          {(activeGuide === 'beer-weather' || !activeGuide) && <ErrorBoundary><BeerWeather pubs={pubs} userLocation={userLocation} /></ErrorBoundary>}
+          {activeGuide === 'sunset' && <ErrorBoundary><SunsetSippers pubs={pubs} userLocation={userLocation} /></ErrorBoundary>}
+          {activeGuide === 'punt' && <ErrorBoundary><PuntNPints pubs={pubs} userLocation={userLocation} /></ErrorBoundary>}
+          {activeGuide === 'dad-bar' && <ErrorBoundary><DadBar pubs={pubs} userLocation={userLocation} /></ErrorBoundary>}
+          {activeGuide === 'cozy' && <ErrorBoundary><RainyDay pubs={pubs} userLocation={userLocation} /></ErrorBoundary>}
         </div>
       </div>
 

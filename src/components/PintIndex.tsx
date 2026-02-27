@@ -40,7 +40,11 @@ function Sparkline({ data, snapshots, width = 280, height = 60 }: {
   const svgRef = useRef<SVGSVGElement>(null);
   const [tooltip, setTooltip] = useState<TooltipState>({ x: 0, y: 0, label: '', price: 0, visible: false });
 
-  if (data.length < 2) return null;
+  if (data.length < 2) return (
+    <div className="bg-white rounded-2xl border border-stone-200/40 p-6 text-center">
+      <p className="text-stone-400 text-sm">No price history data yet — trends build over time.</p>
+    </div>
+  );
   
   const min = Math.min(...data) - 0.1;
   const max = Math.max(...data) + 0.1;
@@ -213,7 +217,17 @@ export default function PintIndex() {
     fetchSnapshots();
   }, []);
 
-  if (loading || snapshots.length === 0) return null;
+  if (loading) return (
+    <div className="bg-white rounded-2xl border border-stone-200/40 p-6">
+      <div className="h-6 w-48 bg-stone-100 animate-pulse rounded mb-4" />
+      <div className="h-40 bg-stone-50 animate-pulse rounded" />
+    </div>
+  );
+  if (snapshots.length === 0) return (
+    <div className="bg-white rounded-2xl border border-stone-200/40 p-6 text-center">
+      <p className="text-stone-400 text-sm">No price history data yet — trends build over time.</p>
+    </div>
+  );
 
   const current = snapshots[snapshots.length - 1];
   const previous = snapshots.length >= 2 ? snapshots[snapshots.length - 2] : null;

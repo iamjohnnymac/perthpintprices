@@ -80,7 +80,11 @@ export default function PintOfTheDay() {
     )
   }
 
-  if (!data) return null
+  if (!data) return (
+    <div className="bg-white rounded-2xl border border-stone-200/40 p-6 text-center">
+      <p className="text-stone-400 text-sm">Pint of the Day loading...</p>
+    </div>
+  )
 
   return (
     <div className="bg-gradient-to-br from-orange/5 via-white to-orange/10 rounded-2xl border border-orange/30 overflow-hidden">

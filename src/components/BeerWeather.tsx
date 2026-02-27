@@ -174,7 +174,12 @@ export default function BeerWeather({ pubs, userLocation }: BeerWeatherProps) {
   const isWindy = weather && weather.windSpeed > 30
 
   if (error || !weather || !condition) {
-    if (error) return null
+    if (error) return (
+      <div className="bg-white rounded-2xl border border-stone-200/40 p-6 text-center">
+        <p className="text-stone-400 text-sm">Weather data unavailable right now.</p>
+        <button onClick={() => window.location.reload()} className="text-amber underline mt-2 text-sm">Retry</button>
+      </div>
+    )
     // Loading state
     return (
       <Card className="bg-white rounded-2xl shadow-[0_2px_16px_rgba(0,0,0,0.08)] border border-stone-200/40">

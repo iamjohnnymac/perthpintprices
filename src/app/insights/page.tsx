@@ -10,6 +10,7 @@ import SuburbLeague from '@/components/SuburbLeague'
 import CrowdPulse from '@/components/CrowdPulse'
 import VenueIntel from '@/components/VenueIntel'
 import Footer from '@/components/Footer'
+import { ErrorBoundary } from '@/components/ErrorBoundary'
 
 export default function InsightsPage() {
   const [pubs, setPubs] = useState<Pub[]>([])
@@ -78,24 +79,24 @@ export default function InsightsPage() {
 
       <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-6 sm:space-y-8">
         <div id="pint-of-the-day">
-          <PintOfTheDay />
+          <ErrorBoundary><PintOfTheDay /></ErrorBoundary>
         </div>
 
         <div id="pint-index" className="grid grid-cols-1 md:grid-cols-2 gap-5">
-          <PintIndex />
-          <TonightsMoves pubs={pubs} userLocation={userLocation} />
+          <ErrorBoundary><PintIndex /></ErrorBoundary>
+          <ErrorBoundary><TonightsMoves pubs={pubs} userLocation={userLocation} /></ErrorBoundary>
         </div>
 
         <div id="suburbs">
-          <SuburbLeague pubs={pubs} />
+          <ErrorBoundary><SuburbLeague pubs={pubs} /></ErrorBoundary>
         </div>
 
         <div id="crowd">
-          <CrowdPulse pubs={pubs} crowdReports={crowdReports} userLocation={userLocation} />
+          <ErrorBoundary><CrowdPulse pubs={pubs} crowdReports={crowdReports} userLocation={userLocation} /></ErrorBoundary>
         </div>
 
         <div id="venues">
-          <VenueIntel pubs={pubs} userLocation={userLocation} />
+          <ErrorBoundary><VenueIntel pubs={pubs} userLocation={userLocation} /></ErrorBoundary>
         </div>
       </div>
 
