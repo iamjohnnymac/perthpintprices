@@ -16,15 +16,13 @@ export default function HappyHourPreview({ pubs }: HappyHourPreviewProps) {
       const currentMinutes = perthTime.getHours() * 60 + perthTime.getMinutes()
       
       const [startH, startM] = (pub.happyHourStart || '16:00').split(':').map(Number)
-      const [endH, endM] = (pub.happyHourEnd || '18:00').split(':').map(Number)
       const startMinutes = startH * 60 + startM
-      const endMinutes = endH * 60 + endM
       
       const isActive = pub.isHappyHourNow
       let minutesUntil = startMinutes - currentMinutes
       if (minutesUntil < 0) minutesUntil += 1440
       
-      return { pub, isActive, minutesUntil, startTime: `${startH}:${(startM||0).toString().padStart(2,'0')}`, endMinutes }
+      return { pub, isActive, minutesUntil }
     })
     .sort((a, b) => {
       if (a.isActive && !b.isActive) return -1
@@ -35,47 +33,56 @@ export default function HappyHourPreview({ pubs }: HappyHourPreviewProps) {
 
   if (hhPubs.length === 0) return null
 
-  const activeCount = hhPubs.filter(h => h.isActive).length
-
-  const formatCountdown = (minutes: number) => {
-    if (minutes < 60) return `${minutes}m`
-    const h = Math.floor(minutes / 60)
-    const m = minutes % 60
-    return m > 0 ? `${h}h ${m}m` : `${h}h`
-  }
+  const activePubs = hhPubs.filter(h => h.isActive)
+  const upcomingPubs = hhPubs.filter(h => !h.isActive)
+  const activeCount = activePubs.length
+  const upcomingCount = upcomingPubs.length
 
   return (
-    <div className="w-full max-w-4xl mx-auto mt-2">
-      <div className="bg-white/80 border border-stone-200/60 rounded-2xl px-3 py-2.5">
-        <div className="flex items-center gap-2 mb-2 px-1">
-          <span className="text-lg">⚡</span>
-          <span className="text-charcoal font-semibold text-sm">
-            {activeCount > 0 ? `${activeCount} happy hours live` : "Happy hour's coming up"}
-          </span>
-          <span className="text-stone-400 text-xs">
-            · {hhPubs.length} venues counting down
+    <Link href="/happy-hour" className="block w-full max-w-4xl mx-auto mt-3 group">
+      <div className="flex items-center gap-3 px-4 py-2.5 rounded-full bg-white/70 border border-stone-200/50 hover:border-orange/30 hover:shadow-sm transition-all">
+        {/* Pulse dot + label */}
+        <div className="flex items-center gap-2 flex-shrink-0">
+          {activeCount > 0 && (
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+            </span>
+          )}
+          <span className="text-charcoal font-semibold text-sm whitespace-nowrap">
+            {activeCount > 0 ? `${activeCount} live` : 'Happy hours'}
           </span>
         </div>
-        <div className="flex gap-3 overflow-x-auto pb-1.5 scrollbar-hide snap-x snap-mandatory">
-          {hhPubs.map(({ pub, isActive, minutesUntil }) => (
-            <Link
-              key={pub.slug}
-              href={`/pub/${pub.slug}`}
-              className="flex-shrink-0 snap-start bg-cream rounded-xl px-3 py-2.5 border border-stone-200/40 hover:border-orange/30 hover:shadow-sm transition-all min-w-[180px] group"
-            >
-              <p className="font-semibold text-charcoal text-sm truncate group-hover:text-orange transition-colors">{pub.name}</p>
-              <div className="flex items-center gap-2 mt-1.5">
-                <span className="text-stone-400 text-xs">{pub.suburb}</span>
-                {isActive ? (
-                  <span className="text-xs font-medium text-green-600 bg-green-50 px-2 py-0.5 rounded-full">LIVE</span>
-                ) : (
-                  <span className="text-xs font-mono text-stone-500">⏱ {formatCountdown(minutesUntil)}</span>
-                )}
-              </div>
-            </Link>
-          ))}
+
+        {/* Separator */}
+        <span className="text-stone-300 text-sm">·</span>
+
+        {/* Pub names — flowing inline text */}
+        <div className="flex-1 min-w-0 overflow-hidden">
+          <p className="text-sm text-stone-500 truncate">
+            {activeCount > 0 && activePubs.map((h, i) => (
+              <span key={h.pub.slug}>
+                <span className="text-charcoal font-medium">{h.pub.name}</span>
+                {i < activePubs.length - 1 && <span className="text-stone-300 mx-1.5">·</span>}
+              </span>
+            ))}
+            {activeCount > 0 && upcomingCount > 0 && (
+              <span className="text-stone-300 mx-1.5">·</span>
+            )}
+            {upcomingCount > 0 && (
+              <span className="text-stone-400">
+                {activeCount > 0
+                  ? `${upcomingCount} more starting soon`
+                  : `${upcomingCount} starting soon`
+                }
+              </span>
+            )}
+          </p>
         </div>
+
+        {/* Arrow */}
+        <span className="text-stone-400 group-hover:text-orange transition-colors flex-shrink-0 text-sm">→</span>
       </div>
-    </div>
+    </Link>
   )
 }
