@@ -78,7 +78,7 @@ export default function PubListView({
     const isActive = sortKey === field
     return (
       <th
-        className={`py-2.5 px-3 sm:px-4 text-[11px] font-semibold uppercase tracking-wider cursor-pointer select-none hover:text-amber transition-colors ${isActive ? 'text-amber' : 'text-stone-500'} ${className}`}
+        className={`py-3.5 px-3 sm:px-4 text-[11px] font-semibold uppercase tracking-wider cursor-pointer select-none hover:text-amber transition-colors ${isActive ? 'text-amber' : 'text-stone-500'} ${className}`}
         onClick={() => handleSort(field)}
       >
         <span className="inline-flex items-center gap-1">
@@ -101,7 +101,7 @@ export default function PubListView({
             <SortHeader label="Beer" field="beer" className="text-left hidden sm:table-cell" />
             <SortHeader label="Price" field="price" className="text-right" />
             <th className="text-left py-3 px-3 text-[11px] font-semibold text-stone-500 uppercase tracking-wider hidden md:table-cell">Happy Hour</th>
-            <th className="text-center py-2.5 px-3 text-[11px] font-semibold text-stone-500 uppercase tracking-wider w-12"></th>
+            <th className="text-center py-3.5 px-3 text-[11px] font-semibold text-stone-500 uppercase tracking-wider w-12"></th>
           </tr>
         </thead>
         <tbody>
@@ -114,7 +114,7 @@ export default function PubListView({
                 className="border-b border-stone-100/80 hover:bg-cream/50 transition-colors cursor-pointer"
                 onClick={() => router.push(`/pub/${pub.slug}`)}
               >
-                <td className="py-2.5 px-2 sm:px-3">
+                <td className="py-3.5 px-2 sm:px-3">
                   <div className="flex items-center gap-2">
                     <span className="text-xs font-medium text-stone-400 w-5 text-right tabular-nums">{index + 1}</span>
                     <div>
@@ -138,22 +138,22 @@ export default function PubListView({
                     </div>
                   </div>
                 </td>
-                <td className="py-2.5 px-3 text-sm text-stone-warm hidden sm:table-cell">
+                <td className="py-3.5 px-3 text-sm text-stone-warm hidden sm:table-cell">
                   {pub.suburb}
                   {userLocation && <span className="text-stone-400 text-xs ml-1">· {formatDistance(getDistanceKm(userLocation.lat, userLocation.lng, pub.lat, pub.lng))}</span>}
                 </td>
-                <td className="py-2.5 px-3 hidden sm:table-cell">
-                  <span className="text-xs text-stone-warm truncate max-w-[120px] block">
+                <td className="py-3.5 px-3 hidden sm:table-cell">
+                  <span className="text-xs text-stone-warm truncate max-w-[160px] block" title={pub.beerType || ''}>
                     {pub.beerType || '—'}
                   </span>
                 </td>
-                <td className={`py-2.5 px-2 sm:px-3 text-right font-bold font-mono text-lg whitespace-nowrap ${getPriceTextColor(pub.price)}`}>
+                <td className={`py-3.5 px-2 sm:px-3 text-right font-bold font-mono text-lg whitespace-nowrap ${getPriceTextColor(pub.price)}`}>
                   {pub.isHappyHourNow && pub.regularPrice !== null && pub.regularPrice !== pub.price && (
                     <span className="text-xs text-stone-400 line-through font-normal mr-1">${pub.regularPrice.toFixed(2)}</span>
                   )}
                   {pub.price !== null ? `$${pub.price.toFixed(2)}` : 'TBC'}
                 </td>
-                <td className="py-2.5 px-3 hidden md:table-cell">
+                <td className="py-3.5 px-3 hidden md:table-cell">
                   {pub.happyHour ? (
                     <span className={`text-sm ${
                       happyHourStatus.isActive ? 'text-amber font-bold' :
@@ -166,7 +166,7 @@ export default function PubListView({
                     <span className="text-xs text-stone-400">—</span>
                   )}
                 </td>
-                <td className="py-2.5 px-3 text-center">
+                <td className="py-3.5 px-3 text-center">
                   {crowdReport ? (
                     <span className="text-sm" title={`${crowdReport.minutes_ago}m ago`}>
                       {CROWD_LEVELS[crowdReport.crowd_level].emoji}

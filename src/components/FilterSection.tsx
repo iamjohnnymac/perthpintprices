@@ -103,7 +103,7 @@ export function FilterSection({
             className={cn(
               "flex items-center gap-1.5 px-3 py-2.5 rounded-full text-xs font-semibold uppercase tracking-wider transition-all whitespace-nowrap border",
               isNearestActive
-                ? "bg-amber text-white border-amber"
+                ? "bg-amber/10 text-amber border-amber/40 border-2"
                 : "bg-cream text-stone-warm border-stone-200/60 hover:border-stone-300"
             )}
           >
@@ -119,14 +119,14 @@ export function FilterSection({
             className={cn(
               "flex items-center gap-1.5 px-3 py-2.5 rounded-full text-xs font-semibold uppercase tracking-wider transition-all border whitespace-nowrap",
               showMoreFilters || activeFilterCount > 0
-                ? "bg-amber text-white border-amber"
+                ? "bg-amber/10 text-amber border-amber/40 border-2"
                 : "bg-cream text-stone-warm border-stone-200/60 hover:border-stone-300"
             )}
           >
             <SlidersHorizontal className="h-3 w-3" />
             Filter
             {activeFilterCount > 0 && (
-              <span className="bg-white/25 text-white text-[10px] rounded-full w-4 h-4 flex items-center justify-center font-bold">
+              <span className="bg-amber/20 text-amber text-[10px] rounded-full w-4 h-4 flex items-center justify-center font-bold">
                 {activeFilterCount}
               </span>
             )}

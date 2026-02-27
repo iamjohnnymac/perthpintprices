@@ -40,12 +40,12 @@ export default function PubCard({ pub, avgPrice = 9.20, distance }: PubCardProps
     <Link href={`/pub/${pub.slug}`} className="block group">
       <div className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all h-full flex flex-col">
         {/* Image placeholder with gradient + initial */}
-        <div className={`relative h-36 sm:h-44 bg-gradient-to-br ${gradient} flex items-center justify-center`}>
+        <div className={`relative h-[140px] sm:h-[180px] bg-gradient-to-br ${gradient} flex items-center justify-center`}>
           <span className="font-serif text-4xl sm:text-5xl text-charcoal/15 select-none">{pub.name.charAt(0)}</span>
           {/* Price badge */}
           {effectivePrice ? (
-            <div className="absolute top-3 right-3 bg-white rounded-full px-3 py-1 shadow-sm flex items-center gap-1.5">
-              <span className="font-mono font-bold text-charcoal text-sm">${effectivePrice.toFixed(2)}</span>
+            <div className="absolute top-3 right-3 bg-white rounded-full px-4 py-1.5 shadow-sm flex items-center gap-1.5">
+              <span className="font-mono font-bold text-charcoal text-base">${effectivePrice.toFixed(2)}</span>
               {label && (
                 <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full ${colors.bg} ${colors.text}`}>
                   {label}
@@ -66,7 +66,7 @@ export default function PubCard({ pub, avgPrice = 9.20, distance }: PubCardProps
         </div>
 
         {/* Card body */}
-        <div className="p-4 flex-1 flex flex-col">
+        <div className="p-5 flex-1 flex flex-col">
           <div className="flex items-start justify-between gap-2">
             <div className="min-w-0 flex-1">
               <h3 className="font-serif text-lg text-charcoal leading-snug truncate">{pub.name}</h3>

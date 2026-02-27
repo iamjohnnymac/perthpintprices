@@ -303,7 +303,7 @@ export default function Home() {
       )}
 
       {/* ═══ CONTENT ═══ */}
-      <div ref={contentRef} className="max-w-5xl mx-auto px-4 sm:px-6 py-3 sm:py-4">
+      <div ref={contentRef} className="max-w-5xl mx-auto px-4 sm:px-6 py-4 sm:py-6">
         {/* ═══ PUBS TAB ═══ */}
         {activeTab === 'pubs' && (
           <>
@@ -328,7 +328,7 @@ export default function Home() {
 
         {/* ═══ INSIGHTS TAB ═══ */}
         {activeTab === 'market' && (
-          <div className="space-y-3 sm:space-y-4">
+          <div className="space-y-4 sm:space-y-6">
             <PintOfTheDay />
             <PintIndex />
             <TonightsMoves pubs={pubs} userLocation={userLocation} />
@@ -340,7 +340,7 @@ export default function Home() {
 
         {/* ═══ GUIDES TAB ═══ */}
         {activeTab === 'explore' && (
-          <div className="space-y-3 sm:space-y-4">
+          <div className="space-y-4 sm:space-y-6">
             {/* Featured: Pub Golf, Pint Crawl, Leaderboard */}
             <div className="grid grid-cols-3 gap-3 sm:gap-4">
               <Link href="/pub-golf" className="bg-white rounded-xl p-4 sm:p-5 shadow-sm hover:shadow-md transition-all active:scale-[0.98] group text-center">
