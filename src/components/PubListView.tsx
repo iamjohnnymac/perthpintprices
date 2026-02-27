@@ -6,7 +6,7 @@ import { Pub } from '@/types/pub'
 import { CrowdReport, CROWD_LEVELS } from '@/lib/supabase'
 import { getHappyHourStatus } from '@/lib/happyHour'
 import { getDistanceKm, formatDistance } from '@/lib/location'
-import { getPriceTextColor, getDirectionsUrl } from '@/lib/priceColors'
+import { getDirectionsUrl } from '@/lib/priceColors'
 import WatchlistButton from '@/components/WatchlistButton'
 
 type SortKey = 'name' | 'suburb' | 'price' | 'beer' | null
@@ -78,7 +78,7 @@ export default function PubListView({
     const isActive = sortKey === field
     return (
       <th
-        className={`py-4 px-3 sm:px-4 text-[11px] font-semibold uppercase tracking-wider cursor-pointer select-none hover:text-amber transition-colors ${isActive ? 'text-amber' : 'text-stone-500'} ${className}`}
+        className={`py-3 px-3 sm:px-4 text-xs font-medium cursor-pointer select-none hover:text-amber transition-colors ${isActive ? 'text-amber' : 'text-stone-400'} ${className}`}
         onClick={() => handleSort(field)}
       >
         <span className="inline-flex items-center gap-1">
@@ -95,13 +95,13 @@ export default function PubListView({
     <div className="bg-white rounded-xl shadow-sm overflow-hidden">
       <table className="w-full">
         <thead className="sticky top-0 z-10">
-          <tr className="bg-cream border-b border-stone-200/60">
+          <tr className="bg-stone-50 border-b border-stone-200/40">
             <SortHeader label="Pub" field="name" className="text-left" />
             <SortHeader label="Suburb" field="suburb" className="text-left hidden sm:table-cell" />
             <SortHeader label="Beer" field="beer" className="text-left hidden sm:table-cell" />
             <SortHeader label="Price" field="price" className="text-right" />
-            <th className="text-left py-3 px-3 text-[11px] font-semibold text-stone-500 uppercase tracking-wider hidden md:table-cell">Happy Hour</th>
-            <th className="text-center py-4 px-3 text-[11px] font-semibold text-stone-500 uppercase tracking-wider w-12"></th>
+            <th className="text-left py-3 px-3 text-xs font-medium text-stone-400 hidden md:table-cell">Happy Hour</th>
+            <th className="text-center py-3 px-3 w-12"></th>
           </tr>
         </thead>
         <tbody>
@@ -116,7 +116,7 @@ export default function PubListView({
               >
                 <td className="py-4 px-3 sm:px-4">
                   <div className="flex items-center gap-2">
-                    <span className="text-xs font-medium text-stone-400 w-5 text-right tabular-nums">{index + 1}</span>
+                    <span className="text-xs text-stone-300 w-5 text-right tabular-nums">{index + 1}</span>
                     <div>
                       <div className="flex items-center gap-2">
                         <a
@@ -131,14 +131,14 @@ export default function PubListView({
                             <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
                           </svg>
                         </a>
-                        <Link href={`/pub/${pub.slug}`} className="font-semibold text-charcoal text-base hover:text-amber transition-colors">{pub.name}</Link>
+                        <Link href={`/pub/${pub.slug}`} className="font-semibold text-charcoal text-[15px] hover:text-amber transition-colors leading-tight">{pub.name}</Link>
                         <WatchlistButton slug={pub.slug} name={pub.name} suburb={pub.suburb} size="sm" />
                       </div>
                       <p className="text-xs text-stone-warm sm:hidden">{pub.suburb}{userLocation && ` · ${formatDistance(getDistanceKm(userLocation.lat, userLocation.lng, pub.lat, pub.lng))}`}</p>
                     </div>
                   </div>
                 </td>
-                <td className="py-4 px-3 text-sm text-stone-warm hidden sm:table-cell">
+                <td className="py-4 px-3 text-sm text-stone-400 hidden sm:table-cell">
                   {pub.suburb}
                   {userLocation && <span className="text-stone-400 text-xs ml-1">· {formatDistance(getDistanceKm(userLocation.lat, userLocation.lng, pub.lat, pub.lng))}</span>}
                 </td>
@@ -147,7 +147,7 @@ export default function PubListView({
                     {pub.beerType || '—'}
                   </span>
                 </td>
-                <td className={`py-4 px-3 sm:px-4 text-right font-bold font-mono text-lg whitespace-nowrap ${getPriceTextColor(pub.price)}`}>
+                <td className={`py-4 px-3 sm:px-4 text-right font-bold font-mono text-lg whitespace-nowrap ${pub.price !== null && pub.price <= 8 ? 'text-bargain' : 'text-charcoal'}`}>
                   {pub.isHappyHourNow && pub.regularPrice !== null && pub.regularPrice !== pub.price && (
                     <span className="text-xs text-stone-400 line-through font-normal mr-1">${pub.regularPrice.toFixed(2)}</span>
                   )}

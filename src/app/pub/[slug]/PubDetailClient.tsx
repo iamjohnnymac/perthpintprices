@@ -144,7 +144,7 @@ export default function PubDetailClient({ pub, nearbyPubs, avgPrice }: PubDetail
             <div className="bg-white rounded-xl p-4 shadow-sm">
               <div className="flex items-end justify-between">
                 <div>
-                  <p className="text-[11px] font-semibold text-stone-warm uppercase tracking-wider mb-1">Pint Price</p>
+                  <p className="text-xs font-medium text-stone-500 mb-1">Pint Price</p>
                   {pub.isHappyHourNow && pub.regularPrice !== null && pub.regularPrice !== pub.price && (
                     <div className="text-sm text-stone-400 line-through font-mono">${pub.regularPrice.toFixed(2)}</div>
                   )}
@@ -189,7 +189,7 @@ export default function PubDetailClient({ pub, nearbyPubs, avgPrice }: PubDetail
             {/* Happy Hour card */}
             {(pub.happyHour || pub.happyHourPrice) && (
               <div className={`rounded-xl p-5 border ${pub.isHappyHourNow ? 'border-amber/30 bg-amber/5' : 'bg-white border-stone-200/40 shadow-sm'}`}>
-                <p className="text-[11px] font-semibold text-stone-warm uppercase tracking-wider mb-2">Happy Hour</p>
+                <p className="text-xs font-medium text-stone-500 mb-2">Happy Hour</p>
                 {pub.happyHourPrice && (
                   <p className={`text-2xl font-bold font-mono ${pub.isHappyHourNow ? 'text-amber' : 'text-charcoal'}`}>
                     ${pub.happyHourPrice.toFixed(2)}
@@ -214,7 +214,7 @@ export default function PubDetailClient({ pub, nearbyPubs, avgPrice }: PubDetail
             {/* Featured In */}
             {(pub.sunsetSpot || pub.kidFriendly || pub.hasTab) && (
               <div>
-                <p className="text-[11px] font-semibold text-stone-warm uppercase tracking-wider mb-3">Featured In</p>
+                <p className="text-xs font-medium text-stone-500 mb-3">Featured In</p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   {pub.sunsetSpot && (
                     <div className="flex items-center gap-3 p-3 rounded-xl bg-gradient-to-r from-orange-50 to-amber-50 border border-orange-200/50">
@@ -250,7 +250,7 @@ export default function PubDetailClient({ pub, nearbyPubs, avgPrice }: PubDetail
             {/* About */}
             {pub.description && (
               <div>
-                <p className="text-[11px] font-semibold text-stone-warm uppercase tracking-wider mb-2">About</p>
+                <p className="text-xs font-medium text-stone-500 mb-2">About</p>
                 <p className="text-sm text-stone-warm leading-relaxed">{pub.description}</p>
               </div>
             )}

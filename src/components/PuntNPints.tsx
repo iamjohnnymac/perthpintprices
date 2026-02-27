@@ -120,7 +120,7 @@ export default function PuntNPints({ pubs, userLocation }: PuntNPintsProps) {
         {isSectionOpen && (<>
         {/* TAB Pubs — Cheapest pints where you can bet on-site */}
         <div className="mb-3">
-          <p className="text-[10px] font-semibold text-stone-500 uppercase tracking-wider mb-1.5">
+          <p className="text-[10px] font-medium text-stone-500 tracking-wide mb-1.5">
             Bet &amp; Drink Under One Roof
           </p>
           <div className="space-y-1">
@@ -148,7 +148,7 @@ export default function PuntNPints({ pubs, userLocation }: PuntNPintsProps) {
         {/* Nearby TAB + Cheap Pint combos */}
         {nearbyPairs.length > 0 && (
           <div className="mb-2">
-            <p className="text-[10px] font-semibold text-stone-500 uppercase tracking-wider mb-1.5">
+            <p className="text-[10px] font-medium text-stone-500 tracking-wide mb-1.5">
               Cheap Pints Near a TAB
             </p>
             <div className="space-y-1">

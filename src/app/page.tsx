@@ -9,7 +9,6 @@ import dynamic from 'next/dynamic'
 
 // Extracted components
 import HeroSection from '@/components/HeroSection'
-import StatsBar from '@/components/StatsBar'
 import { FilterSection } from '@/components/FilterSection'
 import PubListView from '@/components/PubListView'
 import PubCardsView from '@/components/PubCardsView'
@@ -222,24 +221,15 @@ export default function Home() {
 
           {isNavExpanded && (
             <>
-              <div className="flex items-center justify-between mt-2">
-                <div className="flex gap-3">
-                  <Link href="/insights" className="text-sm font-semibold text-stone-warm hover:text-charcoal transition-colors">Insights</Link>
-                  <Link href="/guides" className="text-sm font-semibold text-stone-warm hover:text-charcoal transition-colors">Guides</Link>
+              <div className="flex items-center gap-2 mt-2">
+                  <Link href="/insights" className="px-3 py-1 text-sm font-semibold text-charcoal bg-cream-dark hover:bg-amber/10 hover:text-amber rounded-full transition-all">
+                    Insights
+                  </Link>
+                  <Link href="/guides" className="px-3 py-1 text-sm font-semibold text-charcoal bg-cream-dark hover:bg-amber/10 hover:text-amber rounded-full transition-all">
+                    Guides
+                  </Link>
                 </div>
-              </div>
-              <StatsBar
-                avgPrice={stats.avgPrice}
-                cheapestPrice={stats.minPrice}
-                cheapestSuburb={stats.cheapestSuburb}
-                cheapestSlug={stats.cheapestSlug}
-                priciestPrice={stats.maxPriceValue}
-                priciestSuburb={stats.priciestSuburb}
-                priciestSlug={stats.priciestSlug}
-                happyHourCount={stats.happyHourNow}
-                suburbCount={suburbs.length}
-                venueCount={stats.total}
-              />
+              
             </>
           )}
         </div>
@@ -275,7 +265,7 @@ export default function Home() {
       />
 
       {/* ═══ CONTENT ═══ */}
-      <div ref={contentRef} className="max-w-5xl mx-auto px-4 sm:px-6 pt-6 sm:pt-8 pb-4 sm:pb-6">
+      <div ref={contentRef} className="max-w-5xl mx-auto px-4 sm:px-6 pt-6 sm:pt-8 pb-6 sm:pb-8">
         <MyLocals pubs={pubs} userLocation={userLocation} />
 
         <div className="flex items-center justify-between mb-3">

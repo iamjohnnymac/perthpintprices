@@ -101,7 +101,7 @@ export default function LeaderboardClient() {
           ) : (
             <div>
               {/* Table header */}
-              <div className="grid grid-cols-[40px_1fr_80px_60px] sm:grid-cols-[50px_1fr_120px_100px_80px] gap-2 px-4 py-2.5 bg-stone-50 border-b border-stone-200/60 text-[11px] font-semibold text-stone-500 uppercase tracking-wider">
+              <div className="grid grid-cols-[40px_1fr_80px_60px] sm:grid-cols-[50px_1fr_120px_100px_80px] gap-2 px-4 py-2.5 bg-stone-50 border-b border-stone-200/60 text-xs font-medium text-stone-400">
                 <span>#</span>
                 <span>Reporter</span>
                 <span className="hidden sm:block">Badge</span>

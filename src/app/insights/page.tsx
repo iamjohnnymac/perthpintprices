@@ -77,7 +77,7 @@ export default function InsightsPage() {
         </div>
       </div>
 
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-6 sm:space-y-8">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8 sm:py-12 space-y-8 sm:space-y-10">
         <div id="pint-of-the-day">
           <ErrorBoundary><PintOfTheDay /></ErrorBoundary>
         </div>
