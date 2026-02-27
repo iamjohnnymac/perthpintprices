@@ -82,7 +82,7 @@ export default function InsightsPage() {
           <ErrorBoundary><PintOfTheDay /></ErrorBoundary>
         </div>
 
-        <div id="pint-index" className="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <div id="pint-index" className="grid grid-cols-1 md:grid-cols-2 gap-5 items-start">
           <ErrorBoundary><PintIndex /></ErrorBoundary>
           <ErrorBoundary><TonightsMoves pubs={pubs} userLocation={userLocation} /></ErrorBoundary>
         </div>

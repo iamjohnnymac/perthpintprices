@@ -275,7 +275,7 @@ export default function Home() {
       />
 
       {/* ═══ CONTENT ═══ */}
-      <div ref={contentRef} className="max-w-5xl mx-auto px-4 sm:px-6 py-4 sm:py-6">
+      <div ref={contentRef} className="max-w-5xl mx-auto px-4 sm:px-6 pt-6 sm:pt-8 pb-4 sm:pb-6">
         <MyLocals pubs={pubs} userLocation={userLocation} />
 
         <div className="flex items-center justify-between mb-3">

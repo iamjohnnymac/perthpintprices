@@ -29,7 +29,7 @@ function formatPerthTime(date: Date): string {
 }
 
 export default function TonightsMoves({ pubs, userLocation }: TonightsMovesProps) {
-  const [isExpanded, setIsExpanded] = useState(false)
+  const [isExpanded, setIsExpanded] = useState(true)
   const [perthTime, setPerthTime] = useState(getPerthTime)
 
   useEffect(() => {
@@ -151,7 +151,7 @@ export default function TonightsMoves({ pubs, userLocation }: TonightsMovesProps
             {marketTip && (
               <div className="p-3 rounded-xl bg-gradient-to-r from-orange-50 to-yellow-50 border border-orange-200">
                 <h4 className="text-xs font-semibold text-orange mb-1 flex items-center gap-1">
-                  {E.star} MARKET TIP
+                  {E.star} Market Tip
                   <InfoTooltip text="Our algorithm picks the best value pub right now — weighing price, active happy hour bonus, beer quality, and suburb. Rescores as happy hours start and end." />
                 </h4>
                 <div className="flex items-center justify-between">
@@ -172,7 +172,7 @@ export default function TonightsMoves({ pubs, userLocation }: TonightsMovesProps
             {/* Best Buys */}
             <div>
               <h4 className="text-xs font-semibold text-orange mb-2 flex items-center gap-1">
-                {E.chart_down} BEST BUYS {E.dash} Lowest Prices Right Now
+                {E.chart_down} Best Buys {E.dash} Lowest Prices Right Now
               </h4>
               <div className="space-y-1.5">
                 {bestBuys.map((pub, i) => (
@@ -194,7 +194,7 @@ export default function TonightsMoves({ pubs, userLocation }: TonightsMovesProps
             {activeDeals.length > 0 && (
               <div>
                 <h4 className="text-xs font-semibold text-orange mb-2 flex items-center gap-1">
-                  {E.party} ACTIVE DEALS {E.dash} Happy Hour NOW ({activeDeals.length})
+                  {E.party} Active Deals {E.dash} Happy Hour Now ({activeDeals.length})
                 </h4>
                 <div className="space-y-1.5">
                   {activeDeals.slice(0, 5).map((pub) => {
@@ -222,7 +222,7 @@ export default function TonightsMoves({ pubs, userLocation }: TonightsMovesProps
             {upcomingDeals.length > 0 && (
               <div>
                 <h4 className="text-xs font-semibold text-orange mb-2 flex items-center gap-1">
-                  {E.clock} UPCOMING {E.dash} Happy Hours Starting Soon
+                  {E.clock} Upcoming {E.dash} Happy Hours Starting Soon
                 </h4>
                 <div className="space-y-1.5">
                   {upcomingDeals.map((pub) => {

@@ -101,7 +101,7 @@ export function FilterSection({
           <button
             onClick={() => setSortBy(sortBy === 'nearest' ? 'price' : 'nearest')}
             className={cn(
-              "flex items-center gap-1.5 px-3 py-2.5 rounded-full text-xs font-semibold uppercase tracking-wider transition-all whitespace-nowrap border",
+              "flex items-center gap-1.5 px-3 py-2.5 rounded-full text-sm font-medium transition-all whitespace-nowrap border",
               isNearestActive
                 ? "bg-amber/10 text-amber border-amber/40 border-2"
                 : "bg-cream text-stone-warm border-stone-200/60 hover:border-stone-300"
@@ -117,7 +117,7 @@ export function FilterSection({
           <button
             onClick={() => setShowMoreFilters(!showMoreFilters)}
             className={cn(
-              "flex items-center gap-1.5 px-3 py-2.5 rounded-full text-xs font-semibold uppercase tracking-wider transition-all border whitespace-nowrap",
+              "flex items-center gap-1.5 px-3 py-2.5 rounded-full text-sm font-medium transition-all border whitespace-nowrap",
               showMoreFilters || activeFilterCount > 0
                 ? "bg-amber/10 text-amber border-amber/40 border-2"
                 : "bg-cream text-stone-warm border-stone-200/60 hover:border-stone-300"
@@ -136,7 +136,7 @@ export function FilterSection({
             <div className="absolute right-0 top-full mt-2 w-80 bg-white rounded-xl shadow-lg border border-stone-200/40 p-5 z-50">
               {/* View Mode */}
               <div className="mb-5">
-                <label className="block text-[11px] font-semibold text-stone-warm uppercase tracking-wider mb-2">View</label>
+                <label className="block text-xs font-medium text-stone-500 mb-2">View</label>
                 <div className="flex gap-2">
                   <button
                     onClick={() => setViewMode('cards')}
@@ -161,7 +161,7 @@ export function FilterSection({
 
               {/* Suburb */}
               <div className="mb-5">
-                <label className="block text-[11px] font-semibold text-stone-warm uppercase tracking-wider mb-2">Suburb</label>
+                <label className="block text-xs font-medium text-stone-500 mb-2">Suburb</label>
                 <select
                   value={selectedSuburb || 'all'}
                   onChange={(e) => setSelectedSuburb(e.target.value)}
@@ -176,7 +176,7 @@ export function FilterSection({
 
               {/* Toggles */}
               <div className="mb-5 space-y-2">
-                <label className="block text-[11px] font-semibold text-stone-warm uppercase tracking-wider mb-2">Toggles</label>
+                <label className="block text-xs font-medium text-stone-500 mb-2">Toggles</label>
                 <button
                   onClick={() => setShowHappyHourOnly(!showHappyHourOnly)}
                   className={cn(
@@ -206,7 +206,7 @@ export function FilterSection({
 
               {/* Sort By */}
               <div className="mb-5">
-                <label className="block text-[11px] font-semibold text-stone-warm uppercase tracking-wider mb-2">Sort By</label>
+                <label className="block text-xs font-medium text-stone-500 mb-2">Sort By</label>
                 <div className="flex gap-2">
                   {(['price', 'name', 'suburb'] as const).map(option => (
                     <button
@@ -225,7 +225,7 @@ export function FilterSection({
 
               {/* Max Price slider */}
               <div className="mb-4">
-                <label className="block text-[11px] font-semibold text-stone-warm uppercase tracking-wider mb-2">
+                <label className="block text-xs font-medium text-stone-500 mb-2">
                   Max Price: <span className="text-amber font-bold">${maxPrice}</span>
                 </label>
                 <input

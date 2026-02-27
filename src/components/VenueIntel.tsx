@@ -24,7 +24,7 @@ function getBracketColor(bracket: string): string {
 }
 
 export default function VenueIntel({ pubs, userLocation }: VenueIntelProps) {
-  const [isExpanded, setIsExpanded] = useState(false)
+  const [isExpanded, setIsExpanded] = useState(true)
 
   const priceRange = useMemo(() => {
     if (pubs.length === 0) return { min: 0, max: 0 }
@@ -141,7 +141,7 @@ export default function VenueIntel({ pubs, userLocation }: VenueIntelProps) {
           <div className="mt-3 pt-3 border-t border-stone-200/60 space-y-3" onClick={(e) => e.stopPropagation()}>
             <div>
               <h4 className="text-xs font-semibold text-stone-700 mb-2 flex items-center gap-1">
-                {E.chart_bar} PRICE DISTRIBUTION
+                {E.chart_bar} Price Distribution
               </h4>
               <div className="p-3 rounded-xl bg-white/70 border border-stone-100">
                 <div className="space-y-1.5">
@@ -170,7 +170,7 @@ export default function VenueIntel({ pubs, userLocation }: VenueIntelProps) {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <h4 className="text-xs font-semibold text-green-700 mb-2 flex items-center gap-1">
-                  {E.chart_down} UNDERVALUED {E.dash} Below Market
+                  {E.chart_down} Undervalued {E.dash} Below Market
                 </h4>
                 <div className="space-y-1">
                   {undervalued.map(({ pub, diff }) => (
@@ -190,7 +190,7 @@ export default function VenueIntel({ pubs, userLocation }: VenueIntelProps) {
 
               <div>
                 <h4 className="text-xs font-semibold text-red-600 mb-2 flex items-center gap-1">
-                  {E.chart_up} OVERVALUED {E.dash} Above Market
+                  {E.chart_up} Overvalued {E.dash} Above Market
                 </h4>
                 <div className="space-y-1">
                   {overvalued.map(({ pub, diff }) => (

@@ -18,7 +18,7 @@ type RowItem =
   | { type: 'suburb'; pos: number; stats: SuburbStats; rowBg: string }
 
 export default function SuburbLeague({ pubs }: { pubs: Pub[] }) {
-  const [isExpanded, setIsExpanded] = useState(false)
+  const [isExpanded, setIsExpanded] = useState(true)
   const [sortBy, setSortBy] = useState<'avg' | 'low' | 'high' | 'hh'>('avg')
 
   const suburbs = useMemo<SuburbStats[]>(() => {

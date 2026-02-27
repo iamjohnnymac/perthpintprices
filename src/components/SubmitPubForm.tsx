@@ -227,7 +227,7 @@ export default function SubmitPubForm({ isOpen, onClose }: SubmitPubFormProps) {
   const inputClass =
     'w-full px-3 py-3 h-11 bg-cream border border-cream-dark rounded-xl text-charcoal placeholder-stone-warm/50 focus:outline-none focus:ring-2 focus:ring-amber/40 focus:border-amber transition-all text-sm';
   const labelClass =
-    'block text-xs font-semibold text-stone-warm uppercase tracking-wide mb-1.5';
+    'block text-sm font-medium text-stone-600 mb-1.5';
 
   return (
     <div
