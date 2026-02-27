@@ -22,7 +22,7 @@ export default function StatsBar({
 }: StatsBarProps) {
   return (
     <div className="flex items-center justify-center gap-3 mt-2 overflow-x-auto scrollbar-hide py-1">
-      <div className="flex items-center gap-1.5 px-4 py-2 bg-white rounded-full border border-stone-200/60 text-sm whitespace-nowrap shadow-sm">
+      <div className="hidden sm:flex items-center gap-1.5 px-4 py-2 bg-white rounded-full border border-stone-200/60 text-sm whitespace-nowrap shadow-sm">
         <span className="text-stone-warm">Avg</span>
         <span className="font-bold text-charcoal font-mono">${avgPrice}</span>
       </div>
@@ -30,7 +30,7 @@ export default function StatsBar({
         <span className="text-stone-warm">Low</span>
         <span className="font-bold text-bargain font-mono">${cheapestPrice}</span>
       </Link>
-      <div className="flex items-center gap-1.5 px-4 py-2 bg-white rounded-full border border-stone-200/60 text-sm whitespace-nowrap shadow-sm">
+      <div className="hidden sm:flex items-center gap-1.5 px-4 py-2 bg-white rounded-full border border-stone-200/60 text-sm whitespace-nowrap shadow-sm">
         <span className="text-stone-warm">Venues</span>
         <span className="font-bold text-charcoal">{venueCount}</span>
       </div>

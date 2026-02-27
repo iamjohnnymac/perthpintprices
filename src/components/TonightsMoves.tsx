@@ -133,7 +133,7 @@ export default function TonightsMoves({ pubs, userLocation }: TonightsMovesProps
             <span className="text-2xl">{E.clock}</span>
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="text-base sm:text-lg font-bold font-heading text-stone-800 flex items-center">{`TONIGHT'S BEST BETS`}<InfoTooltip text="Updated in real-time based on current Perth time. Shows active happy hours, best prices right now, and our top pick of the moment." /></h3>
+                <h3 className="text-lg sm:text-xl font-semibold font-heading text-stone-800 flex items-center">{`Tonight's Best Bets`}<InfoTooltip text="Updated in real-time based on current Perth time. Shows active happy hours, best prices right now, and our top pick of the moment." /></h3>
                 <span className="text-[10px] text-stone-400 font-mono">{formatPerthTime(perthTime)} AWST</span>
               </div>
               <p className="text-xs text-stone-500">{summaryText}</p>
@@ -249,7 +249,7 @@ export default function TonightsMoves({ pubs, userLocation }: TonightsMovesProps
             {/* Hot Suburb */}
             {hotSuburb && (
               <div className="p-3 rounded-xl bg-white/70 border border-stone-100 text-center">
-                <h4 className="text-xs font-semibold text-stone-600 mb-1">{E.fire} HOT SUBURB</h4>
+                <h4 className="text-xs font-semibold text-stone-600 mb-1">{E.fire} Hot Suburb</h4>
                 <p className="text-sm font-bold text-stone-800">{hotSuburb.name}</p>
                 <p className="text-[10px] text-stone-400">
                   {hotSuburb.activeCount} active deal{hotSuburb.activeCount !== 1 ? 's' : ''} {E.bullet} Avg ${hotSuburb.avgPrice.toFixed(2)}

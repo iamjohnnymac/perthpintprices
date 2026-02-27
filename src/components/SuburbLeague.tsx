@@ -117,8 +117,8 @@ export default function SuburbLeague({ pubs }: { pubs: Pub[] }) {
           className="w-full text-left p-4 flex items-center justify-between hover:bg-stone-50 transition-all active:scale-[0.995]"
         >
           <div>
-            <h3 className="text-base sm:text-lg font-bold font-heading text-stone-800 flex items-center gap-2">
-              <svg className="inline w-4 h-4 mr-1.5 text-orange" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><rect x="3" y="12" width="4" height="8" rx="1"/><rect x="10" y="8" width="4" height="12" rx="1"/><rect x="17" y="4" width="4" height="16" rx="1"/></svg>SUBURB RANKINGS
+            <h3 className="text-lg font-semibold font-heading text-stone-800 flex items-center gap-2">
+              <svg className="inline w-4 h-4 mr-1.5 text-orange" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><rect x="3" y="12" width="4" height="8" rx="1"/><rect x="10" y="8" width="4" height="12" rx="1"/><rect x="17" y="4" width="4" height="16" rx="1"/></svg>Suburb Rankings
             </h3>
             <p className="text-xs text-stone-500 mt-0.5">
               {isExpanded

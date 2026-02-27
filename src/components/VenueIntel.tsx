@@ -128,7 +128,7 @@ export default function VenueIntel({ pubs, userLocation }: VenueIntelProps) {
           <div className="flex items-center gap-3">
             <span className="text-2xl">{E.chart_bar}</span>
             <div>
-              <h3 className="text-base sm:text-lg font-bold font-heading text-stone-800">VENUE BREAKDOWN</h3>
+              <h3 className="text-lg sm:text-xl font-semibold font-heading text-stone-800">Venue Breakdown</h3>
               <p className="text-xs text-stone-500">{summaryText}</p>
             </div>
           </div>
@@ -212,7 +212,7 @@ export default function VenueIntel({ pubs, userLocation }: VenueIntelProps) {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <h4 className="text-xs font-semibold text-green-700 mb-2 flex items-center gap-1">
-                  {E.green_circle} CHEAPEST SUBURBS
+                  {E.green_circle} Cheapest Suburbs
                 </h4>
                 <div className="space-y-1">
                   {cheapestSuburbs.map((suburb, i) => (
@@ -232,7 +232,7 @@ export default function VenueIntel({ pubs, userLocation }: VenueIntelProps) {
 
               <div>
                 <h4 className="text-xs font-semibold text-red-600 mb-2 flex items-center gap-1">
-                  {E.red_circle} PRICIEST SUBURBS
+                  {E.red_circle} Priciest Suburbs
                 </h4>
                 <div className="space-y-1">
                   {priciestSuburbs.map((suburb, i) => (
