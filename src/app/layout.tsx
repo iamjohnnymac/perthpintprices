@@ -22,6 +22,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const ogDesc = `Perth's pint prices, sorted. ${stats.venueCount}+ venues. Avg: $${stats.avgPrice}. Cheapest: $${stats.cheapestPrice}.`
 
   return {
+    metadataBase: new URL('https://perthpintprices.com'),
     icons: {
       icon: '/favicon.ico',
       apple: '/apple-touch-icon.png',
@@ -32,7 +33,7 @@ export async function generateMetadata(): Promise<Metadata> {
     openGraph: {
       title: "Arvo — Perth's pint prices, sorted.",
       description: ogDesc,
-      url: 'https://arvo.pub',
+      url: 'https://perthpintprices.com',
       siteName: 'Arvo',
       locale: 'en_AU',
       type: 'website',

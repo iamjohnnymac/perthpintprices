@@ -18,10 +18,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   return {
     title,
     description,
+    alternates: { canonical: `https://perthpintprices.com/pub/${params.slug}` },
     openGraph: {
       title: `${pub.name} — ${priceText}`,
       description,
-      url: `https://perthpintprices.vercel.app/pub/${params.slug}`,
+      url: `https://perthpintprices.com/pub/${params.slug}`,
       siteName: 'Arvo',
       locale: 'en_AU',
       type: 'website',
@@ -39,7 +40,7 @@ export async function generateStaticParams() {
   return slugs.map(slug => ({ slug }))
 }
 
-export const revalidate = 300 // Revalidate every 5 minutes
+export const revalidate = 300
 
 export default async function PubPage({ params }: PageProps) {
   const pub = await getPubBySlug(params.slug)
@@ -50,27 +51,38 @@ export default async function PubPage({ params }: PageProps) {
     getSiteStats(),
   ])
   
-  const jsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'BarOrPub',
-    name: pub.name,
-    address: {
-      '@type': 'PostalAddress',
-      streetAddress: pub.address,
-      addressLocality: pub.suburb,
-      addressRegion: 'WA',
-      addressCountry: 'AU',
+  const jsonLd = [
+    {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://perthpintprices.com' },
+        { '@type': 'ListItem', position: 2, name: pub.suburb, item: `https://perthpintprices.com/?suburb=${encodeURIComponent(pub.suburb)}` },
+        { '@type': 'ListItem', position: 3, name: pub.name },
+      ],
     },
-    geo: {
-      '@type': 'GeoCoordinates',
-      latitude: pub.lat,
-      longitude: pub.lng,
+    {
+      '@context': 'https://schema.org',
+      '@type': 'BarOrPub',
+      name: pub.name,
+      address: {
+        '@type': 'PostalAddress',
+        streetAddress: pub.address,
+        addressLocality: pub.suburb,
+        addressRegion: 'WA',
+        addressCountry: 'AU',
+      },
+      geo: {
+        '@type': 'GeoCoordinates',
+        latitude: pub.lat,
+        longitude: pub.lng,
+      },
+      ...(pub.website ? { url: pub.website } : {}),
+      ...(pub.price ? {
+        priceRange: `$${pub.price.toFixed(2)} per pint`,
+      } : {}),
     },
-    ...(pub.website ? { url: pub.website } : {}),
-    ...(pub.price ? {
-      priceRange: `$${pub.price.toFixed(2)} per pint`,
-    } : {}),
-  }
+  ]
 
   return (
     <>

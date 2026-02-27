@@ -11,6 +11,15 @@ import CrowdPulse from '@/components/CrowdPulse'
 import VenueIntel from '@/components/VenueIntel'
 import Footer from '@/components/Footer'
 import { ErrorBoundary } from '@/components/ErrorBoundary'
+import Link from 'next/link'
+
+const insightCards = [
+  { href: '/insights/pint-of-the-day', icon: '🍺', title: 'Pint of the Day', desc: "Today's best value pick" },
+  { href: '/insights/pint-index', icon: '📈', title: 'Perth Pint Index™', desc: 'Live price tracking' },
+  { href: '/insights/tonights-best-bets', icon: '🌙', title: "Tonight's Best Bets", desc: 'Where to drink now' },
+  { href: '/insights/suburb-rankings', icon: '🏘️', title: 'Suburb Rankings', desc: 'Cheapest areas for a pint' },
+  { href: '/insights/venue-breakdown', icon: '🔍', title: 'Venue Breakdown', desc: 'Price brackets & analysis' },
+]
 
 export default function InsightsPage() {
   const [pubs, setPubs] = useState<Pub[]>([])
@@ -41,7 +50,7 @@ export default function InsightsPage() {
   if (isLoading) {
     return (
       <main className="min-h-screen bg-cream">
-        <SubPageNav title="Insights" subtitle="Real-time market data for Perth pints" />
+        <SubPageNav breadcrumbs={[{ label: 'Insights' }]} />
         <div className="flex items-center justify-center py-20">
           <div className="w-12 h-12 border-4 border-stone-300 border-t-amber rounded-full animate-spin" />
         </div>
@@ -49,22 +58,37 @@ export default function InsightsPage() {
     )
   }
 
-  const sections = [
-    { id: 'pint-of-the-day', label: 'Pint of the Day' },
-    { id: 'pint-index', label: 'Market Data' },
-    { id: 'suburbs', label: 'Suburbs' },
-    { id: 'venues', label: 'Venues' },
-  ]
-
   return (
     <main className="min-h-screen bg-cream">
-      <SubPageNav title="Insights" subtitle="Real-time market data for Perth pints" />
-      
+      <SubPageNav breadcrumbs={[{ label: 'Insights' }]} />
+
+      {/* Quick-nav cards */}
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 pt-6 pb-2">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+          {insightCards.map(card => (
+            <Link
+              key={card.href}
+              href={card.href}
+              className="bg-white rounded-2xl p-4 border border-stone-200/40 hover:shadow-md hover:border-amber/30 transition-all group text-center"
+            >
+              <div className="text-2xl mb-1.5">{card.icon}</div>
+              <h3 className="font-semibold text-charcoal text-xs group-hover:text-amber transition-colors">{card.title}</h3>
+              <p className="text-[10px] text-stone-warm mt-0.5">{card.desc}</p>
+            </Link>
+          ))}
+        </div>
+      </div>
+
       {/* Section nav */}
       <div className="sticky top-[52px] z-40 bg-cream/95 backdrop-blur-sm border-b border-stone-200/40">
         <div className="max-w-5xl mx-auto px-4 sm:px-6">
           <div className="flex gap-1 overflow-x-auto scrollbar-hide py-2">
-            {sections.map(s => (
+            {[
+              { id: 'pint-of-the-day', label: 'Pint of the Day' },
+              { id: 'pint-index', label: 'Market Data' },
+              { id: 'suburbs', label: 'Suburbs' },
+              { id: 'venues', label: 'Venues' },
+            ].map(s => (
               <a
                 key={s.id}
                 href={`#${s.id}`}
