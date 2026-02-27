@@ -1,9 +1,11 @@
 'use client'
 
-import { MapContainer, TileLayer, Marker } from 'react-leaflet'
+import { MapContainer, TileLayer, Marker, useMap } from 'react-leaflet'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
+import { useEffect } from 'react'
 import { getSunPosition, sunToMapPosition } from '@/lib/sunPosition'
+import { getMapMode, MAP_TILES, MAP_FILTERS, MAP_OVERLAYS } from '@/lib/mapTheme'
 
 // Simple marker icon
 const miniMarkerIcon = L.divIcon({
@@ -20,6 +22,18 @@ const miniMarkerIcon = L.divIcon({
   iconAnchor: [12, 12],
 })
 
+/** Applies CSS filter to tile pane based on time of day */
+function MapTheme() {
+  const map = useMap()
+  const mode = getMapMode()
+  useEffect(() => {
+    const pane = map.getPane('tilePane')
+    if (pane) pane.style.filter = MAP_FILTERS[mode]
+    return () => { if (pane) pane.style.filter = 'none' }
+  }, [map, mode])
+  return null
+}
+
 interface MiniMapProps {
   lat: number
   lng: number
@@ -30,6 +44,8 @@ export default function MiniMap({ lat, lng, name }: MiniMapProps) {
   const { azimuth, altitude } = getSunPosition(new Date())
   const sunPos = sunToMapPosition(azimuth)
   const isSunUp = altitude > 0
+  const mode = getMapMode()
+  const overlay = MAP_OVERLAYS[mode]
 
   return (
     <div className="relative h-full w-full">
@@ -43,22 +59,27 @@ export default function MiniMap({ lat, lng, name }: MiniMapProps) {
         zoomControl={false}
         attributionControl={false}
       >
-        {/* CartoDB Positron - soft pastel style matching main map */}
-        <TileLayer
-          url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
-        />
+        <TileLayer url={MAP_TILES[mode]} />
+        <MapTheme />
         <Marker position={[lat, lng]} icon={miniMarkerIcon} />
       </MapContainer>
 
-      {/* Sun direction overlay */}
-      {isSunUp && (
+      {/* Time-of-day atmospheric overlay */}
+      {overlay && (
         <div
           className="absolute inset-0 pointer-events-none z-[400]"
+          style={{ background: overlay }}
+        />
+      )}
+
+      {/* Sun direction overlay (daytime/golden hour only) */}
+      {isSunUp && (
+        <div
+          className="absolute inset-0 pointer-events-none z-[401]"
           style={{
             background: `radial-gradient(circle at ${sunPos.x}% ${sunPos.y}%, rgba(251,191,36,0.22) 0%, transparent 65%)`,
           }}
         >
-          {/* Sun dot */}
           <div
             className="absolute rounded-full"
             style={{

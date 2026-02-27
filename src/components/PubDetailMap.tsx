@@ -1,8 +1,10 @@
 'use client'
 
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet'
+import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet'
+import { useEffect } from 'react'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
+import { getMapMode, MAP_TILES, MAP_FILTERS } from '@/lib/mapTheme'
 
 function getPriceMarkerColor(price: number | null): string {
   if (price === null) return '#78716c'
@@ -10,6 +12,17 @@ function getPriceMarkerColor(price: number | null): string {
   if (price <= 9) return '#E8820C'
   if (price <= 11) return '#d97706'
   return '#dc2626'
+}
+
+function MapTheme() {
+  const map = useMap()
+  const mode = getMapMode()
+  useEffect(() => {
+    const pane = map.getPane('tilePane')
+    if (pane) pane.style.filter = MAP_FILTERS[mode]
+    return () => { if (pane) pane.style.filter = 'none' }
+  }, [map, mode])
+  return null
 }
 
 interface PubDetailMapProps {
@@ -49,7 +62,8 @@ export default function PubDetailMap({ lat, lng, name, price }: PubDetailMapProp
       zoomControl={false}
       attributionControl={false}
     >
-      <TileLayer url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png" />
+      <TileLayer url={MAP_TILES[getMapMode()]} />
+      <MapTheme />
       <Marker position={[lat, lng]} icon={markerIcon}>
         <Popup>
           <strong>{name}</strong><br />

@@ -5,6 +5,7 @@ import MarkerClusterGroup from 'react-leaflet-cluster'
 import L from 'leaflet'
 import { Pub } from '@/types/pub'
 import 'leaflet/dist/leaflet.css'
+import { getMapMode, MAP_TILES, MAP_FILTERS, MAP_OVERLAYS, MAP_ATTRIBUTION } from '@/lib/mapTheme'
 import React, { useEffect } from 'react'
 
 // Price-coded markers using DivIcon
@@ -73,6 +74,18 @@ function createClusterCustomIcon(cluster: L.MarkerCluster): L.DivIcon {
     className: 'custom-cluster-icon',
     iconSize: L.point(size, size, true),
   })
+}
+
+/** Applies CSS filter to tile pane based on time of day */
+function MapTheme() {
+  const map = useMap()
+  const mode = getMapMode()
+  useEffect(() => {
+    const pane = map.getPane('tilePane')
+    if (pane) pane.style.filter = MAP_FILTERS[mode]
+    return () => { if (pane) pane.style.filter = 'none' }
+  }, [map, mode])
+  return null
 }
 
 // Component to fit map bounds to visible markers
@@ -148,9 +161,10 @@ export default function MapComponent({ pubs, userLocation, totalPubCount }: MapP
       scrollWheelZoom={true}
     >
       <TileLayer
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
-        url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
+        attribution={MAP_ATTRIBUTION}
+        url={MAP_TILES[getMapMode()]}
       />
+      <MapTheme />
       
       <FitBounds pubs={pubs} userLocation={userLocation} totalPubCount={totalPubCount || pubs.length} />
       

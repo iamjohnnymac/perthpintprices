@@ -6,7 +6,7 @@ import { useState, useEffect, useMemo } from 'react'
 import dynamic from 'next/dynamic'
 import { Pub } from '@/types/pub'
 import { Card, CardContent } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
+
 import E from '@/lib/emoji'
 import InfoTooltip from './InfoTooltip'
 import { getDistanceKm, formatDistance } from '@/lib/location'
@@ -113,7 +113,7 @@ function getSunShadowGradient(azimuth: number, isGolden: boolean): string {
 
 export default function SunsetSippers({ pubs, userLocation }: SunsetSippersProps) {
   const [now, setNow] = useState(new Date())
-  const [isExpanded, setIsExpanded] = useState(false)
+  const [isExpanded, setIsExpanded] = useState(true)
   const [showAllPubs, setShowAllPubs] = useState(false)
   const [apiSunriseHour, setApiSunriseHour] = useState<number | null>(null)
   const [apiSunsetHour, setApiSunsetHour] = useState<number | null>(null)
@@ -227,14 +227,14 @@ export default function SunsetSippers({ pubs, userLocation }: SunsetSippersProps
               <div className="flex items-center gap-2">
                 <h3 className="text-base sm:text-lg font-bold font-heading text-stone-800 flex items-center">SUNSET SIPPERS<InfoTooltip text="Uses Perth's real-time sunset & golden hour times (calculated astronomically). Highlights west-facing pubs with verified prices — best spots to watch the sun go down with a pint." /></h3>
                 {isGoldenHour && (
-                  <Badge className="bg-orange-500 text-white text-[10px] px-1.5 py-0 animate-pulse">
+                  <span className="inline-flex items-center rounded-full bg-amber-500 text-white text-[10px] font-semibold px-2 py-0.5 animate-pulse shadow-sm">
                     GOLDEN HOUR
-                  </Badge>
+                  </span>
                 )}
                 {isSunset && (
-                  <Badge className="bg-orange-600 text-white text-[10px] px-1.5 py-0 animate-pulse">
+                  <span className="inline-flex items-center rounded-full bg-orange-600 text-white text-[10px] font-semibold px-2 py-0.5 animate-pulse shadow-sm">
                     SUNSET NOW
-                  </Badge>
+                  </span>
                 )}
               </div>
               <p className="text-xs text-stone-500">{statusMessage}</p>
