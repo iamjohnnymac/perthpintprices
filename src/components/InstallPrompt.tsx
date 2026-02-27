@@ -70,7 +70,7 @@ export default function InstallPrompt() {
       <div className="fixed inset-0 bg-black/20 backdrop-blur-sm" onClick={dismiss} />
       
       {/* Banner */}
-      <div className="relative mx-3 mb-3 rounded-2xl bg-white shadow-2xl border border-orange/20 overflow-hidden">
+      <div className="relative mx-3 mb-12 rounded-2xl bg-white shadow-2xl border border-orange/20 overflow-hidden">
         {/* Amber accent bar */}
         <div className="h-1 bg-gradient-to-r from-orange via-orange/80 to-orange/60" />
         
