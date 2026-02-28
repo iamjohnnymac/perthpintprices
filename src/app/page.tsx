@@ -43,7 +43,7 @@ export default function Home() {
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedSuburb, setSelectedSuburb] = useState('')
   const [maxPrice, setMaxPrice] = useState(20)
-  const [sortBy, setSortBy] = useState<'price' | 'name' | 'suburb' | 'nearest'>('price')
+  const [sortBy, setSortBy] = useState<'price' | 'name' | 'suburb' | 'nearest' | 'freshness'>('price')
   const [showHappyHourOnly, setShowHappyHourOnly] = useState(false)
   const [showMiniMaps, setShowMiniMaps] = useState(true)
   const [showSubmitForm, setShowSubmitForm] = useState(false)
@@ -161,6 +161,11 @@ export default function Home() {
           const distA = getDistanceKm(userLocation.lat, userLocation.lng, a.lat, a.lng)
           const distB = getDistanceKm(userLocation.lat, userLocation.lng, b.lat, b.lng)
           return distA - distB
+        }
+        if (sortBy === 'freshness') {
+          const aDate = a.lastVerified ? new Date(a.lastVerified).getTime() : 0
+          const bDate = b.lastVerified ? new Date(b.lastVerified).getTime() : 0
+          return bDate - aDate // Most recently verified first
         }
         return 0
       })

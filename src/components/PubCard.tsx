@@ -4,6 +4,7 @@ import { Pub } from '@/types/pub'
 import { getPriceLabel, getPriceLabelColors } from '@/lib/priceLabel'
 import WatchlistButton from '@/components/WatchlistButton'
 import { formatHappyHourDays } from '@/lib/happyHourLive'
+import { getFreshness } from '@/lib/freshness'
 
 interface PubCardProps {
   pub: Pub
@@ -86,6 +87,24 @@ export default function PubCard({ pub, avgPrice = 9.20, distance }: PubCardProps
               <span className="text-stone-400 text-xs">⏰ {hhTiming}</span>
             )}
           </div>
+
+          {/* Freshness indicator */}
+          {pub.priceVerified && (
+            <div className="mt-auto pt-3">
+              {(() => {
+                const freshness = getFreshness(pub.lastVerified)
+                return (
+                  <span className={`inline-flex items-center gap-1 text-[11px] font-medium ${freshness.color}`}>
+                    <span className="text-[9px]">{freshness.icon}</span>
+                    {freshness.label}
+                    {freshness.daysAgo !== null && freshness.daysAgo > 0 && (
+                      <span className="text-stone-400 font-normal">· {freshness.daysAgo}d ago</span>
+                    )}
+                  </span>
+                )
+              })()}
+            </div>
+          )}
 
           {/* Bottom: Vibe tag + arrow */}
           <div className="mt-auto pt-3 flex items-center justify-between">

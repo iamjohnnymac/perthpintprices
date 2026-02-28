@@ -1,3 +1,4 @@
+// Arvo — perthpintprices.com | Production deploy v2
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,

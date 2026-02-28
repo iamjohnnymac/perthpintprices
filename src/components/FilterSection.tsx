@@ -16,8 +16,8 @@ interface FilterSectionProps {
   setShowHappyHourOnly: (show: boolean) => void
   showMiniMaps: boolean
   setShowMiniMaps: (show: boolean) => void
-  sortBy: 'price' | 'name' | 'suburb' | 'nearest'
-  setSortBy: (sort: 'price' | 'name' | 'suburb' | 'nearest') => void
+  sortBy: 'price' | 'name' | 'suburb' | 'nearest' | 'freshness'
+  setSortBy: (sort: 'price' | 'name' | 'suburb' | 'nearest' | 'freshness') => void
   maxPrice: number
   setMaxPrice: (price: number) => void
   showMoreFilters: boolean
@@ -208,7 +208,7 @@ export function FilterSection({
               <div className="mb-5">
                 <label className="block text-xs font-medium text-stone-500 mb-2">Sort By</label>
                 <div className="flex gap-2">
-                  {(['price', 'name', 'suburb'] as const).map(option => (
+                  {(['price', 'name', 'suburb', 'freshness'] as const).map(option => (
                     <button
                       key={option}
                       onClick={() => setSortBy(option)}
@@ -217,7 +217,7 @@ export function FilterSection({
                         sortBy === option ? "bg-amber text-white" : "bg-cream text-stone-warm hover:bg-cream-dark"
                       )}
                     >
-                      {option === 'price' ? 'Price' : option === 'name' ? 'Name' : 'Suburb'}
+                      {option === 'price' ? 'Price' : option === 'name' ? 'Name' : option === 'suburb' ? 'Suburb' : 'Freshness'}
                     </button>
                   ))}
                 </div>

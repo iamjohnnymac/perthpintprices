@@ -7,6 +7,7 @@ import { CrowdReport, CROWD_LEVELS } from '@/lib/supabase'
 import { getHappyHourStatus } from '@/lib/happyHour'
 import { getDistanceKm, formatDistance } from '@/lib/location'
 import { getDirectionsUrl } from '@/lib/priceColors'
+import { getFreshness, formatVerifiedDate } from '@/lib/freshness'
 import WatchlistButton from '@/components/WatchlistButton'
 
 type SortKey = 'name' | 'suburb' | 'price' | 'beer' | null
@@ -101,6 +102,7 @@ export default function PubListView({
             <SortHeader label="Beer" field="beer" className="text-left hidden sm:table-cell" />
             <SortHeader label="Price" field="price" className="text-right" />
             <th className="text-left py-3 px-3 text-xs font-medium text-stone-400 hidden md:table-cell">Happy Hour</th>
+            <th className="text-center py-3 px-2 text-xs font-medium text-stone-400 hidden lg:table-cell">Freshness</th>
             <th className="text-center py-3 px-3 w-12"></th>
           </tr>
         </thead>
@@ -165,6 +167,20 @@ export default function PubListView({
                   ) : (
                     <span className="text-xs text-stone-400">—</span>
                   )}
+                </td>
+                <td className="py-4 px-2 hidden lg:table-cell">
+                  {(() => {
+                    const freshness = getFreshness(pub.lastVerified)
+                    return (
+                      <span
+                        className={`inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full ${freshness.bgColor} ${freshness.color}`}
+                        title={formatVerifiedDate(pub.lastVerified)}
+                      >
+                        <span className="text-[10px]">{freshness.icon}</span>
+                        {freshness.label}
+                      </span>
+                    )
+                  })()}
                 </td>
                 <td className="py-4 px-3 text-center">
                   {crowdReport ? (
