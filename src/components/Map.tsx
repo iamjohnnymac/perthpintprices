@@ -5,34 +5,59 @@ import MarkerClusterGroup from 'react-leaflet-cluster'
 import L from 'leaflet'
 import { Pub } from '@/types/pub'
 import 'leaflet/dist/leaflet.css'
-import { getMapMode, MAP_TILES, MAP_FILTERS, MAP_OVERLAYS, MAP_ATTRIBUTION } from '@/lib/mapTheme'
+import { getMapMode, MAP_TILES, MAP_FILTERS, MAP_ATTRIBUTION } from '@/lib/mapTheme'
 import React, { useEffect } from 'react'
 
-// Price-coded markers using DivIcon
+// Price-coded markers using DivIcon — sized by price (P1c)
 function getPriceIcon(price: number | null): L.DivIcon {
-  if (price === null) { const bgColor = "#9ca3af"; return L.divIcon({ className: "custom-price-marker", html: `<div style="background:${bgColor};color:white;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:10px;box-shadow:0 2px 6px rgba(0,0,0,0.3);border:2px solid white">TBC</div>`, iconSize: [32, 32], iconAnchor: [16, 16] }); }
+  // TBC = smallest (28px)
+  if (price === null) {
+    return L.divIcon({
+      className: 'custom-price-marker',
+      html: `<div style="background:#9ca3af;color:white;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:9px;box-shadow:0 2px 6px rgba(0,0,0,0.3);border:2px solid white">TBC</div>`,
+      iconSize: [28, 28],
+      iconAnchor: [14, 14],
+    })
+  }
+
+  // Cheap (≤$8) = 40px, Mid ($8-$10) = 36px, Expensive (>$10) = 32px
+  let size: number
+  let fontSize: number
+  if (price <= 8) {
+    size = 40
+    fontSize = 13
+  } else if (price <= 10) {
+    size = 36
+    fontSize = 12
+  } else {
+    size = 32
+    fontSize = 11
+  }
+
   let bgColor = '#E8820C' // amber gold for cheap
   if (price > 9) bgColor = '#DC2626' // red for expensive
   else if (price > 7.5) bgColor = '#D97706' // amber for mid
+
+  const half = size / 2
 
   return L.divIcon({
     className: 'custom-price-marker',
     html: `<div style="
       background-color: ${bgColor};
-      width: 32px;
-      height: 32px;
+      width: ${size}px;
+      height: ${size}px;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
       color: white;
       font-weight: bold;
-      font-size: 11px;
+      font-size: ${fontSize}px;
       border: 2px solid white;
       box-shadow: 0 2px 4px rgba(0,0,0,0.3);
     ">$${Math.floor(price)}</div>`,
-    iconSize: [32, 32],
-    iconAnchor: [16, 16],
+    iconSize: [size, size],
+    iconAnchor: [half, half],
   })
 }
 
@@ -157,7 +182,7 @@ export default function MapComponent({ pubs, userLocation, totalPubCount }: MapP
     <MapContainer
       center={center}
       zoom={12}
-      className="h-[200px] sm:h-[300px] md:h-[400px] w-full"
+      className="h-[250px] sm:h-[350px] md:h-[450px] w-full"
       scrollWheelZoom={true}
     >
       <TileLayer

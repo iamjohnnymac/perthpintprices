@@ -6,16 +6,32 @@ interface Pub {
   slug: string;
   name: string;
   suburb: string;
+  lat?: number;
+  lng?: number;
 }
 
 interface SubmitPubFormProps {
   isOpen: boolean;
   onClose: () => void;
+  userLocation?: { lat: number; lng: number } | null;
 }
 
-type Mode = 'existing' | 'new';
+type Mode = 'existing' | 'new' | 'report-outdated';
 
-export default function SubmitPubForm({ isOpen, onClose }: SubmitPubFormProps) {
+function getDistanceKmSimple(lat1: number, lng1: number, lat2: number, lng2: number): number {
+  const R = 6371;
+  const dLat = ((lat2 - lat1) * Math.PI) / 180;
+  const dLon = ((lng2 - lng1) * Math.PI) / 180;
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos((lat1 * Math.PI) / 180) *
+      Math.cos((lat2 * Math.PI) / 180) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2);
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+
+export default function SubmitPubForm({ isOpen, onClose, userLocation }: SubmitPubFormProps) {
   const [mode, setMode] = useState<Mode>('existing');
   const [pubs, setPubs] = useState<Pub[]>([]);
   const [pubsLoading, setPubsLoading] = useState(false);
@@ -31,6 +47,10 @@ export default function SubmitPubForm({ isOpen, onClose }: SubmitPubFormProps) {
   const [suburb, setSuburb] = useState('');
   const [address, setAddress] = useState('');
   const [email, setEmail] = useState('');
+  const [outdatedNote, setOutdatedNote] = useState('');
+
+  // Inline validation (P2b)
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
   // Status
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -81,23 +101,56 @@ export default function SubmitPubForm({ isOpen, onClose }: SubmitPubFormProps) {
     return () => document.removeEventListener('mousedown', handleClick);
   }, [showDropdown]);
 
-  // Filter pubs
+  // Filter and sort pubs (P2b: sort by distance when location available + mode is existing/report-outdated)
   const filtered = useMemo(() => {
-    if (!search.trim()) return pubs.slice(0, 50);
-    const q = search.toLowerCase();
-    return pubs
-      .filter(
-        (p) =>
-          p.name.toLowerCase().includes(q) ||
-          p.suburb.toLowerCase().includes(q)
-      )
-      .slice(0, 30);
-  }, [search, pubs]);
+    let list: Pub[];
+    if (!search.trim()) {
+      list = pubs.slice(0, 50);
+    } else {
+      const q = search.toLowerCase();
+      list = pubs
+        .filter(
+          (p) =>
+            p.name.toLowerCase().includes(q) ||
+            p.suburb.toLowerCase().includes(q)
+        )
+        .slice(0, 30);
+    }
+
+    // Sort by distance when user location is available and in existing/report-outdated mode
+    if (userLocation && (mode === 'existing' || mode === 'report-outdated') && !search.trim()) {
+      list = [...list].sort((a, b) => {
+        if (!a.lat || !a.lng) return 1;
+        if (!b.lat || !b.lng) return -1;
+        const distA = getDistanceKmSimple(userLocation.lat, userLocation.lng, a.lat, a.lng);
+        const distB = getDistanceKmSimple(userLocation.lat, userLocation.lng, b.lat, b.lng);
+        return distA - distB;
+      });
+    }
+
+    return list;
+  }, [search, pubs, userLocation, mode]);
 
   // Reset highlight when results change
   useEffect(() => {
     setHighlightIndex(-1);
   }, [filtered]);
+
+  // P2b: Price validation
+  function validatePrice(val: string): string {
+    if (!val) return '';
+    const num = parseFloat(val);
+    if (isNaN(num)) return 'Please enter a valid number';
+    if (num < 3) return 'Price must be at least $3';
+    if (num > 30) return 'Price must be $30 or less';
+    return '';
+  }
+
+  function handlePriceChange(val: string) {
+    setPrice(val);
+    const err = validatePrice(val);
+    setFieldErrors((prev) => ({ ...prev, price: err }));
+  }
 
   function resetForm() {
     setMode('existing');
@@ -109,7 +162,9 @@ export default function SubmitPubForm({ isOpen, onClose }: SubmitPubFormProps) {
     setSuburb('');
     setAddress('');
     setEmail('');
+    setOutdatedNote('');
     setError('');
+    setFieldErrors({});
     setSubmitted(false);
     setShowDropdown(false);
   }
@@ -146,6 +201,27 @@ export default function SubmitPubForm({ isOpen, onClose }: SubmitPubFormProps) {
     }
   }
 
+  // P2b: Check if form is valid for submit button disabling
+  const isFormValid = useMemo(() => {
+    if (mode === 'existing') {
+      if (!selectedPub) return false;
+      if (!price) return false;
+      const priceNum = parseFloat(price);
+      if (isNaN(priceNum) || priceNum < 3 || priceNum > 30) return false;
+      return true;
+    }
+    if (mode === 'new') {
+      if (!pubName.trim() || !suburb.trim() || !price) return false;
+      const priceNum = parseFloat(price);
+      if (isNaN(priceNum) || priceNum < 3 || priceNum > 30) return false;
+      return true;
+    }
+    if (mode === 'report-outdated') {
+      return !!selectedPub;
+    }
+    return false;
+  }, [mode, selectedPub, price, pubName, suburb]);
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError('');
@@ -159,7 +235,13 @@ export default function SubmitPubForm({ isOpen, onClose }: SubmitPubFormProps) {
           return;
         }
         if (!price) {
-          setError('Please enter a price.');
+          setFieldErrors((prev) => ({ ...prev, price: 'Please enter a price.' }));
+          setIsSubmitting(false);
+          return;
+        }
+        const priceErr = validatePrice(price);
+        if (priceErr) {
+          setFieldErrors((prev) => ({ ...prev, price: priceErr }));
           setIsSubmitting(false);
           return;
         }
@@ -180,9 +262,38 @@ export default function SubmitPubForm({ isOpen, onClose }: SubmitPubFormProps) {
           setIsSubmitting(false);
           return;
         }
+      } else if (mode === 'report-outdated') {
+        if (!selectedPub) {
+          setError('Please select a pub first.');
+          setIsSubmitting(false);
+          return;
+        }
+
+        const res = await fetch('/api/price-report', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            pub_slug: selectedPub.slug,
+            outdated: true,
+            note: outdatedNote.trim() || undefined,
+          }),
+        });
+
+        const data = await res.json();
+        if (!res.ok) {
+          setError(data.error || 'Something went wrong.');
+          setIsSubmitting(false);
+          return;
+        }
       } else {
         if (!pubName.trim() || !suburb.trim() || !price) {
           setError('Pub name, suburb, and price are required.');
+          setIsSubmitting(false);
+          return;
+        }
+        const priceErr = validatePrice(price);
+        if (priceErr) {
+          setFieldErrors((prev) => ({ ...prev, price: priceErr }));
           setIsSubmitting(false);
           return;
         }
@@ -225,9 +336,137 @@ export default function SubmitPubForm({ isOpen, onClose }: SubmitPubFormProps) {
   if (!isOpen) return null;
 
   const inputClass =
-    'w-full px-3 py-3 h-11 bg-cream border border-cream-dark rounded-xl text-charcoal placeholder-stone-warm/50 focus:outline-none focus:ring-2 focus:ring-amber/40 focus:border-amber transition-all text-sm';
+    'w-full px-3 py-3 h-11 bg-cream border border-cream-dark rounded-xl text-charcoal placeholder-stone-warm/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber/50 focus-visible:ring-offset-1 focus:border-amber transition-all text-sm';
+  const inputErrorClass =
+    'w-full px-3 py-3 h-11 bg-cream border border-red-400 rounded-xl text-charcoal placeholder-stone-warm/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-400/50 focus-visible:ring-offset-1 focus:border-red-400 transition-all text-sm';
   const labelClass =
     'block text-sm font-medium text-stone-600 mb-1.5';
+
+  const modeTitle = mode === 'existing'
+    ? 'Report a Price'
+    : mode === 'new'
+    ? 'Submit a New Pub'
+    : 'Report Outdated Price';
+
+  const modeSubtitle = mode === 'existing'
+    ? 'Know a cheap pint? Let us know!'
+    : mode === 'new'
+    ? 'Add a pub we\'re missing'
+    : 'Let us know if a price has changed';
+
+  const submittedMessage = mode === 'existing'
+    ? 'Price submitted! We\'ll review it shortly.'
+    : mode === 'report-outdated'
+    ? 'Thanks for the heads up! We\'ll check this price.'
+    : 'Pub submitted! We\'ll review and add it soon.';
+
+  // Pub search widget (shared by 'existing' and 'report-outdated')
+  const pubSearchWidget = (
+    <div>
+      <label className={labelClass} id="pub-search-label">Select a Pub</label>
+      {selectedPub ? (
+        <div className="flex items-center gap-2 px-3 py-2.5 bg-amber/10 border border-amber/20 rounded-xl">
+          <span className="flex-1 text-sm font-medium text-charcoal">
+            {selectedPub.name}
+            <span className="text-stone-warm font-normal ml-1.5">
+              — {selectedPub.suburb}
+            </span>
+          </span>
+          <button
+            type="button"
+            onClick={handleDeselectPub}
+            className="text-stone-warm hover:text-charcoal transition-colors p-0.5 focus-visible:ring-2 focus-visible:ring-amber/50 focus-visible:ring-offset-1 rounded"
+            aria-label="Deselect pub"
+          >
+            <svg
+              className="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </button>
+        </div>
+      ) : (
+        <div className="relative">
+          <input
+            ref={searchRef}
+            type="text"
+            value={search}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setShowDropdown(true);
+            }}
+            onFocus={() => setShowDropdown(true)}
+            onKeyDown={handleSearchKeyDown}
+            placeholder={
+              pubsLoading
+                ? 'Loading pubs...'
+                : 'Search pubs by name or suburb...'
+            }
+            className={inputClass}
+            autoComplete="off"
+            aria-required="true"
+            aria-labelledby="pub-search-label"
+          />
+          <svg
+            className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-warm/50"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+            />
+          </svg>
+
+          {showDropdown && !pubsLoading && (
+            <div
+              ref={dropdownRef}
+              className="absolute z-50 mt-1 w-full bg-white border border-cream-dark rounded-xl shadow-lg max-h-56 overflow-y-auto"
+            >
+              {filtered.length === 0 ? (
+                <div className="px-4 py-3 text-sm text-stone-warm">
+                  No pubs found for &ldquo;{search}&rdquo;
+                </div>
+              ) : (
+                filtered.map((pub, i) => (
+                  <button
+                    key={pub.slug}
+                    type="button"
+                    onClick={() => handleSelectPub(pub)}
+                    className={`w-full text-left px-4 py-2.5 text-sm transition-colors ${
+                      i === highlightIndex
+                        ? 'bg-amber/10 text-charcoal'
+                        : 'text-charcoal hover:bg-cream'
+                    } ${i === 0 ? 'rounded-t-xl' : ''} ${
+                      i === filtered.length - 1
+                        ? 'rounded-b-xl'
+                        : ''
+                    }`}
+                  >
+                    <span className="font-medium">{pub.name}</span>
+                    <span className="text-stone-warm ml-1.5">
+                      — {pub.suburb}
+                    </span>
+                  </button>
+                ))
+              )}
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
 
   return (
     <div
@@ -237,22 +476,22 @@ export default function SubmitPubForm({ isOpen, onClose }: SubmitPubFormProps) {
       <div
         ref={modalRef}
         className="bg-white rounded-2xl max-w-lg w-full border border-cream-dark shadow-2xl my-auto"
+        role="dialog"
+        aria-label={modeTitle}
       >
         {/* Header */}
         <div className="px-6 py-4 border-b border-cream-dark flex items-center justify-between">
           <div>
             <h2 className="text-xl font-bold text-charcoal">
-              {mode === 'existing' ? 'Report a Price' : 'Submit a New Pub'}
+              {modeTitle}
             </h2>
-            <p className="text-xs text-stone-warm mt-0.5">
-              {mode === 'existing'
-                ? 'Know a cheap pint? Let us know!'
-                : 'Add a pub we\'re missing'}
+            <p className="text-xs text-stone-500 mt-0.5">
+              {modeSubtitle}
             </p>
           </div>
           <button
             onClick={handleClose}
-            className="text-stone-warm hover:text-charcoal transition-colors p-2 hover:bg-cream rounded-xl"
+            className="text-stone-warm hover:text-charcoal transition-colors p-2 hover:bg-cream rounded-xl focus-visible:ring-2 focus-visible:ring-amber/50 focus-visible:ring-offset-1"
             aria-label="Close"
           >
             <svg
@@ -291,125 +530,44 @@ export default function SubmitPubForm({ isOpen, onClose }: SubmitPubFormProps) {
             <h3 className="text-xl font-bold text-charcoal mb-2">
               Thanks legend! 🍻
             </h3>
-            <p className="text-stone-warm text-sm">
-              {mode === 'existing'
-                ? 'Price submitted! We\'ll review it shortly.'
-                : 'Pub submitted! We\'ll review and add it soon.'}
+            <p className="text-stone-500 text-sm">
+              {submittedMessage}
             </p>
             <button
               onClick={handleClose}
-              className="mt-6 px-6 py-2.5 text-sm font-semibold text-amber hover:text-amber-dark transition-colors"
+              className="mt-6 px-6 py-2.5 text-sm font-semibold text-amber hover:text-amber-dark transition-colors focus-visible:ring-2 focus-visible:ring-amber/50 focus-visible:ring-offset-1 rounded-lg"
             >
               Done
             </button>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="p-6 space-y-4">
+            {/* Mode tabs */}
+            <div className="flex gap-1 bg-cream rounded-lg p-1">
+              {([
+                { key: 'existing' as const, label: 'Report Price' },
+                { key: 'report-outdated' as const, label: 'Flag Outdated' },
+                { key: 'new' as const, label: 'New Pub' },
+              ]).map(({ key, label }) => (
+                <button
+                  key={key}
+                  type="button"
+                  onClick={() => { setMode(key); setError(''); setFieldErrors({}); }}
+                  aria-pressed={mode === key}
+                  className={`flex-1 px-2 py-1.5 rounded-md text-xs font-medium transition-all focus-visible:ring-2 focus-visible:ring-amber/50 focus-visible:ring-offset-1 ${
+                    mode === key
+                      ? 'bg-white text-charcoal shadow-sm'
+                      : 'text-stone-warm hover:text-charcoal'
+                  }`}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+
             {mode === 'existing' ? (
               <>
-                {/* Pub search / selection */}
-                <div>
-                  <label className={labelClass}>Select a Pub</label>
-                  {selectedPub ? (
-                    <div className="flex items-center gap-2 px-3 py-2.5 bg-amber/10 border border-amber/20 rounded-xl">
-                      <span className="flex-1 text-sm font-medium text-charcoal">
-                        {selectedPub.name}
-                        <span className="text-stone-warm font-normal ml-1.5">
-                          — {selectedPub.suburb}
-                        </span>
-                      </span>
-                      <button
-                        type="button"
-                        onClick={handleDeselectPub}
-                        className="text-stone-warm hover:text-charcoal transition-colors p-0.5"
-                        aria-label="Deselect pub"
-                      >
-                        <svg
-                          className="w-4 h-4"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M6 18L18 6M6 6l12 12"
-                          />
-                        </svg>
-                      </button>
-                    </div>
-                  ) : (
-                    <div className="relative">
-                      <input
-                        ref={searchRef}
-                        type="text"
-                        value={search}
-                        onChange={(e) => {
-                          setSearch(e.target.value);
-                          setShowDropdown(true);
-                        }}
-                        onFocus={() => setShowDropdown(true)}
-                        onKeyDown={handleSearchKeyDown}
-                        placeholder={
-                          pubsLoading
-                            ? 'Loading pubs...'
-                            : 'Search pubs by name or suburb...'
-                        }
-                        className={inputClass}
-                        autoComplete="off"
-                      />
-                      <svg
-                        className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-warm/50"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                        />
-                      </svg>
-
-                      {showDropdown && !pubsLoading && (
-                        <div
-                          ref={dropdownRef}
-                          className="absolute z-50 mt-1 w-full bg-white border border-cream-dark rounded-xl shadow-lg max-h-56 overflow-y-auto"
-                        >
-                          {filtered.length === 0 ? (
-                            <div className="px-4 py-3 text-sm text-stone-warm">
-                              No pubs found for &ldquo;{search}&rdquo;
-                            </div>
-                          ) : (
-                            filtered.map((pub, i) => (
-                              <button
-                                key={pub.slug}
-                                type="button"
-                                onClick={() => handleSelectPub(pub)}
-                                className={`w-full text-left px-4 py-2.5 text-sm transition-colors ${
-                                  i === highlightIndex
-                                    ? 'bg-amber/10 text-charcoal'
-                                    : 'text-charcoal hover:bg-cream'
-                                } ${i === 0 ? 'rounded-t-xl' : ''} ${
-                                  i === filtered.length - 1
-                                    ? 'rounded-b-xl'
-                                    : ''
-                                }`}
-                              >
-                                <span className="font-medium">{pub.name}</span>
-                                <span className="text-stone-warm ml-1.5">
-                                  — {pub.suburb}
-                                </span>
-                              </button>
-                            ))
-                          )}
-                        </div>
-                      )}
-                    </div>
-                  )}
-                </div>
+                {pubSearchWidget}
 
                 {/* Price + Beer Type */}
                 <div className="grid grid-cols-2 gap-3">
@@ -419,13 +577,18 @@ export default function SubmitPubForm({ isOpen, onClose }: SubmitPubFormProps) {
                       type="number"
                       required
                       step="0.50"
-                      min="1"
+                      min="3"
                       max="30"
                       value={price}
-                      onChange={(e) => setPrice(e.target.value)}
+                      onChange={(e) => handlePriceChange(e.target.value)}
                       placeholder="e.g. 8.00"
-                      className={inputClass}
+                      className={fieldErrors.price ? inputErrorClass : inputClass}
+                      aria-required="true"
+                      aria-invalid={!!fieldErrors.price}
                     />
+                    {fieldErrors.price && (
+                      <p className="text-xs text-red-500 mt-1">{fieldErrors.price}</p>
+                    )}
                   </div>
                   <div>
                     <label className={labelClass}>Beer Type</label>
@@ -438,35 +601,24 @@ export default function SubmitPubForm({ isOpen, onClose }: SubmitPubFormProps) {
                     />
                   </div>
                 </div>
+              </>
+            ) : mode === 'report-outdated' ? (
+              <>
+                {pubSearchWidget}
 
-                {/* Switch to new mode */}
-                <div className="pt-1">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setMode('new');
-                      setError('');
-                    }}
-                    className="text-sm text-amber hover:text-amber-dark font-medium transition-colors"
-                  >
-                    My pub isn&apos;t listed →
-                  </button>
+                {/* Optional note */}
+                <div>
+                  <label className={labelClass}>What&apos;s wrong? (optional)</label>
+                  <textarea
+                    value={outdatedNote}
+                    onChange={(e) => setOutdatedNote(e.target.value)}
+                    placeholder="e.g. Price went up to $12, closed down, etc."
+                    className="w-full px-3 py-3 bg-cream border border-cream-dark rounded-xl text-charcoal placeholder-stone-warm/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber/50 focus-visible:ring-offset-1 focus:border-amber transition-all text-sm min-h-[80px] resize-y"
+                  />
                 </div>
               </>
             ) : (
               <>
-                {/* Back link */}
-                <button
-                  type="button"
-                  onClick={() => {
-                    setMode('existing');
-                    setError('');
-                  }}
-                  className="text-sm text-amber hover:text-amber-dark font-medium transition-colors mb-1"
-                >
-                  ← Back to pub search
-                </button>
-
                 {/* Pub name */}
                 <div>
                   <label className={labelClass}>Pub Name *</label>
@@ -477,6 +629,7 @@ export default function SubmitPubForm({ isOpen, onClose }: SubmitPubFormProps) {
                     onChange={(e) => setPubName(e.target.value)}
                     placeholder="e.g. The Lucky Shag"
                     className={inputClass}
+                    aria-required="true"
                   />
                 </div>
 
@@ -491,6 +644,7 @@ export default function SubmitPubForm({ isOpen, onClose }: SubmitPubFormProps) {
                       onChange={(e) => setSuburb(e.target.value)}
                       placeholder="e.g. Northbridge"
                       className={inputClass}
+                      aria-required="true"
                     />
                   </div>
                   <div>
@@ -499,13 +653,18 @@ export default function SubmitPubForm({ isOpen, onClose }: SubmitPubFormProps) {
                       type="number"
                       required
                       step="0.50"
-                      min="1"
+                      min="3"
                       max="30"
                       value={price}
-                      onChange={(e) => setPrice(e.target.value)}
+                      onChange={(e) => handlePriceChange(e.target.value)}
                       placeholder="e.g. 8.00"
-                      className={inputClass}
+                      className={fieldErrors.price ? inputErrorClass : inputClass}
+                      aria-required="true"
+                      aria-invalid={!!fieldErrors.price}
                     />
+                    {fieldErrors.price && (
+                      <p className="text-xs text-red-500 mt-1">{fieldErrors.price}</p>
+                    )}
                   </div>
                 </div>
 
@@ -549,23 +708,25 @@ export default function SubmitPubForm({ isOpen, onClose }: SubmitPubFormProps) {
 
             {/* Error message */}
             {error && (
-              <p className="text-sm text-pricey font-medium">{error}</p>
+              <p className="text-sm text-pricey font-medium" role="alert">{error}</p>
             )}
 
             {/* Submit button */}
             <button
               type="submit"
-              disabled={isSubmitting}
-              className="w-full py-3 px-4 h-12 bg-amber hover:bg-amber-dark text-white font-bold rounded-xl transition-all transform hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed shadow-md"
+              disabled={isSubmitting || !isFormValid}
+              className="w-full py-3 px-4 h-12 bg-amber hover:bg-amber-dark text-white font-bold rounded-xl transition-all transform hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed shadow-md focus-visible:ring-2 focus-visible:ring-amber/50 focus-visible:ring-offset-1"
             >
               {isSubmitting
                 ? 'Submitting...'
                 : mode === 'existing'
                 ? 'Submit Price'
+                : mode === 'report-outdated'
+                ? 'Report Outdated'
                 : 'Submit New Pub'}
             </button>
 
-            <p className="text-[10px] text-stone-warm text-center">
+            <p className="text-[10px] text-stone-500 text-center">
               All submissions are reviewed before going live.
             </p>
           </form>

@@ -9,18 +9,28 @@ const supabase = createClient(
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json()
-    const { pub_slug, reported_price, beer_type, reporter_name } = body
+    const { pub_slug, reported_price, beer_type, reporter_name, outdated, notes } = body
 
-    if (!pub_slug || !reported_price) {
-      return NextResponse.json({ error: 'pub_slug and reported_price are required' }, { status: 400 })
+    const isOutdatedReport = outdated === true
+
+    if (!pub_slug) {
+      return NextResponse.json({ error: 'pub_slug is required' }, { status: 400 })
     }
 
-    const price = parseFloat(reported_price)
-    if (isNaN(price) || price <= 0 || price >= 100) {
-      return NextResponse.json({ error: 'Price must be between $0.01 and $99.99' }, { status: 400 })
+    // For price reports, price is required. For outdated flags, it's optional.
+    if (!isOutdatedReport && !reported_price) {
+      return NextResponse.json({ error: 'reported_price is required' }, { status: 400 })
     }
 
-    // Simple IP-based rate limiting (hash the IP)
+    let price = 0
+    if (reported_price) {
+      price = parseFloat(reported_price)
+      if (isNaN(price) || price < 3 || price > 30) {
+        return NextResponse.json({ error: 'Price must be between $3 and $30' }, { status: 400 })
+      }
+    }
+
+    // Simple IP-based rate limiting
     const forwarded = req.headers.get('x-forwarded-for')
     const ip = forwarded?.split(',')[0]?.trim() || 'unknown'
     const ipHash = await hashString(ip)
@@ -35,25 +45,33 @@ export async function POST(req: NextRequest) {
       .limit(1)
 
     if (recentReport && recentReport.length > 0) {
-      return NextResponse.json({ error: 'You already reported a price for this pub recently. Try again in an hour.' }, { status: 429 })
+      return NextResponse.json({ error: 'You already reported for this pub recently. Try again in an hour.' }, { status: 429 })
+    }
+
+    const insertData: Record<string, unknown> = {
+      pub_slug,
+      reported_price: isOutdatedReport ? 0 : price,
+      beer_type: beer_type || null,
+      reporter_name: reporter_name || 'Anonymous',
+      ip_hash: ipHash,
+      report_type: isOutdatedReport ? 'outdated_flag' : 'price_report',
+      notes: notes || null,
     }
 
     const { error } = await supabase
       .from('price_reports')
-      .insert({
-        pub_slug,
-        reported_price: price,
-        beer_type: beer_type || null,
-        reporter_name: reporter_name || 'Anonymous',
-        ip_hash: ipHash,
-      })
+      .insert(insertData)
 
     if (error) {
       console.error('Error inserting price report:', error)
       return NextResponse.json({ error: 'Failed to submit report' }, { status: 500 })
     }
 
-    return NextResponse.json({ success: true, message: 'Price reported! Thanks for contributing.' })
+    const message = isOutdatedReport
+      ? 'Thanks for flagging! We\'ll check this price.'
+      : 'Price reported! Thanks for contributing.'
+
+    return NextResponse.json({ success: true, message })
   } catch {
     return NextResponse.json({ error: 'Invalid request' }, { status: 400 })
   }
@@ -80,7 +98,7 @@ export async function GET(req: NextRequest) {
   if (pubSlug) {
     const { data, error } = await supabase
       .from('price_reports')
-      .select('reported_price, beer_type, reporter_name, created_at, status')
+      .select('reported_price, beer_type, reporter_name, created_at, status, report_type, notes')
       .eq('pub_slug', pubSlug)
       .neq('status', 'rejected')
       .order('created_at', { ascending: false })

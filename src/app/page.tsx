@@ -1,6 +1,7 @@
 'use client'
 // Production deploy trigger
-import { useState, useMemo, useEffect, useRef } from 'react'
+import { useState, useMemo, useEffect, useRef, useCallback, Suspense } from 'react'
+import { useSearchParams, useRouter } from 'next/navigation'
 import { Pub } from '@/types/pub'
 import { getPubs, getCrowdLevels, CrowdReport } from '@/lib/supabase'
 
@@ -26,7 +27,7 @@ import NotificationBell from '@/components/NotificationBell'
 const Map = dynamic(() => import('@/components/Map'), {
   ssr: false,
   loading: () => (
-    <div className="h-[200px] sm:h-[300px] md:h-[400px] bg-stone-100 rounded-xl flex items-center justify-center">
+    <div className="h-[250px] sm:h-[350px] md:h-[450px] bg-stone-100 rounded-xl flex items-center justify-center">
       <div className="flex flex-col items-center gap-3">
         <div className="w-12 h-12 border-4 border-stone-300 border-t-stone-600 rounded-full animate-spin"></div>
         <span className="text-stone-600 font-medium">Loading map...</span>
@@ -37,13 +38,34 @@ const Map = dynamic(() => import('@/components/Map'), {
 
 const INITIAL_PUB_COUNT = 10
 
-export default function Home() {
+function LoadingSkeleton() {
+  return (
+    <main className="min-h-screen bg-cream flex items-center justify-center">
+      <div className="flex flex-col items-center gap-3">
+        <div className="w-16 h-16 border-4 border-stone-300 border-t-amber rounded-full animate-spin"></div>
+        <span className="text-stone-600 font-medium text-lg">Loading pubs...</span>
+      </div>
+    </main>
+  )
+}
+
+function HomeContent() {
+  const searchParams = useSearchParams()
+  const router = useRouter()
+
   const [pubs, setPubs] = useState<Pub[]>([])
   const [isLoading, setIsLoading] = useState(true)
-  const [searchTerm, setSearchTerm] = useState('')
-  const [selectedSuburb, setSelectedSuburb] = useState('')
-  const [maxPrice, setMaxPrice] = useState(20)
-  const [sortBy, setSortBy] = useState<'price' | 'name' | 'suburb' | 'nearest' | 'freshness'>('price')
+  const [searchTerm, setSearchTerm] = useState(searchParams.get('q') || '')
+  const [selectedSuburb, setSelectedSuburb] = useState(searchParams.get('suburb') || '')
+  const [maxPrice, setMaxPrice] = useState(() => {
+    const p = searchParams.get('maxPrice')
+    return p ? Number(p) : 20
+  })
+  const [sortBy, setSortBy] = useState<'price' | 'name' | 'suburb' | 'nearest' | 'freshness'>(() => {
+    const s = searchParams.get('sort')
+    if (s === 'name' || s === 'suburb' || s === 'nearest' || s === 'freshness') return s
+    return 'price'
+  })
   const [showHappyHourOnly, setShowHappyHourOnly] = useState(false)
   const [showMiniMaps, setShowMiniMaps] = useState(true)
   const [showSubmitForm, setShowSubmitForm] = useState(false)
@@ -60,6 +82,33 @@ export default function Home() {
   const heroRef = useRef<HTMLDivElement>(null)
   const headerRef = useRef<HTMLElement>(null)
   const contentRef = useRef<HTMLDivElement>(null)
+
+  // P2a: New filter state
+  const [vibeTagFilter, setVibeTagFilter] = useState(searchParams.get('vibe') || '')
+  const [kidFriendlyOnly, setKidFriendlyOnly] = useState(searchParams.get('kids') === '1')
+  const [hasTabOnly, setHasTabOnly] = useState(searchParams.get('tab') === '1')
+
+  // P2a: URL sync — update URL params on filter change
+  const updateUrlParams = useCallback(() => {
+    const params = new URLSearchParams()
+    if (searchTerm) params.set('q', searchTerm)
+    if (selectedSuburb && selectedSuburb !== 'all') params.set('suburb', selectedSuburb)
+    if (sortBy !== 'price') params.set('sort', sortBy)
+    if (vibeTagFilter) params.set('vibe', vibeTagFilter)
+    if (kidFriendlyOnly) params.set('kids', '1')
+    if (hasTabOnly) params.set('tab', '1')
+    if (maxPrice < 20) params.set('maxPrice', String(maxPrice))
+
+    const paramString = params.toString()
+    const newUrl = paramString ? `?${paramString}` : '/'
+    router.replace(newUrl, { scroll: false })
+  }, [searchTerm, selectedSuburb, sortBy, vibeTagFilter, kidFriendlyOnly, hasTabOnly, maxPrice, router])
+
+  // Debounced URL update
+  useEffect(() => {
+    const timeout = setTimeout(updateUrlParams, 300)
+    return () => clearTimeout(timeout)
+  }, [updateUrlParams])
 
   useEffect(() => {
     async function loadPubs() {
@@ -87,12 +136,14 @@ export default function Home() {
         (pos) => {
           setUserLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude })
           setLocationState('granted')
-          setSortBy('nearest')
+          // Only auto-set to nearest if no sort was specified in URL
+          if (!searchParams.get('sort')) setSortBy('nearest')
         },
         () => setLocationState('denied'),
         { enableHighAccuracy: false, timeout: 8000, maximumAge: 300000 }
       )
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   // Unified nav: expand when scrolled past hero (LATCHES — never collapses back)
@@ -146,7 +197,11 @@ export default function Home() {
         const matchesSuburb = !selectedSuburb || selectedSuburb === 'all' || pub.suburb === selectedSuburb
         const matchesPrice = pub.price === null || pub.price <= maxPrice
         const matchesHappyHour = !showHappyHourOnly || !!pub.happyHour
-        return matchesSearch && matchesSuburb && matchesPrice && matchesHappyHour
+        // P2a: new filters
+        const matchesVibe = !vibeTagFilter || pub.vibeTag === vibeTagFilter
+        const matchesKids = !kidFriendlyOnly || pub.kidFriendly === true
+        const matchesTab = !hasTabOnly || pub.hasTab === true
+        return matchesSearch && matchesSuburb && matchesPrice && matchesHappyHour && matchesVibe && matchesKids && matchesTab
       })
       .sort((a, b) => {
         if (showHappyHourOnly) {
@@ -169,7 +224,7 @@ export default function Home() {
         }
         return 0
       })
-  }, [pubs, searchTerm, selectedSuburb, maxPrice, sortBy, showHappyHourOnly, userLocation])
+  }, [pubs, searchTerm, selectedSuburb, maxPrice, sortBy, showHappyHourOnly, userLocation, vibeTagFilter, kidFriendlyOnly, hasTabOnly])
 
   const stats = useMemo(() => {
     if (pubs.length === 0) return { total: 0, minPrice: 0, maxPriceValue: 0, avgPrice: '0', happyHourNow: 0, cheapestSuburb: '', cheapestSlug: '', priciestSuburb: '', priciestSlug: '' }
@@ -193,14 +248,7 @@ export default function Home() {
   }, [pubs, currentTime])
 
   if (isLoading) {
-    return (
-      <main className="min-h-screen bg-cream flex items-center justify-center">
-        <div className="flex flex-col items-center gap-3">
-          <div className="w-16 h-16 border-4 border-stone-300 border-t-amber rounded-full animate-spin"></div>
-          <span className="text-stone-600 font-medium text-lg">Loading pubs...</span>
-        </div>
-      </main>
-    )
+    return <LoadingSkeleton />
   }
 
   return (
@@ -209,15 +257,15 @@ export default function Home() {
       <header ref={headerRef} className="bg-white/95 backdrop-blur-sm sticky top-0 z-[1000] border-b border-stone-200/60 transition-all duration-200">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 py-2.5">
           <div className="flex items-center justify-between gap-2">
-            <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity flex-shrink-0">
+            <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity flex-shrink-0 focus-visible:ring-2 focus-visible:ring-amber/50 focus-visible:ring-offset-1 rounded-lg">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" className="flex-shrink-0"><path d="M12 2v20M2 12h20M4.93 4.93l14.14 14.14M19.07 4.93L4.93 19.07" stroke="#E8820C" strokeWidth="2.5" strokeLinecap="round"/></svg>
               <h1 className="font-serif text-xl text-charcoal">arvo</h1>
             </Link>
             <nav className="flex items-center gap-1.5 sm:gap-2">
-              <Link href="/discover" className="px-2.5 sm:px-3 py-1 text-xs sm:text-sm font-semibold text-charcoal bg-cream-dark hover:bg-amber/10 hover:text-amber rounded-full transition-all">
+              <Link href="/discover" className="px-2.5 sm:px-3 py-1 text-xs sm:text-sm font-semibold text-charcoal bg-cream-dark hover:bg-amber/10 hover:text-amber rounded-full transition-all focus-visible:ring-2 focus-visible:ring-amber/50 focus-visible:ring-offset-1">
                 Discover
               </Link>
-              <Link href="/happy-hour" className="px-2.5 sm:px-3 py-1 text-xs sm:text-sm font-semibold text-charcoal bg-cream-dark hover:bg-amber/10 hover:text-amber rounded-full transition-all">
+              <Link href="/happy-hour" className="px-2.5 sm:px-3 py-1 text-xs sm:text-sm font-semibold text-charcoal bg-cream-dark hover:bg-amber/10 hover:text-amber rounded-full transition-all focus-visible:ring-2 focus-visible:ring-amber/50 focus-visible:ring-offset-1">
                 Happy Hours
               </Link>
             </nav>
@@ -225,7 +273,7 @@ export default function Home() {
               {isNavExpanded && <NotificationBell />}
               <button
                 onClick={() => setShowSubmitForm(true)}
-                className="flex-shrink-0 px-3 sm:px-4 py-1.5 sm:py-2 bg-charcoal hover:bg-charcoal/90 text-white rounded-full font-semibold transition-all text-xs"
+                className="flex-shrink-0 px-3 sm:px-4 py-1.5 sm:py-2 bg-charcoal hover:bg-charcoal/90 text-white rounded-full font-semibold transition-all text-xs focus-visible:ring-2 focus-visible:ring-amber/50 focus-visible:ring-offset-1"
               >
                 <span className="hidden sm:inline">Submit a Price</span>
                 <span className="sm:hidden">Submit</span>
@@ -261,20 +309,42 @@ export default function Home() {
         setShowMoreFilters={setShowMoreFilters}
         stats={stats}
         hasLocation={!!userLocation}
+        vibeTagFilter={vibeTagFilter}
+        setVibeTagFilter={setVibeTagFilter}
+        kidFriendlyOnly={kidFriendlyOnly}
+        setKidFriendlyOnly={setKidFriendlyOnly}
+        hasTabOnly={hasTabOnly}
+        setHasTabOnly={setHasTabOnly}
       />
 
       {/* ═══ CONTENT ═══ */}
       <div ref={contentRef} className="max-w-5xl mx-auto px-4 sm:px-6 pt-6 sm:pt-8 pb-6 sm:pb-8">
         <MyLocals pubs={pubs} userLocation={userLocation} />
 
+        {/* P1c: Map-First View — map ABOVE pub list */}
+        <button
+          onClick={() => setShowMap(!showMap)}
+          className="flex items-center gap-2 text-sm text-stone-500 hover:text-charcoal transition-colors mb-3 focus-visible:ring-2 focus-visible:ring-amber/50 focus-visible:ring-offset-1 rounded-lg"
+          aria-pressed={showMap}
+        >
+          <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+          {showMap ? 'Hide map' : 'Show map'}
+        </button>
+
+        {showMap && (
+          <div className="mb-6 rounded-xl overflow-hidden shadow-sm relative z-0 isolate">
+            <Map pubs={filteredPubs} userLocation={userLocation} totalPubCount={pubs.length} />
+          </div>
+        )}
+
         <div className="flex items-center justify-between mb-3">
-          <p className="text-stone-warm text-sm">
+          <p className="text-stone-500 text-sm">
             Displaying <span className="font-semibold text-charcoal">{showAllPubs ? filteredPubs.length : Math.min(INITIAL_PUB_COUNT, filteredPubs.length)}</span> of {filteredPubs.length} venues
           </p>
           {filteredPubs.length > INITIAL_PUB_COUNT && (
             <button
               onClick={() => setShowAllPubs(!showAllPubs)}
-              className="text-sm font-semibold text-charcoal hover:text-amber transition-colors flex items-center gap-1"
+              className="text-sm font-semibold text-charcoal hover:text-amber transition-colors flex items-center gap-1 focus-visible:ring-2 focus-visible:ring-amber/50 focus-visible:ring-offset-1 rounded-lg"
             >
               {showAllPubs ? 'Show Less' : `View All`}
               <svg className={`w-4 h-4 transition-transform ${showAllPubs ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" /></svg>
@@ -308,22 +378,7 @@ export default function Home() {
           <div className="text-center py-16 bg-white rounded-xl shadow-sm">
             <div className="text-5xl mb-4">{showHappyHourOnly ? '\u{1F37B}' : '\u{1F50D}'}</div>
             <h3 className="font-serif text-xl text-charcoal mb-2">{showHappyHourOnly ? 'No pubs with happy hour info yet' : 'No pubs found'}</h3>
-            <p className="text-stone-warm text-sm">{showHappyHourOnly ? 'We\u2019re building our happy hour database \u2014 submit yours!' : 'Try adjusting your filters'}</p>
-          </div>
-        )}
-
-        {/* ═══ MAP — after pub list ═══ */}
-        <button
-          onClick={() => setShowMap(!showMap)}
-          className="flex items-center gap-2 text-sm text-stone-500 hover:text-charcoal transition-colors mb-3 mt-4"
-        >
-          <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
-          {showMap ? 'Hide map' : 'Show map'}
-        </button>
-
-        {showMap && (
-          <div className="mb-3 rounded-xl overflow-hidden shadow-sm relative z-0 isolate">
-            <Map pubs={filteredPubs} userLocation={userLocation} totalPubCount={pubs.length} />
+            <p className="text-stone-500 text-sm">{showHappyHourOnly ? 'We\u2019re building our happy hour database \u2014 submit yours!' : 'Try adjusting your filters'}</p>
           </div>
         )}
       </div>
@@ -335,7 +390,7 @@ export default function Home() {
       <div className="h-9" /> {/* Spacer for fixed bottom ticker */}
       <PriceTicker pubs={pubs} />
 
-      <SubmitPubForm isOpen={showSubmitForm} onClose={() => setShowSubmitForm(false)} />
+      <SubmitPubForm isOpen={showSubmitForm} onClose={() => setShowSubmitForm(false)} userLocation={userLocation} />
 
       {crowdReportPub && (
         <CrowdReporter
@@ -349,5 +404,13 @@ export default function Home() {
         />
       )}
     </main>
+  )
+}
+
+export default function Home() {
+  return (
+    <Suspense fallback={<LoadingSkeleton />}>
+      <HomeContent />
+    </Suspense>
   )
 }
