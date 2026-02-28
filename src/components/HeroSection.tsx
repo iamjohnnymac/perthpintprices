@@ -1,5 +1,6 @@
 import { Pub } from '@/types/pub'
 import HappyHourPreview from './HappyHourPreview'
+import PintOfTheDayCompact from './PintOfTheDayCompact'
 
 interface HeroSectionProps {
   pubs: Pub[]
@@ -16,6 +17,7 @@ export default function HeroSection({ pubs }: HeroSectionProps) {
         <p className="text-base sm:text-lg text-stone-warm max-w-md mx-auto mb-6 leading-relaxed">
           Perth&apos;s cheapest pints, verified weekly.
         </p>
+        <PintOfTheDayCompact />
         <HappyHourPreview pubs={pubs} />
       </div>
     </section>

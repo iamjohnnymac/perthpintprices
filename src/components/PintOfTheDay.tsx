@@ -93,7 +93,7 @@ export default function PintOfTheDay() {
         <div className="flex items-center gap-2">
           <span className="text-lg">🍺</span>
           <div>
-            <h3 className="text-xs font-bold text-orange-dark tracking-wide">Pint of the Day</h3>
+            <h3 className="text-xs font-bold text-orange-dark">Pint of the Day</h3>
             <p className="text-[10px] text-stone-400">{new Date(data.date + 'T00:00:00+08:00').toLocaleDateString('en-AU', { weekday: 'long', day: 'numeric', month: 'short' })}</p>
           </div>
         </div>
