@@ -285,12 +285,12 @@ export default function PintIndex() {
             {/* Suburb comparison */}
             <div className="grid grid-cols-2 gap-3">
               <div className="bg-amber/10 rounded-xl p-3">
-                <div className="text-[10px] text-amber font-semibold tracking-wide">▼ Cheapest Suburb</div>
+                <div className="text-[10px] text-amber font-semibold">▼ Cheapest Suburb</div>
                 <div className="text-sm font-bold text-stone-800 mt-1">{current.cheapest_suburb}</div>
                 <div className="text-xs text-amber font-mono">avg ${current.cheapest_suburb_avg.toFixed(2)}/pint</div>
               </div>
               <div className="bg-coral/10 rounded-xl p-3">
-                <div className="text-[10px] text-coral font-semibold tracking-wide">▲ Priciest Suburb</div>
+                <div className="text-[10px] text-coral font-semibold">▲ Priciest Suburb</div>
                 <div className="text-sm font-bold text-stone-800 mt-1">{current.most_expensive_suburb}</div>
                 <div className="text-xs text-coral font-mono">avg ${current.most_expensive_suburb_avg.toFixed(2)}/pint</div>
               </div>
@@ -299,13 +299,13 @@ export default function PintIndex() {
             {/* Year-over-year change */}
             <div className="flex items-center justify-between mt-4 px-1">
               <div>
-                <div className="text-[10px] text-stone-400 tracking-wide font-medium">Overall Change</div>
+                <div className="text-[10px] text-stone-400 font-medium">Overall Change</div>
                 <div className={`text-lg font-bold font-mono ${yearChange > 0 ? 'text-coral' : 'text-amber'}`}>
                   {yearChange >= 0 ? '+' : ''}{yearPct.toFixed(1)}%
                 </div>
               </div>
               <div className="text-right">
-                <div className="text-[10px] text-stone-400 tracking-wide font-medium">Median</div>
+                <div className="text-[10px] text-stone-400 font-medium">Median</div>
                 <div className="text-lg font-bold font-mono text-stone-700">${current.median_price.toFixed(2)}</div>
               </div>
             </div>
@@ -313,7 +313,7 @@ export default function PintIndex() {
             {/* Price distribution */}
             {current.price_distribution && (
               <div className="mt-4">
-                <div className="text-[10px] text-stone-400 tracking-wide font-medium mb-2">Price Distribution</div>
+                <div className="text-[10px] text-stone-400 font-medium mb-2">Price Distribution</div>
                 <DistributionBars distribution={current.price_distribution} />
               </div>
             )}
