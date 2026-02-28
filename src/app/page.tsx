@@ -209,11 +209,11 @@ export default function Home() {
               <h1 className="font-serif text-xl text-charcoal">arvo</h1>
             </Link>
             <nav className="flex items-center gap-1.5 sm:gap-2">
-              <Link href="/insights" className="px-2.5 sm:px-3 py-1 text-xs sm:text-sm font-semibold text-charcoal bg-cream-dark hover:bg-amber/10 hover:text-amber rounded-full transition-all">
-                Insights
+              <Link href="/discover" className="px-2.5 sm:px-3 py-1 text-xs sm:text-sm font-semibold text-charcoal bg-cream-dark hover:bg-amber/10 hover:text-amber rounded-full transition-all">
+                Discover
               </Link>
-              <Link href="/guides" className="px-2.5 sm:px-3 py-1 text-xs sm:text-sm font-semibold text-charcoal bg-cream-dark hover:bg-amber/10 hover:text-amber rounded-full transition-all">
-                Guides
+              <Link href="/happy-hour" className="px-2.5 sm:px-3 py-1 text-xs sm:text-sm font-semibold text-charcoal bg-cream-dark hover:bg-amber/10 hover:text-amber rounded-full transition-all">
+                Happy Hours
               </Link>
             </nav>
             <div className="flex items-center gap-2 flex-shrink-0">

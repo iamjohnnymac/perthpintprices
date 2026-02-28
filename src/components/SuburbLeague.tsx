@@ -138,7 +138,7 @@ export default function SuburbLeague({ pubs }: { pubs: Pub[] }) {
             <div className="overflow-x-auto rounded-xl border border-stone-200 max-h-[500px] overflow-y-auto relative">
               <table className="w-full text-sm">
                 <thead className="sticky top-0 z-10">
-                  <tr className="bg-stone-200/95 backdrop-blur-sm text-stone-600 text-xs tracking-wide shadow-[0_1px_3px_rgba(0,0,0,0.08)]">
+                  <tr className="bg-stone-200/95 backdrop-blur-sm text-stone-600 text-xs shadow-[0_1px_3px_rgba(0,0,0,0.08)]">
                     <th className="px-2 py-2.5 text-center font-semibold w-10">Pos</th>
                     <th className="px-2 py-2.5 text-left font-semibold">Suburb</th>
                     <th
@@ -173,7 +173,7 @@ export default function SuburbLeague({ pubs }: { pubs: Pub[] }) {
                     if (row.type === 'divider') {
                       return (
                         <tr key={`div-${idx}`}>
-                          <td colSpan={7} className={`text-center text-[10px] font-semibold py-1 tracking-wide border-y ${row.colorClass}`}>
+                          <td colSpan={7} className={`text-center text-[10px] font-semibold py-1 border-y ${row.colorClass}`}>
                             {row.label}
                           </td>
                         </tr>

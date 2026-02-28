@@ -8,7 +8,7 @@ export default function SocialProof({ venueCount, suburbCount, avgPrice }: Socia
   return (
     <section className="py-6 sm:py-8 bg-charcoal text-white">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
-        <p className="text-amber text-sm font-semibold tracking-wide mb-1">Community-driven since 2024</p>
+        <p className="text-amber text-sm font-semibold mb-1">Community-driven since 2024</p>
         <p className="text-stone-400 mb-5 text-sm max-w-md mx-auto">
           Every price on Arvo comes from someone who was actually there. No scraping, no guessing.
         </p>
