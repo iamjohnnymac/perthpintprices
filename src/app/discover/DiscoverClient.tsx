@@ -52,7 +52,7 @@ function MiniSparkline({ data, width = 120, height = 32 }: { data: number[]; wid
     return `${x},${y}`
   }).join(' ')
   const trend = data[data.length - 1] - data[0]
-  const color = trend > 0 ? '#DC2626' : '#E8740C'
+  const color = trend > 0 ? '#5C4A3A' : '#E8740C'
   return (
     <svg width={width} height={height} className="overflow-visible">
       <polyline points={points} fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
@@ -76,7 +76,7 @@ function FullSparkline({ data, snapshots, width = 280, height = 60 }: { data: nu
   })
   const polyline = pts.map(p => `${p.x},${p.y}`).join(' ')
   const trend = data[data.length - 1] - data[0]
-  const color = trend > 0 ? '#DC2626' : '#E8740C'
+  const color = trend > 0 ? '#5C4A3A' : '#E8740C'
   const gradId = 'sparkGrad-discover'
   const area = `0,${height} 0,${pts[0].y} ${polyline} ${width},${pts[pts.length - 1].y} ${width},${height}`
 
@@ -131,7 +131,7 @@ function DistributionBars({ distribution }: { distribution: Record<string, numbe
     <div className="flex items-end gap-1 h-10">
       {ranges.map((range, i) => (
         <div key={range} className="flex flex-col items-center gap-0.5 flex-1">
-          <div className="w-full rounded-sm transition-all duration-500" style={{ height: `${Math.max((values[i] / maxVal) * 32, 2)}px`, backgroundColor: i <= 1 ? '#E8820C' : i <= 3 ? '#D97706' : '#DC2626', opacity: 0.8 }} />
+          <div className="w-full rounded-sm transition-all duration-500" style={{ height: `${Math.max((values[i] / maxVal) * 32, 2)}px`, backgroundColor: i <= 1 ? '#E8740C' : i <= 3 ? '#D4A574' : '#5C4A3A', opacity: 0.8 }} />
           <span className="text-[9px] text-stone-500 leading-none">{range.replace('$', '')}</span>
         </div>
       ))}
@@ -353,12 +353,12 @@ export default function DiscoverClient() {
   // ─── Bracket color helper ───
   function getBracketColor(bracket: string): string {
     const num = parseInt(bracket.replace('$', ''))
-    if (num <= 7) return 'bg-green-500'
-    if (num <= 8) return 'bg-emerald-500'
-    if (num <= 9) return 'bg-yellow-500'
-    if (num <= 10) return 'bg-orange-500'
-    if (num <= 11) return 'bg-red-400'
-    return 'bg-red-600'
+    if (num <= 7) return 'bg-[#E8740C]'
+    if (num <= 8) return 'bg-[#F09D51]'
+    if (num <= 9) return 'bg-[#D4A574]'
+    if (num <= 10) return 'bg-[#B8977A]'
+    if (num <= 11) return 'bg-[#8B7355]'
+    return 'bg-[#5C4A3A]'
   }
 
   // ─── Submit form trigger ───
@@ -472,7 +472,7 @@ export default function DiscoverClient() {
                       <p className="text-xs text-[#888]">{pub.suburb}</p>
                     </div>
                     <div className="flex items-center gap-2 flex-shrink-0">
-                      <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold ${status.isActive ? 'bg-green-100 text-green-700 border border-green-200' : 'bg-orange-100 text-[#E8740C] border border-orange-200'}`}>
+                      <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold ${status.isActive ? 'bg-[#FFF3E0] text-[#E8740C] border border-[#F5D5B5]' : 'bg-orange-100 text-[#E8740C] border border-orange-200'}`}>
                         {status.countdown || status.statusText}
                       </span>
                       <span className="text-lg font-semibold text-[#1A1A1A] tabular-nums">{pub.price !== null ? `$${pub.price.toFixed(2)}` : 'TBC'}</span>
@@ -540,7 +540,7 @@ export default function DiscoverClient() {
                       <h3 className="text-lg font-bold text-[#1A1A1A]">Perth Pint Index™</h3>
                       <div className="flex items-baseline gap-2 mt-0.5">
                         <span className="text-2xl sm:text-3xl font-bold text-[#1A1A1A] tabular-nums">${pintIndex.current.avg_price.toFixed(2)}</span>
-                        <span className={`text-sm font-semibold ${pintIndex.monthChange > 0 ? 'text-red-600' : 'text-[#E8740C]'}`}>
+                        <span className={`text-sm font-semibold ${pintIndex.monthChange > 0 ? 'text-[#5C4A3A]' : 'text-[#E8740C]'}`}>
                           {pintIndex.monthChange > 0 ? '▲' : pintIndex.monthChange < 0 ? '▼' : '—'}{' '}
                           {pintIndex.monthChange >= 0 ? '+' : ''}{pintIndex.monthChange.toFixed(2)} ({pintIndex.monthPct >= 0 ? '+' : ''}{pintIndex.monthPct.toFixed(1)}%)
                         </span>
@@ -576,10 +576,10 @@ export default function DiscoverClient() {
                         <div className="text-sm font-bold text-[#1A1A1A] mt-1">{pintIndex.current.cheapest_suburb}</div>
                         <div className="text-xs text-[#E8740C] tabular-nums">avg ${pintIndex.current.cheapest_suburb_avg.toFixed(2)}/pint</div>
                       </div>
-                      <div className="bg-red-50 rounded-xl p-3">
-                        <div className="text-[10px] text-red-600 font-semibold">▲ Priciest Suburb</div>
+                      <div className="bg-stone-100 rounded-xl p-3">
+                        <div className="text-[10px] text-[#5C4A3A] font-semibold">▲ Priciest Suburb</div>
                         <div className="text-sm font-bold text-[#1A1A1A] mt-1">{pintIndex.current.most_expensive_suburb}</div>
-                        <div className="text-xs text-red-600 tabular-nums">avg ${pintIndex.current.most_expensive_suburb_avg.toFixed(2)}/pint</div>
+                        <div className="text-xs text-[#5C4A3A] tabular-nums">avg ${pintIndex.current.most_expensive_suburb_avg.toFixed(2)}/pint</div>
                       </div>
                     </div>
 
@@ -587,7 +587,7 @@ export default function DiscoverClient() {
                     <div className="flex items-center justify-between mb-4 px-1">
                       <div>
                         <div className="text-[10px] text-[#888] font-medium">Overall Change</div>
-                        <div className={`text-lg font-bold tabular-nums ${pintIndex.yearChange > 0 ? 'text-red-600' : 'text-[#E8740C]'}`}>
+                        <div className={`text-lg font-bold tabular-nums ${pintIndex.yearChange > 0 ? 'text-[#5C4A3A]' : 'text-[#E8740C]'}`}>
                           {pintIndex.yearChange >= 0 ? '+' : ''}{pintIndex.yearPct.toFixed(1)}%
                         </div>
                       </div>
@@ -685,7 +685,7 @@ export default function DiscoverClient() {
                           </td>
                           <td className="px-3 py-2.5 text-center font-bold text-[#1A1A1A] tabular-nums">${s.avgPrice.toFixed(2)}</td>
                           <td className="px-3 py-2.5 text-center text-emerald-600 font-medium tabular-nums hidden sm:table-cell">${s.minPrice.toFixed(2)}</td>
-                          <td className="px-3 py-2.5 text-center text-red-500 font-medium tabular-nums hidden sm:table-cell">${s.maxPrice.toFixed(2)}</td>
+                          <td className="px-3 py-2.5 text-center text-[#8B7355] font-medium tabular-nums hidden sm:table-cell">${s.maxPrice.toFixed(2)}</td>
                           <td className="px-3 py-2.5 text-center text-[#888] hidden md:table-cell">{s.happyHourPct}%</td>
                         </tr>
                       ))}
@@ -734,34 +734,34 @@ export default function DiscoverClient() {
                 {/* Under/Over valued */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                   <div className="bg-white border border-[#E5E5E5] rounded-xl p-6">
-                    <h4 className="text-sm font-semibold text-green-700 mb-3">📉 Below Market</h4>
+                    <h4 className="text-sm font-semibold text-[#E8740C] mb-3">📉 Below Market</h4>
                     <div className="space-y-1.5">
                       {undervalued.map(({ pub, diff }) => (
-                        <Link key={pub.id} href={`/pub/${pub.slug}`} className="flex items-center justify-between p-2 rounded-lg bg-green-50/60 border border-green-100 hover:bg-green-50 transition-colors">
+                        <Link key={pub.id} href={`/pub/${pub.slug}`} className="flex items-center justify-between p-2 rounded-lg bg-orange-50/60 border border-orange-100 hover:bg-orange-50 transition-colors">
                           <div className="min-w-0">
                             <span className="text-xs font-semibold text-[#1A1A1A] truncate block">{pub.name}</span>
                             <p className="text-[10px] text-[#888]">{pub.suburb}</p>
                           </div>
                           <div className="text-right flex-shrink-0">
-                            <p className="text-xs font-bold text-green-700 tabular-nums">${pub.price!.toFixed(2)}</p>
-                            <p className="text-[9px] text-green-600">↓ -${diff.toFixed(2)}</p>
+                            <p className="text-xs font-bold text-[#E8740C] tabular-nums">${pub.price!.toFixed(2)}</p>
+                            <p className="text-[9px] text-[#F09D51]">↓ -${diff.toFixed(2)}</p>
                           </div>
                         </Link>
                       ))}
                     </div>
                   </div>
                   <div className="bg-white border border-[#E5E5E5] rounded-xl p-6">
-                    <h4 className="text-sm font-semibold text-red-600 mb-3">📈 Above Market</h4>
+                    <h4 className="text-sm font-semibold text-[#5C4A3A] mb-3">📈 Above Market</h4>
                     <div className="space-y-1.5">
                       {overvalued.map(({ pub, diff }) => (
-                        <Link key={pub.id} href={`/pub/${pub.slug}`} className="flex items-center justify-between p-2 rounded-lg bg-red-50/60 border border-red-100 hover:bg-red-50 transition-colors">
+                        <Link key={pub.id} href={`/pub/${pub.slug}`} className="flex items-center justify-between p-2 rounded-lg bg-stone-100/60 border border-stone-200 hover:bg-stone-100 transition-colors">
                           <div className="min-w-0">
                             <span className="text-xs font-semibold text-[#1A1A1A] truncate block">{pub.name}</span>
                             <p className="text-[10px] text-[#888]">{pub.suburb}</p>
                           </div>
                           <div className="text-right flex-shrink-0">
-                            <p className="text-xs font-bold text-red-600 tabular-nums">${pub.price!.toFixed(2)}</p>
-                            <p className="text-[9px] text-red-500">↑ +${diff.toFixed(2)}</p>
+                            <p className="text-xs font-bold text-[#5C4A3A] tabular-nums">${pub.price!.toFixed(2)}</p>
+                            <p className="text-[9px] text-[#8B7355]">↑ +${diff.toFixed(2)}</p>
                           </div>
                         </Link>
                       ))}
@@ -772,7 +772,7 @@ export default function DiscoverClient() {
                 {/* Cheapest / Priciest Suburbs */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                   <div className="bg-white border border-[#E5E5E5] rounded-xl p-6">
-                    <h4 className="text-sm font-semibold text-green-700 mb-3">🟢 Cheapest Suburbs</h4>
+                    <h4 className="text-sm font-semibold text-[#E8740C] mb-3">🍺 Cheapest Suburbs</h4>
                     <div className="space-y-1.5">
                       {cheapestSuburbs.map((s, i) => (
                         <div key={s.suburb} className="flex items-center justify-between p-2 rounded-lg bg-white border border-stone-100">
@@ -781,7 +781,7 @@ export default function DiscoverClient() {
                             <span className="text-xs font-semibold text-[#1A1A1A]">{s.suburb}</span>
                           </div>
                           <div className="text-right">
-                            <span className="text-xs font-bold text-green-700 tabular-nums">${s.avgPrice.toFixed(2)}</span>
+                            <span className="text-xs font-bold text-[#E8740C] tabular-nums">${s.avgPrice.toFixed(2)}</span>
                             <span className="text-[9px] text-[#888] ml-1">({s.pubCount})</span>
                           </div>
                         </div>
@@ -789,7 +789,7 @@ export default function DiscoverClient() {
                     </div>
                   </div>
                   <div className="bg-white border border-[#E5E5E5] rounded-xl p-6">
-                    <h4 className="text-sm font-semibold text-red-600 mb-3">🔴 Priciest Suburbs</h4>
+                    <h4 className="text-sm font-semibold text-[#5C4A3A] mb-3">💰 Priciest Suburbs</h4>
                     <div className="space-y-1.5">
                       {priciestSuburbs.map((s, i) => (
                         <div key={s.suburb} className="flex items-center justify-between p-2 rounded-lg bg-white border border-stone-100">
@@ -798,7 +798,7 @@ export default function DiscoverClient() {
                             <span className="text-xs font-semibold text-[#1A1A1A]">{s.suburb}</span>
                           </div>
                           <div className="text-right">
-                            <span className="text-xs font-bold text-red-600 tabular-nums">${s.avgPrice.toFixed(2)}</span>
+                            <span className="text-xs font-bold text-[#5C4A3A] tabular-nums">${s.avgPrice.toFixed(2)}</span>
                             <span className="text-[9px] text-[#888] ml-1">({s.pubCount})</span>
                           </div>
                         </div>
