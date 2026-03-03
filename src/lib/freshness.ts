@@ -28,7 +28,7 @@ export function getFreshness(lastVerified: string | null): FreshnessInfo {
   const diffMs = now.getTime() - verified.getTime()
   const daysAgo = Math.floor(diffMs / (1000 * 60 * 60 * 24))
 
-  if (daysAgo <= 7) {
+  if (daysAgo <= 14) {
     return {
       level: 'fresh',
       label: 'Fresh',
