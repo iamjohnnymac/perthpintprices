@@ -116,7 +116,7 @@ export default function PubDetailClient({ pub, nearbyPubs, avgPrice }: PubDetail
         <nav className="flex items-center gap-2 text-sm text-stone-warm">
           <Link href="/" className="hover:text-amber transition-colors">Home</Link>
           <span className="text-stone-300">/</span>
-          <span>{pub.suburb}</span>
+          <Link href={`/suburb/${pub.suburb.toLowerCase().replace(/['']/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')}`} className="hover:text-amber transition-colors">{pub.suburb}</Link>
           <span className="text-stone-300">/</span>
           <span className="text-charcoal font-medium">{pub.name}</span>
         </nav>
