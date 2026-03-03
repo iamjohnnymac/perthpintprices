@@ -38,7 +38,7 @@ export default function SubPageNav({ breadcrumbs, title, subtitle, showSubmit = 
                       {crumb.label}
                     </Link>
                   ) : (
-                    <span className="text-sm font-semibold text-charcoal truncate">{crumb.label}</span>
+                    <h1 className="text-sm font-semibold text-charcoal truncate">{crumb.label}</h1>
                   )}
                 </span>
               ))}
@@ -47,7 +47,7 @@ export default function SubPageNav({ breadcrumbs, title, subtitle, showSubmit = 
             <>
               <span className="text-stone-300 text-sm">/</span>
               <div>
-                <span className="text-sm font-semibold text-charcoal">{title}</span>
+                <h1 className="text-sm font-semibold text-charcoal">{title}</h1>
                 {subtitle && <span className="text-xs text-stone-400 ml-2 hidden sm:inline">{subtitle}</span>}
               </div>
             </>

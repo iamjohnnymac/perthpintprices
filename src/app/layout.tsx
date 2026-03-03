@@ -22,7 +22,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const ogDesc = `Perth's pint prices, sorted. ${stats.venueCount}+ venues. Avg: $${stats.avgPrice}. Cheapest: $${stats.cheapestPrice}.`
 
   return {
-    metadataBase: new URL('https://perthpintprices.com'),
+    metadataBase: new URL('https://www.perthpintprices.com'),
     icons: {
       icon: '/favicon.ico',
       apple: '/apple-touch-icon.png',
@@ -31,9 +31,17 @@ export async function generateMetadata(): Promise<Metadata> {
     description: desc,
     keywords: 'Perth, pint prices, beer, pubs, happy hour, Western Australia, cheap drinks, Arvo',
     openGraph: {
+      images: [
+        {
+          url: '/og-image.png',
+          width: 1200,
+          height: 630,
+          alt: "Arvo — Perth's pint prices, sorted",
+        },
+      ],
       title: "Arvo — Perth's pint prices, sorted.",
       description: ogDesc,
-      url: 'https://perthpintprices.com',
+      url: 'https://www.perthpintprices.com',
       siteName: 'Arvo',
       locale: 'en_AU',
       type: 'website',

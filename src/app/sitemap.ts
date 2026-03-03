@@ -1,17 +1,20 @@
 import { MetadataRoute } from 'next'
-import { getAllPubSlugs } from '@/lib/supabase'
+import { getAllPubSlugs, getAllSuburbs } from '@/lib/supabase'
 
-const BASE_URL = 'https://perthpintprices.com'
+const BASE_URL = 'https://www.perthpintprices.com'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const slugs = await getAllPubSlugs()
+  const [slugs, suburbs] = await Promise.all([
+    getAllPubSlugs(),
+    getAllSuburbs(),
+  ])
   const now = new Date().toISOString()
 
   const staticRoutes: MetadataRoute.Sitemap = [
     { url: BASE_URL, lastModified: now, changeFrequency: 'daily', priority: 1.0 },
+    { url: `${BASE_URL}/discover`, lastModified: now, changeFrequency: 'daily', priority: 0.9 },
     { url: `${BASE_URL}/insights`, lastModified: now, changeFrequency: 'daily', priority: 0.9 },
     { url: `${BASE_URL}/guides`, lastModified: now, changeFrequency: 'weekly', priority: 0.9 },
-    { url: `${BASE_URL}/discover`, lastModified: now, changeFrequency: 'daily', priority: 0.9 },
     { url: `${BASE_URL}/insights/pint-of-the-day`, lastModified: now, changeFrequency: 'daily', priority: 0.8 },
     { url: `${BASE_URL}/insights/pint-index`, lastModified: now, changeFrequency: 'daily', priority: 0.8 },
     { url: `${BASE_URL}/insights/tonights-best-bets`, lastModified: now, changeFrequency: 'daily', priority: 0.8 },
@@ -28,6 +31,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${BASE_URL}/leaderboard`, lastModified: now, changeFrequency: 'daily', priority: 0.6 },
   ]
 
+  const suburbRoutes: MetadataRoute.Sitemap = suburbs.map(s => ({
+    url: `${BASE_URL}/suburb/${s.slug}`,
+    lastModified: now,
+    changeFrequency: 'weekly' as const,
+    priority: 0.8,
+  }))
+
   const pubRoutes: MetadataRoute.Sitemap = slugs.map(slug => ({
     url: `${BASE_URL}/pub/${slug}`,
     lastModified: now,
@@ -35,5 +45,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.6,
   }))
 
-  return [...staticRoutes, ...pubRoutes]
+  return [...staticRoutes, ...suburbRoutes, ...pubRoutes]
 }

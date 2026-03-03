@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useMemo } from 'react'
+import Link from 'next/link'
 import { Pub } from '@/types/pub'
 
 interface SuburbStats {
@@ -16,6 +17,10 @@ interface SuburbStats {
 type RowItem =
   | { type: 'divider'; label: string; colorClass: string }
   | { type: 'suburb'; pos: number; stats: SuburbStats; rowBg: string }
+
+function toSlug(name: string): string {
+  return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
+}
 
 export default function SuburbLeague({ pubs }: { pubs: Pub[] }) {
   const [isExpanded, setIsExpanded] = useState(true)
@@ -186,7 +191,7 @@ export default function SuburbLeague({ pubs }: { pubs: Pub[] }) {
                       <tr key={s.suburb} className={rowBg}>
                         <td className="px-2 py-2 text-center font-bold text-stone-500 text-xs">{pos}</td>
                         <td className="px-2 py-2 text-left">
-                          <span className="font-semibold text-stone-800">{s.suburb}</span>
+                          <Link href={`/suburb/${toSlug(s.suburb)}`} className="font-semibold text-stone-800 hover:text-orange transition-colors underline decoration-stone-200 underline-offset-2 hover:decoration-orange">{s.suburb}</Link>
                           <span className="text-[10px] text-stone-400 ml-1">({s.pubCount})</span>
                         </td>
                         <td className="px-2 py-2 text-center font-bold text-stone-800">${s.avgPrice.toFixed(2)}</td>

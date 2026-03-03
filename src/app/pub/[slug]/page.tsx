@@ -18,11 +18,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   return {
     title,
     description,
-    alternates: { canonical: `https://perthpintprices.com/pub/${params.slug}` },
+    alternates: { canonical: `https://www.perthpintprices.com/pub/${params.slug}` },
     openGraph: {
       title: `${pub.name} — ${priceText}`,
       description,
-      url: `https://perthpintprices.com/pub/${params.slug}`,
+      url: `https://www.perthpintprices.com/pub/${params.slug}`,
       siteName: 'Arvo',
       locale: 'en_AU',
       type: 'website',
@@ -56,8 +56,8 @@ export default async function PubPage({ params }: PageProps) {
       '@context': 'https://schema.org',
       '@type': 'BreadcrumbList',
       itemListElement: [
-        { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://perthpintprices.com' },
-        { '@type': 'ListItem', position: 2, name: pub.suburb, item: `https://perthpintprices.com/?suburb=${encodeURIComponent(pub.suburb)}` },
+        { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.perthpintprices.com' },
+        { '@type': 'ListItem', position: 2, name: pub.suburb, item: `https://www.perthpintprices.com/suburb/${pub.suburb.toLowerCase().replace(/['']/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')}` },
         { '@type': 'ListItem', position: 3, name: pub.name },
       ],
     },

@@ -362,3 +362,118 @@ export async function getSiteStats(): Promise<{
     cheapestPrice: Number(data.min_price).toFixed(2),
   }
 }
+
+// ═══ SUBURB PAGES ═══
+
+export interface SuburbInfo {
+  name: string
+  slug: string
+  pubCount: number
+  verifiedCount: number
+  avgPrice: string
+  cheapestPrice: string
+  cheapestPub: string
+  cheapestPubSlug: string
+  mostExpensivePrice: string
+  happyHourCount: number
+}
+
+function toSuburbSlug(suburb: string): string {
+  return suburb
+    .toLowerCase()
+    .replace(/['']/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '')
+}
+
+export async function getAllSuburbs(): Promise<SuburbInfo[]> {
+  const pubs = await getPubs()
+  const grouped: Record<string, typeof pubs> = {}
+  
+  for (const pub of pubs) {
+    if (!pub.suburb) continue
+    if (!grouped[pub.suburb]) grouped[pub.suburb] = []
+    grouped[pub.suburb].push(pub)
+  }
+
+  const suburbs: SuburbInfo[] = []
+  for (const [suburb, subPubs] of Object.entries(grouped)) {
+    const priced = subPubs.filter(p => p.price !== null && p.price > 0)
+    const verified = subPubs.filter(p => p.priceVerified)
+    const cheapest = priced.length > 0 
+      ? priced.reduce((min, p) => p.price! < min.price! ? p : min, priced[0])
+      : null
+    const mostExpensive = priced.length > 0
+      ? priced.reduce((max, p) => p.price! > max.price! ? p : max, priced[0])
+      : null
+    const avg = priced.length > 0
+      ? (priced.reduce((s, p) => s + p.price!, 0) / priced.length).toFixed(2)
+      : '0'
+    const hhCount = subPubs.filter(p => p.happyHour && p.happyHour.trim() !== '').length
+
+    suburbs.push({
+      name: suburb,
+      slug: toSuburbSlug(suburb),
+      pubCount: subPubs.length,
+      verifiedCount: verified.length,
+      avgPrice: avg,
+      cheapestPrice: cheapest ? cheapest.price!.toFixed(2) : 'TBC',
+      cheapestPub: cheapest?.name || '',
+      cheapestPubSlug: cheapest?.slug || '',
+      mostExpensivePrice: mostExpensive ? mostExpensive.price!.toFixed(2) : 'TBC',
+      happyHourCount: hhCount,
+    })
+  }
+
+  suburbs.sort((a, b) => a.name.localeCompare(b.name))
+  return suburbs
+}
+
+export async function getSuburbBySlug(slug: string): Promise<SuburbInfo | null> {
+  const suburbs = await getAllSuburbs()
+  return suburbs.find(s => s.slug === slug) || null
+}
+
+export async function getSuburbPubs(suburbName: string): Promise<Pub[]> {
+  const allPubs = await getPubs()
+  return allPubs
+    .filter(p => p.suburb === suburbName)
+    .sort((a, b) => {
+      if (a.price === null && b.price === null) return 0
+      if (a.price === null) return 1
+      if (b.price === null) return -1
+      return a.price - b.price
+    })
+}
+
+export async function getNearbySuburbs(suburbName: string, limit: number = 5): Promise<SuburbInfo[]> {
+  // Get pubs in the target suburb to find their average lat/lng
+  const allPubs = await getPubs()
+  const suburbPubs = allPubs.filter(p => p.suburb === suburbName)
+  if (suburbPubs.length === 0) return []
+
+  const avgLat = suburbPubs.reduce((s, p) => s + p.lat, 0) / suburbPubs.length
+  const avgLng = suburbPubs.reduce((s, p) => s + p.lng, 0) / suburbPubs.length
+
+  // Find other suburbs and their average positions
+  const grouped: Record<string, typeof allPubs> = {}
+  for (const pub of allPubs) {
+    if (!pub.suburb || pub.suburb === suburbName) continue
+    if (!grouped[pub.suburb]) grouped[pub.suburb] = []
+    grouped[pub.suburb].push(pub)
+  }
+
+  const suburbDistances: { name: string; distance: number }[] = []
+  for (const [suburb, pubs] of Object.entries(grouped)) {
+    const sLat = pubs.reduce((s, p) => s + p.lat, 0) / pubs.length
+    const sLng = pubs.reduce((s, p) => s + p.lng, 0) / pubs.length
+    const dist = Math.sqrt(Math.pow(sLat - avgLat, 2) + Math.pow(sLng - avgLng, 2))
+    suburbDistances.push({ name: suburb, distance: dist })
+  }
+
+  suburbDistances.sort((a, b) => a.distance - b.distance)
+  const nearbyNames = suburbDistances.slice(0, limit).map(s => s.name)
+
+  const allSuburbs = await getAllSuburbs()
+  return allSuburbs.filter(s => nearbyNames.includes(s.name))
+}

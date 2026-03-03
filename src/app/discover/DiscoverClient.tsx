@@ -375,6 +375,7 @@ export default function DiscoverClient() {
   if (isLoading) {
     return (
       <main className="min-h-screen bg-cream">
+      <h1 className="sr-only">Discover Perth's Best Pints</h1>
         <SubPageNav breadcrumbs={[{ label: 'Discover' }]} />
         <div className="flex items-center justify-center py-20">
           <div className="w-12 h-12 border-4 border-stone-300 border-t-amber rounded-full animate-spin" />
