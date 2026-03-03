@@ -15,6 +15,14 @@ export const metadata: Metadata = {
     siteName: 'Arvo',
     locale: 'en_AU',
     type: 'website',
+    images: [
+      {
+        url: 'https://perthpintprices.com/og-image.png',
+        width: 1200,
+        height: 630,
+        alt: "Discover Perth's best pints — guides, stats & pub picks",
+      },
+    ],
   },
 }
 
