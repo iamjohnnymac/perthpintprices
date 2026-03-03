@@ -5,11 +5,11 @@ import type { Metadata } from 'next'
 export const metadata: Metadata = {
   title: "Price Scout Leaderboard — Top Perth Pint Reporters | Arvo",
   description: "Perth's top price reporters helping keep Arvo accurate. Report pint prices to climb the leaderboard and earn bragging rights!",
-  alternates: { canonical: 'https://www.perthpintprices.com/leaderboard' },
+  alternates: { canonical: 'https://perthpintprices.com/leaderboard' },
   openGraph: {
     title: "Price Scout Leaderboard — Top Perth Pint Reporters | Arvo",
     description: "Perth's top price reporters helping keep Arvo accurate. Report pint prices to climb the leaderboard!",
-    url: 'https://www.perthpintprices.com/leaderboard',
+    url: 'https://perthpintprices.com/leaderboard',
     type: 'website',
     siteName: 'Arvo',
   },
@@ -19,7 +19,7 @@ export default function LeaderboardPage() {
   return (
     <>
       <BreadcrumbJsonLd items={[
-        { name: 'Home', url: 'https://www.perthpintprices.com' },
+        { name: 'Home', url: 'https://perthpintprices.com' },
         { name: 'Leaderboard' },
       ]} />
       <LeaderboardClient />

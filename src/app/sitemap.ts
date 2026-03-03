@@ -1,7 +1,7 @@
 import { MetadataRoute } from 'next'
 import { getAllPubSlugs, getAllSuburbs } from '@/lib/supabase'
 
-const BASE_URL = 'https://www.perthpintprices.com'
+const BASE_URL = 'https://perthpintprices.com'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const [slugs, suburbs] = await Promise.all([

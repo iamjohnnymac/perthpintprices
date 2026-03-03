@@ -6,12 +6,12 @@ export const metadata: Metadata = {
   title: 'Happy Hours Live Now in Perth — Cheapest Pints Right Now | Arvo',
   description:
     'See which Perth pubs have happy hour deals running right now. Live countdown timers, savings calculations, and the cheapest pints available today.',
-  alternates: { canonical: 'https://www.perthpintprices.com/happy-hour' },
+  alternates: { canonical: 'https://perthpintprices.com/happy-hour' },
   openGraph: {
     title: 'Happy Hours Live Now in Perth | Arvo',
     description:
       'See which Perth pubs have happy hour deals running right now. Live countdown timers and the cheapest pints available today.',
-    url: 'https://www.perthpintprices.com/happy-hour',
+    url: 'https://perthpintprices.com/happy-hour',
     type: 'website',
     siteName: 'Arvo',
   },
@@ -21,7 +21,7 @@ export default function HappyHourPage() {
   return (
     <>
       <BreadcrumbJsonLd items={[
-        { name: 'Home', url: 'https://www.perthpintprices.com' },
+        { name: 'Home', url: 'https://perthpintprices.com' },
         { name: 'Happy Hour' },
       ]} />
       <HappyHourClient />

@@ -11,18 +11,18 @@ export async function generateMetadata(): Promise<Metadata> {
     title,
     description,
     alternates: {
-      canonical: 'https://www.perthpintprices.com/',
+      canonical: 'https://perthpintprices.com/',
     },
     openGraph: {
       title,
       description: `Perth's pint prices, sorted. ${stats.venueCount}+ venues. Avg: $${stats.avgPrice}. Cheapest: $${stats.cheapestPrice}.`,
-      url: 'https://www.perthpintprices.com/',
+      url: 'https://perthpintprices.com/',
       siteName: 'Arvo',
       locale: 'en_AU',
       type: 'website',
       images: [
         {
-          url: 'https://www.perthpintprices.com/og-image.png',
+          url: 'https://perthpintprices.com/og-image.png',
           width: 1200,
           height: 630,
           alt: "Arvo — Perth's pint prices, sorted",
@@ -44,7 +44,7 @@ function HomeJsonLd() {
     '@type': 'WebSite',
     name: 'Arvo',
     alternateName: 'Perth Pint Prices',
-    url: 'https://www.perthpintprices.com',
+    url: 'https://perthpintprices.com',
     description: "Perth's pint prices, sorted. Real prices from real people.",
   }
 

@@ -6,12 +6,12 @@ export const metadata: Metadata = {
   title: 'Discover — Perth Pint Guides, Stats & Pub Picks | Arvo',
   description: 'Live pint data, suburb rankings, sunset spots, dad bars, and more. Everything beyond the price table.',
   alternates: {
-    canonical: 'https://www.perthpintprices.com/discover',
+    canonical: 'https://perthpintprices.com/discover',
   },
   openGraph: {
     title: 'Discover — Perth Pint Guides, Stats & Pub Picks | Arvo',
     description: 'Live pint data, suburb rankings, sunset spots, dad bars, and more.',
-    url: 'https://www.perthpintprices.com/discover',
+    url: 'https://perthpintprices.com/discover',
     siteName: 'Arvo',
     locale: 'en_AU',
     type: 'website',
@@ -22,7 +22,7 @@ export default function DiscoverPage() {
   return (
     <>
       <BreadcrumbJsonLd items={[
-        { name: 'Home', url: 'https://www.perthpintprices.com' },
+        { name: 'Home', url: 'https://perthpintprices.com' },
         { name: 'Discover' },
       ]} />
       <DiscoverClient />

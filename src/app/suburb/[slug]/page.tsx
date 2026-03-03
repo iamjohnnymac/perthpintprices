@@ -33,12 +33,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     title,
     description,
     alternates: {
-      canonical: `https://www.perthpintprices.com/suburb/${params.slug}`,
+      canonical: `https://perthpintprices.com/suburb/${params.slug}`,
     },
     openGraph: {
       title,
       description,
-      url: `https://www.perthpintprices.com/suburb/${params.slug}`,
+      url: `https://perthpintprices.com/suburb/${params.slug}`,
       siteName: 'Arvo',
       locale: 'en_AU',
       type: 'website',
@@ -63,7 +63,7 @@ export default async function SuburbPage({ params }: PageProps) {
       '@context': 'https://schema.org',
       '@type': 'BreadcrumbList',
       itemListElement: [
-        { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.perthpintprices.com' },
+        { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://perthpintprices.com' },
         { '@type': 'ListItem', position: 2, name: suburb.name },
       ],
     },
@@ -77,7 +77,7 @@ export default async function SuburbPage({ params }: PageProps) {
         '@type': 'ListItem',
         position: i + 1,
         name: pub.name,
-        url: `https://www.perthpintprices.com/pub/${pub.slug}`,
+        url: `https://perthpintprices.com/pub/${pub.slug}`,
       })),
     },
   ]

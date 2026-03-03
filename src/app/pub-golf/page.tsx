@@ -6,11 +6,11 @@ import type { Metadata } from 'next'
 export const metadata: Metadata = {
   title: "Pub Golf Perth — Score Your Pub Crawl | Arvo",
   description: "Play pub golf across Perth's best pubs. Pick a course, track your scores, and see how much your round costs. Real prices from 300+ Perth venues.",
-  alternates: { canonical: 'https://www.perthpintprices.com/pub-golf' },
+  alternates: { canonical: 'https://perthpintprices.com/pub-golf' },
   openGraph: {
     title: "Pub Golf Perth — Score Your Crawl | Arvo",
     description: "Play pub golf across Perth's best pubs with real pint prices.",
-    url: 'https://www.perthpintprices.com/pub-golf',
+    url: 'https://perthpintprices.com/pub-golf',
     type: 'website',
     siteName: 'Arvo',
   }
@@ -23,7 +23,7 @@ export default async function PubGolfPage() {
   return (
     <>
       <BreadcrumbJsonLd items={[
-        { name: 'Home', url: 'https://www.perthpintprices.com' },
+        { name: 'Home', url: 'https://perthpintprices.com' },
         { name: 'Pub Golf' },
       ]} />
       <PubGolfClient pubs={pubs} />
