@@ -332,6 +332,10 @@ export default function PintCrawlClient({ pubs }: { pubs: Pub[] }) {
     <div className="min-h-screen bg-cream">
       {/* Header */}
       <SubPageNav title="Pint Crawl" subtitle="Plan your route" />
+      <div className="text-center py-6">
+        <h2 className="font-serif text-3xl sm:text-4xl text-charcoal mb-1">Pint Crawl</h2>
+        <p className="text-stone-warm text-sm sm:text-base">Plan your route</p>
+      </div>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-6">
         {/* ════════════ SCREEN 1: PLAN ════════════ */}
