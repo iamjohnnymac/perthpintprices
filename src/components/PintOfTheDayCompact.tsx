@@ -1,4 +1,5 @@
 'use client'
+
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 
@@ -46,12 +47,15 @@ export default function PintOfTheDayCompact() {
       href={`/pub/${data.pub.slug}`}
       className="block w-full max-w-2xl mx-auto mt-4 mb-2 group"
     >
-      <div className="flex items-center gap-4 px-5 py-3.5 rounded-2xl bg-white/80 border border-stone-200/50 hover:border-amber/30 hover:shadow-md transition-all">
+      <div className="relative flex items-center gap-4 px-5 py-4 rounded-2xl bg-gradient-to-r from-amber/5 via-white to-amber/5 border border-amber/20 hover:border-amber/40 hover:shadow-lg shadow-sm transition-all">
+        {/* Pint of the day badge */}
+        <div className="absolute -top-2.5 left-4 px-2 py-0.5 bg-amber text-white text-[10px] font-bold uppercase tracking-wider rounded-full">
+          Pint of the day
+        </div>
         <div className="flex-shrink-0 text-center">
           <span className="text-2xl font-bold font-mono text-amber">${data.pub.effectivePrice.toFixed(2)}</span>
-          <p className="text-[10px] text-stone-400 font-medium mt-0.5">pint of the day</p>
         </div>
-        <div className="h-8 w-px bg-stone-200/60 flex-shrink-0" />
+        <div className="h-8 w-px bg-amber/20 flex-shrink-0" />
         <div className="min-w-0 flex-1">
           <p className="text-sm font-semibold text-charcoal group-hover:text-amber transition-colors truncate">
             {data.pub.name}
@@ -60,7 +64,7 @@ export default function PintOfTheDayCompact() {
             {data.pub.suburb}{data.pub.beerType ? ` · ${data.pub.beerType}` : ''}
           </p>
         </div>
-        <span className="text-stone-300 group-hover:text-amber transition-colors flex-shrink-0">→</span>
+        <span className="text-amber/40 group-hover:text-amber transition-colors flex-shrink-0 text-lg">→</span>
       </div>
     </Link>
   )
