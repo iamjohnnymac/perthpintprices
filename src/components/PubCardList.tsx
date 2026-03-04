@@ -23,7 +23,7 @@ interface PubCardListProps {
 /** Get price badge color classes based on price tier */
 function getPriceBadgeClasses(price: number | null): string {
   if (price === null) return 'bg-stone-100 text-stone-400 text-xs'
-  if (price <= 7) return 'bg-emerald-50 text-emerald-700'
+  if (price <= 7) return 'bg-orange-50 text-charcoal'
   if (price <= 9) return 'bg-amber-50 text-amber-700'
   if (price <= 11) return 'bg-orange-50 text-orange-700'
   return 'bg-red-50 text-red-600'
@@ -137,8 +137,8 @@ function PubCard({
       <div className="flex items-center gap-2 mt-2 flex-wrap">
         {/* Happy hour badge */}
         {hhStatus.isActive && (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-medium">
-            <span className="w-[6px] h-[6px] rounded-full bg-emerald-500 animate-pulse" />
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-orange-50 text-charcoal text-xs font-medium">
+            <span className="w-[6px] h-[6px] rounded-full bg-orange-500 animate-pulse" />
             Ends in {hhStatus.countdown?.replace(' left', '')}
           </span>
         )}

@@ -500,7 +500,7 @@ export default function PintCrawlClient({ pubs }: { pubs: Pub[] }) {
               </div>
               <p
                 className={`text-sm font-semibold mt-1 ${
-                  budgetRemaining >= 0 ? 'text-emerald-600' : 'text-red-600'
+                  budgetRemaining >= 0 ? 'text-charcoal' : 'text-red-600'
                 }`}
               >
                 {budgetRemaining >= 0
@@ -815,7 +815,7 @@ export default function PintCrawlClient({ pubs }: { pubs: Pub[] }) {
                       key={i}
                       className={`w-2.5 h-2.5 rounded-full transition-all ${
                         completedStops.has(i)
-                          ? 'bg-emerald-500'
+                          ? 'bg-orange-500'
                           : i === currentStop
                             ? 'bg-orange-500 scale-125'
                             : 'bg-stone-200'
@@ -896,7 +896,7 @@ function StatBox({
     <div className="bg-stone-50 rounded-xl p-3 text-center">
       <div
         className={`text-base font-bold font-heading ${
-          accent ? 'text-emerald-600' : 'text-charcoal'
+          accent ? 'text-charcoal' : 'text-charcoal'
         }`}
       >
         {value}

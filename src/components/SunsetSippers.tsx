@@ -300,7 +300,7 @@ export default function SunsetSippers({ pubs, userLocation }: SunsetSippersProps
                 {E.beer} Best Sunset Spots ({sunsetPubs.length} pubs)
               </h4>
               {cheapestSunset && (
-                <span className="text-xs text-emerald-600 font-medium">
+                <span className="text-xs text-charcoal font-medium">
                   Cheapest: {cheapestSunset.price !== null ? `$${cheapestSunset.price.toFixed(2)}` : 'TBC'} at <Link href={`/pub/${cheapestSunset.slug}`} className="hover:text-orange transition-colors">{cheapestSunset.name}</Link>
                 </span>
               )}

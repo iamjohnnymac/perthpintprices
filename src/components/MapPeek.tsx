@@ -38,8 +38,8 @@ export default function MapPeek({ pubs, userLocation, totalPubCount, happyHourCo
         </svg>
         Show map
         {happyHourCount > 0 && (
-          <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-600 bg-emerald-50 rounded-full px-2 py-0.5">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+          <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-charcoal bg-orange-50 rounded-full px-2 py-0.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse" />
             {happyHourCount} live
           </span>
         )}
@@ -60,8 +60,8 @@ export default function MapPeek({ pubs, userLocation, totalPubCount, happyHourCo
           Hide map
         </button>
         {happyHourCount > 0 && (
-          <span className="inline-flex items-center gap-1.5 text-xs font-medium text-emerald-600">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+          <span className="inline-flex items-center gap-1.5 text-xs font-medium text-charcoal">
+            <span className="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse" />
             {happyHourCount} happy hour{happyHourCount !== 1 ? 's' : ''} live
           </span>
         )}

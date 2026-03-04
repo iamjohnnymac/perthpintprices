@@ -24,7 +24,7 @@ export interface CrowdReport {
 
 export const CROWD_LEVELS = {
   1: { label: 'Empty', emoji: '😴', color: 'bg-blue-500' },
-  2: { label: 'Moderate', emoji: '👥', color: 'bg-green-500' },
+  2: { label: 'Moderate', emoji: '👥', color: 'bg-orange-500' },
   3: { label: 'Busy', emoji: '◉', color: 'bg-yellow-500' },
   4: { label: 'Packed', emoji: '🔥', color: 'bg-red-500' },
 } as const

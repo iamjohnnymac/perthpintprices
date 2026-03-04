@@ -96,7 +96,7 @@ export default function SuburbClient({ suburb, pubs, nearbySuburbs, perthAvgPric
               {avgNum > 0 ? `$${suburb.avgPrice}` : 'TBC'}
             </p>
             {diffText && (
-              <p className={`text-xs mt-1 ${isCheaper ? 'text-emerald-600' : 'text-red-500'}`}>
+              <p className={`text-xs mt-1 ${isCheaper ? 'text-charcoal' : 'text-red-500'}`}>
                 {isCheaper ? '↓' : '↑'} {diffText}
               </p>
             )}
@@ -197,7 +197,7 @@ export default function SuburbClient({ suburb, pubs, nearbySuburbs, perthAvgPric
             <h2 className="font-semibold text-stone-800 mb-3">Price Distribution</h2>
             <div className="flex items-end gap-2 h-20 mb-3">
               {[
-                { label: 'Under $8', count: under8, color: 'bg-emerald-400' },
+                { label: 'Under $8', count: under8, color: 'bg-amber-400' },
                 { label: '$8–$11', count: mid, color: 'bg-amber' },
                 { label: 'Over $11', count: over11, color: 'bg-red-400' },
               ].map(band => {

@@ -15,8 +15,8 @@ interface VenueIntelProps {
 
 function getBracketColor(bracket: string): string {
   const num = parseInt(bracket.replace('$', ''))
-  if (num <= 7) return 'bg-green-500'
-  if (num <= 8) return 'bg-emerald-500'
+  if (num <= 7) return 'bg-orange-500'
+  if (num <= 8) return 'bg-orange-500'
   if (num <= 9) return 'bg-yellow-500'
   if (num <= 10) return 'bg-orange-500'
   if (num <= 11) return 'bg-red-400'
@@ -169,19 +169,19 @@ export default function VenueIntel({ pubs, userLocation }: VenueIntelProps) {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <h4 className="text-xs font-semibold text-green-700 mb-2 flex items-center gap-1">
+                <h4 className="text-xs font-semibold text-charcoal mb-2 flex items-center gap-1">
                   {E.chart_down} Undervalued {E.dash} Below Market
                 </h4>
                 <div className="space-y-1">
                   {undervalued.map(({ pub, diff }) => (
-                    <Link key={pub.id} href={`/pub/${pub.slug}`} className="flex items-center justify-between p-2 rounded-xl bg-green-50/60 border border-green-100">
+                    <Link key={pub.id} href={`/pub/${pub.slug}`} className="flex items-center justify-between p-2 rounded-xl bg-orange-50/60 border border-orange-100">
                       <div className="min-w-0">
                         <span className="text-xs font-semibold text-stone-800 truncate block">{pub.name}</span>
                         <p className="text-[10px] text-stone-400">{pub.suburb}{userLocation && ` · ${formatDistance(getDistanceKm(userLocation.lat, userLocation.lng, pub.lat, pub.lng))}`}</p>
                       </div>
                       <div className="text-right flex-shrink-0">
-                        <p className="text-xs font-bold text-green-700">{pub.price !== null ? `$${pub.price.toFixed(2)}` : 'TBC'}</p>
-                        <p className="text-[9px] text-green-600">{E.down_arrow}-${diff.toFixed(2)}</p>
+                        <p className="text-xs font-bold text-charcoal">{pub.price !== null ? `$${pub.price.toFixed(2)}` : 'TBC'}</p>
+                        <p className="text-[9px] text-charcoal">{E.down_arrow}-${diff.toFixed(2)}</p>
                       </div>
                     </Link>
                   ))}
@@ -211,7 +211,7 @@ export default function VenueIntel({ pubs, userLocation }: VenueIntelProps) {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <h4 className="text-xs font-semibold text-green-700 mb-2 flex items-center gap-1">
+                <h4 className="text-xs font-semibold text-charcoal mb-2 flex items-center gap-1">
                   {E.green_circle} Cheapest Suburbs
                 </h4>
                 <div className="space-y-1">
@@ -222,7 +222,7 @@ export default function VenueIntel({ pubs, userLocation }: VenueIntelProps) {
                         <span className="text-xs font-semibold text-stone-800">{suburb.name}</span>
                       </div>
                       <div className="text-right">
-                        <span className="text-xs font-bold text-green-700">${suburb.avgPrice.toFixed(2)}</span>
+                        <span className="text-xs font-bold text-charcoal">${suburb.avgPrice.toFixed(2)}</span>
                         <span className="text-[9px] text-stone-400 ml-1">({suburb.count})</span>
                       </div>
                     </div>

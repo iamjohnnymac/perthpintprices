@@ -48,13 +48,13 @@ function getPar(price: number | null): number {
 }
 
 function getScoreColor(sips: number, par: number): string {
-  if (sips < par) return 'text-green-600'
+  if (sips < par) return 'text-charcoal'
   if (sips === par) return 'text-orange-600'
   return 'text-red-600'
 }
 
 function getScoreBg(sips: number, par: number): string {
-  if (sips < par) return 'bg-green-50 border-green-200'
+  if (sips < par) return 'bg-orange-50 border-orange-200'
   if (sips === par) return 'bg-orange-50 border-orange-200'
   return 'bg-red-50 border-red-200'
 }
@@ -795,7 +795,7 @@ export default function PubGolfClient({ pubs }: { pubs: Pub[] }) {
                   <td className="py-2 pr-2 text-center font-black text-orange-600">{totalPar}</td>
                   {playerTotals.map((pt: { name: string; total: number }) => (
                     <td key={pt.name} className={`py-2 text-center font-black ${
-                      pt.total < totalPar ? 'text-green-600' : pt.total === totalPar ? 'text-orange-600' : 'text-red-600'
+                      pt.total < totalPar ? 'text-charcoal' : pt.total === totalPar ? 'text-orange-600' : 'text-red-600'
                     }`}>
                       {pt.total}
                       <span className="text-[10px] ml-0.5 opacity-60">({formatDiff(pt.total, totalPar)})</span>
@@ -815,15 +815,15 @@ export default function PubGolfClient({ pubs }: { pubs: Pub[] }) {
                 <p className="text-xs text-stone-500 mt-0.5">Total Spend</p>
               </div>
               <div className="bg-stone-50 rounded-xl p-3 text-center">
-                <p className={`text-2xl font-black font-heading ${avgVsPar < 0 ? 'text-green-600' : avgVsPar === 0 ? 'text-orange-600' : 'text-red-600'}`}>
+                <p className={`text-2xl font-black font-heading ${avgVsPar < 0 ? 'text-charcoal' : avgVsPar === 0 ? 'text-orange-600' : 'text-red-600'}`}>
                   {avgVsPar > 0 ? '+' : ''}{avgVsPar.toFixed(1)}
                 </p>
                 <p className="text-xs text-stone-500 mt-0.5">Avg vs Par</p>
               </div>
               {bestHole && (
-                <div className="bg-green-50 rounded-xl p-3 text-center">
-                  <p className="text-sm font-bold text-green-700 truncate">{bestHole.pub.name}</p>
-                  <p className="text-xs text-green-600 mt-0.5">Best Hole (#{bestHole.index + 1})</p>
+                <div className="bg-orange-50 rounded-xl p-3 text-center">
+                  <p className="text-sm font-bold text-charcoal truncate">{bestHole.pub.name}</p>
+                  <p className="text-xs text-charcoal mt-0.5">Best Hole (#{bestHole.index + 1})</p>
                 </div>
               )}
               {worstHole && (

@@ -63,12 +63,12 @@ export default function PriceReporter({ pubSlug, pubName, currentPrice }: PriceR
 
   if (status === 'success') {
     return (
-      <div className="bg-green-50 border border-green-200 rounded-xl p-4">
+      <div className="bg-orange-50 border border-orange-200 rounded-xl p-4">
         <div className="flex items-center gap-2">
-          <span className="text-green-600 text-lg">✅</span>
+          <span className="text-charcoal text-lg">✅</span>
           <div>
-            <p className="text-sm font-semibold text-green-800">Price reported!</p>
-            <p className="text-xs text-green-600">Thanks for helping keep Arvo accurate.</p>
+            <p className="text-sm font-semibold text-charcoal">Price reported!</p>
+            <p className="text-xs text-charcoal">Thanks for helping keep Arvo accurate.</p>
           </div>
         </div>
       </div>

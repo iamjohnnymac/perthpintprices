@@ -56,7 +56,7 @@ const config: Config = {
   			'beer-dark': '#1A1A1A',
   			'gold': '#E8820C',
 			// Price label colors
-			'bargain': '#22C55E',
+			'bargain': '#D4790E',
 			'fair': '#F59E0B',
 			'pricey': '#EF4444',
   			background: 'hsl(var(--background))',

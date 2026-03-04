@@ -27,15 +27,15 @@ function getVibeLabel(score: number): string {
 
 function getVibeColor(score: number): string {
   if (score <= 1.5) return 'bg-blue-500'
-  if (score <= 2.0) return 'bg-green-500'
-  if (score <= 2.5) return 'bg-emerald-500'
+  if (score <= 2.0) return 'bg-orange-500'
+  if (score <= 2.5) return 'bg-orange-500'
   if (score <= 3.0) return 'bg-yellow-500'
   if (score <= 3.5) return 'bg-orange-500'
   return 'bg-red-500'
 }
 
 function getConfidenceLabel(reportCount: number): { label: string; color: string } {
-  if (reportCount >= 5) return { label: 'High', color: 'text-green-600' }
+  if (reportCount >= 5) return { label: 'High', color: 'text-charcoal' }
   if (reportCount >= 3) return { label: 'Medium', color: 'text-yellow-600' }
   return { label: 'Low', color: 'text-stone-400' }
 }

@@ -61,7 +61,7 @@ export default function MyLocals({ pubs, userLocation }: MyLocalsProps) {
             <div className={`
               min-w-[56px] text-center py-1.5 px-2 rounded-lg font-mono font-bold text-sm
               ${pub.isHappyHourNow
-                ? 'bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200'
+                ? 'bg-orange-50 text-charcoal ring-1 ring-orange-200'
                 : pub.price !== null
                   ? 'bg-stone-50 text-charcoal ring-1 ring-stone-200'
                   : 'bg-stone-50 text-stone-400 ring-1 ring-stone-200'
@@ -69,7 +69,7 @@ export default function MyLocals({ pubs, userLocation }: MyLocalsProps) {
             `}>
               {pub.price !== null ? `$${pub.price.toFixed(2)}` : 'TBC'}
               {pub.isHappyHourNow && (
-                <div className="text-[10px] font-sans font-medium text-emerald-600 mt-0.5">HH</div>
+                <div className="text-[10px] font-sans font-medium text-charcoal mt-0.5">HH</div>
               )}
             </div>
 
@@ -80,7 +80,7 @@ export default function MyLocals({ pubs, userLocation }: MyLocalsProps) {
                   {pub.name}
                 </span>
                 {pub.isHappyHourNow && pub.happyHourMinutesRemaining && (
-                  <span className="text-[10px] bg-emerald-100 text-emerald-700 px-1.5 py-0.5 rounded-full font-medium shrink-0">
+                  <span className="text-[10px] bg-orange-100 text-charcoal px-1.5 py-0.5 rounded-full font-medium shrink-0">
                     {formatMinutes(pub.happyHourMinutesRemaining)}
                   </span>
                 )}

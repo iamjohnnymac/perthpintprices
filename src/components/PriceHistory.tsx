@@ -88,7 +88,7 @@ export default function PriceHistory({ pubId, currentPrice }: PriceHistoryProps)
   })
   const fillPath = `M${padding},${h - padding} L${fillPoints.join(' L')} L${w - padding},${h - padding} Z`
 
-  const lineColor = trendUp ? '#dc2626' : trendFlat ? '#E8820C' : '#16a34a'
+  const lineColor = trendUp ? '#dc2626' : trendFlat ? '#E8820C' : '#E8820C'
   const fillColor = trendUp ? 'rgba(220,38,38,0.08)' : trendFlat ? 'rgba(212,160,23,0.08)' : 'rgba(22,163,74,0.08)'
 
   return (
@@ -99,7 +99,7 @@ export default function PriceHistory({ pubId, currentPrice }: PriceHistoryProps)
         </h3>
         <div className="flex items-center gap-2">
           {!trendFlat && (
-            <span className={`text-xs font-medium ${trendUp ? 'text-red-500' : 'text-emerald-600'}`}>
+            <span className={`text-xs font-medium ${trendUp ? 'text-red-500' : 'text-charcoal'}`}>
               {trendUp ? '▲' : '▼'} {changePercent}%
             </span>
           )}

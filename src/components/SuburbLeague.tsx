@@ -195,7 +195,7 @@ export default function SuburbLeague({ pubs }: { pubs: Pub[] }) {
                           <span className="text-[10px] text-stone-400 ml-1">({s.pubCount})</span>
                         </td>
                         <td className="px-2 py-2 text-center font-bold text-stone-800">${s.avgPrice.toFixed(2)}</td>
-                        <td className="px-2 py-2 text-center text-emerald-600 font-medium hidden sm:table-cell">${s.minPrice.toFixed(2)}</td>
+                        <td className="px-2 py-2 text-center text-charcoal font-medium hidden sm:table-cell">${s.minPrice.toFixed(2)}</td>
                         <td className="px-2 py-2 text-center text-red-500 font-medium hidden sm:table-cell">${s.maxPrice.toFixed(2)}</td>
                         <td className="px-2 py-2 text-center text-stone-500 hidden md:table-cell">{s.happyHourPct}%</td>
                         <td className="px-2 py-2 hidden md:table-cell">
@@ -203,7 +203,7 @@ export default function SuburbLeague({ pubs }: { pubs: Pub[] }) {
                             <div className="flex h-2.5 w-16 rounded-full overflow-hidden bg-stone-100">
                               {s.spread.cheap > 0 && (
                                 <div
-                                  className="bg-emerald-400 h-full"
+                                  className="bg-amber-400 h-full"
                                   style={{ width: `${s.spread.cheap}%` }}
                                 />
                               )}
@@ -230,7 +230,7 @@ export default function SuburbLeague({ pubs }: { pubs: Pub[] }) {
             </div>
             <div className="flex items-center justify-center gap-4 mt-3">
               <div className="flex items-center gap-1.5">
-                <span className="inline-block w-2.5 h-2.5 rounded-full bg-emerald-400" />
+                <span className="inline-block w-2.5 h-2.5 rounded-full bg-amber-400" />
                 <span className="text-[10px] text-stone-400">Under $8</span>
               </div>
               <div className="flex items-center gap-1.5">

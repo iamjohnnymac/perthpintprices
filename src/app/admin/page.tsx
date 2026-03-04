@@ -88,7 +88,7 @@ function StatCard({ label, value, sub, accent }: { label: string; value: string 
 }
 
 function StatusDot({ status }: { status: string }) {
-  const color = status === 'success' ? 'bg-green-500' : status === 'error' ? 'bg-red-500' : 'bg-yellow-500'
+  const color = status === 'success' ? 'bg-orange-500' : status === 'error' ? 'bg-red-500' : 'bg-yellow-500'
   return <span className={`inline-block w-2 h-2 rounded-full ${color}`} />
 }
 
@@ -565,15 +565,15 @@ export default function AdminDashboard() {
               <div className="space-y-2 text-sm">
                 <div className="flex items-center justify-between">
                   <span className="text-gray-400">Dashboard data</span>
-                  <span className="text-green-400 flex items-center gap-1"><span className="w-2 h-2 bg-green-400 rounded-full inline-block" /> Live</span>
+                  <span className="text-green-400 flex items-center gap-1"><span className="w-2 h-2 bg-orange-400 rounded-full inline-block" /> Live</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-gray-400">Rate limiting</span>
-                  <span className="text-green-400 flex items-center gap-1"><span className="w-2 h-2 bg-green-400 rounded-full inline-block" /> Active (5 attempts / 15min)</span>
+                  <span className="text-green-400 flex items-center gap-1"><span className="w-2 h-2 bg-orange-400 rounded-full inline-block" /> Active (5 attempts / 15min)</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-gray-400">Auth protection</span>
-                  <span className="text-green-400 flex items-center gap-1"><span className="w-2 h-2 bg-green-400 rounded-full inline-block" /> Timing-safe</span>
+                  <span className="text-green-400 flex items-center gap-1"><span className="w-2 h-2 bg-orange-400 rounded-full inline-block" /> Timing-safe</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-gray-400">Auto-refresh</span>

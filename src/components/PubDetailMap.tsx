@@ -8,7 +8,7 @@ import { getMapMode, MAP_TILES, MAP_FILTERS } from '@/lib/mapTheme'
 
 function getPriceMarkerColor(price: number | null): string {
   if (price === null) return '#78716c'
-  if (price <= 7) return '#059669'
+  if (price <= 7) return '#D4790E'
   if (price <= 9) return '#E8820C'
   if (price <= 11) return '#d97706'
   return '#dc2626'

@@ -117,14 +117,14 @@ export default function PintOfTheDay() {
             <p className="text-xs text-orange-dark/80 font-medium mt-1.5">💡 {data.reason}</p>
           </div>
           <div className="text-right flex-shrink-0">
-            <div className={`text-2xl font-bold font-mono ${data.pub.isHappyHourNow ? 'text-emerald-600' : 'text-orange'}`}>
+            <div className={`text-2xl font-bold font-mono ${data.pub.isHappyHourNow ? 'text-charcoal' : 'text-orange'}`}>
               ${data.pub.effectivePrice.toFixed(2)}
             </div>
             {data.pub.isHappyHourNow && data.pub.effectivePrice < data.pub.price && (
               <div className="text-[10px] text-stone-400 line-through">${data.pub.price.toFixed(2)}</div>
             )}
             {data.pub.isHappyHourNow && (
-              <span className="inline-block text-[10px] bg-emerald-100 text-emerald-700 px-1.5 py-0.5 rounded-full font-semibold mt-0.5">
+              <span className="inline-block text-[10px] bg-orange-100 text-charcoal px-1.5 py-0.5 rounded-full font-semibold mt-0.5">
                 🍻 HH NOW
               </span>
             )}

@@ -65,86 +65,56 @@ export default function InstallPrompt() {
   if (!show || !platform) return null
 
   return (
-    <div className="fixed bottom-0 inset-x-0 z-50 animate-slide-up">
-      {/* Backdrop */}
-      <div className="fixed inset-0 bg-black/20 backdrop-blur-sm" onClick={dismiss} />
-      
-      {/* Banner */}
-      <div className="relative mx-3 mb-12 rounded-2xl bg-white shadow-2xl border border-orange/20 overflow-hidden">
-        {/* Amber accent bar */}
-        <div className="h-1 bg-gradient-to-r from-orange via-orange/80 to-orange/60" />
+    <div className="fixed bottom-0 inset-x-0 z-50 animate-slide-up px-3 pb-14 pointer-events-none">
+      <div className="pointer-events-auto rounded-xl bg-white/95 backdrop-blur-md shadow-lg border border-orange/15 overflow-hidden">
+        {/* Slim accent bar */}
+        <div className="h-0.5 bg-gradient-to-r from-orange via-amber to-orange" />
         
-        <div className="p-5">
-          {/* Header */}
-          <div className="flex items-start justify-between mb-3">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-xl bg-orange/10 flex items-center justify-center text-2xl">
-                🍺
-              </div>
-              <div>
-                <h3 className="font-semibold text-charcoal text-base">
-                  {platform === 'ios' ? 'Add Arvo to Home Screen' : 'Install Arvo'}
-                </h3>
-                <p className="text-sm text-charcoal/60">Get price alerts & the full app experience</p>
-              </div>
-            </div>
+        <div className="flex items-center gap-3 px-4 py-3">
+          {/* Icon */}
+          <div className="w-9 h-9 rounded-lg bg-orange/10 flex items-center justify-center text-lg flex-shrink-0">
+            🍺
+          </div>
+          
+          {/* Text */}
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-semibold text-charcoal leading-tight truncate">
+              {platform === 'ios' ? 'Add Arvo to Home Screen' : 'Install Arvo'}
+            </p>
+            <p className="text-xs text-stone-warm leading-tight mt-0.5">
+              {platform === 'ios' ? 'Tap Share → Add to Home Screen' : 'Quick access to Perth pint prices'}
+            </p>
+          </div>
+          
+          {/* Action */}
+          {platform === 'android' ? (
+            <button
+              onClick={installAndroid}
+              className="px-4 py-1.5 bg-charcoal text-white text-xs font-semibold rounded-full 
+                         hover:bg-charcoal/90 active:scale-[0.97] transition-all flex-shrink-0"
+            >
+              Install
+            </button>
+          ) : (
             <button
               onClick={dismiss}
-              className="text-charcoal/40 hover:text-charcoal p-1 -mr-1 -mt-1"
-              aria-label="Dismiss"
+              className="px-3 py-1.5 bg-orange/10 text-orange text-xs font-semibold rounded-full 
+                         hover:bg-orange/20 active:scale-[0.97] transition-all flex-shrink-0"
             >
-              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                <path d="M6 6l8 8M14 6l-8 8" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-              </svg>
+              Got it
             </button>
-          </div>
-          
-          {/* Platform-specific content */}
-          {platform === 'ios' ? (
-            <div className="space-y-3 mb-4">
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-xl bg-blue-50 flex items-center justify-center flex-shrink-0">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#007AFF" strokeWidth="2">
-                    <path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8" strokeLinecap="round" strokeLinejoin="round"/>
-                    <polyline points="16,6 12,2 8,6" strokeLinecap="round" strokeLinejoin="round"/>
-                    <line x1="12" y1="2" x2="12" y2="15" strokeLinecap="round"/>
-                  </svg>
-                </div>
-                <p className="text-sm text-charcoal/80">
-                  Tap the <span className="font-medium text-blue-600">Share</span> button in Safari
-                </p>
-              </div>
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-xl bg-blue-50 flex items-center justify-center flex-shrink-0">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#007AFF" strokeWidth="2">
-                    <rect x="3" y="3" width="18" height="18" rx="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    <line x1="12" y1="8" x2="12" y2="16" strokeLinecap="round"/>
-                    <line x1="8" y1="12" x2="16" y2="12" strokeLinecap="round"/>
-                  </svg>
-                </div>
-                <p className="text-sm text-charcoal/80">
-                  Scroll down and tap <span className="font-medium text-charcoal">&quot;Add to Home Screen&quot;</span>
-                </p>
-              </div>
-            </div>
-          ) : (
-            <div className="mb-4">
-              <button
-                onClick={installAndroid}
-                className="w-full py-3 px-4 bg-charcoal text-white font-semibold rounded-xl 
-                           hover:bg-charcoal/90 active:scale-[0.98] transition-all text-sm"
-              >
-                Install Arvo
-              </button>
-            </div>
           )}
           
-          {/* Benefits */}
-          <div className="flex gap-2 flex-wrap">
-            <span className="text-xs bg-orange/10 text-orange px-2.5 py-1 rounded-full font-medium">🔔 Price alerts</span>
-            <span className="text-xs bg-orange/10 text-orange px-2.5 py-1 rounded-full font-medium">⚡ Instant access</span>
-            <span className="text-xs bg-orange/10 text-orange px-2.5 py-1 rounded-full font-medium">📱 Full screen</span>
-          </div>
+          {/* Dismiss */}
+          <button
+            onClick={dismiss}
+            className="text-charcoal/30 hover:text-charcoal/60 p-1 flex-shrink-0 transition-colors"
+            aria-label="Dismiss"
+          >
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+            </svg>
+          </button>
         </div>
       </div>
     </div>

@@ -100,10 +100,10 @@ export default function HappyHourClient() {
           {!loading && pubs.length > 0 && (
             <div className="flex items-center justify-center gap-2 mb-3">
               <span className="relative flex h-3 w-3">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-3 w-3 bg-orange-500"></span>
               </span>
-              <span className="text-green-700 font-bold text-lg">
+              <span className="text-charcoal font-bold text-lg">
                 {pubs.length} active now
               </span>
             </div>
@@ -266,7 +266,7 @@ export default function HappyHourClient() {
                         {/* Countdown */}
                         {pub.happyHourMinutesRemaining != null && (
                           <div className="mt-3">
-                            <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-50 text-green-700 text-xs font-medium border border-green-200/60">
+                            <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-50 text-charcoal text-xs font-medium border border-orange-200/60">
                               <span>⏱</span>
                               {formatMinutesRemaining(
                                 pub.happyHourMinutesRemaining
@@ -280,7 +280,7 @@ export default function HappyHourClient() {
                       <div className="shrink-0 text-right">
                         {pub.happyHourPrice != null ? (
                           <>
-                            <div className="text-3xl sm:text-4xl font-bold font-mono text-green-700">
+                            <div className="text-3xl sm:text-4xl font-bold font-mono text-charcoal">
                               ${pub.happyHourPrice.toFixed(2)}
                             </div>
                             {pub.regularPrice != null && (
@@ -289,9 +289,9 @@ export default function HappyHourClient() {
                               </div>
                             )}
                             {savings > 0 && (
-                              <div className="text-xs font-semibold text-green-600 mt-1">
+                              <div className="text-xs font-semibold text-charcoal mt-1">
                                 Save ${savings.toFixed(2)}{' '}
-                                <span className="text-green-500">
+                                <span className="text-stone-warm">
                                   ({savingsPercent}%)
                                 </span>
                               </div>
@@ -300,12 +300,15 @@ export default function HappyHourClient() {
                         ) : (
                           <>
                             {pub.regularPrice != null && (
-                              <div className="text-3xl sm:text-4xl font-bold font-mono text-charcoal">
-                                ${pub.regularPrice.toFixed(2)}
-                              </div>
+                              <>
+                                <div className="text-xs font-medium text-stone-warm mb-1">Regular price</div>
+                                <div className="text-2xl sm:text-3xl font-bold font-mono text-charcoal/60 line-through decoration-1">
+                                  ${pub.regularPrice.toFixed(2)}
+                                </div>
+                              </>
                             )}
-                            <div className="text-xs font-medium text-orange mt-1">
-                              HH price TBC
+                            <div className="text-xs font-semibold text-orange mt-1">
+                              Happy Hour price TBC
                             </div>
                           </>
                         )}
@@ -314,7 +317,7 @@ export default function HappyHourClient() {
                   </div>
 
                   {/* Bottom accent bar */}
-                  <div className="h-1 bg-gradient-to-r from-green-400 via-orange to-green-400 opacity-60 group-hover:opacity-100 transition-opacity"></div>
+                  <div className="h-1 bg-gradient-to-r from-orange/40 via-amber to-orange/40 opacity-60 group-hover:opacity-100 transition-opacity"></div>
                 </Link>
               )
             })}

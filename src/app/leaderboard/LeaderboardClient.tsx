@@ -123,7 +123,7 @@ export default function LeaderboardClient() {
                     <div className="text-right">
                       <span className="text-sm font-bold text-charcoal">{r.total_reports}</span>
                       {r.verified_count > 0 && (
-                        <span className="block text-[10px] text-green-600">{r.verified_count} verified</span>
+                        <span className="block text-[10px] text-charcoal">{r.verified_count} verified</span>
                       )}
                     </div>
                     <span className="text-[11px] text-stone-400 text-right">{timeAgo(r.last_report)}</span>

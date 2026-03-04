@@ -40,7 +40,7 @@ function formatHappyHourTime(start: string | null, end: string | null): string {
 
 function getPriceColor(price: number | null): string {
   if (price === null) return 'text-stone-400'
-  if (price <= 7) return 'text-emerald-600'
+  if (price <= 7) return 'text-charcoal'
   if (price <= 9) return 'text-amber-700'
   if (price <= 11) return 'text-orange-600'
   return 'text-red-600'
@@ -156,7 +156,7 @@ export default function PubDetailClient({ pub, nearbyPubs, avgPrice }: PubDetail
                   {pub.effectivePrice && Math.abs(priceDiff) >= 0.05 && (
                     <span className={`inline-block text-xs font-semibold px-2.5 py-1 rounded-full ${
                       priceDiff < 0 
-                        ? 'bg-emerald-50 text-emerald-700' 
+                        ? 'bg-orange-50 text-charcoal' 
                         : 'bg-red-50 text-red-600'
                     }`}>
                       ${Math.abs(priceDiff).toFixed(2)} {priceDiff < 0 ? 'below' : 'above'} avg
@@ -176,7 +176,7 @@ export default function PubDetailClient({ pub, nearbyPubs, avgPrice }: PubDetail
                 )}
                 {pub.priceVerified && pub.price !== null && (
                   <span className="inline-flex items-center gap-1 text-xs text-stone-warm bg-cream px-2.5 py-1 rounded-full">
-                    <svg className="w-3 h-3 text-emerald-500" viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>
+                    <svg className="w-3 h-3 text-stone-warm" viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>
                     Verified
                   </span>
                 )}
@@ -226,7 +226,7 @@ export default function PubDetailClient({ pub, nearbyPubs, avgPrice }: PubDetail
                     </div>
                   )}
                   {pub.kidFriendly && (
-                    <div className="flex items-center gap-3 p-3 rounded-xl bg-gradient-to-r from-emerald-50 to-green-50 border border-emerald-200/50">
+                    <div className="flex items-center gap-3 p-3 rounded-xl bg-gradient-to-r from-orange-50 to-amber-50 border border-orange-200/50">
                       <span className="text-xl">👨‍👧</span>
                       <div>
                         <p className="text-sm font-semibold text-charcoal">Dad Bar</p>

@@ -296,7 +296,7 @@ export default function BeerWeather({ pubs, userLocation }: BeerWeatherProps) {
                   <div className="text-right flex-shrink-0">
                     <span className="text-sm font-bold text-orange">{pub.price !== null ? `$${pub.price.toFixed(2)}` : 'TBC'}</span>
                     {pub.happyHour && (
-                      <p className="text-[9px] text-emerald-600 font-medium">Happy Hour</p>
+                      <p className="text-[9px] text-charcoal font-medium">Happy Hour</p>
                     )}
                   </div>
                 </Link>

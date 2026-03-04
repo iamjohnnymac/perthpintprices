@@ -33,9 +33,9 @@ export function getFreshness(lastVerified: string | null): FreshnessInfo {
       level: 'fresh',
       label: 'Fresh',
       daysAgo,
-      color: 'text-emerald-700',
-      bgColor: 'bg-emerald-50',
-      borderColor: 'border-emerald-200',
+      color: 'text-orange-700',
+      bgColor: 'bg-orange-50',
+      borderColor: 'border-orange-200',
       icon: '●',
     }
   }
