@@ -410,13 +410,13 @@ export default function DiscoverClient() {
                     </>
                   )}
                 </div>
-                <div className="text-[40px] font-bold text-[#E8740C] tabular-nums leading-tight">
+                <div className="text-[40px] font-bold text-emerald-600 tabular-nums leading-tight">
                   ${heroPub.price!.toFixed(2)}
                 </div>
                 <p className="text-[#888] text-sm mt-1">{heroPub.beerType}</p>
                 <button
                   onClick={(e) => { e.preventDefault(); e.stopPropagation(); document.getElementById('best-buys')?.scrollIntoView({ behavior: 'smooth' }) }}
-                  className="mt-6 inline-flex items-center gap-1 text-[#E8740C] font-semibold text-sm hover:underline"
+                  className="mt-6 inline-flex items-center gap-1 text-emerald-600 font-semibold text-sm hover:underline"
                 >
                   See All Cheap Pints →
                 </button>
@@ -441,7 +441,7 @@ export default function DiscoverClient() {
                     <div className="flex items-center gap-3 min-w-0">
                       <span className="text-sm font-bold text-[#888] w-5">{i + 1}</span>
                       <div className="min-w-0">
-                        <span className="text-sm font-semibold text-[#1A1A1A] truncate block group-hover:text-[#E8740C] transition-colors">{pub.name}</span>
+                        <span className="text-sm font-semibold text-[#1A1A1A] truncate block group-hover:text-emerald-600 transition-colors">{pub.name}</span>
                         <p className="text-xs text-[#888]">
                           {pub.suburb}
                           {userLocation && ` · ${formatDistance(getDistanceKm(userLocation.lat, userLocation.lng, pub.lat, pub.lng))}`}
@@ -449,11 +449,11 @@ export default function DiscoverClient() {
                         </p>
                       </div>
                     </div>
-                    <span className="text-lg font-semibold text-[#E8740C] tabular-nums flex-shrink-0">${pub.price!.toFixed(2)}</span>
+                    <span className="text-lg font-semibold text-emerald-600 tabular-nums flex-shrink-0">${pub.price!.toFixed(2)}</span>
                   </Link>
                 ))}
               </div>
-              <Link href="/insights/tonights-best-bets" className="block mt-4 text-sm font-semibold text-[#E8740C] hover:underline">
+              <Link href="/insights/tonights-best-bets" className="block mt-4 text-sm font-semibold text-emerald-600 hover:underline">
                 View all →
               </Link>
             </div>
@@ -469,11 +469,11 @@ export default function DiscoverClient() {
                 {upcomingHappyHours.map(({ pub, status }) => (
                   <Link key={pub.id} href={`/pub/${pub.slug}`} className="flex items-center justify-between p-2.5 rounded-lg hover:bg-[#FAFAFA] hover:border-l-2 hover:border-l-[#E8740C] transition-all group">
                     <div className="min-w-0">
-                      <span className="text-sm font-semibold text-[#1A1A1A] truncate block group-hover:text-[#E8740C] transition-colors">{pub.name}</span>
+                      <span className="text-sm font-semibold text-[#1A1A1A] truncate block group-hover:text-emerald-600 transition-colors">{pub.name}</span>
                       <p className="text-xs text-[#888]">{pub.suburb}</p>
                     </div>
                     <div className="flex items-center gap-2 flex-shrink-0">
-                      <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold ${status.isActive ? 'bg-[#FFF3E0] text-[#E8740C] border border-[#F5D5B5]' : 'bg-orange-100 text-[#E8740C] border border-orange-200'}`}>
+                      <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold ${status.isActive ? 'bg-[#FFF3E0] text-emerald-600 border border-[#F5D5B5]' : 'bg-orange-100 text-emerald-600 border border-orange-200'}`}>
                         {status.countdown || status.statusText}
                       </span>
                       <span className="text-lg font-semibold text-[#1A1A1A] tabular-nums">{pub.price !== null ? `$${pub.price.toFixed(2)}` : 'TBC'}</span>
@@ -481,7 +481,7 @@ export default function DiscoverClient() {
                   </Link>
                 ))}
               </div>
-              <Link href="/happy-hour" className="block mt-4 text-sm font-semibold text-[#E8740C] hover:underline">
+              <Link href="/happy-hour" className="block mt-4 text-sm font-semibold text-emerald-600 hover:underline">
                 See all happy hours →
               </Link>
             </div>
@@ -516,9 +516,9 @@ export default function DiscoverClient() {
                 className={`${card.bg} w-[240px] sm:w-[280px] min-h-[200px] rounded-2xl p-6 flex-shrink-0 snap-start hover:shadow-[0_4px_16px_rgba(0,0,0,0.08)] transition-shadow group`}
               >
                 <span className="text-3xl">{card.emoji}</span>
-                <h3 className="text-lg font-bold text-[#1A1A1A] mt-3 group-hover:text-[#E8740C] transition-colors">{card.title}</h3>
+                <h3 className="text-lg font-bold text-[#1A1A1A] mt-3 group-hover:text-emerald-600 transition-colors">{card.title}</h3>
                 <p className="text-sm text-[#666] mt-1 leading-relaxed">{card.desc}</p>
-                <p className="text-sm font-semibold text-[#E8740C] mt-4">{card.count} pubs →</p>
+                <p className="text-sm font-semibold text-emerald-600 mt-4">{card.count} pubs →</p>
               </Link>
             ))}
           </div>
@@ -541,7 +541,7 @@ export default function DiscoverClient() {
                       <h3 className="text-lg font-bold text-[#1A1A1A]">Perth Pint Index™</h3>
                       <div className="flex items-baseline gap-2 mt-0.5">
                         <span className="text-2xl sm:text-3xl font-bold text-[#1A1A1A] tabular-nums">${pintIndex.current.avg_price.toFixed(2)}</span>
-                        <span className={`text-sm font-semibold ${pintIndex.monthChange > 0 ? 'text-[#5C4A3A]' : 'text-[#E8740C]'}`}>
+                        <span className={`text-sm font-semibold ${pintIndex.monthChange > 0 ? 'text-[#5C4A3A]' : 'text-emerald-600'}`}>
                           {pintIndex.monthChange > 0 ? '▲' : pintIndex.monthChange < 0 ? '▼' : '—'}{' '}
                           {pintIndex.monthChange >= 0 ? '+' : ''}{pintIndex.monthChange.toFixed(2)} ({pintIndex.monthPct >= 0 ? '+' : ''}{pintIndex.monthPct.toFixed(1)}%)
                         </span>
@@ -573,9 +573,9 @@ export default function DiscoverClient() {
                     {/* Suburb comparison */}
                     <div className="grid grid-cols-2 gap-3 mb-4">
                       <div className="bg-orange-50 rounded-xl p-3">
-                        <div className="text-[10px] text-[#E8740C] font-semibold">▼ Cheapest Suburb</div>
+                        <div className="text-[10px] text-emerald-600 font-semibold">▼ Cheapest Suburb</div>
                         <div className="text-sm font-bold text-[#1A1A1A] mt-1">{pintIndex.current.cheapest_suburb}</div>
-                        <div className="text-xs text-[#E8740C] tabular-nums">avg ${pintIndex.current.cheapest_suburb_avg.toFixed(2)}/pint</div>
+                        <div className="text-xs text-emerald-600 tabular-nums">avg ${pintIndex.current.cheapest_suburb_avg.toFixed(2)}/pint</div>
                       </div>
                       <div className="bg-stone-100 rounded-xl p-3">
                         <div className="text-[10px] text-[#5C4A3A] font-semibold">▲ Priciest Suburb</div>
@@ -588,7 +588,7 @@ export default function DiscoverClient() {
                     <div className="flex items-center justify-between mb-4 px-1">
                       <div>
                         <div className="text-[10px] text-[#888] font-medium">Overall Change</div>
-                        <div className={`text-lg font-bold tabular-nums ${pintIndex.yearChange > 0 ? 'text-[#5C4A3A]' : 'text-[#E8740C]'}`}>
+                        <div className={`text-lg font-bold tabular-nums ${pintIndex.yearChange > 0 ? 'text-[#5C4A3A]' : 'text-emerald-600'}`}>
                           {pintIndex.yearChange >= 0 ? '+' : ''}{pintIndex.yearPct.toFixed(1)}%
                         </div>
                       </div>
@@ -662,16 +662,16 @@ export default function DiscoverClient() {
                       <tr className="bg-stone-100 text-[#666] text-xs">
                         <th className="px-3 py-2.5 text-center font-semibold w-10">Pos</th>
                         <th className="px-3 py-2.5 text-left font-semibold">Suburb</th>
-                        <th className={`px-3 py-2.5 text-center font-semibold cursor-pointer hover:text-[#E8740C] select-none ${suburbSortBy === 'avg' ? 'text-[#E8740C]' : ''}`} onClick={() => setSuburbSortBy('avg')}>
+                        <th className={`px-3 py-2.5 text-center font-semibold cursor-pointer hover:text-emerald-600 select-none ${suburbSortBy === 'avg' ? 'text-emerald-600' : ''}`} onClick={() => setSuburbSortBy('avg')}>
                           Avg {suburbSortBy === 'avg' && '▾'}
                         </th>
-                        <th className={`px-3 py-2.5 text-center font-semibold cursor-pointer hover:text-[#E8740C] select-none hidden sm:table-cell ${suburbSortBy === 'low' ? 'text-[#E8740C]' : ''}`} onClick={() => setSuburbSortBy('low')}>
+                        <th className={`px-3 py-2.5 text-center font-semibold cursor-pointer hover:text-emerald-600 select-none hidden sm:table-cell ${suburbSortBy === 'low' ? 'text-emerald-600' : ''}`} onClick={() => setSuburbSortBy('low')}>
                           Low {suburbSortBy === 'low' && '▾'}
                         </th>
-                        <th className={`px-3 py-2.5 text-center font-semibold cursor-pointer hover:text-[#E8740C] select-none hidden sm:table-cell ${suburbSortBy === 'high' ? 'text-[#E8740C]' : ''}`} onClick={() => setSuburbSortBy('high')}>
+                        <th className={`px-3 py-2.5 text-center font-semibold cursor-pointer hover:text-emerald-600 select-none hidden sm:table-cell ${suburbSortBy === 'high' ? 'text-emerald-600' : ''}`} onClick={() => setSuburbSortBy('high')}>
                           High {suburbSortBy === 'high' && '▾'}
                         </th>
-                        <th className={`px-3 py-2.5 text-center font-semibold cursor-pointer hover:text-[#E8740C] select-none hidden md:table-cell ${suburbSortBy === 'hh' ? 'text-[#E8740C]' : ''}`} onClick={() => setSuburbSortBy('hh')}>
+                        <th className={`px-3 py-2.5 text-center font-semibold cursor-pointer hover:text-emerald-600 select-none hidden md:table-cell ${suburbSortBy === 'hh' ? 'text-emerald-600' : ''}`} onClick={() => setSuburbSortBy('hh')}>
                           HH% {suburbSortBy === 'hh' && '▾'}
                         </th>
                       </tr>
@@ -696,7 +696,7 @@ export default function DiscoverClient() {
                 {sortedSuburbs.length > 5 && (
                   <button
                     onClick={() => setShowAllSuburbs(!showAllSuburbs)}
-                    className="w-full py-3 text-sm font-semibold text-[#E8740C] hover:bg-[#FAFAFA] transition-colors border-t border-[#E5E5E5]"
+                    className="w-full py-3 text-sm font-semibold text-emerald-600 hover:bg-[#FAFAFA] transition-colors border-t border-[#E5E5E5]"
                   >
                     {showAllSuburbs ? `Show less ▲` : `Show all ${sortedSuburbs.length} suburbs ▼`}
                   </button>
@@ -724,7 +724,7 @@ export default function DiscoverClient() {
                 </div>
                 <div className="bg-orange-50 rounded-xl p-4 text-center border border-orange-200">
                   <p className="text-xs text-[#888]">Median Pint Price in Perth</p>
-                  <p className="text-2xl font-bold text-[#E8740C] tabular-nums">${medianPrice.toFixed(2)}</p>
+                  <p className="text-2xl font-bold text-emerald-600 tabular-nums">${medianPrice.toFixed(2)}</p>
                 </div>
               </div>
             )}
@@ -735,7 +735,7 @@ export default function DiscoverClient() {
                 {/* Under/Over valued */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                   <div className="bg-white border border-[#E5E5E5] rounded-xl p-6">
-                    <h4 className="text-sm font-semibold text-[#E8740C] mb-3">📉 Below Market</h4>
+                    <h4 className="text-sm font-semibold text-emerald-600 mb-3">📉 Below Market</h4>
                     <div className="space-y-1.5">
                       {undervalued.map(({ pub, diff }) => (
                         <Link key={pub.id} href={`/pub/${pub.slug}`} className="flex items-center justify-between p-2 rounded-lg bg-orange-50/60 border border-orange-100 hover:bg-orange-50 transition-colors">
@@ -744,8 +744,8 @@ export default function DiscoverClient() {
                             <p className="text-[10px] text-[#888]">{pub.suburb}</p>
                           </div>
                           <div className="text-right flex-shrink-0">
-                            <p className="text-xs font-bold text-[#E8740C] tabular-nums">${pub.price!.toFixed(2)}</p>
-                            <p className="text-[9px] text-[#F09D51]">↓ -${diff.toFixed(2)}</p>
+                            <p className="text-xs font-bold text-emerald-600 tabular-nums">${pub.price!.toFixed(2)}</p>
+                            <p className="text-[9px] text-emerald-400">↓ -${diff.toFixed(2)}</p>
                           </div>
                         </Link>
                       ))}
@@ -773,7 +773,7 @@ export default function DiscoverClient() {
                 {/* Cheapest / Priciest Suburbs */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                   <div className="bg-white border border-[#E5E5E5] rounded-xl p-6">
-                    <h4 className="text-sm font-semibold text-[#E8740C] mb-3">🍺 Cheapest Suburbs</h4>
+                    <h4 className="text-sm font-semibold text-emerald-600 mb-3">🍺 Cheapest Suburbs</h4>
                     <div className="space-y-1.5">
                       {cheapestSuburbs.map((s, i) => (
                         <div key={s.suburb} className="flex items-center justify-between p-2 rounded-lg bg-white border border-stone-100">
@@ -782,7 +782,7 @@ export default function DiscoverClient() {
                             <span className="text-xs font-semibold text-[#1A1A1A]">{s.suburb}</span>
                           </div>
                           <div className="text-right">
-                            <span className="text-xs font-bold text-[#E8740C] tabular-nums">${s.avgPrice.toFixed(2)}</span>
+                            <span className="text-xs font-bold text-emerald-600 tabular-nums">${s.avgPrice.toFixed(2)}</span>
                             <span className="text-[9px] text-[#888] ml-1">({s.pubCount})</span>
                           </div>
                         </div>
