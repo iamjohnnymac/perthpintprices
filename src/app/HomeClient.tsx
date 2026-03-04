@@ -262,7 +262,7 @@ function HomeContent() {
               </Link>
             </nav>
             <div className="flex items-center gap-2 flex-shrink-0">
-              {isNavExpanded && <NotificationBell />}
+              <NotificationBell />
               <button
                 onClick={() => setShowSubmitForm(true)}
                 className="flex-shrink-0 px-3 sm:px-4 py-1.5 sm:py-2 bg-charcoal hover:bg-charcoal/90 text-white rounded-full font-semibold transition-all text-xs focus-visible:ring-2 focus-visible:ring-amber/50 focus-visible:ring-offset-1"
