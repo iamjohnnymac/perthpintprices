@@ -432,7 +432,7 @@ export default function DiscoverClient() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
             {/* Left: Best Buys */}
-            <div className="bg-white border border-[#E5E5E5] rounded-xl p-6 hover:shadow-[0_4px_16px_rgba(0,0,0,0.08)] transition-shadow">
+            <div className="bg-white border border-[#E5E5E5] rounded-2xl p-6 hover:shadow-[0_4px_16px_rgba(0,0,0,0.08)] transition-shadow">
               <h3 className="text-lg font-bold text-[#1A1A1A] mb-1">🏷️ Best Buys</h3>
               <p className="text-sm text-[#888] mb-4">Lowest prices right now</p>
               <div className="space-y-1">
@@ -459,7 +459,7 @@ export default function DiscoverClient() {
             </div>
 
             {/* Right: Happy Hours */}
-            <div className="bg-white border border-[#E5E5E5] rounded-xl p-6 hover:shadow-[0_4px_16px_rgba(0,0,0,0.08)] transition-shadow">
+            <div className="bg-white border border-[#E5E5E5] rounded-2xl p-6 hover:shadow-[0_4px_16px_rgba(0,0,0,0.08)] transition-shadow">
               <h3 className="text-lg font-bold text-[#1A1A1A] mb-1">⏰ Happy Hours</h3>
               <p className="text-sm text-[#888] mb-4">Starting soon near you</p>
               <div className="space-y-1">
@@ -530,7 +530,7 @@ export default function DiscoverClient() {
         {pintIndex && (
           <section className="mb-10 sm:mb-14">
             <div
-              className="bg-white border border-[#E5E5E5] rounded-xl hover:shadow-[0_4px_16px_rgba(0,0,0,0.08)] transition-shadow cursor-pointer"
+              className="bg-white border border-[#E5E5E5] rounded-2xl hover:shadow-[0_4px_16px_rgba(0,0,0,0.08)] transition-shadow cursor-pointer"
               onClick={() => setIndexExpanded(!indexExpanded)}
             >
               {/* Collapsed row */}
@@ -572,12 +572,12 @@ export default function DiscoverClient() {
 
                     {/* Suburb comparison */}
                     <div className="grid grid-cols-2 gap-3 mb-4">
-                      <div className="bg-orange-50 rounded-xl p-3">
+                      <div className="bg-orange-50 rounded-2xl p-3">
                         <div className="text-[10px] text-emerald-600 font-semibold">▼ Cheapest Suburb</div>
                         <div className="text-sm font-bold text-[#1A1A1A] mt-1">{pintIndex.current.cheapest_suburb}</div>
                         <div className="text-xs text-emerald-600 tabular-nums">avg ${pintIndex.current.cheapest_suburb_avg.toFixed(2)}/pint</div>
                       </div>
-                      <div className="bg-stone-100 rounded-xl p-3">
+                      <div className="bg-stone-100 rounded-2xl p-3">
                         <div className="text-[10px] text-[#5C4A3A] font-semibold">▲ Priciest Suburb</div>
                         <div className="text-sm font-bold text-[#1A1A1A] mt-1">{pintIndex.current.most_expensive_suburb}</div>
                         <div className="text-xs text-[#5C4A3A] tabular-nums">avg ${pintIndex.current.most_expensive_suburb_avg.toFixed(2)}/pint</div>
@@ -655,7 +655,7 @@ export default function DiscoverClient() {
 
             {/* ─── Tab 1: Suburbs ─── */}
             {numbersTab === 'suburbs' && (
-              <div className="bg-white border border-[#E5E5E5] rounded-xl overflow-hidden">
+              <div className="bg-white border border-[#E5E5E5] rounded-2xl overflow-hidden">
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead>
@@ -706,7 +706,7 @@ export default function DiscoverClient() {
 
             {/* ─── Tab 2: Venues ─── */}
             {numbersTab === 'venues' && (
-              <div className="bg-white border border-[#E5E5E5] rounded-xl p-6">
+              <div className="bg-white border border-[#E5E5E5] rounded-2xl p-6">
                 <h4 className="text-sm font-semibold text-[#1A1A1A] mb-3">📊 Price Distribution</h4>
                 <div className="space-y-2 mb-6">
                   {priceBrackets.map(([bracket, count]) => {
@@ -722,7 +722,7 @@ export default function DiscoverClient() {
                     )
                   })}
                 </div>
-                <div className="bg-orange-50 rounded-xl p-4 text-center border border-orange-200">
+                <div className="bg-orange-50 rounded-2xl p-4 text-center border border-orange-200">
                   <p className="text-xs text-[#888]">Median Pint Price in Perth</p>
                   <p className="text-2xl font-bold text-emerald-600 tabular-nums">${medianPrice.toFixed(2)}</p>
                 </div>
@@ -734,7 +734,7 @@ export default function DiscoverClient() {
               <div className="space-y-6">
                 {/* Under/Over valued */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                  <div className="bg-white border border-[#E5E5E5] rounded-xl p-6">
+                  <div className="bg-white border border-[#E5E5E5] rounded-2xl p-6">
                     <h4 className="text-sm font-semibold text-emerald-600 mb-3">📉 Below Market</h4>
                     <div className="space-y-1.5">
                       {undervalued.map(({ pub, diff }) => (
@@ -751,7 +751,7 @@ export default function DiscoverClient() {
                       ))}
                     </div>
                   </div>
-                  <div className="bg-white border border-[#E5E5E5] rounded-xl p-6">
+                  <div className="bg-white border border-[#E5E5E5] rounded-2xl p-6">
                     <h4 className="text-sm font-semibold text-[#5C4A3A] mb-3">📈 Above Market</h4>
                     <div className="space-y-1.5">
                       {overvalued.map(({ pub, diff }) => (
@@ -772,7 +772,7 @@ export default function DiscoverClient() {
 
                 {/* Cheapest / Priciest Suburbs */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                  <div className="bg-white border border-[#E5E5E5] rounded-xl p-6">
+                  <div className="bg-white border border-[#E5E5E5] rounded-2xl p-6">
                     <h4 className="text-sm font-semibold text-emerald-600 mb-3">🍺 Cheapest Suburbs</h4>
                     <div className="space-y-1.5">
                       {cheapestSuburbs.map((s, i) => (
@@ -789,7 +789,7 @@ export default function DiscoverClient() {
                       ))}
                     </div>
                   </div>
-                  <div className="bg-white border border-[#E5E5E5] rounded-xl p-6">
+                  <div className="bg-white border border-[#E5E5E5] rounded-2xl p-6">
                     <h4 className="text-sm font-semibold text-[#5C4A3A] mb-3">💰 Priciest Suburbs</h4>
                     <div className="space-y-1.5">
                       {priciestSuburbs.map((s, i) => (
