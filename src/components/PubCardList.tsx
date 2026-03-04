@@ -55,13 +55,13 @@ function groupPubs(pubs: Pub[]): PubGroup[] {
 
   const groups: PubGroup[] = []
   if (activeHH.length > 0) {
-    groups.push({ key: 'active', label: 'Happy hour now', emoji: '\u{1F7E2}', pubs: activeHH })
+    groups.push({ key: 'active', label: 'Happy hour now', emoji: '🟢', pubs: activeHH })
   }
   if (soonHH.length > 0) {
-    groups.push({ key: 'soon', label: 'Starting soon', emoji: '\u{23F0}', pubs: soonHH })
+    groups.push({ key: 'soon', label: 'Starting soon', emoji: '⏰', pubs: soonHH })
   }
   if (rest.length > 0) {
-    groups.push({ key: 'nearby', label: 'Nearby', emoji: '\u{1F4CD}', pubs: rest })
+    groups.push({ key: 'nearby', label: 'Nearby', emoji: '📍', pubs: rest })
   }
   return groups
 }
@@ -94,7 +94,7 @@ function PubCard({
       className={`bg-white rounded-[10px] px-3.5 py-3 cursor-pointer transition-all duration-150 border hover:shadow-md hover:border-stone-200 ${
         isActiveHH ? 'border-l-[3px] border-l-emerald-500 border-t-transparent border-r-transparent border-b-transparent' : 'border-transparent'
       }`}
-      onClick={() => router.push('/pub/' + pub.slug)}
+      onClick={() => router.push(`/pub/${pub.slug}`)}
       onMouseEnter={() => onHoverPub?.(pub.id)}
       onMouseLeave={() => onHoverPub?.(null)}
     >
@@ -107,16 +107,16 @@ function PubCard({
           <WatchlistButton slug={pub.slug} name={pub.name} suburb={pub.suburb} size="sm" />
         </div>
         <span className={`font-mono text-[15px] font-medium whitespace-nowrap px-2 py-0.5 rounded-md ${priceClasses}`}>
-          {pub.price !== null ? '$' + pub.price.toFixed(2) : 'TBC'}
+          {pub.price !== null ? `$${pub.price.toFixed(2)}` : 'TBC'}
         </span>
       </div>
 
-      {/* Row 2: Meta \u2014 suburb \u00b7 distance \u00b7 beer */}
+      {/* Row 2: Meta */}
       <div className="flex items-center gap-1.5 mt-1 text-xs text-stone-400 flex-wrap">
         <span>{pub.suburb}</span>
         {distance && (
           <>
-            <span className="text-stone-300">\u00b7</span>
+            <span className="text-stone-300">·</span>
             <span className="inline-flex items-center gap-0.5">
               <svg className="w-[11px] h-[11px]" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
@@ -127,13 +127,13 @@ function PubCard({
         )}
         {pub.beerType && (
           <>
-            <span className="text-stone-300">\u00b7</span>
+            <span className="text-stone-300">·</span>
             <span className="truncate max-w-[180px]">{pub.beerType}</span>
           </>
         )}
       </div>
 
-      {/* Row 3: Tags \u2014 all in a single flow, left-aligned */}
+      {/* Row 3: Tags — all in a single flow, left-aligned */}
       <div className="flex items-center gap-2 mt-2 flex-wrap">
         {/* Happy hour badge */}
         {hhStatus.isActive && (
@@ -145,7 +145,7 @@ function PubCard({
         {!hhStatus.isActive && hhStatus.isToday && hhStatus.countdown && (
           <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-50 text-amber-700 text-xs font-medium">
             <span className="w-[5px] h-[5px] rounded-full bg-amber" />
-            {hhStatus.countdown} \u2014 {pub.happyHour}
+            {hhStatus.countdown} — {pub.happyHour}
           </span>
         )}
 
@@ -157,7 +157,7 @@ function PubCard({
 
         {/* Optional tags */}
         {pub.sunsetSpot && (
-          <span className="inline-flex items-center gap-1 text-[11px] text-stone-400 px-2 py-0.5 rounded-full bg-stone-50">\u{1F305} Sunset</span>
+          <span className="inline-flex items-center gap-1 text-[11px] text-stone-400 px-2 py-0.5 rounded-full bg-stone-50">🌅 Sunset</span>
         )}
         {pub.vibeTag && (
           <span className="text-[11px] text-stone-400 px-2 py-0.5 rounded-full bg-stone-50">{pub.vibeTag}</span>
@@ -165,7 +165,7 @@ function PubCard({
 
         {/* Crowd report */}
         {crowdReport && (
-          <span className="inline-flex items-center gap-1 text-[11px] text-stone-400 px-2 py-0.5 rounded-full bg-stone-50" title={crowdReport.minutes_ago + 'm ago'}>
+          <span className="inline-flex items-center gap-1 text-[11px] text-stone-400 px-2 py-0.5 rounded-full bg-stone-50" title={`${crowdReport.minutes_ago}m ago`}>
             {CROWD_LEVELS[crowdReport.crowd_level].emoji} {CROWD_LEVELS[crowdReport.crowd_level].label}
           </span>
         )}
