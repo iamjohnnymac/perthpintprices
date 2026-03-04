@@ -14,6 +14,8 @@ import HeroSection from '@/components/HeroSection'
 import { FilterSection } from '@/components/FilterSection'
 import PubListView from '@/components/PubListView'
 import PubCardsView from '@/components/PubCardsView'
+import PubCardList from '@/components/PubCardList'
+import MapPeek from '@/components/MapPeek'
 import PriceTicker from '@/components/PriceTicker'
 import HowItWorks from '@/components/HowItWorks'
 import SocialProof from '@/components/SocialProof'
@@ -24,17 +26,7 @@ import SubmitPubForm from '@/components/SubmitPubForm'
 import CrowdReporter from '@/components/CrowdReporter'
 import NotificationBell from '@/components/NotificationBell'
 
-const Map = dynamic(() => import('@/components/Map'), {
-  ssr: false,
-  loading: () => (
-    <div className="h-[250px] sm:h-[350px] md:h-[450px] bg-stone-100 rounded-xl flex items-center justify-center">
-      <div className="flex flex-col items-center gap-3">
-        <div className="w-12 h-12 border-4 border-stone-300 border-t-stone-600 rounded-full animate-spin"></div>
-        <span className="text-stone-600 font-medium">Loading map...</span>
-      </div>
-    </div>
-  )
-})
+// Map is now loaded via MapPeek component
 
 const INITIAL_PUB_COUNT = 10
 
@@ -78,7 +70,7 @@ function HomeContent() {
   const [userLocation, setUserLocation] = useState<{lat: number, lng: number} | null>(null)
   const [locationState, setLocationState] = useState<'idle' | 'granted' | 'denied' | 'dismissed'>('idle')
   const [scrolledPastHero, setScrolledPastHero] = useState(false)
-  const [showMap, setShowMap] = useState(true)
+  // showMap state removed — now handled by MapPeek component
   const heroRef = useRef<HTMLDivElement>(null)
   const headerRef = useRef<HTMLElement>(null)
   const contentRef = useRef<HTMLDivElement>(null)
@@ -321,6 +313,14 @@ function HomeContent() {
       <div ref={contentRef} className="max-w-5xl mx-auto px-4 sm:px-6 pt-6 sm:pt-8 pb-6 sm:pb-8">
         <MyLocals pubs={pubs} userLocation={userLocation} />
 
+        {/* Map peek — hidden by default, toggle to show */}
+        <MapPeek
+          pubs={filteredPubs}
+          userLocation={userLocation}
+          totalPubCount={pubs.length}
+          happyHourCount={stats.happyHourNow}
+        />
+
         <div className="flex items-center justify-between mb-3">
           <p className="text-stone-500 text-sm">
             Displaying <span className="font-semibold text-charcoal">{showAllPubs ? filteredPubs.length : Math.min(INITIAL_PUB_COUNT, filteredPubs.length)}</span> of {filteredPubs.length} venues
@@ -336,8 +336,9 @@ function HomeContent() {
           )}
         </div>
 
+        {/* v2 Card-based listing with smart grouping */}
         {viewMode === 'list' && (
-          <PubListView
+          <PubCardList
             pubs={filteredPubs}
             crowdReports={crowdReports}
             userLocation={userLocation}
@@ -360,25 +361,9 @@ function HomeContent() {
 
         {filteredPubs.length === 0 && (
           <div className="text-center py-16 bg-white rounded-xl shadow-sm">
-            <div className="text-5xl mb-4">{showHappyHourOnly ? '\u{1F37B}' : '\u{1F50D}'}</div>
+            <div className="text-5xl mb-4">{showHappyHourOnly ? '🍻' : '🔍'}</div>
             <h3 className="font-serif text-xl text-charcoal mb-2">{showHappyHourOnly ? 'No pubs with happy hour info yet' : 'No pubs found'}</h3>
-            <p className="text-stone-500 text-sm">{showHappyHourOnly ? 'We\u2019re building our happy hour database \u2014 submit yours!' : 'Try adjusting your filters'}</p>
-          </div>
-        )}
-
-        {/* Map below pub list */}
-        <button
-          onClick={() => setShowMap(!showMap)}
-          className="flex items-center gap-2 text-sm text-stone-500 hover:text-charcoal transition-colors mb-3 mt-6 focus-visible:ring-2 focus-visible:ring-amber/50 focus-visible:ring-offset-1 rounded-lg"
-          aria-pressed={showMap}
-        >
-          <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
-          {showMap ? 'Hide map' : 'Show map'}
-        </button>
-
-        {showMap && (
-          <div className="mb-6 rounded-xl overflow-hidden shadow-sm relative z-0 isolate" role="img" aria-label="Interactive map showing pub locations and pint prices across Perth">
-            <Map pubs={filteredPubs} userLocation={userLocation} totalPubCount={pubs.length} />
+            <p className="text-stone-500 text-sm">{showHappyHourOnly ? 'We’re building our happy hour database — submit yours!' : 'Try adjusting your filters'}</p>
           </div>
         )}
       </div>
