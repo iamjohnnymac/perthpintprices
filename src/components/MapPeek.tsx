@@ -31,16 +31,16 @@ export default function MapPeek({ pubs, userLocation, totalPubCount, happyHourCo
     return (
       <button
         onClick={() => setVisible(true)}
-        className="flex items-center gap-2 text-sm text-stone-500 hover:text-charcoal transition-colors mb-3 focus-visible:ring-2 focus-visible:ring-amber/50 focus-visible:ring-offset-1 rounded-lg"
+        className="flex items-center gap-2.5 text-sm font-semibold text-charcoal bg-white border border-stone-200 hover:border-amber/40 hover:bg-amber/5 rounded-full px-4 py-2 mb-4 transition-all shadow-sm focus-visible:ring-2 focus-visible:ring-amber/50 focus-visible:ring-offset-1"
       >
-        <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+        <svg className="w-4 h-4 text-amber" viewBox="0 0 24 24" fill="currentColor">
           <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
         </svg>
         Show map
         {happyHourCount > 0 && (
-          <span className="inline-flex items-center gap-1 text-xs font-medium text-emerald-600">
+          <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-600 bg-emerald-50 rounded-full px-2 py-0.5">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-            {happyHourCount} happy hour{happyHourCount !== 1 ? 's' : ''} live
+            {happyHourCount} live
           </span>
         )}
       </button>
@@ -52,7 +52,7 @@ export default function MapPeek({ pubs, userLocation, totalPubCount, happyHourCo
       <div className="flex items-center justify-between mb-2">
         <button
           onClick={() => setVisible(false)}
-          className="flex items-center gap-1.5 text-xs text-stone-400 hover:text-charcoal transition-colors"
+          className="flex items-center gap-1.5 text-xs font-medium text-stone-400 hover:text-charcoal transition-colors"
         >
           <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
             <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
