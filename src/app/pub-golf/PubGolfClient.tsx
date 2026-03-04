@@ -352,7 +352,15 @@ export default function PubGolfClient({ pubs }: { pubs: Pub[] }) {
   // RENDER: Header (always shown)
   // ---------------------------------------------------------------------------
 
-  const header = <SubPageNav title="Pub Golf" subtitle="Pick your course, tee off" />
+    const header = (
+    <>
+      <SubPageNav title="Pub Golf" subtitle="Pick your course, tee off" />
+      <div className="text-center py-6">
+        <h2 className="font-serif text-3xl sm:text-4xl text-charcoal mb-1">Pub Golf</h2>
+        <p className="text-stone-warm text-sm sm:text-base">Pick your course, tee off</p>
+      </div>
+    </>
+  )
 
   // ---------------------------------------------------------------------------
   // RENDER: SETUP SCREEN
