@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from 'next'
+import Script from 'next/script'
 import { Plus_Jakarta_Sans, DM_Serif_Display, JetBrains_Mono } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import Providers from './Providers'
@@ -62,6 +63,16 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        {/* Google Analytics */}
+                  <Script src="https://www.googletagmanager.com/gtag/js?id=G-1WN68Q85SY" strategy="afterInteractive" />
+                  <Script id="google-analytics" strategy="afterInteractive">
+                    {`
+                                  window.dataLayer = window.dataLayer || [];
+                                                function gtag(){dataLayer.push(arguments);}
+                                                              gtag('js', new Date());
+                                                                            gtag('config', 'G-1WN68Q85SY');
+                                                                                        `}
+                  </Script>Script></Script>
         <link rel="manifest" href="/manifest.json" />
         <meta name="theme-color" content="#E8820C" />
       </head>
