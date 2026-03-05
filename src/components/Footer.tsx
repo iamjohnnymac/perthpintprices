@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { Waves } from 'lucide-react'
 
 export default function Footer() {
   return (
@@ -64,7 +65,7 @@ export default function Footer() {
         {/* Bottom */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
           <p className="text-stone-500 text-xs">&copy; {new Date().getFullYear()} Arvo. Prices may vary. Drink responsibly.</p>
-          <p className="text-stone-600 text-xs">Made in Perth 🌊</p>
+          <p className="text-stone-600 text-xs inline-flex items-center gap-1">Made in Perth <Waves className="w-3 h-3 inline" /></p>
         </div>
       </div>
     </footer>

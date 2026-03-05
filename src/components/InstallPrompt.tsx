@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { Beer } from 'lucide-react'
 
 // Android/Chrome install prompt event
 interface BeforeInstallPromptEvent extends Event {
@@ -73,7 +74,7 @@ export default function InstallPrompt() {
         <div className="flex items-center gap-3 px-4 py-3">
           {/* Icon */}
           <div className="w-9 h-9 rounded-lg bg-orange/10 flex items-center justify-center text-lg flex-shrink-0">
-            🍺
+            <Beer className="w-4 h-4" />
           </div>
           
           {/* Text */}

@@ -1,6 +1,7 @@
 'use client'
 
 import { CrowdLevel, CROWD_LEVELS, CrowdReport } from '@/lib/supabase'
+import LucideIcon from '@/components/LucideIcon'
 
 interface CrowdBadgeProps {
   report: CrowdReport
@@ -28,7 +29,7 @@ export default function CrowdBadge({ report, onClick }: CrowdBadgeProps) {
       `}
       title={`${report.report_count} report${report.report_count > 1 ? 's' : ''} - Click to update`}
     >
-      <span>{info.emoji}</span>
+      <LucideIcon name={info.emoji} className="w-3.5 h-3.5" />
       <span>{info.label}</span>
       <span className="text-white/70 text-[10px]">({formatTimeAgo(report.minutes_ago)})</span>
     </button>

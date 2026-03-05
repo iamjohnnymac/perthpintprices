@@ -9,6 +9,8 @@ import { getDistanceKm, formatDistance } from '@/lib/location'
 import SubPageNav from '@/components/SubPageNav'
 import Footer from '@/components/Footer'
 import { ErrorBoundary } from '@/components/ErrorBoundary'
+import { Beer, Sunset, Users, TrendingUp, DollarSign, BarChart3, Clock } from 'lucide-react'
+import LucideIcon from '@/components/LucideIcon'
 
 /* ─── Types ─── */
 interface PriceSnapshot {
@@ -399,7 +401,7 @@ export default function DiscoverClient() {
               <div className="bg-[#FFF8F0] rounded-2xl py-12 px-6 text-center hover:shadow-[0_4px_16px_rgba(0,0,0,0.08)] transition-shadow">
                 <p className="text-[#888] text-sm mb-1">Your best pint right now</p>
                 <div className="flex items-center justify-center gap-2 mb-3">
-                  <span className="text-xl">🍺</span>
+                  <Beer className="w-5 h-5 text-amber" />
                   <span className="text-[#1A1A1A] font-bold text-lg sm:text-xl">{heroPub.name}</span>
                   <span className="text-[#888] text-sm">·</span>
                   <span className="text-[#888] text-sm">{heroPub.suburb}</span>
@@ -460,7 +462,7 @@ export default function DiscoverClient() {
 
             {/* Right: Happy Hours */}
             <div className="bg-white border border-[#E5E5E5] rounded-2xl p-6 hover:shadow-[0_4px_16px_rgba(0,0,0,0.08)] transition-shadow">
-              <h3 className="text-lg font-bold text-[#1A1A1A] mb-1">⏰ Happy Hours</h3>
+              <h3 className="text-lg font-bold text-[#1A1A1A] mb-1"><Clock className="w-4 h-4 inline" /> Happy Hours</h3>
               <p className="text-sm text-[#888] mb-4">Starting soon near you</p>
               <div className="space-y-1">
                 {upcomingHappyHours.length === 0 && (
@@ -503,19 +505,19 @@ export default function DiscoverClient() {
             <style>{`.snap-x::-webkit-scrollbar { display: none; }`}</style>
 
             {[
-              { emoji: '🌅', title: 'Sunset Sippers', desc: 'West-facing patios and rooftop bars for golden hour pints.', bg: 'bg-[#FFF3E0]', count: pubPickCounts.sunset, href: '/guides/sunset-sippers' },
-              { emoji: '👨', title: 'The Dad Bar', desc: 'No fairy lights, no craft beer menu. Just honest pints and the footy on.', bg: 'bg-[#F5F5F0]', count: pubPickCounts.dad, href: '/guides/dad-bar' },
-              { emoji: '🌤', title: 'Beer Weather', desc: 'Live BOM data matched to beer garden picks. Is it a beer garden arvo?', bg: 'bg-[#E8F5E9]', count: pubPickCounts.beer, href: '/guides/beer-weather' },
-              { emoji: '☔', title: 'Cozy Corners', desc: 'Fireplaces, booths, and warmth for when it\'s bucketing down.', bg: 'bg-[#EDE7F6]', count: pubPickCounts.cozy, href: '/guides/cozy-corners' },
-              { emoji: '🏇', title: 'Punt & Pints', desc: 'TAB screens, cold pints, and a flutter on the trots.', bg: 'bg-[#E3F2FD]', count: pubPickCounts.punt, href: '/guides/punt-and-pints' },
-              { emoji: '⏰', title: 'Happy Hours', desc: 'Live deals happening right now across Perth.', bg: 'bg-[#FFF8E1]', count: pubPickCounts.happy, href: '/happy-hour' },
+              { emoji: 'sunset', title: 'Sunset Sippers', desc: 'West-facing patios and rooftop bars for golden hour pints.', bg: 'bg-[#FFF3E0]', count: pubPickCounts.sunset, href: '/guides/sunset-sippers' },
+              { emoji: 'users', title: 'The Dad Bar', desc: 'No fairy lights, no craft beer menu. Just honest pints and the footy on.', bg: 'bg-[#F5F5F0]', count: pubPickCounts.dad, href: '/guides/dad-bar' },
+              { emoji: 'sun', title: 'Beer Weather', desc: 'Live BOM data matched to beer garden picks. Is it a beer garden arvo?', bg: 'bg-[#E8F5E9]', count: pubPickCounts.beer, href: '/guides/beer-weather' },
+              { emoji: 'umbrella', title: 'Cozy Corners', desc: 'Fireplaces, booths, and warmth for when it\'s bucketing down.', bg: 'bg-[#EDE7F6]', count: pubPickCounts.cozy, href: '/guides/cozy-corners' },
+              { emoji: 'trophy', title: 'Punt & Pints', desc: 'TAB screens, cold pints, and a flutter on the trots.', bg: 'bg-[#E3F2FD]', count: pubPickCounts.punt, href: '/guides/punt-and-pints' },
+              { emoji: 'clock', title: 'Happy Hours', desc: 'Live deals happening right now across Perth.', bg: 'bg-[#FFF8E1]', count: pubPickCounts.happy, href: '/happy-hour' },
             ].map((card) => (
               <Link
                 key={card.title}
                 href={card.href}
                 className={`${card.bg} w-[240px] sm:w-[280px] min-h-[200px] rounded-2xl p-6 flex-shrink-0 snap-start hover:shadow-[0_4px_16px_rgba(0,0,0,0.08)] transition-shadow group`}
               >
-                <span className="text-3xl">{card.emoji}</span>
+                <LucideIcon name={card.emoji} className="w-8 h-8" />
                 <h3 className="text-lg font-bold text-[#1A1A1A] mt-3 group-hover:text-orange transition-colors">{card.title}</h3>
                 <p className="text-sm text-[#666] mt-1 leading-relaxed">{card.desc}</p>
                 <p className="text-sm font-semibold text-orange mt-4">{card.count} pubs →</p>
@@ -707,7 +709,7 @@ export default function DiscoverClient() {
             {/* ─── Tab 2: Venues ─── */}
             {numbersTab === 'venues' && (
               <div className="bg-white border border-[#E5E5E5] rounded-2xl p-6">
-                <h4 className="text-sm font-semibold text-[#1A1A1A] mb-3">📊 Price Distribution</h4>
+                <h4 className="text-sm font-semibold text-[#1A1A1A] mb-3"><BarChart3 className="w-4 h-4 inline" /> Price Distribution</h4>
                 <div className="space-y-2 mb-6">
                   {priceBrackets.map(([bracket, count]) => {
                     const maxCount = Math.max(...priceBrackets.map(([, c]) => c), 1)
@@ -752,7 +754,7 @@ export default function DiscoverClient() {
                     </div>
                   </div>
                   <div className="bg-white border border-[#E5E5E5] rounded-2xl p-6">
-                    <h4 className="text-sm font-semibold text-[#5C4A3A] mb-3">📈 Above Market</h4>
+                    <h4 className="text-sm font-semibold text-[#5C4A3A] mb-3"><TrendingUp className="w-4 h-4 inline" /> Above Market</h4>
                     <div className="space-y-1.5">
                       {overvalued.map(({ pub, diff }) => (
                         <Link key={pub.id} href={`/pub/${pub.slug}`} className="flex items-center justify-between p-2 rounded-lg bg-stone-100/60 border border-stone-200 hover:bg-stone-100 transition-colors">
@@ -773,7 +775,7 @@ export default function DiscoverClient() {
                 {/* Cheapest / Priciest Suburbs */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                   <div className="bg-white border border-[#E5E5E5] rounded-2xl p-6">
-                    <h4 className="text-sm font-semibold text-charcoal mb-3">🍺 Cheapest Suburbs</h4>
+                    <h4 className="text-sm font-semibold text-charcoal mb-3"><Beer className="w-4 h-4 inline" /> Cheapest Suburbs</h4>
                     <div className="space-y-1.5">
                       {cheapestSuburbs.map((s, i) => (
                         <div key={s.suburb} className="flex items-center justify-between p-2 rounded-lg bg-white border border-stone-100">
@@ -790,7 +792,7 @@ export default function DiscoverClient() {
                     </div>
                   </div>
                   <div className="bg-white border border-[#E5E5E5] rounded-2xl p-6">
-                    <h4 className="text-sm font-semibold text-[#5C4A3A] mb-3">💰 Priciest Suburbs</h4>
+                    <h4 className="text-sm font-semibold text-[#5C4A3A] mb-3"><DollarSign className="w-4 h-4 inline" /> Priciest Suburbs</h4>
                     <div className="space-y-1.5">
                       {priciestSuburbs.map((s, i) => (
                         <div key={s.suburb} className="flex items-center justify-between p-2 rounded-lg bg-white border border-stone-100">

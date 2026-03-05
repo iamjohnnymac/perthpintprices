@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { PriceHistoryPoint, supabase } from '@/lib/supabase'
+import { TrendingUp } from 'lucide-react'
 
 interface PriceHistoryProps {
   pubId: number
@@ -95,7 +96,7 @@ export default function PriceHistory({ pubId, currentPrice }: PriceHistoryProps)
     <div className="bg-stone-50/80 rounded-xl border border-stone-200/60 p-4">
       <div className="flex items-center justify-between mb-2">
         <h3 className="text-sm font-heading font-semibold text-charcoal flex items-center gap-2">
-          📈 Price History
+          <TrendingUp className="w-4 h-4 inline" /> Price History
         </h3>
         <div className="flex items-center gap-2">
           {!trendFlat && (

@@ -2,6 +2,8 @@
 
 import { useState } from 'react'
 import { CrowdLevel, CROWD_LEVELS, reportCrowdLevel } from '@/lib/supabase'
+import { CircleCheck } from 'lucide-react'
+import LucideIcon from '@/components/LucideIcon'
 
 interface CrowdReporterProps {
   pubId: string
@@ -57,7 +59,7 @@ export default function CrowdReporter({ pubId, pubName, onClose, onReport }: Cro
         <div className="p-6">
           {isSuccess ? (
             <div className="text-center py-8">
-              <div className="text-6xl mb-4">✅</div>
+              <CircleCheck className="w-16 h-16 text-amber mb-4" />
               <p className="text-white font-semibold text-lg">Thanks!</p>
               <p className="text-gray-400 text-sm">Your report helps others find the vibe!</p>
             </div>
@@ -85,7 +87,7 @@ export default function CrowdReporter({ pubId, pubName, onClose, onReport }: Cro
                         }
                       `}
                     >
-                      <div className="text-3xl mb-1">{info.emoji}</div>
+                      <div className="mb-1"><LucideIcon name={info.emoji} className="w-8 h-8" /></div>
                       <div className="font-semibold text-sm">{info.label}</div>
                     </button>
                   )

@@ -8,6 +8,8 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import InfoTooltip from './InfoTooltip'
 import { getDistanceKm, formatDistance } from '@/lib/location'
+import { Umbrella } from 'lucide-react'
+import LucideIcon from '@/components/LucideIcon'
 
 interface WeatherData {
   temperature: number
@@ -26,16 +28,16 @@ interface WeatherCondition {
   filter: (pubs: Pub[]) => Pub[]
 }
 
-function getWeatherEmoji(code: number): string {
-  if (code === 0) return '○'
-  if (code >= 1 && code <= 3) return '◐'
-  if (code >= 45 && code <= 48) return '🌫️'
-  if (code >= 51 && code <= 57) return '🌧️'
-  if (code >= 61 && code <= 67) return '🌧️'
-  if (code >= 71 && code <= 77) return '❄️'
-  if (code >= 80 && code <= 82) return '🌧️'
-  if (code >= 95 && code <= 99) return '◉'
-  return '◐'
+function getWeatherIcon(code: number): string {
+  if (code === 0) return 'sun'
+  if (code >= 1 && code <= 3) return 'cloud-sun'
+  if (code >= 45 && code <= 48) return 'cloud'
+  if (code >= 51 && code <= 57) return 'cloud-rain'
+  if (code >= 61 && code <= 67) return 'cloud-rain'
+  if (code >= 71 && code <= 77) return 'snowflake'
+  if (code >= 80 && code <= 82) return 'cloud-rain'
+  if (code >= 95 && code <= 99) return 'cloud-lightning'
+  return 'cloud-sun'
 }
 
 function getWeatherLabel(code: number): string {
@@ -59,7 +61,7 @@ function getWeatherCondition(weather: WeatherData, avgPrice: number): WeatherCon
 
   if (isRainy) {
     return {
-      emoji: '🌧️',
+      emoji: 'cloud-rain',
       label: 'Rainy day',
       message: "Rainy day? Cozy up inside with a cold one",
       tagline: `${weather.temperature.toFixed(0)}° and wet — perfect happy hour weather`,
@@ -71,7 +73,7 @@ function getWeatherCondition(weather: WeatherData, avgPrice: number): WeatherCon
 
   if (weather.temperature >= 30) {
     return {
-      emoji: '🔥',
+      emoji: 'flame',
       label: 'Scorcher',
       message: "Scorcher! Head to the beach pubs for a cold one",
       tagline: `${weather.temperature.toFixed(0)}° scorcher — just point me to the coldest pint`,
@@ -83,7 +85,7 @@ function getWeatherCondition(weather: WeatherData, avgPrice: number): WeatherCon
 
   if (weather.temperature >= 22) {
     return {
-      emoji: '☀',
+      emoji: 'sun',
       label: 'Perfect weather',
       message: "Mint conditions — get outside and grab a pint!",
       tagline: `${weather.temperature.toFixed(0)}° and sunny — get outside and grab a cold one`,
@@ -95,7 +97,7 @@ function getWeatherCondition(weather: WeatherData, avgPrice: number): WeatherCon
 
   if (weather.temperature >= 15) {
     return {
-      emoji: '⛅',
+      emoji: 'cloud-sun',
       label: 'Great pub weather',
       message: "Great pub weather — grab a mate and a pint",
       tagline: `${weather.temperature.toFixed(0)}° with a breeze — grab a mate and a cold one`,
@@ -107,7 +109,7 @@ function getWeatherCondition(weather: WeatherData, avgPrice: number): WeatherCon
 
   // Cold
   return {
-    emoji: '❄️',
+    emoji: 'snowflake',
     label: 'Chilly',
     message: "Chilly! Warm up with a pint at a cozy pub",
     tagline: `${weather.temperature.toFixed(0)}° and chilly — rug up and find a cozy corner`,
@@ -206,7 +208,7 @@ export default function BeerWeather({ pubs, userLocation }: BeerWeatherProps) {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="flex flex-col items-center">
-              <span className="text-2xl leading-none">{getWeatherEmoji(weather.weatherCode)}</span>
+              <LucideIcon name={getWeatherIcon(weather.weatherCode)} className="w-6 h-6" />
             </div>
             <div>
               <div className="flex items-center gap-2">
@@ -306,7 +308,7 @@ export default function BeerWeather({ pubs, userLocation }: BeerWeatherProps) {
             {/* Fun footer */}
             <div className="mt-3 text-center text-xs py-2 rounded-xl bg-white/40 text-stone-400">
               {weather.temperature >= 35 && '🥵 Stay hydrated — water between pints!'}
-              {weather.temperature >= 30 && weather.temperature < 35 && '🏖️ Perfect day for a cold schooner by the water'}
+              {weather.temperature >= 30 && weather.temperature < 35 && <><Umbrella className="w-4 h-4 inline" /> Perfect day for a cold schooner by the water</>}
               {weather.temperature >= 22 && weather.temperature < 30 && '🌿 Perth summer sesh weather — get amongst it'}
               {weather.temperature >= 15 && weather.temperature < 22 && '🍂 Classic pub weather — enjoy!'}
               {weather.temperature < 15 && '🧣 Bundle up and find a warm corner booth'}

@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { Beer } from 'lucide-react'
 
 interface StatsBarProps {
   avgPrice: string
@@ -36,7 +37,7 @@ export default function StatsBar({
       </div>
       {happyHourCount > 0 && (
         <Link href="/happy-hour" className="flex items-center gap-1.5 px-4 py-2 bg-amber/10 rounded-full border border-amber/20 text-sm whitespace-nowrap hover:bg-amber/20 transition-colors">
-          <span className="text-amber font-semibold">🍻 {happyHourCount} live</span>
+          <span className="text-amber font-semibold"><Beer className="w-4 h-4 inline" /> {happyHourCount} live</span>
         </Link>
       )}
     </div>

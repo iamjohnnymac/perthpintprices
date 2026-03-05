@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, useRef } from 'react'
 import Link from 'next/link'
 import SubPageNav from '@/components/SubPageNav'
 import { Pub } from '@/types/pub'
+import { Beer, MapPin, DollarSign, CircleCheck, Copy, Share2, Map as MapIcon, Zap } from 'lucide-react'
 
 /* ─── Haversine distance in km ─── */
 function getDistance(lat1: number, lng1: number, lat2: number, lng2: number): number {
@@ -30,7 +31,7 @@ interface RouteSegment {
 }
 
 const AREA_OPTIONS: { value: Area; label: string }[] = [
-  { value: 'near-me', label: '📍 Near Me' },
+  { value: 'near-me', label: 'Near Me' },
   { value: 'northbridge', label: 'Northbridge' },
   { value: 'fremantle', label: 'Fremantle' },
   { value: 'perth-cbd', label: 'Perth CBD' },
@@ -345,7 +346,7 @@ export default function PintCrawlClient({ pubs }: { pubs: Pub[] }) {
             <div className="bg-white rounded-2xl border border-stone-200/60 p-4 sm:p-5">
               <div className="flex items-center justify-between mb-3">
                 <h2 className="text-sm font-semibold text-charcoal font-heading">
-                  💰 Budget per person
+                  <DollarSign className="w-4 h-4 inline" /> Budget per person
                 </h2>
                 <span className="text-2xl font-bold text-charcoal font-heading">
                   ${budget}
@@ -373,7 +374,7 @@ export default function PintCrawlClient({ pubs }: { pubs: Pub[] }) {
             {/* Number of stops */}
             <div className="bg-white rounded-2xl border border-stone-200/60 p-4 sm:p-5">
               <h2 className="text-sm font-semibold text-charcoal font-heading mb-3">
-                🍺 Number of stops
+                <Beer className="w-4 h-4 inline" /> Number of stops
               </h2>
               <div className="flex flex-wrap gap-2">
                 {STOP_OPTIONS.map((n) => (
@@ -400,7 +401,7 @@ export default function PintCrawlClient({ pubs }: { pubs: Pub[] }) {
             {/* Area selector */}
             <div className="bg-white rounded-2xl border border-stone-200/60 p-4 sm:p-5">
               <h2 className="text-sm font-semibold text-charcoal font-heading mb-3">
-                📍 Where?
+                <MapPin className="w-4 h-4 inline" /> Where?
               </h2>
               <div className="flex flex-wrap gap-2">
                 {AREA_OPTIONS.map((opt) => (
@@ -449,17 +450,17 @@ export default function PintCrawlClient({ pubs }: { pubs: Pub[] }) {
               </h2>
               <div className="space-y-3">
                 <ToggleRow
-                  label="🍺 Happy Hour only"
+                  label="Happy Hour only"
                   checked={happyHourOnly}
                   onChange={setHappyHourOnly}
                 />
                 <ToggleRow
-                  label="👨‍👧 Kid-friendly"
+                  label="Kid-friendly"
                   checked={kidFriendly}
                   onChange={setKidFriendly}
                 />
                 <ToggleRow
-                  label="🏇 TAB venues"
+                  label="TAB venues"
                   checked={tabVenues}
                   onChange={setTabVenues}
                 />
@@ -472,7 +473,7 @@ export default function PintCrawlClient({ pubs }: { pubs: Pub[] }) {
               disabled={filteredPubs.length === 0}
               className="w-full bg-charcoal text-white font-heading font-bold text-base rounded-2xl py-4 hover:bg-charcoal/90 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
             >
-              🍻 Generate Route
+              <Beer className="w-4 h-4 inline" /> Generate Route
             </button>
             {filteredPubs.length === 0 && (
               <p className="text-center text-xs text-stone-500">
@@ -563,7 +564,7 @@ export default function PintCrawlClient({ pubs }: { pubs: Pub[] }) {
                         )}
                         {!seg.pub.isHappyHourNow && seg.pub.happyHour && (
                           <p className="text-[10px] text-stone-400 mt-1">
-                            🍺 {seg.pub.happyHour}
+                            <Beer className="w-3 h-3 inline" /> {seg.pub.happyHour}
                           </p>
                         )}
                       </div>
@@ -625,7 +626,7 @@ export default function PintCrawlClient({ pubs }: { pubs: Pub[] }) {
                 onClick={copyRoute}
                 className="flex items-center justify-center gap-2 bg-white border border-stone-200/60 rounded-2xl py-3 text-sm font-semibold text-charcoal hover:bg-stone-50 transition-colors"
               >
-                {copied ? '✅ Copied!' : '📋 Copy Route'}
+                {copied ? <><CircleCheck className="w-3.5 h-3.5 inline" /> Copied!</> : <><Copy className="w-3.5 h-3.5 inline" /> Copy Route</>}
               </button>
             </div>
             <div className="grid grid-cols-2 gap-2">
@@ -698,7 +699,7 @@ export default function PintCrawlClient({ pubs }: { pubs: Pub[] }) {
                   onClick={copyRoute}
                   className="w-full flex items-center justify-center gap-2 bg-charcoal text-white rounded-2xl py-4 text-sm font-bold hover:bg-charcoal/90 transition-colors"
                 >
-                  {copied ? '✅ Copied!' : '📤 Share Your Crawl'}
+                  {copied ? <><CircleCheck className="w-3.5 h-3.5 inline" /> Copied!</> : <><Share2 className="w-3.5 h-3.5 inline" /> Share Your Crawl</>}
                 </button>
                 <button
                   onClick={() => {
@@ -711,7 +712,7 @@ export default function PintCrawlClient({ pubs }: { pubs: Pub[] }) {
                   }}
                   className="w-full flex items-center justify-center gap-2 bg-white border border-stone-200/60 rounded-2xl py-3 text-sm font-semibold text-charcoal hover:bg-stone-50 transition-colors"
                 >
-                  🗺️ Plan Another Crawl
+                  <MapIcon className="w-4 h-4 inline" /> Plan Another Crawl
                 </button>
               </div>
             ) : (
@@ -768,7 +769,7 @@ export default function PintCrawlClient({ pubs }: { pubs: Pub[] }) {
                     {route[currentStop].pub.beerType && (
                       <div className="text-center">
                         <div className="text-sm font-semibold text-charcoal">
-                          🍺 {route[currentStop].pub.beerType}
+                          <Beer className="w-3 h-3 inline" /> {route[currentStop].pub.beerType}
                         </div>
                         <div className="text-xs text-stone-500">cheapest</div>
                       </div>
@@ -834,7 +835,7 @@ export default function PintCrawlClient({ pubs }: { pubs: Pub[] }) {
                   className="w-full bg-charcoal text-white font-heading font-bold text-base rounded-2xl py-4 hover:bg-charcoal/90 transition-colors"
                 >
                   {currentStop < route.length - 1
-                    ? '✅ Done — Next Stop'
+                    ? <><CircleCheck className="w-3.5 h-3.5 inline" /> Done — Next Stop</>
                     : '🏁 Finish Crawl!'}
                 </button>
 

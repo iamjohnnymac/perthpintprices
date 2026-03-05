@@ -9,6 +9,7 @@ import {
   unsubscribeFromPush,
 } from '@/lib/pushNotifications'
 import { useWatchlist } from '@/hooks/useWatchlist'
+import { Bell, BellOff } from 'lucide-react'
 
 export default function NotificationBell() {
   const [permission, setPermission] = useState<NotificationPermission | 'unsupported'>('default')
@@ -98,7 +99,7 @@ export default function NotificationBell() {
       </button>
       {showTooltip && !isLoading && (
         <div className="absolute right-0 top-full mt-1 px-3 py-1.5 bg-charcoal text-white text-[11px] rounded-lg whitespace-nowrap z-50 shadow-lg">
-          {isSubscribed ? '🔔 Alerts on for your watchlist' : '🔕 Enable price alerts'}
+          {isSubscribed ? <><Bell className="w-3.5 h-3.5 inline" /> Alerts on for your watchlist</> : <><BellOff className="w-3.5 h-3.5 inline" /> Enable price alerts</>}
         </div>
       )}
     </div>

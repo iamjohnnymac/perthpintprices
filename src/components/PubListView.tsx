@@ -9,6 +9,7 @@ import { getDistanceKm, formatDistance } from '@/lib/location'
 import { getDirectionsUrl } from '@/lib/priceColors'
 import { getFreshness, formatVerifiedDate } from '@/lib/freshness'
 import WatchlistButton from '@/components/WatchlistButton'
+import LucideIcon from '@/components/LucideIcon'
 
 type SortKey = 'name' | 'suburb' | 'price' | 'beer' | null
 type SortDir = 'asc' | 'desc'
@@ -162,7 +163,7 @@ export default function PubListView({
                       happyHourStatus.isToday ? 'text-amber-dark font-semibold' :
                       'text-stone-warm'
                     }`}>
-                      {happyHourStatus.statusEmoji} {happyHourStatus.statusText}
+                      {happyHourStatus.statusEmoji && <LucideIcon name={happyHourStatus.statusEmoji} className="w-3.5 h-3.5 inline" />} {happyHourStatus.statusText}
                     </span>
                   ) : (
                     <span className="text-xs text-stone-400">—</span>
@@ -185,7 +186,7 @@ export default function PubListView({
                 <td className="py-4 px-3 text-center">
                   {crowdReport ? (
                     <span className="text-sm" title={`${crowdReport.minutes_ago}m ago`}>
-                      {CROWD_LEVELS[crowdReport.crowd_level].emoji}
+                      <LucideIcon name={CROWD_LEVELS[crowdReport.crowd_level].emoji} className="w-3.5 h-3.5" />
                     </span>
                   ) : (
                     <button

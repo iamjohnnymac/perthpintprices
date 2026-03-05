@@ -1,6 +1,8 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
+import LucideIcon from '@/components/LucideIcon'
+import { DollarSign, Bell, Copy, BarChart3, PenLine, Beer, Sunset, Users, Trophy } from 'lucide-react'
 
 interface DashboardData {
   overview: {
@@ -98,11 +100,11 @@ function CategoryIcon({ category }: { category: string }) {
     deployment: '🚀',
     database: '🗄️',
     system: '⚙️',
-    price: '💰',
-    notification: '🔔',
-    general: '📋',
+    price: 'dollar-sign',
+    notification: 'bell',
+    general: 'copy',
   }
-  return <span>{icons[category] || '📋'}</span>
+  return <LucideIcon name={icons[category] || 'copy'} className="w-4 h-4" />
 }
 
 export default function AdminDashboard() {
@@ -204,9 +206,9 @@ export default function AdminDashboard() {
   }
 
   const tabs = [
-    { id: 'overview' as const, label: 'Overview', icon: '📊' },
-    { id: 'activity' as const, label: 'Activity', icon: '📋' },
-    { id: 'reports' as const, label: 'Reports', icon: '📝' },
+    { id: 'overview' as const, label: 'Overview', icon: 'bar-chart' },
+    { id: 'activity' as const, label: 'Activity', icon: 'copy' },
+    { id: 'reports' as const, label: 'Reports', icon: 'pen-line' },
     { id: 'health' as const, label: 'Health', icon: '🏥' },
   ]
 
@@ -251,7 +253,7 @@ export default function AdminDashboard() {
                   : 'border-transparent text-gray-500 hover:text-gray-300'
               }`}
             >
-              {tab.icon} {tab.label}
+              <LucideIcon name={tab.icon} className="w-4 h-4 inline" /> {tab.label}
             </button>
           ))}
         </div>
@@ -283,14 +285,14 @@ export default function AdminDashboard() {
               <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-3">Feature Coverage</h2>
               <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
                 {[
-                  { label: 'Happy Hour', value: data.features.happyHour, icon: '🍻' },
-                  { label: 'Cozy Pubs', value: data.features.cozyPubs, icon: '☕' },
-                  { label: 'Sunset Spots', value: data.features.sunsetSpots, icon: '🌅' },
-                  { label: 'Dad Bars', value: data.features.dadBars, icon: '👨‍👧' },
-                  { label: 'TAB Venues', value: data.features.tabVenues, icon: '🏇' },
+                  { label: 'Happy Hour', value: data.features.happyHour, icon: 'beer' },
+                  { label: 'Cozy Pubs', value: data.features.cozyPubs, icon: 'coffee' },
+                  { label: 'Sunset Spots', value: data.features.sunsetSpots, icon: 'sunset' },
+                  { label: 'Dad Bars', value: data.features.dadBars, icon: 'users' },
+                  { label: 'TAB Venues', value: data.features.tabVenues, icon: 'trophy' },
                 ].map(f => (
                   <div key={f.label} className="text-center p-3 bg-[#111] rounded-lg">
-                    <p className="text-lg">{f.icon}</p>
+                    <LucideIcon name={f.icon} className="w-5 h-5" />
                     <p className="text-xl font-bold text-[#E8820C]">{f.value}</p>
                     <p className="text-xs text-gray-500">{f.label}</p>
                   </div>
@@ -301,7 +303,7 @@ export default function AdminDashboard() {
             {/* Push & Reports Row */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="bg-[#1A1A1A] border border-[#333] rounded-lg p-4">
-                <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-3">🔔 Push Notifications</h2>
+                <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-3"><Bell className="w-3.5 h-3.5 inline" /> Push Notifications</h2>
                 <div className="flex gap-6">
                   <div>
                     <p className="text-2xl font-bold text-[#E8820C]">{data.pushSubscriptions.total}</p>
@@ -314,7 +316,7 @@ export default function AdminDashboard() {
                 </div>
               </div>
               <div className="bg-[#1A1A1A] border border-[#333] rounded-lg p-4">
-                <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-3">📝 Crowdsourced Reports</h2>
+                <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-3"><PenLine className="w-3.5 h-3.5 inline" /> Crowdsourced Reports</h2>
                 <div className="flex gap-6">
                   <div>
                     <p className="text-2xl font-bold text-[#E8820C]">{data.priceReports.total}</p>

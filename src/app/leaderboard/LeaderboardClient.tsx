@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import SubPageNav from '@/components/SubPageNav'
+import { Beer, Star, Trophy, Target, PenLine, CircleCheck, Medal } from 'lucide-react'
 
 interface Reporter {
   reporter_name: string
@@ -11,11 +12,11 @@ interface Reporter {
 }
 
 const BADGES = [
-  { min: 1, label: '🔰 Rookie Scout', color: 'bg-stone-100 text-stone-600' },
-  { min: 5, label: '🍺 Price Spotter', color: 'bg-blue-100 text-blue-700' },
-  { min: 10, label: '🎯 Price Scout', color: 'bg-orange/10 text-orange-dark' },
-  { min: 25, label: '⭐ Price Pro', color: 'bg-orange/20 text-orange-dark' },
-  { min: 50, label: '🏆 Perth Legend', color: 'bg-yellow-100 text-yellow-800' },
+  { min: 1, label: 'Rookie Scout', color: 'bg-stone-100 text-stone-600' },
+  { min: 5, label: 'Price Spotter', color: 'bg-blue-100 text-blue-700' },
+  { min: 10, label: 'Price Scout', color: 'bg-orange/10 text-orange-dark' },
+  { min: 25, label: 'Price Pro', color: 'bg-orange/20 text-orange-dark' },
+  { min: 50, label: 'Perth Legend', color: 'bg-yellow-100 text-yellow-800' },
 ]
 
 function getBadge(count: number) {
@@ -63,14 +64,14 @@ export default function LeaderboardClient() {
           <h2 className="text-sm font-bold text-charcoal mb-2">How to climb the leaderboard</h2>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div className="flex items-start gap-2">
-              <span className="text-lg">📝</span>
+              <PenLine className="w-5 h-5" />
               <div>
                 <p className="text-xs font-semibold text-charcoal">Report prices</p>
                 <p className="text-[11px] text-stone-500">Visit any pub page and tap &quot;Report Current Price&quot;</p>
               </div>
             </div>
             <div className="flex items-start gap-2">
-              <span className="text-lg">✅</span>
+              <CircleCheck className="w-5 h-5" />
               <div>
                 <p className="text-xs font-semibold text-charcoal">Get verified</p>
                 <p className="text-[11px] text-stone-500">Reports matching other data get verified automatically</p>
@@ -95,7 +96,7 @@ export default function LeaderboardClient() {
             </div>
           ) : reporters.length === 0 ? (
             <div className="p-8 text-center">
-              <div className="text-4xl mb-3">🏆</div>
+              <Trophy className="w-10 h-10 text-amber mb-3" />
               <h3 className="text-lg font-bold text-charcoal mb-1">Be the first!</h3>
               <p className="text-sm text-stone-500 mb-4">No price reports yet. Visit any pub page and report the current pint price to get on the board.</p>
               <Link href="/" className="inline-flex items-center gap-2 px-5 py-2.5 bg-charcoal text-white rounded-full text-sm font-bold hover:bg-charcoal/90 transition-all">
@@ -117,7 +118,7 @@ export default function LeaderboardClient() {
                 return (
                   <div key={r.reporter_name} className="grid grid-cols-[40px_1fr_80px_60px] sm:grid-cols-[50px_1fr_120px_100px_80px] gap-2 px-4 py-3 border-b border-stone-100 last:border-0 items-center hover:bg-stone-50/50 transition-colors">
                     <span className={`text-sm font-bold ${i === 0 ? 'text-orange' : i === 1 ? 'text-stone-400' : i === 2 ? 'text-orange-dark' : 'text-stone-500'}`}>
-                      {i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `${i + 1}`}
+                      {i === 0 ? <Trophy className="w-4 h-4 text-yellow-500 inline" /> : i === 1 ? <Medal className="w-4 h-4 text-gray-400 inline" /> : i === 2 ? <Medal className="w-4 h-4 text-amber-700 inline" /> : `${i + 1}`}
                     </span>
                     <div className="min-w-0">
                       <p className="text-sm font-semibold text-charcoal truncate">{r.reporter_name}</p>

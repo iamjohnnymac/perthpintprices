@@ -7,6 +7,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import InfoTooltip from './InfoTooltip'
 import { getDistanceKm, formatDistance } from '@/lib/location'
+import { CloudRain, Coffee } from 'lucide-react'
 
 interface RainyDayProps {
   pubs: Pub[]
@@ -36,15 +37,15 @@ function getRainIntensity(code: number): string {
 }
 
 const RAIN_QUIPS = [
-  "Perfect excuse for a cheeky pint by the window ☕",
-  "Nothing beats rain on the roof and a cold one in hand 🍺",
-  "Chucking it down — time to hunker down with a brew 🌧️",
+  "Perfect excuse for a cheeky pint by the window",
+  "Nothing beats rain on the roof and a cold one in hand",
+  "Chucking it down — time to hunker down with a brew",
   "Wet outside, warm inside — that's the Perth way 🤙",
 ]
 
 const DRY_QUIPS = [
-  "No rain, no worries — still great spots to chill ☀️",
-  "Save these for the next downpour — or just go now 🍻",
+  "No rain, no worries — still great spots to chill",
+  "Save these for the next downpour — or just go now",
   "Cozy vibes rain or shine ✌️",
 ]
 
@@ -136,7 +137,7 @@ export default function RainyDay({ pubs, userLocation }: RainyDayProps) {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="flex flex-col items-center">
-              <span className="text-2xl leading-none">{isRaining ? '☔' : '☕'}</span>
+              <span className="text-2xl leading-none">{isRaining ? <CloudRain className="w-6 h-6" /> : <Coffee className="w-6 h-6" />}</span>
             </div>
             <div>
               <div className="flex items-center gap-2">
@@ -181,7 +182,7 @@ export default function RainyDay({ pubs, userLocation }: RainyDayProps) {
             {isRaining && (
               <div className="flex sm:hidden justify-center gap-2 mb-2">
                 <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-blue-50 text-blue-600 border border-blue-100">
-                  🌧️ {getRainIntensity(weather.weatherCode)}
+                  <CloudRain className="w-4 h-4 inline" /> {getRainIntensity(weather.weatherCode)}
                 </span>
                 <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-white/60 text-stone-500 border border-stone-100">
                   💧 {weather.precipitation.toFixed(1)} mm

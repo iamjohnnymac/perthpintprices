@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef, useMemo } from 'react';
+import { Beer } from 'lucide-react'
 
 interface Pub {
   slug: string;
@@ -528,7 +529,7 @@ export default function SubmitPubForm({ isOpen, onClose, userLocation }: SubmitP
               </svg>
             </div>
             <h3 className="text-xl font-bold text-charcoal mb-2">
-              Thanks legend! 🍻
+              Thanks legend! <Beer className="w-4 h-4 inline" />
             </h3>
             <p className="text-stone-500 text-sm">
               {submittedMessage}

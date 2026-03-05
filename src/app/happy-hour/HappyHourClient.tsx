@@ -6,6 +6,7 @@ import SubPageNav from '@/components/SubPageNav'
 import { getPubs } from '@/lib/supabase'
 import { Pub } from '@/types/pub'
 import { getDistanceKm, formatDistance } from '@/lib/location'
+import { Beer, DollarSign, MapPin, Clock } from 'lucide-react'
 
 type SortMode = 'price' | 'nearest'
 
@@ -91,7 +92,7 @@ export default function HappyHourClient() {
         {/* Page Title */}
         <div className="text-center mb-3">
           <div className="inline-flex items-center gap-2 mb-2">
-            <span className="text-3xl sm:text-4xl">🍻</span>
+            <Beer className="w-8 h-8 sm:w-10 sm:h-10 text-amber" />
             <h1 className="text-3xl sm:text-4xl font-bold text-charcoal font-heading">
               Happy Hours Live
             </h1>
@@ -135,7 +136,7 @@ export default function HappyHourClient() {
                   : 'bg-white text-stone-500 border border-stone-200 hover:border-stone-300'
               }`}
             >
-              💰 Cheapest
+              <DollarSign className="w-4 h-4 inline" /> Cheapest
             </button>
             {hasLocation && (
               <button
@@ -146,7 +147,7 @@ export default function HappyHourClient() {
                     : 'bg-white text-stone-500 border border-stone-200 hover:border-stone-300'
                 }`}
               >
-                📍 Nearest
+                <MapPin className="w-4 h-4 inline" /> Nearest
               </button>
             )}
           </div>
@@ -163,7 +164,7 @@ export default function HappyHourClient() {
         {/* Empty State */}
         {!loading && pubs.length === 0 && (
           <div className="text-center py-6 sm:py-8">
-            <div className="text-5xl mb-4">🕐</div>
+            <Clock className="w-12 h-12 text-amber mb-4" />
             <h2 className="text-xl sm:text-2xl font-bold text-charcoal mb-3 font-heading">
               No happy hours running right now
             </h2>
@@ -257,7 +258,7 @@ export default function HappyHourClient() {
                           )}
                           {pub.beerType && (
                             <span className="inline-flex items-center gap-1">
-                              <span className="text-stone-400">🍺</span>
+                              <Beer className="w-3.5 h-3.5 text-stone-400" />
                               {pub.beerType}
                             </span>
                           )}

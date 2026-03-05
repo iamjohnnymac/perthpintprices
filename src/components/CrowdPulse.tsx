@@ -9,6 +9,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import E from '@/lib/emoji'
 import InfoTooltip from './InfoTooltip'
 import { getDistanceKm, formatDistance } from '@/lib/location'
+import LucideIcon from '@/components/LucideIcon'
 
 interface CrowdPulseProps {
   pubs: Pub[]
@@ -174,7 +175,7 @@ export default function CrowdPulse({ pubs, crowdReports, userLocation }: CrowdPu
                     return (
                       <Link key={pub.id} href={`/pub/${pub.slug}`} className="flex items-center justify-between p-2 rounded-xl bg-coral/5 border border-coral/20">
                         <div className="flex items-center gap-2 min-w-0">
-                          <span className="text-sm">{levelInfo.emoji}</span>
+                          <LucideIcon name={levelInfo.emoji} className="w-4 h-4" />
                           <div className="min-w-0">
                             <span className="text-xs font-semibold text-stone-800 truncate block">{pub.name}</span>
                             <p className="text-[10px] text-stone-400">{pub.suburb}{userLocation && ` · ${formatDistance(getDistanceKm(userLocation.lat, userLocation.lng, pub.lat, pub.lng))}`}</p>
@@ -204,7 +205,7 @@ export default function CrowdPulse({ pubs, crowdReports, userLocation }: CrowdPu
                     return (
                       <Link key={pub.id} href={`/pub/${pub.slug}`} className="flex items-center justify-between p-2 rounded-xl bg-orange/5 border border-orange/20">
                         <div className="flex items-center gap-2 min-w-0">
-                          <span className="text-sm">{levelInfo.emoji}</span>
+                          <LucideIcon name={levelInfo.emoji} className="w-4 h-4" />
                           <div className="min-w-0">
                             <span className="text-xs font-semibold text-stone-800 truncate block">{pub.name}</span>
                             <p className="text-[10px] text-stone-400">{pub.suburb}{userLocation && ` · ${formatDistance(getDistanceKm(userLocation.lat, userLocation.lng, pub.lat, pub.lng))}`} {E.bullet} {pub.price !== null ? `$${pub.price.toFixed(2)}` : 'TBC'}</p>

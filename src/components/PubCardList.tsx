@@ -8,6 +8,8 @@ import { getHappyHourStatus } from '@/lib/happyHour'
 import { getDistanceKm, formatDistance } from '@/lib/location'
 import { getFreshness, formatVerifiedDate } from '@/lib/freshness'
 import WatchlistButton from '@/components/WatchlistButton'
+import { Sunset } from 'lucide-react'
+import LucideIcon from '@/components/LucideIcon'
 
 interface PubCardListProps {
   pubs: Pub[]
@@ -58,10 +60,10 @@ function groupPubs(pubs: Pub[]): PubGroup[] {
     groups.push({ key: 'active', label: 'Happy hour now', emoji: '🟢', pubs: activeHH })
   }
   if (soonHH.length > 0) {
-    groups.push({ key: 'soon', label: 'Starting soon', emoji: '⏰', pubs: soonHH })
+    groups.push({ key: 'soon', label: 'Starting soon', emoji: 'clock', pubs: soonHH })
   }
   if (rest.length > 0) {
-    groups.push({ key: 'nearby', label: 'Nearby', emoji: '📍', pubs: rest })
+    groups.push({ key: 'nearby', label: 'Nearby', emoji: 'map-pin', pubs: rest })
   }
   return groups
 }
@@ -157,7 +159,7 @@ function PubCard({
 
         {/* Optional tags */}
         {pub.sunsetSpot && (
-          <span className="inline-flex items-center gap-1 text-[11px] text-stone-400 px-2 py-0.5 rounded-full bg-stone-50">🌅 Sunset</span>
+          <span className="inline-flex items-center gap-1 text-[11px] text-stone-400 px-2 py-0.5 rounded-full bg-stone-50"><Sunset className="w-3 h-3 inline" /> Sunset</span>
         )}
         {pub.vibeTag && (
           <span className="text-[11px] text-stone-400 px-2 py-0.5 rounded-full bg-stone-50">{pub.vibeTag}</span>
@@ -166,7 +168,7 @@ function PubCard({
         {/* Crowd report */}
         {crowdReport && (
           <span className="inline-flex items-center gap-1 text-[11px] text-stone-400 px-2 py-0.5 rounded-full bg-stone-50" title={`${crowdReport.minutes_ago}m ago`}>
-            {CROWD_LEVELS[crowdReport.crowd_level].emoji} {CROWD_LEVELS[crowdReport.crowd_level].label}
+            <LucideIcon name={CROWD_LEVELS[crowdReport.crowd_level].emoji} className="w-3 h-3 inline" /> {CROWD_LEVELS[crowdReport.crowd_level].label}
           </span>
         )}
         {!crowdReport && (
@@ -213,7 +215,7 @@ export default function PubCardList({
             {/* Section divider */}
             <div className="flex items-center gap-2 pt-3 pb-1">
               <span className="text-[11px] font-semibold uppercase tracking-wider text-stone-400">
-                {group.emoji} {group.label}
+                <LucideIcon name={group.emoji} className="w-4 h-4 inline" /> {group.label}
               </span>
               <div className="flex-1 h-px bg-stone-200/60" />
             </div>

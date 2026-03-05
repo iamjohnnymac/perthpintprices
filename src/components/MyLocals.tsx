@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { Pub } from '@/types/pub'
 import { useWatchlist } from '@/hooks/useWatchlist'
 import { getDistanceKm } from '@/lib/location'
+import { Star } from 'lucide-react'
 
 interface MyLocalsProps {
   pubs: Pub[]
@@ -42,7 +43,7 @@ export default function MyLocals({ pubs, userLocation }: MyLocalsProps) {
     <div className="bg-gradient-to-r from-orange/5 to-orange/10 rounded-2xl border border-orange/20 p-5 sm:p-6">
       <div className="flex items-center justify-between mb-3">
         <h2 className="text-base sm:text-lg font-heading font-semibold text-charcoal flex items-center gap-2">
-          <span className="text-lg">⭐</span>
+          <Star className="w-5 h-5 text-amber" />
           My Locals
           <span className="text-xs font-normal text-stone-400 bg-stone-100 px-2 py-0.5 rounded-full">
             {count}/5

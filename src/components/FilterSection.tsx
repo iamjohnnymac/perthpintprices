@@ -1,6 +1,6 @@
 "use client"
 
-import { Search, SlidersHorizontal, ChevronDown, X, MapPin, LayoutGrid, List, Clock, Map as MapIcon } from "lucide-react"
+import { Search, SlidersHorizontal, ChevronDown, X, MapPin, LayoutGrid, List, Clock, Map as MapIcon , Baby } from "lucide-react"
 import { useState, useRef, useEffect } from "react"
 import { cn } from "@/lib/utils"
 
@@ -267,7 +267,7 @@ export function FilterSection({
                       : "bg-cream text-stone-warm border-stone-200/60 hover:bg-cream-dark"
                   )}
                 >
-                  <span className="flex items-center gap-2">👶 Kid Friendly</span>
+                  <span className="flex items-center gap-2"><Baby className="w-4 h-4 inline" /> Kid Friendly</span>
                 </button>
 
                 {/* P2a: TAB Available toggle */}

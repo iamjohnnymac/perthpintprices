@@ -100,7 +100,7 @@ export function getHappyHourStatus(happyHourStr: string | null | undefined): Hap
       isActive: false,
       isToday: false,
       statusText: happyHourStr,
-      statusEmoji: '🕐',
+      statusEmoji: 'clock',
       countdown: null
     };
   }
@@ -127,7 +127,7 @@ export function getHappyHourStatus(happyHourStr: string | null | undefined): Hap
       isActive: true,
       isToday: true,
       statusText: 'Happy Hour NOW!',
-      statusEmoji: '●',
+      statusEmoji: 'circle-dot',
       countdown
     };
   }
@@ -143,7 +143,7 @@ export function getHappyHourStatus(happyHourStr: string | null | undefined): Hap
       isActive: false,
       isToday: true,
       statusText: `Happy Hour ${countdown}`,
-      statusEmoji: '⏰',
+      statusEmoji: 'clock',
       countdown
     };
   }
@@ -162,7 +162,7 @@ export function getHappyHourStatus(happyHourStr: string | null | undefined): Hap
         isActive: false,
         isToday: false,
         statusText: `Tomorrow ${formatHour(parsed.startHour)}`,
-        statusEmoji: '📅',
+        statusEmoji: 'clock',
         countdown: null
       };
     }
@@ -170,7 +170,7 @@ export function getHappyHourStatus(happyHourStr: string | null | undefined): Hap
       isActive: false,
       isToday: false,
       statusText: `${DAY_NAMES[nextOccurrence]} ${formatHour(parsed.startHour)}`,
-      statusEmoji: '📅',
+      statusEmoji: 'clock',
       countdown: null
     };
   }
@@ -180,7 +180,7 @@ export function getHappyHourStatus(happyHourStr: string | null | undefined): Hap
       isActive: false,
       isToday: false,
       statusText: `Tomorrow ${formatHour(parsed.startHour)}`,
-      statusEmoji: '📅',
+      statusEmoji: 'clock',
       countdown: null
     };
   }
@@ -189,7 +189,7 @@ export function getHappyHourStatus(happyHourStr: string | null | undefined): Hap
     isActive: false,
     isToday: false,
     statusText: `${DAY_NAMES[nextDay]} ${formatHour(parsed.startHour)}`,
-    statusEmoji: '📅',
+    statusEmoji: 'clock',
     countdown: null
   };
 }

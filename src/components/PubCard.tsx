@@ -5,6 +5,7 @@ import { getPriceLabel, getPriceLabelColors } from '@/lib/priceLabel'
 import WatchlistButton from '@/components/WatchlistButton'
 import { formatHappyHourDays } from '@/lib/happyHourLive'
 import { getFreshness } from '@/lib/freshness'
+import { Zap, Clock } from 'lucide-react'
 
 interface PubCardProps {
   pub: Pub
@@ -61,7 +62,7 @@ export default function PubCard({ pub, avgPrice = 9.20, distance }: PubCardProps
           {/* HH NOW badge */}
           {pub.isHappyHourNow && (
             <div className="absolute top-3 left-3 bg-amber text-white text-xs font-bold px-2.5 py-1 rounded-full shadow-sm">
-              ⚡ HAPPY HOUR
+              <Zap className="w-3.5 h-3.5 inline" /> HAPPY HOUR
             </div>
           )}
         </div>
@@ -84,7 +85,7 @@ export default function PubCard({ pub, avgPrice = 9.20, distance }: PubCardProps
               <span className="text-stone-warm text-xs">{pub.beerType}</span>
             )}
             {!pub.isHappyHourNow && hhTiming && (
-              <span className="text-stone-400 text-xs">⏰ {hhTiming}</span>
+              <span className="text-stone-400 text-xs"><Clock className="w-3 h-3 inline" /> {hhTiming}</span>
             )}
           </div>
 

@@ -1,6 +1,7 @@
 'use client'
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import { Beer, CircleCheck, Copy, Lightbulb, Medal } from 'lucide-react'
 
 interface PintOfTheDayData {
   date: string
@@ -91,7 +92,7 @@ export default function PintOfTheDay() {
       {/* Header strip */}
       <div className="px-4 sm:px-5 pt-3 sm:pt-4 pb-2 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <span className="text-lg">🍺</span>
+          <Beer className="w-5 h-5 text-amber" />
           <div>
             <h3 className="text-xs font-bold text-orange-dark">Pint of the Day</h3>
             <p className="text-[10px] text-stone-400">{new Date(data.date + 'T00:00:00+08:00').toLocaleDateString('en-AU', { weekday: 'long', day: 'numeric', month: 'short' })}</p>
@@ -101,7 +102,7 @@ export default function PintOfTheDay() {
           onClick={handleShare}
           className="flex items-center gap-1 px-2.5 py-1 text-[11px] font-medium text-stone-500 hover:text-orange-dark hover:bg-orange/10 rounded-full transition-all"
         >
-          {shared ? '✅ Copied!' : '📋 Share'}
+          {shared ? <><CircleCheck className="w-3.5 h-3.5 inline" /> Copied!</> : <><Copy className="w-3.5 h-3.5 inline" /> Share</>}
         </button>
       </div>
 
@@ -114,7 +115,7 @@ export default function PintOfTheDay() {
             {data.pub.beerType && (
               <p className="text-xs text-stone-400 mt-0.5">{data.pub.beerType}</p>
             )}
-            <p className="text-xs text-orange-dark/80 font-medium mt-1.5">💡 {data.reason}</p>
+            <p className="text-xs text-orange-dark/80 font-medium mt-1.5"><Lightbulb className="w-3 h-3 inline" /> {data.reason}</p>
           </div>
           <div className="text-right flex-shrink-0">
             <div className={`text-2xl font-bold font-mono ${data.pub.isHappyHourNow ? 'text-charcoal' : 'text-orange'}`}>
@@ -125,7 +126,7 @@ export default function PintOfTheDay() {
             )}
             {data.pub.isHappyHourNow && (
               <span className="inline-block text-[10px] bg-orange-100 text-charcoal px-1.5 py-0.5 rounded-full font-semibold mt-0.5">
-                🍻 HH NOW
+                <Beer className="w-3 h-3 inline" /> HH NOW
               </span>
             )}
           </div>
@@ -134,7 +135,7 @@ export default function PintOfTheDay() {
         {/* Runner up */}
         {data.runnerUp && (
           <div className="mt-3 pt-3 border-t border-stone-100 flex items-center justify-between">
-            <span className="text-[11px] text-stone-400">🥈 Runner up</span>
+            <span className="text-[11px] text-stone-400"><Medal className="w-3 h-3 inline" /> Runner up</span>
             <span className="text-[11px] text-stone-500">
               {data.runnerUp.name} · {data.runnerUp.suburb} · <span className="font-semibold">${data.runnerUp.price.toFixed(2)}</span>
             </span>

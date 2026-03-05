@@ -4,11 +4,11 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import dynamic from 'next/dynamic'
 import { Pub } from '@/types/pub'
-import E from '@/lib/emoji'
 import WatchlistButton from '@/components/WatchlistButton'
 import PriceHistory from '@/components/PriceHistory'
 import PriceReporter from '@/components/PriceReporter'
 import { formatHappyHourDays } from '@/lib/happyHourLive'
+import { Beer, Zap, Sunset, Users, Trophy } from 'lucide-react'
 
 const PubDetailMap = dynamic(() => import('@/components/PubDetailMap'), {
   ssr: false,
@@ -163,7 +163,7 @@ export default function PubDetailClient({ pub, nearbyPubs, avgPrice }: PubDetail
                     </span>
                   )}
                   {pub.beerType && (
-                    <p className="text-xs text-stone-warm">🍺 {pub.beerType}</p>
+                    <p className="text-xs text-stone-warm"><Beer className="w-3 h-3 inline" /> {pub.beerType}</p>
                   )}
                 </div>
               </div>
@@ -171,7 +171,7 @@ export default function PubDetailClient({ pub, nearbyPubs, avgPrice }: PubDetail
               <div className="flex flex-wrap gap-2 mt-4 pt-4 border-t border-stone-100">
                 {pub.isHappyHourNow && (
                   <span className="inline-flex items-center gap-1.5 text-xs font-bold text-amber bg-amber/10 px-2.5 py-1 rounded-full">
-                    ⚡ HAPPY HOUR{pub.happyHourMinutesRemaining ? ` · ${pub.happyHourMinutesRemaining}m left` : ''}
+                    <Zap className="w-3.5 h-3.5 inline" /> HAPPY HOUR{pub.happyHourMinutesRemaining ? ` · ${pub.happyHourMinutesRemaining}m left` : ''}
                   </span>
                 )}
                 {pub.priceVerified && pub.price !== null && (
@@ -218,7 +218,7 @@ export default function PubDetailClient({ pub, nearbyPubs, avgPrice }: PubDetail
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   {pub.sunsetSpot && (
                     <div className="flex items-center gap-3 p-3 rounded-xl bg-gradient-to-r from-orange-50 to-amber-50 border border-orange-200/50">
-                      <span className="text-xl">🌅</span>
+                      <Sunset className="w-5 h-5 text-amber" />
                       <div>
                         <p className="text-sm font-semibold text-charcoal">Sunset Sippers</p>
                         <p className="text-xs text-stone-warm">Great spot for golden hour</p>
@@ -227,7 +227,7 @@ export default function PubDetailClient({ pub, nearbyPubs, avgPrice }: PubDetail
                   )}
                   {pub.kidFriendly && (
                     <div className="flex items-center gap-3 p-3 rounded-xl bg-gradient-to-r from-orange-50 to-amber-50 border border-orange-200/50">
-                      <span className="text-xl">👨‍👧</span>
+                      <Users className="w-5 h-5 text-stone-warm" />
                       <div>
                         <p className="text-sm font-semibold text-charcoal">Dad Bar</p>
                         <p className="text-xs text-stone-warm">Kid-friendly venue</p>
@@ -236,7 +236,7 @@ export default function PubDetailClient({ pub, nearbyPubs, avgPrice }: PubDetail
                   )}
                   {pub.hasTab && (
                     <div className="flex items-center gap-3 p-3 rounded-xl border border-stone-200/50" style={{ background: 'linear-gradient(to right, #f3eef8, #f8f4fb)' }}>
-                      <span className="text-xl">🏇</span>
+                      <Trophy className="w-5 h-5 text-stone-warm" />
                       <div>
                         <p className="text-sm font-semibold text-charcoal">Punt & Pints</p>
                         <p className="text-xs text-stone-warm">TAB venue</p>
@@ -309,7 +309,7 @@ export default function PubDetailClient({ pub, nearbyPubs, avgPrice }: PubDetail
                       <p className="font-semibold text-charcoal text-sm group-hover:text-amber transition-colors truncate">{nearby.name}</p>
                       <p className="text-xs text-stone-warm truncate">{nearby.beerType || 'House Pint'}</p>
                       {nearby.isHappyHourNow && (
-                        <p className="text-xs text-amber font-semibold mt-0.5">⚡ Happy Hour Live</p>
+                        <p className="text-xs text-amber font-semibold mt-0.5"><Zap className="w-3 h-3 inline" /> Happy Hour Live</p>
                       )}
                     </div>
                     <div className="flex items-center gap-3 ml-3">

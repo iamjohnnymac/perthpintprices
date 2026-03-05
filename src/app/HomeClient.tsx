@@ -25,6 +25,7 @@ import MyLocals from '@/components/MyLocals'
 import SubmitPubForm from '@/components/SubmitPubForm'
 import CrowdReporter from '@/components/CrowdReporter'
 import NotificationBell from '@/components/NotificationBell'
+import { Beer, Search as SearchIcon } from 'lucide-react'
 
 // Map is now loaded via MapPeek component
 
@@ -363,7 +364,7 @@ function HomeContent() {
 
         {filteredPubs.length === 0 && (
           <div className="text-center py-16 bg-white rounded-xl shadow-sm">
-            <div className="text-5xl mb-4">{showHappyHourOnly ? '🍻' : '🔍'}</div>
+            <div className="text-5xl mb-4">{showHappyHourOnly ? <Beer className="w-12 h-12 text-amber" /> : <SearchIcon className="w-12 h-12 text-stone-400" />}</div>
             <h3 className="font-serif text-xl text-charcoal mb-2">{showHappyHourOnly ? 'No pubs with happy hour info yet' : 'No pubs found'}</h3>
             <p className="text-stone-500 text-sm">{showHappyHourOnly ? 'We’re building our happy hour database — submit yours!' : 'Try adjusting your filters'}</p>
           </div>

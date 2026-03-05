@@ -4,7 +4,8 @@ import { useState, useMemo, useCallback } from 'react'
 import Link from 'next/link'
 import SubPageNav from '@/components/SubPageNav'
 import { Pub } from '@/types/pub'
-import { Search, X, Plus, Minus, ChevronDown, ChevronUp, Copy, Check, ArrowRight, RotateCcw, Home } from 'lucide-react'
+import { Search, X, Plus, Minus, ChevronDown, ChevronUp, Copy, Check, ArrowRight, RotateCcw, Home , Target, Flag, Trophy, BarChart3, Users, MapPin } from 'lucide-react'
+import LucideIcon from '@/components/LucideIcon'
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -132,14 +133,14 @@ export default function PubGolfClient({ pubs }: { pubs: Pub[] }) {
     const options: CourseOption[] = []
     suburbGroups.forEach(([suburb, list]: [string, Pub[]]) => {
       let label = `${suburb} Tour`
-      let emoji = '🍻'
+      let emoji = 'beer'
       if (suburb === 'Northbridge') { label = 'Northbridge Nine'; emoji = '🌃' }
       else if (suburb === 'Fremantle') { label = 'Freo Front Nine'; emoji = '⚓' }
       else if (suburb === 'Perth') { label = 'CBD Classic'; emoji = '🏙️' }
       options.push({ type: 'suburb', label, emoji, suburb, pubCount: list.length })
     })
-    options.push({ type: 'lucky-dip', label: 'Lucky Dip', emoji: '🎲' })
-    options.push({ type: 'custom', label: 'Custom Course', emoji: '🎯' })
+    options.push({ type: 'lucky-dip', label: 'Lucky Dip', emoji: 'dices' })
+    options.push({ type: 'custom', label: 'Custom Course', emoji: 'target' })
     return options
   }, [suburbGroups])
 
@@ -377,7 +378,7 @@ export default function PubGolfClient({ pubs }: { pubs: Pub[] }) {
 
           {/* Players Section */}
           <section className="bg-white rounded-2xl border border-stone-200/60 p-4 sm:p-5">
-            <h2 className="text-lg font-bold font-heading text-charcoal mb-3">👥 Players</h2>
+            <h2 className="text-lg font-bold font-heading text-charcoal mb-3"><Users className="w-4 h-4 inline" /> Players</h2>
             <div className="flex gap-2 mb-3">
               <input
                 type="text"
@@ -442,7 +443,7 @@ export default function PubGolfClient({ pubs }: { pubs: Pub[] }) {
 
           {/* Course Selection */}
           <section className="bg-white rounded-2xl border border-stone-200/60 p-4 sm:p-5">
-            <h2 className="text-lg font-bold font-heading text-charcoal mb-3">📍 Choose Your Course</h2>
+            <h2 className="text-lg font-bold font-heading text-charcoal mb-3"><MapPin className="w-4 h-4 inline" /> Choose Your Course</h2>
             <div className="space-y-2">
               {courseOptions.map((option: CourseOption) => {
                 const isSelected = selectedCourse?.label === option.label && selectedCourse?.type === option.type
@@ -461,7 +462,7 @@ export default function PubGolfClient({ pubs }: { pubs: Pub[] }) {
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2 min-w-0">
-                        <span className="text-lg flex-shrink-0">{option.emoji}</span>
+                        <span className="flex-shrink-0"><LucideIcon name={option.emoji} className="w-5 h-5" /></span>
                         <span className="font-semibold text-charcoal text-sm truncate">{option.label}</span>
                       </div>
                       {option.pubCount && (
@@ -484,7 +485,7 @@ export default function PubGolfClient({ pubs }: { pubs: Pub[] }) {
           {selectedCourse?.type === 'custom' && (
             <section className="bg-white rounded-2xl border border-stone-200/60 p-4 sm:p-5">
               <h2 className="text-lg font-bold font-heading text-charcoal mb-3">
-                🎯 Pick Your Pubs ({customPubs.length}/{holeCount})
+                <Target className="w-4 h-4 inline" /> Pick Your Pubs ({customPubs.length}/{holeCount})
               </h2>
 
               {/* Selected pubs */}
@@ -549,7 +550,7 @@ export default function PubGolfClient({ pubs }: { pubs: Pub[] }) {
             disabled={!canStart}
             className="w-full py-4 bg-charcoal text-white text-lg font-bold font-heading rounded-2xl hover:bg-charcoal/90 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 shadow-md"
           >
-            🏌️ Tee Off!
+            <Flag className="w-4 h-4 inline" /> Tee Off!
           </button>
         </main>
       </div>
@@ -667,7 +668,7 @@ export default function PubGolfClient({ pubs }: { pubs: Pub[] }) {
               onClick={() => setShowScorecard((prev: boolean) => !prev)}
               className="w-full flex items-center justify-between px-4 py-3 hover:bg-stone-50 transition-colors"
             >
-              <span className="text-sm font-bold text-charcoal font-heading">📋 Running Scorecard</span>
+              <span className="text-sm font-bold text-charcoal font-heading"><Copy className="w-3.5 h-3.5 inline" /> Running Scorecard</span>
               {showScorecard ? <ChevronUp className="w-4 h-4 text-stone-400" /> : <ChevronDown className="w-4 h-4 text-stone-400" />}
             </button>
             {showScorecard && (
@@ -742,7 +743,7 @@ export default function PubGolfClient({ pubs }: { pubs: Pub[] }) {
 
           {/* Winner Announcement */}
           <section className="bg-white rounded-2xl border border-stone-200/60 p-5 sm:p-6 text-center">
-            <p className="text-4xl mb-2">🏆</p>
+            <Trophy className="w-10 h-10 text-amber mb-2" />
             <h2 className="text-2xl sm:text-3xl font-black font-heading text-charcoal mb-1">Round Complete!</h2>
             {winner && players.length > 1 && (
               <p className="text-lg font-bold text-orange-600">
@@ -758,7 +759,7 @@ export default function PubGolfClient({ pubs }: { pubs: Pub[] }) {
 
           {/* Full Scorecard */}
           <section className="bg-white rounded-2xl border border-stone-200/60 p-4 sm:p-5 overflow-x-auto">
-            <h3 className="text-sm font-bold text-charcoal mb-3 font-heading">📋 FULL SCORECARD</h3>
+            <h3 className="text-sm font-bold text-charcoal mb-3 font-heading"><Copy className="w-3.5 h-3.5 inline" /> FULL SCORECARD</h3>
             <table className="w-full text-xs">
               <thead>
                 <tr className="border-b border-stone-200">
@@ -816,7 +817,7 @@ export default function PubGolfClient({ pubs }: { pubs: Pub[] }) {
 
           {/* Stats */}
           <section className="bg-white rounded-2xl border border-stone-200/60 p-4 sm:p-5">
-            <h3 className="text-sm font-bold text-charcoal mb-3 font-heading">📊 ROUND STATS</h3>
+            <h3 className="text-sm font-bold text-charcoal mb-3 font-heading"><BarChart3 className="w-4 h-4 inline" /> ROUND STATS</h3>
             <div className="grid grid-cols-2 gap-3">
               <div className="bg-stone-50 rounded-xl p-3 text-center">
                 <p className="text-2xl font-black text-orange-600 font-heading">${totalSpend.toFixed(0)}</p>
