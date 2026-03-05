@@ -47,7 +47,7 @@ export default function PubCard({ pub, avgPrice = 9.20, distance }: PubCardProps
           {/* Faded location map */}
           {pub.lat && pub.lng && (
             <div
-              className="absolute inset-0 opacity-30"
+              className="absolute inset-0 opacity-50"
               style={{
                 backgroundImage: `url(${getMapTileUrl(pub.lat, pub.lng, 15)})`,
                 backgroundSize: 'cover',

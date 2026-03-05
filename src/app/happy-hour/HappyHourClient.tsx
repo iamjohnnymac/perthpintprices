@@ -219,7 +219,7 @@ export default function HappyHourClient() {
                   {/* Faded location map on right side */}
                   {pub.lat && pub.lng && (
                     <div
-                      className="absolute right-0 top-0 bottom-0 w-1/2 opacity-30 pointer-events-none"
+                      className="absolute right-0 top-0 bottom-0 w-1/2 opacity-50 pointer-events-none"
                       style={{
                         backgroundImage: `url(${getMapTileUrl(pub.lat, pub.lng, 15)})`,
                         backgroundSize: 'cover',
@@ -231,7 +231,7 @@ export default function HappyHourClient() {
                       aria-hidden="true"
                     />
                   )}
-                  <div className="relative p-4">
+                  <div className="relative z-10 p-4">
                     <div className="flex items-start justify-between gap-4">
                       {/* Left: Pub info */}
                       <div className="flex-1 min-w-0">
@@ -293,8 +293,8 @@ export default function HappyHourClient() {
                         )}
                       </div>
 
-                      {/* Right: Pricing */}
-                      <div className="shrink-0 text-right">
+                      {/* Right: Pricing — frosted backdrop so price floats above map */}
+                      <div className="shrink-0 text-right bg-white/85 backdrop-blur-sm rounded-xl px-3 py-2 shadow-sm">
                         {pub.happyHourPrice != null ? (
                           <>
                             <div className="text-3xl sm:text-4xl font-bold font-mono text-charcoal">

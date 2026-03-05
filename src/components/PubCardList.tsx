@@ -104,7 +104,7 @@ function PubCard({
       {/* Faded location map on right side */}
       {pub.lat && pub.lng && (
         <div
-          className="absolute right-0 top-0 bottom-0 w-1/2 opacity-30 pointer-events-none"
+          className="absolute right-0 top-0 bottom-0 w-1/2 opacity-50 pointer-events-none"
           style={{
             backgroundImage: `url(${getMapTileUrl(pub.lat, pub.lng, 15)})`,
             backgroundSize: 'cover',
@@ -117,20 +117,20 @@ function PubCard({
         />
       )}
       {/* Row 1: Name + Price */}
-      <div className="flex items-center justify-between gap-2.5">
+      <div className="relative z-10 flex items-center justify-between gap-2.5">
         <div className="flex items-center gap-2 min-w-0 flex-1">
           <span className="font-semibold text-[15px] text-charcoal truncate leading-tight">
             {pub.name}
           </span>
           <WatchlistButton slug={pub.slug} name={pub.name} suburb={pub.suburb} size="sm" />
         </div>
-        <span className={`font-mono text-[15px] font-medium whitespace-nowrap px-2 py-0.5 rounded-md ${priceClasses}`}>
+        <span className={`font-mono text-[15px] font-medium whitespace-nowrap px-2.5 py-1 rounded-lg bg-white/90 backdrop-blur-sm shadow-sm ${priceClasses}`}>
           {pub.price !== null ? `$${pub.price.toFixed(2)}` : 'TBC'}
         </span>
       </div>
 
       {/* Row 2: Meta */}
-      <div className="flex items-center gap-1.5 mt-1 text-xs text-stone-400 flex-wrap">
+      <div className="relative z-10 flex items-center gap-1.5 mt-1 text-xs text-stone-400 flex-wrap">
         <span>{pub.suburb}</span>
         {distance && (
           <>
@@ -152,7 +152,7 @@ function PubCard({
       </div>
 
       {/* Row 3: Tags — all in a single flow, left-aligned */}
-      <div className="flex items-center gap-2 mt-2 flex-wrap">
+      <div className="relative z-10 flex items-center gap-2 mt-2 flex-wrap">
         {/* Happy hour badge */}
         {hhStatus.isActive && (
           <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-orange-50 text-charcoal text-xs font-medium">
