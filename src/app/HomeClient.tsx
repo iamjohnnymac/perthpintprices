@@ -15,7 +15,7 @@ import { FilterSection } from '@/components/FilterSection'
 import PubListView from '@/components/PubListView'
 import PubCardsView from '@/components/PubCardsView'
 import PubCardList from '@/components/PubCardList'
-import MapPeek from '@/components/MapPeek'
+import MapPeekInline from '@/components/MapPeekInline'
 import PriceTicker from '@/components/PriceTicker'
 import HowItWorks from '@/components/HowItWorks'
 import SocialProof from '@/components/SocialProof'
@@ -313,25 +313,27 @@ function HomeContent() {
       <div ref={contentRef} className="max-w-5xl mx-auto px-4 sm:px-6 pt-6 sm:pt-8 pb-6 sm:pb-8">
         <MyLocals pubs={pubs} userLocation={userLocation} />
 
-        {/* Map peek — hidden by default, toggle to show */}
-        <MapPeek
-          pubs={filteredPubs}
-          userLocation={userLocation}
-          totalPubCount={pubs.length}
-          happyHourCount={stats.happyHourNow}
-        />
 
-        <div className="flex items-center justify-between mb-3">
-          <p className="text-stone-500 text-sm">
-            Displaying <span className="font-semibold text-charcoal">{showAllPubs ? filteredPubs.length : Math.min(INITIAL_PUB_COUNT, filteredPubs.length)}</span> of {filteredPubs.length} venues
-          </p>
+        {/* Combined toolbar: Map toggle + venue count in ONE row */}
+        <div className="flex flex-wrap items-center justify-between gap-y-0 mb-3">
+          <div className="flex items-center gap-3">
+            <MapPeekInline
+              pubs={filteredPubs}
+              userLocation={userLocation}
+              totalPubCount={pubs.length}
+              happyHourCount={stats.happyHourNow}
+            />
+            <p className="text-stone-500 text-xs sm:text-sm">
+              <span className="font-semibold text-charcoal">{showAllPubs ? filteredPubs.length : Math.min(INITIAL_PUB_COUNT, filteredPubs.length)}</span> of {filteredPubs.length} venues
+            </p>
+          </div>
           {filteredPubs.length > INITIAL_PUB_COUNT && (
             <button
               onClick={() => setShowAllPubs(!showAllPubs)}
-              className="text-sm font-semibold text-charcoal hover:text-amber transition-colors flex items-center gap-1 focus-visible:ring-2 focus-visible:ring-amber/50 focus-visible:ring-offset-1 rounded-lg"
+              className="text-xs sm:text-sm font-semibold text-charcoal hover:text-amber transition-colors flex items-center gap-1 focus-visible:ring-2 focus-visible:ring-amber/50 focus-visible:ring-offset-1 rounded-lg"
             >
-              {showAllPubs ? 'Show Less' : `View All`}
-              <svg className={`w-4 h-4 transition-transform ${showAllPubs ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" /></svg>
+              {showAllPubs ? 'Less' : `All`}
+              <svg className={`w-3.5 h-3.5 transition-transform ${showAllPubs ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" /></svg>
             </button>
           )}
         </div>

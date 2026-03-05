@@ -139,23 +139,6 @@ export function FilterSection({
           )}
         </div>
 
-        {/* Nearby toggle pill */}
-        {hasLocation && (
-          <button
-            onClick={() => setSortBy(sortBy === 'nearest' ? 'price' : 'nearest')}
-            aria-pressed={isNearestActive}
-            className={cn(
-              "flex items-center gap-1.5 px-3 py-2.5 rounded-full text-sm font-medium transition-all whitespace-nowrap border focus-visible:ring-2 focus-visible:ring-amber/50 focus-visible:ring-offset-1",
-              isNearestActive
-                ? "bg-amber/10 text-amber border-amber/40 border-2"
-                : "bg-cream text-stone-warm border-stone-200/60 hover:border-stone-300"
-            )}
-          >
-            <MapPin className="h-3 w-3" />
-            Nearby{isNearestActive ? ': on' : ''}
-          </button>
-        )}
-
         {/* Filter button */}
         <div className="relative flex-shrink-0" ref={dropdownRef}>
           <button
@@ -243,6 +226,22 @@ export function FilterSection({
               {/* Toggles */}
               <div className="mb-5 space-y-2">
                 <label className="block text-xs font-medium text-stone-500 mb-2">Toggles</label>
+                {/* Nearby sort (moved from toolbar) */}
+                {hasLocation && (
+                  <button
+                    onClick={() => setSortBy(sortBy === 'nearest' ? 'price' : 'nearest')}
+                    aria-pressed={isNearestActive}
+                    className={cn(
+                      "w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-sm transition-all border focus-visible:ring-2 focus-visible:ring-amber/50 focus-visible:ring-offset-1",
+                      isNearestActive
+                        ? "bg-amber/10 text-amber border-amber/30 font-medium"
+                        : "bg-cream text-stone-warm border-stone-200/60 hover:bg-cream-dark"
+                    )}
+                  >
+                    <span className="flex items-center gap-2"><MapPin className="h-3.5 w-3.5" /> Sort by Nearest</span>
+                    {isNearestActive && <span className="text-xs font-bold text-amber">ON</span>}
+                  </button>
+                )}
                 <button
                   onClick={() => setShowHappyHourOnly(!showHappyHourOnly)}
                   aria-pressed={showHappyHourOnly}

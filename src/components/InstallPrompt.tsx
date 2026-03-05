@@ -65,7 +65,7 @@ export default function InstallPrompt() {
   if (!show || !platform) return null
 
   return (
-    <div className="fixed bottom-0 inset-x-0 z-50 animate-slide-up px-3 pb-14 pointer-events-none">
+    <div className="fixed bottom-0 inset-x-0 z-40 animate-slide-up px-3 pb-[52px] pointer-events-none">
       <div className="pointer-events-auto rounded-xl bg-white/95 backdrop-blur-md shadow-lg border border-orange/15 overflow-hidden">
         {/* Slim accent bar */}
         <div className="h-0.5 bg-gradient-to-r from-orange via-amber to-orange" />
