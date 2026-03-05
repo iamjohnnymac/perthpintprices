@@ -64,15 +64,15 @@ export default function RootLayout({
     <html lang="en">
       <head>
         {/* Google Analytics */}
-                  <Script src="https://www.googletagmanager.com/gtag/js?id=G-1WN68Q85SY" strategy="afterInteractive" />
-                  <Script id="google-analytics" strategy="afterInteractive">
-                    {`
-                                  window.dataLayer = window.dataLayer || [];
-                                                function gtag(){dataLayer.push(arguments);}
-                                                              gtag('js', new Date());
-                                                                            gtag('config', 'G-1WN68Q85SY');
-                                                                                        `}
-                  </Script>Script></Script>
+        <Script src="https://www.googletagmanager.com/gtag/js?id=G-1WN68Q85SY" strategy="afterInteractive" />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-1WN68Q85SY');
+          `}
+        </Script>
         <link rel="manifest" href="/manifest.json" />
         <meta name="theme-color" content="#E8820C" />
       </head>
