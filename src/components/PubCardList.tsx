@@ -104,7 +104,7 @@ function PubCard({
       {/* Faded location map on right side */}
       {pub.lat && pub.lng && (
         <div
-          className="absolute right-0 top-0 bottom-0 w-[100px] sm:w-[140px] opacity-[0.07] pointer-events-none"
+          className="absolute right-0 top-0 bottom-0 w-[140px] sm:w-[200px] opacity-[0.18] pointer-events-none"
           style={{
             backgroundImage: `url(${getMapTileUrl(pub.lat, pub.lng, 15)})`,
             backgroundSize: 'cover',

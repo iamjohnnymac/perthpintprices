@@ -219,7 +219,7 @@ export default function HappyHourClient() {
                   {/* Faded location map on right side */}
                   {pub.lat && pub.lng && (
                     <div
-                      className="absolute right-0 top-0 bottom-0 w-[120px] sm:w-[180px] opacity-[0.08] pointer-events-none"
+                      className="absolute right-0 top-0 bottom-0 w-[160px] sm:w-[220px] opacity-[0.18] pointer-events-none"
                       style={{
                         backgroundImage: `url(${getMapTileUrl(pub.lat, pub.lng, 15)})`,
                         backgroundSize: 'cover',
