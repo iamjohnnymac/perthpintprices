@@ -10,6 +10,6 @@ export function getMapTileUrl(lat: number, lng: number, zoom: number = 15): stri
   const y = Math.floor(
     ((1 - Math.log(Math.tan(latRad) + 1 / Math.cos(latRad)) / Math.PI) / 2) * n
   )
-  // CartoDB Voyager (light, clean style) at 2x for retina sharpness
-  return `https://basemaps.cartocdn.com/rastertiles/voyager/${zoom}/${x}/${y}@2x.png`
+  // CartoDB Voyager No Labels — street grid without text for clean card backgrounds
+  return `https://basemaps.cartocdn.com/rastertiles/voyager_nolabels/${zoom}/${x}/${y}@2x.png`
 }
