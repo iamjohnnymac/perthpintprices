@@ -6,7 +6,8 @@ import SubPageNav from '@/components/SubPageNav'
 import { getPubs } from '@/lib/supabase'
 import { Pub } from '@/types/pub'
 import { getDistanceKm, formatDistance } from '@/lib/location'
-import { Beer, DollarSign, MapPin, Clock } from 'lucide-react'
+import { Beer, DollarSign, MapPin, Clock, Timer } from 'lucide-react'
+import { getMapTileUrl } from '@/lib/mapTile'
 
 type SortMode = 'price' | 'nearest'
 
@@ -213,9 +214,24 @@ export default function HappyHourClient() {
                 <Link
                   key={pub.id}
                   href={`/pub/${pub.slug}`}
-                  className="block bg-white rounded-2xl shadow-[0_2px_16px_rgba(0,0,0,0.08)] border border-stone-200/60 hover:border-orange/50 hover:shadow-[0_4px_24px_rgba(0,0,0,0.12)] transition-all group overflow-hidden"
+                  className="block relative bg-white rounded-2xl shadow-[0_2px_16px_rgba(0,0,0,0.08)] border border-stone-200/60 hover:border-orange/50 hover:shadow-[0_4px_24px_rgba(0,0,0,0.12)] transition-all group overflow-hidden"
                 >
-                  <div className="p-4">
+                  {/* Faded location map on right side */}
+                  {pub.lat && pub.lng && (
+                    <div
+                      className="absolute right-0 top-0 bottom-0 w-[120px] sm:w-[180px] opacity-[0.08] pointer-events-none"
+                      style={{
+                        backgroundImage: `url(${getMapTileUrl(pub.lat, pub.lng, 15)})`,
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center',
+                        filter: 'sepia(0.3) saturate(0.7)',
+                        maskImage: 'linear-gradient(to right, transparent 0%, black 50%)',
+                        WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 50%)',
+                      }}
+                      aria-hidden="true"
+                    />
+                  )}
+                  <div className="relative p-4">
                     <div className="flex items-start justify-between gap-4">
                       {/* Left: Pub info */}
                       <div className="flex-1 min-w-0">
@@ -268,7 +284,7 @@ export default function HappyHourClient() {
                         {pub.happyHourMinutesRemaining != null && (
                           <div className="mt-3">
                             <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-50 text-charcoal text-xs font-medium border border-orange-200/60">
-                              <span>⏱</span>
+                              <Timer className="w-3.5 h-3.5" />
                               {formatMinutesRemaining(
                                 pub.happyHourMinutesRemaining
                               )}

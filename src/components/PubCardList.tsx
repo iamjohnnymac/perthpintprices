@@ -10,6 +10,7 @@ import { getFreshness, formatVerifiedDate } from '@/lib/freshness'
 import WatchlistButton from '@/components/WatchlistButton'
 import { Sunset } from 'lucide-react'
 import LucideIcon from '@/components/LucideIcon'
+import { getMapTileUrl } from '@/lib/mapTile'
 
 interface PubCardListProps {
   pubs: Pub[]
@@ -93,13 +94,28 @@ function PubCard({
 
   return (
     <div
-      className={`bg-white rounded-[10px] px-3.5 py-3 cursor-pointer transition-all duration-150 border hover:shadow-md hover:border-stone-200 ${
-        isActiveHH ? 'border-l-[3px] border-l-emerald-500 border-t-transparent border-r-transparent border-b-transparent' : 'border-transparent'
+      className={`relative bg-white rounded-[10px] px-3.5 py-3 cursor-pointer transition-all duration-150 border hover:shadow-md hover:border-stone-200 overflow-hidden ${
+        isActiveHH ? 'border-l-[3px] border-l-orange-500 border-t-transparent border-r-transparent border-b-transparent' : 'border-transparent'
       }`}
       onClick={() => router.push(`/pub/${pub.slug}`)}
       onMouseEnter={() => onHoverPub?.(pub.id)}
       onMouseLeave={() => onHoverPub?.(null)}
     >
+      {/* Faded location map on right side */}
+      {pub.lat && pub.lng && (
+        <div
+          className="absolute right-0 top-0 bottom-0 w-[100px] sm:w-[140px] opacity-[0.07] pointer-events-none"
+          style={{
+            backgroundImage: `url(${getMapTileUrl(pub.lat, pub.lng, 15)})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            filter: 'sepia(0.3) saturate(0.7)',
+            maskImage: 'linear-gradient(to right, transparent 0%, black 40%)',
+            WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 40%)',
+          }}
+          aria-hidden="true"
+        />
+      )}
       {/* Row 1: Name + Price */}
       <div className="flex items-center justify-between gap-2.5">
         <div className="flex items-center gap-2 min-w-0 flex-1">

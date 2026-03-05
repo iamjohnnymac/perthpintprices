@@ -6,6 +6,7 @@ import WatchlistButton from '@/components/WatchlistButton'
 import { formatHappyHourDays } from '@/lib/happyHourLive'
 import { getFreshness } from '@/lib/freshness'
 import { Zap, Clock } from 'lucide-react'
+import { getMapTileUrl } from '@/lib/mapTile'
 
 interface PubCardProps {
   pub: Pub
@@ -41,9 +42,22 @@ export default function PubCard({ pub, avgPrice = 9.20, distance }: PubCardProps
   return (
     <Link href={`/pub/${pub.slug}`} className="block group">
       <div className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all h-full flex flex-col">
-        {/* Image placeholder with gradient + initial */}
-        <div className={`relative h-[140px] sm:h-[180px] bg-gradient-to-br ${gradient} flex items-center justify-center`}>
-          <span className="font-serif text-4xl sm:text-5xl text-charcoal/15 select-none">{pub.name.charAt(0)}</span>
+        {/* Image placeholder with map tile background */}
+        <div className={`relative h-[140px] sm:h-[180px] bg-gradient-to-br ${gradient} flex items-center justify-center overflow-hidden`}>
+          {/* Faded location map */}
+          {pub.lat && pub.lng && (
+            <div
+              className="absolute inset-0 opacity-[0.12]"
+              style={{
+                backgroundImage: `url(${getMapTileUrl(pub.lat, pub.lng, 15)})`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                filter: 'sepia(0.3) saturate(0.7)',
+              }}
+              aria-hidden="true"
+            />
+          )}
+          <span className="relative font-serif text-4xl sm:text-5xl text-charcoal/15 select-none">{pub.name.charAt(0)}</span>
           {/* Price badge */}
           {effectivePrice ? (
             <div className="absolute top-3 right-3 bg-white rounded-full px-4 py-1.5 shadow-sm flex items-center gap-1.5">
