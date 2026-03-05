@@ -370,7 +370,7 @@ function HomeContent() {
         )}
       </div>
 
-      <HowItWorks />
+      <HowItWorks venueCount={pubs.length} suburbCount={suburbs.length} />
       <SocialProof venueCount={stats.total} suburbCount={suburbs.length} avgPrice={stats.avgPrice} />
       <FAQ />
       <Footer />
