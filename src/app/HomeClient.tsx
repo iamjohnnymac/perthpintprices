@@ -24,7 +24,6 @@ import Footer from '@/components/Footer'
 import MyLocals from '@/components/MyLocals'
 import SubmitPubForm from '@/components/SubmitPubForm'
 import CrowdReporter from '@/components/CrowdReporter'
-import NotificationBell from '@/components/NotificationBell'
 import { Beer, Search as SearchIcon } from 'lucide-react'
 
 // Map is now loaded via MapPeek component
@@ -246,34 +245,20 @@ function HomeContent() {
 
   return (
     <main className="min-h-screen bg-cream">
-      {/* ═══ UNIFIED NAV — one component, expands on scroll ═══ */}
-      <header ref={headerRef} className="bg-white/95 backdrop-blur-sm sticky top-0 z-[1000] border-b border-stone-200/60 transition-all duration-200">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 py-2.5">
-          <div className="flex items-center justify-between gap-2">
-            <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity flex-shrink-0 focus-visible:ring-2 focus-visible:ring-amber/50 focus-visible:ring-offset-1 rounded-lg">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" className="flex-shrink-0"><path d="M12 2v20M2 12h20M4.93 4.93l14.14 14.14M19.07 4.93L4.93 19.07" stroke="#E8820C" strokeWidth="2.5" strokeLinecap="round"/></svg>
-              <span className="font-serif text-xl text-charcoal">arvo</span>
-            </Link>
-            <nav className="flex items-center gap-1.5 sm:gap-2">
-              <Link href="/discover" className="px-2.5 sm:px-3 py-1 text-xs sm:text-sm font-semibold text-charcoal bg-cream-dark hover:bg-amber/10 hover:text-amber rounded-full transition-all focus-visible:ring-2 focus-visible:ring-amber/50 focus-visible:ring-offset-1">
-                Discover
-              </Link>
-              <Link href="/happy-hour" className="px-2.5 sm:px-3 py-1 text-xs sm:text-sm font-semibold text-charcoal bg-cream-dark hover:bg-amber/10 hover:text-amber rounded-full transition-all focus-visible:ring-2 focus-visible:ring-amber/50 focus-visible:ring-offset-1">
-                Happy Hours
-              </Link>
-            </nav>
-            <div className="flex items-center gap-2 flex-shrink-0">
-              <NotificationBell />
-              <button
-                onClick={() => setShowSubmitForm(true)}
-                className="flex-shrink-0 px-3 sm:px-4 py-1.5 sm:py-2 bg-charcoal hover:bg-charcoal/90 text-white rounded-full font-semibold transition-all text-xs focus-visible:ring-2 focus-visible:ring-amber/50 focus-visible:ring-offset-1"
-              >
-                <span className="hidden sm:inline">Submit a Price</span>
-                <span className="sm:hidden">Submit</span>
-              </button>
-            </div>
+      {/* ═══ HEADER — minimal monospace with pill CTA ═══ */}
+      <header ref={headerRef} className="max-w-container mx-auto px-6 py-6 flex items-center justify-between">
+        <Link href="/" className="flex items-center gap-2 no-underline">
+          <div className="w-7 h-7 bg-amber border-2 border-ink rounded-md flex items-center justify-center text-sm shadow-[2px_2px_0_#171717]">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 2v20M2 12h20M4.93 4.93l14.14 14.14M19.07 4.93L4.93 19.07" stroke="white" strokeWidth="2.5" strokeLinecap="round"/></svg>
           </div>
-        </div>
+          <span className="font-mono text-[1.6rem] font-extrabold text-ink tracking-[-0.04em]">arvo</span>
+        </Link>
+        <button
+          onClick={() => setShowSubmitForm(true)}
+          className="font-mono text-[0.72rem] font-bold uppercase tracking-[0.05em] text-ink bg-white border-3 border-ink rounded-pill px-5 py-2.5 shadow-hard-sm hover:translate-x-[1.5px] hover:translate-y-[1.5px] hover:shadow-hard-hover transition-all cursor-pointer"
+        >
+          Submit a Price
+        </button>
       </header>
 
       {/* ═══ HERO — compact branding moment ═══ */}
