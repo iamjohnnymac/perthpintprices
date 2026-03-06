@@ -76,7 +76,7 @@ export default function RootLayout({
         <link rel="manifest" href="/manifest.json" />
         <meta name="theme-color" content="#E8820C" />
       </head>
-      <body className={`${plusJakarta.variable} ${dmSerif.variable} ${jetbrainsMono.variable} ${plusJakarta.className}`}><Providers>{children}</Providers><Analytics /></body>
+      <body className={`${plusJakarta.variable} ${dmSerif.variable} ${jetbrainsMono.variable} ${plusJakarta.className}`}><div className="h-[5px] bg-amber w-full" /><Providers>{children}</Providers><Analytics /></body>
     </html>
   )
 }
