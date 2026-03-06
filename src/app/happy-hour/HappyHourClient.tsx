@@ -3,11 +3,10 @@
 import { useEffect, useState, useCallback, useMemo } from 'react'
 import Link from 'next/link'
 import SubPageNav from '@/components/SubPageNav'
+import Footer from '@/components/Footer'
 import { getPubs } from '@/lib/supabase'
 import { Pub } from '@/types/pub'
 import { getDistanceKm, formatDistance } from '@/lib/location'
-import { Beer, DollarSign, MapPin, Clock, Timer } from 'lucide-react'
-import { getMapTileUrl } from '@/lib/mapTile'
 
 type SortMode = 'price' | 'nearest'
 
@@ -19,7 +18,6 @@ export default function HappyHourClient() {
   const [locationState, setLocationState] = useState<'pending' | 'granted' | 'denied'>('pending')
   const [sortMode, setSortMode] = useState<SortMode>('price')
 
-  // Request geolocation on mount
   useEffect(() => {
     if (typeof window !== 'undefined' && navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -52,7 +50,6 @@ export default function HappyHourClient() {
     return () => clearInterval(interval)
   }, [fetchPubs])
 
-  // Sort pubs based on current mode
   const pubs = useMemo(() => {
     const sorted = [...allPubs]
     if (sortMode === 'nearest' && userLocation) {
@@ -62,7 +59,6 @@ export default function HappyHourClient() {
         return distA - distB
       })
     } else {
-      // Price sort: cheapest effective price first
       sorted.sort((a, b) => {
         const priceA = a.happyHourPrice ?? a.price ?? a.regularPrice ?? 999
         const priceB = b.happyHourPrice ?? b.price ?? b.regularPrice ?? 999
@@ -75,137 +71,108 @@ export default function HappyHourClient() {
   const formatMinutesRemaining = (mins: number | null): string => {
     if (mins == null) return ''
     if (mins < 1) return 'Ending soon'
-    if (mins < 60) return `${mins} min remaining`
+    if (mins < 60) return `${mins}m left`
     const hours = Math.floor(mins / 60)
     const remainder = mins % 60
-    if (remainder === 0) return `${hours}h remaining`
-    return `${hours}h ${remainder}m remaining`
+    if (remainder === 0) return `${hours}h left`
+    return `${hours}h ${remainder}m left`
   }
 
   const hasLocation = locationState === 'granted' && userLocation !== null
-  const isNearestActive = sortMode === 'nearest' && hasLocation
 
   return (
-    <div className="min-h-screen bg-cream">
+    <div className="min-h-screen bg-white">
       <SubPageNav title="Happy Hours" />
 
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4 sm:py-5">
-        {/* Page Title */}
-        <div className="text-center mb-3">
-          <div className="inline-flex items-center gap-2 mb-2">
-            <Beer className="w-8 h-8 sm:w-10 sm:h-10 text-amber" />
-            <h1 className="text-3xl sm:text-4xl font-bold text-charcoal font-heading">
-              Happy Hours Live
-            </h1>
+      <div className="max-w-container mx-auto px-6 py-8">
+        {/* Page heading */}
+        <div className="mb-6">
+          <div className="flex items-center gap-2 mb-1.5">
+            <span className="w-3.5 h-3.5 rounded-[4px] bg-red" />
+            <span className="font-mono text-[0.68rem] font-bold uppercase tracking-[0.1em] text-gray-mid">Live</span>
           </div>
+          <h1 className="font-mono font-extrabold text-[clamp(1.8rem,5vw,2.4rem)] tracking-[-0.03em] text-ink leading-[1.1]">
+            Happy Hours
+          </h1>
 
           {!loading && pubs.length > 0 && (
-            <div className="flex items-center justify-center gap-2 mb-3">
-              <span className="relative flex h-3 w-3">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-3 w-3 bg-orange-500"></span>
-              </span>
-              <span className="text-charcoal font-bold text-lg">
+            <div className="flex items-center gap-2 mt-3">
+              <span className="w-2 h-2 rounded-full bg-green shadow-[0_0_8px_rgba(45,122,61,0.5)] animate-pulse" />
+              <span className="font-mono text-[0.75rem] font-bold text-ink">
                 {pubs.length} active now
               </span>
             </div>
           )}
 
-          <p className="text-stone-500 text-base sm:text-lg max-w-xl mx-auto">
-            {loading
-              ? 'Checking happy hour deals across Perth...'
-              : pubs.length > 0
-                ? 'These pubs have happy hour deals right now in Perth'
-                : ''}
-          </p>
-
           {lastRefresh && !loading && (
-            <p className="text-stone-400 text-xs mt-2">
-              Auto-refreshes every 60 seconds
+            <p className="text-gray-mid text-[0.7rem] mt-2">
+              Auto-refreshes every 60s
             </p>
           )}
         </div>
 
         {/* Sort Controls */}
         {!loading && pubs.length > 0 && (
-          <div className="flex items-center justify-center gap-2 mb-4">
+          <div className="flex gap-2 mb-6">
             <button
               onClick={() => setSortMode('price')}
-              className={`px-4 py-2 rounded-full text-sm font-semibold transition-all ${
+              className={`font-mono text-[0.72rem] font-bold uppercase tracking-[0.05em] border-3 border-ink rounded-pill px-5 py-2.5 transition-all ${
                 sortMode === 'price'
-                  ? 'bg-charcoal text-white shadow-md'
-                  : 'bg-white text-stone-500 border border-stone-200 hover:border-stone-300'
+                  ? 'bg-ink text-white shadow-hard-sm'
+                  : 'bg-white text-ink shadow-hard-sm hover:translate-x-[1.5px] hover:translate-y-[1.5px] hover:shadow-hard-hover'
               }`}
             >
-              <DollarSign className="w-4 h-4 inline" /> Cheapest
+              Cheapest
             </button>
             {hasLocation && (
               <button
                 onClick={() => setSortMode(sortMode === 'nearest' ? 'price' : 'nearest')}
-                className={`px-4 py-2 rounded-full text-sm font-semibold transition-all ${
-                  isNearestActive
-                    ? 'bg-blue-600 text-white shadow-md'
-                    : 'bg-white text-stone-500 border border-stone-200 hover:border-stone-300'
+                className={`font-mono text-[0.72rem] font-bold uppercase tracking-[0.05em] border-3 border-ink rounded-pill px-5 py-2.5 transition-all ${
+                  sortMode === 'nearest'
+                    ? 'bg-ink text-white shadow-hard-sm'
+                    : 'bg-white text-ink shadow-hard-sm hover:translate-x-[1.5px] hover:translate-y-[1.5px] hover:shadow-hard-hover'
                 }`}
               >
-                <MapPin className="w-4 h-4 inline" /> Nearest
+                Nearest
               </button>
             )}
           </div>
         )}
 
-        {/* Loading State */}
+        {/* Loading */}
         {loading && (
-          <div className="flex flex-col items-center justify-center py-20 gap-4">
-            <div className="w-10 h-10 border-4 border-orange/30 border-t-orange rounded-full animate-spin"></div>
-            <p className="text-stone-400 text-sm">Loading happy hours...</p>
+          <div className="flex flex-col items-center justify-center py-20 gap-3">
+            <div className="w-16 h-16 border-4 border-stone-300 border-t-amber rounded-full animate-spin" />
+            <span className="text-gray-mid font-medium">Loading happy hours...</span>
           </div>
         )}
 
         {/* Empty State */}
         {!loading && pubs.length === 0 && (
-          <div className="text-center py-6 sm:py-8">
-            <Clock className="w-12 h-12 text-amber mb-4" />
-            <h2 className="text-xl sm:text-2xl font-bold text-charcoal mb-3 font-heading">
-              No happy hours running right now
+          <div className="border-3 border-ink rounded-card p-8 text-center shadow-hard">
+            <h2 className="font-mono font-extrabold text-xl text-ink mb-3">
+              No happy hours right now
             </h2>
-            <p className="text-stone-500 max-w-md mx-auto mb-4 leading-relaxed">
-              Check back during the week — most kick off between 4–6pm!
+            <p className="text-gray-mid text-sm mb-6 max-w-md mx-auto leading-relaxed">
+              Check back during the week — most kick off between 4-6pm.
               We&apos;ll show live deals as soon as they start.
             </p>
             <Link
               href="/"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-charcoal hover:bg-charcoal/90 text-white rounded-full font-bold transition-all"
+              className="inline-flex items-center gap-2 font-mono text-[0.85rem] font-bold uppercase tracking-[0.05em] text-white bg-ink border-3 border-ink rounded-pill px-9 py-4 shadow-hard hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-hard-hover transition-all no-underline"
             >
               Browse all pubs
-              <svg
-                className="w-4 h-4"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"
-                />
-              </svg>
             </Link>
           </div>
         )}
 
-        {/* Active Happy Hour Cards */}
+        {/* Pub List */}
         {!loading && pubs.length > 0 && (
-          <div className="grid gap-3">
-            {pubs.map((pub) => {
+          <div className="space-y-0">
+            {pubs.map((pub, i) => {
               const savings = pub.happyHourPrice != null
                 ? (pub.regularPrice ?? 0) - pub.happyHourPrice
                 : 0
-              const savingsPercent =
-                pub.regularPrice && pub.regularPrice > 0 && savings > 0
-                  ? Math.round((savings / pub.regularPrice) * 100)
-                  : 0
               const distance = userLocation
                 ? getDistanceKm(userLocation.lat, userLocation.lng, pub.lat, pub.lng)
                 : null
@@ -214,127 +181,66 @@ export default function HappyHourClient() {
                 <Link
                   key={pub.id}
                   href={`/pub/${pub.slug}`}
-                  className="block relative bg-white rounded-2xl shadow-[0_2px_16px_rgba(0,0,0,0.08)] border border-stone-200/60 hover:border-orange/50 hover:shadow-[0_4px_24px_rgba(0,0,0,0.12)] transition-all group overflow-hidden"
+                  className={`flex items-center gap-4 py-4 no-underline group ${
+                    i < pubs.length - 1 ? 'border-b border-gray-light' : ''
+                  }`}
                 >
-                  {/* Faded location map on right side */}
-                  {pub.lat && pub.lng && (
-                    <div
-                      className="absolute right-0 top-0 bottom-0 w-1/2 opacity-50 pointer-events-none"
-                      style={{
-                        backgroundImage: `url(${getMapTileUrl(pub.lat, pub.lng, 15)})`,
-                        backgroundSize: 'cover',
-                        backgroundPosition: 'center',
-                        filter: 'sepia(0.3) saturate(0.7)',
-                        maskImage: 'linear-gradient(to right, transparent 0%, black 50%)',
-                        WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 50%)',
-                      }}
-                      aria-hidden="true"
-                    />
-                  )}
-                  <div className="relative z-10 p-4">
-                    <div className="flex items-start justify-between gap-4">
-                      {/* Left: Pub info */}
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-1">
-                          <h2 className="text-lg sm:text-xl font-bold text-charcoal group-hover:text-orange transition-colors truncate">
-                            {pub.name}
-                          </h2>
-                          <span className="shrink-0 inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-orange/15 text-orange border border-orange/30">
-                            HH
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-2 text-sm text-stone-500 mb-3">
-                          <span>{pub.suburb}</span>
-                          {distance != null && (
-                            <span className="text-blue-600 font-medium">
-                              · {formatDistance(distance)}
-                            </span>
-                          )}
-                        </div>
+                  {/* Rank */}
+                  <span className="font-mono text-[0.75rem] font-bold text-gray-mid w-6 text-right flex-shrink-0">
+                    {i + 1}
+                  </span>
 
-                        {/* Schedule & Beer */}
-                        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-stone-500">
-                          {pub.happyHourLabel && (
-                            <span className="inline-flex items-center gap-1">
-                              <svg
-                                className="w-3.5 h-3.5 text-stone-400"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                                viewBox="0 0 24 24"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"
-                                />
-                              </svg>
-                              {pub.happyHourLabel}
-                            </span>
-                          )}
-                          {pub.beerType && (
-                            <span className="inline-flex items-center gap-1">
-                              <Beer className="w-3.5 h-3.5 text-stone-400" />
-                              {pub.beerType}
-                            </span>
-                          )}
-                        </div>
-
-                        {/* Countdown */}
-                        {pub.happyHourMinutesRemaining != null && (
-                          <div className="mt-3">
-                            <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-50 text-charcoal text-xs font-medium border border-orange-200/60">
-                              <Timer className="w-3.5 h-3.5" />
-                              {formatMinutesRemaining(
-                                pub.happyHourMinutesRemaining
-                              )}
-                            </span>
-                          </div>
-                        )}
-                      </div>
-
-                      {/* Right: Pricing — frosted backdrop so price floats above map */}
-                      <div className="shrink-0 text-right bg-white/85 backdrop-blur-sm rounded-xl px-3 py-2 shadow-sm">
-                        {pub.happyHourPrice != null ? (
-                          <>
-                            <div className="text-3xl sm:text-4xl font-bold font-mono text-charcoal">
-                              ${pub.happyHourPrice.toFixed(2)}
-                            </div>
-                            {pub.regularPrice != null && (
-                              <div className="text-sm text-stone-400 line-through mt-0.5">
-                                ${pub.regularPrice.toFixed(2)}
-                              </div>
-                            )}
-                            {savings > 0 && (
-                              <div className="text-xs font-semibold text-charcoal mt-1">
-                                Save ${savings.toFixed(2)}{' '}
-                                <span className="text-stone-warm">
-                                  ({savingsPercent}%)
-                                </span>
-                              </div>
-                            )}
-                          </>
-                        ) : (
-                          <>
-                            {pub.regularPrice != null && (
-                              <>
-                                <div className="text-xs font-medium text-stone-warm mb-1">Regular price</div>
-                                <div className="text-2xl sm:text-3xl font-bold font-mono text-charcoal/60 line-through decoration-1">
-                                  ${pub.regularPrice.toFixed(2)}
-                                </div>
-                              </>
-                            )}
-                            <div className="text-xs font-semibold text-orange mt-1">
-                              Happy Hour price TBC
-                            </div>
-                          </>
-                        )}
-                      </div>
+                  {/* Info */}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <span className="font-mono text-[0.85rem] font-extrabold text-ink group-hover:text-amber transition-colors truncate">
+                        {pub.name}
+                      </span>
+                      <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[0.6rem] font-bold uppercase tracking-wider bg-red-pale text-red border border-red flex-shrink-0">
+                        HH
+                      </span>
                     </div>
+                    <div className="flex items-center gap-2 text-[0.75rem] text-gray-mid mt-0.5">
+                      <span>{pub.suburb}</span>
+                      {distance != null && (
+                        <span>· {formatDistance(distance)}</span>
+                      )}
+                      {pub.happyHourLabel && (
+                        <span>· {pub.happyHourLabel}</span>
+                      )}
+                    </div>
+                    {pub.happyHourMinutesRemaining != null && (
+                      <span className="inline-flex items-center gap-1 mt-1 text-[0.65rem] font-bold text-red">
+                        <span className="w-1.5 h-1.5 rounded-full bg-red animate-pulse" />
+                        {formatMinutesRemaining(pub.happyHourMinutesRemaining)}
+                      </span>
+                    )}
                   </div>
 
-                  {/* Bottom accent bar */}
-                  <div className="h-1 bg-gradient-to-r from-orange/40 via-amber to-orange/40 opacity-60 group-hover:opacity-100 transition-opacity"></div>
+                  {/* Price */}
+                  <div className="text-right flex-shrink-0">
+                    {pub.happyHourPrice != null ? (
+                      <>
+                        <span className="font-mono text-[1.3rem] font-extrabold text-ink">
+                          ${pub.happyHourPrice.toFixed(2)}
+                        </span>
+                        {pub.regularPrice != null && (
+                          <div className="text-[0.7rem] text-gray-mid line-through">
+                            ${pub.regularPrice.toFixed(2)}
+                          </div>
+                        )}
+                        {savings > 0 && (
+                          <div className="text-[0.65rem] font-bold text-green">
+                            Save ${savings.toFixed(2)}
+                          </div>
+                        )}
+                      </>
+                    ) : (
+                      <span className="font-mono text-[1.3rem] font-extrabold text-ink">
+                        ${pub.price?.toFixed(2) ?? 'TBC'}
+                      </span>
+                    )}
+                  </div>
                 </Link>
               )
             })}
@@ -343,32 +249,18 @@ export default function HappyHourClient() {
 
         {/* Footer CTA */}
         {!loading && pubs.length > 0 && (
-          <div className="text-center mt-4">
-            <p className="text-stone-400 text-sm mb-4">
-              Want to see all venues and compare prices?
-            </p>
+          <div className="text-center mt-8">
             <Link
               href="/"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-charcoal hover:bg-charcoal/90 text-white rounded-full font-bold transition-all"
+              className="inline-flex items-center gap-2 font-mono text-[0.85rem] font-bold uppercase tracking-[0.05em] text-white bg-ink border-3 border-ink rounded-pill px-9 py-4 shadow-hard hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-hard-hover transition-all no-underline"
             >
               View all pubs
-              <svg
-                className="w-4 h-4"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"
-                />
-              </svg>
             </Link>
           </div>
         )}
       </div>
+
+      <Footer />
     </div>
   )
 }

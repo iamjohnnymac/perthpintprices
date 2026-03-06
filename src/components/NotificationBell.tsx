@@ -70,7 +70,7 @@ export default function NotificationBell() {
           <BellOffIcon />
         </button>
         {showTooltip && (
-          <div className="absolute right-0 top-full mt-1 px-3 py-1.5 bg-charcoal text-white text-[11px] rounded-lg whitespace-nowrap z-50 shadow-lg">
+          <div className="absolute right-0 top-full mt-1 px-3 py-1.5 bg-ink text-white text-[11px] rounded-lg whitespace-nowrap z-50 shadow-lg">
             Notifications blocked — enable in browser settings
           </div>
         )}
@@ -98,7 +98,7 @@ export default function NotificationBell() {
         )}
       </button>
       {showTooltip && !isLoading && (
-        <div className="absolute right-0 top-full mt-1 px-3 py-1.5 bg-charcoal text-white text-[11px] rounded-lg whitespace-nowrap z-50 shadow-lg">
+        <div className="absolute right-0 top-full mt-1 px-3 py-1.5 bg-ink text-white text-[11px] rounded-lg whitespace-nowrap z-50 shadow-lg">
           {isSubscribed ? <><Bell className="w-3.5 h-3.5 inline" /> Alerts on for your watchlist</> : <><BellOff className="w-3.5 h-3.5 inline" /> Enable price alerts</>}
         </div>
       )}

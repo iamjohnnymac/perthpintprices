@@ -195,7 +195,7 @@ export default function SuburbLeague({ pubs }: { pubs: Pub[] }) {
                           <span className="text-[10px] text-stone-400 ml-1">({s.pubCount})</span>
                         </td>
                         <td className="px-2 py-2 text-center font-bold text-stone-800">${s.avgPrice.toFixed(2)}</td>
-                        <td className="px-2 py-2 text-center text-charcoal font-medium hidden sm:table-cell">${s.minPrice.toFixed(2)}</td>
+                        <td className="px-2 py-2 text-center text-ink font-medium hidden sm:table-cell">${s.minPrice.toFixed(2)}</td>
                         <td className="px-2 py-2 text-center text-red-500 font-medium hidden sm:table-cell">${s.maxPrice.toFixed(2)}</td>
                         <td className="px-2 py-2 text-center text-stone-500 hidden md:table-cell">{s.happyHourPct}%</td>
                         <td className="px-2 py-2 hidden md:table-cell">

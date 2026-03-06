@@ -376,7 +376,7 @@ export default function DiscoverClient() {
   // ─── Loading State ───
   if (isLoading) {
     return (
-      <main className="min-h-screen bg-cream">
+      <main className="min-h-screen bg-white">
       <h1 className="sr-only">Discover Perth's Best Pints</h1>
         <SubPageNav breadcrumbs={[{ label: 'Discover' }]} />
         <div className="flex items-center justify-center py-20">
@@ -387,10 +387,10 @@ export default function DiscoverClient() {
   }
 
   return (
-    <main className="min-h-screen bg-cream">
+    <main className="min-h-screen bg-white">
       <SubPageNav breadcrumbs={[{ label: 'Discover' }]} />
 
-      <div className="max-w-5xl mx-auto px-4 sm:px-6">
+      <div className="max-w-container mx-auto px-6">
 
         {/* ════════════════════════════════════════════
             1. HERO: Tonight's Quick Pick
@@ -398,7 +398,7 @@ export default function DiscoverClient() {
         {heroPub && (
           <section className="pt-8 sm:pt-12 mb-10 sm:mb-14">
             <Link href={`/pub/${heroPub.slug}`} className="block">
-              <div className="bg-[#FFF8F0] rounded-2xl py-12 px-6 text-center hover:shadow-[0_4px_16px_rgba(0,0,0,0.08)] transition-shadow">
+              <div className="bg-[#FFF8F0] rounded-card py-12 px-6 text-center hover:shadow-[0_4px_16px_rgba(0,0,0,0.08)] transition-shadow">
                 <p className="text-[#888] text-sm mb-1">Your best pint right now</p>
                 <div className="flex items-center justify-center gap-2 mb-3">
                   <Beer className="w-5 h-5 text-amber" />
@@ -412,7 +412,7 @@ export default function DiscoverClient() {
                     </>
                   )}
                 </div>
-                <div className="text-[40px] font-bold text-charcoal tabular-nums leading-tight">
+                <div className="text-[40px] font-bold text-ink tabular-nums leading-tight">
                   ${heroPub.price!.toFixed(2)}
                 </div>
                 <p className="text-[#888] text-sm mt-1">{heroPub.beerType}</p>
@@ -434,7 +434,7 @@ export default function DiscoverClient() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
             {/* Left: Best Buys */}
-            <div className="bg-white border border-[#E5E5E5] rounded-2xl p-6 hover:shadow-[0_4px_16px_rgba(0,0,0,0.08)] transition-shadow">
+            <div className="bg-white border-3 border-ink shadow-hard-sm rounded-card p-6 hover:shadow-[0_4px_16px_rgba(0,0,0,0.08)] transition-shadow">
               <h3 className="text-lg font-bold text-[#1A1A1A] mb-1">🏷️ Best Buys</h3>
               <p className="text-sm text-[#888] mb-4">Lowest prices right now</p>
               <div className="space-y-1">
@@ -451,7 +451,7 @@ export default function DiscoverClient() {
                         </p>
                       </div>
                     </div>
-                    <span className="text-lg font-semibold text-charcoal tabular-nums flex-shrink-0">${pub.price!.toFixed(2)}</span>
+                    <span className="text-lg font-semibold text-ink tabular-nums flex-shrink-0">${pub.price!.toFixed(2)}</span>
                   </Link>
                 ))}
               </div>
@@ -461,7 +461,7 @@ export default function DiscoverClient() {
             </div>
 
             {/* Right: Happy Hours */}
-            <div className="bg-white border border-[#E5E5E5] rounded-2xl p-6 hover:shadow-[0_4px_16px_rgba(0,0,0,0.08)] transition-shadow">
+            <div className="bg-white border-3 border-ink shadow-hard-sm rounded-card p-6 hover:shadow-[0_4px_16px_rgba(0,0,0,0.08)] transition-shadow">
               <h3 className="text-lg font-bold text-[#1A1A1A] mb-1"><Clock className="w-4 h-4 inline" /> Happy Hours</h3>
               <p className="text-sm text-[#888] mb-4">Starting soon near you</p>
               <div className="space-y-1">
@@ -475,7 +475,7 @@ export default function DiscoverClient() {
                       <p className="text-xs text-[#888]">{pub.suburb}</p>
                     </div>
                     <div className="flex items-center gap-2 flex-shrink-0">
-                      <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold ${status.isActive ? 'bg-[#FFF3E0] text-charcoal border border-[#F5D5B5]' : 'bg-orange-100 text-charcoal border border-orange-200'}`}>
+                      <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold ${status.isActive ? 'bg-[#FFF3E0] text-ink border border-[#F5D5B5]' : 'bg-orange-100 text-ink border border-orange-200'}`}>
                         {status.countdown || status.statusText}
                       </span>
                       <span className="text-lg font-semibold text-[#1A1A1A] tabular-nums">{pub.price !== null ? `$${pub.price.toFixed(2)}` : 'TBC'}</span>
@@ -515,7 +515,7 @@ export default function DiscoverClient() {
               <Link
                 key={card.title}
                 href={card.href}
-                className={`${card.bg} w-[240px] sm:w-[280px] min-h-[200px] rounded-2xl p-6 flex-shrink-0 snap-start hover:shadow-[0_4px_16px_rgba(0,0,0,0.08)] transition-shadow group`}
+                className={`${card.bg} w-[240px] sm:w-[280px] min-h-[200px] rounded-card p-6 flex-shrink-0 snap-start hover:shadow-[0_4px_16px_rgba(0,0,0,0.08)] transition-shadow group`}
               >
                 <LucideIcon name={card.emoji} className="w-8 h-8" />
                 <h3 className="text-lg font-bold text-[#1A1A1A] mt-3 group-hover:text-orange transition-colors">{card.title}</h3>
@@ -532,7 +532,7 @@ export default function DiscoverClient() {
         {pintIndex && (
           <section className="mb-10 sm:mb-14">
             <div
-              className="bg-white border border-[#E5E5E5] rounded-2xl hover:shadow-[0_4px_16px_rgba(0,0,0,0.08)] transition-shadow cursor-pointer"
+              className="bg-white border-3 border-ink shadow-hard-sm rounded-card hover:shadow-[0_4px_16px_rgba(0,0,0,0.08)] transition-shadow cursor-pointer"
               onClick={() => setIndexExpanded(!indexExpanded)}
             >
               {/* Collapsed row */}
@@ -543,7 +543,7 @@ export default function DiscoverClient() {
                       <h3 className="text-lg font-bold text-[#1A1A1A]">Perth Pint Index™</h3>
                       <div className="flex items-baseline gap-2 mt-0.5">
                         <span className="text-2xl sm:text-3xl font-bold text-[#1A1A1A] tabular-nums">${pintIndex.current.avg_price.toFixed(2)}</span>
-                        <span className={`text-sm font-semibold ${pintIndex.monthChange > 0 ? 'text-[#5C4A3A]' : 'text-charcoal'}`}>
+                        <span className={`text-sm font-semibold ${pintIndex.monthChange > 0 ? 'text-[#5C4A3A]' : 'text-ink'}`}>
                           {pintIndex.monthChange > 0 ? '▲' : pintIndex.monthChange < 0 ? '▼' : '—'}{' '}
                           {pintIndex.monthChange >= 0 ? '+' : ''}{pintIndex.monthChange.toFixed(2)} ({pintIndex.monthPct >= 0 ? '+' : ''}{pintIndex.monthPct.toFixed(1)}%)
                         </span>
@@ -574,12 +574,12 @@ export default function DiscoverClient() {
 
                     {/* Suburb comparison */}
                     <div className="grid grid-cols-2 gap-3 mb-4">
-                      <div className="bg-orange-50 rounded-2xl p-3">
-                        <div className="text-[10px] text-charcoal font-semibold">▼ Cheapest Suburb</div>
+                      <div className="bg-orange-50 rounded-card p-3">
+                        <div className="text-[10px] text-ink font-semibold">▼ Cheapest Suburb</div>
                         <div className="text-sm font-bold text-[#1A1A1A] mt-1">{pintIndex.current.cheapest_suburb}</div>
-                        <div className="text-xs text-charcoal tabular-nums">avg ${pintIndex.current.cheapest_suburb_avg.toFixed(2)}/pint</div>
+                        <div className="text-xs text-ink tabular-nums">avg ${pintIndex.current.cheapest_suburb_avg.toFixed(2)}/pint</div>
                       </div>
-                      <div className="bg-stone-100 rounded-2xl p-3">
+                      <div className="bg-stone-100 rounded-card p-3">
                         <div className="text-[10px] text-[#5C4A3A] font-semibold">▲ Priciest Suburb</div>
                         <div className="text-sm font-bold text-[#1A1A1A] mt-1">{pintIndex.current.most_expensive_suburb}</div>
                         <div className="text-xs text-[#5C4A3A] tabular-nums">avg ${pintIndex.current.most_expensive_suburb_avg.toFixed(2)}/pint</div>
@@ -590,7 +590,7 @@ export default function DiscoverClient() {
                     <div className="flex items-center justify-between mb-4 px-1">
                       <div>
                         <div className="text-[10px] text-[#888] font-medium">Overall Change</div>
-                        <div className={`text-lg font-bold tabular-nums ${pintIndex.yearChange > 0 ? 'text-[#5C4A3A]' : 'text-charcoal'}`}>
+                        <div className={`text-lg font-bold tabular-nums ${pintIndex.yearChange > 0 ? 'text-[#5C4A3A]' : 'text-ink'}`}>
                           {pintIndex.yearChange >= 0 ? '+' : ''}{pintIndex.yearPct.toFixed(1)}%
                         </div>
                       </div>
@@ -657,7 +657,7 @@ export default function DiscoverClient() {
 
             {/* ─── Tab 1: Suburbs ─── */}
             {numbersTab === 'suburbs' && (
-              <div className="bg-white border border-[#E5E5E5] rounded-2xl overflow-hidden">
+              <div className="bg-white border-3 border-ink shadow-hard-sm rounded-card overflow-hidden">
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead>
@@ -687,7 +687,7 @@ export default function DiscoverClient() {
                             <span className="text-[10px] text-[#888] ml-1">({s.pubCount})</span>
                           </td>
                           <td className="px-3 py-2.5 text-center font-bold text-[#1A1A1A] tabular-nums">${s.avgPrice.toFixed(2)}</td>
-                          <td className="px-3 py-2.5 text-center text-charcoal font-medium tabular-nums hidden sm:table-cell">${s.minPrice.toFixed(2)}</td>
+                          <td className="px-3 py-2.5 text-center text-ink font-medium tabular-nums hidden sm:table-cell">${s.minPrice.toFixed(2)}</td>
                           <td className="px-3 py-2.5 text-center text-[#8B7355] font-medium tabular-nums hidden sm:table-cell">${s.maxPrice.toFixed(2)}</td>
                           <td className="px-3 py-2.5 text-center text-[#888] hidden md:table-cell">{s.happyHourPct}%</td>
                         </tr>
@@ -698,7 +698,7 @@ export default function DiscoverClient() {
                 {sortedSuburbs.length > 5 && (
                   <button
                     onClick={() => setShowAllSuburbs(!showAllSuburbs)}
-                    className="w-full py-3 text-sm font-semibold text-charcoal hover:bg-[#FAFAFA] transition-colors border-t border-[#E5E5E5]"
+                    className="w-full py-3 text-sm font-semibold text-ink hover:bg-[#FAFAFA] transition-colors border-t border-[#E5E5E5]"
                   >
                     {showAllSuburbs ? `Show less ▲` : `Show all ${sortedSuburbs.length} suburbs ▼`}
                   </button>
@@ -708,7 +708,7 @@ export default function DiscoverClient() {
 
             {/* ─── Tab 2: Venues ─── */}
             {numbersTab === 'venues' && (
-              <div className="bg-white border border-[#E5E5E5] rounded-2xl p-6">
+              <div className="bg-white border-3 border-ink shadow-hard-sm rounded-card p-6">
                 <h4 className="text-sm font-semibold text-[#1A1A1A] mb-3"><BarChart3 className="w-4 h-4 inline" /> Price Distribution</h4>
                 <div className="space-y-2 mb-6">
                   {priceBrackets.map(([bracket, count]) => {
@@ -724,9 +724,9 @@ export default function DiscoverClient() {
                     )
                   })}
                 </div>
-                <div className="bg-orange-50 rounded-2xl p-4 text-center border border-orange-200">
+                <div className="bg-orange-50 rounded-card p-4 text-center border border-orange-200">
                   <p className="text-xs text-[#888]">Median Pint Price in Perth</p>
-                  <p className="text-2xl font-bold text-charcoal tabular-nums">${medianPrice.toFixed(2)}</p>
+                  <p className="text-2xl font-bold text-ink tabular-nums">${medianPrice.toFixed(2)}</p>
                 </div>
               </div>
             )}
@@ -736,8 +736,8 @@ export default function DiscoverClient() {
               <div className="space-y-6">
                 {/* Under/Over valued */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                  <div className="bg-white border border-[#E5E5E5] rounded-2xl p-6">
-                    <h4 className="text-sm font-semibold text-charcoal mb-3">📉 Below Market</h4>
+                  <div className="bg-white border-3 border-ink shadow-hard-sm rounded-card p-6">
+                    <h4 className="text-sm font-semibold text-ink mb-3">📉 Below Market</h4>
                     <div className="space-y-1.5">
                       {undervalued.map(({ pub, diff }) => (
                         <Link key={pub.id} href={`/pub/${pub.slug}`} className="flex items-center justify-between p-2 rounded-lg bg-orange-50/60 border border-orange-100 hover:bg-orange-50 transition-colors">
@@ -746,14 +746,14 @@ export default function DiscoverClient() {
                             <p className="text-[10px] text-[#888]">{pub.suburb}</p>
                           </div>
                           <div className="text-right flex-shrink-0">
-                            <p className="text-xs font-bold text-charcoal tabular-nums">${pub.price!.toFixed(2)}</p>
-                            <p className="text-[9px] text-stone-warm">↓ -${diff.toFixed(2)}</p>
+                            <p className="text-xs font-bold text-ink tabular-nums">${pub.price!.toFixed(2)}</p>
+                            <p className="text-[9px] text-gray-mid">↓ -${diff.toFixed(2)}</p>
                           </div>
                         </Link>
                       ))}
                     </div>
                   </div>
-                  <div className="bg-white border border-[#E5E5E5] rounded-2xl p-6">
+                  <div className="bg-white border-3 border-ink shadow-hard-sm rounded-card p-6">
                     <h4 className="text-sm font-semibold text-[#5C4A3A] mb-3"><TrendingUp className="w-4 h-4 inline" /> Above Market</h4>
                     <div className="space-y-1.5">
                       {overvalued.map(({ pub, diff }) => (
@@ -774,8 +774,8 @@ export default function DiscoverClient() {
 
                 {/* Cheapest / Priciest Suburbs */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                  <div className="bg-white border border-[#E5E5E5] rounded-2xl p-6">
-                    <h4 className="text-sm font-semibold text-charcoal mb-3"><Beer className="w-4 h-4 inline" /> Cheapest Suburbs</h4>
+                  <div className="bg-white border-3 border-ink shadow-hard-sm rounded-card p-6">
+                    <h4 className="text-sm font-semibold text-ink mb-3"><Beer className="w-4 h-4 inline" /> Cheapest Suburbs</h4>
                     <div className="space-y-1.5">
                       {cheapestSuburbs.map((s, i) => (
                         <div key={s.suburb} className="flex items-center justify-between p-2 rounded-lg bg-white border border-stone-100">
@@ -784,14 +784,14 @@ export default function DiscoverClient() {
                             <span className="text-xs font-semibold text-[#1A1A1A]">{s.suburb}</span>
                           </div>
                           <div className="text-right">
-                            <span className="text-xs font-bold text-charcoal tabular-nums">${s.avgPrice.toFixed(2)}</span>
+                            <span className="text-xs font-bold text-ink tabular-nums">${s.avgPrice.toFixed(2)}</span>
                             <span className="text-[9px] text-[#888] ml-1">({s.pubCount})</span>
                           </div>
                         </div>
                       ))}
                     </div>
                   </div>
-                  <div className="bg-white border border-[#E5E5E5] rounded-2xl p-6">
+                  <div className="bg-white border-3 border-ink shadow-hard-sm rounded-card p-6">
                     <h4 className="text-sm font-semibold text-[#5C4A3A] mb-3"><DollarSign className="w-4 h-4 inline" /> Priciest Suburbs</h4>
                     <div className="space-y-1.5">
                       {priciestSuburbs.map((s, i) => (
@@ -819,7 +819,7 @@ export default function DiscoverClient() {
             6. CONTRIBUTE CTA BANNER
             ════════════════════════════════════════════ */}
         <section id="contribute" className="mb-10 sm:mb-14">
-          <div className="bg-[#FFF8F0] rounded-2xl py-12 px-6 text-center">
+          <div className="bg-[#FFF8F0] rounded-card py-12 px-6 text-center">
             <h2 className="text-[24px] sm:text-[28px] font-bold text-[#1A1A1A]">Know a price we&apos;re missing?</h2>
             <p className="text-[16px] text-[#888] mt-2">Help Perth drink cheaper.</p>
             <button

@@ -32,7 +32,7 @@ export default function MapPeekInline({ pubs, userLocation, totalPubCount, happy
       {/* Inline toggle button */}
       <button
         onClick={() => setVisible(!visible)}
-        className="flex items-center gap-1.5 text-xs font-semibold text-charcoal bg-white border border-stone-200 hover:border-amber/40 hover:bg-amber/5 rounded-full px-3 py-1.5 transition-all shadow-sm focus-visible:ring-2 focus-visible:ring-amber/50 focus-visible:ring-offset-1 flex-shrink-0"
+        className="flex items-center gap-1.5 text-xs font-semibold text-ink bg-white border border-stone-200 hover:border-amber/40 hover:bg-amber/5 rounded-full px-3 py-1.5 transition-all shadow-sm focus-visible:ring-2 focus-visible:ring-amber/50 focus-visible:ring-offset-1 flex-shrink-0"
       >
         <svg className="w-3.5 h-3.5 text-amber" viewBox="0 0 24 24" fill="currentColor">
           <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>

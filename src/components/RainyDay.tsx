@@ -238,7 +238,7 @@ export default function RainyDay({ pubs, userLocation }: RainyDayProps) {
                       {pub.price !== null ? `$${pub.price.toFixed(2)}` : 'TBC'}
                     </span>
                     {pub.happyHour && (
-                      <p className="text-[9px] text-charcoal font-medium">Happy Hour</p>
+                      <p className="text-[9px] text-ink font-medium">Happy Hour</p>
                     )}
                   </div>
                 </Link>

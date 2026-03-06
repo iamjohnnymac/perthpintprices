@@ -49,7 +49,7 @@ export default function HappyHourPreview({ pubs }: HappyHourPreviewProps) {
               <span className="relative inline-flex rounded-full h-2 w-2 bg-orange-500"></span>
             </span>
           )}
-          <span className="text-charcoal font-semibold text-sm whitespace-nowrap">
+          <span className="text-ink font-semibold text-sm whitespace-nowrap">
             {activeCount > 0 ? `${activeCount} live` : 'Happy hours'}
           </span>
         </div>
@@ -62,7 +62,7 @@ export default function HappyHourPreview({ pubs }: HappyHourPreviewProps) {
           <p className="text-sm text-stone-500 truncate">
             {activeCount > 0 && activePubs.map((h, i) => (
               <span key={h.pub.slug}>
-                <span className="text-charcoal font-medium">{h.pub.name}</span>
+                <span className="text-ink font-medium">{h.pub.name}</span>
                 {i < activePubs.length - 1 && <span className="text-stone-300 mx-1.5">·</span>}
               </span>
             ))}

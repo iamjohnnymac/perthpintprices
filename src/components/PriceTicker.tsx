@@ -41,7 +41,7 @@ export default function PriceTicker({ pubs }: PriceTickerProps) {
   }, [pubs]);
 
   if (tickers.length === 0) return (
-    <div className="fixed bottom-0 left-0 right-0 bg-charcoal text-white/70 text-xs py-2 text-center z-50">
+    <div className="fixed bottom-0 left-0 right-0 bg-ink text-white/70 text-xs py-2 text-center z-50">
       Perth pint prices, sorted. arvo
     </div>
   );
@@ -50,7 +50,7 @@ export default function PriceTicker({ pubs }: PriceTickerProps) {
   const duration = Math.max(30, tickers.length * 2.5);
 
   return (
-    <div className="w-full bg-charcoal border-t border-stone-700/40 overflow-hidden select-none fixed bottom-0 left-0 right-0" style={{ height: '36px', zIndex: 9999 }}>
+    <div className="w-full bg-ink border-t border-stone-700/40 overflow-hidden select-none fixed bottom-0 left-0 right-0" style={{ height: '36px', zIndex: 9999 }}>
       <style>{`
         @keyframes ticker-scroll {
           0% { transform: translate3d(0, 0, 0); }
@@ -71,7 +71,7 @@ export default function PriceTicker({ pubs }: PriceTickerProps) {
           {items.map((t, i) => {
             const isAboveAvg = t.diff >= 0;
             const arrow = isAboveAvg ? E.up_arrow : E.down_arrow;
-            const color = isAboveAvg ? 'text-coral' : 'text-charcoal';
+            const color = isAboveAvg ? 'text-coral' : 'text-ink';
             const diffStr = Math.abs(t.diff).toFixed(2);
 
             return (

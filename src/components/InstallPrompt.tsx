@@ -79,10 +79,10 @@ export default function InstallPrompt() {
           
           {/* Text */}
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-semibold text-charcoal leading-tight truncate">
+            <p className="text-sm font-semibold text-ink leading-tight truncate">
               {platform === 'ios' ? 'Add Arvo to Home Screen' : 'Install Arvo'}
             </p>
-            <p className="text-xs text-stone-warm leading-tight mt-0.5">
+            <p className="text-xs text-gray-mid leading-tight mt-0.5">
               {platform === 'ios' ? 'Tap Share → Add to Home Screen' : 'Quick access to Perth pint prices'}
             </p>
           </div>
@@ -91,8 +91,8 @@ export default function InstallPrompt() {
           {platform === 'android' ? (
             <button
               onClick={installAndroid}
-              className="px-4 py-1.5 bg-charcoal text-white text-xs font-semibold rounded-full 
-                         hover:bg-charcoal/90 active:scale-[0.97] transition-all flex-shrink-0"
+              className="px-4 py-1.5 bg-ink text-white text-xs font-semibold rounded-full 
+                         hover:bg-ink/90 active:scale-[0.97] transition-all flex-shrink-0"
             >
               Install
             </button>
@@ -109,7 +109,7 @@ export default function InstallPrompt() {
           {/* Dismiss */}
           <button
             onClick={dismiss}
-            className="text-charcoal/30 hover:text-charcoal/60 p-1 flex-shrink-0 transition-colors"
+            className="text-ink/30 hover:text-ink/60 p-1 flex-shrink-0 transition-colors"
             aria-label="Dismiss"
           >
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none">

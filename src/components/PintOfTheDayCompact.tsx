@@ -57,7 +57,7 @@ export default function PintOfTheDayCompact() {
         </div>
         <div className="h-8 w-px bg-amber/20 flex-shrink-0" />
         <div className="min-w-0 flex-1">
-          <p className="text-sm font-semibold text-charcoal group-hover:text-amber transition-colors truncate">
+          <p className="text-sm font-semibold text-ink group-hover:text-amber transition-colors truncate">
             {data.pub.name}
           </p>
           <p className="text-xs text-stone-400 truncate">

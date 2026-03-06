@@ -8,11 +8,11 @@ import WatchlistButton from '@/components/WatchlistButton'
 import PriceHistory from '@/components/PriceHistory'
 import PriceReporter from '@/components/PriceReporter'
 import { formatHappyHourDays } from '@/lib/happyHourLive'
-import { Beer, Zap, Sunset, Users, Trophy } from 'lucide-react'
+import Footer from '@/components/Footer'
 
 const PubDetailMap = dynamic(() => import('@/components/PubDetailMap'), {
   ssr: false,
-  loading: () => <div className="h-[350px] bg-cream animate-pulse rounded-xl" />,
+  loading: () => <div className="h-[350px] bg-off-white animate-pulse rounded-card border-3 border-ink" />,
 })
 
 function timeAgo(dateStr: string): string {
@@ -35,15 +35,7 @@ function formatHappyHourTime(start: string | null, end: string | null): string {
     const h12 = h > 12 ? h - 12 : h === 0 ? 12 : h
     return `${h12}${period}`
   }
-  return `${fmt(start)} – ${fmt(end)}`
-}
-
-function getPriceColor(price: number | null): string {
-  if (price === null) return 'text-stone-400'
-  if (price <= 7) return 'text-charcoal'
-  if (price <= 9) return 'text-amber-700'
-  if (price <= 11) return 'text-orange-600'
-  return 'text-red-600'
+  return `${fmt(start)} - ${fmt(end)}`
 }
 
 interface PubDetailClientProps {
@@ -73,7 +65,7 @@ export default function PubDetailClient({ pub, nearbyPubs, avgPrice }: PubDetail
   const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${pub.lat},${pub.lng}`
 
   async function sharePub() {
-    const text = `🍺 $${pub.price?.toFixed(2) ?? 'TBC'} pints at ${pub.name}, ${pub.suburb} — found on Arvo`
+    const text = `$${pub.price?.toFixed(2) ?? 'TBC'} pints at ${pub.name}, ${pub.suburb} - found on Arvo`
     if (navigator.share) {
       try { await navigator.share({ text, url: window.location.href }) } catch {}
     } else if (navigator.clipboard) {
@@ -84,174 +76,130 @@ export default function PubDetailClient({ pub, nearbyPubs, avgPrice }: PubDetail
   const priceDiff = pub.effectivePrice && avgPrice ? pub.effectivePrice - avgPrice : 0
 
   return (
-    <div className="min-h-screen bg-cream">
+    <div className="min-h-screen bg-white">
       {/* Navigation */}
-      <div className="bg-white/95 backdrop-blur-sm border-b border-stone-200/60 sticky top-0 z-50">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 py-2.5 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Link href="/" className="flex items-center gap-1.5 text-stone-warm hover:text-charcoal transition-colors text-sm">
-              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M19 12H5M12 19l-7-7 7-7"/>
-              </svg>
-            </Link>
-            <Link href="/" className="flex items-center gap-1.5">
-              <span className="text-amber text-lg">✳</span>
-              <span className="font-serif text-lg text-charcoal">arvo</span>
-            </Link>
-          </div>
-          <div className="flex items-center gap-1">
-            <WatchlistButton slug={pub.slug} name={pub.name} suburb={pub.suburb} size="md" />
-            <button onClick={sharePub} className="text-stone-400 hover:text-amber transition-colors p-2" title="Share this pub">
-              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
-                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
-              </svg>
-            </button>
-          </div>
+      <header className="max-w-container mx-auto px-6 py-6 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <Link href="/" className="flex items-center gap-2 no-underline">
+            <div className="w-7 h-7 bg-amber border-2 border-ink rounded-md flex items-center justify-center text-sm shadow-[2px_2px_0_#171717]">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 2v20M2 12h20M4.93 4.93l14.14 14.14M19.07 4.93L4.93 19.07" stroke="white" strokeWidth="2.5" strokeLinecap="round"/></svg>
+            </div>
+            <span className="font-mono text-[1.6rem] font-extrabold text-ink tracking-[-0.04em]">arvo</span>
+          </Link>
         </div>
-      </div>
+        <div className="flex items-center gap-2">
+          <WatchlistButton slug={pub.slug} name={pub.name} suburb={pub.suburb} size="md" />
+          <button onClick={sharePub} className="text-gray-mid hover:text-amber transition-colors p-2" title="Share this pub">
+            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+              <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+            </svg>
+          </button>
+        </div>
+      </header>
 
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-3 space-y-3">
+      <div className="max-w-container mx-auto px-6 pb-8 space-y-6">
         {/* Breadcrumb */}
-        <nav className="flex items-center gap-2 text-sm text-stone-warm">
-          <Link href="/" className="hover:text-amber transition-colors">Home</Link>
-          <span className="text-stone-300">/</span>
-          <Link href={`/suburb/${pub.suburb.toLowerCase().replace(/['']/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')}`} className="hover:text-amber transition-colors">{pub.suburb}</Link>
-          <span className="text-stone-300">/</span>
-          <span className="text-charcoal font-medium">{pub.name}</span>
+        <nav className="flex items-center gap-2 font-mono text-[0.7rem] text-gray-mid">
+          <Link href="/" className="hover:text-amber transition-colors no-underline">Home</Link>
+          <span>/</span>
+          <Link href={`/suburb/${pub.suburb.toLowerCase().replace(/['']/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')}`} className="hover:text-amber transition-colors no-underline">{pub.suburb}</Link>
+          <span>/</span>
+          <span className="text-ink font-bold">{pub.name}</span>
         </nav>
 
-        {/* Two-column layout */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 items-start">
-          {/* Left column — info */}
-          <div className="space-y-3">
-            {/* Name + vibe */}
-            <div>
-              <h1 className="font-serif text-3xl sm:text-4xl text-charcoal leading-tight">
-                {pub.name}
-              </h1>
-              <div className="flex items-center gap-2 mt-2">
-                <p className="text-stone-warm">
-                  {pub.suburb}{distance && ` · ${distance}`}
-                </p>
-                {pub.vibeTag && (
-                  <span className="text-xs text-stone-warm italic px-2 py-0.5 rounded-full bg-cream-dark">{pub.vibeTag}</span>
-                )}
-              </div>
-            </div>
+        {/* Name + vibe */}
+        <div>
+          <h1 className="font-mono font-extrabold text-[clamp(1.8rem,5vw,2.4rem)] tracking-[-0.03em] text-ink leading-[1.1]">
+            {pub.name}
+          </h1>
+          <div className="flex items-center gap-2 mt-2 text-[0.8rem] text-gray-mid">
+            <span>{pub.suburb}{distance && ` · ${distance}`}</span>
+            {pub.vibeTag && (
+              <span className="font-mono text-[0.6rem] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full border border-gray-light text-gray-mid">{pub.vibeTag}</span>
+            )}
+          </div>
+        </div>
 
-            {/* Price block — EatClub style */}
-            <div className="bg-white rounded-xl p-4 shadow-sm">
+        {/* Two-column layout */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+          {/* Left column */}
+          <div className="space-y-5">
+            {/* Price block */}
+            <div className="border-3 border-ink rounded-card p-5 shadow-hard">
               <div className="flex items-end justify-between">
                 <div>
-                  <p className="text-xs font-medium text-stone-500 mb-1">Pint Price</p>
+                  <p className="font-mono text-[0.68rem] font-bold uppercase tracking-[0.1em] text-gray-mid mb-1">Pint Price</p>
                   {pub.isHappyHourNow && pub.regularPrice !== null && pub.regularPrice !== pub.price && (
-                    <div className="text-sm text-stone-400 line-through font-mono">${pub.regularPrice.toFixed(2)}</div>
+                    <div className="text-sm text-gray-mid line-through font-mono">${pub.regularPrice.toFixed(2)}</div>
                   )}
-                  <div className={`text-4xl sm:text-5xl font-bold font-mono ${getPriceColor(pub.price)}`}>
+                  <div className="font-mono text-[2.5rem] font-extrabold text-ink leading-none">
                     {pub.price !== null ? `$${pub.price.toFixed(2)}` : 'TBC'}
                   </div>
                 </div>
                 <div className="text-right space-y-1.5">
                   {pub.effectivePrice && Math.abs(priceDiff) >= 0.05 && (
-                    <span className={`inline-block text-xs font-semibold px-2.5 py-1 rounded-full ${
-                      priceDiff < 0 
-                        ? 'bg-orange-50 text-charcoal' 
-                        : 'bg-red-50 text-red-600'
+                    <span className={`inline-block font-mono text-[0.65rem] font-bold px-2.5 py-1 rounded-full border ${
+                      priceDiff < 0
+                        ? 'bg-green-pale text-green border-green'
+                        : 'bg-red-pale text-red border-red'
                     }`}>
                       ${Math.abs(priceDiff).toFixed(2)} {priceDiff < 0 ? 'below' : 'above'} avg
                     </span>
                   )}
                   {pub.beerType && (
-                    <p className="text-xs text-stone-warm"><Beer className="w-3 h-3 inline" /> {pub.beerType}</p>
+                    <p className="text-[0.7rem] text-gray-mid">{pub.beerType}</p>
                   )}
                 </div>
               </div>
               {/* Status row */}
-              <div className="flex flex-wrap gap-2 mt-4 pt-4 border-t border-stone-100">
+              <div className="flex flex-wrap gap-2 mt-4 pt-4 border-t border-gray-light">
                 {pub.isHappyHourNow && (
-                  <span className="inline-flex items-center gap-1.5 text-xs font-bold text-amber bg-amber/10 px-2.5 py-1 rounded-full">
-                    <Zap className="w-3.5 h-3.5 inline" /> HAPPY HOUR{pub.happyHourMinutesRemaining ? ` · ${pub.happyHourMinutesRemaining}m left` : ''}
+                  <span className="inline-flex items-center gap-1.5 font-mono text-[0.6rem] font-bold uppercase tracking-wider text-red bg-red-pale px-2.5 py-1 rounded-full border border-red">
+                    HH{pub.happyHourMinutesRemaining ? ` · ${pub.happyHourMinutesRemaining}m left` : ''}
                   </span>
                 )}
                 {pub.priceVerified && pub.price !== null && (
-                  <span className="inline-flex items-center gap-1 text-xs text-stone-warm bg-cream px-2.5 py-1 rounded-full">
-                    <svg className="w-3 h-3 text-stone-warm" viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>
+                  <span className="inline-flex items-center gap-1 font-mono text-[0.6rem] font-bold uppercase tracking-wider text-green bg-green-pale px-2.5 py-1 rounded-full border border-green">
                     Verified
                   </span>
                 )}
                 {pub.lastVerified && (
-                  <span className="text-xs text-stone-400">Updated {timeAgo(pub.lastVerified)}</span>
+                  <span className="text-[0.7rem] text-gray-mid">Updated {timeAgo(pub.lastVerified)}</span>
                 )}
               </div>
             </div>
 
             {/* Happy Hour card */}
             {(pub.happyHour || pub.happyHourPrice) && (
-              <div className={`rounded-xl p-5 border ${pub.isHappyHourNow ? 'border-amber/30 bg-amber/5' : 'bg-white border-stone-200/40 shadow-sm'}`}>
-                <p className="text-xs font-medium text-stone-500 mb-2">Happy Hour</p>
+              <div className={`border-3 rounded-card p-5 ${pub.isHappyHourNow ? 'border-red bg-red-pale' : 'border-ink shadow-hard-sm'}`}>
+                <p className="font-mono text-[0.68rem] font-bold uppercase tracking-[0.1em] text-gray-mid mb-2">Happy Hour</p>
                 {pub.happyHourPrice && (
-                  <p className={`text-2xl font-bold font-mono ${pub.isHappyHourNow ? 'text-amber' : 'text-charcoal'}`}>
+                  <p className={`font-mono text-[1.5rem] font-extrabold ${pub.isHappyHourNow ? 'text-red' : 'text-ink'}`}>
                     ${pub.happyHourPrice.toFixed(2)}
                   </p>
                 )}
                 {pub.happyHourDays && pub.happyHourStart && pub.happyHourEnd ? (
-                  <p className="text-sm text-stone-warm mt-1">
+                  <p className="text-[0.8rem] text-gray-mid mt-1">
                     {formatHappyHourDays(pub.happyHourDays)} · {formatHappyHourTime(pub.happyHourStart, pub.happyHourEnd)}
                   </p>
                 ) : (
                   <>
-                    {pub.happyHourDays && <p className="text-sm text-stone-warm mt-1">{formatHappyHourDays(pub.happyHourDays)}</p>}
+                    {pub.happyHourDays && <p className="text-[0.8rem] text-gray-mid mt-1">{formatHappyHourDays(pub.happyHourDays)}</p>}
                     {pub.happyHourStart && pub.happyHourEnd && (
-                      <p className="text-sm text-stone-warm">{formatHappyHourTime(pub.happyHourStart, pub.happyHourEnd)}</p>
+                      <p className="text-[0.8rem] text-gray-mid">{formatHappyHourTime(pub.happyHourStart, pub.happyHourEnd)}</p>
                     )}
-                    {!pub.happyHourPrice && !pub.happyHourStart && pub.happyHour && <p className="text-sm text-stone-warm">{pub.happyHour}</p>}
+                    {!pub.happyHourPrice && !pub.happyHourStart && pub.happyHour && <p className="text-[0.8rem] text-gray-mid">{pub.happyHour}</p>}
                   </>
                 )}
-              </div>
-            )}
-
-            {/* Featured In */}
-            {(pub.sunsetSpot || pub.kidFriendly || pub.hasTab) && (
-              <div>
-                <p className="text-xs font-medium text-stone-500 mb-3">Featured In</p>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                  {pub.sunsetSpot && (
-                    <div className="flex items-center gap-3 p-3 rounded-xl bg-gradient-to-r from-orange-50 to-amber-50 border border-orange-200/50">
-                      <Sunset className="w-5 h-5 text-amber" />
-                      <div>
-                        <p className="text-sm font-semibold text-charcoal">Sunset Sippers</p>
-                        <p className="text-xs text-stone-warm">Great spot for golden hour</p>
-                      </div>
-                    </div>
-                  )}
-                  {pub.kidFriendly && (
-                    <div className="flex items-center gap-3 p-3 rounded-xl bg-gradient-to-r from-orange-50 to-amber-50 border border-orange-200/50">
-                      <Users className="w-5 h-5 text-stone-warm" />
-                      <div>
-                        <p className="text-sm font-semibold text-charcoal">Dad Bar</p>
-                        <p className="text-xs text-stone-warm">Kid-friendly venue</p>
-                      </div>
-                    </div>
-                  )}
-                  {pub.hasTab && (
-                    <div className="flex items-center gap-3 p-3 rounded-xl border border-stone-200/50" style={{ background: 'linear-gradient(to right, #f3eef8, #f8f4fb)' }}>
-                      <Trophy className="w-5 h-5 text-stone-warm" />
-                      <div>
-                        <p className="text-sm font-semibold text-charcoal">Punt & Pints</p>
-                        <p className="text-xs text-stone-warm">TAB venue</p>
-                      </div>
-                    </div>
-                  )}
-                </div>
               </div>
             )}
 
             {/* About */}
             {pub.description && (
               <div>
-                <p className="text-xs font-medium text-stone-500 mb-2">About</p>
-                <p className="text-sm text-stone-warm leading-relaxed">{pub.description}</p>
+                <p className="font-mono text-[0.68rem] font-bold uppercase tracking-[0.1em] text-gray-mid mb-2">About</p>
+                <p className="text-[0.85rem] text-gray-mid leading-relaxed">{pub.description}</p>
               </div>
             )}
 
@@ -263,78 +211,75 @@ export default function PubDetailClient({ pub, nearbyPubs, avgPrice }: PubDetail
               <PriceReporter pubSlug={pub.slug} pubName={pub.name} currentPrice={pub.price} />
             </div>
 
-            {/* Action buttons — EatClub-style bottom CTA */}
+            {/* Action buttons */}
             <div className="flex gap-3">
               {pub.website && (
                 <a
                   href={pub.website}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex-1 bg-amber text-white text-center py-3.5 rounded-full font-semibold text-sm hover:bg-amber-dark transition-colors flex items-center justify-center gap-2"
+                  className="flex-1 font-mono text-[0.75rem] font-bold uppercase tracking-[0.05em] text-white bg-amber border-3 border-ink rounded-pill py-3.5 shadow-hard-sm hover:translate-x-[1.5px] hover:translate-y-[1.5px] hover:shadow-hard-hover transition-all text-center no-underline"
                 >
                   Visit Website
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" /></svg>
                 </a>
               )}
               <a
                 href={directionsUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex-1 bg-charcoal text-white text-center py-3.5 rounded-full font-semibold text-sm hover:bg-charcoal/90 transition-colors flex items-center justify-center gap-2"
+                className="flex-1 font-mono text-[0.75rem] font-bold uppercase tracking-[0.05em] text-white bg-ink border-3 border-ink rounded-pill py-3.5 shadow-hard-sm hover:translate-x-[1.5px] hover:translate-y-[1.5px] hover:shadow-hard-hover transition-all text-center no-underline"
               >
                 Get Directions
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" /></svg>
               </a>
             </div>
-
           </div>
 
           {/* Right column — map */}
-          <div className="md:sticky md:top-20 rounded-xl overflow-hidden h-[350px] shadow-sm">
+          <div className="md:sticky md:top-20 rounded-card overflow-hidden h-[350px] border-3 border-ink shadow-hard">
             <PubDetailMap lat={pub.lat} lng={pub.lng} name={pub.name} price={pub.price} />
           </div>
         </div>
 
         {/* Nearby Pubs */}
         {nearbyPubs.length > 0 && (
-          <div className="space-y-3 mt-5">
-            <h2 className="font-serif text-2xl text-charcoal">
+          <div className="mt-8">
+            <div className="flex items-center gap-2 mb-4">
+              <span className="w-3.5 h-3.5 rounded-[4px] bg-amber" />
+              <span className="font-mono text-[0.68rem] font-bold uppercase tracking-[0.1em] text-gray-mid">Nearby</span>
+            </div>
+            <h2 className="font-mono font-extrabold text-xl tracking-[-0.02em] text-ink mb-4">
               More in {pub.suburb}
             </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {nearbyPubs.map(nearby => (
-                <Link key={nearby.id} href={`/pub/${nearby.slug}`} className="group">
-                  <div className="bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition-all flex items-center justify-between">
-                    <div className="min-w-0 flex-1">
-                      <p className="font-semibold text-charcoal text-sm group-hover:text-amber transition-colors truncate">{nearby.name}</p>
-                      <p className="text-xs text-stone-warm truncate">{nearby.beerType || 'House Pint'}</p>
-                      {nearby.isHappyHourNow && (
-                        <p className="text-xs text-amber font-semibold mt-0.5"><Zap className="w-3 h-3 inline" /> Happy Hour Live</p>
-                      )}
-                    </div>
-                    <div className="flex items-center gap-3 ml-3">
-                      <span className={`text-lg font-bold font-mono ${getPriceColor(nearby.price)}`}>
-                        {nearby.price !== null ? `$${nearby.price.toFixed(2)}` : 'TBC'}
+            <div className="space-y-0">
+              {nearbyPubs.map((nearby, i) => (
+                <Link
+                  key={nearby.id}
+                  href={`/pub/${nearby.slug}`}
+                  className={`flex items-center justify-between py-3.5 no-underline group ${
+                    i < nearbyPubs.length - 1 ? 'border-b border-gray-light' : ''
+                  }`}
+                >
+                  <div className="min-w-0 flex-1">
+                    <p className="font-mono text-[0.85rem] font-extrabold text-ink group-hover:text-amber transition-colors truncate">{nearby.name}</p>
+                    <p className="text-[0.7rem] text-gray-mid truncate">{nearby.beerType || 'House Pint'}</p>
+                    {nearby.isHappyHourNow && (
+                      <span className="inline-flex items-center gap-1 mt-0.5 text-[0.6rem] font-bold text-red">
+                        <span className="w-1.5 h-1.5 rounded-full bg-red animate-pulse" />
+                        Happy Hour Live
                       </span>
-                      <div className="w-7 h-7 rounded-full border border-stone-200 flex items-center justify-center group-hover:border-amber transition-colors">
-                        <svg className="w-3.5 h-3.5 text-stone-400 group-hover:text-amber transition-colors" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
-                        </svg>
-                      </div>
-                    </div>
+                    )}
                   </div>
+                  <span className="font-mono text-[1.1rem] font-extrabold text-ink ml-3">
+                    {nearby.price !== null ? `$${nearby.price.toFixed(2)}` : 'TBC'}
+                  </span>
                 </Link>
               ))}
             </div>
           </div>
         )}
-
-        {/* Footer note */}
-        <div className="text-center py-3 text-xs text-stone-400">
-          <p>Data sourced from verified pub menus and community reports.</p>
-
-        </div>
       </div>
+
+      <Footer />
     </div>
   )
 }
