@@ -25,7 +25,7 @@ export default function SubPageNav({ breadcrumbs, title, subtitle, showSubmit = 
           <span className="font-mono text-[1.6rem] font-extrabold text-ink tracking-[-0.04em]">arvo</span>
         </Link>
         {breadcrumbs ? (
-          <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 min-w-0 overflow-hidden">
+          <nav aria-label="Breadcrumb" className="hidden sm:flex items-center gap-1.5 min-w-0 overflow-hidden">
             {breadcrumbs.map((crumb, i) => (
               <span key={i} className="flex items-center gap-1.5 min-w-0">
                 <span className="text-gray-mid text-sm flex-shrink-0">/</span>
@@ -40,19 +40,17 @@ export default function SubPageNav({ breadcrumbs, title, subtitle, showSubmit = 
             ))}
           </nav>
         ) : title ? (
-          <>
+          <div className="hidden sm:flex items-center gap-1.5">
             <span className="text-gray-mid text-sm">/</span>
-            <div>
-              <span className="font-mono text-[0.72rem] font-bold uppercase tracking-[0.05em] text-ink">{title}</span>
-              {subtitle && <span className="text-[0.65rem] text-gray-mid ml-2 hidden sm:inline">{subtitle}</span>}
-            </div>
-          </>
+            <span className="font-mono text-[0.72rem] font-bold uppercase tracking-[0.05em] text-ink">{title}</span>
+            {subtitle && <span className="text-[0.65rem] text-gray-mid ml-1">{subtitle}</span>}
+          </div>
         ) : null}
       </div>
       {showSubmit && (
         <Link
-          href="/"
-          className="font-mono text-[0.72rem] font-bold uppercase tracking-[0.05em] text-ink bg-white border-3 border-ink rounded-pill px-5 py-2.5 shadow-hard-sm hover:translate-x-[1.5px] hover:translate-y-[1.5px] hover:shadow-hard-hover transition-all no-underline flex-shrink-0"
+          href="/?submit=1"
+          className="font-mono text-[0.65rem] sm:text-[0.72rem] font-bold uppercase tracking-[0.05em] text-ink bg-white border-3 border-ink rounded-pill px-3 sm:px-5 py-2 sm:py-2.5 shadow-hard-sm hover:translate-x-[1.5px] hover:translate-y-[1.5px] hover:shadow-hard-hover transition-all no-underline flex-shrink-0"
         >
           Submit a Price
         </Link>

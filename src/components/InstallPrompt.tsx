@@ -67,31 +67,28 @@ export default function InstallPrompt() {
 
   return (
     <div className="fixed bottom-0 inset-x-0 z-40 animate-slide-up px-3 pb-[52px] pointer-events-none">
-      <div className="pointer-events-auto rounded-xl bg-white/95 backdrop-blur-md shadow-lg border border-orange/15 overflow-hidden">
-        {/* Slim accent bar */}
-        <div className="h-0.5 bg-gradient-to-r from-orange via-amber to-orange" />
-        
+      <div className="pointer-events-auto rounded-card bg-white border-3 border-ink shadow-hard-sm overflow-hidden">
         <div className="flex items-center gap-3 px-4 py-3">
           {/* Icon */}
-          <div className="w-9 h-9 rounded-lg bg-orange/10 flex items-center justify-center text-lg flex-shrink-0">
-            <Beer className="w-4 h-4" />
+          <div className="w-9 h-9 rounded-[6px] bg-amber border-2 border-ink flex items-center justify-center flex-shrink-0">
+            <Beer className="w-4 h-4 text-white" />
           </div>
-          
+
           {/* Text */}
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-semibold text-ink leading-tight truncate">
+            <p className="font-mono text-sm font-bold text-ink leading-tight truncate">
               {platform === 'ios' ? 'Add Arvo to Home Screen' : 'Install Arvo'}
             </p>
             <p className="text-xs text-gray-mid leading-tight mt-0.5">
               {platform === 'ios' ? 'Tap Share → Add to Home Screen' : 'Quick access to Perth pint prices'}
             </p>
           </div>
-          
+
           {/* Action */}
           {platform === 'android' ? (
             <button
               onClick={installAndroid}
-              className="px-4 py-1.5 bg-ink text-white text-xs font-semibold rounded-full 
+              className="px-4 py-1.5 bg-ink text-white font-mono text-xs font-bold uppercase tracking-[0.05em] rounded-pill border-2 border-ink
                          hover:bg-ink/90 active:scale-[0.97] transition-all flex-shrink-0"
             >
               Install
@@ -99,17 +96,17 @@ export default function InstallPrompt() {
           ) : (
             <button
               onClick={dismiss}
-              className="px-3 py-1.5 bg-orange/10 text-orange text-xs font-semibold rounded-full 
-                         hover:bg-orange/20 active:scale-[0.97] transition-all flex-shrink-0"
+              className="px-3 py-1.5 bg-off-white text-ink font-mono text-xs font-bold uppercase tracking-[0.05em] rounded-pill border-2 border-ink
+                         hover:bg-gray-light active:scale-[0.97] transition-all flex-shrink-0"
             >
               Got it
             </button>
           )}
-          
+
           {/* Dismiss */}
           <button
             onClick={dismiss}
-            className="text-ink/30 hover:text-ink/60 p-1 flex-shrink-0 transition-colors"
+            className="text-gray-mid hover:text-ink p-1 flex-shrink-0 transition-colors"
             aria-label="Dismiss"
           >
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
