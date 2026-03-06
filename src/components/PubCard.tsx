@@ -19,7 +19,7 @@ function getPlaceholderGradient(name: string) {
   const gradients = [
     'from-amber/20 to-amber-light/10',
     'from-orange-100 to-amber-50',
-    'from-stone-200 to-cream-dark',
+    'from-stone-200 to-off-white',
     'from-amber-50 to-orange-50',
     'from-stone-100 to-stone-50',
     'from-amber/10 to-cream',
@@ -57,11 +57,11 @@ export default function PubCard({ pub, avgPrice = 9.20, distance }: PubCardProps
               aria-hidden="true"
             />
           )}
-          <span className="relative font-serif text-4xl sm:text-5xl text-charcoal/15 select-none">{pub.name.charAt(0)}</span>
+          <span className="relative font-serif text-4xl sm:text-5xl text-ink/15 select-none">{pub.name.charAt(0)}</span>
           {/* Price badge */}
           {effectivePrice ? (
             <div className="absolute top-3 right-3 bg-white rounded-full px-4 py-1.5 shadow-sm flex items-center gap-1.5">
-              <span className="font-mono font-bold text-charcoal text-base">${effectivePrice.toFixed(2)}</span>
+              <span className="font-mono font-bold text-ink text-base">${effectivePrice.toFixed(2)}</span>
               {label && (
                 <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full ${colors.bg} ${colors.text}`}>
                   {label}
@@ -70,7 +70,7 @@ export default function PubCard({ pub, avgPrice = 9.20, distance }: PubCardProps
             </div>
           ) : (
             <div className="absolute top-3 right-3 bg-white/90 rounded-full px-3 py-1 shadow-sm">
-              <span className="text-stone-warm text-xs font-medium">Price TBC</span>
+              <span className="text-gray-mid text-xs font-medium">Price TBC</span>
             </div>
           )}
           {/* HH NOW badge */}
@@ -85,8 +85,8 @@ export default function PubCard({ pub, avgPrice = 9.20, distance }: PubCardProps
         <div className="p-5 flex-1 flex flex-col">
           <div className="flex items-start justify-between gap-2">
             <div className="min-w-0 flex-1">
-              <h3 className="font-serif text-lg text-charcoal leading-snug truncate">{pub.name}</h3>
-              <p className="text-stone-warm text-sm mt-0.5">
+              <h3 className="font-serif text-lg text-ink leading-snug truncate">{pub.name}</h3>
+              <p className="text-gray-mid text-sm mt-0.5">
                 {pub.suburb}{distance ? ` · ${distance}` : ''}
               </p>
             </div>
@@ -96,7 +96,7 @@ export default function PubCard({ pub, avgPrice = 9.20, distance }: PubCardProps
           {/* Details row */}
           <div className="mt-3 flex flex-wrap items-center gap-2 text-sm">
             {pub.beerType && (
-              <span className="text-stone-warm text-xs">{pub.beerType}</span>
+              <span className="text-gray-mid text-xs">{pub.beerType}</span>
             )}
             {!pub.isHappyHourNow && hhTiming && (
               <span className="text-stone-400 text-xs"><Clock className="w-3 h-3 inline" /> {hhTiming}</span>
@@ -124,7 +124,7 @@ export default function PubCard({ pub, avgPrice = 9.20, distance }: PubCardProps
           {/* Bottom: Vibe tag + arrow */}
           <div className="mt-auto pt-3 flex items-center justify-between">
             {pub.vibeTag ? (
-              <span className="text-xs text-stone-warm italic">{pub.vibeTag}</span>
+              <span className="text-xs text-gray-mid italic">{pub.vibeTag}</span>
             ) : <span />}
             <div className="w-8 h-8 rounded-full border border-stone-200 flex items-center justify-center group-hover:border-amber group-hover:bg-amber/5 transition-all">
               <svg className="w-4 h-4 text-stone-400 group-hover:text-amber transition-colors" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">

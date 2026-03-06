@@ -337,9 +337,9 @@ export default function SubmitPubForm({ isOpen, onClose, userLocation }: SubmitP
   if (!isOpen) return null;
 
   const inputClass =
-    'w-full px-3 py-3 h-11 bg-cream border border-cream-dark rounded-xl text-charcoal placeholder-stone-warm/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber/50 focus-visible:ring-offset-1 focus:border-amber transition-all text-sm';
+    'w-full px-3 py-3 h-11 bg-white border border-off-white rounded-xl text-ink placeholder-stone-warm/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber/50 focus-visible:ring-offset-1 focus:border-amber transition-all text-sm';
   const inputErrorClass =
-    'w-full px-3 py-3 h-11 bg-cream border border-red-400 rounded-xl text-charcoal placeholder-stone-warm/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-400/50 focus-visible:ring-offset-1 focus:border-red-400 transition-all text-sm';
+    'w-full px-3 py-3 h-11 bg-white border border-red-400 rounded-xl text-ink placeholder-stone-warm/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-400/50 focus-visible:ring-offset-1 focus:border-red-400 transition-all text-sm';
   const labelClass =
     'block text-sm font-medium text-stone-600 mb-1.5';
 
@@ -367,16 +367,16 @@ export default function SubmitPubForm({ isOpen, onClose, userLocation }: SubmitP
       <label className={labelClass} id="pub-search-label">Select a Pub</label>
       {selectedPub ? (
         <div className="flex items-center gap-2 px-3 py-2.5 bg-amber/10 border border-amber/20 rounded-xl">
-          <span className="flex-1 text-sm font-medium text-charcoal">
+          <span className="flex-1 text-sm font-medium text-ink">
             {selectedPub.name}
-            <span className="text-stone-warm font-normal ml-1.5">
+            <span className="text-gray-mid font-normal ml-1.5">
               — {selectedPub.suburb}
             </span>
           </span>
           <button
             type="button"
             onClick={handleDeselectPub}
-            className="text-stone-warm hover:text-charcoal transition-colors p-0.5 focus-visible:ring-2 focus-visible:ring-amber/50 focus-visible:ring-offset-1 rounded"
+            className="text-gray-mid hover:text-ink transition-colors p-0.5 focus-visible:ring-2 focus-visible:ring-amber/50 focus-visible:ring-offset-1 rounded"
             aria-label="Deselect pub"
           >
             <svg
@@ -417,7 +417,7 @@ export default function SubmitPubForm({ isOpen, onClose, userLocation }: SubmitP
             aria-labelledby="pub-search-label"
           />
           <svg
-            className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-warm/50"
+            className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-mid/50"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -433,10 +433,10 @@ export default function SubmitPubForm({ isOpen, onClose, userLocation }: SubmitP
           {showDropdown && !pubsLoading && (
             <div
               ref={dropdownRef}
-              className="absolute z-50 mt-1 w-full bg-white border border-cream-dark rounded-xl shadow-lg max-h-56 overflow-y-auto"
+              className="absolute z-50 mt-1 w-full bg-white border border-off-white rounded-xl shadow-lg max-h-56 overflow-y-auto"
             >
               {filtered.length === 0 ? (
-                <div className="px-4 py-3 text-sm text-stone-warm">
+                <div className="px-4 py-3 text-sm text-gray-mid">
                   No pubs found for &ldquo;{search}&rdquo;
                 </div>
               ) : (
@@ -447,8 +447,8 @@ export default function SubmitPubForm({ isOpen, onClose, userLocation }: SubmitP
                     onClick={() => handleSelectPub(pub)}
                     className={`w-full text-left px-4 py-2.5 text-sm transition-colors ${
                       i === highlightIndex
-                        ? 'bg-amber/10 text-charcoal'
-                        : 'text-charcoal hover:bg-cream'
+                        ? 'bg-amber/10 text-ink'
+                        : 'text-ink hover:bg-white'
                     } ${i === 0 ? 'rounded-t-xl' : ''} ${
                       i === filtered.length - 1
                         ? 'rounded-b-xl'
@@ -456,7 +456,7 @@ export default function SubmitPubForm({ isOpen, onClose, userLocation }: SubmitP
                     }`}
                   >
                     <span className="font-medium">{pub.name}</span>
-                    <span className="text-stone-warm ml-1.5">
+                    <span className="text-gray-mid ml-1.5">
                       — {pub.suburb}
                     </span>
                   </button>
@@ -471,19 +471,19 @@ export default function SubmitPubForm({ isOpen, onClose, userLocation }: SubmitP
 
   return (
     <div
-      className="fixed inset-0 bg-charcoal/50 backdrop-blur-sm z-[9999] flex items-start justify-center pt-8 pb-8 px-4 overflow-y-auto"
+      className="fixed inset-0 bg-ink/50 backdrop-blur-sm z-[9999] flex items-start justify-center pt-8 pb-8 px-4 overflow-y-auto"
       onClick={handleOverlayClick}
     >
       <div
         ref={modalRef}
-        className="bg-white rounded-2xl max-w-lg w-full border border-cream-dark shadow-2xl my-auto"
+        className="bg-white rounded-2xl max-w-lg w-full border border-off-white shadow-2xl my-auto"
         role="dialog"
         aria-label={modeTitle}
       >
         {/* Header */}
-        <div className="px-6 py-4 border-b border-cream-dark flex items-center justify-between">
+        <div className="px-6 py-4 border-b border-off-white flex items-center justify-between">
           <div>
-            <h2 className="text-xl font-bold text-charcoal">
+            <h2 className="text-xl font-bold text-ink">
               {modeTitle}
             </h2>
             <p className="text-xs text-stone-500 mt-0.5">
@@ -492,7 +492,7 @@ export default function SubmitPubForm({ isOpen, onClose, userLocation }: SubmitP
           </div>
           <button
             onClick={handleClose}
-            className="text-stone-warm hover:text-charcoal transition-colors p-2 hover:bg-cream rounded-xl focus-visible:ring-2 focus-visible:ring-amber/50 focus-visible:ring-offset-1"
+            className="text-gray-mid hover:text-ink transition-colors p-2 hover:bg-white rounded-xl focus-visible:ring-2 focus-visible:ring-amber/50 focus-visible:ring-offset-1"
             aria-label="Close"
           >
             <svg
@@ -528,7 +528,7 @@ export default function SubmitPubForm({ isOpen, onClose, userLocation }: SubmitP
                 />
               </svg>
             </div>
-            <h3 className="text-xl font-bold text-charcoal mb-2">
+            <h3 className="text-xl font-bold text-ink mb-2">
               Thanks legend! <Beer className="w-4 h-4 inline" />
             </h3>
             <p className="text-stone-500 text-sm">
@@ -544,7 +544,7 @@ export default function SubmitPubForm({ isOpen, onClose, userLocation }: SubmitP
         ) : (
           <form onSubmit={handleSubmit} className="p-6 space-y-4">
             {/* Mode tabs */}
-            <div className="flex gap-1 bg-cream rounded-lg p-1">
+            <div className="flex gap-1 bg-white rounded-lg p-1">
               {([
                 { key: 'existing' as const, label: 'Report Price' },
                 { key: 'report-outdated' as const, label: 'Flag Outdated' },
@@ -557,8 +557,8 @@ export default function SubmitPubForm({ isOpen, onClose, userLocation }: SubmitP
                   aria-pressed={mode === key}
                   className={`flex-1 px-2 py-1.5 rounded-md text-xs font-medium transition-all focus-visible:ring-2 focus-visible:ring-amber/50 focus-visible:ring-offset-1 ${
                     mode === key
-                      ? 'bg-white text-charcoal shadow-sm'
-                      : 'text-stone-warm hover:text-charcoal'
+                      ? 'bg-white text-ink shadow-sm'
+                      : 'text-gray-mid hover:text-ink'
                   }`}
                 >
                   {label}
@@ -614,7 +614,7 @@ export default function SubmitPubForm({ isOpen, onClose, userLocation }: SubmitP
                     value={outdatedNote}
                     onChange={(e) => setOutdatedNote(e.target.value)}
                     placeholder="e.g. Price went up to $12, closed down, etc."
-                    className="w-full px-3 py-3 bg-cream border border-cream-dark rounded-xl text-charcoal placeholder-stone-warm/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber/50 focus-visible:ring-offset-1 focus:border-amber transition-all text-sm min-h-[80px] resize-y"
+                    className="w-full px-3 py-3 bg-white border border-off-white rounded-xl text-ink placeholder-stone-warm/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber/50 focus-visible:ring-offset-1 focus:border-amber transition-all text-sm min-h-[80px] resize-y"
                   />
                 </div>
               </>

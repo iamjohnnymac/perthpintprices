@@ -95,12 +95,12 @@ export default function PriceHistory({ pubId, currentPrice }: PriceHistoryProps)
   return (
     <div className="bg-stone-50/80 rounded-xl border border-stone-200/60 p-4">
       <div className="flex items-center justify-between mb-2">
-        <h3 className="text-sm font-heading font-semibold text-charcoal flex items-center gap-2">
+        <h3 className="text-sm font-heading font-semibold text-ink flex items-center gap-2">
           <TrendingUp className="w-4 h-4 inline" /> Price History
         </h3>
         <div className="flex items-center gap-2">
           {!trendFlat && (
-            <span className={`text-xs font-medium ${trendUp ? 'text-red-500' : 'text-charcoal'}`}>
+            <span className={`text-xs font-medium ${trendUp ? 'text-red-500' : 'text-ink'}`}>
               {trendUp ? '▲' : '▼'} {changePercent}%
             </span>
           )}
@@ -143,7 +143,7 @@ export default function PriceHistory({ pubId, currentPrice }: PriceHistoryProps)
           {pricePoints.slice(-3).reverse().map((point, i) => (
             <div key={i} className="flex items-center justify-between text-xs">
               <span className="text-stone-500">{formatDateFull(point.changedAt)}</span>
-              <span className="font-mono font-medium text-charcoal">
+              <span className="font-mono font-medium text-ink">
                 ${point.price!.toFixed(2)}
                 {point.beerType && <span className="text-stone-400 font-sans ml-1">({point.beerType})</span>}
               </span>

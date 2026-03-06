@@ -42,7 +42,7 @@ export default function MyLocals({ pubs, userLocation }: MyLocalsProps) {
   return (
     <div className="bg-gradient-to-r from-orange/5 to-orange/10 rounded-2xl border border-orange/20 p-5 sm:p-6">
       <div className="flex items-center justify-between mb-3">
-        <h2 className="text-base sm:text-lg font-heading font-semibold text-charcoal flex items-center gap-2">
+        <h2 className="text-base sm:text-lg font-heading font-semibold text-ink flex items-center gap-2">
           <Star className="w-5 h-5 text-amber" />
           My Locals
           <span className="text-xs font-normal text-stone-400 bg-stone-100 px-2 py-0.5 rounded-full">
@@ -62,26 +62,26 @@ export default function MyLocals({ pubs, userLocation }: MyLocalsProps) {
             <div className={`
               min-w-[56px] text-center py-1.5 px-2 rounded-lg font-mono font-bold text-sm
               ${pub.isHappyHourNow
-                ? 'bg-orange-50 text-charcoal ring-1 ring-orange-200'
+                ? 'bg-orange-50 text-ink ring-1 ring-orange-200'
                 : pub.price !== null
-                  ? 'bg-stone-50 text-charcoal ring-1 ring-stone-200'
+                  ? 'bg-stone-50 text-ink ring-1 ring-stone-200'
                   : 'bg-stone-50 text-stone-400 ring-1 ring-stone-200'
               }
             `}>
               {pub.price !== null ? `$${pub.price.toFixed(2)}` : 'TBC'}
               {pub.isHappyHourNow && (
-                <div className="text-[10px] font-sans font-medium text-charcoal mt-0.5">HH</div>
+                <div className="text-[10px] font-sans font-medium text-ink mt-0.5">HH</div>
               )}
             </div>
 
             {/* Pub info */}
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2">
-                <span className="font-medium text-charcoal text-sm truncate group-hover:text-orange transition-colors">
+                <span className="font-medium text-ink text-sm truncate group-hover:text-orange transition-colors">
                   {pub.name}
                 </span>
                 {pub.isHappyHourNow && pub.happyHourMinutesRemaining && (
-                  <span className="text-[10px] bg-orange-100 text-charcoal px-1.5 py-0.5 rounded-full font-medium shrink-0">
+                  <span className="text-[10px] bg-orange-100 text-ink px-1.5 py-0.5 rounded-full font-medium shrink-0">
                     {formatMinutes(pub.happyHourMinutesRemaining)}
                   </span>
                 )}

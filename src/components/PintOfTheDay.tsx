@@ -110,7 +110,7 @@ export default function PintOfTheDay() {
       <Link href={`/pub/${data.pub.slug}`} className="block px-4 sm:px-5 pb-4 sm:pb-5 group">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0 flex-1">
-            <h4 className="text-lg font-bold font-heading text-charcoal group-hover:text-orange transition-colors truncate">{data.pub.name}</h4>
+            <h4 className="text-lg font-bold font-heading text-ink group-hover:text-orange transition-colors truncate">{data.pub.name}</h4>
             <p className="text-xs text-stone-500 mt-0.5">{data.pub.suburb} · {data.pub.address}</p>
             {data.pub.beerType && (
               <p className="text-xs text-stone-400 mt-0.5">{data.pub.beerType}</p>
@@ -118,14 +118,14 @@ export default function PintOfTheDay() {
             <p className="text-xs text-orange-dark/80 font-medium mt-1.5"><Lightbulb className="w-3 h-3 inline" /> {data.reason}</p>
           </div>
           <div className="text-right flex-shrink-0">
-            <div className={`text-2xl font-bold font-mono ${data.pub.isHappyHourNow ? 'text-charcoal' : 'text-orange'}`}>
+            <div className={`text-2xl font-bold font-mono ${data.pub.isHappyHourNow ? 'text-ink' : 'text-orange'}`}>
               ${data.pub.effectivePrice.toFixed(2)}
             </div>
             {data.pub.isHappyHourNow && data.pub.effectivePrice < data.pub.price && (
               <div className="text-[10px] text-stone-400 line-through">${data.pub.price.toFixed(2)}</div>
             )}
             {data.pub.isHappyHourNow && (
-              <span className="inline-block text-[10px] bg-orange-100 text-charcoal px-1.5 py-0.5 rounded-full font-semibold mt-0.5">
+              <span className="inline-block text-[10px] bg-orange-100 text-ink px-1.5 py-0.5 rounded-full font-semibold mt-0.5">
                 <Beer className="w-3 h-3 inline" /> HH NOW
               </span>
             )}

@@ -16,7 +16,7 @@ export function getPriceBgColor(price: number | null): string {
 
 export function getPriceTextColor(price: number | null): string {
   if (price === null) return 'text-stone-400'
-  return 'text-charcoal'
+  return 'text-ink'
 }
 
 export function getDirectionsUrl(pub: { name: string; address: string }): string {

@@ -169,7 +169,7 @@ export default function VenueIntel({ pubs, userLocation }: VenueIntelProps) {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <h4 className="text-xs font-semibold text-charcoal mb-2 flex items-center gap-1">
+                <h4 className="text-xs font-semibold text-ink mb-2 flex items-center gap-1">
                   {E.chart_down} Undervalued {E.dash} Below Market
                 </h4>
                 <div className="space-y-1">
@@ -180,8 +180,8 @@ export default function VenueIntel({ pubs, userLocation }: VenueIntelProps) {
                         <p className="text-[10px] text-stone-400">{pub.suburb}{userLocation && ` · ${formatDistance(getDistanceKm(userLocation.lat, userLocation.lng, pub.lat, pub.lng))}`}</p>
                       </div>
                       <div className="text-right flex-shrink-0">
-                        <p className="text-xs font-bold text-charcoal">{pub.price !== null ? `$${pub.price.toFixed(2)}` : 'TBC'}</p>
-                        <p className="text-[9px] text-charcoal">{E.down_arrow}-${diff.toFixed(2)}</p>
+                        <p className="text-xs font-bold text-ink">{pub.price !== null ? `$${pub.price.toFixed(2)}` : 'TBC'}</p>
+                        <p className="text-[9px] text-ink">{E.down_arrow}-${diff.toFixed(2)}</p>
                       </div>
                     </Link>
                   ))}
@@ -211,7 +211,7 @@ export default function VenueIntel({ pubs, userLocation }: VenueIntelProps) {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <h4 className="text-xs font-semibold text-charcoal mb-2 flex items-center gap-1">
+                <h4 className="text-xs font-semibold text-ink mb-2 flex items-center gap-1">
                   {E.green_circle} Cheapest Suburbs
                 </h4>
                 <div className="space-y-1">
@@ -222,7 +222,7 @@ export default function VenueIntel({ pubs, userLocation }: VenueIntelProps) {
                         <span className="text-xs font-semibold text-stone-800">{suburb.name}</span>
                       </div>
                       <div className="text-right">
-                        <span className="text-xs font-bold text-charcoal">${suburb.avgPrice.toFixed(2)}</span>
+                        <span className="text-xs font-bold text-ink">${suburb.avgPrice.toFixed(2)}</span>
                         <span className="text-[9px] text-stone-400 ml-1">({suburb.count})</span>
                       </div>
                     </div>

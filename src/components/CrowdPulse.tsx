@@ -36,7 +36,7 @@ function getVibeColor(score: number): string {
 }
 
 function getConfidenceLabel(reportCount: number): { label: string; color: string } {
-  if (reportCount >= 5) return { label: 'High', color: 'text-charcoal' }
+  if (reportCount >= 5) return { label: 'High', color: 'text-ink' }
   if (reportCount >= 3) return { label: 'Medium', color: 'text-yellow-600' }
   return { label: 'Low', color: 'text-stone-400' }
 }

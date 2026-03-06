@@ -66,10 +66,10 @@ export default function PriceReporter({ pubSlug, pubName, currentPrice }: PriceR
     return (
       <div className="bg-orange-50 border border-orange-200 rounded-xl p-4">
         <div className="flex items-center gap-2">
-          <CircleCheck className="w-5 h-5 text-charcoal" />
+          <CircleCheck className="w-5 h-5 text-ink" />
           <div>
-            <p className="text-sm font-semibold text-charcoal">Price reported!</p>
-            <p className="text-xs text-charcoal">Thanks for helping keep Arvo accurate.</p>
+            <p className="text-sm font-semibold text-ink">Price reported!</p>
+            <p className="text-xs text-ink">Thanks for helping keep Arvo accurate.</p>
           </div>
         </div>
       </div>
@@ -91,7 +91,7 @@ export default function PriceReporter({ pubSlug, pubName, currentPrice }: PriceR
   return (
     <div className="bg-white rounded-xl border border-stone-200/60 p-4">
       <div className="flex items-center justify-between mb-3">
-        <h3 className="text-sm font-bold text-charcoal"><PenLine className="w-4 h-4 inline" /> Report Price</h3>
+        <h3 className="text-sm font-bold text-ink"><PenLine className="w-4 h-4 inline" /> Report Price</h3>
         <button onClick={() => setIsOpen(false)} className="text-stone-400 hover:text-stone-600 text-xs">✕ Close</button>
       </div>
       <p className="text-xs text-stone-500 mb-3">
@@ -147,7 +147,7 @@ export default function PriceReporter({ pubSlug, pubName, currentPrice }: PriceR
         <button
           type="submit"
           disabled={status === 'submitting' || !price}
-          className="w-full py-3 bg-charcoal hover:bg-charcoal/90 text-white rounded-xl font-bold text-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98]"
+          className="w-full py-3 bg-ink hover:bg-ink/90 text-white rounded-xl font-bold text-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98]"
         >
           {status === 'submitting' ? 'Submitting...' : <><Beer className="w-4 h-4 inline" /> Submit Price Report</>}
         </button>

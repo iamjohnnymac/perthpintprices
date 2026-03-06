@@ -2,7 +2,8 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import SubPageNav from '@/components/SubPageNav'
-import { Beer, Star, Trophy, Target, PenLine, CircleCheck, Medal } from 'lucide-react'
+import Footer from '@/components/Footer'
+import { Trophy, Medal } from 'lucide-react'
 
 interface Reporter {
   reporter_name: string
@@ -12,11 +13,11 @@ interface Reporter {
 }
 
 const BADGES = [
-  { min: 1, label: 'Rookie Scout', color: 'bg-stone-100 text-stone-600' },
-  { min: 5, label: 'Price Spotter', color: 'bg-blue-100 text-blue-700' },
-  { min: 10, label: 'Price Scout', color: 'bg-orange/10 text-orange-dark' },
-  { min: 25, label: 'Price Pro', color: 'bg-orange/20 text-orange-dark' },
-  { min: 50, label: 'Perth Legend', color: 'bg-yellow-100 text-yellow-800' },
+  { min: 1, label: 'Rookie Scout', color: 'bg-off-white text-gray-mid border border-gray-light' },
+  { min: 5, label: 'Price Spotter', color: 'bg-blue-50 text-blue-700 border border-blue-200' },
+  { min: 10, label: 'Price Scout', color: 'bg-amber/10 text-amber border border-amber/30' },
+  { min: 25, label: 'Price Pro', color: 'bg-amber/20 text-amber border border-amber/40' },
+  { min: 50, label: 'Perth Legend', color: 'bg-amber text-white border border-amber' },
 ]
 
 function getBadge(count: number) {
@@ -51,62 +52,62 @@ export default function LeaderboardClient() {
   }, [])
 
   return (
-    <div className="min-h-screen bg-cream">
+    <div className="min-h-screen bg-white">
       <SubPageNav title="Leaderboard" subtitle="Perth's top price reporters" />
-      <div className="text-center py-6">
-        <h2 className="font-serif text-3xl sm:text-4xl text-charcoal mb-1">Leaderboard</h2>
-        <p className="text-stone-warm text-sm sm:text-base">Perth's top price reporters</p>
-      </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-6 space-y-4">
+      <div className="max-w-container mx-auto px-6 py-8">
+        {/* Heading */}
+        <div className="mb-6">
+          <div className="flex items-center gap-2 mb-1.5">
+            <span className="w-3.5 h-3.5 rounded-[4px] bg-amber" />
+            <span className="font-mono text-[0.68rem] font-bold uppercase tracking-[0.1em] text-gray-mid">Rankings</span>
+          </div>
+          <h1 className="font-mono font-extrabold text-[clamp(1.8rem,5vw,2.4rem)] tracking-[-0.03em] text-ink leading-[1.1]">
+            Leaderboard
+          </h1>
+          <p className="text-gray-mid text-[0.85rem] mt-1">Perth&apos;s top price reporters</p>
+        </div>
+
         {/* How it works */}
-        <div className="bg-orange/5 border border-orange/20 rounded-2xl p-4 sm:p-5">
-          <h2 className="text-sm font-bold text-charcoal mb-2">How to climb the leaderboard</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            <div className="flex items-start gap-2">
-              <PenLine className="w-5 h-5" />
-              <div>
-                <p className="text-xs font-semibold text-charcoal">Report prices</p>
-                <p className="text-[11px] text-stone-500">Visit any pub page and tap &quot;Report Current Price&quot;</p>
+        <div className="border-3 border-ink rounded-card p-5 shadow-hard-sm mb-6 bg-off-white">
+          <h2 className="font-mono text-[0.75rem] font-extrabold text-ink uppercase tracking-[0.05em] mb-3">How to climb</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            {[
+              { color: '#D4740A', label: 'Report', desc: 'Visit any pub page and tap "Report Current Price"' },
+              { color: '#2D7A3D', label: 'Verify', desc: 'Reports matching other data get verified automatically' },
+              { color: '#3B82F6', label: 'Badge Up', desc: 'Rookie Scout → Price Spotter → Price Scout → Perth Legend' },
+            ].map((step) => (
+              <div key={step.label}>
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="w-3 h-3 rounded-[3px]" style={{ background: step.color }} />
+                  <span className="font-mono text-[0.65rem] font-bold uppercase tracking-[0.08em] text-gray-mid">{step.label}</span>
+                </div>
+                <p className="text-[0.75rem] text-gray-mid leading-relaxed">{step.desc}</p>
               </div>
-            </div>
-            <div className="flex items-start gap-2">
-              <CircleCheck className="w-5 h-5" />
-              <div>
-                <p className="text-xs font-semibold text-charcoal">Get verified</p>
-                <p className="text-[11px] text-stone-500">Reports matching other data get verified automatically</p>
-              </div>
-            </div>
-            <div className="flex items-start gap-2">
-              <span className="text-lg">🏅</span>
-              <div>
-                <p className="text-xs font-semibold text-charcoal">Earn badges</p>
-                <p className="text-[11px] text-stone-500">Rookie Scout → Price Spotter → Price Scout → Perth Legend</p>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
 
         {/* Leaderboard */}
-        <div className="bg-white rounded-2xl border border-stone-200/60 overflow-hidden">
+        <div className="border-3 border-ink rounded-card shadow-hard overflow-hidden">
           {loading ? (
             <div className="p-8 text-center">
-              <div className="w-10 h-10 border-3 border-stone-200 border-t-orange rounded-full animate-spin mx-auto mb-2" />
-              <p className="text-sm text-stone-500">Loading leaderboard...</p>
+              <div className="w-16 h-16 border-4 border-stone-300 border-t-amber rounded-full animate-spin mx-auto mb-3" />
+              <p className="text-gray-mid">Loading leaderboard...</p>
             </div>
           ) : reporters.length === 0 ? (
             <div className="p-8 text-center">
-              <Trophy className="w-10 h-10 text-amber mb-3" />
-              <h3 className="text-lg font-bold text-charcoal mb-1">Be the first!</h3>
-              <p className="text-sm text-stone-500 mb-4">No price reports yet. Visit any pub page and report the current pint price to get on the board.</p>
-              <Link href="/" className="inline-flex items-center gap-2 px-5 py-2.5 bg-charcoal text-white rounded-full text-sm font-bold hover:bg-charcoal/90 transition-all">
-                Browse Pubs →
+              <Trophy className="w-10 h-10 text-amber mx-auto mb-3" />
+              <h3 className="font-mono font-extrabold text-lg text-ink mb-1">Be the first!</h3>
+              <p className="text-[0.85rem] text-gray-mid mb-4">No price reports yet. Visit any pub page and report the current pint price.</p>
+              <Link href="/" className="inline-flex font-mono text-[0.75rem] font-bold uppercase tracking-[0.05em] text-white bg-ink border-3 border-ink rounded-pill px-6 py-3 shadow-hard-sm hover:translate-x-[1.5px] hover:translate-y-[1.5px] hover:shadow-hard-hover transition-all no-underline">
+                Browse Pubs
               </Link>
             </div>
           ) : (
             <div>
-              {/* Table header */}
-              <div className="grid grid-cols-[40px_1fr_80px_60px] sm:grid-cols-[50px_1fr_120px_100px_80px] gap-2 px-4 py-2.5 bg-stone-50 border-b border-stone-200/60 text-xs font-medium text-stone-400">
+              {/* Header */}
+              <div className="grid grid-cols-[40px_1fr_80px_60px] sm:grid-cols-[50px_1fr_120px_100px_80px] gap-2 px-4 py-2.5 bg-off-white border-b border-gray-light font-mono text-[0.6rem] font-bold uppercase tracking-wider text-gray-mid">
                 <span>#</span>
                 <span>Reporter</span>
                 <span className="hidden sm:block">Badge</span>
@@ -116,22 +117,22 @@ export default function LeaderboardClient() {
               {reporters.map((r, i) => {
                 const badge = getBadge(r.total_reports)
                 return (
-                  <div key={r.reporter_name} className="grid grid-cols-[40px_1fr_80px_60px] sm:grid-cols-[50px_1fr_120px_100px_80px] gap-2 px-4 py-3 border-b border-stone-100 last:border-0 items-center hover:bg-stone-50/50 transition-colors">
-                    <span className={`text-sm font-bold ${i === 0 ? 'text-orange' : i === 1 ? 'text-stone-400' : i === 2 ? 'text-orange-dark' : 'text-stone-500'}`}>
-                      {i === 0 ? <Trophy className="w-4 h-4 text-yellow-500 inline" /> : i === 1 ? <Medal className="w-4 h-4 text-gray-400 inline" /> : i === 2 ? <Medal className="w-4 h-4 text-amber-700 inline" /> : `${i + 1}`}
+                  <div key={r.reporter_name} className="grid grid-cols-[40px_1fr_80px_60px] sm:grid-cols-[50px_1fr_120px_100px_80px] gap-2 px-4 py-3 border-b border-gray-light last:border-0 items-center hover:bg-off-white transition-colors">
+                    <span className="font-mono text-[0.75rem] font-bold">
+                      {i === 0 ? <Trophy className="w-4 h-4 text-amber inline" /> : i === 1 ? <Medal className="w-4 h-4 text-gray-400 inline" /> : i === 2 ? <Medal className="w-4 h-4 text-amber-700 inline" /> : <span className="text-gray-mid">{i + 1}</span>}
                     </span>
                     <div className="min-w-0">
-                      <p className="text-sm font-semibold text-charcoal truncate">{r.reporter_name}</p>
-                      <span className={`sm:hidden inline-block text-[10px] px-1.5 py-0.5 rounded-full ${badge.color} font-medium mt-0.5`}>{badge.label}</span>
+                      <p className="font-mono text-[0.8rem] font-bold text-ink truncate">{r.reporter_name}</p>
+                      <span className={`sm:hidden inline-block text-[0.55rem] px-1.5 py-0.5 rounded-full ${badge.color} font-bold mt-0.5`}>{badge.label}</span>
                     </div>
-                    <span className={`hidden sm:inline-block text-[11px] px-2 py-0.5 rounded-full ${badge.color} font-medium w-fit`}>{badge.label}</span>
+                    <span className={`hidden sm:inline-block text-[0.6rem] px-2 py-0.5 rounded-full ${badge.color} font-bold w-fit`}>{badge.label}</span>
                     <div className="text-right">
-                      <span className="text-sm font-bold text-charcoal">{r.total_reports}</span>
+                      <span className="font-mono text-[0.85rem] font-extrabold text-ink">{r.total_reports}</span>
                       {r.verified_count > 0 && (
-                        <span className="block text-[10px] text-charcoal">{r.verified_count} verified</span>
+                        <span className="block text-[0.6rem] text-gray-mid">{r.verified_count} verified</span>
                       )}
                     </div>
-                    <span className="text-[11px] text-stone-400 text-right">{timeAgo(r.last_report)}</span>
+                    <span className="text-[0.65rem] text-gray-mid text-right">{timeAgo(r.last_report)}</span>
                   </div>
                 )
               })}
@@ -139,6 +140,8 @@ export default function LeaderboardClient() {
           )}
         </div>
       </div>
+
+      <Footer />
     </div>
   )
 }

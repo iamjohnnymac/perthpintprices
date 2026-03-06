@@ -4,26 +4,26 @@
 
 @layer base {
   :root {
-    --background: 35 60% 97%;
-    --foreground: 0 0% 10%;
+    --background: 0 0% 100%;
+    --foreground: 0 0% 9%;
     --card: 0 0% 100%;
-    --card-foreground: 0 0% 10%;
+    --card-foreground: 0 0% 9%;
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 10%;
-    --primary: 30 89% 48%;
+    --popover-foreground: 0 0% 9%;
+    --primary: 31 91% 44%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 35 30% 94%;
-    --secondary-foreground: 0 0% 10%;
-    --muted: 35 20% 94%;
-    --muted-foreground: 0 0% 42%;
-    --accent: 35 30% 94%;
-    --accent-foreground: 0 0% 10%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 30 15% 88%;
-    --input: 30 15% 88%;
-    --ring: 30 89% 48%;
-    --chart-1: 30 89% 48%;
+    --secondary: 60 8% 96%;
+    --secondary-foreground: 0 0% 9%;
+    --muted: 60 5% 93%;
+    --muted-foreground: 60 2% 53%;
+    --accent: 60 8% 96%;
+    --accent-foreground: 0 0% 9%;
+    --destructive: 6 63% 47%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 60 5% 93%;
+    --input: 60 5% 93%;
+    --ring: 31 91% 44%;
+    --chart-1: 31 91% 44%;
     --chart-2: 173 58% 39%;
     --chart-3: 197 37% 24%;
     --chart-4: 43 74% 66%;
@@ -37,13 +37,13 @@
     font-size: 16px;
   }
   body {
-    @apply text-base leading-relaxed text-charcoal antialiased;
-    background-color: #FDF8F0;
+    @apply text-base leading-relaxed text-ink antialiased;
+    background-color: #FFFFFF;
     -webkit-overflow-scrolling: touch;
   }
   h1, h2, h3 {
-    font-family: var(--font-plus-jakarta), system-ui, sans-serif;
-    @apply font-semibold;
+    font-family: var(--font-jetbrains-mono), 'Courier New', monospace;
+    @apply font-extrabold;
   }
 }
 
@@ -54,15 +54,7 @@
   .section-gap-sm {
     @apply py-4 sm:py-6;
   }
-  /* EatClub-style card */
-  .ec-card {
-    @apply bg-white rounded-2xl border border-stone-200/40 shadow-none hover:shadow-md transition-shadow;
-  }
-  /* EatClub-style section heading */
-  .ec-heading {
-    font-family: var(--font-plus-jakarta), system-ui, sans-serif;
-    @apply text-2xl sm:text-3xl text-charcoal font-bold;
-  }
+
 }
 
 /* Hide scrollbar but keep scroll functionality */
@@ -81,7 +73,7 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: #FDF8F0;
+  background: #FFFFFF;
   border-radius: 3px;
 }
 

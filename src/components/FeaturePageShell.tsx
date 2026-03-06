@@ -52,19 +52,22 @@ export default function FeaturePageShell({ breadcrumbs, needsCrowd = false, chil
 
   if (isLoading) {
     return (
-      <main className="min-h-screen bg-cream">
+      <main className="min-h-screen bg-white">
         <SubPageNav breadcrumbs={breadcrumbs} />
         <div className="flex items-center justify-center py-20">
-          <div className="w-12 h-12 border-4 border-stone-300 border-t-amber rounded-full animate-spin" />
+          <div className="flex flex-col items-center gap-3">
+            <div className="w-16 h-16 border-4 border-stone-300 border-t-amber rounded-full animate-spin" />
+            <span className="text-gray-mid font-medium text-lg">Loading...</span>
+          </div>
         </div>
       </main>
     )
   }
 
   return (
-    <main className="min-h-screen bg-cream">
+    <main className="min-h-screen bg-white">
       <SubPageNav breadcrumbs={breadcrumbs} />
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
+      <div className="max-w-container mx-auto px-6 py-8 sm:py-12">
         <ErrorBoundary>
           {children({ pubs, userLocation, crowdReports })}
         </ErrorBoundary>

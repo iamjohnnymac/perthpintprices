@@ -114,7 +114,7 @@ export default function PubListView({
             return (
               <tr
                 key={pub.id}
-                className="border-b border-stone-100/80 hover:bg-cream/50 transition-colors cursor-pointer"
+                className="border-b border-stone-100/80 hover:bg-white/50 transition-colors cursor-pointer"
                 onClick={() => router.push(`/pub/${pub.slug}`)}
               >
                 <td className="py-4 px-3 sm:px-4">
@@ -134,10 +134,10 @@ export default function PubListView({
                             <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
                           </svg>
                         </a>
-                        <Link href={`/pub/${pub.slug}`} className="font-semibold text-charcoal text-[15px] hover:text-amber transition-colors leading-tight">{pub.name}</Link>
+                        <Link href={`/pub/${pub.slug}`} className="font-semibold text-ink text-[15px] hover:text-amber transition-colors leading-tight">{pub.name}</Link>
                         <WatchlistButton slug={pub.slug} name={pub.name} suburb={pub.suburb} size="sm" />
                       </div>
-                      <p className="text-xs text-stone-warm sm:hidden">{pub.suburb}{userLocation && ` · ${formatDistance(getDistanceKm(userLocation.lat, userLocation.lng, pub.lat, pub.lng))}`}</p>
+                      <p className="text-xs text-gray-mid sm:hidden">{pub.suburb}{userLocation && ` · ${formatDistance(getDistanceKm(userLocation.lat, userLocation.lng, pub.lat, pub.lng))}`}</p>
                     </div>
                   </div>
                 </td>
@@ -146,11 +146,11 @@ export default function PubListView({
                   {userLocation && <span className="text-stone-400 text-xs ml-1">· {formatDistance(getDistanceKm(userLocation.lat, userLocation.lng, pub.lat, pub.lng))}</span>}
                 </td>
                 <td className="py-4 px-3 hidden sm:table-cell">
-                  <span className="text-xs text-stone-warm truncate max-w-[160px] block" title={pub.beerType || ''}>
+                  <span className="text-xs text-gray-mid truncate max-w-[160px] block" title={pub.beerType || ''}>
                     {pub.beerType || '—'}
                   </span>
                 </td>
-                <td className={`py-4 px-3 sm:px-4 text-right font-bold font-mono text-lg whitespace-nowrap ${pub.price !== null && pub.price <= 8 ? 'text-bargain' : 'text-charcoal'}`}>
+                <td className={`py-4 px-3 sm:px-4 text-right font-bold font-mono text-lg whitespace-nowrap ${pub.price !== null && pub.price <= 8 ? 'text-bargain' : 'text-ink'}`}>
                   {pub.isHappyHourNow && pub.regularPrice !== null && pub.regularPrice !== pub.price && (
                     <span className="text-xs text-stone-400 line-through font-normal mr-1">${pub.regularPrice.toFixed(2)}</span>
                   )}
@@ -161,7 +161,7 @@ export default function PubListView({
                     <span className={`text-sm ${
                       happyHourStatus.isActive ? 'text-amber font-bold' :
                       happyHourStatus.isToday ? 'text-amber-dark font-semibold' :
-                      'text-stone-warm'
+                      'text-gray-mid'
                     }`}>
                       {happyHourStatus.statusEmoji && <LucideIcon name={happyHourStatus.statusEmoji} className="w-3.5 h-3.5 inline" />} {happyHourStatus.statusText}
                     </span>
@@ -206,7 +206,7 @@ export default function PubListView({
       {!showAll && pubs.length > initialCount && (
         <button
           onClick={onShowAll}
-          className="w-full py-4 text-sm font-semibold text-charcoal hover:text-amber hover:bg-cream/50 transition-all flex items-center justify-center gap-2 border-t border-stone-200/60"
+          className="w-full py-4 text-sm font-semibold text-ink hover:text-amber hover:bg-white/50 transition-all flex items-center justify-center gap-2 border-t border-stone-200/60"
         >
           View all {pubs.length} venues
           <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" /></svg>

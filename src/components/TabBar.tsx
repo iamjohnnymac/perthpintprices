@@ -34,7 +34,7 @@ export default function TabBar({ activeTab, onTabChange }: TabBarProps) {
                 outline-none focus:outline-none
                 border-b-2
                 ${isActive
-                  ? 'text-charcoal border-amber'
+                  ? 'text-ink border-amber'
                   : 'text-stone-400 border-transparent hover:text-stone-600'
                 }
               `}
