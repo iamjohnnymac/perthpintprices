@@ -1,25 +1,62 @@
-import { Pub } from '@/types/pub'
-import HappyHourPreview from './HappyHourPreview'
-import PintOfTheDayCompact from './PintOfTheDayCompact'
-
 interface HeroSectionProps {
-  pubs: Pub[]
+  pubs: { price: number | null; suburb: string }[]
 }
 
 export default function HeroSection({ pubs }: HeroSectionProps) {
+  const priced = pubs.filter(p => p.price !== null)
+  const venueCount = priced.length || 420
+  const suburbCount = new Set(pubs.map(p => p.suburb)).size || 150
+  const cheapest = priced.length > 0 ? Math.min(...priced.map(p => p.price!)) : 6
+
   return (
-    <section className="relative overflow-hidden">
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 pt-5 sm:pt-12 pb-2 sm:pb-6 text-center">
-        <h1 className="font-serif text-[2rem] sm:text-[3.5rem] lg:text-[4.25rem] text-charcoal leading-[1.08] mb-1.5">
-          Perth&apos;s pint prices,{' '}
+    <>
+      {/* Hero */}
+      <section className="text-center px-6 pt-8 pb-10 max-w-container mx-auto">
+        {/* Beer glass illustration */}
+        <div className="w-[100px] h-[120px] mx-auto mb-7 relative">
+          <div className="w-[70px] h-[95px] mx-auto relative border-3 border-ink rounded-[4px_4px_8px_8px] shadow-hard overflow-hidden"
+               style={{ background: 'linear-gradient(180deg, #F5D98A 0%, #D4A030 45%, #C4880A 100%)' }}>
+            {/* Foam */}
+            <div className="absolute -top-[8px] -left-[3px] -right-[3px] h-[28px] bg-[#FFFEF0] rounded-[18px_18px_40%_40%] border-3 border-ink border-b-0" />
+            {/* Handle */}
+            <div className="absolute -right-[20px] top-[18px] w-[18px] h-[42px] border-3 border-ink border-l-0 rounded-[0_10px_10px_0] bg-white" />
+          </div>
+        </div>
+
+        <h1 className="font-mono text-[clamp(2.4rem,7vw,3.2rem)] font-extrabold leading-[1.05] tracking-[-0.04em] text-ink mb-3">
+          Perth&apos;s pints,<br />
           <span className="text-amber">sorted.</span>
         </h1>
-        <p className="text-base sm:text-lg text-stone-warm max-w-md mx-auto mb-3 leading-relaxed">
-          Real prices from real punters. Updated weekly.
+        <p className="font-body text-[0.95rem] text-gray-mid font-medium">
+          Every pub. Every price. Updated weekly.
         </p>
-        <PintOfTheDayCompact />
-        <HappyHourPreview pubs={pubs} />
+      </section>
+
+      {/* Accent dot row */}
+      <div className="flex justify-center gap-1.5 py-2 max-w-container mx-auto">
+        {[
+          '#D4740A','#D4740A','#F2A91A','#C43D2E','#D4740A','#2D7A3D','#F2A91A','#D4740A',
+          '#3B82F6','#D4740A','#C43D2E','#F2A91A','#2D7A3D','#D4740A','#7C3AED','#D4740A'
+        ].map((color, i) => (
+          <span key={i} className="w-2.5 h-2.5 rounded-full" style={{ background: color }} />
+        ))}
       </div>
-    </section>
+
+      {/* Stat strip */}
+      <div className="max-w-container mx-auto px-6 pb-8 flex gap-2.5 justify-center flex-wrap">
+        <div className="border-3 border-ink rounded-card px-5 py-3.5 text-center min-w-[100px] bg-white shadow-hard-sm">
+          <span className="font-mono text-[1.6rem] font-extrabold tracking-[-0.02em] block leading-[1.1]">{venueCount}</span>
+          <span className="font-mono text-[0.6rem] font-bold uppercase tracking-[0.08em] text-gray-mid block mt-0.5">Venues</span>
+        </div>
+        <div className="border-3 border-ink rounded-card px-5 py-3.5 text-center min-w-[100px] bg-white shadow-hard-sm">
+          <span className="font-mono text-[1.6rem] font-extrabold tracking-[-0.02em] block leading-[1.1]">{suburbCount}</span>
+          <span className="font-mono text-[0.6rem] font-bold uppercase tracking-[0.08em] text-gray-mid block mt-0.5">Suburbs</span>
+        </div>
+        <div className="border-3 border-ink rounded-card px-5 py-3.5 text-center min-w-[100px] bg-amber shadow-hard-sm">
+          <span className="font-mono text-[1.6rem] font-extrabold tracking-[-0.02em] block leading-[1.1] text-white">${cheapest}</span>
+          <span className="font-mono text-[0.6rem] font-bold uppercase tracking-[0.08em] text-white/80 block mt-0.5">Cheapest</span>
+        </div>
+      </div>
+    </>
   )
 }

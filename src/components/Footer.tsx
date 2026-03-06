@@ -1,73 +1,30 @@
 import Link from 'next/link'
-import { Waves } from 'lucide-react'
 
 export default function Footer() {
   return (
-    <footer className="bg-charcoal text-white">
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-10 sm:py-14">
-        {/* Top row: Logo + tagline */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-8">
-          <div className="flex items-center gap-2.5">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="flex-shrink-0"><path d="M12 2v20M2 12h20M4.93 4.93l14.14 14.14M19.07 4.93L4.93 19.07" stroke="#E8820C" strokeWidth="2.5" strokeLinecap="round"/></svg>
-            <span className="font-serif text-2xl">arvo</span>
-          </div>
-          <p className="text-stone-400 text-sm">Perth&apos;s pint prices, sorted.</p>
-        </div>
-
-        {/* Link columns */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 mb-8 pb-8 border-b border-stone-700/40">
-          <div>
-            <h4 className="text-xs font-semibold text-stone-500 uppercase tracking-wider mb-3">Explore</h4>
-            <ul className="space-y-2.5">
-              <li><Link href="/happy-hour" className="text-sm text-stone-300 hover:text-white transition-colors">Happy Hours</Link></li>
-              <li><Link href="/pub-golf" className="text-sm text-stone-300 hover:text-white transition-colors">Pub Golf</Link></li>
-              <li><Link href="/pint-crawl" className="text-sm text-stone-300 hover:text-white transition-colors">Pint Crawl</Link></li>
-              <li><Link href="/leaderboard" className="text-sm text-stone-300 hover:text-white transition-colors">Leaderboard</Link></li>
-              <li><Link href="/discover" className="text-sm text-stone-300 hover:text-white transition-colors">Discover</Link></li>
-            </ul>
-          </div>
-          <div>
-            <h4 className="text-xs font-semibold text-stone-500 uppercase tracking-wider mb-3">Beer Sizes</h4>
-            <ul className="space-y-2.5">
-              <li className="text-sm text-stone-300">Middy <span className="text-stone-500">285ml</span></li>
-              <li className="text-sm text-stone-300">Schooner <span className="text-stone-500">425ml</span></li>
-              <li className="text-sm text-amber font-medium">Pint <span className="text-stone-500">570ml</span></li>
-            </ul>
-          </div>
-          <div>
-            <h4 className="text-xs font-semibold text-stone-500 uppercase tracking-wider mb-3">About</h4>
-            <ul className="space-y-2.5">
-              <li className="text-sm text-stone-300">Community-driven</li>
-              <li className="text-sm text-stone-300">100% real prices</li>
-              <li className="text-sm text-stone-300">Updated weekly</li>
-            </ul>
-          </div>
-          <div>
-            <h4 className="text-xs font-semibold text-stone-500 uppercase tracking-wider mb-3">Contact</h4>
-            <ul className="space-y-2.5">
-              <li>
-                <a href="mailto:perthpintprices@gmail.com" className="text-sm text-stone-300 hover:text-white transition-colors">
-                  Email us
-                </a>
-              </li>
-              <li>
-                <a
-                  href="mailto:perthpintprices@gmail.com?subject=Price%20Correction"
-                  className="text-sm text-amber hover:text-amber-light transition-colors"
-                >
-                  Report wrong price
-                </a>
-              </li>
-            </ul>
-          </div>
-        </div>
-
-        {/* Bottom */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
-          <p className="text-stone-500 text-xs">&copy; {new Date().getFullYear()} Arvo. Prices may vary. Drink responsibly.</p>
-          <p className="text-stone-600 text-xs inline-flex items-center gap-1">Made in Perth <Waves className="w-3 h-3 inline" /></p>
-        </div>
+    <footer className="border-t-3 border-ink max-w-container mx-auto px-6 py-8 pb-12 text-center">
+      <div className="flex justify-center gap-6 mb-5 flex-wrap">
+        {[
+          { href: '/happy-hour', label: 'Happy Hours' },
+          { href: '/pub-golf', label: 'Pub Golf' },
+          { href: '/pint-crawl', label: 'Pint Crawl' },
+          { href: '/leaderboard', label: 'Leaderboard' },
+        ].map((link) => (
+          <Link
+            key={link.href}
+            href={link.href}
+            className="font-mono text-[0.7rem] font-bold uppercase tracking-[0.06em] text-gray-mid hover:text-amber transition-colors no-underline"
+          >
+            {link.label}
+          </Link>
+        ))}
       </div>
+      <p className="text-[0.75rem] text-gray-mid leading-relaxed max-w-[400px] mx-auto mb-4">
+        Prices are community-submitted and may vary. Drink responsibly.
+      </p>
+      <p className="font-display text-[0.9rem] italic text-gray-mid">
+        Made in Perth
+      </p>
     </footer>
   )
 }

@@ -7,32 +7,22 @@ import { getPubs, getCrowdLevels, CrowdReport } from '@/lib/supabase'
 
 import { getDistanceKm } from '@/lib/location'
 import Link from 'next/link'
-import dynamic from 'next/dynamic'
-
 // Extracted components
 import HeroSection from '@/components/HeroSection'
 import { FilterSection } from '@/components/FilterSection'
-import PubListView from '@/components/PubListView'
-import PubCardsView from '@/components/PubCardsView'
 import PubCardList from '@/components/PubCardList'
-import MapPeekInline from '@/components/MapPeekInline'
-import PriceTicker from '@/components/PriceTicker'
 import HowItWorks from '@/components/HowItWorks'
 import SocialProof from '@/components/SocialProof'
 import FAQ from '@/components/FAQ'
 import Footer from '@/components/Footer'
-import MyLocals from '@/components/MyLocals'
 import SubmitPubForm from '@/components/SubmitPubForm'
 import CrowdReporter from '@/components/CrowdReporter'
-import { Beer, Search as SearchIcon } from 'lucide-react'
-
-// Map is now loaded via MapPeek component
 
 const INITIAL_PUB_COUNT = 10
 
 function LoadingSkeleton() {
   return (
-    <main className="min-h-screen bg-cream flex items-center justify-center">
+    <main className="min-h-screen bg-white flex items-center justify-center">
       <div className="flex flex-col items-center gap-3">
         <div className="w-16 h-16 border-4 border-stone-300 border-t-amber rounded-full animate-spin"></div>
         <span className="text-stone-600 font-medium text-lg">Loading pubs...</span>
@@ -244,7 +234,7 @@ function HomeContent() {
   }
 
   return (
-    <main className="min-h-screen bg-cream">
+    <main className="min-h-screen bg-white">
       {/* ═══ HEADER — minimal monospace with pill CTA ═══ */}
       <header ref={headerRef} className="max-w-container mx-auto px-6 py-6 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2 no-underline">
@@ -256,15 +246,38 @@ function HomeContent() {
         <button
           onClick={() => setShowSubmitForm(true)}
           className="font-mono text-[0.72rem] font-bold uppercase tracking-[0.05em] text-ink bg-white border-3 border-ink rounded-pill px-5 py-2.5 shadow-hard-sm hover:translate-x-[1.5px] hover:translate-y-[1.5px] hover:shadow-hard-hover transition-all cursor-pointer"
+          data-submit-trigger
         >
           Submit a Price
         </button>
       </header>
 
-      {/* ═══ HERO — compact branding moment ═══ */}
+      {/* ═══ HERO — beer glass, dots, stat strip ═══ */}
       <div ref={heroRef}>
         <HeroSection pubs={pubs} />
       </div>
+
+      {/* ═══ LIVE HAPPY HOUR BANNER ═══ */}
+      {(() => {
+        const liveHH = pubs.find(p => p.isHappyHourNow)
+        if (!liveHH) return null
+        return (
+          <Link href="/happy-hour" className="block max-w-container mx-auto px-6 mb-5">
+            <div className="bg-ink border-3 border-ink rounded-pill px-6 py-3 flex items-center gap-3 shadow-hard">
+              <div className="flex items-center gap-1.5 flex-shrink-0">
+                <span className="w-2 h-2 rounded-full bg-green shadow-[0_0_8px_rgba(45,122,61,0.5)] animate-pulse" />
+                <span className="font-mono font-bold text-[0.72rem] uppercase tracking-[0.05em] text-white">Live</span>
+              </div>
+              <span className="text-white font-medium text-[0.85rem] flex-1 truncate">
+                <strong className="text-amber-light font-bold">{liveHH.name}</strong> has ${liveHH.price?.toFixed(2)} pints right now
+              </span>
+              <span className="font-mono font-extrabold text-[1.1rem] text-amber-light flex-shrink-0">
+                ${liveHH.price?.toFixed(2)}
+              </span>
+            </div>
+          </Link>
+        )
+      })()}
 
       {/* ═══ FILTER BAR — below header, above content ═══ */}
       <FilterSection
@@ -295,73 +308,23 @@ function HomeContent() {
         setHasTabOnly={setHasTabOnly}
       />
 
-      {/* ═══ CONTENT ═══ */}
-      <div ref={contentRef} className="max-w-5xl mx-auto px-4 sm:px-6 pt-6 sm:pt-8 pb-6 sm:pb-8">
-        <MyLocals pubs={pubs} userLocation={userLocation} />
-
-
-        {/* Combined toolbar: Map toggle + venue count in ONE row */}
-        <div className="flex flex-wrap items-center justify-between gap-y-0 mb-3">
-          <div className="flex items-center gap-3">
-            <MapPeekInline
-              pubs={filteredPubs}
-              userLocation={userLocation}
-              totalPubCount={pubs.length}
-              happyHourCount={stats.happyHourNow}
-            />
-            <p className="text-stone-500 text-xs sm:text-sm">
-              <span className="font-semibold text-charcoal">{showAllPubs ? filteredPubs.length : Math.min(INITIAL_PUB_COUNT, filteredPubs.length)}</span> of {filteredPubs.length} venues
-            </p>
-          </div>
-          {filteredPubs.length > INITIAL_PUB_COUNT && (
-            <button
-              onClick={() => setShowAllPubs(!showAllPubs)}
-              className="text-xs sm:text-sm font-semibold text-charcoal hover:text-amber transition-colors flex items-center gap-1 focus-visible:ring-2 focus-visible:ring-amber/50 focus-visible:ring-offset-1 rounded-lg"
-            >
-              {showAllPubs ? 'Less' : `All`}
-              <svg className={`w-3.5 h-3.5 transition-transform ${showAllPubs ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" /></svg>
-            </button>
-          )}
-        </div>
-
-        {/* v2 Card-based listing with smart grouping */}
-        {viewMode === 'list' && (
-          <PubCardList
-            pubs={filteredPubs}
-            crowdReports={crowdReports}
-            userLocation={userLocation}
-            onCrowdReport={setCrowdReportPub}
-            showAll={showAllPubs}
-            initialCount={INITIAL_PUB_COUNT}
-            onShowAll={() => setShowAllPubs(true)}
-          />
-        )}
-
-        {viewMode === 'cards' && (
-          <PubCardsView
-            pubs={filteredPubs}
-            userLocation={userLocation}
-            showAll={showAllPubs}
-            initialCount={INITIAL_PUB_COUNT}
-            onShowAll={() => setShowAllPubs(true)}
-          />
-        )}
-
-        {filteredPubs.length === 0 && (
-          <div className="text-center py-16 bg-white rounded-xl shadow-sm">
-            <div className="text-5xl mb-4">{showHappyHourOnly ? <Beer className="w-12 h-12 text-amber" /> : <SearchIcon className="w-12 h-12 text-stone-400" />}</div>
-            <h3 className="font-serif text-xl text-charcoal mb-2">{showHappyHourOnly ? 'No pubs with happy hour info yet' : 'No pubs found'}</h3>
-            <p className="text-stone-500 text-sm">{showHappyHourOnly ? 'We’re building our happy hour database — submit yours!' : 'Try adjusting your filters'}</p>
-          </div>
-        )}
+      {/* ═══ PUB LIST ═══ */}
+      <div ref={contentRef}>
+        <PubCardList
+          pubs={filteredPubs}
+          crowdReports={crowdReports}
+          userLocation={userLocation}
+          onCrowdReport={setCrowdReportPub}
+          showAll={showAllPubs}
+          initialCount={INITIAL_PUB_COUNT}
+          onShowAll={() => setShowAllPubs(true)}
+        />
       </div>
 
       <HowItWorks venueCount={pubs.length} suburbCount={suburbs.length} />
       <SocialProof venueCount={stats.total} suburbCount={suburbs.length} avgPrice={stats.avgPrice} />
       <FAQ />
       <Footer />
-      <div className="h-9" /> {/* Spacer for fixed bottom ticker */}
-      <PriceTicker pubs={pubs} />
 
       <SubmitPubForm isOpen={showSubmitForm} onClose={() => setShowSubmitForm(false)} userLocation={userLocation} />
 

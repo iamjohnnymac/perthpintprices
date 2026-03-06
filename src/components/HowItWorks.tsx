@@ -3,60 +3,55 @@ interface HowItWorksProps {
   suburbCount?: number
 }
 
-function SearchIcon() {
-  return (
-    <svg className="w-7 h-7 text-amber" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
-      <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
-    </svg>
-  )
-}
-
-function CompareIcon() {
-  return (
-    <svg className="w-7 h-7 text-amber" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
-      <path strokeLinecap="round" strokeLinejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
-    </svg>
-  )
-}
-
-function PintIcon() {
-  return (
-    <svg className="w-7 h-7 text-amber" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
-      <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
-      <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
-    </svg>
-  )
-}
-
 export default function HowItWorks({ venueCount = 420, suburbCount = 154 }: HowItWorksProps) {
-  const steps = [
-    { num: '01', title: 'Find your pub', desc: `Search or browse ${venueCount}+ venues across ${suburbCount} Perth suburbs.`, Icon: SearchIcon },
-    { num: '02', title: 'Compare prices', desc: "See who's cheapest, who's on happy hour, and what's nearby.", Icon: CompareIcon },
-    { num: '03', title: 'Go enjoy', desc: 'Get directions, grab a pint, save a few bucks.', Icon: PintIcon },
-  ]
-
   return (
-    <section className="py-12 sm:py-16 bg-cream/40">
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 text-center">
-        <h2 className="font-serif text-3xl sm:text-4xl text-charcoal mb-2">
-          How it works
-        </h2>
-        <p className="text-stone-400 mb-8 text-sm">No app download. No sign-up. Just prices.</p>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
-          {steps.map((step) => (
-            <div key={step.num} className="bg-white rounded-xl p-5 text-center shadow-sm border border-stone-100">
-              <div className="flex items-center justify-center w-12 h-12 mx-auto mb-3 rounded-full bg-amber/10">
-                <step.Icon />
+    <>
+      {/* Size Legend */}
+      <section className="bg-off-white py-14 px-6">
+        <div className="max-w-container mx-auto">
+          <div className="flex items-center gap-2 mb-1.5">
+            <span className="w-3.5 h-3.5 rounded-[4px] bg-amber" />
+            <span className="font-mono text-[0.68rem] font-bold uppercase tracking-[0.1em] text-gray-mid">Beer Sizes</span>
+          </div>
+          <h2 className="font-mono font-extrabold text-[clamp(1.4rem,4vw,1.8rem)] tracking-[-0.03em] text-ink mb-6">
+            Know your glass.
+          </h2>
+          <div className="flex justify-center gap-4 flex-wrap">
+            {[
+              { name: 'Middy', ml: '285ml' },
+              { name: 'Schooner', ml: '425ml' },
+              { name: 'Pint', ml: '570ml' },
+            ].map((size) => (
+              <div key={size.name} className="border-3 border-ink rounded-card px-6 py-5 text-center bg-white shadow-hard-sm flex-1 max-w-[180px]">
+                <span className="font-mono text-[0.8rem] font-extrabold uppercase tracking-[0.05em] text-ink block">{size.name}</span>
+                <span className="font-mono text-[0.7rem] text-gray-mid font-medium">{size.ml}</span>
               </div>
-              <div className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-amber/10 text-amber font-mono font-bold text-xs mb-2">
-                {step.num}
-              </div>
-              <h3 className="font-serif text-lg text-charcoal mb-1">{step.title}</h3>
-              <p className="text-stone-400 leading-relaxed text-sm">{step.desc}</p>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
+
+      {/* Features */}
+      <section className="py-14 px-6">
+        <div className="max-w-container mx-auto">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
+            {[
+              { color: '#3B82F6', label: 'Track', heading: 'Real prices from real people.', desc: 'Community-submitted. No scraping. No guessing. Every price verified by someone who was actually there.' },
+              { color: '#C43D2E', label: 'Happy Hours', heading: 'Never miss a deal.', desc: "Live happy hour tracking across Perth. Know exactly where the cheap pints are flowing right now." },
+              { color: '#2D7A3D', label: 'Fresh', heading: 'Always up to date.', desc: 'Prices updated weekly. Stale data gets flagged. The freshest prices float to the top.' },
+            ].map((feature) => (
+              <div key={feature.label}>
+                <div className="flex items-center gap-2 mb-1.5">
+                  <span className="w-3.5 h-3.5 rounded-[4px]" style={{ background: feature.color }} />
+                  <span className="font-mono text-[0.68rem] font-bold uppercase tracking-[0.1em] text-gray-mid">{feature.label}</span>
+                </div>
+                <h3 className="font-mono text-base font-extrabold tracking-[-0.02em] text-ink leading-[1.2] mb-2">{feature.heading}</h3>
+                <p className="font-body text-[0.85rem] text-gray-mid font-medium leading-relaxed">{feature.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    </>
   )
 }
