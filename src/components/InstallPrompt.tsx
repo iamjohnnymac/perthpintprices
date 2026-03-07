@@ -17,10 +17,13 @@ export default function InstallPrompt() {
   useEffect(() => {
     const isStandalone = ('standalone' in window.navigator && (window.navigator as any).standalone) ||
       window.matchMedia('(display-mode: standalone)').matches
-    const dismissed = localStorage.getItem('install-prompt-dismissed')
+    const dismissedAt = localStorage.getItem('install-prompt-dismissed')
+    const SEVEN_DAYS = 7 * 24 * 60 * 60 * 1000
     
-    // Already installed or dismissed — bail
-    if (isStandalone || dismissed) return
+    // Already installed — bail
+    if (isStandalone) return
+    // Dismissed recently (within 7 days) — bail
+    if (dismissedAt && Date.now() - parseInt(dismissedAt) < SEVEN_DAYS) return
 
     // Only show on mobile devices (skip desktop)
     const isMobile = window.innerWidth < 768 || 'ontouchstart' in window
