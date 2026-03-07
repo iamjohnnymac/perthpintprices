@@ -3,7 +3,7 @@ interface HowItWorksProps {
   suburbCount?: number
 }
 
-export default function HowItWorks({ venueCount = 420, suburbCount = 154 }: HowItWorksProps) {
+export default function HowItWorks({ venueCount = 0, suburbCount = 0 }: HowItWorksProps) {
   return (
     <>
       {/* Size Legend */}

@@ -2,11 +2,11 @@ interface SocialProofProps {
   venueCount: number
   suburbCount: number
   avgPrice: string
+  cheapestPrice: number
+  priciestPrice: number
 }
 
-export default function SocialProof({ venueCount, suburbCount, avgPrice }: SocialProofProps) {
-  const cheapest = 6
-  const priciest = 17
+export default function SocialProof({ venueCount, suburbCount, avgPrice, cheapestPrice, priciestPrice }: SocialProofProps) {
 
   return (
     <>
@@ -15,10 +15,10 @@ export default function SocialProof({ venueCount, suburbCount, avgPrice }: Socia
         <div className="max-w-container mx-auto text-center">
           <div className="flex justify-center gap-3 mb-6 flex-wrap">
             {[
-              { value: String(venueCount || 420), label: 'Venues', accent: false },
-              { value: String(suburbCount || 150), label: 'Suburbs', accent: false },
-              { value: `$${cheapest}`, label: 'Cheapest', accent: true },
-              { value: `$${priciest}`, label: 'Priciest', accent: false },
+              { value: String(venueCount), label: 'Venues', accent: false },
+              { value: String(suburbCount), label: 'Suburbs', accent: false },
+              { value: cheapestPrice > 0 ? `$${cheapestPrice}` : 'TBC', label: 'Cheapest', accent: true },
+              { value: priciestPrice > 0 ? `$${priciestPrice}` : 'TBC', label: 'Priciest', accent: false },
             ].map((stat) => (
               <div
                 key={stat.label}

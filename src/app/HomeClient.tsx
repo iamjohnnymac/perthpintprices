@@ -243,6 +243,21 @@ function HomeContent() {
           </div>
           <span className="font-mono text-[1.6rem] font-extrabold text-ink tracking-[-0.04em]">arvo</span>
         </Link>
+        <nav className="hidden sm:flex items-center gap-1">
+          {[
+            { href: '/discover', label: 'Discover' },
+            { href: '/happy-hour', label: 'Happy Hours' },
+            { href: '/leaderboard', label: 'Leaderboard' },
+          ].map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className="font-mono text-[0.72rem] font-bold uppercase tracking-[0.05em] text-gray-mid hover:text-amber transition-colors no-underline px-3 py-1.5"
+            >
+              {link.label}
+            </Link>
+          ))}
+        </nav>
         <button
           onClick={() => setShowSubmitForm(true)}
           className="font-mono text-[0.72rem] font-bold uppercase tracking-[0.05em] text-ink bg-white border-3 border-ink rounded-pill px-5 py-2.5 shadow-hard-sm hover:translate-x-[1.5px] hover:translate-y-[1.5px] hover:shadow-hard-hover transition-all cursor-pointer"
@@ -322,7 +337,7 @@ function HomeContent() {
       </div>
 
       <HowItWorks venueCount={pubs.length} suburbCount={suburbs.length} />
-      <SocialProof venueCount={stats.total} suburbCount={suburbs.length} avgPrice={stats.avgPrice} />
+      <SocialProof venueCount={pubs.length} suburbCount={suburbs.length} avgPrice={stats.avgPrice} cheapestPrice={stats.minPrice} priciestPrice={stats.maxPriceValue} />
       <FAQ />
       <Footer />
 

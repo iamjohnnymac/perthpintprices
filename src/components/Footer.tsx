@@ -3,6 +3,24 @@ import Link from 'next/link'
 export default function Footer() {
   return (
     <footer className="border-t-3 border-ink max-w-container mx-auto px-6 py-8 pb-12 text-center">
+      <div className="flex justify-center gap-6 mb-3 flex-wrap">
+        {[
+          { href: '/discover', label: 'Discover' },
+          { href: '/insights/pint-index', label: 'Pint Index' },
+          { href: '/insights/suburb-rankings', label: 'Suburb Rankings' },
+          { href: '/guides/beer-weather', label: 'Beer Weather' },
+          { href: '/guides/sunset-sippers', label: 'Sunset Sippers' },
+          { href: '/guides/dad-bar', label: 'Dad Bar' },
+        ].map((link) => (
+          <Link
+            key={link.href}
+            href={link.href}
+            className="font-mono text-[0.7rem] font-bold uppercase tracking-[0.06em] text-gray-mid hover:text-amber transition-colors no-underline"
+          >
+            {link.label}
+          </Link>
+        ))}
+      </div>
       <div className="flex justify-center gap-6 mb-5 flex-wrap">
         {[
           { href: '/happy-hour', label: 'Happy Hours' },

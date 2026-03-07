@@ -4,9 +4,9 @@ interface HeroSectionProps {
 
 export default function HeroSection({ pubs }: HeroSectionProps) {
   const priced = pubs.filter(p => p.price !== null)
-  const venueCount = priced.length || 420
-  const suburbCount = new Set(pubs.map(p => p.suburb)).size || 150
-  const cheapest = priced.length > 0 ? Math.min(...priced.map(p => p.price!)) : 6
+  const venueCount = pubs.length
+  const suburbCount = new Set(pubs.map(p => p.suburb)).size
+  const cheapest = priced.length > 0 ? Math.min(...priced.map(p => p.price!)) : 0
 
   return (
     <>
