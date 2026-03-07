@@ -32,16 +32,6 @@ export default function HeroSection({ pubs }: HeroSectionProps) {
         </p>
       </section>
 
-      {/* Accent dot row */}
-      <div className="flex justify-center gap-1.5 py-2 max-w-container mx-auto">
-        {[
-          '#D4740A','#D4740A','#F2A91A','#C43D2E','#D4740A','#2D7A3D','#F2A91A','#D4740A',
-          '#3B82F6','#D4740A','#C43D2E','#F2A91A','#2D7A3D','#D4740A','#7C3AED','#D4740A'
-        ].map((color, i) => (
-          <span key={i} className="w-2.5 h-2.5 rounded-full" style={{ background: color }} />
-        ))}
-      </div>
-
       {/* Stat strip */}
       <div className="max-w-container mx-auto px-6 pb-8 flex gap-2.5 justify-center flex-wrap">
         <div className="border-3 border-ink rounded-card px-5 py-3.5 text-center min-w-[100px] bg-white shadow-hard-sm">
