@@ -210,9 +210,9 @@ function HomeContent() {
 
   const stats = useMemo(() => {
     if (pubs.length === 0) return { total: 0, minPrice: 0, maxPriceValue: 0, avgPrice: '0', happyHourNow: 0, cheapestSuburb: '', cheapestSlug: '', priciestSuburb: '', priciestSlug: '' }
-    const priced = pubs.filter(p => p.price !== null)
-    const minP = Math.min(...priced.map(p => p.price!))
-    const maxP = Math.max(...priced.map(p => p.price!))
+    const priced = pubs.filter(p => p.price !== null && p.price_verified)
+    const minP = priced.length > 0 ? Math.min(...priced.map(p => p.price!)) : 0
+    const maxP = priced.length > 0 ? Math.max(...priced.map(p => p.price!)) : 0
     const cheapest = priced.find(p => p.price === minP)
     const priciest = priced.find(p => p.price === maxP)
     return {
