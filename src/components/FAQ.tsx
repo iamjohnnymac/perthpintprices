@@ -33,13 +33,13 @@ export default function FAQ() {
   ]
 
   return (
-    <section className="py-14 px-6 bg-off-white">
+    <section className="py-14 px-6 bg-off-white bg-noise relative">
       <div className="max-w-container mx-auto">
         <div className="flex items-center gap-2 mb-1.5">
-          <span className="w-3.5 h-3.5 rounded-[4px] bg-amber" />
+          <span className="w-3.5 h-3.5 rounded-[4px] bg-blue" />
           <span className="font-mono text-[0.68rem] font-bold uppercase tracking-[0.1em] text-gray-mid">Questions</span>
         </div>
-        <h2 className="font-mono font-extrabold text-[clamp(1.4rem,4vw,1.8rem)] tracking-[-0.03em] text-ink mb-6">
+        <h2 className="text-[clamp(1.4rem,4vw,1.8rem)] tracking-[-0.03em] text-ink mb-6">
           Got questions?
         </h2>
         <div>

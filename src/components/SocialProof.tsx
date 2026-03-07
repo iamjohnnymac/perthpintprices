@@ -4,9 +4,10 @@ interface SocialProofProps {
   avgPrice: string
   cheapestPrice: number
   priciestPrice: number
+  onSubmitClick?: () => void
 }
 
-export default function SocialProof({ venueCount, suburbCount, avgPrice, cheapestPrice, priciestPrice }: SocialProofProps) {
+export default function SocialProof({ venueCount, suburbCount, avgPrice, cheapestPrice, priciestPrice, onSubmitClick }: SocialProofProps) {
 
   return (
     <>
@@ -46,19 +47,16 @@ export default function SocialProof({ venueCount, suburbCount, avgPrice, cheapes
       </section>
 
       {/* Submit CTA */}
-      <section className="bg-off-white py-14 px-6 text-center">
+      <section className="bg-off-white py-14 px-6 text-center bg-noise relative">
         <div className="max-w-container mx-auto">
-          <h2 className="font-display text-[clamp(1.5rem,4vw,2rem)] text-ink mb-2">
+          <h2 className="text-[clamp(1.5rem,4vw,2rem)] text-ink mb-2">
             Know a price we&apos;re missing?
           </h2>
           <p className="font-body text-[0.95rem] text-gray-mid font-medium mb-6">
             Help the community. Takes 30 seconds.
           </p>
           <button
-            onClick={() => {
-              const btn = document.querySelector('[data-submit-trigger]') as HTMLButtonElement
-              btn?.click()
-            }}
+            onClick={onSubmitClick}
             className="inline-flex items-center gap-2 font-mono text-[0.85rem] font-bold uppercase tracking-[0.05em] text-ink bg-amber-light border-3 border-ink rounded-pill px-9 py-4 shadow-hard hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-hard-hover active:translate-x-[4px] active:translate-y-[4px] active:shadow-none transition-all cursor-pointer"
           >
             Submit a Price →

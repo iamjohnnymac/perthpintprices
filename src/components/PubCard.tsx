@@ -41,9 +41,9 @@ export default function PubCard({ pub, avgPrice = 9.20, distance }: PubCardProps
 
   return (
     <Link href={`/pub/${pub.slug}`} className="block group">
-      <div className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all h-full flex flex-col">
+      <div className="bg-white border-3 border-ink rounded-card overflow-hidden shadow-hard-sm hover:translate-x-[1.5px] hover:translate-y-[1.5px] hover:shadow-hard-hover transition-all h-full flex flex-col">
         {/* Image placeholder with map tile background */}
-        <div className={`relative h-[140px] sm:h-[180px] bg-gradient-to-br ${gradient} flex items-center justify-center overflow-hidden`}>
+        <div className={`relative h-[140px] sm:h-[180px] bg-gradient-to-br ${gradient} flex items-center justify-center overflow-hidden border-b-3 border-ink`}>
           {/* Faded location map */}
           {pub.lat && pub.lng && (
             <div
@@ -60,7 +60,7 @@ export default function PubCard({ pub, avgPrice = 9.20, distance }: PubCardProps
           <span className="relative font-serif text-4xl sm:text-5xl text-ink/15 select-none">{pub.name.charAt(0)}</span>
           {/* Price badge */}
           {effectivePrice ? (
-            <div className="absolute top-3 right-3 bg-white rounded-full px-4 py-1.5 shadow-sm flex items-center gap-1.5">
+            <div className="absolute top-3 right-3 bg-white border-2 border-ink rounded-pill px-4 py-1.5 shadow-hard-sm flex items-center gap-1.5">
               <span className="font-mono font-bold text-ink text-base">${effectivePrice.toFixed(2)}</span>
               {label && (
                 <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full ${colors.bg} ${colors.text}`}>
@@ -69,13 +69,13 @@ export default function PubCard({ pub, avgPrice = 9.20, distance }: PubCardProps
               )}
             </div>
           ) : (
-            <div className="absolute top-3 right-3 bg-white/90 rounded-full px-3 py-1 shadow-sm">
+            <div className="absolute top-3 right-3 bg-white border-2 border-ink rounded-pill px-3 py-1">
               <span className="text-gray-mid text-xs font-medium">Price TBC</span>
             </div>
           )}
           {/* HH NOW badge */}
           {pub.isHappyHourNow && (
-            <div className="absolute top-3 left-3 bg-amber text-white text-xs font-bold px-2.5 py-1 rounded-full shadow-sm">
+            <div className="absolute top-3 left-3 bg-red text-white text-xs font-bold px-2.5 py-1 rounded-pill border-2 border-ink">
               <Zap className="w-3.5 h-3.5 inline" /> HAPPY HOUR
             </div>
           )}
@@ -126,8 +126,8 @@ export default function PubCard({ pub, avgPrice = 9.20, distance }: PubCardProps
             {pub.vibeTag ? (
               <span className="text-xs text-gray-mid italic">{pub.vibeTag}</span>
             ) : <span />}
-            <div className="w-8 h-8 rounded-full border border-stone-200 flex items-center justify-center group-hover:border-amber group-hover:bg-amber/5 transition-all">
-              <svg className="w-4 h-4 text-stone-400 group-hover:text-amber transition-colors" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+            <div className="w-8 h-8 rounded-full border-2 border-ink flex items-center justify-center group-hover:bg-amber group-hover:text-white transition-all">
+              <svg className="w-4 h-4 text-ink group-hover:text-white transition-colors" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
               </svg>
             </div>

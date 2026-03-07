@@ -41,9 +41,13 @@
     background-color: #FFFFFF;
     -webkit-overflow-scrolling: touch;
   }
-  h1, h2, h3 {
+  h1 {
     font-family: var(--font-jetbrains-mono), 'Courier New', monospace;
     @apply font-extrabold;
+  }
+  h2, h3 {
+    font-family: var(--font-dm-serif), Georgia, serif;
+    @apply font-bold;
   }
 }
 
@@ -54,7 +58,105 @@
   .section-gap-sm {
     @apply py-4 sm:py-6;
   }
+}
 
+/* ═══ Page load animations ═══ */
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes foam-wobble {
+  0%, 100% { transform: translateY(0) scaleX(1); }
+  25% { transform: translateY(-1px) scaleX(1.02); }
+  50% { transform: translateY(0.5px) scaleX(0.98); }
+  75% { transform: translateY(-0.5px) scaleX(1.01); }
+}
+
+@keyframes beer-fill {
+  from {
+    clip-path: inset(100% 0 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+.animate-fade-up {
+  animation: fade-up 0.5s ease-out both;
+}
+
+.animate-fade-in {
+  animation: fade-in 0.4s ease-out both;
+}
+
+.animate-scale-in {
+  animation: scale-in 0.4s ease-out both;
+}
+
+.animate-foam-wobble {
+  animation: foam-wobble 3s ease-in-out infinite;
+}
+
+.animate-beer-fill {
+  animation: beer-fill 0.8s ease-out both;
+}
+
+/* Stagger delays for child elements */
+.stagger-1 { animation-delay: 0.05s; }
+.stagger-2 { animation-delay: 0.1s; }
+.stagger-3 { animation-delay: 0.15s; }
+.stagger-4 { animation-delay: 0.2s; }
+.stagger-5 { animation-delay: 0.25s; }
+.stagger-6 { animation-delay: 0.3s; }
+.stagger-7 { animation-delay: 0.35s; }
+.stagger-8 { animation-delay: 0.4s; }
+
+/* ═══ Background textures ═══ */
+.bg-noise {
+  position: relative;
+}
+.bg-noise::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 256px 256px;
+  pointer-events: none;
+  z-index: 0;
+}
+.bg-noise > * {
+  position: relative;
+  z-index: 1;
+}
+
+.bg-dot-grid {
+  background-image: radial-gradient(circle, #171717 0.5px, transparent 0.5px);
+  background-size: 16px 16px;
+  background-position: 0 0;
 }
 
 /* Hide scrollbar but keep scroll functionality */

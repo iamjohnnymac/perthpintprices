@@ -102,7 +102,7 @@ export function FilterSection({
           <button
             onClick={handleNearestClick}
             className={`font-mono text-[0.7rem] font-bold uppercase tracking-[0.04em] px-4 py-3 transition-all flex items-center gap-1.5 ${
-              sortBy === 'nearest' ? 'bg-ink text-white' : 'text-gray-mid'
+              sortBy === 'nearest' ? 'bg-blue text-white' : 'text-gray-mid'
             }`}
           >
             <MapPin className="w-3 h-3" />
@@ -121,8 +121,8 @@ export function FilterSection({
               onClick={() => setNearbyRadius(r)}
               className={`font-mono text-[0.65rem] font-bold uppercase tracking-[0.04em] px-3 py-1.5 rounded-pill border-2 transition-all ${
                 nearbyRadius === r
-                  ? 'bg-ink text-white border-ink'
-                  : 'bg-white text-gray-mid border-gray-light hover:border-ink'
+                  ? 'bg-blue text-white border-blue'
+                  : 'bg-white text-gray-mid border-gray-light hover:border-blue'
               }`}
             >
               {r === 0 ? 'All' : `${r}km`}

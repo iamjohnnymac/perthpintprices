@@ -23,9 +23,16 @@ const INITIAL_PUB_COUNT = 10
 function LoadingSkeleton() {
   return (
     <main className="min-h-screen bg-white flex items-center justify-center">
-      <div className="flex flex-col items-center gap-3">
-        <div className="w-16 h-16 border-4 border-stone-300 border-t-amber rounded-full animate-spin"></div>
-        <span className="text-stone-600 font-medium text-lg">Loading pubs...</span>
+      <div className="flex flex-col items-center gap-4">
+        {/* Branded beer glass loading animation */}
+        <div className="w-[60px] h-[80px] relative animate-pulse">
+          <div className="w-[46px] h-[62px] mx-auto relative border-3 border-ink rounded-[3px_3px_6px_6px] overflow-hidden bg-amber-pale">
+            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-amber to-amber-light animate-beer-fill" style={{ height: '100%' }} />
+            <div className="absolute -top-[5px] -left-[2px] -right-[2px] h-[18px] bg-[#FFFEF0] rounded-[12px_12px_40%_40%] border-3 border-ink border-b-0 animate-foam-wobble" />
+            <div className="absolute -right-[14px] top-[12px] w-[12px] h-[28px] border-3 border-ink border-l-0 rounded-[0_8px_8px_0] bg-white" />
+          </div>
+        </div>
+        <span className="font-mono text-[0.75rem] font-bold uppercase tracking-[0.1em] text-gray-mid">Loading pubs...</span>
       </div>
     </main>
   )
@@ -376,7 +383,7 @@ function HomeContent() {
       </div>
 
       <HowItWorks venueCount={pubs.length} suburbCount={suburbs.length} />
-      <SocialProof venueCount={pubs.length} suburbCount={suburbs.length} avgPrice={stats.avgPrice} cheapestPrice={stats.minPrice} priciestPrice={stats.maxPriceValue} />
+      <SocialProof venueCount={pubs.length} suburbCount={suburbs.length} avgPrice={stats.avgPrice} cheapestPrice={stats.minPrice} priciestPrice={stats.maxPriceValue} onSubmitClick={() => setShowSubmitForm(true)} />
       <FAQ />
       <Footer />
 

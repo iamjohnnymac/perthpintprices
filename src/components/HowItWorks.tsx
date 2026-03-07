@@ -7,13 +7,13 @@ export default function HowItWorks({ venueCount = 0, suburbCount = 0 }: HowItWor
   return (
     <>
       {/* Size Legend */}
-      <section className="bg-off-white py-14 px-6">
+      <section className="bg-off-white py-14 px-6 bg-noise relative">
         <div className="max-w-container mx-auto">
           <div className="flex items-center gap-2 mb-1.5">
-            <span className="w-3.5 h-3.5 rounded-[4px] bg-amber" />
+            <span className="w-3.5 h-3.5 rounded-[4px] bg-blue" />
             <span className="font-mono text-[0.68rem] font-bold uppercase tracking-[0.1em] text-gray-mid">Beer Sizes</span>
           </div>
-          <h2 className="font-mono font-extrabold text-[clamp(1.4rem,4vw,1.8rem)] tracking-[-0.03em] text-ink mb-6">
+          <h2 className="text-[clamp(1.4rem,4vw,1.8rem)] tracking-[-0.03em] text-ink mb-6">
             Know your glass.
           </h2>
           <div className="flex justify-center gap-4 flex-wrap">
@@ -45,7 +45,7 @@ export default function HowItWorks({ venueCount = 0, suburbCount = 0 }: HowItWor
                   <span className="w-3.5 h-3.5 rounded-[4px]" style={{ background: feature.color }} />
                   <span className="font-mono text-[0.68rem] font-bold uppercase tracking-[0.1em] text-gray-mid">{feature.label}</span>
                 </div>
-                <h3 className="font-mono text-base font-extrabold tracking-[-0.02em] text-ink leading-[1.2] mb-2">{feature.heading}</h3>
+                <h3 className="text-base font-bold tracking-[-0.02em] text-ink leading-[1.2] mb-2">{feature.heading}</h3>
                 <p className="font-body text-[0.85rem] text-gray-mid font-medium leading-relaxed">{feature.desc}</p>
               </div>
             ))}
