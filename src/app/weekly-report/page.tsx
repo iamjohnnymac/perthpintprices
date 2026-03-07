@@ -1,6 +1,6 @@
 import { Metadata } from 'next'
 import BreadcrumbJsonLd from '@/components/BreadcrumbJsonLd'
-import WeeklyClient from './WeeklyClient'
+import WeeklyClient from './WeeklyReportClient'
 
 export const metadata: Metadata = {
   title: 'This Week in Perth Pints | Arvo',

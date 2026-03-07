@@ -51,7 +51,7 @@ export async function GET(request: NextRequest) {
     let expensiveSuburb = ''
     let expensiveAvg = 0
 
-    for (const [suburb, subPrices] of suburbPrices) {
+    for (const [suburb, subPrices] of Array.from(suburbPrices)) {
       if (subPrices.length < 2) continue // Need at least 2 pubs for meaningful suburb avg
       const subAvg = subPrices.reduce((s, p) => s + p, 0) / subPrices.length
       if (subAvg < cheapestAvg) { cheapestAvg = subAvg; cheapestSuburb = suburb }
