@@ -1,5 +1,7 @@
 "use client"
 
+import { MapPin } from 'lucide-react'
+
 interface FilterSectionProps {
   viewMode: 'cards' | 'list'
   setViewMode: (mode: 'cards' | 'list') => void
@@ -20,6 +22,10 @@ interface FilterSectionProps {
   setShowMoreFilters: (show: boolean) => void
   stats: { happyHourNow: number }
   hasLocation?: boolean
+  locationState?: 'idle' | 'granted' | 'denied' | 'dismissed'
+  requestLocation?: () => void
+  nearbyRadius?: number
+  setNearbyRadius?: (radius: number) => void
   vibeTagFilter: string
   setVibeTagFilter: (vibe: string) => void
   kidFriendlyOnly: boolean
@@ -35,9 +41,21 @@ export function FilterSection({
   sortBy,
   setSortBy,
   hasLocation,
+  locationState,
+  requestLocation,
+  nearbyRadius = 5,
+  setNearbyRadius,
 }: FilterSectionProps) {
+  const handleNearestClick = () => {
+    if (hasLocation) {
+      setSortBy('nearest')
+    } else if (requestLocation) {
+      requestLocation()
+    }
+  }
+
   return (
-    <div className="max-w-container mx-auto px-6 mb-2">
+    <div className="max-w-container mx-auto px-6 mb-2 space-y-2">
       <div className="flex gap-2.5 items-center">
         {/* Suburb select */}
         <select
@@ -51,7 +69,7 @@ export function FilterSection({
           ))}
         </select>
 
-        {/* Sort toggle */}
+        {/* Sort toggle — NEAREST always visible */}
         <div className="bg-white border-3 border-ink rounded-pill overflow-hidden flex">
           <button
             onClick={() => setSortBy('price')}
@@ -61,18 +79,37 @@ export function FilterSection({
           >
             Cheapest
           </button>
-          {hasLocation && (
-            <button
-              onClick={() => setSortBy('nearest')}
-              className={`font-mono text-[0.7rem] font-bold uppercase tracking-[0.04em] px-4 py-3 transition-all ${
-                sortBy === 'nearest' ? 'bg-ink text-white' : 'text-gray-mid'
-              }`}
-            >
-              Nearest
-            </button>
-          )}
+          <button
+            onClick={handleNearestClick}
+            className={`font-mono text-[0.7rem] font-bold uppercase tracking-[0.04em] px-4 py-3 transition-all flex items-center gap-1.5 ${
+              sortBy === 'nearest' ? 'bg-ink text-white' : 'text-gray-mid'
+            }`}
+          >
+            <MapPin className="w-3 h-3" />
+            {locationState === 'idle' && !hasLocation ? 'Near Me' : 'Nearest'}
+          </button>
         </div>
       </div>
+
+      {/* Radius pills — only when sorting by nearest */}
+      {sortBy === 'nearest' && hasLocation && setNearbyRadius && (
+        <div className="flex items-center gap-2">
+          <span className="font-mono text-[0.65rem] font-bold uppercase tracking-[0.06em] text-gray-mid">Within</span>
+          {[1, 3, 5, 0].map((r) => (
+            <button
+              key={r}
+              onClick={() => setNearbyRadius(r)}
+              className={`font-mono text-[0.65rem] font-bold uppercase tracking-[0.04em] px-3 py-1.5 rounded-pill border-2 transition-all ${
+                nearbyRadius === r
+                  ? 'bg-ink text-white border-ink'
+                  : 'bg-white text-gray-mid border-gray-light hover:border-ink'
+              }`}
+            >
+              {r === 0 ? 'All' : `${r}km`}
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   )
 }

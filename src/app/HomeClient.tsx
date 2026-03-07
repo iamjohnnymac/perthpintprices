@@ -59,6 +59,7 @@ function HomeContent() {
   const [showAllPubs, setShowAllPubs] = useState(false)
   const [userLocation, setUserLocation] = useState<{lat: number, lng: number} | null>(null)
   const [locationState, setLocationState] = useState<'idle' | 'granted' | 'denied' | 'dismissed'>('idle')
+  const [nearbyRadius, setNearbyRadius] = useState<number>(5) // km — 1, 3, 5, or 0 = all
   const [scrolledPastHero, setScrolledPastHero] = useState(false)
   // showMap state removed — now handled by MapPeek component
   const heroRef = useRef<HTMLDivElement>(null)
@@ -128,6 +129,22 @@ function HomeContent() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  // Manual location request (triggered by NEAREST button when location not yet granted)
+  const requestLocation = () => {
+    if (typeof window !== 'undefined' && navigator.geolocation) {
+      setLocationState('idle')
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          setUserLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude })
+          setLocationState('granted')
+          setSortBy('nearest')
+        },
+        () => setLocationState('denied'),
+        { enableHighAccuracy: false, timeout: 8000, maximumAge: 300000 }
+      )
+    }
+  }
+
   // Unified nav: expand when scrolled past hero (LATCHES — never collapses back)
   useEffect(() => {
     const handleScroll = () => {
@@ -183,7 +200,9 @@ function HomeContent() {
         const matchesVibe = !vibeTagFilter || pub.vibeTag === vibeTagFilter
         const matchesKids = !kidFriendlyOnly || pub.kidFriendly === true
         const matchesTab = !hasTabOnly || pub.hasTab === true
-        return matchesSearch && matchesSuburb && matchesPrice && matchesHappyHour && matchesVibe && matchesKids && matchesTab
+        const matchesRadius = !(sortBy === 'nearest' && userLocation && nearbyRadius > 0) ||
+          getDistanceKm(userLocation!.lat, userLocation!.lng, pub.lat, pub.lng) <= nearbyRadius
+        return matchesSearch && matchesSuburb && matchesPrice && matchesHappyHour && matchesVibe && matchesKids && matchesTab && matchesRadius
       })
       .sort((a, b) => {
         if (showHappyHourOnly) {
@@ -206,7 +225,7 @@ function HomeContent() {
         }
         return 0
       })
-  }, [pubs, searchTerm, selectedSuburb, maxPrice, sortBy, showHappyHourOnly, userLocation, vibeTagFilter, kidFriendlyOnly, hasTabOnly])
+  }, [pubs, searchTerm, selectedSuburb, maxPrice, sortBy, showHappyHourOnly, userLocation, vibeTagFilter, kidFriendlyOnly, hasTabOnly, nearbyRadius])
 
   const stats = useMemo(() => {
     if (pubs.length === 0) return { total: 0, minPrice: 0, maxPriceValue: 0, avgPrice: '0', happyHourNow: 0, cheapestSuburb: '', cheapestSlug: '', priciestSuburb: '', priciestSlug: '' }
@@ -315,6 +334,10 @@ function HomeContent() {
         setShowMoreFilters={setShowMoreFilters}
         stats={stats}
         hasLocation={!!userLocation}
+        locationState={locationState}
+        requestLocation={requestLocation}
+        nearbyRadius={nearbyRadius}
+        setNearbyRadius={setNearbyRadius}
         vibeTagFilter={vibeTagFilter}
         setVibeTagFilter={setVibeTagFilter}
         kidFriendlyOnly={kidFriendlyOnly}
