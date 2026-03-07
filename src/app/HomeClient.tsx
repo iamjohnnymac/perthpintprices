@@ -60,6 +60,7 @@ function HomeContent() {
   const [userLocation, setUserLocation] = useState<{lat: number, lng: number} | null>(null)
   const [locationState, setLocationState] = useState<'idle' | 'granted' | 'denied' | 'dismissed'>('idle')
   const [nearbyRadius, setNearbyRadius] = useState<number>(5) // km — 1, 3, 5, or 0 = all
+  const [beerTypeFilter, setBeerTypeFilter] = useState<string>('')
   const [scrolledPastHero, setScrolledPastHero] = useState(false)
   // showMap state removed — now handled by MapPeek component
   const heroRef = useRef<HTMLDivElement>(null)
@@ -186,6 +187,17 @@ function HomeContent() {
     return Array.from(suburbSet).sort()
   }, [pubs])
 
+  const beerTypes = useMemo(() => {
+    const counts = new Map<string, number>()
+    pubs.forEach(p => {
+      if (p.beerType) counts.set(p.beerType, (counts.get(p.beerType) || 0) + 1)
+    })
+    return Array.from(counts.entries())
+      .filter(([, cnt]) => cnt >= 2) // Only show types with 2+ pubs
+      .sort((a, b) => b[1] - a[1])
+      .map(([type]) => type)
+  }, [pubs])
+
   const filteredPubs = useMemo(() => {
     return pubs
       .filter(pub => {
@@ -202,7 +214,8 @@ function HomeContent() {
         const matchesTab = !hasTabOnly || pub.hasTab === true
         const matchesRadius = !(sortBy === 'nearest' && userLocation && nearbyRadius > 0) ||
           getDistanceKm(userLocation!.lat, userLocation!.lng, pub.lat, pub.lng) <= nearbyRadius
-        return matchesSearch && matchesSuburb && matchesPrice && matchesHappyHour && matchesVibe && matchesKids && matchesTab && matchesRadius
+        const matchesBeerType = !beerTypeFilter || (pub.beerType && pub.beerType.toLowerCase().includes(beerTypeFilter.toLowerCase()))
+        return matchesSearch && matchesSuburb && matchesPrice && matchesHappyHour && matchesVibe && matchesKids && matchesTab && matchesRadius && matchesBeerType
       })
       .sort((a, b) => {
         if (showHappyHourOnly) {
@@ -225,7 +238,7 @@ function HomeContent() {
         }
         return 0
       })
-  }, [pubs, searchTerm, selectedSuburb, maxPrice, sortBy, showHappyHourOnly, userLocation, vibeTagFilter, kidFriendlyOnly, hasTabOnly, nearbyRadius])
+  }, [pubs, searchTerm, selectedSuburb, maxPrice, sortBy, showHappyHourOnly, userLocation, vibeTagFilter, kidFriendlyOnly, hasTabOnly, nearbyRadius, beerTypeFilter])
 
   const stats = useMemo(() => {
     if (pubs.length === 0) return { total: 0, minPrice: 0, maxPriceValue: 0, avgPrice: '0', happyHourNow: 0, cheapestSuburb: '', cheapestSlug: '', priciestSuburb: '', priciestSlug: '' }
@@ -338,6 +351,9 @@ function HomeContent() {
         requestLocation={requestLocation}
         nearbyRadius={nearbyRadius}
         setNearbyRadius={setNearbyRadius}
+        beerTypes={beerTypes}
+        beerTypeFilter={beerTypeFilter}
+        setBeerTypeFilter={setBeerTypeFilter}
         vibeTagFilter={vibeTagFilter}
         setVibeTagFilter={setVibeTagFilter}
         kidFriendlyOnly={kidFriendlyOnly}
