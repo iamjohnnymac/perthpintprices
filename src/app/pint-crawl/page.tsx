@@ -1,3 +1,4 @@
+import { Suspense } from 'react'
 import { getPubs } from '@/lib/supabase'
 import BreadcrumbJsonLd from '@/components/BreadcrumbJsonLd'
 import PintCrawlClient from './PintCrawlClient'
@@ -26,7 +27,13 @@ export default async function PintCrawlPage() {
         { name: 'Home', url: 'https://perthpintprices.com' },
         { name: 'Pint Crawl' },
       ]} />
-      <PintCrawlClient pubs={pubs} />
+      <Suspense fallback={
+        <div className="min-h-screen bg-white flex items-center justify-center">
+          <p className="font-mono text-stone-400 animate-pulse text-sm">Loading crawl planner...</p>
+        </div>
+      }>
+        <PintCrawlClient pubs={pubs} />
+      </Suspense>
     </>
   )
 }

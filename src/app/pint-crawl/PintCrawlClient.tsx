@@ -1,10 +1,11 @@
 'use client'
 
 import { useState, useEffect, useCallback, useRef } from 'react'
+import { useSearchParams, useRouter, usePathname } from 'next/navigation'
 import Link from 'next/link'
 import SubPageNav from '@/components/SubPageNav'
 import { Pub } from '@/types/pub'
-import { Beer, MapPin, DollarSign, CircleCheck, Copy, Share2, Map as MapIcon, Zap } from 'lucide-react'
+import { Beer, MapPin, DollarSign, CircleCheck, Copy, Share2, Map as MapIcon, Zap, Shuffle, Pencil, Footprints, PartyPopper, Flag, AlertTriangle, Timer, Link as LinkIcon } from 'lucide-react'
 
 /* ─── Haversine distance in km ─── */
 function getDistance(lat1: number, lng1: number, lat2: number, lng2: number): number {
@@ -70,8 +71,14 @@ export default function PintCrawlClient({ pubs }: { pubs: Pub[] }) {
   const [completedStops, setCompletedStops] = useState<Set<number>>(new Set())
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
+  // URL state
+  const searchParams = useSearchParams()
+  const router = useRouter()
+  const pathname = usePathname()
+
   // Clipboard feedback
   const [copied, setCopied] = useState(false)
+  const [shared, setShared] = useState(false)
 
   /* ─── Geolocation ─── */
   const requestLocation = useCallback(() => {
@@ -101,6 +108,42 @@ export default function PintCrawlClient({ pubs }: { pubs: Pub[] }) {
       if (userLat === null) requestLocation()
     }
   }, [area, userLat, requestLocation])
+
+  /* ─── Hydrate from URL params (shared link) ─── */
+  const hydrated = useRef(false)
+  useEffect(() => {
+    if (hydrated.current || !searchParams) return
+    hydrated.current = true
+
+    const pubSlugs = searchParams.get('pubs')
+    const urlArea = searchParams.get('area') as Area | null
+    const urlBudget = searchParams.get('budget')
+    const urlStops = searchParams.get('stops')
+
+    if (pubSlugs) {
+      const slugList = pubSlugs.split(',')
+      if (urlArea) setArea(urlArea)
+      if (urlBudget) setBudget(Number(urlBudget))
+      if (urlStops) setStops(Number(urlStops))
+
+      // Build route from shared pub slugs
+      const slugToPub = new Map(pubs.map(p => [p.slug, p]))
+      const matchedPubs = slugList
+        .map(slug => slugToPub.get(slug))
+        .filter((p): p is Pub => p !== undefined && p.price !== null)
+
+      if (matchedPubs.length > 0) {
+        const segments: RouteSegment[] = matchedPubs.map((pub, i) => ({
+          pub,
+          distFromPrev: i === 0
+            ? null
+            : getDistance(matchedPubs[i - 1].lat, matchedPubs[i - 1].lng, pub.lat, pub.lng),
+        }))
+        setRoute(segments)
+        setPhase('route')
+      }
+    }
+  }, [searchParams, pubs])
 
   /* ─── Live crawl timer ─── */
   useEffect(() => {
@@ -251,8 +294,16 @@ export default function PintCrawlClient({ pubs }: { pubs: Pub[] }) {
 
       setRoute(segments)
       setPhase('route')
+
+      // Sync route to URL for shareability
+      const params = new URLSearchParams()
+      params.set('pubs', ordered.map(p => p.slug).join(','))
+      params.set('area', area)
+      params.set('budget', String(budget))
+      params.set('stops', String(stops))
+      router.replace(`${pathname}?${params.toString()}`, { scroll: false })
     },
-    [filteredPubs, stops, budget]
+    [filteredPubs, stops, budget, area, router, pathname]
   )
 
   /* ─── Route stats ─── */
@@ -300,6 +351,15 @@ export default function PintCrawlClient({ pubs }: { pubs: Pub[] }) {
   }
 
   /* ─── Share / Copy ─── */
+  const getShareUrl = () => {
+    const params = new URLSearchParams()
+    params.set('pubs', route.map(s => s.pub.slug).join(','))
+    params.set('area', area)
+    params.set('budget', String(budget))
+    params.set('stops', String(stops))
+    return `https://perthpintprices.com/pint-crawl?${params.toString()}`
+  }
+
   const shareText = () => {
     const pubNames = route.map((s) => s.pub.name).join(' → ')
     const areaLabel =
@@ -312,7 +372,34 @@ export default function PintCrawlClient({ pubs }: { pubs: Pub[] }) {
             : area === 'fremantle'
               ? 'Fremantle'
               : 'Perth CBD'
-    return `🗺️ Arvo Pint Crawl\n\nRoute: ${pubNames}\nArea: ${areaLabel}\nTotal: $${totalCost.toFixed(2)} for ${route.length} pints\nWalking: ~${totalDistance.toFixed(1)}km (${totalWalkMin}min)\n\nPlan yours at arvo.pub/pint-crawl`
+    return `Arvo Pint Crawl\n\nRoute: ${pubNames}\nArea: ${areaLabel}\nTotal: $${totalCost.toFixed(2)} for ${route.length} pints\nWalking: ~${totalDistance.toFixed(1)}km (${totalWalkMin}min)\n\n${getShareUrl()}`
+  }
+
+  const shareCrawl = async () => {
+    const url = getShareUrl()
+    // Try native Web Share API first (mobile)
+    if (typeof navigator !== 'undefined' && navigator.share) {
+      try {
+        await navigator.share({
+          title: `Arvo Pint Crawl — ${route.length} stops`,
+          text: `Check out this pub crawl: ${route.map(s => s.pub.name).join(' → ')} — $${totalCost.toFixed(2)} total`,
+          url,
+        })
+        setShared(true)
+        setTimeout(() => setShared(false), 2000)
+        return
+      } catch {
+        // User cancelled or API failed — fall through to clipboard
+      }
+    }
+    // Fallback: copy link to clipboard
+    try {
+      await navigator.clipboard.writeText(url)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    } catch {
+      // Silent fail
+    }
   }
 
   const copyRoute = async () => {
@@ -399,7 +486,7 @@ export default function PintCrawlClient({ pubs }: { pubs: Pub[] }) {
               </div>
               {tightBudget && filteredPubs.length > 0 && (
                 <p className="text-xs text-orange-600 mt-2 font-medium">
-                  ⚠️ Tight budget for {stops} stops!
+                  <AlertTriangle className="w-3 h-3 inline mr-1" /> Tight budget for {stops} stops!
                 </p>
               )}
             </div>
@@ -515,7 +602,7 @@ export default function PintCrawlClient({ pubs }: { pubs: Pub[] }) {
                 }`}
               >
                 {budgetRemaining >= 0
-                  ? `Under budget by $${budgetRemaining.toFixed(2)} 🎉`
+                  ? `Under budget by $${budgetRemaining.toFixed(2)}`
                   : `Over budget by $${Math.abs(budgetRemaining).toFixed(2)}`}
               </p>
             </div>
@@ -620,19 +707,27 @@ export default function PintCrawlClient({ pubs }: { pubs: Pub[] }) {
               </div>
             </div>
 
+            {/* Share link */}
+            <button
+              onClick={shareCrawl}
+              className="w-full flex items-center justify-center gap-2 bg-amber-50 border-2 border-amber-200 rounded-2xl py-3 text-sm font-bold text-amber-800 hover:bg-amber-100 transition-colors"
+            >
+              {shared ? <><CircleCheck className="w-4 h-4" /> Shared!</> : copied ? <><CircleCheck className="w-4 h-4" /> Link Copied!</> : <><LinkIcon className="w-4 h-4" /> Share This Crawl</>}
+            </button>
+
             {/* Action buttons */}
             <div className="grid grid-cols-2 gap-2">
               <button
                 onClick={() => generateRoute(true)}
                 className="flex items-center justify-center gap-2 bg-white border border-stone-200/60 rounded-2xl py-3 text-sm font-semibold text-ink hover:bg-stone-50 transition-colors"
               >
-                🔀 Shuffle
+                <Shuffle className="w-3.5 h-3.5" /> Shuffle
               </button>
               <button
                 onClick={copyRoute}
                 className="flex items-center justify-center gap-2 bg-white border border-stone-200/60 rounded-2xl py-3 text-sm font-semibold text-ink hover:bg-stone-50 transition-colors"
               >
-                {copied ? <><CircleCheck className="w-3.5 h-3.5 inline" /> Copied!</> : <><Copy className="w-3.5 h-3.5 inline" /> Copy Route</>}
+                {copied ? <><CircleCheck className="w-3.5 h-3.5" /> Copied!</> : <><Copy className="w-3.5 h-3.5" /> Copy Route</>}
               </button>
             </div>
             <div className="grid grid-cols-2 gap-2">
@@ -640,13 +735,13 @@ export default function PintCrawlClient({ pubs }: { pubs: Pub[] }) {
                 onClick={() => setPhase('plan')}
                 className="flex items-center justify-center gap-2 bg-white border border-stone-200/60 rounded-2xl py-3 text-sm font-semibold text-ink hover:bg-stone-50 transition-colors"
               >
-                ✏️ Edit Plan
+                <Pencil className="w-3.5 h-3.5" /> Edit Plan
               </button>
               <button
                 onClick={startCrawl}
                 className="flex items-center justify-center gap-2 bg-ink text-white rounded-2xl py-3 text-sm font-bold hover:bg-ink/90 transition-colors"
               >
-                🚶 Start Crawl
+                <Footprints className="w-3.5 h-3.5" /> Start Crawl
               </button>
             </div>
           </div>
@@ -659,7 +754,7 @@ export default function PintCrawlClient({ pubs }: { pubs: Pub[] }) {
             {currentStop >= route.length ? (
               <div className="space-y-3 sm:space-y-4">
                 <div className="bg-white border-3 border-ink rounded-card shadow-hard-sm p-6 sm:p-8 text-center">
-                  <div className="text-5xl mb-3">🎉</div>
+                  <div className="flex justify-center mb-3"><PartyPopper className="w-12 h-12 text-amber-500" /></div>
                   <h2 className="text-xl font-bold mono text-ink mb-1">
                     Crawl Complete!
                   </h2>
@@ -702,10 +797,10 @@ export default function PintCrawlClient({ pubs }: { pubs: Pub[] }) {
                 </div>
 
                 <button
-                  onClick={copyRoute}
+                  onClick={shareCrawl}
                   className="w-full flex items-center justify-center gap-2 bg-ink text-white rounded-2xl py-4 text-sm font-bold hover:bg-ink/90 transition-colors"
                 >
-                  {copied ? <><CircleCheck className="w-3.5 h-3.5 inline" /> Copied!</> : <><Share2 className="w-3.5 h-3.5 inline" /> Share Your Crawl</>}
+                  {shared ? <><CircleCheck className="w-3.5 h-3.5" /> Shared!</> : copied ? <><CircleCheck className="w-3.5 h-3.5" /> Link Copied!</> : <><Share2 className="w-3.5 h-3.5" /> Share Your Crawl</>}
                 </button>
                 <button
                   onClick={() => {
@@ -715,6 +810,7 @@ export default function PintCrawlClient({ pubs }: { pubs: Pub[] }) {
                     setElapsed(0)
                     setCurrentStop(0)
                     setCompletedStops(new Set())
+                    router.replace(pathname, { scroll: false })
                   }}
                   className="w-full flex items-center justify-center gap-2 bg-white border border-stone-200/60 rounded-2xl py-3 text-sm font-semibold text-ink hover:bg-stone-50 transition-colors"
                 >
@@ -729,8 +825,8 @@ export default function PintCrawlClient({ pubs }: { pubs: Pub[] }) {
                     <span className="text-xs font-semibold text-stone-500">
                       Stop {currentStop + 1} of {route.length}
                     </span>
-                    <span className="text-xs text-stone-500">
-                      ⏱ {formatTime(elapsed)}
+                    <span className="text-xs text-stone-500 flex items-center gap-1">
+                      <Timer className="w-3 h-3" /> {formatTime(elapsed)}
                     </span>
                   </div>
                   <div className="w-full bg-stone-100 rounded-pill h-2">
@@ -842,7 +938,7 @@ export default function PintCrawlClient({ pubs }: { pubs: Pub[] }) {
                 >
                   {currentStop < route.length - 1
                     ? <><CircleCheck className="w-3.5 h-3.5 inline" /> Done — Next Stop</>
-                    : '🏁 Finish Crawl!'}
+                    : <><Flag className="w-3.5 h-3.5 inline" /> Finish Crawl!</>}
                 </button>
 
                 {/* Back to route button */}
