@@ -174,6 +174,7 @@ export async function GET(request: NextRequest) {
       sunsetResult,
       dadBarResult,
       tabResult,
+      pubSubmissionsResult,
     ] = await Promise.all([
       // Total pubs and breakdown
       supabase.from('pubs').select('id, slug, name, price, suburb, price_verified, last_verified, last_updated, cozy_pub, sunset_spot, kid_friendly, has_tab, happy_hour_price, happy_hour_days, vibe_tag', { count: 'exact' }),
@@ -199,6 +200,8 @@ export async function GET(request: NextRequest) {
       supabase.from('pubs').select('name', { count: 'exact' }).eq('kid_friendly', true),
       // TAB venues count
       supabase.from('pubs').select('name', { count: 'exact' }).eq('has_tab', true),
+      // Pub submissions
+      supabase.from('pub_submissions').select('*', { count: 'exact' }).order('created_at', { ascending: false }).limit(20),
     ])
 
     const pubs = pubsResult.data || []
@@ -242,7 +245,8 @@ export async function GET(request: NextRequest) {
       priceReports: {
         total: priceReportsResult.count || 0,
         pending: (priceReportsResult.data || []).filter((r: any) => r.status === 'pending').length,
-        recent: (priceReportsResult.data || []).slice(0, 5).map((r: any) => ({
+        recent: (priceReportsResult.data || []).map((r: any) => ({
+          id: r.id,
           pubSlug: r.pub_slug,
           reportedPrice: r.reported_price,
           beerType: r.beer_type,
@@ -284,6 +288,21 @@ export async function GET(request: NextRequest) {
         name: p.name,
         suburb: p.suburb,
       })),
+      pubSubmissions: {
+        total: pubSubmissionsResult.count || 0,
+        pending: (pubSubmissionsResult.data || []).filter((s: any) => s.status === 'pending').length,
+        recent: (pubSubmissionsResult.data || []).map((s: any) => ({
+          id: s.id,
+          pubName: s.pub_name,
+          suburb: s.suburb,
+          address: s.address,
+          price: s.price,
+          beerType: s.beer_type,
+          submitterEmail: s.submitter_email,
+          status: s.status,
+          createdAt: s.created_at,
+        })),
+      },
       generatedAt: new Date().toISOString(),
     })
   } catch (error: any) {

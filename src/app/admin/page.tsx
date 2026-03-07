@@ -1,8 +1,16 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
-import LucideIcon from '@/components/LucideIcon'
-import { DollarSign, Bell, Copy, BarChart3, PenLine, Beer, Sunset, Users, Trophy } from 'lucide-react'
+import {
+  DollarSign, Bell, BarChart3, Activity, FileText, Heart,
+  Beer, Sunset, Users, Trophy, MapPin, AlertTriangle, Shield,
+  Clock, RefreshCw, LogOut, Check, X, ChevronDown, ChevronUp,
+  Copy, PenLine, Eye, EyeOff, Loader2, Store
+} from 'lucide-react'
+
+/* ================================================================
+   TYPES
+   ================================================================ */
 
 interface DashboardData {
   overview: {
@@ -22,18 +30,31 @@ interface DashboardData {
     dadBars: number
     tabVenues: number
   }
-  pushSubscriptions: {
-    total: number
-    active: number
-  }
+  pushSubscriptions: { total: number; active: number }
   priceReports: {
     total: number
     pending: number
     recent: Array<{
+      id: string
       pubSlug: string
       reportedPrice: number
       beerType: string
       reporter: string
+      status: string
+      createdAt: string
+    }>
+  }
+  pubSubmissions: {
+    total: number
+    pending: number
+    recent: Array<{
+      id: number
+      pubName: string
+      suburb: string
+      address: string
+      price: number | null
+      beerType: string | null
+      submitterEmail: string | null
       status: string
       createdAt: string
     }>
@@ -68,6 +89,10 @@ interface DashboardData {
   generatedAt: string
 }
 
+/* ================================================================
+   HELPERS
+   ================================================================ */
+
 function timeAgo(date: string): string {
   const seconds = Math.floor((Date.now() - new Date(date).getTime()) / 1000)
   if (seconds < 60) return `${seconds}s ago`
@@ -79,517 +104,682 @@ function timeAgo(date: string): string {
   return `${days}d ago`
 }
 
-function StatCard({ label, value, sub, accent }: { label: string; value: string | number; sub?: string; accent?: boolean }) {
+/* ================================================================
+   SMALL COMPONENTS
+   ================================================================ */
+
+function StatCard({ label, value, sub, icon: Icon }: {
+  label: string; value: string | number; sub?: string; icon?: React.ElementType
+}) {
   return (
-    <div className="bg-[#1A1A1A] border border-[#333] rounded-lg p-4">
-      <p className="text-xs text-gray-500 uppercase tracking-wider">{label}</p>
-      <p className={`text-2xl font-bold mt-1 ${accent ? 'text-[#E8820C]' : 'text-white'}`}>{value}</p>
-      {sub && <p className="text-xs text-gray-500 mt-1">{sub}</p>}
+    <div className="bg-white border border-gray-light rounded-card p-4">
+      <div className="flex items-center gap-2 mb-1">
+        {Icon && <Icon size={14} className="text-gray-mid" />}
+        <p className="text-xs font-medium text-gray-mid">{label}</p>
+      </div>
+      <p className="text-2xl font-bold text-ink">{value}</p>
+      {sub && <p className="text-xs text-gray-mid mt-1">{sub}</p>}
     </div>
   )
 }
 
-function StatusDot({ status }: { status: string }) {
-  const color = status === 'success' ? 'bg-orange-500' : status === 'error' ? 'bg-red-500' : 'bg-yellow-500'
-  return <span className={`inline-block w-2 h-2 rounded-full ${color}`} />
+function StatusBadge({ status }: { status: string }) {
+  const styles: Record<string, string> = {
+    pending: 'bg-amber-pale text-amber',
+    verified: 'bg-green-pale text-green',
+    approved: 'bg-green-pale text-green',
+    rejected: 'bg-red-pale text-red',
+    success: 'bg-green-pale text-green',
+    error: 'bg-red-pale text-red',
+    warning: 'bg-amber-pale text-amber',
+  }
+  return (
+    <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${styles[status] || 'bg-gray-light text-gray-mid'}`}>
+      {status}
+    </span>
+  )
 }
 
 function CategoryIcon({ category }: { category: string }) {
-  const icons: Record<string, string> = {
-    scraper: '🕷️',
-    deployment: '🚀',
-    database: '🗄️',
-    system: '⚙️',
-    price: 'dollar-sign',
-    notification: 'bell',
-    general: 'copy',
+  const icons: Record<string, React.ElementType> = {
+    scraper: RefreshCw,
+    deployment: BarChart3,
+    'price-update': DollarSign,
+    security: Shield,
+    notification: Bell,
+    submission: FileText,
   }
-  return <LucideIcon name={icons[category] || 'copy'} className="w-4 h-4" />
+  const Icon = icons[category] || Activity
+  return <Icon size={14} className="text-gray-mid" />
 }
 
-export default function AdminDashboard() {
-  const [password, setPassword] = useState('')
-  const [authed, setAuthed] = useState(false)
-  const [data, setData] = useState<DashboardData | null>(null)
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
-  const [lastRefresh, setLastRefresh] = useState<Date | null>(null)
-  const [activeTab, setActiveTab] = useState<'overview' | 'activity' | 'reports' | 'health'>('overview')
+/* ================================================================
+   LOGIN SCREEN
+   ================================================================ */
 
-  const fetchData = useCallback(async (pw?: string) => {
-    const token = pw || sessionStorage.getItem('admin_pw') || ''
+function LoginScreen({ onLogin }: { onLogin: (pw: string) => void }) {
+  const [password, setPassword] = useState('')
+  const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
     setLoading(true)
     setError('')
     try {
       const res = await fetch('/api/admin/stats', {
-        headers: { Authorization: `Bearer ${token}` },
-        cache: 'no-store',
+        headers: { Authorization: `Bearer ${password}` },
       })
-      if (res.status === 429) {
-        const json = await res.json()
-        setError(json.error || 'Too many failed attempts. Try again later.')
-        setLoading(false)
-        return
+      if (res.ok) {
+        onLogin(password)
+      } else if (res.status === 429) {
+        setError('Too many attempts. Try again later.')
+      } else {
+        setError('Wrong password')
       }
-      if (res.status === 401) {
-        setAuthed(false)
-        sessionStorage.removeItem('admin_pw')
-        setError('Invalid password')
-        setLoading(false)
-        return
-      }
-      const json = await res.json()
-      setData(json)
-      setAuthed(true)
-      setLastRefresh(new Date())
-      sessionStorage.setItem('admin_pw', token)
-    } catch (err: any) {
-      setError(err.message)
+    } catch {
+      setError('Connection error')
     }
     setLoading(false)
-  }, [])
-
-  // Auto-login from session
-  useEffect(() => {
-    const saved = sessionStorage.getItem('admin_pw')
-    if (saved) fetchData(saved)
-  }, [fetchData])
-
-  // Auto-refresh every 30s
-  useEffect(() => {
-    if (!authed) return
-    const interval = setInterval(() => fetchData(), 30000)
-    return () => clearInterval(interval)
-  }, [authed, fetchData])
-
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault()
-    fetchData(password)
   }
 
-  // Password gate
-  if (!authed) {
-    return (
-      <div className="min-h-screen bg-[#111] flex items-center justify-center p-4">
-        <form onSubmit={handleLogin} className="bg-[#1A1A1A] border border-[#333] rounded-xl p-6 w-full max-w-sm">
-          <div className="flex items-center gap-2 mb-6">
-            <span className="text-[#E8820C] text-2xl">✳️</span>
-            <h1 className="text-white text-xl font-bold">Arvo Admin</h1>
+  return (
+    <div className="min-h-screen bg-off-white flex items-center justify-center px-4">
+      <div className="w-full max-w-sm">
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center gap-2 mb-2">
+            <span className="text-amber text-2xl font-bold">✳</span>
+            <span className="font-display text-2xl text-ink">arvo</span>
           </div>
-          <input
-            type="password"
-            value={password}
-            onChange={e => setPassword(e.target.value)}
-            placeholder="Enter admin password"
-            className="w-full bg-[#111] border border-[#333] rounded-lg px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-[#E8820C] mb-4"
-            autoFocus
-          />
-          {error && <p className="text-red-400 text-sm mb-3">{error}</p>}
+          <p className="text-gray-mid text-sm">Admin Dashboard</p>
+        </div>
+
+        <form onSubmit={handleSubmit} className="bg-white border border-gray-light rounded-card p-6 space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-ink mb-1.5">Password</label>
+            <div className="relative">
+              <input
+                type={showPassword ? 'text' : 'password'}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full px-3 py-2.5 bg-off-white border border-gray-light rounded-lg text-ink text-sm focus:outline-none focus:border-amber focus:ring-1 focus:ring-amber pr-10"
+                placeholder="Enter admin password"
+                autoFocus
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-mid hover:text-ink"
+              >
+                {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+              </button>
+            </div>
+          </div>
+
+          {error && (
+            <div className="flex items-center gap-2 text-red text-sm bg-red-pale rounded-lg px-3 py-2">
+              <AlertTriangle size={14} />
+              {error}
+            </div>
+          )}
+
           <button
             type="submit"
-            disabled={loading}
-            className="w-full bg-[#E8820C] text-white font-semibold rounded-lg py-3 hover:bg-[#d4750b] transition-colors disabled:opacity-50"
+            disabled={loading || !password}
+            className="w-full py-2.5 bg-amber text-white font-semibold rounded-lg hover:bg-amber/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm"
           >
-            {loading ? 'Checking...' : 'Enter Dashboard'}
+            {loading ? <Loader2 size={16} className="animate-spin mx-auto" /> : 'Sign In'}
           </button>
         </form>
       </div>
-    )
-  }
+    </div>
+  )
+}
 
-  if (!data) {
-    return (
-      <div className="min-h-screen bg-[#111] flex items-center justify-center">
-        <div className="text-[#E8820C] animate-pulse text-lg">Loading dashboard...</div>
+/* ================================================================
+   TABS
+   ================================================================ */
+
+type TabId = 'overview' | 'activity' | 'reports' | 'health'
+
+const TABS: { id: TabId; label: string; icon: React.ElementType }[] = [
+  { id: 'overview', label: 'Overview', icon: BarChart3 },
+  { id: 'activity', label: 'Activity', icon: Activity },
+  { id: 'reports', label: 'Reports', icon: FileText },
+  { id: 'health', label: 'Health', icon: Heart },
+]
+
+/* ================================================================
+   TAB: OVERVIEW
+   ================================================================ */
+
+function OverviewTab({ data }: { data: DashboardData }) {
+  return (
+    <div className="space-y-6">
+      {/* Key Stats */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <StatCard label="Total Venues" value={data.overview.totalPubs} icon={Store} />
+        <StatCard label="Priced" value={data.overview.pricedPubs} sub={`${data.overview.unpricedPubs} TBC`} icon={DollarSign} />
+        <StatCard label="Suburbs" value={data.overview.suburbs} icon={MapPin} />
+        <StatCard label="Avg Price" value={`$${data.overview.avgPrice.toFixed(2)}`} sub={`$${data.overview.minPrice} – $${data.overview.maxPrice}`} icon={Beer} />
       </div>
-    )
-  }
 
-  const tabs = [
-    { id: 'overview' as const, label: 'Overview', icon: 'bar-chart' },
-    { id: 'activity' as const, label: 'Activity', icon: 'copy' },
-    { id: 'reports' as const, label: 'Reports', icon: 'pen-line' },
-    { id: 'health' as const, label: 'Health', icon: '🏥' },
-  ]
+      {/* Features */}
+      <div>
+        <h3 className="text-sm font-semibold text-ink mb-3">Feature Coverage</h3>
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+          <StatCard label="Happy Hour" value={data.features.happyHour} icon={Clock} />
+          <StatCard label="Cozy Pubs" value={data.features.cozyPubs} icon={Heart} />
+          <StatCard label="Sunset Spots" value={data.features.sunsetSpots} icon={Sunset} />
+          <StatCard label="Dad Bars" value={data.features.dadBars} icon={Users} />
+          <StatCard label="TAB Venues" value={data.features.tabVenues} icon={Trophy} />
+        </div>
+      </div>
+
+      {/* Recently Updated */}
+      <div>
+        <h3 className="text-sm font-semibold text-ink mb-3">Recently Updated</h3>
+        <div className="bg-white border border-gray-light rounded-card overflow-hidden">
+          {data.recentlyUpdated.map((pub, i) => (
+            <div key={i} className={`flex items-center justify-between px-4 py-3 ${i > 0 ? 'border-t border-gray-light' : ''}`}>
+              <div>
+                <p className="text-sm font-medium text-ink">{pub.name}</p>
+                <p className="text-xs text-gray-mid">{pub.suburb}</p>
+              </div>
+              <div className="text-right">
+                <p className="text-sm font-mono font-semibold text-ink">{pub.price ? `$${Number(pub.price).toFixed(2)}` : 'TBC'}</p>
+                <p className="text-xs text-gray-mid">{timeAgo(pub.lastUpdated)}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Price History */}
+      <div>
+        <h3 className="text-sm font-semibold text-ink mb-3">Price Change History</h3>
+        <div className="bg-white border border-gray-light rounded-card overflow-hidden">
+          {data.priceHistory.recent.length === 0 ? (
+            <p className="text-sm text-gray-mid px-4 py-6 text-center">No price changes recorded yet</p>
+          ) : (
+            data.priceHistory.recent.map((h, i) => (
+              <div key={i} className={`flex items-center justify-between px-4 py-3 ${i > 0 ? 'border-t border-gray-light' : ''}`}>
+                <div>
+                  <p className="text-sm font-medium text-ink">{h.pubName}</p>
+                  <p className="text-xs text-gray-mid">{h.source || h.changeType}</p>
+                </div>
+                <div className="text-right">
+                  <p className="text-sm font-mono font-semibold text-ink">${Number(h.price).toFixed(2)}</p>
+                  <p className="text-xs text-gray-mid">{timeAgo(h.changedAt)}</p>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+/* ================================================================
+   TAB: ACTIVITY
+   ================================================================ */
+
+function ActivityTab({ data }: { data: DashboardData }) {
+  return (
+    <div className="space-y-3">
+      <h3 className="text-sm font-semibold text-ink">Agent Activity Log</h3>
+      <div className="bg-white border border-gray-light rounded-card overflow-hidden">
+        {data.agentActivity.length === 0 ? (
+          <p className="text-sm text-gray-mid px-4 py-6 text-center">No activity recorded</p>
+        ) : (
+          data.agentActivity.map((a, i) => (
+            <div key={i} className={`flex items-start gap-3 px-4 py-3 ${i > 0 ? 'border-t border-gray-light' : ''}`}>
+              <div className="mt-0.5">
+                <CategoryIcon category={a.category} />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm text-ink">{a.action}</p>
+                <div className="flex items-center gap-2 mt-1">
+                  <StatusBadge status={a.status} />
+                  <span className="text-xs text-gray-mid">{timeAgo(a.createdAt)}</span>
+                </div>
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+    </div>
+  )
+}
+
+/* ================================================================
+   TAB: REPORTS (with approve/reject)
+   ================================================================ */
+
+function ReportsTab({ data, password, onRefresh }: { data: DashboardData; password: string; onRefresh: () => void }) {
+  const [actionLoading, setActionLoading] = useState<string | null>(null)
+  const [actionError, setActionError] = useState<string | null>(null)
+  const [showUnpriced, setShowUnpriced] = useState(false)
+
+  const handleReview = async (type: 'price_report' | 'pub_submission', id: string | number, action: 'approve' | 'reject') => {
+    const key = `${type}-${id}-${action}`
+    setActionLoading(key)
+    setActionError(null)
+    try {
+      const res = await fetch('/api/admin/review', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${password}`,
+        },
+        body: JSON.stringify({ type, id, action }),
+      })
+      const result = await res.json()
+      if (!res.ok) {
+        setActionError(result.error || 'Action failed')
+      } else {
+        onRefresh()
+      }
+    } catch {
+      setActionError('Network error')
+    }
+    setActionLoading(null)
+  }
 
   return (
-    <div className="min-h-screen bg-[#111] text-white">
-      {/* Header */}
-      <header className="border-b border-[#333] sticky top-0 bg-[#111] z-50">
-        <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <span className="text-[#E8820C] text-xl">✳️</span>
-            <h1 className="text-lg font-bold">Arvo Admin</h1>
+    <div className="space-y-6">
+      {actionError && (
+        <div className="flex items-center gap-2 text-red text-sm bg-red-pale rounded-lg px-3 py-2">
+          <AlertTriangle size={14} />
+          {actionError}
+          <button onClick={() => setActionError(null)} className="ml-auto"><X size={14} /></button>
+        </div>
+      )}
+
+      {/* Price Reports */}
+      <div>
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="text-sm font-semibold text-ink">Price Reports</h3>
+          {data.priceReports.pending > 0 && (
+            <span className="bg-amber text-white text-xs font-bold px-2 py-0.5 rounded-full">
+              {data.priceReports.pending} pending
+            </span>
+          )}
+        </div>
+        <div className="bg-white border border-gray-light rounded-card overflow-hidden">
+          {data.priceReports.recent.length === 0 ? (
+            <p className="text-sm text-gray-mid px-4 py-6 text-center">No price reports yet</p>
+          ) : (
+            data.priceReports.recent.map((r, i) => {
+              const isPending = r.status === 'pending'
+              const approveKey = `price_report-${r.id}-approve`
+              const rejectKey = `price_report-${r.id}-reject`
+              return (
+                <div key={r.id} className={`px-4 py-3 ${i > 0 ? 'border-t border-gray-light' : ''}`}>
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-ink">{r.pubSlug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}</p>
+                      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1">
+                        <span className="text-sm font-mono font-semibold text-ink">${Number(r.reportedPrice).toFixed(2)}</span>
+                        {r.beerType && <span className="text-xs text-gray-mid">{r.beerType}</span>}
+                        <span className="text-xs text-gray-mid">by {r.reporter}</span>
+                      </div>
+                      <div className="flex items-center gap-2 mt-1.5">
+                        <StatusBadge status={r.status} />
+                        <span className="text-xs text-gray-mid">{timeAgo(r.createdAt)}</span>
+                      </div>
+                    </div>
+                    {isPending && (
+                      <div className="flex items-center gap-2 shrink-0">
+                        <button
+                          onClick={() => handleReview('price_report', r.id, 'approve')}
+                          disabled={actionLoading !== null}
+                          className="flex items-center gap-1 px-3 py-1.5 bg-green text-white text-xs font-medium rounded-lg hover:bg-green/90 disabled:opacity-50 transition-colors"
+                        >
+                          {actionLoading === approveKey ? <Loader2 size={12} className="animate-spin" /> : <Check size={12} />}
+                          Approve
+                        </button>
+                        <button
+                          onClick={() => handleReview('price_report', r.id, 'reject')}
+                          disabled={actionLoading !== null}
+                          className="flex items-center gap-1 px-3 py-1.5 bg-red text-white text-xs font-medium rounded-lg hover:bg-red/90 disabled:opacity-50 transition-colors"
+                        >
+                          {actionLoading === rejectKey ? <Loader2 size={12} className="animate-spin" /> : <X size={12} />}
+                          Reject
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )
+            })
+          )}
+        </div>
+      </div>
+
+      {/* Pub Submissions */}
+      <div>
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="text-sm font-semibold text-ink">Pub Submissions</h3>
+          {data.pubSubmissions.pending > 0 && (
+            <span className="bg-amber text-white text-xs font-bold px-2 py-0.5 rounded-full">
+              {data.pubSubmissions.pending} pending
+            </span>
+          )}
+        </div>
+        <div className="bg-white border border-gray-light rounded-card overflow-hidden">
+          {data.pubSubmissions.recent.length === 0 ? (
+            <p className="text-sm text-gray-mid px-4 py-6 text-center">No pub submissions yet</p>
+          ) : (
+            data.pubSubmissions.recent.map((s, i) => {
+              const isPending = s.status === 'pending'
+              const approveKey = `pub_submission-${s.id}-approve`
+              const rejectKey = `pub_submission-${s.id}-reject`
+              return (
+                <div key={s.id} className={`px-4 py-3 ${i > 0 ? 'border-t border-gray-light' : ''}`}>
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-ink">{s.pubName}</p>
+                      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1">
+                        <span className="text-xs text-gray-mid flex items-center gap-1">
+                          <MapPin size={10} />{s.suburb}
+                        </span>
+                        {s.address && <span className="text-xs text-gray-mid">{s.address}</span>}
+                        {s.price && <span className="text-sm font-mono font-semibold text-ink">${Number(s.price).toFixed(2)}</span>}
+                        {s.beerType && <span className="text-xs text-gray-mid">{s.beerType}</span>}
+                      </div>
+                      {s.submitterEmail && (
+                        <p className="text-xs text-gray-mid mt-0.5">{s.submitterEmail}</p>
+                      )}
+                      <div className="flex items-center gap-2 mt-1.5">
+                        <StatusBadge status={s.status} />
+                        <span className="text-xs text-gray-mid">{timeAgo(s.createdAt)}</span>
+                      </div>
+                    </div>
+                    {isPending && (
+                      <div className="flex items-center gap-2 shrink-0">
+                        <button
+                          onClick={() => handleReview('pub_submission', s.id, 'approve')}
+                          disabled={actionLoading !== null}
+                          className="flex items-center gap-1 px-3 py-1.5 bg-green text-white text-xs font-medium rounded-lg hover:bg-green/90 disabled:opacity-50 transition-colors"
+                        >
+                          {actionLoading === approveKey ? <Loader2 size={12} className="animate-spin" /> : <Check size={12} />}
+                          Approve
+                        </button>
+                        <button
+                          onClick={() => handleReview('pub_submission', s.id, 'reject')}
+                          disabled={actionLoading !== null}
+                          className="flex items-center gap-1 px-3 py-1.5 bg-red text-white text-xs font-medium rounded-lg hover:bg-red/90 disabled:opacity-50 transition-colors"
+                        >
+                          {actionLoading === rejectKey ? <Loader2 size={12} className="animate-spin" /> : <X size={12} />}
+                          Reject
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )
+            })
+          )}
+        </div>
+      </div>
+
+      {/* Unpriced Pubs */}
+      <div>
+        <button
+          onClick={() => setShowUnpriced(!showUnpriced)}
+          className="flex items-center gap-2 text-sm font-semibold text-ink"
+        >
+          Unpriced Venues ({data.unpricedPubs.length})
+          {showUnpriced ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+        </button>
+        {showUnpriced && (
+          <div className="bg-white border border-gray-light rounded-card mt-3 overflow-hidden max-h-64 overflow-y-auto">
+            {data.unpricedPubs.map((p, i) => (
+              <div key={i} className={`flex items-center justify-between px-4 py-2 ${i > 0 ? 'border-t border-gray-light' : ''}`}>
+                <span className="text-sm text-ink">{p.name}</span>
+                <span className="text-xs text-gray-mid">{p.suburb}</span>
+              </div>
+            ))}
           </div>
-          <div className="flex items-center gap-3 text-xs text-gray-500">
-            {loading && <span className="text-[#E8820C] animate-pulse">Refreshing...</span>}
-            {lastRefresh && <span>Updated {timeAgo(lastRefresh.toISOString())}</span>}
+        )}
+      </div>
+    </div>
+  )
+}
+
+/* ================================================================
+   TAB: HEALTH
+   ================================================================ */
+
+function HealthTab({ data }: { data: DashboardData }) {
+  const snapshot = data.snapshot
+  return (
+    <div className="space-y-6">
+      {/* Push Notifications */}
+      <div>
+        <h3 className="text-sm font-semibold text-ink mb-3">Push Notifications</h3>
+        <div className="grid grid-cols-2 gap-3">
+          <StatCard label="Subscribers" value={data.pushSubscriptions.total} icon={Bell} />
+          <StatCard label="Active" value={data.pushSubscriptions.active} icon={Check} />
+        </div>
+      </div>
+
+      {/* Latest Snapshot */}
+      {snapshot && (
+        <div>
+          <h3 className="text-sm font-semibold text-ink mb-3">Latest Weekly Snapshot</h3>
+          <div className="bg-white border border-gray-light rounded-card p-4 space-y-3">
+            <div className="flex items-center justify-between">
+              <span className="text-xs text-gray-mid">Snapshot Date</span>
+              <span className="text-sm font-medium text-ink">{new Date(snapshot.snapshot_date).toLocaleDateString()}</span>
+            </div>
+            <div className="grid grid-cols-2 gap-3 text-sm">
+              <div>
+                <span className="text-xs text-gray-mid">Avg Price</span>
+                <p className="font-mono font-semibold text-ink">${Number(snapshot.avg_price || 0).toFixed(2)}</p>
+              </div>
+              <div>
+                <span className="text-xs text-gray-mid">Median Price</span>
+                <p className="font-mono font-semibold text-ink">${Number(snapshot.median_price || 0).toFixed(2)}</p>
+              </div>
+              <div>
+                <span className="text-xs text-gray-mid">Total Pubs</span>
+                <p className="font-semibold text-ink">{snapshot.total_pubs}</p>
+              </div>
+              <div>
+                <span className="text-xs text-gray-mid">Suburbs</span>
+                <p className="font-semibold text-ink">{snapshot.total_suburbs}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Data Quality */}
+      <div>
+        <h3 className="text-sm font-semibold text-ink mb-3">Data Quality</h3>
+        <div className="bg-white border border-gray-light rounded-card p-4 space-y-3">
+          <div className="flex items-center justify-between">
+            <span className="text-sm text-ink">Price Coverage</span>
+            <span className="text-sm font-semibold text-ink">
+              {data.overview.totalPubs > 0
+                ? Math.round((data.overview.pricedPubs / data.overview.totalPubs) * 100)
+                : 0}%
+            </span>
+          </div>
+          <div className="w-full bg-gray-light rounded-full h-2">
+            <div
+              className="bg-amber h-2 rounded-full transition-all"
+              style={{ width: `${data.overview.totalPubs > 0 ? (data.overview.pricedPubs / data.overview.totalPubs) * 100 : 0}%` }}
+            />
+          </div>
+          <div className="flex items-center justify-between">
+            <span className="text-sm text-ink">Vibe Tagged</span>
+            <span className="text-sm font-semibold text-ink">
+              {data.overview.vibeTagged} / {data.overview.totalPubs}
+            </span>
+          </div>
+          <div className="flex items-center justify-between">
+            <span className="text-sm text-ink">Price Reports</span>
+            <span className="text-sm font-semibold text-ink">
+              {data.priceReports.total} ({data.priceReports.pending} pending)
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+/* ================================================================
+   MAIN DASHBOARD
+   ================================================================ */
+
+export default function AdminDashboard() {
+  const [password, setPassword] = useState<string | null>(null)
+  const [data, setData] = useState<DashboardData | null>(null)
+  const [loading, setLoading] = useState(false)
+  const [activeTab, setActiveTab] = useState<TabId>('overview')
+  const [error, setError] = useState<string | null>(null)
+
+  const fetchData = useCallback(async () => {
+    if (!password) return
+    setLoading(true)
+    setError(null)
+    try {
+      const res = await fetch('/api/admin/stats', {
+        headers: { Authorization: `Bearer ${password}` },
+      })
+      if (res.ok) {
+        setData(await res.json())
+      } else {
+        setError('Failed to fetch data')
+      }
+    } catch {
+      setError('Connection error')
+    }
+    setLoading(false)
+  }, [password])
+
+  useEffect(() => {
+    if (password) fetchData()
+  }, [password, fetchData])
+
+  const handleLogin = (pw: string) => {
+    setPassword(pw)
+    if (typeof window !== 'undefined') {
+      sessionStorage.setItem('arvo-admin', pw)
+    }
+  }
+
+  // Auto-login from session
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const saved = sessionStorage.getItem('arvo-admin')
+      if (saved) setPassword(saved)
+    }
+  }, [])
+
+  if (!password) {
+    return <LoginScreen onLogin={handleLogin} />
+  }
+
+  return (
+    <div className="min-h-screen bg-off-white">
+      {/* Header */}
+      <header className="bg-white border-b border-gray-light sticky top-0 z-50">
+        <div className="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="text-amber text-xl font-bold">✳</span>
+            <span className="font-display text-lg text-ink">arvo</span>
+            <span className="text-xs text-gray-mid ml-1">admin</span>
+          </div>
+          <div className="flex items-center gap-3">
             <button
-              onClick={() => fetchData()}
-              className="text-gray-400 hover:text-[#E8820C] transition-colors"
+              onClick={fetchData}
+              disabled={loading}
+              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-ink border border-gray-light rounded-lg hover:bg-gray-light disabled:opacity-50 transition-colors"
             >
-              ↻ Refresh
+              <RefreshCw size={12} className={loading ? 'animate-spin' : ''} />
+              Refresh
             </button>
             <button
-              onClick={() => { sessionStorage.removeItem('admin_pw'); setAuthed(false); setData(null) }}
-              className="text-gray-400 hover:text-red-400 transition-colors"
+              onClick={() => {
+                setPassword(null)
+                setData(null)
+                sessionStorage.removeItem('arvo-admin')
+              }}
+              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-gray-mid hover:text-ink transition-colors"
             >
-              Logout
+              <LogOut size={12} />
             </button>
           </div>
         </div>
       </header>
 
-      {/* Tab Navigation */}
-      <div className="border-b border-[#333]">
-        <div className="max-w-7xl mx-auto px-4 flex gap-1 overflow-x-auto">
-          {tabs.map(tab => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`px-4 py-3 text-sm font-medium whitespace-nowrap border-b-2 transition-colors ${
-                activeTab === tab.id
-                  ? 'border-[#E8820C] text-[#E8820C]'
-                  : 'border-transparent text-gray-500 hover:text-gray-300'
-              }`}
-            >
-              <LucideIcon name={tab.icon} className="w-4 h-4 inline" /> {tab.label}
-            </button>
-          ))}
+      <div className="max-w-4xl mx-auto px-4 py-6">
+        {/* Tabs */}
+        <div className="flex gap-1 mb-6 bg-white border border-gray-light rounded-card p-1">
+          {TABS.map((tab) => {
+            const Icon = tab.icon
+            const isActive = activeTab === tab.id
+            const hasPending = tab.id === 'reports' && data &&
+              ((data.priceReports?.pending || 0) + (data.pubSubmissions?.pending || 0)) > 0
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors relative ${
+                  isActive
+                    ? 'bg-amber text-white'
+                    : 'text-gray-mid hover:text-ink hover:bg-gray-light'
+                }`}
+              >
+                <Icon size={14} />
+                <span className="hidden sm:inline">{tab.label}</span>
+                {hasPending && (
+                  <span className={`absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full ${isActive ? 'bg-white' : 'bg-amber'}`} />
+                )}
+              </button>
+            )
+          })}
         </div>
+
+        {/* Error State */}
+        {error && (
+          <div className="flex items-center gap-2 text-red text-sm bg-red-pale rounded-lg px-3 py-2 mb-4">
+            <AlertTriangle size={14} />
+            {error}
+          </div>
+        )}
+
+        {/* Loading State */}
+        {loading && !data && (
+          <div className="flex items-center justify-center py-20">
+            <Loader2 size={24} className="animate-spin text-amber" />
+          </div>
+        )}
+
+        {/* Tab Content */}
+        {data && (
+          <>
+            {activeTab === 'overview' && <OverviewTab data={data} />}
+            {activeTab === 'activity' && <ActivityTab data={data} />}
+            {activeTab === 'reports' && <ReportsTab data={data} password={password} onRefresh={fetchData} />}
+            {activeTab === 'health' && <HealthTab data={data} />}
+          </>
+        )}
+
+        {/* Footer */}
+        {data && (
+          <p className="text-center text-xs text-gray-mid mt-8 pb-4">
+            Last fetched {timeAgo(data.generatedAt)}
+          </p>
+        )}
       </div>
-
-      {/* Content */}
-      <main className="max-w-7xl mx-auto px-4 py-6">
-
-        {/* OVERVIEW TAB */}
-        {activeTab === 'overview' && (
-          <div className="space-y-6">
-            {/* Key Metrics */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-              <StatCard label="Total Pubs" value={data.overview.totalPubs} accent />
-              <StatCard label="Priced" value={data.overview.pricedPubs} sub={`${data.overview.unpricedPubs} unpriced`} />
-              <StatCard label="Avg Price" value={`$${data.overview.avgPrice.toFixed(2)}`} accent />
-              <StatCard label="Suburbs" value={data.overview.suburbs} />
-            </div>
-
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-              <StatCard label="Cheapest" value={`$${data.overview.minPrice.toFixed(2)}`} />
-              <StatCard label="Most Expensive" value={`$${data.overview.maxPrice.toFixed(2)}`} />
-              <StatCard label="Vibe Tagged" value={data.overview.vibeTagged} sub={`of ${data.overview.totalPubs}`} />
-              <StatCard label="Price Changes" value={data.priceHistory.totalChanges} />
-            </div>
-
-            {/* Feature Coverage */}
-            <div className="bg-[#1A1A1A] border border-[#333] rounded-lg p-4">
-              <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-3">Feature Coverage</h2>
-              <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
-                {[
-                  { label: 'Happy Hour', value: data.features.happyHour, icon: 'beer' },
-                  { label: 'Cozy Pubs', value: data.features.cozyPubs, icon: 'coffee' },
-                  { label: 'Sunset Spots', value: data.features.sunsetSpots, icon: 'sunset' },
-                  { label: 'Dad Bars', value: data.features.dadBars, icon: 'users' },
-                  { label: 'TAB Venues', value: data.features.tabVenues, icon: 'trophy' },
-                ].map(f => (
-                  <div key={f.label} className="text-center p-3 bg-[#111] rounded-lg">
-                    <LucideIcon name={f.icon} className="w-5 h-5" />
-                    <p className="text-xl font-bold text-[#E8820C]">{f.value}</p>
-                    <p className="text-xs text-gray-500">{f.label}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Push & Reports Row */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="bg-[#1A1A1A] border border-[#333] rounded-lg p-4">
-                <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-3"><Bell className="w-3.5 h-3.5 inline" /> Push Notifications</h2>
-                <div className="flex gap-6">
-                  <div>
-                    <p className="text-2xl font-bold text-[#E8820C]">{data.pushSubscriptions.total}</p>
-                    <p className="text-xs text-gray-500">Total subscribers</p>
-                  </div>
-                  <div>
-                    <p className="text-2xl font-bold text-white">{data.pushSubscriptions.active}</p>
-                    <p className="text-xs text-gray-500">Active</p>
-                  </div>
-                </div>
-              </div>
-              <div className="bg-[#1A1A1A] border border-[#333] rounded-lg p-4">
-                <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-3"><PenLine className="w-3.5 h-3.5 inline" /> Crowdsourced Reports</h2>
-                <div className="flex gap-6">
-                  <div>
-                    <p className="text-2xl font-bold text-[#E8820C]">{data.priceReports.total}</p>
-                    <p className="text-xs text-gray-500">Total reports</p>
-                  </div>
-                  <div>
-                    <p className="text-2xl font-bold text-yellow-400">{data.priceReports.pending}</p>
-                    <p className="text-xs text-gray-500">Pending review</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Recently Updated Pubs */}
-            <div className="bg-[#1A1A1A] border border-[#333] rounded-lg p-4">
-              <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-3">Recently Updated Pubs</h2>
-              <div className="space-y-2">
-                {data.recentlyUpdated.map((pub, i) => (
-                  <div key={i} className="flex items-center justify-between py-2 border-b border-[#222] last:border-0">
-                    <div>
-                      <span className="text-white font-medium">{pub.name}</span>
-                      <span className="text-gray-500 text-xs ml-2">{pub.suburb}</span>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <span className="text-[#E8820C] font-mono">${pub.price?.toFixed(2) || 'TBC'}</span>
-                      <span className="text-gray-600 text-xs">{pub.lastUpdated ? timeAgo(pub.lastUpdated) : '—'}</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* ACTIVITY TAB */}
-        {activeTab === 'activity' && (
-          <div className="space-y-4">
-            <div className="bg-[#1A1A1A] border border-[#333] rounded-lg p-4">
-              <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-4">Agent Activity Feed</h2>
-              {data.agentActivity.length === 0 ? (
-                <p className="text-gray-600 text-sm">No activity logged yet. Activity will appear here as the agent runs tasks.</p>
-              ) : (
-                <div className="space-y-3">
-                  {data.agentActivity.map((activity, i) => (
-                    <div key={i} className="flex items-start gap-3 py-3 border-b border-[#222] last:border-0">
-                      <div className="mt-0.5">
-                        <CategoryIcon category={activity.category} />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2">
-                          <StatusDot status={activity.status} />
-                          <span className="text-white font-medium text-sm">{activity.action}</span>
-                        </div>
-                        {activity.details?.description && (
-                          <p className="text-gray-500 text-xs mt-1 truncate">{activity.details.description}</p>
-                        )}
-                      </div>
-                      <span className="text-gray-600 text-xs whitespace-nowrap">{timeAgo(activity.createdAt)}</span>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-
-        {/* REPORTS TAB */}
-        {activeTab === 'reports' && (
-          <div className="space-y-4">
-            {/* Price Reports */}
-            <div className="bg-[#1A1A1A] border border-[#333] rounded-lg p-4">
-              <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-4">Crowdsourced Price Reports</h2>
-              {data.priceReports.recent.length === 0 ? (
-                <p className="text-gray-600 text-sm">No price reports submitted yet.</p>
-              ) : (
-                <div className="space-y-2">
-                  {data.priceReports.recent.map((report, i) => (
-                    <div key={i} className="flex items-center justify-between py-2 border-b border-[#222] last:border-0">
-                      <div className="flex-1 min-w-0">
-                        <span className="text-white font-medium text-sm capitalize">{(report.pubSlug || 'unknown').replace(/-/g, ' ')}</span>
-                        {report.beerType && <span className="text-gray-500 text-xs ml-2">({report.beerType})</span>}
-                        <p className="text-gray-600 text-xs">by {report.reporter}</p>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <span className="text-[#E8820C] font-mono font-bold">${report.reportedPrice}</span>
-                        <span className={`text-xs px-2 py-0.5 rounded-full ${
-                          report.status === 'pending' ? 'bg-yellow-900/30 text-yellow-400' :
-                          report.status === 'verified' ? 'bg-green-900/30 text-green-400' :
-                          'bg-red-900/30 text-red-400'
-                        }`}>{report.status}</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {/* Price History */}
-            <div className="bg-[#1A1A1A] border border-[#333] rounded-lg p-4">
-              <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-4">
-                Price Change History <span className="text-[#E8820C]">({data.priceHistory.totalChanges} total)</span>
-              </h2>
-              {data.priceHistory.recent.length === 0 ? (
-                <p className="text-gray-600 text-sm">No price changes recorded yet.</p>
-              ) : (
-                <div className="space-y-2">
-                  {data.priceHistory.recent.map((change, i) => (
-                    <div key={i} className="flex items-center justify-between py-2 border-b border-[#222] last:border-0">
-                      <div className="flex-1 min-w-0">
-                        <span className="text-white text-sm capitalize">{change.pubName || (change.pubSlug || 'unknown').replace(/-/g, ' ')}</span>
-                        <span className={`ml-2 text-xs px-1.5 py-0.5 rounded ${
-                          change.changeType === 'initial' ? 'bg-blue-900/30 text-blue-400' :
-                          change.changeType === 'update' ? 'bg-yellow-900/30 text-yellow-400' :
-                          'bg-gray-800 text-gray-400'
-                        }`}>{change.changeType}</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-[#E8820C] font-mono font-bold text-sm">${change.price?.toFixed(2) || 'TBC'}</span>
-                        {change.happyHourPrice && (
-                          <span className="text-green-400 font-mono text-xs">HH ${change.happyHourPrice.toFixed(2)}</span>
-                        )}
-                        <span className="text-gray-600 text-xs">{timeAgo(change.changedAt)}</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-
-        {/* HEALTH TAB */}
-        {activeTab === 'health' && (
-          <div className="space-y-4">
-            {/* Data Quality */}
-            <div className="bg-[#1A1A1A] border border-[#333] rounded-lg p-4">
-              <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-4">Data Quality</h2>
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-gray-400 text-sm">Price coverage</span>
-                  <div className="flex items-center gap-2">
-                    <div className="w-32 h-2 bg-[#333] rounded-full overflow-hidden">
-                      <div 
-                        className="h-full bg-[#E8820C] rounded-full" 
-                        style={{ width: `${(data.overview.pricedPubs / data.overview.totalPubs * 100)}%` }}
-                      />
-                    </div>
-                    <span className="text-white text-sm font-mono">
-                      {Math.round(data.overview.pricedPubs / data.overview.totalPubs * 100)}%
-                    </span>
-                  </div>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-gray-400 text-sm">Vibe tags</span>
-                  <div className="flex items-center gap-2">
-                    <div className="w-32 h-2 bg-[#333] rounded-full overflow-hidden">
-                      <div 
-                        className="h-full bg-[#E8820C] rounded-full" 
-                        style={{ width: `${(data.overview.vibeTagged / data.overview.totalPubs * 100)}%` }}
-                      />
-                    </div>
-                    <span className="text-white text-sm font-mono">
-                      {Math.round(data.overview.vibeTagged / data.overview.totalPubs * 100)}%
-                    </span>
-                  </div>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-gray-400 text-sm">Happy hour data</span>
-                  <div className="flex items-center gap-2">
-                    <div className="w-32 h-2 bg-[#333] rounded-full overflow-hidden">
-                      <div 
-                        className="h-full bg-[#E8820C] rounded-full" 
-                        style={{ width: `${(data.features.happyHour / data.overview.totalPubs * 100)}%` }}
-                      />
-                    </div>
-                    <span className="text-white text-sm font-mono">
-                      {Math.round(data.features.happyHour / data.overview.totalPubs * 100)}%
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Unpriced Pubs */}
-            {data.unpricedPubs.length > 0 && (
-              <div className="bg-[#1A1A1A] border border-[#333] rounded-lg p-4">
-                <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-3">
-                  ⚠️ Pubs Without Prices ({data.unpricedPubs.length})
-                </h2>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                  {data.unpricedPubs.map((pub, i) => (
-                    <div key={i} className="flex items-center gap-2 py-1">
-                      <span className="text-red-400 text-xs">●</span>
-                      <span className="text-white text-sm">{pub.name}</span>
-                      <span className="text-gray-600 text-xs">{pub.suburb}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Snapshot Info */}
-            {data.snapshot && (
-              <div className="bg-[#1A1A1A] border border-[#333] rounded-lg p-4">
-                <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-3">Latest Snapshot</h2>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
-                  <div>
-                    <p className="text-gray-500">Date</p>
-                    <p className="text-white font-mono">{data.snapshot.snapshot_date}</p>
-                  </div>
-                  <div>
-                    <p className="text-gray-500">Pub Count</p>
-                    <p className="text-white font-mono">{data.snapshot.total_pubs}</p>
-                  </div>
-                  <div>
-                    <p className="text-gray-500">Avg Price</p>
-                    <p className="text-[#E8820C] font-mono">${data.snapshot.avg_price}</p>
-                  </div>
-                  <div>
-                    <p className="text-gray-500">Range</p>
-                    <p className="text-white font-mono">${data.snapshot.min_price} - ${data.snapshot.max_price}</p>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Security Monitor */}
-            {data.agentActivity.filter(a => a.category === 'security').length > 0 && (
-              <div className="bg-[#1A1A1A] border border-red-900/50 rounded-lg p-4">
-                <h2 className="text-sm font-semibold text-red-400 uppercase tracking-wider mb-3">🔒 Security Events</h2>
-                <div className="space-y-2">
-                  {data.agentActivity.filter(a => a.category === 'security').slice(0, 5).map((event, i) => (
-                    <div key={i} className="flex items-center justify-between py-2 border-b border-[#222] last:border-0">
-                      <div className="flex items-center gap-2">
-                        <span className="w-2 h-2 bg-red-400 rounded-full" />
-                        <span className="text-white text-sm">{event.action}</span>
-                      </div>
-                      <span className="text-gray-600 text-xs">{timeAgo(event.createdAt)}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* System Status */}
-            <div className="bg-[#1A1A1A] border border-[#333] rounded-lg p-4">
-              <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-3">System Status</h2>
-              <div className="space-y-2 text-sm">
-                <div className="flex items-center justify-between">
-                  <span className="text-gray-400">Dashboard data</span>
-                  <span className="text-green-400 flex items-center gap-1"><span className="w-2 h-2 bg-orange-400 rounded-full inline-block" /> Live</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-gray-400">Rate limiting</span>
-                  <span className="text-green-400 flex items-center gap-1"><span className="w-2 h-2 bg-orange-400 rounded-full inline-block" /> Active (5 attempts / 15min)</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-gray-400">Auth protection</span>
-                  <span className="text-green-400 flex items-center gap-1"><span className="w-2 h-2 bg-orange-400 rounded-full inline-block" /> Timing-safe</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-gray-400">Auto-refresh</span>
-                  <span className="text-green-400">Every 30s</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-gray-400">Last generated</span>
-                  <span className="text-gray-300 font-mono">{new Date(data.generatedAt).toLocaleString()}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-      </main>
     </div>
   )
 }
