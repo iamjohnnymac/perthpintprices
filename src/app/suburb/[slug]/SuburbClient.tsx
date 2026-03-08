@@ -192,10 +192,6 @@ export default function SuburbClient({ suburb, pubs, nearbySuburbs, perthAvgPric
       {/* Nearby Suburbs */}
       {nearbySuburbs.length > 0 && (
         <section className="max-w-container mx-auto px-6 pb-6">
-          <div className="flex items-center gap-2 mb-3">
-            <span className="w-3.5 h-3.5 rounded-[4px] bg-amber" />
-            <span className="font-mono text-[0.68rem] font-bold uppercase tracking-[0.1em] text-gray-mid">Nearby</span>
-          </div>
           <div className="flex flex-wrap gap-2">
             {nearbySuburbs.map(ns => (
               <Link

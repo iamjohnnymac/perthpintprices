@@ -43,9 +43,8 @@ function sortByNearestNeighbor(pubs: Pub[]): Pub[] {
 }
 
 function getPar(price: number | null): number {
-  if (price === null || price < 7) return 2
-  if (price < 9) return 3
-  if (price < 11) return 4
+  if (price === null || price <= 10) return 3
+  if (price <= 13) return 4
   return 5
 }
 
@@ -290,28 +289,48 @@ export default function PubGolfClient({ pubs }: { pubs: Pub[] }) {
 
   const shareText = useMemo(() => {
     if (!winner) return ''
+    // Emoji row: winner's per-hole results
+    const emojiRow = coursePubs.map((pub: Pub, i: number) => {
+      const holePar = getPar(pub.price)
+      const sips = scores[winner.name]?.[i] ?? holePar
+      if (sips < holePar) return '⛳'
+      if (sips === holePar) return '🍺'
+      return '💀'
+    }).join('')
+
+    const playerLines = playerTotals.map((p: { name: string; total: number }) => {
+      const prefix = players.length > 1 && p.name === winner.name ? '🏆' : '🍺'
+      return `${prefix} ${p.name}: ${p.total} (${formatDiff(p.total, totalPar)} par)`
+    })
+
     const lines = [
-      `Arvo Pub Golf: ${courseName}`,
+      `🏌️ ARVO PUB GOLF 🍺`,
+      courseName,
       '',
-      `${winner.name} wins!`,
+      emojiRow,
       '',
-      ...playerTotals.map((p: { name: string; total: number }) => `${p.name}: ${p.total} (${formatDiff(p.total, totalPar)} par)`),
+      ...playerLines,
       '',
-      `Round cost: $${totalSpend.toFixed(2)}`,
-      `${coursePubs.length} pubs across ${uniqueSuburbs} suburb${uniqueSuburbs !== 1 ? 's' : ''}`,
-      '',
-      'Play at arvo.pub/pub-golf',
+      `💰 $${totalSpend.toFixed(0)} · ${coursePubs.length} holes · ${uniqueSuburbs} suburb${uniqueSuburbs !== 1 ? 's' : ''}`,
+      'Play free → arvo.pub/pub-golf',
     ]
     return lines.join('\n')
-  }, [winner, courseName, playerTotals, totalPar, totalSpend, coursePubs.length, uniqueSuburbs])
+  }, [winner, courseName, playerTotals, players, totalPar, totalSpend, coursePubs, scores, uniqueSuburbs])
 
-  const copyResults = useCallback(async () => {
+  const shareResults = useCallback(async () => {
+    // Try native share (mobile)
+    if (navigator.share) {
+      try {
+        await navigator.share({ text: shareText })
+        return
+      } catch { /* user cancelled, fall through to copy */ }
+    }
+    // Clipboard fallback
     try {
       await navigator.clipboard.writeText(shareText)
       setCopied(true)
       setTimeout(() => setCopied(false), 2000)
     } catch {
-      // Fallback
       const ta = document.createElement('textarea')
       ta.value = shareText
       document.body.appendChild(ta)
@@ -358,10 +377,6 @@ export default function PubGolfClient({ pubs }: { pubs: Pub[] }) {
     <>
       <SubPageNav title="Pub Golf" subtitle="Pick your course, tee off" />
       <div className="max-w-container mx-auto px-6 pt-8 pb-4">
-        <div className="flex items-center gap-2 mb-1.5">
-          <span className="w-3.5 h-3.5 rounded-[4px]" style={{ background: '#2D7A3D' }} />
-          <span className="font-mono text-[0.68rem] font-bold uppercase tracking-[0.1em] text-gray-mid">Game</span>
-        </div>
         <h1 className="font-mono font-extrabold text-[clamp(1.8rem,5vw,2.4rem)] tracking-[-0.03em] text-ink leading-[1.1]">
           Pub Golf
         </h1>
@@ -853,15 +868,15 @@ export default function PubGolfClient({ pubs }: { pubs: Pub[] }) {
             </div>
           </section>
 
-          {/* Share Results */}
+          {/* Share Scorecard */}
           <button
-            onClick={copyResults}
+            onClick={shareResults}
             className="w-full py-4 bg-amber text-white text-lg font-bold font-mono rounded-2xl hover:bg-orange-600 transition-all duration-200 shadow-md flex items-center justify-center gap-2"
           >
             {copied ? (
               <><Check className="w-5 h-5" /> Copied!</>
             ) : (
-              <><Copy className="w-5 h-5" /> Share Results</>
+              <><Copy className="w-5 h-5" /> Share Scorecard</>
             )}
           </button>
 

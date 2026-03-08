@@ -84,10 +84,6 @@ export default function WeeklyClient() {
       <main className="max-w-container mx-auto px-6 py-8 space-y-4">
         {/* Header */}
         <div className="mb-2">
-          <div className="flex items-center gap-2 mb-1.5">
-            <span className="w-3.5 h-3.5 rounded-[4px] bg-amber" />
-            <span className="font-mono text-[0.68rem] font-bold uppercase tracking-[0.1em] text-gray-mid">Weekly</span>
-          </div>
           <h1 className="font-mono font-extrabold text-[clamp(1.6rem,4vw,2rem)] tracking-[-0.03em] text-ink leading-[1.1]">
             This Week in Perth Pints
           </h1>

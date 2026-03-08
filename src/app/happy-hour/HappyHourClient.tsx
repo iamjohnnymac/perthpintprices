@@ -87,10 +87,6 @@ export default function HappyHourClient() {
       <div className="max-w-container mx-auto px-6 py-8">
         {/* Page heading */}
         <div className="mb-6">
-          <div className="flex items-center gap-2 mb-1.5">
-            <span className="w-3.5 h-3.5 rounded-[4px] bg-red" />
-            <span className="font-mono text-[0.68rem] font-bold uppercase tracking-[0.1em] text-gray-mid">Live</span>
-          </div>
           <h1 className="font-mono font-extrabold text-[clamp(1.8rem,5vw,2.4rem)] tracking-[-0.03em] text-ink leading-[1.1]">
             Happy Hours
           </h1>

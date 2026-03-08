@@ -35,10 +35,6 @@ export default function SuburbsClient({ suburbs }: SuburbsClientProps) {
       <div className="max-w-container mx-auto px-6 pb-12">
         {/* Header */}
         <div className="mb-8">
-          <div className="flex items-center gap-2 mb-3">
-            <span className="w-3.5 h-3.5 rounded-[4px] bg-amber" />
-            <span className="font-mono text-[0.68rem] font-bold uppercase tracking-[0.1em] text-gray-mid">Browse</span>
-          </div>
           <h1 className="font-mono font-extrabold text-[clamp(1.8rem,5vw,2.4rem)] tracking-[-0.03em] text-ink leading-[1.1] mb-2">
             All Suburbs
           </h1>

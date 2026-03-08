@@ -244,10 +244,6 @@ export default function PubDetailClient({ pub, nearbyPubs, avgPrice }: PubDetail
         {/* Nearby Pubs */}
         {nearbyPubs.length > 0 && (
           <div className="mt-8">
-            <div className="flex items-center gap-2 mb-4">
-              <span className="w-3.5 h-3.5 rounded-[4px] bg-amber" />
-              <span className="font-mono text-[0.68rem] font-bold uppercase tracking-[0.1em] text-gray-mid">Nearby</span>
-            </div>
             <h2 className="font-mono font-extrabold text-xl tracking-[-0.02em] text-ink mb-4">
               More in {pub.suburb}
             </h2>
