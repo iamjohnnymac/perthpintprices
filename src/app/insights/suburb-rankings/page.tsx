@@ -3,7 +3,7 @@ import BreadcrumbJsonLd from '@/components/BreadcrumbJsonLd'
 import SuburbRankingsPage from './SuburbRankingsPage'
 
 export const metadata: Metadata = {
-  title: "Perth Suburb Pint Price Rankings — Cheapest Suburbs for Beer | Arvo",
+  title: "Perth Suburb Pint Price Rankings: Cheapest Suburbs for Beer | Arvo",
   description: "Compare pint prices across every Perth suburb. Find the cheapest suburbs for a beer, from Fremantle to Joondalup. Ranked by average pint price.",
   alternates: { canonical: 'https://perthpintprices.com/insights/suburb-rankings' },
   openGraph: {

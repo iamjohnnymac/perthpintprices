@@ -1,6 +1,6 @@
 'use client'
 
-// VAPID public key — safe to expose (env var set on Vercel)
+// VAPID public key - safe to expose (env var set on Vercel)
 const VAPID_PUBLIC_KEY = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY || ''
 
 /**
@@ -122,6 +122,6 @@ export async function syncWatchlist(watchedSlugs: string[]): Promise<void> {
       }),
     })
   } catch {
-    // Silent fail — push sync is non-critical
+    // Silent fail - push sync is non-critical
   }
 }

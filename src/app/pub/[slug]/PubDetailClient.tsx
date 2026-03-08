@@ -234,7 +234,7 @@ export default function PubDetailClient({ pub, nearbyPubs, avgPrice }: PubDetail
             </div>
           </div>
 
-          {/* Right column — map */}
+          {/* Right column - map */}
           <div className="md:sticky md:top-20 rounded-card overflow-hidden h-[350px] border-3 border-ink shadow-hard">
             <PubDetailMap lat={pub.lat} lng={pub.lng} name={pub.name} price={pub.price} />
           </div>

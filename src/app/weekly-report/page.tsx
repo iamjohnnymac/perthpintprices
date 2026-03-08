@@ -4,11 +4,11 @@ import WeeklyClient from './WeeklyReportClient'
 
 export const metadata: Metadata = {
   title: 'This Week in Perth Pints | Arvo',
-  description: 'Weekly roundup of Perth beer prices — price movements, cheapest pints, and trending venues.',
+  description: 'Weekly roundup of Perth beer prices. Price movements, cheapest pints, and trending venues.',
   alternates: { canonical: 'https://perthpintprices.com/weekly' },
   openGraph: {
     title: 'This Week in Perth Pints | Arvo',
-    description: 'Weekly roundup of Perth beer prices — drops, deals, and trends.',
+    description: 'Weekly roundup of Perth beer prices. Drops, deals, and trends.',
     url: 'https://perthpintprices.com/weekly',
     type: 'website',
     siteName: 'Arvo',

@@ -59,10 +59,10 @@ function HomeContent() {
   const [showAllPubs, setShowAllPubs] = useState(false)
   const [userLocation, setUserLocation] = useState<{lat: number, lng: number} | null>(null)
   const [locationState, setLocationState] = useState<'idle' | 'granted' | 'denied' | 'dismissed'>('idle')
-  const [nearbyRadius, setNearbyRadius] = useState<number>(5) // km — 1, 3, 5, or 0 = all
+  const [nearbyRadius, setNearbyRadius] = useState<number>(5) // km - 1, 3, 5, or 0 = all
   const [beerTypeFilter, setBeerTypeFilter] = useState<string>('')
   const [scrolledPastHero, setScrolledPastHero] = useState(false)
-  // showMap state removed — now handled by MapPeek component
+  // showMap state removed - now handled by MapPeek component
   const heroRef = useRef<HTMLDivElement>(null)
   const headerRef = useRef<HTMLElement>(null)
   const contentRef = useRef<HTMLDivElement>(null)
@@ -72,7 +72,7 @@ function HomeContent() {
   const [kidFriendlyOnly, setKidFriendlyOnly] = useState(searchParams.get('kids') === '1')
   const [hasTabOnly, setHasTabOnly] = useState(searchParams.get('tab') === '1')
 
-  // P2a: URL sync — update URL params on filter change
+  // P2a: URL sync - update URL params on filter change
   const updateUrlParams = useCallback(() => {
     const params = new URLSearchParams()
     if (searchTerm) params.set('q', searchTerm)
@@ -146,7 +146,7 @@ function HomeContent() {
     }
   }
 
-  // Unified nav: expand when scrolled past hero (LATCHES — never collapses back)
+  // Unified nav: expand when scrolled past hero (LATCHES - never collapses back)
   useEffect(() => {
     const handleScroll = () => {
       if (heroRef.current && !scrolledPastHero) {
@@ -267,7 +267,7 @@ function HomeContent() {
 
   return (
     <main className="min-h-screen bg-white">
-      {/* ═══ HEADER — minimal monospace with pill CTA ═══ */}
+      {/* ═══ HEADER - minimal monospace with pill CTA ═══ */}
       <header ref={headerRef} className="max-w-container mx-auto px-6 py-6 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2 no-underline">
           <div className="w-7 h-7 bg-amber border-2 border-ink rounded-md flex items-center justify-center text-sm shadow-[2px_2px_0_#171717]">
@@ -299,7 +299,7 @@ function HomeContent() {
         </button>
       </header>
 
-      {/* ═══ HERO — beer glass, dots, stat strip ═══ */}
+      {/* ═══ HERO - beer glass, dots, stat strip ═══ */}
       <div ref={heroRef}>
         <HeroSection pubs={pubs} />
       </div>
@@ -326,7 +326,7 @@ function HomeContent() {
         )
       })()}
 
-      {/* ═══ FILTER BAR — below header, above content ═══ */}
+      {/* ═══ FILTER BAR - below header, above content ═══ */}
       <FilterSection
         viewMode={viewMode}
         setViewMode={setViewMode}

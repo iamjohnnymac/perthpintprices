@@ -10,7 +10,7 @@ const supabase = createClient(
 /**
  * POST /api/push/send
  * Send push notifications to subscribers.
- * Protected by PUSH_API_SECRET — only callable by the scraper trigger.
+ * Protected by PUSH_API_SECRET - only callable by the scraper trigger.
  *
  * Body: {
  *   title: string,

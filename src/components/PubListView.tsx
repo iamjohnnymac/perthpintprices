@@ -147,7 +147,7 @@ export default function PubListView({
                 </td>
                 <td className="py-4 px-3 hidden sm:table-cell">
                   <span className="text-xs text-gray-mid truncate max-w-[160px] block" title={pub.beerType || ''}>
-                    {pub.beerType || '—'}
+                    {pub.beerType || '-'}
                   </span>
                 </td>
                 <td className={`py-4 px-3 sm:px-4 text-right font-bold font-mono text-lg whitespace-nowrap ${pub.price !== null && pub.price <= 8 ? 'text-bargain' : 'text-ink'}`}>
@@ -166,7 +166,7 @@ export default function PubListView({
                       {happyHourStatus.statusEmoji && <LucideIcon name={happyHourStatus.statusEmoji} className="w-3.5 h-3.5 inline" />} {happyHourStatus.statusText}
                     </span>
                   ) : (
-                    <span className="text-xs text-stone-400">—</span>
+                    <span className="text-xs text-stone-400">-</span>
                   )}
                 </td>
                 <td className="py-4 px-2 hidden lg:table-cell">

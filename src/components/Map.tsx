@@ -8,7 +8,7 @@ import 'leaflet/dist/leaflet.css'
 import { getMapMode, MAP_TILES, MAP_FILTERS, MAP_ATTRIBUTION } from '@/lib/mapTheme'
 import React, { useEffect } from 'react'
 
-// Price-coded markers using DivIcon — sized by price (P1c)
+// Price-coded markers using DivIcon - sized by price (P1c)
 function getPriceIcon(price: number | null): L.DivIcon {
   // TBC = smallest (28px)
   if (price === null) {
@@ -150,14 +150,14 @@ function FitBounds({ pubs, userLocation, totalPubCount }: { pubs: Pub[], userLoc
       if (pubs.length === 0) {
         map.setView([-31.9505, 115.8605], 11)
       } else if (isFiltered) {
-        // User is searching/filtering — zoom to filtered results
+        // User is searching/filtering - zoom to filtered results
         const bounds = L.latLngBounds(pubs.map(pub => [pub.lat, pub.lng]))
         map.fitBounds(bounds, { padding: [30, 30], maxZoom: 15 })
       } else if (userLocation) {
-        // Filter cleared — return to user location
+        // Filter cleared - return to user location
         map.setView([userLocation.lat, userLocation.lng], 14, { animate: true })
       } else {
-        // Filter cleared, no user location — fit to all
+        // Filter cleared, no user location - fit to all
         const bounds = L.latLngBounds(pubs.map(pub => [pub.lat, pub.lng]))
         map.fitBounds(bounds, { padding: [30, 30], maxZoom: 14 })
       }

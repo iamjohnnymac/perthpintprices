@@ -11,7 +11,7 @@ export const dynamic = 'force-dynamic'
 export const revalidate = 0
 
 // ============================================================
-// RATE LIMITING — In-memory store (resets on cold start, fine for serverless)
+// RATE LIMITING - In-memory store (resets on cold start, fine for serverless)
 // Blocks an IP after 5 failed attempts for 15 minutes
 // ============================================================
 interface RateLimitEntry {

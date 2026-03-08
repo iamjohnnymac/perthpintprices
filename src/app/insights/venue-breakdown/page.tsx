@@ -3,7 +3,7 @@ import BreadcrumbJsonLd from '@/components/BreadcrumbJsonLd'
 import VenueBreakdownPage from './VenueBreakdownPage'
 
 export const metadata: Metadata = {
-  title: "Perth Pub Price Analysis — Venue Breakdown by Price Bracket | Arvo",
+  title: "Perth Pub Price Analysis: Venue Breakdown by Price Bracket | Arvo",
   description: "Deep dive into Perth's pub pricing. See how venues stack up across price brackets, find undervalued gems, and spot overpriced outliers.",
   alternates: { canonical: 'https://perthpintprices.com/insights/venue-breakdown' },
   openGraph: {

@@ -39,13 +39,13 @@ function getRainIntensity(code: number): string {
 const RAIN_QUIPS = [
   "Perfect excuse for a cheeky pint by the window",
   "Nothing beats rain on the roof and a cold one in hand",
-  "Chucking it down — time to hunker down with a brew",
-  "Wet outside, warm inside — that's the Perth way 🤙",
+  "Chucking it down. Time to hunker down with a brew",
+  "Wet outside, warm inside. That's the Perth way 🤙",
 ]
 
 const DRY_QUIPS = [
-  "No rain, no worries — still great spots to chill",
-  "Save these for the next downpour — or just go now",
+  "No rain, no worries. Still great spots to chill",
+  "Save these for the next downpour, or just go now",
   "Cozy vibes rain or shine ✌️",
 ]
 
@@ -153,7 +153,7 @@ export default function RainyDay({ pubs, userLocation }: RainyDayProps) {
               </div>
               <p className="text-xs text-stone-500">
                 {isRaining
-                  ? "It's chucking it down — here's where to hide"
+                  ? "It's chucking it down. Here's where to hide"
                   : "No rain today, but these are still top spots to hunker down"}
               </p>
             </div>
@@ -193,7 +193,7 @@ export default function RainyDay({ pubs, userLocation }: RainyDayProps) {
             {/* Tagline */}
             <p className="text-xs text-stone-500 italic mb-2 text-center">
               {isRaining
-                ? "Chucking it down out there — duck into one of these cozy spots"
+                ? "Chucking it down out there. Duck into one of these cozy spots"
                 : "No umbrella needed, but these cozy corners are always a good shout"}
             </p>
 

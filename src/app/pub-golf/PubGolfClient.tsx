@@ -290,7 +290,7 @@ export default function PubGolfClient({ pubs }: { pubs: Pub[] }) {
   const shareText = useMemo(() => {
     if (!winner) return ''
     const lines = [
-      `⛳ Arvo Pub Golf — ${courseName}`,
+      `⛳ Arvo Pub Golf: ${courseName}`,
       '',
       `🏆 ${winner.name} wins!`,
       '',
