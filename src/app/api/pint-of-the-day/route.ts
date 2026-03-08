@@ -15,7 +15,7 @@ const supabase = createClient(
  * 3. Score pubs based on: price (lower = better), happy hour active, variety (different suburb each day)
  * 4. Pick the top scorer as Pint of the Day
  * 
- * The algorithm is deterministic — same date always returns same pub.
+ * The algorithm is deterministic - same date always returns same pub.
  * This lets us cache aggressively and ensures consistency across users.
  */
 export async function GET() {

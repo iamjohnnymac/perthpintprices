@@ -20,9 +20,9 @@ export default function InstallPrompt() {
     const dismissedAt = localStorage.getItem('install-prompt-dismissed')
     const SEVEN_DAYS = 7 * 24 * 60 * 60 * 1000
     
-    // Already installed — bail
+    // Already installed - bail
     if (isStandalone) return
-    // Dismissed recently (within 7 days) — bail
+    // Dismissed recently (within 7 days) - bail
     if (dismissedAt && Date.now() - parseInt(dismissedAt) < SEVEN_DAYS) return
 
     // Only show on mobile devices (skip desktop)
@@ -32,7 +32,7 @@ export default function InstallPrompt() {
     const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent) && !(window as any).MSStream
     
     if (isIOS) {
-      // iOS Safari — show manual instructions after delay
+      // iOS Safari - show manual instructions after delay
       const timer = setTimeout(() => {
         setPlatform('ios')
         setShow(true)
@@ -40,7 +40,7 @@ export default function InstallPrompt() {
       return () => clearTimeout(timer)
     }
 
-    // Android/Chrome — listen for native install prompt
+    // Android/Chrome - listen for native install prompt
     const handler = (e: Event) => {
       e.preventDefault()
       setDeferredPrompt(e as BeforeInstallPromptEvent)

@@ -3,7 +3,7 @@ import BreadcrumbJsonLd from '@/components/BreadcrumbJsonLd'
 import TonightsBestBetsPage from './TonightsBestBetsPage'
 
 export const metadata: Metadata = {
-  title: "Tonight's Best Pints in Perth — Where to Drink Now | Arvo",
+  title: "Tonight's Best Pints in Perth: Where to Drink Now | Arvo",
   description: "Find the cheapest pints in Perth right now. Live happy hour deals, tonight's best bets, and where to get the most value on your next round.",
   alternates: { canonical: 'https://perthpintprices.com/insights/tonights-best-bets' },
   openGraph: {

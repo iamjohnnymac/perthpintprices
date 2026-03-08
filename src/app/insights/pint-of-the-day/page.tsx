@@ -3,7 +3,7 @@ import BreadcrumbJsonLd from '@/components/BreadcrumbJsonLd'
 import PintOfTheDayPage from './PintOfTheDayPage'
 
 export const metadata: Metadata = {
-  title: "Perth Pint of the Day — Today's Best Value Beer | Arvo",
+  title: "Perth Pint of the Day: Today's Best Value Beer | Arvo",
   description: "Today's best value pint in Perth, algorithmically picked from 300+ venues. Updated daily with verified prices from real pub-goers.",
   alternates: { canonical: 'https://perthpintprices.com/insights/pint-of-the-day' },
   openGraph: {

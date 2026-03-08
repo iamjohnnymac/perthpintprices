@@ -28,7 +28,7 @@ export async function generateMetadata(): Promise<Metadata> {
       icon: '/favicon.ico',
       apple: '/apple-touch-icon.png',
     },
-    title: "Arvo — Perth's pint prices, sorted.",
+    title: "Arvo | Perth's pint prices, sorted.",
     description: desc,
     keywords: 'Perth, pint prices, beer, pubs, happy hour, Western Australia, cheap drinks, Arvo',
     openGraph: {
@@ -37,10 +37,10 @@ export async function generateMetadata(): Promise<Metadata> {
           url: '/og-image.png',
           width: 1200,
           height: 630,
-          alt: "Arvo — Perth's pint prices, sorted",
+          alt: "Arvo | Perth's pint prices, sorted",
         },
       ],
-      title: "Arvo — Perth's pint prices, sorted.",
+      title: "Arvo | Perth's pint prices, sorted.",
       description: ogDesc,
       url: 'https://perthpintprices.com',
       siteName: 'Arvo',
@@ -49,8 +49,8 @@ export async function generateMetadata(): Promise<Metadata> {
     },
     twitter: {
       card: 'summary_large_image',
-      title: "Arvo — Perth's pint prices, sorted.",
-      description: `Perth's pint prices, sorted. ${stats.venueCount}+ venues — find cheap pints near you.`,
+      title: "Arvo | Perth's pint prices, sorted.",
+      description: `Perth's pint prices, sorted. ${stats.venueCount}+ venues. Find cheap pints near you.`,
     },
   }
 }

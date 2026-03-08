@@ -39,7 +39,7 @@ export default function PuntNPints({ pubs, userLocation }: PuntNPintsProps) {
     fetchTabs()
   }, [])
 
-  // Pubs with TAB on-site — the holy grail: punt AND pint under one roof
+  // Pubs with TAB on-site - the holy grail: punt AND pint under one roof
   const tabPubs = useMemo(() => {
     return pubs
       .filter(p => p.hasTab && p.price !== null)
@@ -118,7 +118,7 @@ export default function PuntNPints({ pubs, userLocation }: PuntNPintsProps) {
         </div>
 
         {isSectionOpen && (<>
-        {/* TAB Pubs — Cheapest pints where you can bet on-site */}
+        {/* TAB Pubs - Cheapest pints where you can bet on-site */}
         <div className="mb-3">
           <p className="text-[10px] font-medium text-stone-500 mb-1.5">
             Bet &amp; Drink Under One Roof

@@ -154,7 +154,7 @@ export default function HappyHourClient() {
               No happy hours right now
             </h2>
             <p className="text-gray-mid text-sm mb-6 max-w-md mx-auto leading-relaxed">
-              Check back during the week — most kick off between 4-6pm.
+              Check back during the week. Most kick off between 4-6pm.
               We&apos;ll show live deals as soon as they start.
             </p>
             <Link

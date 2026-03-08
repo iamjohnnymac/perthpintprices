@@ -169,11 +169,11 @@ export default function SunsetSippers({ pubs, userLocation }: SunsetSippersProps
   const sunShadow = getSunShadowGradient(sunAzimuth, isGoldenHour || isSunset)
   const cheapestSunset = sunsetPubs[0]
 
-  // Sun arc SVG dimensions — taller arc with room for labels below
+  // Sun arc SVG dimensions - taller arc with room for labels below
   const arcWidth = 200
   const arcHeight = 72
   const arcCenterX = arcWidth / 2   // 100
-  const arcCenterY = 46             // horizon line — lower gives taller visible arc
+  const arcCenterY = 46             // horizon line - lower gives taller visible arc
   const arcRx = 86                  // wide horizontal radius
   const arcRy = 42                  // taller vertical radius → more prominent arc
 
@@ -225,7 +225,7 @@ export default function SunsetSippers({ pubs, userLocation }: SunsetSippersProps
             <StatusIcon />
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="text-base sm:text-lg font-bold font-heading text-stone-800 flex items-center">Sunset Sippers<InfoTooltip text="Uses Perth's real-time sunset & golden hour times (calculated astronomically). Highlights west-facing pubs with verified prices — best spots to watch the sun go down with a pint." /></h3>
+                <h3 className="text-base sm:text-lg font-bold font-heading text-stone-800 flex items-center">Sunset Sippers<InfoTooltip text="Uses Perth's real-time sunset & golden hour times (calculated astronomically). Highlights west-facing pubs with verified prices. Best spots to watch the sun go down with a pint." /></h3>
                 {isGoldenHour && (
                   <span className="inline-flex items-center rounded-full bg-amber-500 text-white text-[10px] font-semibold px-2 py-0.5 animate-pulse shadow-sm">
                     GOLDEN HOUR
@@ -247,7 +247,7 @@ export default function SunsetSippers({ pubs, userLocation }: SunsetSippersProps
               <svg width={160} height={58} viewBox={`0 0 ${arcWidth} ${arcHeight}`} className="opacity-80" overflow="hidden" style={{display:'block'}}>
                 {/* Horizon line */}
                 <line x1="8" y1={arcCenterY} x2={arcWidth - 8} y2={arcCenterY} stroke="#d4a574" strokeWidth="1" strokeDasharray="3,3" opacity="0.6" />
-                {/* Full arc (dashed guide) — flat ellipse */}
+                {/* Full arc (dashed guide) - flat ellipse */}
                 <path
                   d={`M 12 ${arcCenterY} A ${arcRx} ${arcRy} 0 0 1 ${arcWidth - 12} ${arcCenterY}`}
                   fill="none"
@@ -256,7 +256,7 @@ export default function SunsetSippers({ pubs, userLocation }: SunsetSippersProps
                   strokeDasharray="3,3"
                   opacity="0.3"
                 />
-                {/* Traveled path — flat ellipse */}
+                {/* Traveled path - flat ellipse */}
                 {sunPosition > 0 && sunPosition < 100 && (
                   <path
                     d={`M 12 ${arcCenterY} A ${arcRx} ${arcRy} 0 0 1 ${sunX} ${sunY}`}
@@ -274,7 +274,7 @@ export default function SunsetSippers({ pubs, userLocation }: SunsetSippersProps
                     <circle cx={sunX} cy={sunY} r="3" fill="#D97706" />
                   </>
                 )}
-                {/* Labels — below horizon line, larger font, symmetric */}
+                {/* Labels - below horizon line, larger font, symmetric */}
                 <text x="6" y={arcCenterY + 18} fontSize="11" fill="#92734a" fontFamily="monospace" fontWeight="500">{E.arrow_up_plain}{formatTime(sunTimes.sunrise).replace(' ', '')}</text>
                 <text x={arcWidth - 70} y={arcCenterY + 18} fontSize="11" fill="#c2410c" fontFamily="monospace" fontWeight="500">{E.arrow_down_plain}{formatTime(sunTimes.sunset).replace(' ', '')}</text>
               </svg>

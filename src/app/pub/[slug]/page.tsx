@@ -9,10 +9,10 @@ interface PageProps {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const pub = await getPubBySlug(params.slug)
-  if (!pub) return { title: 'Pub Not Found — Arvo' }
+  if (!pub) return { title: 'Pub Not Found | Arvo' }
   
   const priceText = pub.price !== null ? `$${pub.price.toFixed(2)} pints` : 'Price TBC'
-  const title = `${pub.name}, ${pub.suburb} — ${priceText} | Arvo`
+  const title = `${pub.name}, ${pub.suburb}: ${priceText} | Arvo`
   const description = `${priceText} at ${pub.name} in ${pub.suburb}, Perth WA.${pub.happyHour ? ` Happy Hour: ${pub.happyHour}.` : ''} ${pub.beerType ? `Serving ${pub.beerType}.` : ''} Find the best pint prices on Arvo.`
   
   return {
@@ -20,7 +20,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     description,
     alternates: { canonical: `https://perthpintprices.com/pub/${params.slug}` },
     openGraph: {
-      title: `${pub.name} — ${priceText}`,
+      title: `${pub.name}: ${priceText}`,
       description,
       url: `https://perthpintprices.com/pub/${params.slug}`,
       siteName: 'Arvo',
@@ -29,7 +29,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     },
     twitter: {
       card: 'summary',
-      title: `${pub.name} — ${priceText}`,
+      title: `${pub.name}: ${priceText}`,
       description,
     },
   }

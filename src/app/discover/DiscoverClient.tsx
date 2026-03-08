@@ -466,7 +466,7 @@ export default function DiscoverClient() {
               <p className="text-sm text-[#888] mb-4">Starting soon near you</p>
               <div className="space-y-1">
                 {upcomingHappyHours.length === 0 && (
-                  <p className="text-sm text-[#888] py-4 text-center">No happy hours active or upcoming right now — check back later!</p>
+                  <p className="text-sm text-[#888] py-4 text-center">No happy hours active or upcoming right now. Check back later!</p>
                 )}
                 {upcomingHappyHours.map(({ pub, status }) => (
                   <Link key={pub.id} href={`/pub/${pub.slug}`} className="flex items-center justify-between p-2.5 rounded-lg hover:bg-[#FAFAFA] hover:border-l-2 hover:border-l-[#E8740C] transition-all group">
@@ -544,7 +544,7 @@ export default function DiscoverClient() {
                       <div className="flex items-baseline gap-2 mt-0.5">
                         <span className="text-2xl sm:text-3xl font-bold text-[#1A1A1A] tabular-nums">${pintIndex.current.avg_price.toFixed(2)}</span>
                         <span className={`text-sm font-semibold ${pintIndex.monthChange > 0 ? 'text-[#5C4A3A]' : 'text-ink'}`}>
-                          {pintIndex.monthChange > 0 ? '▲' : pintIndex.monthChange < 0 ? '▼' : '—'}{' '}
+                          {pintIndex.monthChange > 0 ? '▲' : pintIndex.monthChange < 0 ? '▼' : '-'}{' '}
                           {pintIndex.monthChange >= 0 ? '+' : ''}{pintIndex.monthChange.toFixed(2)} ({pintIndex.monthPct >= 0 ? '+' : ''}{pintIndex.monthPct.toFixed(1)}%)
                         </span>
                       </div>
