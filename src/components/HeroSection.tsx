@@ -11,7 +11,7 @@ export default function HeroSection({ pubs }: HeroSectionProps) {
   return (
     <>
       {/* Hero */}
-      <section className="text-center px-6 pt-4 pb-10 max-w-container mx-auto relative">
+      <section className="text-center px-6 pt-2 pb-8 max-w-container mx-auto relative">
         {/* Dot grid background texture */}
         <div className="absolute inset-0 bg-dot-grid opacity-[0.035] pointer-events-none" />
 
@@ -36,7 +36,7 @@ export default function HeroSection({ pubs }: HeroSectionProps) {
           Every pub. Every price. Updated weekly.
         </p>
         <p className="font-mono text-[0.65rem] font-bold uppercase tracking-[0.12em] text-gray-mid/60 mt-2 animate-fade-up stagger-4">
-          Community-powered · Est. 2024
+          Community-powered · Est. 2026
         </p>
       </section>
 

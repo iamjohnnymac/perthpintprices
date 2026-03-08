@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import SubPageNav from '@/components/SubPageNav'
+import Footer from '@/components/Footer'
 import { TrendingUp, TrendingDown, Minus, Beer, MapPin, Users, BarChart3, Trophy } from 'lucide-react'
 
 interface WeeklyData {
@@ -26,15 +27,15 @@ interface WeeklyData {
 }
 
 function TrendIcon({ change }: { change: number }) {
-  if (change < 0) return <TrendingDown className="w-5 h-5 text-stone-500" />
-  if (change > 0) return <TrendingUp className="w-5 h-5 text-amber-600" />
-  return <Minus className="w-5 h-5 text-stone-400" />
+  if (change < 0) return <TrendingDown className="w-5 h-5 text-gray-mid" />
+  if (change > 0) return <TrendingUp className="w-5 h-5 text-amber" />
+  return <Minus className="w-5 h-5 text-gray-mid" />
 }
 
 function trendColor(change: number) {
-  if (change < 0) return 'text-stone-500'
-  if (change > 0) return 'text-amber-600'
-  return 'text-stone-400'
+  if (change < 0) return 'text-gray-mid'
+  if (change > 0) return 'text-amber'
+  return 'text-gray-mid'
 }
 
 export default function WeeklyClient() {
@@ -52,8 +53,8 @@ export default function WeeklyClient() {
     return (
       <div className="min-h-screen bg-[#FDF8F0]">
         <SubPageNav title="Weekly Report" subtitle="This week in Perth pints" />
-        <div className="max-w-2xl mx-auto px-4 py-16 text-center">
-          <p className="font-mono text-stone-400 animate-pulse text-sm">Loading weekly report...</p>
+        <div className="max-w-container mx-auto px-6 py-16 text-center">
+          <p className="font-mono text-gray-mid animate-pulse text-sm">Loading weekly report...</p>
         </div>
       </div>
     )
@@ -63,10 +64,10 @@ export default function WeeklyClient() {
     return (
       <div className="min-h-screen bg-[#FDF8F0]">
         <SubPageNav title="Weekly Report" subtitle="This week in Perth pints" />
-        <div className="max-w-2xl mx-auto px-4 py-16 text-center">
+        <div className="max-w-container mx-auto px-6 py-16 text-center">
           <BarChart3 className="w-12 h-12 text-stone-300 mx-auto mb-4" />
-          <p className="font-mono text-stone-500 text-sm">No report data available yet.</p>
-          <p className="text-stone-400 text-xs mt-1">Check back Monday morning.</p>
+          <p className="font-mono text-gray-mid text-sm">No report data available yet.</p>
+          <p className="text-gray-mid text-xs mt-1">Check back Monday morning.</p>
         </div>
       </div>
     )
@@ -80,22 +81,22 @@ export default function WeeklyClient() {
     <div className="min-h-screen bg-[#FDF8F0]">
       <SubPageNav title="Weekly Report" subtitle="This week in Perth pints" />
 
-      <main className="max-w-2xl mx-auto px-4 py-8 space-y-4">
+      <main className="max-w-container mx-auto px-6 py-8 space-y-4">
         {/* Header */}
         <div className="mb-2">
           <div className="flex items-center gap-2 mb-1.5">
-            <span className="w-3.5 h-3.5 rounded-[4px] bg-amber-400" />
-            <span className="font-mono text-[0.68rem] font-bold uppercase tracking-[0.1em] text-stone-400">Weekly</span>
+            <span className="w-3.5 h-3.5 rounded-[4px] bg-amber" />
+            <span className="font-mono text-[0.68rem] font-bold uppercase tracking-[0.1em] text-gray-mid">Weekly</span>
           </div>
           <h1 className="font-mono font-extrabold text-[clamp(1.6rem,4vw,2rem)] tracking-[-0.03em] text-ink leading-[1.1]">
             This Week in Perth Pints
           </h1>
-          <p className="text-stone-400 text-sm mt-1">Week of {weekLabel}</p>
+          <p className="text-gray-mid text-sm mt-1">Week of {weekLabel}</p>
         </div>
 
         {/* Big Number - Average Price */}
         <div className="border-3 border-ink rounded-card shadow-hard-sm p-5 bg-white">
-          <p className="font-mono text-xs text-stone-400 uppercase mb-1">Average Pint Price</p>
+          <p className="font-mono text-xs text-gray-mid uppercase mb-1">Average Pint Price</p>
           <div className="flex items-baseline gap-3">
             <span className="font-mono text-4xl sm:text-5xl font-bold text-ink">${data.avgPrice.toFixed(2)}</span>
             <div className={`flex items-center gap-1 font-mono text-base font-bold ${trendColor(data.avgChange)}`}>
@@ -103,7 +104,7 @@ export default function WeeklyClient() {
               <span>${Math.abs(data.avgChange).toFixed(2)} ({Math.abs(data.avgChangePct).toFixed(1)}%)</span>
             </div>
           </div>
-          <p className="text-stone-400 text-xs mt-2">
+          <p className="text-gray-mid text-xs mt-2">
             Across {data.totalPubs} venues in {data.totalSuburbs} suburbs
             {data.totalReportsThisWeek > 0 && ` · ${data.totalReportsThisWeek} reports this week`}
           </p>
@@ -113,19 +114,19 @@ export default function WeeklyClient() {
         <div className="grid grid-cols-2 gap-3">
           <div className="border-3 border-ink rounded-card shadow-hard-sm p-4 bg-white text-center">
             <p className="font-mono text-2xl font-bold text-ink">${data.minPrice.toFixed(2)}</p>
-            <p className="text-xs text-stone-400 mt-0.5">Cheapest Pint</p>
+            <p className="text-xs text-gray-mid mt-0.5">Cheapest Pint</p>
           </div>
           <div className="border-3 border-ink rounded-card shadow-hard-sm p-4 bg-white text-center">
             <p className="font-mono text-2xl font-bold text-ink">${data.maxPrice.toFixed(2)}</p>
-            <p className="text-xs text-stone-400 mt-0.5">Priciest Pint</p>
+            <p className="text-xs text-gray-mid mt-0.5">Priciest Pint</p>
           </div>
           <div className="border-3 border-ink rounded-card shadow-hard-sm p-4 bg-white text-center">
             <p className="font-mono text-2xl font-bold text-ink">${data.medianPrice.toFixed(2)}</p>
-            <p className="text-xs text-stone-400 mt-0.5">Median Price</p>
+            <p className="text-xs text-gray-mid mt-0.5">Median Price</p>
           </div>
           <div className="border-3 border-ink rounded-card shadow-hard-sm p-4 bg-white text-center">
             <p className="font-mono text-2xl font-bold text-ink">{data.totalPubs}</p>
-            <p className="text-xs text-stone-400 mt-0.5">Venues Tracked</p>
+            <p className="text-xs text-gray-mid mt-0.5">Venues Tracked</p>
           </div>
         </div>
 
@@ -136,19 +137,19 @@ export default function WeeklyClient() {
               <MapPin className="w-4 h-4" /> Suburb Snapshot
             </h2>
             <div className="grid grid-cols-2 gap-3">
-              <div className="bg-stone-50 rounded-xl p-3 text-center">
+              <div className="bg-off-white rounded-xl p-3 text-center">
                 <p className="font-mono text-sm font-bold text-ink">{data.cheapestSuburb}</p>
                 {data.cheapestSuburbAvg && (
                   <p className="font-mono text-lg font-bold text-ink mt-1">${data.cheapestSuburbAvg.toFixed(2)}</p>
                 )}
-                <p className="text-[10px] text-stone-400 mt-0.5">Cheapest avg</p>
+                <p className="text-[10px] text-gray-mid mt-0.5">Cheapest avg</p>
               </div>
-              <div className="bg-stone-50 rounded-xl p-3 text-center">
+              <div className="bg-off-white rounded-xl p-3 text-center">
                 <p className="font-mono text-sm font-bold text-ink">{data.mostExpensiveSuburb}</p>
                 {data.mostExpensiveSuburbAvg && (
                   <p className="font-mono text-lg font-bold text-ink mt-1">${data.mostExpensiveSuburbAvg.toFixed(2)}</p>
                 )}
-                <p className="text-[10px] text-stone-400 mt-0.5">Priciest avg</p>
+                <p className="text-[10px] text-gray-mid mt-0.5">Priciest avg</p>
               </div>
             </div>
           </div>
@@ -168,9 +169,9 @@ export default function WeeklyClient() {
                   className="flex items-center justify-between text-sm hover:bg-amber-50 -mx-2 px-2 py-1.5 rounded-lg transition-colors"
                 >
                   <span className="flex items-center gap-2 min-w-0">
-                    <span className="font-mono text-stone-400 text-xs w-5 text-right">{i + 1}.</span>
+                    <span className="font-mono text-gray-mid text-xs w-5 text-right">{i + 1}.</span>
                     <span className="font-medium text-ink truncate">{pub.name}</span>
-                    <span className="text-stone-400 text-xs flex-shrink-0">{pub.suburb}</span>
+                    <span className="text-gray-mid text-xs flex-shrink-0">{pub.suburb}</span>
                   </span>
                   <span className="font-mono font-bold text-ink flex-shrink-0 ml-2">${Number(pub.price).toFixed(2)}</span>
                 </Link>
@@ -193,7 +194,7 @@ export default function WeeklyClient() {
                   className="flex items-center justify-between text-sm hover:bg-amber-50 -mx-2 px-2 py-1.5 rounded-lg transition-colors"
                 >
                   <span className="font-medium text-ink">{pub.name}</span>
-                  <span className="text-stone-400 text-xs">{pub.reportCount} report{pub.reportCount !== 1 ? 's' : ''}</span>
+                  <span className="text-gray-mid text-xs">{pub.reportCount} report{pub.reportCount !== 1 ? 's' : ''}</span>
                 </Link>
               ))}
             </div>
@@ -202,15 +203,17 @@ export default function WeeklyClient() {
 
         {/* CTA */}
         <div className="text-center pt-2 pb-8">
-          <p className="text-stone-400 text-xs mb-3">Know a price? Help keep Perth honest.</p>
+          <p className="text-gray-mid text-xs mb-3">Know a price? Help keep Perth honest.</p>
           <Link
             href="/submit"
-            className="inline-flex items-center gap-2 bg-amber text-white font-mono font-bold text-sm rounded-2xl px-6 py-3 hover:bg-amber/90 transition-colors"
+            className="inline-flex items-center gap-2 bg-amber text-white font-mono font-bold text-sm rounded-pill px-6 py-3 hover:bg-amber/90 transition-colors"
           >
             <Beer className="w-4 h-4" /> Submit a Price
           </Link>
         </div>
       </main>
+
+      <Footer />
     </div>
   )
 }

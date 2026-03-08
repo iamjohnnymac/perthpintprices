@@ -15,7 +15,7 @@ const config: Config = {
         '30': '7.5rem',
       },
       maxWidth: {
-        'container': '680px',
+        'container': '800px',
       },
       fontFamily: {
         display: ['var(--font-dm-serif)', 'Georgia', 'serif'],

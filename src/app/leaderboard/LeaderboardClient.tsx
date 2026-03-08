@@ -89,7 +89,7 @@ export default function LeaderboardClient() {
         </div>
 
         {/* Leaderboard */}
-        <div className="border-3 border-ink rounded-card shadow-hard overflow-hidden">
+        <div className="border-3 border-ink rounded-card shadow-hard-sm overflow-hidden">
           {loading ? (
             <div className="p-8 text-center">
               <div className="w-16 h-16 border-4 border-stone-300 border-t-amber rounded-full animate-spin mx-auto mb-3" />

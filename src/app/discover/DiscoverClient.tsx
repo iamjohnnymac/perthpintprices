@@ -9,7 +9,7 @@ import { getDistanceKm, formatDistance } from '@/lib/location'
 import SubPageNav from '@/components/SubPageNav'
 import Footer from '@/components/Footer'
 import { ErrorBoundary } from '@/components/ErrorBoundary'
-import { Beer, Sunset, Users, TrendingUp, DollarSign, BarChart3, Clock } from 'lucide-react'
+import { Beer, Sunset, Users, TrendingUp, DollarSign, BarChart3, Clock, Tag } from 'lucide-react'
 import LucideIcon from '@/components/LucideIcon'
 
 /* ─── Types ─── */
@@ -398,24 +398,24 @@ export default function DiscoverClient() {
         {heroPub && (
           <section className="pt-8 sm:pt-12 mb-10 sm:mb-14">
             <Link href={`/pub/${heroPub.slug}`} className="block">
-              <div className="bg-[#FFF8F0] rounded-card py-12 px-6 text-center hover:shadow-[0_4px_16px_rgba(0,0,0,0.08)] transition-shadow">
-                <p className="text-[#888] text-sm mb-1">Your best pint right now</p>
+              <div className="bg-[#FDF8F0] rounded-card py-12 px-6 text-center hover:shadow-[0_4px_16px_rgba(0,0,0,0.08)] transition-shadow">
+                <p className="text-gray-mid text-sm mb-1">Your best pint right now</p>
                 <div className="flex items-center justify-center gap-2 mb-3">
                   <Beer className="w-5 h-5 text-amber" />
-                  <span className="text-[#1A1A1A] font-bold text-lg sm:text-xl">{heroPub.name}</span>
-                  <span className="text-[#888] text-sm">·</span>
-                  <span className="text-[#888] text-sm">{heroPub.suburb}</span>
+                  <span className="text-ink font-bold text-lg sm:text-xl">{heroPub.name}</span>
+                  <span className="text-gray-mid text-sm">·</span>
+                  <span className="text-gray-mid text-sm">{heroPub.suburb}</span>
                   {userLocation && (
                     <>
-                      <span className="text-[#888] text-sm">·</span>
-                      <span className="text-[#888] text-sm">{formatDistance(getDistanceKm(userLocation.lat, userLocation.lng, heroPub.lat, heroPub.lng))}</span>
+                      <span className="text-gray-mid text-sm">·</span>
+                      <span className="text-gray-mid text-sm">{formatDistance(getDistanceKm(userLocation.lat, userLocation.lng, heroPub.lat, heroPub.lng))}</span>
                     </>
                   )}
                 </div>
                 <div className="text-[40px] font-bold text-ink tabular-nums leading-tight">
                   ${heroPub.price!.toFixed(2)}
                 </div>
-                <p className="text-[#888] text-sm mt-1">{heroPub.beerType}</p>
+                <p className="text-gray-mid text-sm mt-1">{heroPub.beerType}</p>
                 <button
                   onClick={(e) => { e.preventDefault(); e.stopPropagation(); document.getElementById('best-buys')?.scrollIntoView({ behavior: 'smooth' }) }}
                   className="mt-6 inline-flex items-center gap-1 text-orange font-semibold text-sm hover:underline"
@@ -435,16 +435,16 @@ export default function DiscoverClient() {
 
             {/* Left: Best Buys */}
             <div className="bg-white border-3 border-ink shadow-hard-sm rounded-card p-6 hover:shadow-[0_4px_16px_rgba(0,0,0,0.08)] transition-shadow">
-              <h3 className="text-lg font-bold text-[#1A1A1A] mb-1">🏷️ Best Buys</h3>
-              <p className="text-sm text-[#888] mb-4">Lowest prices right now</p>
+              <h3 className="text-lg font-bold text-ink mb-1"><Tag className="w-5 h-5 inline mr-1" />Best Buys</h3>
+              <p className="text-sm text-gray-mid mb-4">Lowest prices right now</p>
               <div className="space-y-1">
                 {bestBuys.slice(0, 5).map((pub, i) => (
                   <Link key={pub.id} href={`/pub/${pub.slug}`} className="flex items-center justify-between p-2.5 rounded-lg hover:bg-[#FAFAFA] hover:border-l-2 hover:border-l-[#E8740C] transition-all group">
                     <div className="flex items-center gap-3 min-w-0">
-                      <span className="text-sm font-bold text-[#888] w-5">{i + 1}</span>
+                      <span className="text-sm font-bold text-gray-mid w-5">{i + 1}</span>
                       <div className="min-w-0">
-                        <span className="text-sm font-semibold text-[#1A1A1A] truncate block group-hover:text-orange transition-colors">{pub.name}</span>
-                        <p className="text-xs text-[#888]">
+                        <span className="text-sm font-semibold text-ink truncate block group-hover:text-orange transition-colors">{pub.name}</span>
+                        <p className="text-xs text-gray-mid">
                           {pub.suburb}
                           {userLocation && ` · ${formatDistance(getDistanceKm(userLocation.lat, userLocation.lng, pub.lat, pub.lng))}`}
                           {' · '}{pub.beerType}
@@ -462,23 +462,23 @@ export default function DiscoverClient() {
 
             {/* Right: Happy Hours */}
             <div className="bg-white border-3 border-ink shadow-hard-sm rounded-card p-6 hover:shadow-[0_4px_16px_rgba(0,0,0,0.08)] transition-shadow">
-              <h3 className="text-lg font-bold text-[#1A1A1A] mb-1"><Clock className="w-4 h-4 inline" /> Happy Hours</h3>
-              <p className="text-sm text-[#888] mb-4">Starting soon near you</p>
+              <h3 className="text-lg font-bold text-ink mb-1"><Clock className="w-4 h-4 inline" /> Happy Hours</h3>
+              <p className="text-sm text-gray-mid mb-4">Starting soon near you</p>
               <div className="space-y-1">
                 {upcomingHappyHours.length === 0 && (
-                  <p className="text-sm text-[#888] py-4 text-center">No happy hours active or upcoming right now. Check back later!</p>
+                  <p className="text-sm text-gray-mid py-4 text-center">No happy hours active or upcoming right now. Check back later!</p>
                 )}
                 {upcomingHappyHours.map(({ pub, status }) => (
                   <Link key={pub.id} href={`/pub/${pub.slug}`} className="flex items-center justify-between p-2.5 rounded-lg hover:bg-[#FAFAFA] hover:border-l-2 hover:border-l-[#E8740C] transition-all group">
                     <div className="min-w-0">
-                      <span className="text-sm font-semibold text-[#1A1A1A] truncate block group-hover:text-orange transition-colors">{pub.name}</span>
-                      <p className="text-xs text-[#888]">{pub.suburb}</p>
+                      <span className="text-sm font-semibold text-ink truncate block group-hover:text-orange transition-colors">{pub.name}</span>
+                      <p className="text-xs text-gray-mid">{pub.suburb}</p>
                     </div>
                     <div className="flex items-center gap-2 flex-shrink-0">
                       <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold ${status.isActive ? 'bg-[#FFF3E0] text-ink border border-[#F5D5B5]' : 'bg-orange-100 text-ink border border-orange-200'}`}>
                         {status.countdown || status.statusText}
                       </span>
-                      <span className="text-lg font-semibold text-[#1A1A1A] tabular-nums">{pub.price !== null ? `$${pub.price.toFixed(2)}` : 'TBC'}</span>
+                      <span className="text-lg font-semibold text-ink tabular-nums">{pub.price !== null ? `$${pub.price.toFixed(2)}` : 'TBC'}</span>
                     </div>
                   </Link>
                 ))}
@@ -495,8 +495,8 @@ export default function DiscoverClient() {
             3. PUB PICKS CAROUSEL
             ════════════════════════════════════════════ */}
         <section className="mb-10 sm:mb-14">
-          <h2 className="text-[24px] sm:text-[28px] font-bold text-[#1A1A1A]">Pub Picks</h2>
-          <p className="text-[16px] text-[#888] mt-1 mb-6">Curated lists for every mood</p>
+          <h2 className="text-[24px] sm:text-[28px] font-bold text-ink font-display">Pub Picks</h2>
+          <p className="text-[16px] text-gray-mid mt-1 mb-6">Curated lists for every mood</p>
 
           <div
             className="flex gap-4 overflow-x-auto pl-1 pb-4 snap-x snap-mandatory"
@@ -506,7 +506,7 @@ export default function DiscoverClient() {
 
             {[
               { emoji: 'sunset', title: 'Sunset Sippers', desc: 'West-facing patios and rooftop bars for golden hour pints.', bg: 'bg-[#FFF3E0]', count: pubPickCounts.sunset, href: '/guides/sunset-sippers' },
-              { emoji: 'users', title: 'The Dad Bar', desc: 'No fairy lights, no craft beer menu. Just honest pints and the footy on.', bg: 'bg-[#F5F5F0]', count: pubPickCounts.dad, href: '/guides/dad-bar' },
+              { emoji: 'users', title: 'The Dad Bar', desc: 'No fairy lights, no craft beer menu. Just honest pints and the footy on.', bg: 'bg-off-white', count: pubPickCounts.dad, href: '/guides/dad-bar' },
               { emoji: 'sun', title: 'Beer Weather', desc: 'Live BOM data matched to beer garden picks. Is it a beer garden arvo?', bg: 'bg-[#E8F5E9]', count: pubPickCounts.beer, href: '/guides/beer-weather' },
               { emoji: 'umbrella', title: 'Cozy Corners', desc: 'Fireplaces, booths, and warmth for when it\'s bucketing down.', bg: 'bg-[#EDE7F6]', count: pubPickCounts.cozy, href: '/guides/cozy-corners' },
               { emoji: 'trophy', title: 'Punt & Pints', desc: 'TAB screens, cold pints, and a flutter on the trots.', bg: 'bg-[#E3F2FD]', count: pubPickCounts.punt, href: '/guides/punt-and-pints' },
@@ -518,8 +518,8 @@ export default function DiscoverClient() {
                 className={`${card.bg} w-[240px] sm:w-[280px] min-h-[200px] rounded-card p-6 flex-shrink-0 snap-start hover:shadow-[0_4px_16px_rgba(0,0,0,0.08)] transition-shadow group`}
               >
                 <LucideIcon name={card.emoji} className="w-8 h-8" />
-                <h3 className="text-lg font-bold text-[#1A1A1A] mt-3 group-hover:text-orange transition-colors">{card.title}</h3>
-                <p className="text-sm text-[#666] mt-1 leading-relaxed">{card.desc}</p>
+                <h3 className="text-lg font-bold text-ink mt-3 group-hover:text-orange transition-colors">{card.title}</h3>
+                <p className="text-sm text-gray-mid mt-1 leading-relaxed">{card.desc}</p>
                 <p className="text-sm font-semibold text-orange mt-4">{card.count} pubs →</p>
               </Link>
             ))}
@@ -540,10 +540,10 @@ export default function DiscoverClient() {
                 <div className="flex items-center justify-between gap-4 flex-wrap">
                   <div className="flex items-center gap-4 flex-wrap">
                     <div>
-                      <h3 className="text-lg font-bold text-[#1A1A1A]">Perth Pint Index™</h3>
+                      <h3 className="text-lg font-bold text-ink">Perth Pint Index™</h3>
                       <div className="flex items-baseline gap-2 mt-0.5">
-                        <span className="text-2xl sm:text-3xl font-bold text-[#1A1A1A] tabular-nums">${pintIndex.current.avg_price.toFixed(2)}</span>
-                        <span className={`text-sm font-semibold ${pintIndex.monthChange > 0 ? 'text-[#5C4A3A]' : 'text-ink'}`}>
+                        <span className="text-2xl sm:text-3xl font-bold text-ink tabular-nums">${pintIndex.current.avg_price.toFixed(2)}</span>
+                        <span className={`text-sm font-semibold ${pintIndex.monthChange > 0 ? 'text-ink' : 'text-ink'}`}>
                           {pintIndex.monthChange > 0 ? '▲' : pintIndex.monthChange < 0 ? '▼' : '-'}{' '}
                           {pintIndex.monthChange >= 0 ? '+' : ''}{pintIndex.monthChange.toFixed(2)} ({pintIndex.monthPct >= 0 ? '+' : ''}{pintIndex.monthPct.toFixed(1)}%)
                         </span>
@@ -553,11 +553,11 @@ export default function DiscoverClient() {
                       <MiniSparkline data={pintIndex.sparkData} />
                     </div>
                   </div>
-                  <button className="text-sm text-[#888] hover:text-[#1A1A1A] transition-colors flex items-center gap-1" aria-expanded={indexExpanded}>
+                  <button className="text-sm text-gray-mid hover:text-ink transition-colors flex items-center gap-1" aria-expanded={indexExpanded}>
                     {indexExpanded ? 'Collapse ▲' : 'Expand ▼'}
                   </button>
                 </div>
-                <p className="text-xs text-[#888] mt-2">
+                <p className="text-xs text-gray-mid mt-2">
                   {pintIndex.current.total_pubs} pubs · {pintIndex.current.total_suburbs} suburbs · Median ${pintIndex.current.median_price.toFixed(2)}
                 </p>
               </div>
@@ -568,7 +568,7 @@ export default function DiscoverClient() {
                   <div className="pt-4">
                     {/* Full sparkline */}
                     <div className="mb-4">
-                      <p className="text-xs text-[#888] mb-2">Price trend · hover to explore</p>
+                      <p className="text-xs text-gray-mid mb-2">Price trend · hover to explore</p>
                       <FullSparkline data={pintIndex.sparkData} snapshots={snapshots} width={320} height={60} />
                     </div>
 
@@ -576,45 +576,45 @@ export default function DiscoverClient() {
                     <div className="grid grid-cols-2 gap-3 mb-4">
                       <div className="bg-orange-50 rounded-card p-3">
                         <div className="text-[10px] text-ink font-semibold">▼ Cheapest Suburb</div>
-                        <div className="text-sm font-bold text-[#1A1A1A] mt-1">{pintIndex.current.cheapest_suburb}</div>
+                        <div className="text-sm font-bold text-ink mt-1">{pintIndex.current.cheapest_suburb}</div>
                         <div className="text-xs text-ink tabular-nums">avg ${pintIndex.current.cheapest_suburb_avg.toFixed(2)}/pint</div>
                       </div>
                       <div className="bg-stone-100 rounded-card p-3">
-                        <div className="text-[10px] text-[#5C4A3A] font-semibold">▲ Priciest Suburb</div>
-                        <div className="text-sm font-bold text-[#1A1A1A] mt-1">{pintIndex.current.most_expensive_suburb}</div>
-                        <div className="text-xs text-[#5C4A3A] tabular-nums">avg ${pintIndex.current.most_expensive_suburb_avg.toFixed(2)}/pint</div>
+                        <div className="text-[10px] text-ink font-semibold">▲ Priciest Suburb</div>
+                        <div className="text-sm font-bold text-ink mt-1">{pintIndex.current.most_expensive_suburb}</div>
+                        <div className="text-xs text-ink tabular-nums">avg ${pintIndex.current.most_expensive_suburb_avg.toFixed(2)}/pint</div>
                       </div>
                     </div>
 
                     {/* Overall change + Median */}
                     <div className="flex items-center justify-between mb-4 px-1">
                       <div>
-                        <div className="text-[10px] text-[#888] font-medium">Overall Change</div>
-                        <div className={`text-lg font-bold tabular-nums ${pintIndex.yearChange > 0 ? 'text-[#5C4A3A]' : 'text-ink'}`}>
+                        <div className="text-[10px] text-gray-mid font-medium">Overall Change</div>
+                        <div className={`text-lg font-bold tabular-nums ${pintIndex.yearChange > 0 ? 'text-ink' : 'text-ink'}`}>
                           {pintIndex.yearChange >= 0 ? '+' : ''}{pintIndex.yearPct.toFixed(1)}%
                         </div>
                       </div>
                       <div className="text-right">
-                        <div className="text-[10px] text-[#888] font-medium">Median</div>
-                        <div className="text-lg font-bold text-[#1A1A1A] tabular-nums">${pintIndex.current.median_price.toFixed(2)}</div>
+                        <div className="text-[10px] text-gray-mid font-medium">Median</div>
+                        <div className="text-lg font-bold text-ink tabular-nums">${pintIndex.current.median_price.toFixed(2)}</div>
                       </div>
                     </div>
 
                     {/* Price distribution */}
                     {pintIndex.current.price_distribution && (
                       <div>
-                        <div className="text-[10px] text-[#888] font-medium mb-2">Price Distribution</div>
+                        <div className="text-[10px] text-gray-mid font-medium mb-2">Price Distribution</div>
                         <DistributionBars distribution={pintIndex.current.price_distribution} />
                       </div>
                     )}
 
                     {/* Mobile sparkline */}
                     <div className="sm:hidden mt-4">
-                      <p className="text-xs text-[#888] mb-2">Price trend · tap to explore</p>
+                      <p className="text-xs text-gray-mid mb-2">Price trend · tap to explore</p>
                       <FullSparkline data={pintIndex.sparkData} snapshots={snapshots} width={280} height={50} />
                     </div>
 
-                    <p className="text-[10px] text-[#888] mt-3 text-center">Tracking Perth beer prices weekly.</p>
+                    <p className="text-[10px] text-gray-mid mt-3 text-center">Tracking Perth beer prices weekly.</p>
                   </div>
                 </div>
               )}
@@ -626,8 +626,8 @@ export default function DiscoverClient() {
             5. THE NUMBERS (tabbed)
             ════════════════════════════════════════════ */}
         <section className="mb-10 sm:mb-14">
-          <h2 className="text-[24px] sm:text-[28px] font-bold text-[#1A1A1A]">The Numbers</h2>
-          <p className="text-[16px] text-[#888] mt-1 mb-6">How Perth&apos;s pint market stacks up</p>
+          <h2 className="text-[24px] sm:text-[28px] font-bold text-ink font-display">The Numbers</h2>
+          <p className="text-[16px] text-gray-mid mt-1 mb-6">How Perth&apos;s pint market stacks up</p>
 
           {/* Tab bar */}
           <div role="tablist" className="flex gap-0 border-b border-[#E5E5E5] mb-6">
@@ -643,8 +643,8 @@ export default function DiscoverClient() {
                 onClick={() => setNumbersTab(tab.id)}
                 className={`px-4 sm:px-6 py-3 text-sm sm:text-base transition-colors ${
                   numbersTab === tab.id
-                    ? 'font-bold text-[#1A1A1A] border-b-2 border-[#E8740C]'
-                    : 'font-normal text-[#666] hover:text-[#1A1A1A]'
+                    ? 'font-bold text-ink border-b-2 border-[#E8740C]'
+                    : 'font-normal text-gray-mid hover:text-ink'
                 }`}
               >
                 {tab.label}
@@ -661,7 +661,7 @@ export default function DiscoverClient() {
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead>
-                      <tr className="bg-stone-100 text-[#666] text-xs">
+                      <tr className="bg-stone-100 text-gray-mid text-xs">
                         <th className="px-3 py-2.5 text-center font-semibold w-10">Pos</th>
                         <th className="px-3 py-2.5 text-left font-semibold">Suburb</th>
                         <th className={`px-3 py-2.5 text-center font-semibold cursor-pointer hover:text-orange select-none ${suburbSortBy === 'avg' ? 'text-orange' : ''}`} onClick={() => setSuburbSortBy('avg')}>
@@ -681,15 +681,15 @@ export default function DiscoverClient() {
                     <tbody>
                       {(showAllSuburbs ? sortedSuburbs : sortedSuburbs.slice(0, 5)).map((s, i) => (
                         <tr key={s.suburb} className={i % 2 === 0 ? 'bg-white' : 'bg-stone-50/60'}>
-                          <td className="px-3 py-2.5 text-center font-bold text-[#888] text-xs">{i + 1}</td>
+                          <td className="px-3 py-2.5 text-center font-bold text-gray-mid text-xs">{i + 1}</td>
                           <td className="px-3 py-2.5 text-left">
-                            <span className="font-semibold text-[#1A1A1A]">{s.suburb}</span>
-                            <span className="text-[10px] text-[#888] ml-1">({s.pubCount})</span>
+                            <span className="font-semibold text-ink">{s.suburb}</span>
+                            <span className="text-[10px] text-gray-mid ml-1">({s.pubCount})</span>
                           </td>
-                          <td className="px-3 py-2.5 text-center font-bold text-[#1A1A1A] tabular-nums">${s.avgPrice.toFixed(2)}</td>
+                          <td className="px-3 py-2.5 text-center font-bold text-ink tabular-nums">${s.avgPrice.toFixed(2)}</td>
                           <td className="px-3 py-2.5 text-center text-ink font-medium tabular-nums hidden sm:table-cell">${s.minPrice.toFixed(2)}</td>
-                          <td className="px-3 py-2.5 text-center text-[#8B7355] font-medium tabular-nums hidden sm:table-cell">${s.maxPrice.toFixed(2)}</td>
-                          <td className="px-3 py-2.5 text-center text-[#888] hidden md:table-cell">{s.happyHourPct}%</td>
+                          <td className="px-3 py-2.5 text-center text-gray-mid font-medium tabular-nums hidden sm:table-cell">${s.maxPrice.toFixed(2)}</td>
+                          <td className="px-3 py-2.5 text-center text-gray-mid hidden md:table-cell">{s.happyHourPct}%</td>
                         </tr>
                       ))}
                     </tbody>
@@ -709,23 +709,23 @@ export default function DiscoverClient() {
             {/* ─── Tab 2: Venues ─── */}
             {numbersTab === 'venues' && (
               <div className="bg-white border-3 border-ink shadow-hard-sm rounded-card p-6">
-                <h4 className="text-sm font-semibold text-[#1A1A1A] mb-3"><BarChart3 className="w-4 h-4 inline" /> Price Distribution</h4>
+                <h4 className="text-sm font-semibold text-ink mb-3"><BarChart3 className="w-4 h-4 inline" /> Price Distribution</h4>
                 <div className="space-y-2 mb-6">
                   {priceBrackets.map(([bracket, count]) => {
                     const maxCount = Math.max(...priceBrackets.map(([, c]) => c), 1)
                     return (
                       <div key={bracket} className="flex items-center gap-2">
-                        <span className="text-xs text-[#888] w-10 text-right tabular-nums">{bracket}</span>
+                        <span className="text-xs text-gray-mid w-10 text-right tabular-nums">{bracket}</span>
                         <div className="flex-1 h-5 bg-stone-100 rounded-full overflow-hidden">
                           <div className={`h-full rounded-full transition-all ${getBracketColor(bracket)}`} style={{ width: `${(count / maxCount) * 100}%` }} />
                         </div>
-                        <span className="text-xs font-semibold text-[#666] w-8 text-right">{count}</span>
+                        <span className="text-xs font-semibold text-gray-mid w-8 text-right">{count}</span>
                       </div>
                     )
                   })}
                 </div>
                 <div className="bg-orange-50 rounded-card p-4 text-center border border-orange-200">
-                  <p className="text-xs text-[#888]">Median Pint Price in Perth</p>
+                  <p className="text-xs text-gray-mid">Median Pint Price in Perth</p>
                   <p className="text-2xl font-bold text-ink tabular-nums">${medianPrice.toFixed(2)}</p>
                 </div>
               </div>
@@ -737,13 +737,13 @@ export default function DiscoverClient() {
                 {/* Under/Over valued */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                   <div className="bg-white border-3 border-ink shadow-hard-sm rounded-card p-6">
-                    <h4 className="text-sm font-semibold text-ink mb-3">📉 Below Market</h4>
+                    <h4 className="text-sm font-semibold text-ink mb-3"><TrendingUp className="w-4 h-4 inline mr-1 rotate-180" />Below Market</h4>
                     <div className="space-y-1.5">
                       {undervalued.map(({ pub, diff }) => (
                         <Link key={pub.id} href={`/pub/${pub.slug}`} className="flex items-center justify-between p-2 rounded-lg bg-orange-50/60 border border-orange-100 hover:bg-orange-50 transition-colors">
                           <div className="min-w-0">
-                            <span className="text-xs font-semibold text-[#1A1A1A] truncate block">{pub.name}</span>
-                            <p className="text-[10px] text-[#888]">{pub.suburb}</p>
+                            <span className="text-xs font-semibold text-ink truncate block">{pub.name}</span>
+                            <p className="text-[10px] text-gray-mid">{pub.suburb}</p>
                           </div>
                           <div className="text-right flex-shrink-0">
                             <p className="text-xs font-bold text-ink tabular-nums">${pub.price!.toFixed(2)}</p>
@@ -754,17 +754,17 @@ export default function DiscoverClient() {
                     </div>
                   </div>
                   <div className="bg-white border-3 border-ink shadow-hard-sm rounded-card p-6">
-                    <h4 className="text-sm font-semibold text-[#5C4A3A] mb-3"><TrendingUp className="w-4 h-4 inline" /> Above Market</h4>
+                    <h4 className="text-sm font-semibold text-ink mb-3"><TrendingUp className="w-4 h-4 inline" /> Above Market</h4>
                     <div className="space-y-1.5">
                       {overvalued.map(({ pub, diff }) => (
                         <Link key={pub.id} href={`/pub/${pub.slug}`} className="flex items-center justify-between p-2 rounded-lg bg-stone-100/60 border border-stone-200 hover:bg-stone-100 transition-colors">
                           <div className="min-w-0">
-                            <span className="text-xs font-semibold text-[#1A1A1A] truncate block">{pub.name}</span>
-                            <p className="text-[10px] text-[#888]">{pub.suburb}</p>
+                            <span className="text-xs font-semibold text-ink truncate block">{pub.name}</span>
+                            <p className="text-[10px] text-gray-mid">{pub.suburb}</p>
                           </div>
                           <div className="text-right flex-shrink-0">
-                            <p className="text-xs font-bold text-[#5C4A3A] tabular-nums">${pub.price!.toFixed(2)}</p>
-                            <p className="text-[9px] text-[#8B7355]">↑ +${diff.toFixed(2)}</p>
+                            <p className="text-xs font-bold text-ink tabular-nums">${pub.price!.toFixed(2)}</p>
+                            <p className="text-[9px] text-gray-mid">↑ +${diff.toFixed(2)}</p>
                           </div>
                         </Link>
                       ))}
@@ -780,29 +780,29 @@ export default function DiscoverClient() {
                       {cheapestSuburbs.map((s, i) => (
                         <div key={s.suburb} className="flex items-center justify-between p-2 rounded-lg bg-white border border-stone-100">
                           <div className="flex items-center gap-2">
-                            <span className="text-[10px] font-bold text-[#888]">{i + 1}</span>
-                            <span className="text-xs font-semibold text-[#1A1A1A]">{s.suburb}</span>
+                            <span className="text-[10px] font-bold text-gray-mid">{i + 1}</span>
+                            <span className="text-xs font-semibold text-ink">{s.suburb}</span>
                           </div>
                           <div className="text-right">
                             <span className="text-xs font-bold text-ink tabular-nums">${s.avgPrice.toFixed(2)}</span>
-                            <span className="text-[9px] text-[#888] ml-1">({s.pubCount})</span>
+                            <span className="text-[9px] text-gray-mid ml-1">({s.pubCount})</span>
                           </div>
                         </div>
                       ))}
                     </div>
                   </div>
                   <div className="bg-white border-3 border-ink shadow-hard-sm rounded-card p-6">
-                    <h4 className="text-sm font-semibold text-[#5C4A3A] mb-3"><DollarSign className="w-4 h-4 inline" /> Priciest Suburbs</h4>
+                    <h4 className="text-sm font-semibold text-ink mb-3"><DollarSign className="w-4 h-4 inline" /> Priciest Suburbs</h4>
                     <div className="space-y-1.5">
                       {priciestSuburbs.map((s, i) => (
                         <div key={s.suburb} className="flex items-center justify-between p-2 rounded-lg bg-white border border-stone-100">
                           <div className="flex items-center gap-2">
-                            <span className="text-[10px] font-bold text-[#888]">{i + 1}</span>
-                            <span className="text-xs font-semibold text-[#1A1A1A]">{s.suburb}</span>
+                            <span className="text-[10px] font-bold text-gray-mid">{i + 1}</span>
+                            <span className="text-xs font-semibold text-ink">{s.suburb}</span>
                           </div>
                           <div className="text-right">
-                            <span className="text-xs font-bold text-[#5C4A3A] tabular-nums">${s.avgPrice.toFixed(2)}</span>
-                            <span className="text-[9px] text-[#888] ml-1">({s.pubCount})</span>
+                            <span className="text-xs font-bold text-ink tabular-nums">${s.avgPrice.toFixed(2)}</span>
+                            <span className="text-[9px] text-gray-mid ml-1">({s.pubCount})</span>
                           </div>
                         </div>
                       ))}
@@ -819,16 +819,16 @@ export default function DiscoverClient() {
             6. CONTRIBUTE CTA BANNER
             ════════════════════════════════════════════ */}
         <section id="contribute" className="mb-10 sm:mb-14">
-          <div className="bg-[#FFF8F0] rounded-card py-12 px-6 text-center">
-            <h2 className="text-[24px] sm:text-[28px] font-bold text-[#1A1A1A]">Know a price we&apos;re missing?</h2>
-            <p className="text-[16px] text-[#888] mt-2">Help Perth drink cheaper.</p>
+          <div className="bg-[#FDF8F0] rounded-card py-12 px-6 text-center">
+            <h2 className="text-[24px] sm:text-[28px] font-bold text-ink font-display">Know a price we&apos;re missing?</h2>
+            <p className="text-[16px] text-gray-mid mt-2">Help Perth drink cheaper.</p>
             <button
               onClick={openSubmitForm}
               className="mt-6 bg-[#E8740C] text-white font-semibold rounded-lg px-8 py-3 hover:bg-[#d06a0b] transition-colors"
             >
               Submit a Price
             </button>
-            <p className="text-sm text-[#888] mt-4">{pubs.length} venues tracked · Updated weekly</p>
+            <p className="text-sm text-gray-mid mt-4">{pubs.length} venues tracked · Updated weekly</p>
           </div>
         </section>
 

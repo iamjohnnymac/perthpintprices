@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, useRef } from 'react'
 import { useSearchParams, useRouter, usePathname } from 'next/navigation'
 import Link from 'next/link'
 import SubPageNav from '@/components/SubPageNav'
+import Footer from '@/components/Footer'
 import { Pub } from '@/types/pub'
 import { Beer, MapPin, DollarSign, CircleCheck, Copy, Share2, Map as MapIcon, Zap, Shuffle, Pencil, Footprints, PartyPopper, Flag, AlertTriangle, Timer, Link as LinkIcon } from 'lucide-react'
 
@@ -438,10 +439,10 @@ export default function PintCrawlClient({ pubs }: { pubs: Pub[] }) {
             {/* Budget */}
             <div className="bg-white border-3 border-ink rounded-card shadow-hard-sm p-4 sm:p-5">
               <div className="flex items-center justify-between mb-3">
-                <h2 className="text-sm font-semibold text-ink mono">
+                <h2 className="text-sm font-semibold text-ink font-mono">
                   <DollarSign className="w-4 h-4 inline" /> Budget per person
                 </h2>
-                <span className="text-2xl font-bold text-ink mono">
+                <span className="text-2xl font-bold text-ink font-mono">
                   ${budget}
                 </span>
               </div>
@@ -452,13 +453,13 @@ export default function PintCrawlClient({ pubs }: { pubs: Pub[] }) {
                 step={5}
                 value={budget}
                 onChange={(e) => setBudget(Number(e.target.value))}
-                className="w-full h-2 bg-stone-200 rounded-pill appearance-none cursor-pointer accent-orange"
+                className="w-full h-2 bg-gray-light rounded-pill appearance-none cursor-pointer accent-amber"
               />
-              <div className="flex items-center justify-between mt-2 text-xs text-stone-500">
+              <div className="flex items-center justify-between mt-2 text-xs text-gray-mid">
                 <span>$20</span>
                 <span>$150</span>
               </div>
-              <p className="text-xs text-stone-500 mt-2">
+              <p className="text-xs text-gray-mid mt-2">
                 ≈ {estimatedPints} pints at avg $
                 {avgPrice.toFixed(2)}
               </p>
@@ -466,7 +467,7 @@ export default function PintCrawlClient({ pubs }: { pubs: Pub[] }) {
 
             {/* Number of stops */}
             <div className="bg-white border-3 border-ink rounded-card shadow-hard-sm p-4 sm:p-5">
-              <h2 className="text-sm font-semibold text-ink mono mb-3">
+              <h2 className="text-sm font-semibold text-ink font-mono mb-3">
                 <Beer className="w-4 h-4 inline" /> Number of stops
               </h2>
               <div className="flex flex-wrap gap-2">
@@ -477,7 +478,7 @@ export default function PintCrawlClient({ pubs }: { pubs: Pub[] }) {
                     className={`px-4 py-2 rounded-pill text-sm font-semibold transition-all ${
                       stops === n
                         ? 'bg-ink text-white shadow-sm'
-                        : 'bg-stone-100 text-stone-600 hover:bg-stone-200'
+                        : 'bg-off-white text-gray-mid hover:bg-gray-light'
                     }`}
                   >
                     {n}
@@ -485,7 +486,7 @@ export default function PintCrawlClient({ pubs }: { pubs: Pub[] }) {
                 ))}
               </div>
               {tightBudget && filteredPubs.length > 0 && (
-                <p className="text-xs text-orange-600 mt-2 font-medium">
+                <p className="text-xs text-amber mt-2 font-medium">
                   <AlertTriangle className="w-3 h-3 inline mr-1" /> Tight budget for {stops} stops!
                 </p>
               )}
@@ -493,7 +494,7 @@ export default function PintCrawlClient({ pubs }: { pubs: Pub[] }) {
 
             {/* Area selector */}
             <div className="bg-white border-3 border-ink rounded-card shadow-hard-sm p-4 sm:p-5">
-              <h2 className="text-sm font-semibold text-ink mono mb-3">
+              <h2 className="text-sm font-semibold text-ink font-mono mb-3">
                 <MapPin className="w-4 h-4 inline" /> Where?
               </h2>
               <div className="flex flex-wrap gap-2">
@@ -504,7 +505,7 @@ export default function PintCrawlClient({ pubs }: { pubs: Pub[] }) {
                     className={`px-4 py-2 rounded-pill text-sm font-semibold transition-all ${
                       area === opt.value
                         ? 'bg-ink text-white shadow-sm'
-                        : 'bg-stone-100 text-stone-600 hover:bg-stone-200'
+                        : 'bg-off-white text-gray-mid hover:bg-gray-light'
                     }`}
                   >
                     {opt.label}
@@ -512,7 +513,7 @@ export default function PintCrawlClient({ pubs }: { pubs: Pub[] }) {
                 ))}
               </div>
               {area === 'near-me' && geoLoading && (
-                <p className="text-xs text-stone-500 mt-2">Getting your location…</p>
+                <p className="text-xs text-gray-mid mt-2">Getting your location…</p>
               )}
               {area === 'near-me' && geoError && (
                 <p className="text-xs text-red-500 mt-2">
@@ -520,12 +521,12 @@ export default function PintCrawlClient({ pubs }: { pubs: Pub[] }) {
                 </p>
               )}
               {area === 'near-me' && userLat !== null && (
-                <p className="text-xs text-stone-500 mt-2">
+                <p className="text-xs text-gray-mid mt-2">
                   Showing pubs within 5km · {filteredPubs.length} found
                 </p>
               )}
               {area !== 'near-me' && area !== 'all' && (
-                <p className="text-xs text-stone-500 mt-2">
+                <p className="text-xs text-gray-mid mt-2">
                   {filteredPubs.length} pub{filteredPubs.length !== 1 ? 's' : ''} in{' '}
                   {area === 'northbridge'
                     ? 'Northbridge'
@@ -538,7 +539,7 @@ export default function PintCrawlClient({ pubs }: { pubs: Pub[] }) {
 
             {/* Options toggles */}
             <div className="bg-white border-3 border-ink rounded-card shadow-hard-sm p-4 sm:p-5">
-              <h2 className="text-sm font-semibold text-ink mono mb-3">
+              <h2 className="text-sm font-semibold text-ink font-mono mb-3">
                 Options
               </h2>
               <div className="space-y-3">
@@ -564,12 +565,12 @@ export default function PintCrawlClient({ pubs }: { pubs: Pub[] }) {
             <button
               onClick={() => generateRoute(false)}
               disabled={filteredPubs.length === 0}
-              className="w-full bg-ink text-white mono font-bold text-base rounded-2xl py-4 hover:bg-ink/90 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+              className="w-full bg-ink text-white font-mono font-bold text-base rounded-2xl py-4 hover:bg-ink/90 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
             >
               <Beer className="w-4 h-4 inline" /> Generate Route
             </button>
             {filteredPubs.length === 0 && (
-              <p className="text-center text-xs text-stone-500">
+              <p className="text-center text-xs text-gray-mid">
                 No pubs match your filters. Try adjusting your options.
               </p>
             )}
@@ -580,15 +581,15 @@ export default function PintCrawlClient({ pubs }: { pubs: Pub[] }) {
         {phase === 'route' && (
           <div className="space-y-3 sm:space-y-4">
             {routeMessage && (
-              <div className="bg-orange-50 border border-orange-200 rounded-2xl p-3 text-sm text-orange-800">
+              <div className="bg-amber-pale border border-amber rounded-2xl p-3 text-sm text-amber">
                 {routeMessage}
               </div>
             )}
 
             {/* Route overview */}
             <div className="bg-white border-3 border-ink rounded-card shadow-hard-sm p-4 sm:p-5">
-              <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-stone-600">
-                <span className="font-semibold text-ink mono">
+              <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-gray-mid">
+                <span className="font-semibold text-ink font-mono">
                   {route.length} stops
                 </span>
                 <span>·</span>
@@ -615,8 +616,8 @@ export default function PintCrawlClient({ pubs }: { pubs: Pub[] }) {
                     {/* Walking segment */}
                     {seg.distFromPrev !== null && (
                       <div className="flex items-center gap-3 py-2 pl-4">
-                        <div className="w-px h-6 bg-stone-200 ml-[3px]" />
-                        <span className="text-xs text-stone-400">
+                        <div className="w-px h-6 bg-gray-light ml-[3px]" />
+                        <span className="text-xs text-gray-mid">
                           ~{walkingMinutes(seg.distFromPrev)} min walk (
                           {seg.distFromPrev >= 1
                             ? `${seg.distFromPrev.toFixed(1)}km`
@@ -628,16 +629,16 @@ export default function PintCrawlClient({ pubs }: { pubs: Pub[] }) {
                     {/* Pub stop */}
                     <Link
                       href={`/pub/${seg.pub.slug}`}
-                      className="flex items-start gap-3 p-3 -mx-1 rounded-xl hover:bg-stone-50 transition-colors"
+                      className="flex items-start gap-3 p-3 -mx-1 rounded-xl hover:bg-off-white transition-colors"
                     >
                       <div className="flex-shrink-0 w-7 h-7 rounded-pill bg-ink text-white flex items-center justify-center text-xs font-bold">
                         {i + 1}
                       </div>
                       <div className="min-w-0 flex-1">
-                        <h3 className="text-sm font-bold text-ink mono truncate">
+                        <h3 className="text-sm font-bold text-ink font-mono truncate">
                           {seg.pub.name}
                         </h3>
-                        <p className="text-xs text-stone-500 mt-0.5">
+                        <p className="text-xs text-gray-mid mt-0.5">
                           {seg.pub.suburb} ·{' '}
                           <span className="font-semibold text-ink">
                             ${seg.pub.price?.toFixed(2) ?? 'TBC'}
@@ -647,22 +648,22 @@ export default function PintCrawlClient({ pubs }: { pubs: Pub[] }) {
                           )}
                         </p>
                         {seg.pub.isHappyHourNow && seg.pub.happyHourLabel && (
-                          <span className="inline-flex items-center gap-1 mt-1 px-2 py-0.5 rounded-pill bg-orange-100 text-orange-800 text-[10px] font-semibold">
+                          <span className="inline-flex items-center gap-1 mt-1 px-2 py-0.5 rounded-pill bg-amber-pale text-amber text-[10px] font-semibold">
                             <span className="relative flex h-1.5 w-1.5">
-                              <span className="animate-ping absolute inline-flex h-full w-full rounded-pill bg-orange-500 opacity-75" />
-                              <span className="relative inline-flex rounded-pill h-1.5 w-1.5 bg-orange-500" />
+                              <span className="animate-ping absolute inline-flex h-full w-full rounded-pill bg-amber opacity-75" />
+                              <span className="relative inline-flex rounded-pill h-1.5 w-1.5 bg-amber" />
                             </span>
                             NOW! {seg.pub.happyHourLabel}
                           </span>
                         )}
                         {!seg.pub.isHappyHourNow && seg.pub.happyHour && (
-                          <p className="text-[10px] text-stone-400 mt-1">
+                          <p className="text-[10px] text-gray-mid mt-1">
                             <Beer className="w-3 h-3 inline" /> {seg.pub.happyHour}
                           </p>
                         )}
                       </div>
                       <svg
-                        className="w-4 h-4 text-stone-300 flex-shrink-0 mt-1"
+                        className="w-4 h-4 text-gray flex-shrink-0 mt-1"
                         fill="none"
                         viewBox="0 0 24 24"
                         strokeWidth={2}
@@ -682,7 +683,7 @@ export default function PintCrawlClient({ pubs }: { pubs: Pub[] }) {
 
             {/* Route stats */}
             <div className="bg-white border-3 border-ink rounded-card shadow-hard-sm p-4 sm:p-5">
-              <h3 className="text-sm font-semibold text-ink mono mb-3">
+              <h3 className="text-sm font-semibold text-ink font-mono mb-3">
                 Route Stats
               </h3>
               <div className="grid grid-cols-2 gap-3">
@@ -710,7 +711,7 @@ export default function PintCrawlClient({ pubs }: { pubs: Pub[] }) {
             {/* Share link */}
             <button
               onClick={shareCrawl}
-              className="w-full flex items-center justify-center gap-2 bg-amber-50 border-2 border-amber-200 rounded-2xl py-3 text-sm font-bold text-amber-800 hover:bg-amber-100 transition-colors"
+              className="w-full flex items-center justify-center gap-2 bg-amber-pale border-2 border-amber rounded-2xl py-3 text-sm font-bold text-amber hover:bg-amber-pale transition-colors"
             >
               {shared ? <><CircleCheck className="w-4 h-4" /> Shared!</> : copied ? <><CircleCheck className="w-4 h-4" /> Link Copied!</> : <><LinkIcon className="w-4 h-4" /> Share This Crawl</>}
             </button>
@@ -719,13 +720,13 @@ export default function PintCrawlClient({ pubs }: { pubs: Pub[] }) {
             <div className="grid grid-cols-2 gap-2">
               <button
                 onClick={() => generateRoute(true)}
-                className="flex items-center justify-center gap-2 bg-white border border-stone-200/60 rounded-2xl py-3 text-sm font-semibold text-ink hover:bg-stone-50 transition-colors"
+                className="flex items-center justify-center gap-2 bg-white border border-gray-light/60 rounded-2xl py-3 text-sm font-semibold text-ink hover:bg-off-white transition-colors"
               >
                 <Shuffle className="w-3.5 h-3.5" /> Shuffle
               </button>
               <button
                 onClick={copyRoute}
-                className="flex items-center justify-center gap-2 bg-white border border-stone-200/60 rounded-2xl py-3 text-sm font-semibold text-ink hover:bg-stone-50 transition-colors"
+                className="flex items-center justify-center gap-2 bg-white border border-gray-light/60 rounded-2xl py-3 text-sm font-semibold text-ink hover:bg-off-white transition-colors"
               >
                 {copied ? <><CircleCheck className="w-3.5 h-3.5" /> Copied!</> : <><Copy className="w-3.5 h-3.5" /> Copy Route</>}
               </button>
@@ -733,7 +734,7 @@ export default function PintCrawlClient({ pubs }: { pubs: Pub[] }) {
             <div className="grid grid-cols-2 gap-2">
               <button
                 onClick={() => setPhase('plan')}
-                className="flex items-center justify-center gap-2 bg-white border border-stone-200/60 rounded-2xl py-3 text-sm font-semibold text-ink hover:bg-stone-50 transition-colors"
+                className="flex items-center justify-center gap-2 bg-white border border-gray-light/60 rounded-2xl py-3 text-sm font-semibold text-ink hover:bg-off-white transition-colors"
               >
                 <Pencil className="w-3.5 h-3.5" /> Edit Plan
               </button>
@@ -754,11 +755,11 @@ export default function PintCrawlClient({ pubs }: { pubs: Pub[] }) {
             {currentStop >= route.length ? (
               <div className="space-y-3 sm:space-y-4">
                 <div className="bg-white border-3 border-ink rounded-card shadow-hard-sm p-6 sm:p-8 text-center">
-                  <div className="flex justify-center mb-3"><PartyPopper className="w-12 h-12 text-amber-500" /></div>
-                  <h2 className="text-xl font-bold mono text-ink mb-1">
+                  <div className="flex justify-center mb-3"><PartyPopper className="w-12 h-12 text-amber" /></div>
+                  <h2 className="text-xl font-bold font-mono text-ink mb-1">
                     Crawl Complete!
                   </h2>
-                  <p className="text-sm text-stone-500">
+                  <p className="text-sm text-gray-mid">
                     You absolute legend. Here&apos;s your stats:
                   </p>
                 </div>
@@ -812,7 +813,7 @@ export default function PintCrawlClient({ pubs }: { pubs: Pub[] }) {
                     setCompletedStops(new Set())
                     router.replace(pathname, { scroll: false })
                   }}
-                  className="w-full flex items-center justify-center gap-2 bg-white border border-stone-200/60 rounded-2xl py-3 text-sm font-semibold text-ink hover:bg-stone-50 transition-colors"
+                  className="w-full flex items-center justify-center gap-2 bg-white border border-gray-light/60 rounded-2xl py-3 text-sm font-semibold text-ink hover:bg-off-white transition-colors"
                 >
                   <MapIcon className="w-4 h-4 inline" /> Plan Another Crawl
                 </button>
@@ -822,22 +823,22 @@ export default function PintCrawlClient({ pubs }: { pubs: Pub[] }) {
                 {/* Progress bar */}
                 <div className="bg-white border-3 border-ink rounded-card shadow-hard-sm p-4 sm:p-5">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs font-semibold text-stone-500">
+                    <span className="text-xs font-semibold text-gray-mid">
                       Stop {currentStop + 1} of {route.length}
                     </span>
-                    <span className="text-xs text-stone-500 flex items-center gap-1">
+                    <span className="text-xs text-gray-mid flex items-center gap-1">
                       <Timer className="w-3 h-3" /> {formatTime(elapsed)}
                     </span>
                   </div>
-                  <div className="w-full bg-stone-100 rounded-pill h-2">
+                  <div className="w-full bg-off-white rounded-pill h-2">
                     <div
-                      className="bg-orange-500 h-2 rounded-pill transition-all duration-500"
+                      className="bg-amber h-2 rounded-pill transition-all duration-500"
                       style={{
                         width: `${((currentStop + 1) / route.length) * 100}%`,
                       }}
                     />
                   </div>
-                  <div className="flex items-center justify-between mt-2 text-xs text-stone-500">
+                  <div className="flex items-center justify-between mt-2 text-xs text-gray-mid">
                     <span>
                       Spent: ${runningSpend.toFixed(2)}
                     </span>
@@ -850,30 +851,30 @@ export default function PintCrawlClient({ pubs }: { pubs: Pub[] }) {
                 {/* Current stop */}
                 <div className="bg-white border-3 border-ink rounded-card shadow-hard-sm p-5 sm:p-6">
                   <div className="text-center mb-4">
-                    <div className="inline-flex items-center justify-center w-14 h-14 rounded-pill bg-ink text-white text-2xl font-bold mono mb-3">
+                    <div className="inline-flex items-center justify-center w-14 h-14 rounded-pill bg-ink text-white text-2xl font-bold font-mono mb-3">
                       {currentStop + 1}
                     </div>
-                    <h2 className="text-lg font-bold mono text-ink">
+                    <h2 className="text-lg font-bold font-mono text-ink">
                       {route[currentStop].pub.name}
                     </h2>
-                    <p className="text-sm text-stone-500 mt-1">
+                    <p className="text-sm text-gray-mid mt-1">
                       {route[currentStop].pub.address}
                     </p>
                   </div>
 
                   <div className="flex items-center justify-center gap-4 text-sm">
                     <div className="text-center">
-                      <div className="text-xl font-bold text-ink mono">
+                      <div className="text-xl font-bold text-ink font-mono">
                         ${route[currentStop].pub.price?.toFixed(2) ?? 'TBC'}
                       </div>
-                      <div className="text-xs text-stone-500">pint price</div>
+                      <div className="text-xs text-gray-mid">pint price</div>
                     </div>
                     {route[currentStop].pub.beerType && (
                       <div className="text-center">
                         <div className="text-sm font-semibold text-ink">
                           <Beer className="w-3 h-3 inline" /> {route[currentStop].pub.beerType}
                         </div>
-                        <div className="text-xs text-stone-500">cheapest</div>
+                        <div className="text-xs text-gray-mid">cheapest</div>
                       </div>
                     )}
                   </div>
@@ -881,10 +882,10 @@ export default function PintCrawlClient({ pubs }: { pubs: Pub[] }) {
                   {route[currentStop].pub.isHappyHourNow &&
                     route[currentStop].pub.happyHourLabel && (
                       <div className="mt-3 text-center">
-                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-pill bg-orange-100 text-orange-800 text-xs font-semibold">
+                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-pill bg-amber-pale text-amber text-xs font-semibold">
                           <span className="relative flex h-2 w-2">
-                            <span className="animate-ping absolute inline-flex h-full w-full rounded-pill bg-orange-500 opacity-75" />
-                            <span className="relative inline-flex rounded-pill h-2 w-2 bg-orange-500" />
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-pill bg-amber opacity-75" />
+                            <span className="relative inline-flex rounded-pill h-2 w-2 bg-amber" />
                           </span>
                           NOW! {route[currentStop].pub.happyHourLabel}
                         </span>
@@ -894,20 +895,20 @@ export default function PintCrawlClient({ pubs }: { pubs: Pub[] }) {
 
                 {/* Next stop preview */}
                 {currentStop < route.length - 1 && (
-                  <div className="bg-stone-50 border-3 border-ink rounded-card shadow-hard-sm p-3 sm:p-4">
-                    <p className="text-xs text-stone-500 mb-1">Next up:</p>
+                  <div className="bg-off-white border-3 border-ink rounded-card shadow-hard-sm p-3 sm:p-4">
+                    <p className="text-xs text-gray-mid mb-1">Next up:</p>
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm font-semibold text-ink mono">
+                        <p className="text-sm font-semibold text-ink font-mono">
                           {route[currentStop + 1].pub.name}
                         </p>
-                        <p className="text-xs text-stone-500">
+                        <p className="text-xs text-gray-mid">
                           {route[currentStop + 1].pub.suburb} · $
                           {route[currentStop + 1].pub.price?.toFixed(2) ?? 'TBC'}
                         </p>
                       </div>
                       {route[currentStop + 1].distFromPrev !== null && (
-                        <span className="text-xs text-stone-400">
+                        <span className="text-xs text-gray-mid">
                           ~{walkingMinutes(route[currentStop + 1].distFromPrev!)} min walk
                         </span>
                       )}
@@ -922,10 +923,10 @@ export default function PintCrawlClient({ pubs }: { pubs: Pub[] }) {
                       key={i}
                       className={`w-2.5 h-2.5 rounded-pill transition-all ${
                         completedStops.has(i)
-                          ? 'bg-orange-500'
+                          ? 'bg-amber'
                           : i === currentStop
-                            ? 'bg-orange-500 scale-125'
-                            : 'bg-stone-200'
+                            ? 'bg-amber scale-125'
+                            : 'bg-gray-light'
                       }`}
                     />
                   ))}
@@ -934,7 +935,7 @@ export default function PintCrawlClient({ pubs }: { pubs: Pub[] }) {
                 {/* Advance button */}
                 <button
                   onClick={advanceStop}
-                  className="w-full bg-ink text-white mono font-bold text-base rounded-2xl py-4 hover:bg-ink/90 transition-colors"
+                  className="w-full bg-ink text-white font-mono font-bold text-base rounded-2xl py-4 hover:bg-ink/90 transition-colors"
                 >
                   {currentStop < route.length - 1
                     ? <><CircleCheck className="w-3.5 h-3.5 inline" /> Done. Next Stop</>
@@ -944,7 +945,7 @@ export default function PintCrawlClient({ pubs }: { pubs: Pub[] }) {
                 {/* Back to route button */}
                 <button
                   onClick={() => setPhase('route')}
-                  className="w-full flex items-center justify-center gap-2 bg-white border border-stone-200/60 rounded-2xl py-3 text-sm font-semibold text-stone-500 hover:bg-stone-50 transition-colors"
+                  className="w-full flex items-center justify-center gap-2 bg-white border border-gray-light/60 rounded-2xl py-3 text-sm font-semibold text-gray-mid hover:bg-off-white transition-colors"
                 >
                   ← View Full Route
                 </button>
@@ -953,6 +954,7 @@ export default function PintCrawlClient({ pubs }: { pubs: Pub[] }) {
           </div>
         )}
       </main>
+      <Footer />
     </div>
   )
 }
@@ -969,14 +971,14 @@ function ToggleRow({
 }) {
   return (
     <label className="flex items-center justify-between cursor-pointer">
-      <span className="text-sm text-stone-600">{label}</span>
+      <span className="text-sm text-gray-mid">{label}</span>
       <button
         type="button"
         role="switch"
         aria-checked={checked}
         onClick={() => onChange(!checked)}
         className={`relative inline-flex h-6 w-11 items-center rounded-pill transition-colors ${
-          checked ? 'bg-orange-500' : 'bg-stone-200'
+          checked ? 'bg-amber' : 'bg-gray-light'
         }`}
       >
         <span
@@ -1000,15 +1002,15 @@ function StatBox({
   accent?: boolean
 }) {
   return (
-    <div className="bg-stone-50 rounded-xl p-3 text-center">
+    <div className="bg-off-white rounded-xl p-3 text-center">
       <div
-        className={`text-base font-bold mono ${
+        className={`text-base font-bold font-mono ${
           accent ? 'text-ink' : 'text-ink'
         }`}
       >
         {value}
       </div>
-      <div className="text-[10px] text-stone-500 mt-0.5">{label}</div>
+      <div className="text-[10px] text-gray-mid mt-0.5">{label}</div>
     </div>
   )
 }

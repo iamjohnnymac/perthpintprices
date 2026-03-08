@@ -6,6 +6,7 @@ import { getHappyHourStatus } from '@/lib/happyHour'
 import { getFreshness } from '@/lib/freshness'
 import { getDistanceKm, formatDistance } from '@/lib/location'
 import Link from 'next/link'
+import { Beer } from 'lucide-react'
 
 interface PubCardListProps {
   pubs: Pub[]
@@ -35,12 +36,24 @@ export default function PubCardList({
         <span className="font-mono text-[0.68rem] font-bold uppercase tracking-[0.1em] text-gray-mid">Pint</span>
       </div>
 
+      {/* Empty state */}
+      {pubs.length === 0 && (
+        <div className="py-16 text-center">
+          <div className="mb-3"><Beer className="w-8 h-8 mx-auto text-gray-mid" /></div>
+          <p className="font-body text-base font-semibold text-ink mb-1">No pubs found</p>
+          <p className="font-body text-[0.85rem] text-gray-mid">Try changing your filters or expanding your search radius.</p>
+        </div>
+      )}
+
       {/* Pub rows */}
       {displayPubs.map((pub, index) => {
         const hhStatus = getHappyHourStatus(pub.happyHour)
         const freshness = getFreshness(pub.lastVerified)
-        const distance = userLocation
-          ? formatDistance(getDistanceKm(userLocation.lat, userLocation.lng, pub.lat, pub.lng))
+        const distanceKm = userLocation
+          ? getDistanceKm(userLocation.lat, userLocation.lng, pub.lat, pub.lng)
+          : null
+        const distance = distanceKm !== null && distanceKm <= 500
+          ? formatDistance(distanceKm)
           : null
 
         const isFirst = index === 0

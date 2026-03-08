@@ -6,6 +6,7 @@ import SubPageNav from '@/components/SubPageNav'
 import { Pub } from '@/types/pub'
 import { Search, X, Plus, Minus, ChevronDown, ChevronUp, Copy, Check, ArrowRight, RotateCcw, Home , Target, Flag, Trophy, BarChart3, Users, MapPin } from 'lucide-react'
 import LucideIcon from '@/components/LucideIcon'
+import Footer from '@/components/Footer'
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -50,13 +51,13 @@ function getPar(price: number | null): number {
 
 function getScoreColor(sips: number, par: number): string {
   if (sips < par) return 'text-ink'
-  if (sips === par) return 'text-orange-600'
+  if (sips === par) return 'text-amber'
   return 'text-red-600'
 }
 
 function getScoreBg(sips: number, par: number): string {
-  if (sips < par) return 'bg-orange-50 border-orange-200'
-  if (sips === par) return 'bg-orange-50 border-orange-200'
+  if (sips < par) return 'bg-amber-pale border-amber-light'
+  if (sips === par) return 'bg-amber-pale border-amber-light'
   return 'bg-red-50 border-red-200'
 }
 
@@ -134,9 +135,9 @@ export default function PubGolfClient({ pubs }: { pubs: Pub[] }) {
     suburbGroups.forEach(([suburb, list]: [string, Pub[]]) => {
       let label = `${suburb} Tour`
       let emoji = 'beer'
-      if (suburb === 'Northbridge') { label = 'Northbridge Nine'; emoji = '🌃' }
-      else if (suburb === 'Fremantle') { label = 'Freo Front Nine'; emoji = '⚓' }
-      else if (suburb === 'Perth') { label = 'CBD Classic'; emoji = '🏙️' }
+      if (suburb === 'Northbridge') { label = 'Northbridge Nine'; emoji = 'building-2' }
+      else if (suburb === 'Fremantle') { label = 'Freo Front Nine'; emoji = 'anchor' }
+      else if (suburb === 'Perth') { label = 'CBD Classic'; emoji = 'landmark' }
       options.push({ type: 'suburb', label, emoji, suburb, pubCount: list.length })
     })
     options.push({ type: 'lucky-dip', label: 'Lucky Dip', emoji: 'dices' })
@@ -290,14 +291,14 @@ export default function PubGolfClient({ pubs }: { pubs: Pub[] }) {
   const shareText = useMemo(() => {
     if (!winner) return ''
     const lines = [
-      `⛳ Arvo Pub Golf: ${courseName}`,
+      `Arvo Pub Golf: ${courseName}`,
       '',
-      `🏆 ${winner.name} wins!`,
+      `${winner.name} wins!`,
       '',
       ...playerTotals.map((p: { name: string; total: number }) => `${p.name}: ${p.total} (${formatDiff(p.total, totalPar)} par)`),
       '',
-      `💰 Round cost: $${totalSpend.toFixed(2)}`,
-      `🍺 ${coursePubs.length} pubs across ${uniqueSuburbs} suburb${uniqueSuburbs !== 1 ? 's' : ''}`,
+      `Round cost: $${totalSpend.toFixed(2)}`,
+      `${coursePubs.length} pubs across ${uniqueSuburbs} suburb${uniqueSuburbs !== 1 ? 's' : ''}`,
       '',
       'Play at arvo.pub/pub-golf',
     ]
@@ -384,7 +385,7 @@ export default function PubGolfClient({ pubs }: { pubs: Pub[] }) {
 
           {/* Players Section */}
           <section className="bg-white border-3 border-ink rounded-card shadow-hard-sm p-4 sm:p-5">
-            <h2 className="text-lg font-bold mono text-ink mb-3"><Users className="w-4 h-4 inline" /> Players</h2>
+            <h2 className="text-lg font-bold font-mono text-ink mb-3"><Users className="w-4 h-4 inline" /> Players</h2>
             <div className="flex gap-2 mb-3">
               <input
                 type="text"
@@ -393,24 +394,24 @@ export default function PubGolfClient({ pubs }: { pubs: Pub[] }) {
                 onKeyDown={(e) => { if (e.key === 'Enter') addPlayer() }}
                 placeholder="Player name"
                 maxLength={20}
-                className="flex-1 min-w-0 px-3 py-2.5 rounded-xl border border-stone-200 bg-stone-50 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400/50 focus:border-orange-400 transition-all duration-200"
+                className="flex-1 min-w-0 px-3 py-2.5 rounded-xl border border-gray-light bg-off-white text-sm focus:outline-none focus:ring-2 focus:ring-orange-400/50 focus:border-orange-400 transition-all duration-200"
               />
               <button
                 onClick={addPlayer}
                 disabled={!playerInput.trim() || players.length >= 8}
-                className="px-4 py-2.5 bg-orange-500 text-white text-sm font-semibold rounded-xl hover:bg-orange-600 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200"
+                className="px-4 py-2.5 bg-amber text-white text-sm font-semibold rounded-xl hover:bg-orange-600 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200"
               >
                 <Plus className="w-4 h-4" />
               </button>
             </div>
             {players.length === 0 ? (
-              <p className="text-xs text-stone-400">Add at least 1 player to start</p>
+              <p className="text-xs text-gray-mid">Add at least 1 player to start</p>
             ) : (
               <div className="flex flex-wrap gap-2">
                 {players.map((name: string) => (
                   <span
                     key={name}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-orange-50 text-orange-800 border border-orange-200 rounded-pill text-sm font-medium"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-amber-pale text-orange-800 border border-amber-light rounded-pill text-sm font-medium"
                   >
                     {name}
                     <button onClick={() => removePlayer(name)} className="text-orange-400 hover:text-orange-700 transition-colors">
@@ -420,12 +421,12 @@ export default function PubGolfClient({ pubs }: { pubs: Pub[] }) {
                 ))}
               </div>
             )}
-            <p className="text-xs text-stone-400 mt-2">{players.length}/8 players</p>
+            <p className="text-xs text-gray-mid mt-2">{players.length}/8 players</p>
           </section>
 
           {/* Hole Count */}
           <section className="bg-white border-3 border-ink rounded-card shadow-hard-sm p-4 sm:p-5">
-            <h2 className="text-lg font-bold mono text-ink mb-3">🕳️ Number of Holes</h2>
+            <h2 className="text-lg font-bold font-mono text-ink mb-3"><Target className="w-5 h-5 inline mr-1" />Number of Holes</h2>
             <div className="flex gap-2">
               {[5, 9, 18].map((n: number) => (
                 <button
@@ -438,7 +439,7 @@ export default function PubGolfClient({ pubs }: { pubs: Pub[] }) {
                   className={`flex-1 py-2.5 rounded-xl text-sm font-bold transition-all duration-200 border ${
                     holeCount === n
                       ? 'bg-ink text-white border-charcoal shadow-md'
-                      : 'bg-stone-50 text-stone-600 border-stone-200 hover:border-stone-300'
+                      : 'bg-off-white text-gray-mid border-gray-light hover:border-gray'
                   }`}
                 >
                   {n} Holes
@@ -449,7 +450,7 @@ export default function PubGolfClient({ pubs }: { pubs: Pub[] }) {
 
           {/* Course Selection */}
           <section className="bg-white border-3 border-ink rounded-card shadow-hard-sm p-4 sm:p-5">
-            <h2 className="text-lg font-bold mono text-ink mb-3"><MapPin className="w-4 h-4 inline" /> Choose Your Course</h2>
+            <h2 className="text-lg font-bold font-mono text-ink mb-3"><MapPin className="w-4 h-4 inline" /> Choose Your Course</h2>
             <div className="space-y-2">
               {courseOptions.map((option: CourseOption) => {
                 const isSelected = selectedCourse?.label === option.label && selectedCourse?.type === option.type
@@ -462,8 +463,8 @@ export default function PubGolfClient({ pubs }: { pubs: Pub[] }) {
                     }}
                     className={`w-full text-left p-3 sm:p-4 rounded-xl border transition-all duration-200 ${
                       isSelected
-                        ? 'border-orange-400 bg-orange-50 ring-2 ring-orange-400/30'
-                        : 'border-stone-200 bg-stone-50 hover:border-stone-300'
+                        ? 'border-orange-400 bg-amber-pale ring-2 ring-orange-400/30'
+                        : 'border-gray-light bg-off-white hover:border-gray'
                     }`}
                   >
                     <div className="flex items-center justify-between">
@@ -472,14 +473,14 @@ export default function PubGolfClient({ pubs }: { pubs: Pub[] }) {
                         <span className="font-semibold text-ink text-sm truncate">{option.label}</span>
                       </div>
                       {option.pubCount && (
-                        <span className="text-xs text-stone-400 flex-shrink-0 ml-2">{option.pubCount} pubs</span>
+                        <span className="text-xs text-gray-mid flex-shrink-0 ml-2">{option.pubCount} pubs</span>
                       )}
                     </div>
                     {option.type === 'lucky-dip' && (
-                      <p className="text-xs text-stone-500 mt-1 ml-7">Random {holeCount} pubs from all of Perth</p>
+                      <p className="text-xs text-gray-mid mt-1 ml-7">Random {holeCount} pubs from all of Perth</p>
                     )}
                     {option.type === 'custom' && (
-                      <p className="text-xs text-stone-500 mt-1 ml-7">Pick your own pubs from the full list</p>
+                      <p className="text-xs text-gray-mid mt-1 ml-7">Pick your own pubs from the full list</p>
                     )}
                   </button>
                 )
@@ -490,7 +491,7 @@ export default function PubGolfClient({ pubs }: { pubs: Pub[] }) {
           {/* Custom Course Picker */}
           {selectedCourse?.type === 'custom' && (
             <section className="bg-white border-3 border-ink rounded-card shadow-hard-sm p-4 sm:p-5">
-              <h2 className="text-lg font-bold mono text-ink mb-3">
+              <h2 className="text-lg font-bold font-mono text-ink mb-3">
                 <Target className="w-4 h-4 inline" /> Pick Your Pubs ({customPubs.length}/{holeCount})
               </h2>
 
@@ -500,11 +501,11 @@ export default function PubGolfClient({ pubs }: { pubs: Pub[] }) {
                   {customPubs.map((pub: Pub, idx: number) => (
                     <div
                       key={pub.id}
-                      className="flex items-center gap-2 px-3 py-2 bg-orange-50 border border-orange-200 rounded-xl text-sm"
+                      className="flex items-center gap-2 px-3 py-2 bg-amber-pale border border-amber-light rounded-xl text-sm"
                     >
                       <span className="font-bold text-orange-700 w-5 text-center flex-shrink-0">{idx + 1}</span>
                       <span className="truncate flex-1 text-ink font-medium">{pub.name}</span>
-                      <span className="text-xs text-stone-400 flex-shrink-0">{pub.suburb}</span>
+                      <span className="text-xs text-gray-mid flex-shrink-0">{pub.suburb}</span>
                       <button
                         onClick={() => removeCustomPub(pub.id)}
                         className="text-orange-400 hover:text-red-500 flex-shrink-0 transition-colors"
@@ -519,28 +520,28 @@ export default function PubGolfClient({ pubs }: { pubs: Pub[] }) {
               {/* Search */}
               {customPubs.length < holeCount && (
                 <div className="relative">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400" />
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-mid" />
                   <input
                     type="text"
                     value={customSearch}
                     onChange={(e) => setCustomSearch(e.target.value)}
                     placeholder="Search pubs..."
-                    className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-stone-200 bg-stone-50 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400/50 focus:border-orange-400 transition-all duration-200"
+                    className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-gray-light bg-off-white text-sm focus:outline-none focus:ring-2 focus:ring-orange-400/50 focus:border-orange-400 transition-all duration-200"
                   />
                 </div>
               )}
 
               {/* Search results */}
               {customSearchResults.length > 0 && (
-                <div className="mt-2 max-h-48 overflow-y-auto rounded-xl border border-stone-200 bg-white divide-y divide-stone-100">
+                <div className="mt-2 max-h-48 overflow-y-auto rounded-xl border border-gray-light bg-white divide-y divide-stone-100">
                   {customSearchResults.map((pub: Pub) => (
                     <button
                       key={pub.id}
                       onClick={() => addCustomPub(pub)}
-                      className="w-full text-left px-3 py-2.5 hover:bg-orange-50 transition-colors text-sm flex items-center justify-between gap-2"
+                      className="w-full text-left px-3 py-2.5 hover:bg-amber-pale transition-colors text-sm flex items-center justify-between gap-2"
                     >
                       <span className="truncate font-medium text-ink">{pub.name}</span>
-                      <span className="text-xs text-stone-400 flex-shrink-0">
+                      <span className="text-xs text-gray-mid flex-shrink-0">
                         {pub.suburb} {pub.price ? `· $${pub.price.toFixed(2)}` : ''}
                       </span>
                     </button>
@@ -554,11 +555,12 @@ export default function PubGolfClient({ pubs }: { pubs: Pub[] }) {
           <button
             onClick={startGame}
             disabled={!canStart}
-            className="w-full py-4 bg-ink text-white text-lg font-bold mono rounded-2xl hover:bg-ink/90 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 shadow-md"
+            className="w-full py-4 bg-ink text-white text-lg font-bold font-mono rounded-2xl hover:bg-ink/90 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 shadow-md"
           >
             <Flag className="w-4 h-4 inline" /> Tee Off!
           </button>
         </main>
+        <Footer />
       </div>
     )
   }
@@ -582,12 +584,12 @@ export default function PubGolfClient({ pubs }: { pubs: Pub[] }) {
           {/* Progress bar */}
           <div className="bg-white border-3 border-ink rounded-card shadow-hard-sm p-3 sm:p-4">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-semibold text-stone-500">HOLE {currentHole + 1} OF {coursePubs.length}</span>
-              <span className="text-xs text-stone-400">{Math.round(progress)}%</span>
+              <span className="text-xs font-semibold text-gray-mid">HOLE {currentHole + 1} OF {coursePubs.length}</span>
+              <span className="text-xs text-gray-mid">{Math.round(progress)}%</span>
             </div>
-            <div className="w-full h-2 bg-stone-100 rounded-pill overflow-hidden">
+            <div className="w-full h-2 bg-off-white rounded-pill overflow-hidden">
               <div
-                className="h-full bg-orange-500 rounded-pill transition-all duration-500 ease-out"
+                className="h-full bg-amber rounded-pill transition-all duration-500 ease-out"
                 style={{ width: `${progress}%` }}
               />
             </div>
@@ -597,30 +599,30 @@ export default function PubGolfClient({ pubs }: { pubs: Pub[] }) {
           <div className="bg-white border-3 border-ink rounded-card shadow-hard-sm p-4 sm:p-5">
             <div className="flex items-start justify-between gap-3 mb-3">
               <div className="min-w-0">
-                <p className="text-3xl sm:text-4xl font-black mono text-ink leading-none">HOLE {currentHole + 1}</p>
+                <p className="text-3xl sm:text-4xl font-black font-mono text-ink leading-none">HOLE {currentHole + 1}</p>
                 <Link
                   href={`/pub/${pub.slug}`}
-                  className="text-lg font-bold text-ink hover:text-orange-600 transition-colors mt-1 block truncate"
+                  className="text-lg font-bold text-ink hover:text-amber transition-colors mt-1 block truncate"
                 >
                   {pub.name}
                 </Link>
-                <p className="text-xs text-stone-500 truncate">{pub.suburb} · {pub.address}</p>
+                <p className="text-xs text-gray-mid truncate">{pub.suburb} · {pub.address}</p>
               </div>
-              <span className="flex-shrink-0 inline-flex items-center px-3 py-1.5 bg-orange-100 text-orange-800 text-xs font-bold rounded-pill border border-orange-200">
+              <span className="flex-shrink-0 inline-flex items-center px-3 py-1.5 bg-orange-100 text-orange-800 text-xs font-bold rounded-pill border border-amber-light">
                 PAR {par}
               </span>
             </div>
 
-            <div className="flex items-end justify-between border-t border-stone-100 pt-3">
+            <div className="flex items-end justify-between border-t border-gray-light pt-3">
               <div>
                 {pub.price ? (
-                  <p className="text-3xl font-black text-orange-600 mono">${pub.price.toFixed(2)}</p>
+                  <p className="text-3xl font-black text-amber font-mono">${pub.price.toFixed(2)}</p>
                 ) : (
-                  <p className="text-lg font-semibold text-stone-400">Price TBC</p>
+                  <p className="text-lg font-semibold text-gray-mid">Price TBC</p>
                 )}
-                <p className="text-xs text-stone-400">{pub.beerType || 'Pint'}</p>
+                <p className="text-xs text-gray-mid">{pub.beerType || 'Pint'}</p>
               </div>
-              <p className="text-xs text-stone-500 italic text-right">
+              <p className="text-xs text-gray-mid italic text-right">
                 Finish your pint in {par} sips or less!
               </p>
             </div>
@@ -628,7 +630,7 @@ export default function PubGolfClient({ pubs }: { pubs: Pub[] }) {
 
           {/* Score Entry */}
           <div className="bg-white border-3 border-ink rounded-card shadow-hard-sm p-4 sm:p-5">
-            <h3 className="text-sm font-bold text-ink mb-3 mono">SCORES</h3>
+            <h3 className="text-sm font-bold text-ink mb-3 font-mono">SCORES</h3>
             <div className="space-y-3">
               {players.map((player: string) => {
                 const sips = scores[player]?.[currentHole] ?? par
@@ -638,18 +640,18 @@ export default function PubGolfClient({ pubs }: { pubs: Pub[] }) {
                     <div className="flex items-center gap-2 flex-shrink-0">
                       <button
                         onClick={() => updateScore(player, currentHole, sips - 1)}
-                        className="w-9 h-9 rounded-pill bg-white border border-stone-200 flex items-center justify-center hover:bg-stone-50 active:scale-95 transition-all duration-200"
+                        className="w-9 h-9 rounded-pill bg-white border border-gray-light flex items-center justify-center hover:bg-off-white active:scale-95 transition-all duration-200"
                       >
-                        <Minus className="w-4 h-4 text-stone-600" />
+                        <Minus className="w-4 h-4 text-gray-mid" />
                       </button>
                       <span className={`text-xl font-black w-8 text-center tabular-nums ${getScoreColor(sips, par)}`}>
                         {sips}
                       </span>
                       <button
                         onClick={() => updateScore(player, currentHole, sips + 1)}
-                        className="w-9 h-9 rounded-pill bg-white border border-stone-200 flex items-center justify-center hover:bg-stone-50 active:scale-95 transition-all duration-200"
+                        className="w-9 h-9 rounded-pill bg-white border border-gray-light flex items-center justify-center hover:bg-off-white active:scale-95 transition-all duration-200"
                       >
-                        <Plus className="w-4 h-4 text-stone-600" />
+                        <Plus className="w-4 h-4 text-gray-mid" />
                       </button>
                     </div>
                   </div>
@@ -661,9 +663,9 @@ export default function PubGolfClient({ pubs }: { pubs: Pub[] }) {
           {/* Next Hole / Finish */}
           <button
             onClick={nextHole}
-            className="w-full py-4 bg-ink text-white text-lg font-bold mono rounded-2xl hover:bg-ink/90 transition-all duration-200 shadow-md flex items-center justify-center gap-2"
+            className="w-full py-4 bg-ink text-white text-lg font-bold font-mono rounded-2xl hover:bg-ink/90 transition-all duration-200 shadow-md flex items-center justify-center gap-2"
           >
-            {isLastHole ? '🏁 Finish Round' : (
+            {isLastHole ? <><Flag className="w-5 h-5 inline" /> Finish Round</> : (
               <>Next Hole <ArrowRight className="w-5 h-5" /></>
             )}
           </button>
@@ -672,21 +674,21 @@ export default function PubGolfClient({ pubs }: { pubs: Pub[] }) {
           <div className="bg-white border-3 border-ink rounded-card shadow-hard-sm overflow-hidden">
             <button
               onClick={() => setShowScorecard((prev: boolean) => !prev)}
-              className="w-full flex items-center justify-between px-4 py-3 hover:bg-stone-50 transition-colors"
+              className="w-full flex items-center justify-between px-4 py-3 hover:bg-off-white transition-colors"
             >
-              <span className="text-sm font-bold text-ink mono"><Copy className="w-3.5 h-3.5 inline" /> Running Scorecard</span>
-              {showScorecard ? <ChevronUp className="w-4 h-4 text-stone-400" /> : <ChevronDown className="w-4 h-4 text-stone-400" />}
+              <span className="text-sm font-bold text-ink font-mono"><Copy className="w-3.5 h-3.5 inline" /> Running Scorecard</span>
+              {showScorecard ? <ChevronUp className="w-4 h-4 text-gray-mid" /> : <ChevronDown className="w-4 h-4 text-gray-mid" />}
             </button>
             {showScorecard && (
               <div className="px-4 pb-4 overflow-x-auto">
                 <table className="w-full text-xs">
                   <thead>
-                    <tr className="border-b border-stone-200">
-                      <th className="text-left py-2 pr-2 text-stone-500 font-medium">Hole</th>
-                      <th className="text-left py-2 pr-2 text-stone-500 font-medium">Pub</th>
-                      <th className="text-center py-2 pr-2 text-stone-500 font-medium">Par</th>
+                    <tr className="border-b border-gray-light">
+                      <th className="text-left py-2 pr-2 text-gray-mid font-medium">Hole</th>
+                      <th className="text-left py-2 pr-2 text-gray-mid font-medium">Pub</th>
+                      <th className="text-center py-2 pr-2 text-gray-mid font-medium">Par</th>
                       {players.map((p: string) => (
-                        <th key={p} className="text-center py-2 text-stone-500 font-medium truncate max-w-[60px]">{p}</th>
+                        <th key={p} className="text-center py-2 text-gray-mid font-medium truncate max-w-[60px]">{p}</th>
                       ))}
                     </tr>
                   </thead>
@@ -694,10 +696,10 @@ export default function PubGolfClient({ pubs }: { pubs: Pub[] }) {
                     {coursePubs.slice(0, currentHole + 1).map((cp: Pub, i: number) => {
                       const holePar = getPar(cp.price)
                       return (
-                        <tr key={i} className="border-b border-stone-100">
+                        <tr key={i} className="border-b border-gray-light">
                           <td className="py-1.5 pr-2 font-bold text-ink">{i + 1}</td>
-                          <td className="py-1.5 pr-2 truncate max-w-[100px] text-stone-600">{cp.name}</td>
-                          <td className="py-1.5 pr-2 text-center text-orange-600 font-bold">{holePar}</td>
+                          <td className="py-1.5 pr-2 truncate max-w-[100px] text-gray-mid">{cp.name}</td>
+                          <td className="py-1.5 pr-2 text-center text-amber font-bold">{holePar}</td>
                           {players.map((p: string) => {
                             const s = scores[p]?.[i]
                             const display = s !== undefined ? s : '-'
@@ -711,9 +713,9 @@ export default function PubGolfClient({ pubs }: { pubs: Pub[] }) {
                       )
                     })}
                     {/* Running totals */}
-                    <tr className="border-t-2 border-stone-300">
+                    <tr className="border-t-2 border-gray">
                       <td className="py-2 pr-2 font-black text-ink" colSpan={2}>TOTAL</td>
-                      <td className="py-2 pr-2 text-center font-black text-orange-600">
+                      <td className="py-2 pr-2 text-center font-black text-amber">
                         {coursePubs.slice(0, currentHole + 1).reduce((s: number, cp: Pub) => s + getPar(cp.price), 0)}
                       </td>
                       {players.map((p: string) => {
@@ -729,6 +731,7 @@ export default function PubGolfClient({ pubs }: { pubs: Pub[] }) {
             )}
           </div>
         </main>
+        <Footer />
       </div>
     )
   }
@@ -750,30 +753,30 @@ export default function PubGolfClient({ pubs }: { pubs: Pub[] }) {
           {/* Winner Announcement */}
           <section className="bg-white border-3 border-ink rounded-card shadow-hard-sm p-5 sm:p-6 text-center">
             <Trophy className="w-10 h-10 text-amber mb-2" />
-            <h2 className="text-2xl sm:text-3xl font-black mono text-ink mb-1">Round Complete!</h2>
+            <h2 className="text-2xl sm:text-3xl font-black font-mono text-ink mb-1">Round Complete!</h2>
             {winner && players.length > 1 && (
-              <p className="text-lg font-bold text-orange-600">
-                🎉 {winner.name} wins with {winner.total}! ({formatDiff(winner.total, totalPar)} par)
+              <p className="text-lg font-bold text-amber">
+                {winner.name} wins with {winner.total}! ({formatDiff(winner.total, totalPar)} par)
               </p>
             )}
             {players.length === 1 && winner && (
-              <p className="text-lg font-bold text-orange-600">
-                🎉 {winner.name} finished with {winner.total}! ({formatDiff(winner.total, totalPar)} par)
+              <p className="text-lg font-bold text-amber">
+                {winner.name} finished with {winner.total}! ({formatDiff(winner.total, totalPar)} par)
               </p>
             )}
           </section>
 
           {/* Full Scorecard */}
           <section className="bg-white border-3 border-ink rounded-card shadow-hard-sm p-4 sm:p-5 overflow-x-auto">
-            <h3 className="text-sm font-bold text-ink mb-3 mono"><Copy className="w-3.5 h-3.5 inline" /> FULL SCORECARD</h3>
+            <h3 className="text-sm font-bold text-ink mb-3 font-mono"><Copy className="w-3.5 h-3.5 inline" /> FULL SCORECARD</h3>
             <table className="w-full text-xs">
               <thead>
-                <tr className="border-b border-stone-200">
-                  <th className="text-left py-2 pr-2 text-stone-500 font-medium">Hole</th>
-                  <th className="text-left py-2 pr-2 text-stone-500 font-medium">Pub</th>
-                  <th className="text-center py-2 pr-2 text-stone-500 font-medium">Par</th>
+                <tr className="border-b border-gray-light">
+                  <th className="text-left py-2 pr-2 text-gray-mid font-medium">Hole</th>
+                  <th className="text-left py-2 pr-2 text-gray-mid font-medium">Pub</th>
+                  <th className="text-center py-2 pr-2 text-gray-mid font-medium">Par</th>
                   {players.map((p: string) => (
-                    <th key={p} className="text-center py-2 text-stone-500 font-medium truncate max-w-[60px]">{p}</th>
+                    <th key={p} className="text-center py-2 text-gray-mid font-medium truncate max-w-[60px]">{p}</th>
                   ))}
                 </tr>
               </thead>
@@ -781,14 +784,14 @@ export default function PubGolfClient({ pubs }: { pubs: Pub[] }) {
                 {coursePubs.map((pub: Pub, i: number) => {
                   const holePar = getPar(pub.price)
                   return (
-                    <tr key={i} className="border-b border-stone-100">
+                    <tr key={i} className="border-b border-gray-light">
                       <td className="py-1.5 pr-2 font-bold text-ink">{i + 1}</td>
                       <td className="py-1.5 pr-2 truncate max-w-[100px]">
-                        <Link href={`/pub/${pub.slug}`} className="text-stone-600 hover:text-orange-600 transition-colors">
+                        <Link href={`/pub/${pub.slug}`} className="text-gray-mid hover:text-amber transition-colors">
                           {pub.name}
                         </Link>
                       </td>
-                      <td className="py-1.5 pr-2 text-center text-orange-600 font-bold">{holePar}</td>
+                      <td className="py-1.5 pr-2 text-center text-amber font-bold">{holePar}</td>
                       {players.map((p: string) => {
                         const s = scores[p]?.[i] ?? holePar
                         const diff = s - holePar
@@ -805,12 +808,12 @@ export default function PubGolfClient({ pubs }: { pubs: Pub[] }) {
                   )
                 })}
                 {/* Total row */}
-                <tr className="border-t-2 border-stone-300">
+                <tr className="border-t-2 border-gray">
                   <td className="py-2 pr-2 font-black text-ink" colSpan={2}>TOTAL</td>
-                  <td className="py-2 pr-2 text-center font-black text-orange-600">{totalPar}</td>
+                  <td className="py-2 pr-2 text-center font-black text-amber">{totalPar}</td>
                   {playerTotals.map((pt: { name: string; total: number }) => (
                     <td key={pt.name} className={`py-2 text-center font-black ${
-                      pt.total < totalPar ? 'text-ink' : pt.total === totalPar ? 'text-orange-600' : 'text-red-600'
+                      pt.total < totalPar ? 'text-ink' : pt.total === totalPar ? 'text-amber' : 'text-red-600'
                     }`}>
                       {pt.total}
                       <span className="text-[10px] ml-0.5 opacity-60">({formatDiff(pt.total, totalPar)})</span>
@@ -823,20 +826,20 @@ export default function PubGolfClient({ pubs }: { pubs: Pub[] }) {
 
           {/* Stats */}
           <section className="bg-white border-3 border-ink rounded-card shadow-hard-sm p-4 sm:p-5">
-            <h3 className="text-sm font-bold text-ink mb-3 mono"><BarChart3 className="w-4 h-4 inline" /> ROUND STATS</h3>
+            <h3 className="text-sm font-bold text-ink mb-3 font-mono"><BarChart3 className="w-4 h-4 inline" /> ROUND STATS</h3>
             <div className="grid grid-cols-2 gap-3">
-              <div className="bg-stone-50 rounded-xl p-3 text-center">
-                <p className="text-2xl font-black text-orange-600 mono">${totalSpend.toFixed(0)}</p>
-                <p className="text-xs text-stone-500 mt-0.5">Total Spend</p>
+              <div className="bg-off-white rounded-xl p-3 text-center">
+                <p className="text-2xl font-black text-amber font-mono">${totalSpend.toFixed(0)}</p>
+                <p className="text-xs text-gray-mid mt-0.5">Total Spend</p>
               </div>
-              <div className="bg-stone-50 rounded-xl p-3 text-center">
-                <p className={`text-2xl font-black mono ${avgVsPar < 0 ? 'text-ink' : avgVsPar === 0 ? 'text-orange-600' : 'text-red-600'}`}>
+              <div className="bg-off-white rounded-xl p-3 text-center">
+                <p className={`text-2xl font-black mono ${avgVsPar < 0 ? 'text-ink' : avgVsPar === 0 ? 'text-amber' : 'text-red-600'}`}>
                   {avgVsPar > 0 ? '+' : ''}{avgVsPar.toFixed(1)}
                 </p>
-                <p className="text-xs text-stone-500 mt-0.5">Avg vs Par</p>
+                <p className="text-xs text-gray-mid mt-0.5">Avg vs Par</p>
               </div>
               {bestHole && (
-                <div className="bg-orange-50 rounded-xl p-3 text-center">
+                <div className="bg-amber-pale rounded-xl p-3 text-center">
                   <p className="text-sm font-bold text-ink truncate">{bestHole.pub.name}</p>
                   <p className="text-xs text-ink mt-0.5">Best Hole (#{bestHole.index + 1})</p>
                 </div>
@@ -853,12 +856,12 @@ export default function PubGolfClient({ pubs }: { pubs: Pub[] }) {
           {/* Share Results */}
           <button
             onClick={copyResults}
-            className="w-full py-4 bg-orange-500 text-white text-lg font-bold mono rounded-2xl hover:bg-orange-600 transition-all duration-200 shadow-md flex items-center justify-center gap-2"
+            className="w-full py-4 bg-amber text-white text-lg font-bold font-mono rounded-2xl hover:bg-orange-600 transition-all duration-200 shadow-md flex items-center justify-center gap-2"
           >
             {copied ? (
               <><Check className="w-5 h-5" /> Copied!</>
             ) : (
-              <><Copy className="w-5 h-5" /> 📸 Share Results</>
+              <><Copy className="w-5 h-5" /> Share Results</>
             )}
           </button>
 
@@ -866,18 +869,19 @@ export default function PubGolfClient({ pubs }: { pubs: Pub[] }) {
           <div className="flex gap-3">
             <button
               onClick={resetGame}
-              className="flex-1 py-3 bg-ink text-white font-bold mono rounded-2xl hover:bg-ink/90 transition-all duration-200 flex items-center justify-center gap-2 text-sm"
+              className="flex-1 py-3 bg-ink text-white font-bold font-mono rounded-2xl hover:bg-ink/90 transition-all duration-200 flex items-center justify-center gap-2 text-sm"
             >
               <RotateCcw className="w-4 h-4" /> Play Again
             </button>
             <Link
               href="/"
-              className="flex-1 py-3 bg-white text-ink font-bold mono rounded-2xl border border-stone-200 hover:bg-stone-50 transition-all duration-200 flex items-center justify-center gap-2 text-sm"
+              className="flex-1 py-3 bg-white text-ink font-bold font-mono rounded-2xl border border-gray-light hover:bg-off-white transition-all duration-200 flex items-center justify-center gap-2 text-sm"
             >
               <Home className="w-4 h-4" /> Back to Arvo
             </Link>
           </div>
         </main>
+        <Footer />
       </div>
     )
   }

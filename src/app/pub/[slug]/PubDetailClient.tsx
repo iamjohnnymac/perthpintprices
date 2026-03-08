@@ -57,6 +57,7 @@ export default function PubDetailClient({ pub, nearbyPubs, avgPrice }: PubDetail
           Math.cos(pos.coords.latitude * Math.PI / 180) * Math.cos(pub.lat * Math.PI / 180) *
           Math.sin(dLng / 2) ** 2
         const d = R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
+        if (d > 500) return // Too far to be meaningful (likely not in Perth)
         setDistance(d < 1 ? `${Math.round(d * 1000)}m away` : `${d.toFixed(1)}km away`)
       }, () => {})
     }

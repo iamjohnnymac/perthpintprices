@@ -25,8 +25,8 @@ export default function InstallPrompt() {
     // Dismissed recently (within 7 days) - bail
     if (dismissedAt && Date.now() - parseInt(dismissedAt) < SEVEN_DAYS) return
 
-    // Only show on mobile devices (skip desktop)
-    const isMobile = window.innerWidth < 768 || 'ontouchstart' in window
+    // Only show on mobile devices (skip desktop) — require both narrow viewport AND touch
+    const isMobile = window.innerWidth < 768 && 'ontouchstart' in window
     if (!isMobile) return
 
     const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent) && !(window as any).MSStream
@@ -69,7 +69,7 @@ export default function InstallPrompt() {
   if (!show || !platform) return null
 
   return (
-    <div className="fixed bottom-0 inset-x-0 z-40 animate-slide-up px-3 pb-[52px] pointer-events-none">
+    <div className="fixed bottom-0 inset-x-0 z-40 animate-slide-up px-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] pointer-events-none">
       <div className="pointer-events-auto rounded-card bg-white border-3 border-ink shadow-hard-sm overflow-hidden">
         <div className="flex items-center gap-3 px-4 py-3">
           {/* Icon */}

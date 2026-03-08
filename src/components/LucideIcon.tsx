@@ -1,6 +1,6 @@
 'use client'
 
-import { Beer, Zap, MapPin, Sunset, TrendingUp, PenLine, CircleCheck, Copy, Lightbulb, Medal, Bell, BellOff, Star, Waves, Baby, Flame, CloudRain, Sun, Umbrella, Users, Clock, Dices, Target, Flag, Trophy, DollarSign, BarChart3, Map as MapIcon, Share2, CirclePlay, CloudSun, CloudLightning, Snowflake, Cloud, Moon, Circle, CircleDot, Coffee } from 'lucide-react'
+import { Beer, Zap, MapPin, Sunset, TrendingUp, PenLine, CircleCheck, Copy, Lightbulb, Medal, Bell, BellOff, Star, Waves, Baby, Flame, CloudRain, Sun, Umbrella, Users, Clock, Dices, Target, Flag, Trophy, DollarSign, BarChart3, Map as MapIcon, Share2, CirclePlay, CloudSun, CloudLightning, Snowflake, Cloud, Moon, Circle, CircleDot, Coffee, Building2, Landmark, Anchor } from 'lucide-react'
 
 const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   beer: Beer,
@@ -41,6 +41,9 @@ const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   circle: Circle,
   'circle-dot': CircleDot,
   coffee: Coffee,
+  'building-2': Building2,
+  landmark: Landmark,
+  anchor: Anchor,
 }
 
 interface LucideIconProps {

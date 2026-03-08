@@ -149,7 +149,7 @@ export default function HappyHourClient() {
 
         {/* Empty State */}
         {!loading && pubs.length === 0 && (
-          <div className="border-3 border-ink rounded-card p-8 text-center shadow-hard">
+          <div className="border-3 border-ink rounded-card p-8 text-center shadow-hard-sm">
             <h2 className="font-mono font-extrabold text-xl text-ink mb-3">
               No happy hours right now
             </h2>
@@ -159,7 +159,7 @@ export default function HappyHourClient() {
             </p>
             <Link
               href="/"
-              className="inline-flex items-center gap-2 font-mono text-[0.85rem] font-bold uppercase tracking-[0.05em] text-white bg-amber border-3 border-ink rounded-pill px-9 py-4 shadow-hard hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-hard-hover transition-all no-underline"
+              className="inline-flex items-center gap-2 font-mono text-[0.85rem] font-bold uppercase tracking-[0.05em] text-white bg-amber border-3 border-ink rounded-pill px-9 py-4 shadow-hard-sm hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-hard-hover transition-all no-underline"
             >
               Browse all pubs
             </Link>
@@ -252,7 +252,7 @@ export default function HappyHourClient() {
           <div className="text-center mt-8">
             <Link
               href="/"
-              className="inline-flex items-center gap-2 font-mono text-[0.85rem] font-bold uppercase tracking-[0.05em] text-white bg-amber border-3 border-ink rounded-pill px-9 py-4 shadow-hard hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-hard-hover transition-all no-underline"
+              className="inline-flex items-center gap-2 font-mono text-[0.85rem] font-bold uppercase tracking-[0.05em] text-white bg-amber border-3 border-ink rounded-pill px-9 py-4 shadow-hard-sm hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-hard-hover transition-all no-underline"
             >
               View all pubs
             </Link>

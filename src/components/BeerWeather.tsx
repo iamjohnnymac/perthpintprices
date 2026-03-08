@@ -8,7 +8,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import InfoTooltip from './InfoTooltip'
 import { getDistanceKm, formatDistance } from '@/lib/location'
-import { Umbrella } from 'lucide-react'
+import { Umbrella, Thermometer, Sun, Leaf } from 'lucide-react'
 import LucideIcon from '@/components/LucideIcon'
 
 interface WeatherData {
@@ -263,7 +263,7 @@ export default function BeerWeather({ pubs, userLocation }: BeerWeatherProps) {
                 ◦ {weather.humidity}%
               </span>
               <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-white/60 text-stone-500 border border-stone-100">
-                🌡️ {weather.temperature.toFixed(1)}°C
+                <Thermometer className="w-3.5 h-3.5 inline" /> {weather.temperature.toFixed(1)}°C
               </span>
             </div>
 
@@ -307,11 +307,11 @@ export default function BeerWeather({ pubs, userLocation }: BeerWeatherProps) {
 
             {/* Fun footer */}
             <div className="mt-3 text-center text-xs py-2 rounded-xl bg-white/40 text-stone-400">
-              {weather.temperature >= 35 && '🥵 Stay hydrated. Water between pints!'}
+              {weather.temperature >= 35 && <><Sun className="w-4 h-4 inline" /> Stay hydrated. Water between pints!</>}
               {weather.temperature >= 30 && weather.temperature < 35 && <><Umbrella className="w-4 h-4 inline" /> Perfect day for a cold schooner by the water</>}
-              {weather.temperature >= 22 && weather.temperature < 30 && '🌿 Perth summer sesh weather. Get amongst it'}
-              {weather.temperature >= 15 && weather.temperature < 22 && '🍂 Classic pub weather. Enjoy!'}
-              {weather.temperature < 15 && '🧣 Bundle up and find a warm corner booth'}
+              {weather.temperature >= 22 && weather.temperature < 30 && <><Leaf className="w-4 h-4 inline" /> Perth summer sesh weather. Get amongst it</>}
+              {weather.temperature >= 15 && weather.temperature < 22 && <><Leaf className="w-4 h-4 inline" /> Classic pub weather. Enjoy!</>}
+              {weather.temperature < 15 && <><Thermometer className="w-4 h-4 inline" /> Bundle up and find a warm corner booth</>}
               {isWindy && ' · Hold onto your hat out there!'}
             </div>
           </div>

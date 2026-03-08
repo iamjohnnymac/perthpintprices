@@ -7,7 +7,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import InfoTooltip from './InfoTooltip'
 import { getDistanceKm, formatDistance } from '@/lib/location'
-import { CloudRain, Coffee } from 'lucide-react'
+import { CloudRain, Coffee, Droplets } from 'lucide-react'
 
 interface RainyDayProps {
   pubs: Pub[]
@@ -40,13 +40,13 @@ const RAIN_QUIPS = [
   "Perfect excuse for a cheeky pint by the window",
   "Nothing beats rain on the roof and a cold one in hand",
   "Chucking it down. Time to hunker down with a brew",
-  "Wet outside, warm inside. That's the Perth way 🤙",
+  "Wet outside, warm inside. That's the Perth way",
 ]
 
 const DRY_QUIPS = [
   "No rain, no worries. Still great spots to chill",
   "Save these for the next downpour, or just go now",
-  "Cozy vibes rain or shine ✌️",
+  "Cozy vibes rain or shine",
 ]
 
 export default function RainyDay({ pubs, userLocation }: RainyDayProps) {
@@ -185,7 +185,7 @@ export default function RainyDay({ pubs, userLocation }: RainyDayProps) {
                   <CloudRain className="w-4 h-4 inline" /> {getRainIntensity(weather.weatherCode)}
                 </span>
                 <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-white/60 text-stone-500 border border-stone-100">
-                  💧 {weather.precipitation.toFixed(1)} mm
+                  <Droplets className="w-3.5 h-3.5 inline" /> {weather.precipitation.toFixed(1)} mm
                 </span>
               </div>
             )}
