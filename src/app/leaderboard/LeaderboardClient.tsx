@@ -13,11 +13,11 @@ interface Reporter {
 }
 
 const BADGES = [
-  { min: 1, label: 'Rookie Scout', color: 'bg-off-white text-gray-mid border border-gray-light' },
-  { min: 5, label: 'Price Spotter', color: 'bg-blue-50 text-blue-700 border border-blue-200' },
-  { min: 10, label: 'Price Scout', color: 'bg-amber/10 text-amber border border-amber/30' },
-  { min: 25, label: 'Price Pro', color: 'bg-amber/20 text-amber border border-amber/40' },
-  { min: 50, label: 'Perth Legend', color: 'bg-amber text-white border border-amber' },
+  { min: 1, label: 'Rookie Scout', color: 'bg-off-white text-gray-mid border-2 border-gray-light' },
+  { min: 5, label: 'Price Spotter', color: 'bg-off-white text-ink border-2 border-gray-light' },
+  { min: 10, label: 'Price Scout', color: 'bg-amber-pale text-amber border-2 border-amber/30' },
+  { min: 25, label: 'Price Pro', color: 'bg-amber-pale text-amber border-2 border-amber/40' },
+  { min: 50, label: 'Perth Legend', color: 'bg-amber text-white border-2 border-amber' },
 ]
 
 function getBadge(count: number) {
@@ -69,14 +69,14 @@ export default function LeaderboardClient() {
           <h2 className="font-mono text-[0.75rem] font-extrabold text-ink uppercase tracking-[0.05em] mb-3">How to climb</h2>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             {[
-              { color: '#D4740A', label: 'Report', desc: 'Visit any pub page and tap "Report Current Price"' },
-              { color: '#2D7A3D', label: 'Verify', desc: 'Reports matching other data get verified automatically' },
-              { color: '#3B82F6', label: 'Badge Up', desc: 'Rookie Scout → Price Spotter → Price Scout → Perth Legend' },
+              { num: '1', label: 'Report', desc: 'Visit any pub page and tap "Report Current Price"' },
+              { num: '2', label: 'Verify', desc: 'Reports matching other data get verified automatically' },
+              { num: '3', label: 'Badge Up', desc: 'Rookie Scout → Price Spotter → Price Scout → Perth Legend' },
             ].map((step) => (
               <div key={step.label}>
                 <div className="flex items-center gap-2 mb-1">
-                  <span className="w-3 h-3 rounded-[3px]" style={{ background: step.color }} />
-                  <span className="font-mono text-[0.65rem] font-bold uppercase tracking-[0.08em] text-gray-mid">{step.label}</span>
+                  <span className="w-5 h-5 flex items-center justify-center rounded-full bg-ink text-white font-mono text-[0.55rem] font-bold">{step.num}</span>
+                  <span className="font-mono text-[0.65rem] font-bold uppercase tracking-[0.08em] text-ink">{step.label}</span>
                 </div>
                 <p className="text-[0.75rem] text-gray-mid leading-relaxed">{step.desc}</p>
               </div>

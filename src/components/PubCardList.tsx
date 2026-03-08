@@ -3,7 +3,6 @@
 import { Pub } from '@/types/pub'
 import { CrowdReport } from '@/lib/supabase'
 import { getHappyHourStatus } from '@/lib/happyHour'
-import { getFreshness } from '@/lib/freshness'
 import { getDistanceKm, formatDistance } from '@/lib/location'
 import Link from 'next/link'
 import { Beer } from 'lucide-react'
@@ -48,7 +47,6 @@ export default function PubCardList({
       {/* Pub rows */}
       {displayPubs.map((pub, index) => {
         const hhStatus = getHappyHourStatus(pub.happyHour)
-        const freshness = getFreshness(pub.lastVerified)
         const distanceKm = userLocation
           ? getDistanceKm(userLocation.lat, userLocation.lng, pub.lat, pub.lng)
           : null
@@ -80,11 +78,6 @@ export default function PubCardList({
                 {hhStatus.isActive && (
                   <span className="font-mono text-[0.58rem] font-bold uppercase tracking-[0.05em] px-1.5 py-0.5 rounded-pill ml-1.5 border-2 bg-red-pale text-red border-red inline-block align-middle">
                     HH
-                  </span>
-                )}
-                {freshness.label === 'Fresh' && (
-                  <span className="font-mono text-[0.58rem] font-bold uppercase tracking-[0.05em] px-1.5 py-0.5 rounded-pill ml-1.5 border-2 bg-green-pale text-green border-green inline-block align-middle">
-                    Fresh
                   </span>
                 )}
               </span>
