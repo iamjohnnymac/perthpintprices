@@ -38,7 +38,7 @@
   }
   body {
     @apply text-base leading-relaxed text-ink antialiased;
-    background-color: #FFFFFF;
+    background-color: #FDF8F0;
     -webkit-overflow-scrolling: touch;
   }
   h1 {
@@ -455,7 +455,7 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: #FFFFFF;
+  background: #FDF8F0;
   border-radius: 3px;
 }
 
