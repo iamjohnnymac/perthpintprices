@@ -53,12 +53,17 @@ export async function POST(request: NextRequest) {
         const now = new Date().toISOString()
         const slug = target_slug || report.pub_slug
 
-        // Build update payload — only include beer_type if provided
+        // Build update payload — route to correct price column based on report type
+        const isHappyHour = report.report_type === 'happy_hour_report'
         const updatePayload: Record<string, unknown> = {
-          price: report.reported_price,
-          price_verified: true,
-          last_verified: now,
           last_updated: now,
+        }
+        if (isHappyHour) {
+          updatePayload.happy_hour_price = report.reported_price
+        } else {
+          updatePayload.price = report.reported_price
+          updatePayload.price_verified = true
+          updatePayload.last_verified = now
         }
         if (report.beer_type) {
           updatePayload.beer_type = report.beer_type

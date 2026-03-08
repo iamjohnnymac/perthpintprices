@@ -82,6 +82,18 @@ function HomeContent({ initialPubs }: { initialPubs: Pub[] }) {
   const headerRef = useRef<HTMLElement>(null)
   const contentRef = useRef<HTMLDivElement>(null)
 
+  // Auto-open submit form when ?submit=1 is in URL (e.g. from suburb page links)
+  useEffect(() => {
+    if (searchParams.get('submit') === '1') {
+      setShowSubmitForm(true)
+      // Clean the param from URL
+      const params = new URLSearchParams(searchParams.toString())
+      params.delete('submit')
+      const newUrl = params.toString() ? `?${params.toString()}` : '/'
+      router.replace(newUrl, { scroll: false })
+    }
+  }, [searchParams, router])
+
   // P2a: New filter state
   const [vibeTagFilter, setVibeTagFilter] = useState(searchParams.get('vibe') || '')
   const [kidFriendlyOnly, setKidFriendlyOnly] = useState(searchParams.get('kids') === '1')

@@ -1,4 +1,4 @@
-export type FreshnessLevel = 'fresh' | 'aging' | 'stale' | 'unknown'
+export type FreshnessLevel = 'verified' | 'unknown'
 
 export interface FreshnessInfo {
   level: FreshnessLevel
@@ -7,7 +7,6 @@ export interface FreshnessInfo {
   color: string
   bgColor: string
   borderColor: string
-  icon: string
 }
 
 export function getFreshness(lastVerified: string | null): FreshnessInfo {
@@ -19,7 +18,6 @@ export function getFreshness(lastVerified: string | null): FreshnessInfo {
       color: 'text-gray-mid',
       bgColor: 'bg-off-white',
       borderColor: 'border-gray-light',
-      icon: '-',
     }
   }
 
@@ -28,38 +26,13 @@ export function getFreshness(lastVerified: string | null): FreshnessInfo {
   const diffMs = now.getTime() - verified.getTime()
   const daysAgo = Math.floor(diffMs / (1000 * 60 * 60 * 24))
 
-  if (daysAgo <= 14) {
-    return {
-      level: 'fresh',
-      label: 'Fresh',
-      daysAgo,
-      color: 'text-green',
-      bgColor: 'bg-green-pale',
-      borderColor: 'border-green',
-      icon: '●',
-    }
-  }
-
-  if (daysAgo <= 21) {
-    return {
-      level: 'aging',
-      label: 'Aging',
-      daysAgo,
-      color: 'text-amber',
-      bgColor: 'bg-amber-pale',
-      borderColor: 'border-amber',
-      icon: '◐',
-    }
-  }
-
   return {
-    level: 'stale',
-    label: 'Stale',
+    level: 'verified',
+    label: 'Verified',
     daysAgo,
-    color: 'text-red',
-    bgColor: 'bg-red-pale',
-    borderColor: 'border-red',
-    icon: '○',
+    color: 'text-green',
+    bgColor: 'bg-green-pale',
+    borderColor: 'border-green',
   }
 }
 

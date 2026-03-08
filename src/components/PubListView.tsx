@@ -177,7 +177,6 @@ export default function PubListView({
                         className={`inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full ${freshness.bgColor} ${freshness.color}`}
                         title={formatVerifiedDate(pub.lastVerified)}
                       >
-                        <span className="text-[10px]">{freshness.icon}</span>
                         {freshness.label}
                       </span>
                     )

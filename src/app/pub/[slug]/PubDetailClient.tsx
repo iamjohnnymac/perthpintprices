@@ -6,7 +6,8 @@ import dynamic from 'next/dynamic'
 import { Pub } from '@/types/pub'
 import WatchlistButton from '@/components/WatchlistButton'
 import PriceHistory from '@/components/PriceHistory'
-import PriceReporter from '@/components/PriceReporter'
+import SubmitPubForm from '@/components/SubmitPubForm'
+import { PenLine } from 'lucide-react'
 import { formatHappyHourDays } from '@/lib/happyHourLive'
 import Footer from '@/components/Footer'
 
@@ -46,6 +47,7 @@ interface PubDetailClientProps {
 
 export default function PubDetailClient({ pub, nearbyPubs, avgPrice }: PubDetailClientProps) {
   const [distance, setDistance] = useState<string | null>(null)
+  const [showSubmitForm, setShowSubmitForm] = useState(false)
 
   useEffect(() => {
     if ('geolocation' in navigator) {
@@ -231,7 +233,13 @@ export default function PubDetailClient({ pub, nearbyPubs, avgPrice }: PubDetail
 
             {/* Report a price */}
             <div id="report-price">
-              <PriceReporter pubSlug={pub.slug} pubName={pub.name} currentPrice={pub.price} />
+              <button
+                onClick={() => setShowSubmitForm(true)}
+                className="flex items-center gap-1.5 font-mono text-[0.75rem] font-bold text-gray-mid hover:text-amber transition-colors"
+              >
+                <PenLine className="w-3.5 h-3.5" />
+                <span>Report a price update</span>
+              </button>
             </div>
           </div>
 
@@ -277,6 +285,11 @@ export default function PubDetailClient({ pub, nearbyPubs, avgPrice }: PubDetail
       </div>
 
       <Footer />
+      <SubmitPubForm
+        isOpen={showSubmitForm}
+        onClose={() => setShowSubmitForm(false)}
+        initialPub={{ slug: pub.slug, name: pub.name, suburb: pub.suburb }}
+      />
     </div>
   )
 }

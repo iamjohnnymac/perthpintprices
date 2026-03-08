@@ -22,7 +22,7 @@ export default function SubPageNav({ breadcrumbs, title, subtitle, showSubmit = 
   const navLinks = [
     { href: '/discover', label: 'Discover' },
     { href: '/happy-hour', label: 'Happy Hours' },
-    { href: '/leaderboard', label: 'Leaderboard' },
+    { href: '/weekly-report', label: 'Pint Report' },
   ].filter((link) => link.href !== pathname)
 
   return (
@@ -44,15 +44,15 @@ export default function SubPageNav({ breadcrumbs, title, subtitle, showSubmit = 
                     {crumb.label}
                   </Link>
                 ) : (
-                  <span className="font-mono text-[0.72rem] font-bold uppercase tracking-[0.05em] text-ink whitespace-nowrap">{crumb.label}</span>
+                  <span className="font-mono text-[0.72rem] font-bold uppercase tracking-[0.05em] text-ink truncate">{crumb.label}</span>
                 )}
               </span>
             ))}
           </nav>
         ) : title ? (
-          <div className="hidden sm:flex items-center gap-1.5">
-            <span className="text-gray-mid text-sm">/</span>
-            <span className="font-mono text-[0.72rem] font-bold uppercase tracking-[0.05em] text-ink">{title}</span>
+          <div className="hidden sm:flex items-center gap-1.5 min-w-0">
+            <span className="text-gray-mid text-sm flex-shrink-0">/</span>
+            <span className="font-mono text-[0.72rem] font-bold uppercase tracking-[0.05em] text-ink truncate">{title}</span>
             {subtitle && <span className="text-[0.65rem] text-gray-mid ml-1">{subtitle}</span>}
           </div>
         ) : null}

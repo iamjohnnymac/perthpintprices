@@ -9,7 +9,7 @@ const supabase = createClient(
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json()
-    const { pub_slug, reported_price, beer_type, reporter_name, outdated, notes } = body
+    const { pub_slug, reported_price, beer_type, reporter_name, outdated, notes, price_type } = body
 
     const isOutdatedReport = outdated === true
 
@@ -54,7 +54,7 @@ export async function POST(req: NextRequest) {
       beer_type: beer_type || null,
       reporter_name: reporter_name || 'Anonymous',
       ip_hash: ipHash,
-      report_type: isOutdatedReport ? 'outdated_flag' : 'price_report',
+      report_type: isOutdatedReport ? 'outdated_flag' : (price_type === 'happy_hour' ? 'happy_hour_report' : 'price_report'),
       notes: notes || null,
     }
 
