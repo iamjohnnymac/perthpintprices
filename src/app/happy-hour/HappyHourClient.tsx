@@ -81,7 +81,7 @@ export default function HappyHourClient() {
   const hasLocation = locationState === 'granted' && userLocation !== null
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-[#FDF8F0]">
       <SubPageNav title="Happy Hours" />
 
       <div className="max-w-container mx-auto px-6 py-8">
@@ -159,7 +159,7 @@ export default function HappyHourClient() {
             </p>
             <Link
               href="/"
-              className="inline-flex items-center gap-2 font-mono text-[0.85rem] font-bold uppercase tracking-[0.05em] text-white bg-ink border-3 border-ink rounded-pill px-9 py-4 shadow-hard hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-hard-hover transition-all no-underline"
+              className="inline-flex items-center gap-2 font-mono text-[0.85rem] font-bold uppercase tracking-[0.05em] text-white bg-amber border-3 border-ink rounded-pill px-9 py-4 shadow-hard hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-hard-hover transition-all no-underline"
             >
               Browse all pubs
             </Link>
@@ -252,7 +252,7 @@ export default function HappyHourClient() {
           <div className="text-center mt-8">
             <Link
               href="/"
-              className="inline-flex items-center gap-2 font-mono text-[0.85rem] font-bold uppercase tracking-[0.05em] text-white bg-ink border-3 border-ink rounded-pill px-9 py-4 shadow-hard hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-hard-hover transition-all no-underline"
+              className="inline-flex items-center gap-2 font-mono text-[0.85rem] font-bold uppercase tracking-[0.05em] text-white bg-amber border-3 border-ink rounded-pill px-9 py-4 shadow-hard hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-hard-hover transition-all no-underline"
             >
               View all pubs
             </Link>

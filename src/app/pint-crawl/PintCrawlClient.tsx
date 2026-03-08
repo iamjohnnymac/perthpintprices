@@ -417,7 +417,7 @@ export default function PintCrawlClient({ pubs }: { pubs: Pub[] }) {
   /* ═══════════════════════════════════════════════ */
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-[#FDF8F0]">
       {/* Header */}
       <SubPageNav title="Pint Crawl" subtitle="Plan your route" />
 

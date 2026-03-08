@@ -31,7 +31,7 @@ export default function SuburbClient({ suburb, pubs, nearbySuburbs, perthAvgPric
   const over11 = priced.filter(p => p.price! > 11).length
 
   return (
-    <main className="min-h-screen bg-white">
+    <main className="min-h-screen bg-[#FDF8F0]">
       {/* Nav */}
       <header className="max-w-container mx-auto px-6 py-6 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2 no-underline">

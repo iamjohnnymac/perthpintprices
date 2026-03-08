@@ -52,7 +52,7 @@ export default function FeaturePageShell({ breadcrumbs, needsCrowd = false, chil
 
   if (isLoading) {
     return (
-      <main className="min-h-screen bg-white">
+      <main className="min-h-screen bg-[#FDF8F0]">
         <SubPageNav breadcrumbs={breadcrumbs} />
         <div className="flex items-center justify-center py-20">
           <div className="flex flex-col items-center gap-3">
@@ -65,7 +65,7 @@ export default function FeaturePageShell({ breadcrumbs, needsCrowd = false, chil
   }
 
   return (
-    <main className="min-h-screen bg-white">
+    <main className="min-h-screen bg-[#FDF8F0]">
       <SubPageNav breadcrumbs={breadcrumbs} />
       <div className="max-w-container mx-auto px-6 py-8 sm:py-12">
         <ErrorBoundary>

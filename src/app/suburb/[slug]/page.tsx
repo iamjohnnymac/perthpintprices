@@ -7,9 +7,17 @@ interface PageProps {
   params: { slug: string }
 }
 
+export const dynamicParams = true
+
 export async function generateStaticParams() {
-  const suburbs = await getAllSuburbs()
-  return suburbs.map(s => ({ slug: s.slug }))
+  // Pre-build only the top suburbs at build time for speed
+  // All other suburb pages are generated on-demand and cached via ISR (revalidate = 300)
+  const topSlugs = [
+    'northbridge', 'fremantle', 'perth', 'subiaco', 'leederville',
+    'mount-lawley', 'victoria-park', 'scarborough', 'joondalup', 'mandurah',
+    'cottesloe', 'claremont', 'east-perth', 'south-perth', 'midland',
+  ]
+  return topSlugs.map(slug => ({ slug }))
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {

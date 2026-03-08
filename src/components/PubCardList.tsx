@@ -103,7 +103,7 @@ export default function PubCardList({
         <div className="pt-2 pb-10">
           <button
             onClick={onShowAll}
-            className="w-full font-mono text-[0.85rem] font-bold uppercase tracking-[0.06em] text-white bg-ink border-3 border-ink rounded-pill py-[18px] px-8 shadow-hard hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-hard-hover active:translate-x-[4px] active:translate-y-[4px] active:shadow-none transition-all cursor-pointer"
+            className="w-full font-mono text-[0.85rem] font-bold uppercase tracking-[0.06em] text-white bg-amber border-3 border-ink rounded-pill py-[18px] px-8 shadow-hard hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-hard-hover active:translate-x-[4px] active:translate-y-[4px] active:shadow-none transition-all cursor-pointer"
           >
             View all {pubs.length} venues →
           </button>

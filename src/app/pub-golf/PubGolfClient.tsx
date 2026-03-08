@@ -378,7 +378,7 @@ export default function PubGolfClient({ pubs }: { pubs: Pub[] }) {
       (selectedCourse.type !== 'custom' || customPubs.length > 0)
 
     return (
-      <div className="min-h-screen bg-white">
+      <div className="min-h-screen bg-[#FDF8F0]">
         {header}
         <main className="max-w-container mx-auto px-6 py-4 sm:py-6 space-y-4 sm:space-y-5">
 
@@ -575,7 +575,7 @@ export default function PubGolfClient({ pubs }: { pubs: Pub[] }) {
     const progress = ((currentHole + 1) / coursePubs.length) * 100
 
     return (
-      <div className="min-h-screen bg-white">
+      <div className="min-h-screen bg-[#FDF8F0]">
         {header}
         <main className="max-w-container mx-auto px-6 py-4 sm:py-6 space-y-3 sm:space-y-4">
 
@@ -743,7 +743,7 @@ export default function PubGolfClient({ pubs }: { pubs: Pub[] }) {
       : 0
 
     return (
-      <div className="min-h-screen bg-white">
+      <div className="min-h-screen bg-[#FDF8F0]">
         {header}
         <main className="max-w-container mx-auto px-6 py-4 sm:py-6 space-y-3 sm:space-y-4">
 

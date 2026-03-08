@@ -7,7 +7,7 @@ import { ErrorBoundary } from '@/components/ErrorBoundary'
 
 export default function PintOfTheDayPage() {
   return (
-    <main className="min-h-screen bg-white">
+    <main className="min-h-screen bg-[#FDF8F0]">
       <SubPageNav breadcrumbs={[
         { label: 'Insights', href: '/insights' },
         { label: 'Pint of the Day' },
