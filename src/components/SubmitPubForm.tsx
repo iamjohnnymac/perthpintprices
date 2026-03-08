@@ -15,6 +15,7 @@ interface SubmitPubFormProps {
   isOpen: boolean;
   onClose: () => void;
   userLocation?: { lat: number; lng: number } | null;
+  initialPub?: { slug: string; name: string; suburb: string } | null;
 }
 
 type Mode = 'existing' | 'new' | 'report-outdated';
@@ -32,7 +33,7 @@ function getDistanceKmSimple(lat1: number, lng1: number, lat2: number, lng2: num
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
 
-export default function SubmitPubForm({ isOpen, onClose, userLocation }: SubmitPubFormProps) {
+export default function SubmitPubForm({ isOpen, onClose, userLocation, initialPub }: SubmitPubFormProps) {
   const [mode, setMode] = useState<Mode>('existing');
   const [pubs, setPubs] = useState<Pub[]>([]);
   const [pubsLoading, setPubsLoading] = useState(false);
@@ -43,12 +44,14 @@ export default function SubmitPubForm({ isOpen, onClose, userLocation }: SubmitP
 
   // Form fields
   const [price, setPrice] = useState('');
+  const [priceType, setPriceType] = useState<'regular' | 'happy_hour'>('regular');
   const [beerType, setBeerType] = useState('');
   const [pubName, setPubName] = useState('');
   const [suburb, setSuburb] = useState('');
   const [address, setAddress] = useState('');
   const [email, setEmail] = useState('');
   const [outdatedNote, setOutdatedNote] = useState('');
+  const [issueReason, setIssueReason] = useState<'price_wrong' | 'temp_closed' | 'perm_closed' | 'other'>('price_wrong');
 
   // Inline validation (P2b)
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
@@ -74,6 +77,14 @@ export default function SubmitPubForm({ isOpen, onClose, userLocation }: SubmitP
       .catch(() => {})
       .finally(() => setPubsLoading(false));
   }, [isOpen]);
+
+  // Pre-select pub when initialPub is provided
+  useEffect(() => {
+    if (isOpen && initialPub && !selectedPub) {
+      setSelectedPub({ slug: initialPub.slug, name: initialPub.name, suburb: initialPub.suburb });
+      setSearch(initialPub.name);
+    }
+  }, [isOpen, initialPub, selectedPub]);
 
   // Escape key
   useEffect(() => {
@@ -158,12 +169,14 @@ export default function SubmitPubForm({ isOpen, onClose, userLocation }: SubmitP
     setSearch('');
     setSelectedPub(null);
     setPrice('');
+    setPriceType('regular');
     setBeerType('');
     setPubName('');
     setSuburb('');
     setAddress('');
     setEmail('');
     setOutdatedNote('');
+    setIssueReason('price_wrong');
     setError('');
     setFieldErrors({});
     setSubmitted(false);
@@ -254,6 +267,7 @@ export default function SubmitPubForm({ isOpen, onClose, userLocation }: SubmitP
             pub_slug: selectedPub.slug,
             reported_price: parseFloat(price),
             beer_type: beerType || undefined,
+            price_type: priceType,
           }),
         });
 
@@ -276,7 +290,9 @@ export default function SubmitPubForm({ isOpen, onClose, userLocation }: SubmitP
           body: JSON.stringify({
             pub_slug: selectedPub.slug,
             outdated: true,
-            note: outdatedNote.trim() || undefined,
+            notes: outdatedNote.trim()
+              ? `[${issueReason}] ${outdatedNote.trim()}`
+              : `[${issueReason}]`,
           }),
         });
 
@@ -347,18 +363,18 @@ export default function SubmitPubForm({ isOpen, onClose, userLocation }: SubmitP
     ? 'Report a Price'
     : mode === 'new'
     ? 'Submit a New Pub'
-    : 'Report Outdated Price';
+    : 'Report an Issue';
 
   const modeSubtitle = mode === 'existing'
     ? 'Know a cheap pint? Let us know!'
     : mode === 'new'
     ? 'Add a pub we\'re missing'
-    : 'Let us know if a price has changed';
+    : 'Closed, renovating, or something else?';
 
   const submittedMessage = mode === 'existing'
     ? 'Price submitted! We\'ll review it shortly.'
     : mode === 'report-outdated'
-    ? 'Thanks for the heads up! We\'ll check this price.'
+    ? 'Thanks for the heads up! We\'ll look into it.'
     : 'Pub submitted! We\'ll review and add it soon.';
 
   // Pub search widget (shared by 'existing' and 'report-outdated')
@@ -543,7 +559,7 @@ export default function SubmitPubForm({ isOpen, onClose, userLocation }: SubmitP
             <div className="flex gap-1 bg-off-white rounded-card p-1 border-2 border-gray-light">
               {([
                 { key: 'existing' as const, label: 'Report Price' },
-                { key: 'report-outdated' as const, label: 'Flag Outdated' },
+                { key: 'report-outdated' as const, label: 'Report Issue' },
                 { key: 'new' as const, label: 'New Pub' },
               ]).map(({ key, label }) => (
                 <button
@@ -598,18 +614,78 @@ export default function SubmitPubForm({ isOpen, onClose, userLocation }: SubmitP
                     />
                   </div>
                 </div>
+
+                {/* Price Type Toggle */}
+                <div>
+                  <label className={labelClass}>Price Type</label>
+                  <div className="flex gap-1 bg-off-white rounded-pill p-0.5 border-2 border-gray-light">
+                    <button
+                      type="button"
+                      onClick={() => setPriceType('regular')}
+                      className={`flex-1 px-3 py-1.5 rounded-pill font-mono text-[0.65rem] font-bold transition-all ${
+                        priceType === 'regular'
+                          ? 'bg-white text-ink shadow-sm'
+                          : 'text-gray-mid hover:text-ink'
+                      }`}
+                    >
+                      Regular Price
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setPriceType('happy_hour')}
+                      className={`flex-1 px-3 py-1.5 rounded-pill font-mono text-[0.65rem] font-bold transition-all ${
+                        priceType === 'happy_hour'
+                          ? 'bg-amber-pale text-amber shadow-sm'
+                          : 'text-gray-mid hover:text-ink'
+                      }`}
+                    >
+                      Happy Hour
+                    </button>
+                  </div>
+                </div>
               </>
             ) : mode === 'report-outdated' ? (
               <>
                 {pubSearchWidget}
 
+                {/* Issue reason pills */}
+                <div>
+                  <label className={labelClass}>What&apos;s the issue?</label>
+                  <div className="grid grid-cols-2 gap-1.5">
+                    {([
+                      { key: 'price_wrong' as const, label: 'Price Wrong' },
+                      { key: 'temp_closed' as const, label: 'Temp Closed' },
+                      { key: 'perm_closed' as const, label: 'Perm Closed' },
+                      { key: 'other' as const, label: 'Other' },
+                    ]).map(({ key, label }) => (
+                      <button
+                        key={key}
+                        type="button"
+                        onClick={() => setIssueReason(key)}
+                        className={`px-3 py-2 rounded-pill font-mono text-[0.65rem] font-bold transition-all border-2 ${
+                          issueReason === key
+                            ? 'bg-ink text-white border-ink shadow-sm'
+                            : 'bg-off-white text-gray-mid border-gray-light hover:text-ink hover:border-ink/30'
+                        }`}
+                      >
+                        {label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
                 {/* Optional note */}
                 <div>
-                  <label className={labelClass}>What&apos;s wrong? (optional)</label>
+                  <label className={labelClass}>Details (optional)</label>
                   <textarea
                     value={outdatedNote}
                     onChange={(e) => setOutdatedNote(e.target.value)}
-                    placeholder="e.g. Price went up to $12, closed down, etc."
+                    placeholder={
+                      issueReason === 'price_wrong' ? 'e.g. Price went up to $12'
+                      : issueReason === 'temp_closed' ? 'e.g. Closed for renovations until March'
+                      : issueReason === 'perm_closed' ? 'e.g. Shut down last month'
+                      : 'What should we know?'
+                    }
                     className="w-full px-3 py-3 bg-white border-2 border-gray-light rounded-card text-ink text-sm font-mono placeholder-gray-mid/50 focus:outline-none focus:border-ink transition-all min-h-[80px] resize-y"
                   />
                 </div>
@@ -719,7 +795,7 @@ export default function SubmitPubForm({ isOpen, onClose, userLocation }: SubmitP
                 : mode === 'existing'
                 ? 'Submit Price'
                 : mode === 'report-outdated'
-                ? 'Report Outdated'
+                ? 'Submit Report'
                 : 'Submit New Pub'}
             </button>
 

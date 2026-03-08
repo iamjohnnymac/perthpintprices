@@ -251,6 +251,7 @@ export async function GET(request: NextRequest) {
           reportedPrice: r.reported_price,
           beerType: r.beer_type,
           reporter: r.reporter_name || 'Anonymous',
+          reportType: r.report_type || 'price_report',
           status: r.status,
           createdAt: r.created_at,
         })),
