@@ -43,15 +43,21 @@ export default function PubCardList({
           ? formatDistance(getDistanceKm(userLocation.lat, userLocation.lng, pub.lat, pub.lng))
           : null
 
+        const isFirst = index === 0
+
         return (
           <Link
             key={pub.id}
             href={`/pub/${pub.slug}`}
-            className="flex items-baseline justify-between py-3.5 px-2.5 -mx-2.5 border-b border-gray-light rounded-lg cursor-pointer no-underline text-ink hover:bg-off-white transition-colors"
+            className={`flex items-baseline justify-between py-3.5 px-2.5 -mx-2.5 border-b border-gray-light rounded-lg cursor-pointer no-underline text-ink hover:bg-off-white transition-colors ${
+              isFirst ? 'border-l-[4px] border-l-amber bg-amber-pale/30 ml-0 pl-3' : ''
+            }`}
           >
             {/* Rank */}
-            <span className="font-mono text-[0.75rem] font-bold text-gray-mid min-w-[28px] mr-1">
-              {index + 1}.
+            <span className={`font-mono text-[0.75rem] font-bold min-w-[28px] mr-1 ${
+              isFirst ? 'text-amber' : 'text-gray-mid'
+            }`}>
+              {isFirst ? '★' : `${index + 1}.`}
             </span>
 
             {/* Info */}

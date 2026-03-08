@@ -1,9 +1,11 @@
 'use client'
 
 import { useState } from 'react'
+import { useInView } from '@/hooks/useInView'
 
 export default function FAQ() {
   const [openIndex, setOpenIndex] = useState<number | null>(null)
+  const { ref: faqRef, inView: faqInView } = useInView()
 
   const faqs = [
     {
@@ -34,7 +36,7 @@ export default function FAQ() {
 
   return (
     <section className="py-14 px-6 bg-off-white bg-noise relative">
-      <div className="max-w-container mx-auto">
+      <div ref={faqRef} className={`max-w-container mx-auto reveal ${faqInView ? 'in-view' : ''}`}>
         <div className="flex items-center gap-2 mb-1.5">
           <span className="w-3.5 h-3.5 rounded-[4px] bg-blue" />
           <span className="font-mono text-[0.68rem] font-bold uppercase tracking-[0.1em] text-gray-mid">Questions</span>

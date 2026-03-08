@@ -12,40 +12,51 @@ export default function Footer() {
           <span className="font-mono text-[1.4rem] font-extrabold tracking-[-0.04em]">arvo</span>
         </div>
 
-        {/* Nav links in two rows */}
-        <div className="flex flex-wrap gap-x-6 gap-y-2 mb-3">
-          {[
-            { href: '/discover', label: 'Discover' },
-            { href: '/insights/pint-index', label: 'Pint Index' },
-            { href: '/insights/suburb-rankings', label: 'Suburb Rankings' },
-            { href: '/guides/beer-weather', label: 'Beer Weather' },
-            { href: '/guides/sunset-sippers', label: 'Sunset Sippers' },
-            { href: '/guides/dad-bar', label: 'Dad Bar' },
-          ].map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="font-mono text-[0.7rem] font-bold uppercase tracking-[0.06em] text-white/50 hover:text-amber-light transition-colors no-underline"
-            >
-              {link.label}
-            </Link>
-          ))}
-        </div>
-        <div className="flex flex-wrap gap-x-6 gap-y-2 mb-8">
-          {[
-            { href: '/happy-hour', label: 'Happy Hours' },
-            { href: '/pub-golf', label: 'Pub Golf' },
-            { href: '/pint-crawl', label: 'Pint Crawl' },
-            { href: '/leaderboard', label: 'Leaderboard' },
-          ].map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="font-mono text-[0.7rem] font-bold uppercase tracking-[0.06em] text-white/50 hover:text-amber-light transition-colors no-underline"
-            >
-              {link.label}
-            </Link>
-          ))}
+        {/* Nav links in labeled columns */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-8 mb-8">
+          <div>
+            <span className="font-mono text-[0.6rem] font-bold uppercase tracking-[0.12em] text-white/30 block mb-3">Explore</span>
+            <div className="flex flex-col gap-2">
+              {[
+                { href: '/discover', label: 'Discover' },
+                { href: '/happy-hour', label: 'Happy Hours' },
+                { href: '/leaderboard', label: 'Leaderboard' },
+              ].map((link) => (
+                <Link key={link.href} href={link.href} className="font-mono text-[0.7rem] font-bold uppercase tracking-[0.06em] text-white/50 hover:text-amber-light transition-colors no-underline">
+                  {link.label}
+                </Link>
+              ))}
+            </div>
+          </div>
+          <div>
+            <span className="font-mono text-[0.6rem] font-bold uppercase tracking-[0.12em] text-white/30 block mb-3">Guides</span>
+            <div className="flex flex-col gap-2">
+              {[
+                { href: '/guides/beer-weather', label: 'Beer Weather' },
+                { href: '/guides/sunset-sippers', label: 'Sunset Sippers' },
+                { href: '/guides/dad-bar', label: 'Dad Bar' },
+              ].map((link) => (
+                <Link key={link.href} href={link.href} className="font-mono text-[0.7rem] font-bold uppercase tracking-[0.06em] text-white/50 hover:text-amber-light transition-colors no-underline">
+                  {link.label}
+                </Link>
+              ))}
+            </div>
+          </div>
+          <div>
+            <span className="font-mono text-[0.6rem] font-bold uppercase tracking-[0.12em] text-white/30 block mb-3">Insights</span>
+            <div className="flex flex-col gap-2">
+              {[
+                { href: '/insights/pint-index', label: 'Pint Index' },
+                { href: '/insights/suburb-rankings', label: 'Suburb Rankings' },
+                { href: '/pub-golf', label: 'Pub Golf' },
+                { href: '/pint-crawl', label: 'Pint Crawl' },
+              ].map((link) => (
+                <Link key={link.href} href={link.href} className="font-mono text-[0.7rem] font-bold uppercase tracking-[0.06em] text-white/50 hover:text-amber-light transition-colors no-underline">
+                  {link.label}
+                </Link>
+              ))}
+            </div>
+          </div>
         </div>
 
         {/* Divider */}

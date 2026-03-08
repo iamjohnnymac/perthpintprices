@@ -1,3 +1,7 @@
+'use client'
+
+import { useInView } from '@/hooks/useInView'
+
 interface SocialProofProps {
   venueCount: number
   suburbCount: number
@@ -7,48 +11,29 @@ interface SocialProofProps {
   onSubmitClick?: () => void
 }
 
-export default function SocialProof({ venueCount, suburbCount, avgPrice, cheapestPrice, priciestPrice, onSubmitClick }: SocialProofProps) {
+export default function SocialProof({ avgPrice, onSubmitClick }: SocialProofProps) {
+  const { ref: trustRef, inView: trustInView } = useInView()
+  const { ref: ctaRef, inView: ctaInView } = useInView()
 
   return (
     <>
-      {/* Stats section */}
+      {/* Trust signal + avg price */}
       <section className="py-14 px-6">
-        <div className="max-w-container mx-auto text-center">
-          <div className="flex justify-center gap-3 mb-6 flex-wrap">
-            {[
-              { value: String(venueCount), label: 'Venues', accent: false },
-              { value: String(suburbCount), label: 'Suburbs', accent: false },
-              { value: cheapestPrice > 0 ? `$${cheapestPrice}` : 'TBC', label: 'Cheapest', accent: true },
-              { value: priciestPrice > 0 ? `$${priciestPrice}` : 'TBC', label: 'Priciest', accent: false },
-            ].map((stat) => (
-              <div
-                key={stat.label}
-                className={`border-3 border-ink rounded-card px-6 py-5 text-center min-w-[130px] shadow-hard ${
-                  stat.accent ? 'bg-amber' : 'bg-white'
-                }`}
-              >
-                <span className={`font-mono text-[2rem] font-extrabold tracking-[-0.02em] block leading-[1.1] ${
-                  stat.accent ? 'text-white' : 'text-ink'
-                }`}>
-                  {stat.value}
-                </span>
-                <span className={`font-mono text-[0.6rem] font-bold uppercase tracking-[0.08em] block mt-0.5 ${
-                  stat.accent ? 'text-white/75' : 'text-gray-mid'
-                }`}>
-                  {stat.label}
-                </span>
-              </div>
-            ))}
-          </div>
-          <p className="font-display text-[1.1rem] italic text-gray-mid">
-            Every price from a real person. No scraping. No guessing.
+        <div ref={trustRef} className={`max-w-container mx-auto text-center reveal ${trustInView ? 'in-view' : ''}`}>
+          <p className="font-display text-[clamp(1.3rem,4vw,1.7rem)] italic text-ink leading-[1.3] mb-4">
+            Every price from a real person.<br />
+            No scraping. No guessing.
           </p>
+          <div className="inline-flex items-baseline gap-2 border-3 border-ink rounded-pill px-7 py-3 bg-white shadow-hard-sm">
+            <span className="font-mono text-[0.65rem] font-bold uppercase tracking-[0.08em] text-gray-mid">Avg pint</span>
+            <span className="font-mono text-[1.4rem] font-extrabold tracking-[-0.02em] text-ink">${avgPrice}</span>
+          </div>
         </div>
       </section>
 
       {/* Submit CTA */}
       <section className="bg-off-white py-14 px-6 text-center bg-noise relative">
-        <div className="max-w-container mx-auto">
+        <div ref={ctaRef} className={`max-w-container mx-auto reveal ${ctaInView ? 'in-view' : ''}`}>
           <h2 className="text-[clamp(1.5rem,4vw,2rem)] text-ink mb-2">
             Know a price we&apos;re missing?
           </h2>
