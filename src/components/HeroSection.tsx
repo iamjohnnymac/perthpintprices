@@ -15,12 +15,14 @@ export default function HeroSection({ pubs }: HeroSectionProps) {
         {/* Dot grid background texture */}
         <div className="absolute inset-0 bg-dot-grid opacity-[0.035] pointer-events-none" />
 
-        {/* Beer glass illustration — scaled up for impact */}
+        {/* Beer glass illustration — fresh pour animation */}
         <div className="w-[140px] h-[170px] mx-auto mb-8 relative animate-scale-in">
-          <div className="w-[96px] h-[130px] mx-auto relative border-3 border-ink rounded-[5px_5px_10px_10px] shadow-hard overflow-hidden"
-               style={{ background: 'linear-gradient(180deg, #F5D98A 0%, #D4A030 45%, #C4880A 100%)' }}>
-            {/* Foam */}
-            <div className="absolute -top-[10px] -left-[3px] -right-[3px] h-[36px] bg-[#FFFEF0] rounded-[22px_22px_40%_40%] border-3 border-ink border-b-0 animate-foam-wobble" />
+          <div className="w-[96px] h-[130px] mx-auto relative border-3 border-ink rounded-[5px_5px_10px_10px] shadow-hard overflow-hidden bg-white">
+            {/* Beer liquid — fills from bottom */}
+            <div className="absolute inset-0 animate-beer-fill"
+                 style={{ background: 'linear-gradient(180deg, #F5D98A 0%, #D4A030 45%, #C4880A 100%)' }} />
+            {/* Foam — appears after pour completes */}
+            <div className="absolute -top-[10px] -left-[3px] -right-[3px] h-[36px] bg-[#FFFEF0] rounded-[22px_22px_40%_40%] border-3 border-ink border-b-0 animate-foam-appear" />
             {/* Handle */}
             <div className="absolute -right-[26px] top-[24px] w-[22px] h-[56px] border-3 border-ink border-l-0 rounded-[0_12px_12px_0] bg-white" />
           </div>

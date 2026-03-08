@@ -121,7 +121,17 @@
 }
 
 .animate-beer-fill {
-  animation: beer-fill 0.8s ease-out both;
+  animation: beer-fill 1.2s ease-out 0.3s both;
+}
+
+@keyframes foam-appear {
+  0% { opacity: 0; transform: translateY(6px) scaleY(0.2); }
+  70% { opacity: 1; transform: translateY(-2px) scaleY(1.1); }
+  100% { opacity: 1; transform: translateY(0) scaleY(1); }
+}
+
+.animate-foam-appear {
+  animation: foam-appear 0.5s ease-out 1.3s both, foam-wobble 3s ease-in-out 1.8s infinite;
 }
 
 /* Stagger delays for child elements */
