@@ -3,11 +3,11 @@ import BreadcrumbJsonLd from '@/components/BreadcrumbJsonLd'
 import PintIndexPage from './PintIndexPage'
 
 export const metadata: Metadata = {
-  title: "Perth Pint Index™ — Live Beer Price Tracker | Arvo",
+  title: "Perth Pint Index™: Live Beer Price Tracker | Arvo",
   description: "Track Perth's average pint price over time. The Perth Pint Index™ monitors beer pricing trends across 300+ venues with weekly snapshots.",
   alternates: { canonical: 'https://perthpintprices.com/insights/pint-index' },
   openGraph: {
-    title: "Perth Pint Index™ — Live Beer Price Tracker | Arvo",
+    title: "Perth Pint Index™: Live Beer Price Tracker | Arvo",
     description: "Track Perth's average pint price over time across 300+ venues.",
     url: 'https://perthpintprices.com/insights/pint-index',
     type: 'website',

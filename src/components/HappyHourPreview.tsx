@@ -57,7 +57,7 @@ export default function HappyHourPreview({ pubs }: HappyHourPreviewProps) {
         {/* Separator */}
         <span className="text-stone-300 text-sm">·</span>
 
-        {/* Pub names — flowing inline text */}
+        {/* Pub names - flowing inline text */}
         <div className="flex-1 min-w-0 overflow-hidden">
           <p className="text-sm text-stone-500 truncate">
             {activeCount > 0 && activePubs.map((h, i) => (

@@ -4,7 +4,7 @@ import { getSiteStats } from '@/lib/supabase'
 
 export async function generateMetadata(): Promise<Metadata> {
   const stats = await getSiteStats()
-  const title = "Arvo — Perth's pint prices, sorted."
+  const title = "Arvo | Perth's pint prices, sorted."
   const description = `Perth's pint prices, sorted. Real prices from real people across ${stats.venueCount}+ venues and ${stats.suburbCount} suburbs.`
 
   return {
@@ -25,14 +25,14 @@ export async function generateMetadata(): Promise<Metadata> {
           url: 'https://perthpintprices.com/og-image.png',
           width: 1200,
           height: 630,
-          alt: "Arvo — Perth's pint prices, sorted",
+          alt: "Arvo | Perth's pint prices, sorted",
         },
       ],
     },
     twitter: {
       card: 'summary_large_image',
       title,
-      description: `Perth's pint prices, sorted. ${stats.venueCount}+ venues — find cheap pints near you.`,
+      description: `Perth's pint prices, sorted. ${stats.venueCount}+ venues. Find cheap pints near you.`,
     },
   }
 }

@@ -98,7 +98,7 @@ export default function SuburbClient({ suburb, pubs, nearbySuburbs, perthAvgPric
       <section className="max-w-container mx-auto px-6 pb-6">
         <div className="border-3 border-ink rounded-card shadow-hard overflow-hidden">
           <div className="px-4 py-3 border-b border-gray-light">
-            <h2 className="font-mono font-extrabold text-[0.85rem] text-ink uppercase tracking-[0.05em]">All Venues — Cheapest First</h2>
+            <h2 className="font-mono font-extrabold text-[0.85rem] text-ink uppercase tracking-[0.05em]">All Venues - Cheapest First</h2>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
@@ -145,7 +145,7 @@ export default function SuburbClient({ suburb, pubs, nearbySuburbs, perthAvgPric
                         {pub.happyHour ? (
                           <span className="text-[0.7rem] text-red font-bold">{pub.happyHour}</span>
                         ) : (
-                          <span className="text-[0.7rem] text-gray-mid">—</span>
+                          <span className="text-[0.7rem] text-gray-mid">-</span>
                         )}
                       </td>
                     </tr>

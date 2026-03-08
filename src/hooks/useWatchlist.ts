@@ -112,7 +112,7 @@ export function useWatchlist(): WatchlistContextType {
 /**
  * Sync watchlist slugs to the push subscription on the server.
  * Only runs if the user has an active push subscription.
- * Silent fail — this is non-critical.
+ * Silent fail - this is non-critical.
  */
 async function syncWatchlistToPush(slugs: string[]): Promise<void> {
   try {
@@ -133,6 +133,6 @@ async function syncWatchlistToPush(slugs: string[]): Promise<void> {
       }),
     })
   } catch {
-    // Silent fail — push sync is non-critical
+    // Silent fail - push sync is non-critical
   }
 }

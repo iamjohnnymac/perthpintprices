@@ -370,7 +370,7 @@ export default function SubmitPubForm({ isOpen, onClose, userLocation }: SubmitP
           <span className="flex-1 text-sm font-mono font-bold text-ink">
             {selectedPub.name}
             <span className="text-gray-mid font-normal ml-1.5">
-              — {selectedPub.suburb}
+              - {selectedPub.suburb}
             </span>
           </span>
           <button
@@ -453,7 +453,7 @@ export default function SubmitPubForm({ isOpen, onClose, userLocation }: SubmitP
                   >
                     <span className="font-medium">{pub.name}</span>
                     <span className="text-gray-mid ml-1.5">
-                      — {pub.suburb}
+                      - {pub.suburb}
                     </span>
                   </button>
                 ))

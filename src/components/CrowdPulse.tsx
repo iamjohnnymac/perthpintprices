@@ -99,7 +99,7 @@ export default function CrowdPulse({ pubs, crowdReports, userLocation }: CrowdPu
   if (liveCount === 0) {
     return (
       <div className="bg-white rounded-2xl border border-stone-200/40 p-6 text-center">
-        <p className="text-stone-400 text-sm">No crowd reports yet — be the first!</p>
+        <p className="text-stone-400 text-sm">No crowd reports yet. Be the first!</p>
       </div>
     )
   }

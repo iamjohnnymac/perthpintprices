@@ -19,7 +19,7 @@ export function getFreshness(lastVerified: string | null): FreshnessInfo {
       color: 'text-stone-400',
       bgColor: 'bg-stone-50',
       borderColor: 'border-stone-200',
-      icon: '—',
+      icon: '-',
     }
   }
 

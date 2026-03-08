@@ -14,12 +14,12 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const suburb = await getSuburbBySlug(params.slug)
-  if (!suburb) return { title: 'Suburb Not Found — Arvo' }
+  if (!suburb) return { title: 'Suburb Not Found | Arvo' }
 
   const priceText = suburb.cheapestPrice !== 'TBC'
     ? `${suburb.pubCount} Pubs from $${suburb.cheapestPrice}`
     : `${suburb.pubCount} Pubs`
-  const title = `Cheapest Pints in ${suburb.name} — ${priceText} | Arvo`
+  const title = `Cheapest Pints in ${suburb.name}: ${priceText} | Arvo`
 
   const descParts = [`Compare pint prices across ${suburb.pubCount} pubs in ${suburb.name}, Perth.`]
   if (suburb.cheapestPrice !== 'TBC') {

@@ -42,7 +42,7 @@ function Sparkline({ data, snapshots, width = 280, height = 60 }: {
 
   if (data.length < 2) return (
     <div className="bg-white rounded-2xl border border-stone-200/40 p-6 text-center">
-      <p className="text-stone-400 text-sm">No price history data yet — trends build over time.</p>
+      <p className="text-stone-400 text-sm">No price history data yet. Trends build over time.</p>
     </div>
   );
   
@@ -225,7 +225,7 @@ export default function PintIndex() {
   );
   if (snapshots.length === 0) return (
     <div className="bg-white rounded-2xl border border-stone-200/40 p-6 text-center">
-      <p className="text-stone-400 text-sm">No price history data yet — trends build over time.</p>
+      <p className="text-stone-400 text-sm">No price history data yet. Trends build over time.</p>
     </div>
   );
 
