@@ -4,7 +4,7 @@ import { useState, useMemo, useCallback } from 'react'
 import Link from 'next/link'
 import SubPageNav from '@/components/SubPageNav'
 import { Pub } from '@/types/pub'
-import { Search, X, Plus, Minus, ChevronDown, ChevronUp, Copy, Check, ArrowRight, RotateCcw, Home , Target, Flag, Trophy, BarChart3, Users, MapPin } from 'lucide-react'
+import { Search, X, Plus, Minus, ChevronDown, ChevronUp, Copy, Check, ArrowRight, RotateCcw, Home, Target, Flag, Trophy, BarChart3, Users, MapPin, HelpCircle } from 'lucide-react'
 import LucideIcon from '@/components/LucideIcon'
 import Footer from '@/components/Footer'
 
@@ -373,14 +373,56 @@ export default function PubGolfClient({ pubs }: { pubs: Pub[] }) {
   // RENDER: Header (always shown)
   // ---------------------------------------------------------------------------
 
+    const [showHowTo, setShowHowTo] = useState(false)
+
     const header = (
     <>
       <SubPageNav title="Pub Golf" subtitle="Pick your course, tee off" />
       <div className="max-w-container mx-auto px-6 pt-8 pb-4">
-        <h1 className="font-mono font-extrabold text-[clamp(1.8rem,5vw,2.4rem)] tracking-[-0.03em] text-ink leading-[1.1]">
-          Pub Golf
-        </h1>
-        <p className="text-gray-mid text-[0.85rem] mt-1">Pick your course, tee off</p>
+        <div className="flex items-start justify-between gap-3">
+          <div>
+            <h1 className="font-mono font-extrabold text-[clamp(1.8rem,5vw,2.4rem)] tracking-[-0.03em] text-ink leading-[1.1]">
+              Pub Golf
+            </h1>
+            <p className="text-gray-mid text-[0.85rem] mt-1">Pick your course, tee off</p>
+          </div>
+          <button
+            onClick={() => setShowHowTo(!showHowTo)}
+            className={`flex items-center gap-1.5 px-3 py-1.5 mt-1 font-mono text-[0.65rem] font-bold uppercase tracking-[0.05em] border-3 border-ink rounded-card shadow-hard-sm transition-all ${
+              showHowTo ? 'bg-amber text-white' : 'bg-white text-gray-mid hover:text-ink hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-hard-hover'
+            }`}
+          >
+            <HelpCircle size={12} />
+            How to Play
+          </button>
+        </div>
+        {showHowTo && (
+          <div className="mt-4 bg-white border-3 border-ink rounded-card shadow-hard-sm p-4 sm:p-5 space-y-3">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div className="flex items-start gap-2.5">
+                <span className="flex-shrink-0 w-6 h-6 bg-amber text-white font-mono text-[0.7rem] font-bold rounded-full flex items-center justify-center border-2 border-ink">1</span>
+                <div>
+                  <p className="font-mono text-[0.75rem] font-bold text-ink">Pick a course</p>
+                  <p className="font-mono text-[0.65rem] text-gray-mid mt-0.5">Choose a preset suburb crawl, go lucky dip, or build your own</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-2.5">
+                <span className="flex-shrink-0 w-6 h-6 bg-amber text-white font-mono text-[0.7rem] font-bold rounded-full flex items-center justify-center border-2 border-ink">2</span>
+                <div>
+                  <p className="font-mono text-[0.75rem] font-bold text-ink">Drink at each pub</p>
+                  <p className="font-mono text-[0.65rem] text-gray-mid mt-0.5">Each hole is a pub. Finish your pint in the par number of sips or fewer</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-2.5">
+                <span className="flex-shrink-0 w-6 h-6 bg-amber text-white font-mono text-[0.7rem] font-bold rounded-full flex items-center justify-center border-2 border-ink">3</span>
+                <div>
+                  <p className="font-mono text-[0.75rem] font-bold text-ink">Lowest score wins</p>
+                  <p className="font-mono text-[0.65rem] text-gray-mid mt-0.5">⛳ Under par · 🍺 Par · 💀 Over par — fewest sips takes the trophy</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </>
   )
