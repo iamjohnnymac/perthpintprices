@@ -121,17 +121,27 @@
 }
 
 .animate-beer-fill {
-  animation: beer-fill 1.2s ease-out 0.3s both;
+  animation: beer-fill 2.0s ease-out 0.3s both;
 }
 
 @keyframes foam-appear {
-  0% { opacity: 0; transform: translateY(6px) scaleY(0.2); }
-  70% { opacity: 1; transform: translateY(-2px) scaleY(1.1); }
+  0% { opacity: 0; transform: translateY(8px) scaleY(0.1); }
+  50% { opacity: 1; transform: translateY(-4px) scaleY(1.15); }
+  75% { transform: translateY(1px) scaleY(0.95); }
   100% { opacity: 1; transform: translateY(0) scaleY(1); }
 }
 
 .animate-foam-appear {
-  animation: foam-appear 0.5s ease-out 1.3s both, foam-wobble 3s ease-in-out 1.8s infinite;
+  animation: foam-appear 0.7s ease-out 2.1s both, foam-wobble 3s ease-in-out 2.8s infinite;
+}
+
+@keyframes bubble-rise {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-8px); }
+}
+
+.animate-bubble-rise {
+  animation: bubble-rise 3s ease-in-out 2.3s infinite alternate;
 }
 
 /* Stagger delays for child elements */
