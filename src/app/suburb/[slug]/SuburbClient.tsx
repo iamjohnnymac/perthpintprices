@@ -2,9 +2,11 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import { CheckCircle2, Clock, AlertCircle, HelpCircle } from 'lucide-react'
 import { Pub } from '@/types/pub'
 import { SuburbInfo } from '@/lib/supabase'
-import { getFreshness, formatVerifiedDate } from '@/lib/freshness'
+import { getFreshness, formatVerifiedDate, FreshnessLevel } from '@/lib/freshness'
+import SubPageNav from '@/components/SubPageNav'
 import Footer from '@/components/Footer'
 
 interface SuburbClientProps {
@@ -12,6 +14,13 @@ interface SuburbClientProps {
   pubs: Pub[]
   nearbySuburbs: SuburbInfo[]
   perthAvgPrice: number
+}
+
+const freshnessIcons: Record<FreshnessLevel, React.ReactNode> = {
+  fresh: <CheckCircle2 className="w-3 h-3" />,
+  aging: <Clock className="w-3 h-3" />,
+  stale: <AlertCircle className="w-3 h-3" />,
+  unknown: <HelpCircle className="w-3 h-3" />,
 }
 
 export default function SuburbClient({ suburb, pubs, nearbySuburbs, perthAvgPrice }: SuburbClientProps) {
@@ -25,37 +34,14 @@ export default function SuburbClient({ suburb, pubs, nearbySuburbs, perthAvgPric
     ? `${Math.abs(Math.round(priceDiff))}% ${isCheaper ? 'cheaper' : 'more expensive'} than Perth average`
     : null
 
-  const priced = pubs.filter(p => p.price !== null)
-  const under8 = priced.filter(p => p.price! <= 8).length
-  const mid = priced.filter(p => p.price! > 8 && p.price! <= 11).length
-  const over11 = priced.filter(p => p.price! > 11).length
-
   return (
     <main className="min-h-screen bg-[#FDF8F0]">
-      {/* Nav */}
-      <header className="max-w-container mx-auto px-6 py-6 flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-2 no-underline">
-          <div className="w-7 h-7 bg-amber border-2 border-ink rounded-md flex items-center justify-center text-sm shadow-[2px_2px_0_#171717]">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 2v20M2 12h20M4.93 4.93l14.14 14.14M19.07 4.93L4.93 19.07" stroke="white" strokeWidth="2.5" strokeLinecap="round"/></svg>
-          </div>
-          <span className="font-mono text-[1.6rem] font-extrabold text-ink tracking-[-0.04em]">arvo</span>
-        </Link>
-        <Link
-          href="/"
-          className="font-mono text-[0.72rem] font-bold uppercase tracking-[0.05em] text-ink bg-white border-3 border-ink rounded-pill px-5 py-2.5 shadow-hard-sm hover:translate-x-[1.5px] hover:translate-y-[1.5px] hover:shadow-hard-hover transition-all no-underline"
-        >
-          Submit a Price
-        </Link>
-      </header>
-
-      {/* Breadcrumb */}
-      <div className="max-w-container mx-auto px-6">
-        <nav className="flex items-center gap-1.5 font-mono text-[0.7rem] text-gray-mid">
-          <Link href="/" className="hover:text-amber transition-colors no-underline">Home</Link>
-          <span>/</span>
-          <span className="text-ink font-bold">{suburb.name}</span>
-        </nav>
-      </div>
+      <SubPageNav
+        breadcrumbs={[
+          { label: 'Suburbs', href: '/suburbs' },
+          { label: suburb.name },
+        ]}
+      />
 
       {/* Hero Stats */}
       <section className="max-w-container mx-auto px-6 pt-6 pb-6">
@@ -94,20 +80,22 @@ export default function SuburbClient({ suburb, pubs, nearbySuburbs, perthAvgPric
         </div>
       </section>
 
-      {/* Pub Table */}
+      {/* Pub Table (desktop) + Card List (mobile) */}
       <section className="max-w-container mx-auto px-6 pb-6">
-        <div className="border-3 border-ink rounded-card shadow-hard overflow-hidden">
+        <div className="border-3 border-ink rounded-card shadow-hard-sm overflow-hidden">
           <div className="px-4 py-3 border-b border-gray-light">
             <h2 className="font-mono font-extrabold text-[0.85rem] text-ink uppercase tracking-[0.05em]">All Venues - Cheapest First</h2>
           </div>
-          <div className="overflow-x-auto">
+
+          {/* Desktop table */}
+          <div className="hidden sm:block overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-off-white text-gray-mid font-mono text-[0.65rem] uppercase tracking-wider">
                   <th className="px-4 py-2.5 text-left font-bold w-10">#</th>
                   <th className="px-4 py-2.5 text-left font-bold">Venue</th>
                   <th className="px-4 py-2.5 text-center font-bold">Pint Price</th>
-                  <th className="px-4 py-2.5 text-center font-bold hidden sm:table-cell">Status</th>
+                  <th className="px-4 py-2.5 text-center font-bold">Status</th>
                   <th className="px-4 py-2.5 text-left font-bold hidden md:table-cell">Happy Hour</th>
                 </tr>
               </thead>
@@ -121,7 +109,7 @@ export default function SuburbClient({ suburb, pubs, nearbySuburbs, perthAvgPric
                         <Link href={`/pub/${pub.slug}`} className="font-mono text-[0.8rem] font-extrabold text-ink hover:text-amber transition-colors no-underline">
                           {pub.name}
                         </Link>
-                        <p className="text-[0.7rem] text-gray-mid mt-0.5 truncate max-w-[200px] sm:max-w-none">{pub.address}</p>
+                        <p className="text-[0.7rem] text-gray-mid mt-0.5 truncate max-w-none">{pub.address}</p>
                       </td>
                       <td className="px-4 py-3 text-center">
                         {pub.price !== null && pub.priceVerified ? (
@@ -135,9 +123,9 @@ export default function SuburbClient({ suburb, pubs, nearbySuburbs, perthAvgPric
                           <p className="text-[0.6rem] text-gray-mid mt-0.5">{pub.beerType}</p>
                         )}
                       </td>
-                      <td className="px-4 py-3 text-center hidden sm:table-cell">
+                      <td className="px-4 py-3 text-center">
                         <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[0.6rem] font-bold ${freshness.bgColor} ${freshness.color} border ${freshness.borderColor}`}>
-                          {freshness.icon} {freshness.label}
+                          {freshnessIcons[freshness.level]} {freshness.label}
                         </span>
                         <p className="text-[0.6rem] text-gray-mid mt-0.5">{formatVerifiedDate(pub.lastVerified)}</p>
                       </td>
@@ -154,6 +142,40 @@ export default function SuburbClient({ suburb, pubs, nearbySuburbs, perthAvgPric
               </tbody>
             </table>
           </div>
+
+          {/* Mobile card list */}
+          <div className="sm:hidden">
+            {displayPubs.map((pub, i) => (
+              <Link
+                key={pub.id}
+                href={`/pub/${pub.slug}`}
+                className={`flex items-center justify-between px-4 py-3.5 no-underline group ${
+                  i > 0 ? 'border-t border-gray-light' : ''
+                } ${i === 0 ? 'bg-amber/5' : ''}`}
+              >
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-2">
+                    <span className="font-mono text-[0.65rem] font-bold text-gray-mid w-4 flex-shrink-0">{i + 1}</span>
+                    <p className="font-mono text-[0.82rem] font-extrabold text-ink group-hover:text-amber transition-colors truncate">{pub.name}</p>
+                  </div>
+                  <div className="flex items-center gap-2 ml-6 mt-0.5">
+                    {pub.happyHour && (
+                      <span className="text-[0.65rem] font-bold text-red">{pub.happyHour}</span>
+                    )}
+                    {pub.beerType && !pub.happyHour && (
+                      <span className="text-[0.65rem] text-gray-mid">{pub.beerType}</span>
+                    )}
+                  </div>
+                </div>
+                <span className={`font-mono text-[1rem] font-extrabold ml-3 flex-shrink-0 ${
+                  pub.price !== null && pub.priceVerified ? 'text-ink' : 'text-gray-mid text-[0.8rem]'
+                }`}>
+                  {pub.price !== null && pub.priceVerified ? `$${pub.price.toFixed(2)}` : 'TBC'}
+                </span>
+              </Link>
+            ))}
+          </div>
+
           {pubs.length > 10 && (
             <div className="px-4 py-3 border-t border-gray-light text-center">
               <button
@@ -166,37 +188,6 @@ export default function SuburbClient({ suburb, pubs, nearbySuburbs, perthAvgPric
           )}
         </div>
       </section>
-
-      {/* Price Distribution */}
-      {priced.length >= 3 && (
-        <section className="max-w-container mx-auto px-6 pb-6">
-          <div className="border-3 border-ink rounded-card p-5 shadow-hard-sm">
-            <h2 className="font-mono font-extrabold text-[0.85rem] text-ink uppercase tracking-[0.05em] mb-3">Price Distribution</h2>
-            <div className="flex items-end gap-2 h-20 mb-3">
-              {[
-                { label: 'Under $8', count: under8, color: 'bg-amber' },
-                { label: '$8-$11', count: mid, color: 'bg-amber/60' },
-                { label: 'Over $11', count: over11, color: 'bg-red' },
-              ].map(band => {
-                const pct = priced.length > 0 ? (band.count / priced.length) * 100 : 0
-                return (
-                  <div key={band.label} className="flex-1 flex flex-col items-center gap-1">
-                    <span className="font-mono text-[0.7rem] font-bold text-ink">{band.count}</span>
-                    <div className="w-full rounded-t-lg relative" style={{ height: `${Math.max(pct, 4)}%` }}>
-                      <div className={`absolute inset-0 ${band.color} rounded-t-lg`} />
-                    </div>
-                    <span className="text-[0.6rem] text-gray-mid">{band.label}</span>
-                  </div>
-                )
-              })}
-            </div>
-            <p className="text-[0.7rem] text-gray-mid">
-              Based on {priced.length} venues with verified prices in {suburb.name}.
-              {avgNum > 0 && ` Perth average: $${perthAvgPrice.toFixed(2)}.`}
-            </p>
-          </div>
-        </section>
-      )}
 
       {/* Nearby Suburbs */}
       {nearbySuburbs.length > 0 && (
@@ -225,12 +216,12 @@ export default function SuburbClient({ suburb, pubs, nearbySuburbs, perthAvgPric
 
       {/* Footer CTA */}
       <section className="max-w-container mx-auto px-6 pb-8">
-        <div className="bg-ink border-3 border-ink rounded-card p-6 text-center shadow-hard">
+        <div className="bg-ink border-3 border-ink rounded-card p-6 text-center shadow-hard-sm">
           <h2 className="font-mono font-extrabold text-xl text-white mb-2">Know a price in {suburb.name}?</h2>
           <p className="text-white/60 text-sm mb-4">Help us keep {suburb.name} pint prices accurate.</p>
           <Link
             href="/?submit=1"
-            className="inline-flex font-mono text-[0.85rem] font-bold uppercase tracking-[0.05em] text-ink bg-amber-light border-3 border-ink rounded-pill px-9 py-4 shadow-hard hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-hard-hover transition-all no-underline"
+            className="inline-flex font-mono text-[0.85rem] font-bold uppercase tracking-[0.05em] text-ink bg-amber-light border-3 border-ink rounded-pill px-9 py-4 shadow-hard-sm hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-hard-hover transition-all no-underline"
           >
             Submit a Price
           </Link>

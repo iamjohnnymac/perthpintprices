@@ -206,7 +206,7 @@ export default function SunsetSippers({ pubs, userLocation }: SunsetSippersProps
     statusMessage = `Golden hour! Sunset in ${getTimeUntil(sunTimes.sunset, now)}`
     StatusIcon = DuskIcon
   } else if (isNighttime) {
-    statusMessage = 'After dark ' + E.dash + ' plan tomorrow\'s sunset sesh'
+    statusMessage = 'After dark. Plan tomorrow\'s sunset sesh'
     StatusIcon = MoonIcon
   } else {
     statusMessage = `Sunset in ${getTimeUntil(sunTimes.sunset, now)}`
@@ -225,7 +225,7 @@ export default function SunsetSippers({ pubs, userLocation }: SunsetSippersProps
             <StatusIcon />
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="text-base sm:text-lg font-bold font-heading text-stone-800 flex items-center">Sunset Sippers<InfoTooltip text="Uses Perth's real-time sunset & golden hour times (calculated astronomically). Highlights west-facing pubs with verified prices. Best spots to watch the sun go down with a pint." /></h3>
+                <h3 className="text-base sm:text-lg font-bold font-heading text-stone-800 flex items-center">Sunset Sippers<InfoTooltip text="Real-time sunset and golden hour times for Perth. We pick west-facing pubs so you can watch the sun go down with a pint." /></h3>
                 {isGoldenHour && (
                   <span className="inline-flex items-center rounded-full bg-amber-500 text-white text-[10px] font-semibold px-2 py-0.5 animate-pulse shadow-sm">
                     GOLDEN HOUR
@@ -378,9 +378,9 @@ export default function SunsetSippers({ pubs, userLocation }: SunsetSippersProps
                 : 'bg-orange-50 text-stone-500'
             }`}>
               {isSunset && E.sunset + ' Quick! Grab a pint and face west!'}
-              {isGoldenHour && !isSunset && E.camera + ' Golden hour lighting ' + E.dash + ' your pint has never looked better'}
-              {!isGoldenHour && !isSunset && !isNighttime && E.sun + ` Golden hour starts at ${formatTime(sunTimes.goldenHourStart)} ` + E.dash + ' plan your sesh'}
-              {isNighttime && E.crescent_moon + ' The sun will rise again tomorrow ' + E.dash + ' rest up, champion'}
+              {isGoldenHour && !isSunset && E.camera + ' Golden hour lighting. Your pint has never looked better'}
+              {!isGoldenHour && !isSunset && !isNighttime && E.sun + ` Golden hour starts at ${formatTime(sunTimes.goldenHourStart)}. Plan your sesh`}
+              {isNighttime && E.crescent_moon + ' The sun will rise again tomorrow. Rest up, champion'}
             </div>
           </div>
         )}

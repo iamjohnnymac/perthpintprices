@@ -80,10 +80,10 @@ export default function PriceReporter({ pubSlug, pubName, currentPrice }: PriceR
     return (
       <button
         onClick={handleOpen}
-        className="w-full flex items-center justify-center gap-2 py-3 px-4 bg-ink text-white border-3 border-ink rounded-pill font-mono text-sm font-bold uppercase tracking-[0.05em] shadow-hard-sm hover:translate-x-[1.5px] hover:translate-y-[1.5px] hover:shadow-hard-hover transition-all active:scale-[0.98]"
+        className="flex items-center gap-1.5 font-mono text-[0.75rem] font-bold text-gray-mid hover:text-amber transition-colors"
       >
-        <PenLine className="w-4 h-4" />
-        <span>Report Current Price</span>
+        <PenLine className="w-3.5 h-3.5" />
+        <span>Report a price update</span>
       </button>
     )
   }

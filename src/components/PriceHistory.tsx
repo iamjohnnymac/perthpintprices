@@ -31,7 +31,7 @@ export default function PriceHistory({ pubId, currentPrice }: PriceHistoryProps)
           .select('price, happy_hour_price, beer_type, changed_at, change_type, source')
           .eq('pub_id', pubId)
           .order('changed_at', { ascending: true })
-        
+
         if (!error && data) {
           setHistory(data.map(row => ({
             price: row.price != null ? Number(row.price) : null,
@@ -50,13 +50,13 @@ export default function PriceHistory({ pubId, currentPrice }: PriceHistoryProps)
 
   if (isLoading) {
     return (
-      <div className="h-24 bg-stone-50 rounded-xl animate-pulse" />
+      <div className="h-24 bg-off-white rounded-card animate-pulse" />
     )
   }
 
-  // Need at least 1 data point
+  // Need at least 2 data points for meaningful history
   const pricePoints = history.filter(h => h.price !== null)
-  if (pricePoints.length === 0) return null
+  if (pricePoints.length <= 1) return null
 
   // Calculate trend
   const firstPrice = pricePoints[0].price!
@@ -89,18 +89,18 @@ export default function PriceHistory({ pubId, currentPrice }: PriceHistoryProps)
   })
   const fillPath = `M${padding},${h - padding} L${fillPoints.join(' L')} L${w - padding},${h - padding} Z`
 
-  const lineColor = trendUp ? '#dc2626' : trendFlat ? '#E8820C' : '#E8820C'
+  const lineColor = trendUp ? '#dc2626' : '#E8820C'
   const fillColor = trendUp ? 'rgba(220,38,38,0.08)' : trendFlat ? 'rgba(212,160,23,0.08)' : 'rgba(22,163,74,0.08)'
 
   return (
-    <div className="bg-stone-50/80 rounded-xl border border-stone-200/60 p-4">
+    <div className="bg-off-white rounded-card border border-gray-light p-4">
       <div className="flex items-center justify-between mb-2">
-        <h3 className="text-sm font-heading font-semibold text-ink flex items-center gap-2">
+        <h3 className="text-sm font-mono font-semibold text-ink flex items-center gap-2">
           <TrendingUp className="w-4 h-4 inline" /> Price History
         </h3>
         <div className="flex items-center gap-2">
           {!trendFlat && (
-            <span className={`text-xs font-medium ${trendUp ? 'text-red-500' : 'text-ink'}`}>
+            <span className={`text-xs font-medium ${trendUp ? 'text-red' : 'text-ink'}`}>
               {trendUp ? '▲' : '▼'} {changePercent}%
             </span>
           )}
@@ -127,36 +127,26 @@ export default function PriceHistory({ pubId, currentPrice }: PriceHistoryProps)
 
       {/* Timeline labels */}
       <div className="flex items-center justify-between mt-2">
-        <span className="text-[10px] text-stone-400">
+        <span className="text-[10px] text-gray-mid">
           {formatDate(pricePoints[0].changedAt)}
         </span>
-        {pricePoints.length > 1 && (
-          <span className="text-[10px] text-stone-400">
-            {formatDate(pricePoints[pricePoints.length - 1].changedAt)}
-          </span>
-        )}
+        <span className="text-[10px] text-gray-mid">
+          {formatDate(pricePoints[pricePoints.length - 1].changedAt)}
+        </span>
       </div>
 
       {/* Price history entries (last 3) */}
-      {pricePoints.length > 1 && (
-        <div className="mt-3 space-y-2 border-t border-stone-200/60 pt-3">
-          {pricePoints.slice(-3).reverse().map((point, i) => (
-            <div key={i} className="flex items-center justify-between text-xs">
-              <span className="text-stone-500">{formatDateFull(point.changedAt)}</span>
-              <span className="font-mono font-medium text-ink">
-                ${point.price!.toFixed(2)}
-                {point.beerType && <span className="text-stone-400 font-sans ml-1">({point.beerType})</span>}
-              </span>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {pricePoints.length === 1 && (
-        <p className="text-xs text-stone-400 mt-2 text-center">
-          Price tracking started. Trend data builds over time
-        </p>
-      )}
+      <div className="mt-3 space-y-2 border-t border-gray-light pt-3">
+        {pricePoints.slice(-3).reverse().map((point, i) => (
+          <div key={i} className="flex items-center justify-between text-xs">
+            <span className="text-gray-mid">{formatDateFull(point.changedAt)}</span>
+            <span className="font-mono font-medium text-ink">
+              ${point.price!.toFixed(2)}
+              {point.beerType && <span className="text-gray-mid font-body ml-1">({point.beerType})</span>}
+            </span>
+          </div>
+        ))}
+      </div>
     </div>
   )
 }

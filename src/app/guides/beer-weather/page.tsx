@@ -3,12 +3,12 @@ import BreadcrumbJsonLd from '@/components/BreadcrumbJsonLd'
 import BeerWeatherPage from './BeerWeatherPage'
 
 export const metadata: Metadata = {
-  title: "Beer Weather Perth: Weather-Matched Pub Picks | Arvo",
-  description: "What's the weather saying about your next pint? Get real-time Perth weather matched to the perfect pub. Scorcher? Hit a beer garden. Rainy? Find a cozy corner.",
+  title: "Beer Weather Perth | Arvo",
+  description: "What's the weather saying about your next pint? Live Perth weather matched to pub picks. Scorcher? Hit a beer garden. Rainy? Find a cozy corner.",
   alternates: { canonical: 'https://perthpintprices.com/guides/beer-weather' },
   openGraph: {
-    title: "Beer Weather Perth: Weather-Matched Pub Picks | Arvo",
-    description: "Real-time Perth weather matched to the perfect pub pick.",
+    title: "Beer Weather Perth | Arvo",
+    description: "Live Perth weather matched to the right pub for the day.",
     url: 'https://perthpintprices.com/guides/beer-weather',
     type: 'website',
     siteName: 'Arvo',

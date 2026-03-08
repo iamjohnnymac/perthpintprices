@@ -1,2 +1,2 @@
-import { redirect } from 'next/navigation'
-export default function GuidesPage() { redirect('/discover') }
+import { permanentRedirect } from 'next/navigation'
+export default function GuidesPage() { permanentRedirect('/discover') }

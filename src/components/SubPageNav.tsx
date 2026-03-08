@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import MobileNav from '@/components/MobileNav'
+import PintIndexBadge from '@/components/PintIndexBadge'
 
 interface BreadcrumbLink {
   label: string
@@ -58,6 +59,8 @@ export default function SubPageNav({ breadcrumbs, title, subtitle, showSubmit = 
       </div>
 
       <div className="flex items-center gap-2">
+        <PintIndexBadge />
+
         {/* Desktop nav links */}
         <nav className="hidden sm:flex items-center gap-1 mr-2">
           {navLinks.map((link) => (

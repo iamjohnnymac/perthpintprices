@@ -21,3 +21,13 @@ npm-debug.log*
 # misc
 .DS_Store
 *.pem
+
+# IDE
+.cursor/
+.vscode/
+
+# Playwright MCP cache
+.playwright-mcp/
+
+# Development screenshots
+*.png

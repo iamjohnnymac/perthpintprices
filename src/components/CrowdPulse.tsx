@@ -192,11 +192,11 @@ export default function CrowdPulse({ pubs, crowdReports, userLocation }: CrowdPu
               </div>
             )}
 
-            {/* Quiet Venues - Hidden Gems */}
+            {/* Quiet Venues */}
             {quietVenues.length > 0 && (
               <div className="mb-3">
                 <h4 className="text-xs font-semibold text-orange mb-2 flex items-center gap-1">
-                  {E.green_circle} HIDDEN GEMS {E.dash} Undervalued Venues
+                  {E.green_circle} QUIET SPOTS {E.dash} Low Crowd, Low Price
                 </h4>
                 <div className="space-y-1.5">
                   {quietVenues.map(({ pub, report }) => {

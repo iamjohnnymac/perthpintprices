@@ -16,9 +16,9 @@ export function getFreshness(lastVerified: string | null): FreshnessInfo {
       level: 'unknown',
       label: 'Unverified',
       daysAgo: null,
-      color: 'text-stone-400',
-      bgColor: 'bg-stone-50',
-      borderColor: 'border-stone-200',
+      color: 'text-gray-mid',
+      bgColor: 'bg-off-white',
+      borderColor: 'border-gray-light',
       icon: '-',
     }
   }
@@ -33,9 +33,9 @@ export function getFreshness(lastVerified: string | null): FreshnessInfo {
       level: 'fresh',
       label: 'Fresh',
       daysAgo,
-      color: 'text-orange-700',
-      bgColor: 'bg-orange-50',
-      borderColor: 'border-orange-200',
+      color: 'text-green',
+      bgColor: 'bg-green-pale',
+      borderColor: 'border-green',
       icon: '●',
     }
   }
@@ -45,9 +45,9 @@ export function getFreshness(lastVerified: string | null): FreshnessInfo {
       level: 'aging',
       label: 'Aging',
       daysAgo,
-      color: 'text-amber-600',
-      bgColor: 'bg-amber-50',
-      borderColor: 'border-amber-200',
+      color: 'text-amber',
+      bgColor: 'bg-amber-pale',
+      borderColor: 'border-amber',
       icon: '◐',
     }
   }
@@ -56,9 +56,9 @@ export function getFreshness(lastVerified: string | null): FreshnessInfo {
     level: 'stale',
     label: 'Stale',
     daysAgo,
-    color: 'text-red-500',
-    bgColor: 'bg-red-50',
-    borderColor: 'border-red-200',
+    color: 'text-red',
+    bgColor: 'bg-red-pale',
+    borderColor: 'border-red',
     icon: '○',
   }
 }
@@ -69,7 +69,7 @@ export function formatVerifiedDate(lastVerified: string | null): string {
   const now = new Date()
   const diffMs = now.getTime() - date.getTime()
   const daysAgo = Math.floor(diffMs / (1000 * 60 * 60 * 24))
-  
+
   if (daysAgo === 0) return 'Verified today'
   if (daysAgo === 1) return 'Verified yesterday'
   if (daysAgo < 7) return `Verified ${daysAgo}d ago`

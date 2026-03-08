@@ -1,6 +1,6 @@
 import { Metadata } from 'next'
 import HomeClient from './HomeClient'
-import { getSiteStats } from '@/lib/supabase'
+import { getSiteStats, getPubs } from '@/lib/supabase'
 
 export async function generateMetadata(): Promise<Metadata> {
   const stats = await getSiteStats()
@@ -39,14 +39,70 @@ export async function generateMetadata(): Promise<Metadata> {
 
 // JSON-LD structured data for homepage
 function HomeJsonLd() {
-  const jsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'WebSite',
-    name: 'Arvo',
-    alternateName: 'Perth Pint Prices',
-    url: 'https://perthpintprices.com',
-    description: "Perth's pint prices, sorted. Real prices from real people.",
-  }
+  const jsonLd = [
+    {
+      '@context': 'https://schema.org',
+      '@type': 'WebSite',
+      name: 'Arvo',
+      alternateName: 'Perth Pint Prices',
+      url: 'https://perthpintprices.com',
+      description: "Perth's pint prices, sorted. Real prices from real people.",
+    },
+    {
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      mainEntity: [
+        {
+          '@type': 'Question',
+          name: 'How accurate are the prices?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'Every price is verified through menus, direct calls, or community submissions. If we haven\'t confirmed a price, you\'ll see "Price TBC" instead of a guess.',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: 'How often are prices updated?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'Arvo runs automated checks weekly and accepts community submissions around the clock. Every price includes a "last verified" date so you know how fresh it is.',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: 'What does the price represent?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'All prices shown are for a standard pint (570ml) of the cheapest tap beer available at each venue. Happy hour prices are shown when they\'re currently active.',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: 'Can I submit a price?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'Absolutely. Hit "Submit a Price" in the top nav or use the Report button on any pub page.',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: 'Why is a pub showing "Price TBC"?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'We only display prices we\'ve confirmed. "Price TBC" means we know the pub exists but haven\'t verified its current pint price yet. You can help by submitting it!',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: 'Is Arvo free?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: '100%. No app download. No sign-up. Just prices.',
+          },
+        },
+      ],
+    },
+  ]
 
   return (
     <script
@@ -58,11 +114,12 @@ function HomeJsonLd() {
 
 export const revalidate = 300
 
-export default function HomePage() {
+export default async function HomePage() {
+  const [pubs, stats] = await Promise.all([getPubs(), getSiteStats()])
   return (
     <>
       <HomeJsonLd />
-      <HomeClient />
+      <HomeClient initialPubs={pubs} initialStats={stats} />
     </>
   )
 }

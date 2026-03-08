@@ -1,12 +1,12 @@
 import { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Guides: Curated Perth Pub Picks for Every Occasion | Arvo',
-  description: "Perth's best pub guides: beer weather picks, sunset spots, dad-friendly pubs, TAB venues, rainy day refuges, and more. Curated for every occasion.",
+  title: 'Perth Pub Guides: Weather, Sunsets, Dad Bars & More | Arvo',
+  description: "Perth pub guides for every mood. Beer weather picks, sunset spots, dad-friendly pubs, TAB venues, rainy day refuges, and more.",
   alternates: { canonical: 'https://perthpintprices.com/guides' },
   openGraph: {
-    title: 'Curated Perth Pub Guides | Arvo',
-    description: "Beer weather picks, sunset spots, dad-friendly pubs, and more curated guides.",
+    title: 'Perth Pub Guides | Arvo',
+    description: "Beer weather picks, sunset spots, dad-friendly pubs, and more.",
     type: 'website',
     siteName: 'Arvo',
   },

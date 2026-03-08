@@ -10,7 +10,7 @@ export default function FAQ() {
   const faqs = [
     {
       q: 'How accurate are the prices?',
-      a: 'Real prices from real people. Every price is verified through menus, direct calls, or community submissions. No scraping, no guessing \u2014 if we don\'t have a confirmed price, you\'ll see "Price TBC".',
+      a: 'Every price is verified through menus, direct calls, or community submissions. If we haven\'t confirmed a price, you\'ll see "Price TBC" instead of a guess.',
     },
     {
       q: 'How often are prices updated?',
