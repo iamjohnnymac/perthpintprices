@@ -28,7 +28,7 @@ export default async function PintCrawlPage() {
         { name: 'Pint Crawl' },
       ]} />
       <Suspense fallback={
-        <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="min-h-screen bg-[#FDF8F0] flex items-center justify-center">
           <p className="font-mono text-stone-400 animate-pulse text-sm">Loading crawl planner...</p>
         </div>
       }>

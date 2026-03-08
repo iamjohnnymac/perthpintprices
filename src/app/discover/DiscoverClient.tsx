@@ -376,7 +376,7 @@ export default function DiscoverClient() {
   // ─── Loading State ───
   if (isLoading) {
     return (
-      <main className="min-h-screen bg-white">
+      <main className="min-h-screen bg-[#FDF8F0]">
       <h1 className="sr-only">Discover Perth's Best Pints</h1>
         <SubPageNav breadcrumbs={[{ label: 'Discover' }]} />
         <div className="flex items-center justify-center py-20">
@@ -387,7 +387,7 @@ export default function DiscoverClient() {
   }
 
   return (
-    <main className="min-h-screen bg-white">
+    <main className="min-h-screen bg-[#FDF8F0]">
       <SubPageNav breadcrumbs={[{ label: 'Discover' }]} />
 
       <div className="max-w-container mx-auto px-6">

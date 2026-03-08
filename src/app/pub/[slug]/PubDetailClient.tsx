@@ -76,7 +76,7 @@ export default function PubDetailClient({ pub, nearbyPubs, avgPrice }: PubDetail
   const priceDiff = pub.effectivePrice && avgPrice ? pub.effectivePrice - avgPrice : 0
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-[#FDF8F0]">
       {/* Navigation */}
       <header className="max-w-container mx-auto px-6 py-6 flex items-center justify-between">
         <div className="flex items-center gap-3">

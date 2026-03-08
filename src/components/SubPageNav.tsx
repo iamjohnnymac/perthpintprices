@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import MobileNav from '@/components/MobileNav'
 
 interface BreadcrumbLink {
   label: string
@@ -47,14 +48,37 @@ export default function SubPageNav({ breadcrumbs, title, subtitle, showSubmit = 
           </div>
         ) : null}
       </div>
-      {showSubmit && (
-        <Link
-          href="/?submit=1"
-          className="font-mono text-[0.65rem] sm:text-[0.72rem] font-bold uppercase tracking-[0.05em] text-ink bg-white border-3 border-ink rounded-pill px-3 sm:px-5 py-2 sm:py-2.5 shadow-hard-sm hover:translate-x-[1.5px] hover:translate-y-[1.5px] hover:shadow-hard-hover transition-all no-underline flex-shrink-0"
-        >
-          Submit a Price
-        </Link>
-      )}
+
+      <div className="flex items-center gap-2">
+        {/* Desktop nav links */}
+        <nav className="hidden sm:flex items-center gap-1 mr-2">
+          {[
+            { href: '/discover', label: 'Discover' },
+            { href: '/happy-hour', label: 'Happy Hours' },
+            { href: '/leaderboard', label: 'Leaderboard' },
+          ].map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className="font-mono text-[0.72rem] font-bold uppercase tracking-[0.05em] text-gray-mid hover:text-amber transition-colors no-underline px-3 py-1.5"
+            >
+              {link.label}
+            </Link>
+          ))}
+        </nav>
+
+        {showSubmit && (
+          <Link
+            href="/?submit=1"
+            className="hidden sm:inline-flex font-mono text-[0.65rem] sm:text-[0.72rem] font-bold uppercase tracking-[0.05em] text-ink bg-white border-3 border-ink rounded-pill px-3 sm:px-5 py-2 sm:py-2.5 shadow-hard-sm hover:translate-x-[1.5px] hover:translate-y-[1.5px] hover:shadow-hard-hover transition-all no-underline flex-shrink-0"
+          >
+            Submit a Price
+          </Link>
+        )}
+
+        {/* Mobile hamburger */}
+        <MobileNav />
+      </div>
     </header>
   )
 }

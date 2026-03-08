@@ -33,7 +33,7 @@ export default function FAQ() {
   ]
 
   return (
-    <section className="py-14 px-6 bg-off-white">
+    <section className="py-14 px-6 bg-white">
       <div className="max-w-container mx-auto">
         <div className="flex items-center gap-2 mb-1.5">
           <span className="w-3.5 h-3.5 rounded-[4px] bg-amber" />

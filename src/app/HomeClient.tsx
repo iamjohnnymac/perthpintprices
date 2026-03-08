@@ -17,12 +17,14 @@ import FAQ from '@/components/FAQ'
 import Footer from '@/components/Footer'
 import SubmitPubForm from '@/components/SubmitPubForm'
 import CrowdReporter from '@/components/CrowdReporter'
+import MobileNav from '@/components/MobileNav'
+import ScrollReveal from '@/components/ScrollReveal'
 
 const INITIAL_PUB_COUNT = 10
 
 function LoadingSkeleton() {
   return (
-    <main className="min-h-screen bg-white flex items-center justify-center">
+    <main className="min-h-screen bg-[#FDF8F0] flex items-center justify-center">
       <div className="flex flex-col items-center gap-3">
         <div className="w-16 h-16 border-4 border-stone-300 border-t-amber rounded-full animate-spin"></div>
         <span className="text-stone-600 font-medium text-lg">Loading pubs...</span>
@@ -266,7 +268,7 @@ function HomeContent() {
   }
 
   return (
-    <main className="min-h-screen bg-white">
+    <main className="min-h-screen bg-[#FDF8F0]">
       {/* ═══ HEADER - minimal monospace with pill CTA ═══ */}
       <header ref={headerRef} className="max-w-container mx-auto px-6 py-6 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2 no-underline">
@@ -290,13 +292,16 @@ function HomeContent() {
             </Link>
           ))}
         </nav>
-        <button
-          onClick={() => setShowSubmitForm(true)}
-          className="font-mono text-[0.72rem] font-bold uppercase tracking-[0.05em] text-ink bg-white border-3 border-ink rounded-pill px-5 py-2.5 shadow-hard-sm hover:translate-x-[1.5px] hover:translate-y-[1.5px] hover:shadow-hard-hover transition-all cursor-pointer"
-          data-submit-trigger
-        >
-          Submit a Price
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setShowSubmitForm(true)}
+            className="hidden sm:inline-flex font-mono text-[0.72rem] font-bold uppercase tracking-[0.05em] text-ink bg-white border-3 border-ink rounded-pill px-5 py-2.5 shadow-hard-sm hover:translate-x-[1.5px] hover:translate-y-[1.5px] hover:shadow-hard-hover transition-all cursor-pointer"
+            data-submit-trigger
+          >
+            Submit a Price
+          </button>
+          <MobileNav onSubmitClick={() => setShowSubmitForm(true)} />
+        </div>
       </header>
 
       {/* ═══ HERO - beer glass, dots, stat strip ═══ */}
@@ -375,9 +380,15 @@ function HomeContent() {
         />
       </div>
 
-      <HowItWorks venueCount={pubs.length} suburbCount={suburbs.length} />
-      <SocialProof venueCount={pubs.length} suburbCount={suburbs.length} avgPrice={stats.avgPrice} cheapestPrice={stats.minPrice} priciestPrice={stats.maxPriceValue} />
-      <FAQ />
+      <ScrollReveal>
+        <HowItWorks venueCount={pubs.length} suburbCount={suburbs.length} />
+      </ScrollReveal>
+      <ScrollReveal delay={100}>
+        <SocialProof venueCount={pubs.length} suburbCount={suburbs.length} avgPrice={stats.avgPrice} cheapestPrice={stats.minPrice} priciestPrice={stats.maxPriceValue} />
+      </ScrollReveal>
+      <ScrollReveal>
+        <FAQ />
+      </ScrollReveal>
       <Footer />
 
       <SubmitPubForm isOpen={showSubmitForm} onClose={() => setShowSubmitForm(false)} userLocation={userLocation} />

@@ -50,7 +50,7 @@ export default function WeeklyClient() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-white">
+      <div className="min-h-screen bg-[#FDF8F0]">
         <SubPageNav title="Weekly Report" subtitle="This week in Perth pints" />
         <div className="max-w-2xl mx-auto px-4 py-16 text-center">
           <p className="font-mono text-stone-400 animate-pulse text-sm">Loading weekly report...</p>
@@ -61,7 +61,7 @@ export default function WeeklyClient() {
 
   if (!data || data.avgPrice === undefined) {
     return (
-      <div className="min-h-screen bg-white">
+      <div className="min-h-screen bg-[#FDF8F0]">
         <SubPageNav title="Weekly Report" subtitle="This week in Perth pints" />
         <div className="max-w-2xl mx-auto px-4 py-16 text-center">
           <BarChart3 className="w-12 h-12 text-stone-300 mx-auto mb-4" />
@@ -77,7 +77,7 @@ export default function WeeklyClient() {
   })
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-[#FDF8F0]">
       <SubPageNav title="Weekly Report" subtitle="This week in Perth pints" />
 
       <main className="max-w-2xl mx-auto px-4 py-8 space-y-4">
@@ -205,7 +205,7 @@ export default function WeeklyClient() {
           <p className="text-stone-400 text-xs mb-3">Know a price? Help keep Perth honest.</p>
           <Link
             href="/submit"
-            className="inline-flex items-center gap-2 bg-ink text-white font-mono font-bold text-sm rounded-2xl px-6 py-3 hover:bg-ink/90 transition-colors"
+            className="inline-flex items-center gap-2 bg-amber text-white font-mono font-bold text-sm rounded-2xl px-6 py-3 hover:bg-amber/90 transition-colors"
           >
             <Beer className="w-4 h-4" /> Submit a Price
           </Link>

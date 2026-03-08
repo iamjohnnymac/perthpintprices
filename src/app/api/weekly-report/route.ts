@@ -71,6 +71,18 @@ export async function GET() {
       }
     }
 
+    // Use live verified prices for min/max (snapshots may have stale data)
+    const { data: liveMinMax } = await supabase
+      .from('pubs')
+      .select('price')
+      .eq('price_verified', true)
+      .not('price', 'is', null)
+      .order('price', { ascending: true })
+
+    const livePrices = (liveMinMax || []).map(p => Number(p.price)).filter(p => p > 0)
+    const liveMin = livePrices.length > 0 ? livePrices[0] : Number(latest.min_price)
+    const liveMax = livePrices.length > 0 ? livePrices[livePrices.length - 1] : Number(latest.max_price)
+
     // Compute week-over-week change
     const avgPrice = Number(latest.avg_price)
     const prevAvg = previous ? Number(previous.avg_price) : avgPrice
@@ -84,8 +96,8 @@ export async function GET() {
       avgChange,
       avgChangePct,
       medianPrice: Number(latest.median_price),
-      minPrice: Number(latest.min_price),
-      maxPrice: Number(latest.max_price),
+      minPrice: liveMin,
+      maxPrice: liveMax,
       totalPubs: latest.total_pubs,
       totalSuburbs: latest.total_suburbs,
       cheapestSuburb: latest.cheapest_suburb,

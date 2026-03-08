@@ -52,7 +52,7 @@ export default function LeaderboardClient() {
   }, [])
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-[#FDF8F0]">
       <SubPageNav title="Leaderboard" subtitle="Perth's top price reporters" />
 
       <div className="max-w-container mx-auto px-6 py-8">

@@ -7,7 +7,7 @@ export default function HowItWorks({ venueCount = 0, suburbCount = 0 }: HowItWor
   return (
     <>
       {/* Size Legend */}
-      <section className="bg-off-white py-14 px-6">
+      <section className="bg-white py-14 px-6">
         <div className="max-w-container mx-auto">
           <div className="flex items-center gap-2 mb-1.5">
             <span className="w-3.5 h-3.5 rounded-[4px] bg-amber" />
