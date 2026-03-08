@@ -59,6 +59,20 @@ export default function Footer() {
           </div>
         </div>
 
+        {/* Beer sizes — compact inline reference */}
+        <div className="flex items-center gap-4 mb-8 pt-2">
+          <span className="font-mono text-[0.6rem] font-bold uppercase tracking-[0.12em] text-white/30">Glass sizes</span>
+          {[
+            { name: 'Middy', ml: '285ml' },
+            { name: 'Schooner', ml: '425ml' },
+            { name: 'Pint', ml: '570ml' },
+          ].map((size) => (
+            <span key={size.name} className="font-mono text-[0.65rem] text-white/50">
+              <span className="font-bold text-white/70">{size.name}</span> {size.ml}
+            </span>
+          ))}
+        </div>
+
         {/* Divider */}
         <div className="border-t border-white/10 pt-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
           <p className="text-[0.75rem] text-white/40 leading-relaxed max-w-[400px]">
