@@ -62,7 +62,7 @@ export default function NotificationBell() {
       <div className="relative">
         <button
           className="relative p-2 rounded-full text-gray-400 cursor-not-allowed"
-          title="Notifications blocked — enable in browser settings"
+          title="Notifications blocked. Enable in browser settings"
           disabled
           onMouseEnter={() => setShowTooltip(true)}
           onMouseLeave={() => setShowTooltip(false)}
@@ -71,7 +71,7 @@ export default function NotificationBell() {
         </button>
         {showTooltip && (
           <div className="absolute right-0 top-full mt-1 px-3 py-1.5 bg-ink text-white text-[11px] rounded-lg whitespace-nowrap z-50 shadow-lg">
-            Notifications blocked — enable in browser settings
+            Notifications blocked. Enable in browser settings
           </div>
         )}
       </div>
@@ -88,7 +88,7 @@ export default function NotificationBell() {
             ? 'text-amber bg-amber/10 hover:bg-amber/20'
             : 'text-gray-500 hover:text-amber hover:bg-amber/5'
         } ${isLoading ? 'animate-pulse' : ''}`}
-        title={isSubscribed ? 'Alerts on — tap to disable' : 'Enable price alerts'}
+        title={isSubscribed ? 'Alerts on. Tap to disable' : 'Enable price alerts'}
         onMouseEnter={() => setShowTooltip(true)}
         onMouseLeave={() => setShowTooltip(false)}
       >

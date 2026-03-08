@@ -89,7 +89,7 @@ export function FilterSection({
           </select>
         )}
 
-        {/* Sort toggle — NEAREST always visible */}
+        {/* Sort toggle - NEAREST always visible */}
         <div className="bg-white border-3 border-ink rounded-pill overflow-hidden flex">
           <button
             onClick={() => setSortBy('price')}
@@ -111,7 +111,7 @@ export function FilterSection({
         </div>
       </div>
 
-      {/* Radius pills — only when sorting by nearest */}
+      {/* Radius pills - only when sorting by nearest */}
       {sortBy === 'nearest' && hasLocation && setNearbyRadius && (
         <div className="flex items-center gap-2">
           <span className="font-mono text-[0.65rem] font-bold uppercase tracking-[0.06em] text-gray-mid">Within</span>

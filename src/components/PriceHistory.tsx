@@ -105,7 +105,7 @@ export default function PriceHistory({ pubId, currentPrice }: PriceHistoryProps)
             </span>
           )}
           {trendFlat && (
-            <span className="text-xs font-medium text-amber">— Stable</span>
+            <span className="text-xs font-medium text-amber">- Stable</span>
           )}
         </div>
       </div>
@@ -154,7 +154,7 @@ export default function PriceHistory({ pubId, currentPrice }: PriceHistoryProps)
 
       {pricePoints.length === 1 && (
         <p className="text-xs text-stone-400 mt-2 text-center">
-          Price tracking started — trend data builds over time
+          Price tracking started. Trend data builds over time
         </p>
       )}
     </div>

@@ -88,11 +88,11 @@ export default function SuburbLeague({ pubs }: { pubs: Pub[] }) {
       const pos = i + 1
 
       if (pos === 5 && total > 5) {
-        items.push({ type: 'divider', label: '— Promotion Zone ↑ —', colorClass: 'bg-orange/10 text-orange border-orange/30' })
+        items.push({ type: 'divider', label: '- Promotion Zone ↑ -', colorClass: 'bg-orange/10 text-orange border-orange/30' })
       }
 
       if (pos === total - 2 && total > 6) {
-        items.push({ type: 'divider', label: '— Relegation Zone ↓ —', colorClass: 'bg-coral/10 text-coral border-coral/30' })
+        items.push({ type: 'divider', label: '- Relegation Zone ↓ -', colorClass: 'bg-coral/10 text-coral border-coral/30' })
       }
 
       const isRelegation = pos > total - 3 && total > 6
@@ -127,10 +127,10 @@ export default function SuburbLeague({ pubs }: { pubs: Pub[] }) {
             </h3>
             <p className="text-xs text-stone-500 mt-0.5">
               {isExpanded
-                ? `${total} suburbs ${sortLabel} — tap columns to re-sort`
+                ? `${total} suburbs ${sortLabel}. Tap columns to re-sort`
                 : leader
-                  ? `${leader.suburb} leads at $${leader.avgPrice.toFixed(2)} avg — tap to explore`
-                  : 'Ranked by average pint price — footy ladder style'}
+                  ? `${leader.suburb} leads at $${leader.avgPrice.toFixed(2)} avg. Tap to explore`
+                  : 'Ranked by average pint price, footy ladder style'}
             </p>
           </div>
           <svg width="16" height="16" viewBox="0 0 16 16" className={`text-stone-400 transition-transform ${isExpanded ? 'rotate-180' : ''}`}>

@@ -152,7 +152,7 @@ export default function TonightsMoves({ pubs, userLocation }: TonightsMovesProps
               <div className="p-3 rounded-xl bg-gradient-to-r from-orange-50 to-yellow-50 border border-orange-200">
                 <h4 className="text-xs font-semibold text-orange mb-1 flex items-center gap-1">
                   {E.star} Market Tip
-                  <InfoTooltip text="Our algorithm picks the best value pub right now — weighing price, active happy hour bonus, beer quality, and suburb. Rescores as happy hours start and end." />
+                  <InfoTooltip text="Our algorithm picks the best value pub right now, weighing price, active happy hour bonus, beer quality, and suburb. Rescores as happy hours start and end." />
                 </h4>
                 <div className="flex items-center justify-between">
                   <div>

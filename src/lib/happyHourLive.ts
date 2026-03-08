@@ -125,7 +125,7 @@ export function getHappyHourStatus(pub: {
   const hhStart = pub.happyHourStart ?? null
   const hhEnd = pub.happyHourEnd ?? null
   
-  // No happy hour timing data — can't determine if active
+  // No happy hour timing data - can't determine if active
   if (!hhDays || !hhStart || !hhEnd) {
     return {
       isActive: false,

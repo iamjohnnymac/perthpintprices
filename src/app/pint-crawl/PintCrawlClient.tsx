@@ -381,15 +381,15 @@ export default function PintCrawlClient({ pubs }: { pubs: Pub[] }) {
     if (typeof navigator !== 'undefined' && navigator.share) {
       try {
         await navigator.share({
-          title: `Arvo Pint Crawl — ${route.length} stops`,
-          text: `Check out this pub crawl: ${route.map(s => s.pub.name).join(' → ')} — $${totalCost.toFixed(2)} total`,
+          title: `Arvo Pint Crawl: ${route.length} stops`,
+          text: `Check out this pub crawl: ${route.map(s => s.pub.name).join(' → ')} - $${totalCost.toFixed(2)} total`,
           url,
         })
         setShared(true)
         setTimeout(() => setShared(false), 2000)
         return
       } catch {
-        // User cancelled or API failed — fall through to clipboard
+        // User cancelled or API failed - fall through to clipboard
       }
     }
     // Fallback: copy link to clipboard
@@ -937,7 +937,7 @@ export default function PintCrawlClient({ pubs }: { pubs: Pub[] }) {
                   className="w-full bg-ink text-white mono font-bold text-base rounded-2xl py-4 hover:bg-ink/90 transition-colors"
                 >
                   {currentStop < route.length - 1
-                    ? <><CircleCheck className="w-3.5 h-3.5 inline" /> Done — Next Stop</>
+                    ? <><CircleCheck className="w-3.5 h-3.5 inline" /> Done. Next Stop</>
                     : <><Flag className="w-3.5 h-3.5 inline" /> Finish Crawl!</>}
                 </button>
 

@@ -93,7 +93,7 @@ export default function WeeklyClient() {
           <p className="text-stone-400 text-sm mt-1">Week of {weekLabel}</p>
         </div>
 
-        {/* Big Number — Average Price */}
+        {/* Big Number - Average Price */}
         <div className="border-3 border-ink rounded-card shadow-hard-sm p-5 bg-white">
           <p className="font-mono text-xs text-stone-400 uppercase mb-1">Average Pint Price</p>
           <div className="flex items-baseline gap-3">
