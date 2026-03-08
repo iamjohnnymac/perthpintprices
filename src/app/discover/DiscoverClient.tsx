@@ -1,9 +1,9 @@
 'use client'
 
-import { useState, useEffect, useMemo, useRef } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import Link from 'next/link'
 import { Pub } from '@/types/pub'
-import { getPubs, getCrowdLevels, CrowdReport, supabase } from '@/lib/supabase'
+import { getPubs, getCrowdLevels, CrowdReport } from '@/lib/supabase'
 import { getHappyHourStatus } from '@/lib/happyHour'
 import { getDistanceKm, formatDistance } from '@/lib/location'
 import SubPageNav from '@/components/SubPageNav'
@@ -11,107 +11,9 @@ import Footer from '@/components/Footer'
 import { Beer, Clock, Tag } from 'lucide-react'
 import LucideIcon from '@/components/LucideIcon'
 
-/* ─── Types ─── */
-interface PriceSnapshot {
-  snapshot_date: string
-  avg_price: number
-  median_price: number
-  min_price: number
-  max_price: number
-  total_pubs: number
-  total_suburbs: number
-  cheapest_suburb: string
-  cheapest_suburb_avg: number
-  most_expensive_suburb: string
-  most_expensive_suburb_avg: number
-  price_distribution: Record<string, number>
-}
-
 /* ─── Helpers ─── */
 function getPerthTime(): Date {
   return new Date(new Date().toLocaleString('en-US', { timeZone: 'Australia/Perth' }))
-}
-
-/* ─── Inline Sparkline (compact) ─── */
-function MiniSparkline({ data, width = 120, height = 32, color: colorOverride }: { data: number[]; width?: number; height?: number; color?: string }) {
-  if (data.length < 2) return null
-  const min = Math.min(...data) - 0.05
-  const max = Math.max(...data) + 0.05
-  const range = max - min || 1
-  const points = data.map((val, i) => {
-    const x = (i / (data.length - 1)) * width
-    const y = height - ((val - min) / range) * (height - 4) - 2
-    return `${x},${y}`
-  }).join(' ')
-  const trend = data[data.length - 1] - data[0]
-  const color = colorOverride || (trend > 0 ? '#171717' : '#D4740A')
-  return (
-    <svg width={width} height={height} className="overflow-visible">
-      <polyline points={points} fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-      <circle cx={width} cy={parseFloat(points.split(' ').pop()!.split(',')[1])} r="3" fill={color} stroke="white" strokeWidth="1.5" />
-    </svg>
-  )
-}
-
-/* ─── Full Sparkline with tooltip ─── */
-function FullSparkline({ data, snapshots, width = 280, height = 60 }: { data: number[]; snapshots: PriceSnapshot[]; width?: number; height?: number }) {
-  const svgRef = useRef<SVGSVGElement>(null)
-  const [tooltip, setTooltip] = useState<{ x: number; y: number; label: string; price: number; visible: boolean }>({ x: 0, y: 0, label: '', price: 0, visible: false })
-  if (data.length < 2) return null
-  const min = Math.min(...data) - 0.1
-  const max = Math.max(...data) + 0.1
-  const range = max - min || 1
-  const pts = data.map((val, i) => {
-    const x = (i / (data.length - 1)) * width
-    const y = height - ((val - min) / range) * (height - 8) - 4
-    return { x, y, val }
-  })
-  const polyline = pts.map(p => `${p.x},${p.y}`).join(' ')
-  const trend = data[data.length - 1] - data[0]
-  const color = trend > 0 ? '#171717' : '#D4740A'
-  const gradId = 'sparkGrad-discover'
-  const area = `0,${height} 0,${pts[0].y} ${polyline} ${width},${pts[pts.length - 1].y} ${width},${height}`
-
-  const handleMove = (e: React.MouseEvent<SVGSVGElement>) => {
-    const svg = svgRef.current
-    if (!svg) return
-    const rect = svg.getBoundingClientRect()
-    const mx = (e.clientX - rect.left) * (width / rect.width)
-    let ci = 0, cd = Infinity
-    pts.forEach((p, i) => { const d = Math.abs(p.x - mx); if (d < cd) { cd = d; ci = i } })
-    const snap = snapshots[ci]
-    const date = new Date(snap.snapshot_date)
-    setTooltip({ x: pts[ci].x, y: pts[ci].y, label: date.toLocaleDateString('en-AU', { month: 'short', year: '2-digit' }), price: data[ci], visible: true })
-  }
-
-  return (
-    <div className="relative">
-      <svg ref={svgRef} width={width} height={height} className="overflow-visible cursor-crosshair" onMouseMove={handleMove} onMouseLeave={() => setTooltip(t => ({ ...t, visible: false }))}>
-        <defs>
-          <linearGradient id={gradId} x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor={color} stopOpacity="0.25" />
-            <stop offset="100%" stopColor={color} stopOpacity="0.02" />
-          </linearGradient>
-        </defs>
-        <polygon points={area} fill={`url(#${gradId})`} />
-        <polyline points={polyline} fill="none" stroke={color} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-        {tooltip.visible ? (
-          <>
-            <line x1={tooltip.x} y1={0} x2={tooltip.x} y2={height} stroke={color} strokeWidth="1" strokeDasharray="3,3" opacity="0.5" />
-            <circle cx={tooltip.x} cy={tooltip.y} r="5" fill={color} stroke="white" strokeWidth="2" />
-          </>
-        ) : (
-          <circle cx={width} cy={pts[pts.length - 1].y} r="4" fill={color} stroke="white" strokeWidth="2" />
-        )}
-      </svg>
-      {tooltip.visible && (
-        <div className="absolute z-50 bg-ink text-white text-xs rounded px-2 py-1 pointer-events-none whitespace-nowrap shadow-lg" style={{ left: tooltip.x, top: tooltip.y - 36, transform: tooltip.x > width * 0.75 ? 'translateX(-100%)' : tooltip.x < width * 0.25 ? 'translateX(0)' : 'translateX(-50%)' }}>
-          <span className="font-bold">${tooltip.price.toFixed(2)}</span>
-          <span className="text-white/60 ml-1">{tooltip.label}</span>
-        </div>
-      )}
-    </div>
-  )
 }
 
 /* ════════════════════════════════════════════════════════════
@@ -122,8 +24,6 @@ export default function DiscoverClient() {
   const [crowdReports, setCrowdReports] = useState<Record<string, CrowdReport>>({})
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null)
   const [isLoading, setIsLoading] = useState(true)
-  const [snapshots, setSnapshots] = useState<PriceSnapshot[]>([])
-  const [indexExpanded, setIndexExpanded] = useState(false)
   const [perthTime, setPerthTime] = useState(getPerthTime)
 
   // ─── Data Fetching ───
@@ -135,27 +35,6 @@ export default function DiscoverClient() {
       setIsLoading(false)
     }
     load()
-  }, [])
-
-  useEffect(() => {
-    async function fetchSnapshots() {
-      const { data, error } = await supabase
-        .from('price_snapshots')
-        .select('*')
-        .order('snapshot_date', { ascending: true })
-      if (data && !error) {
-        setSnapshots(data.map((d: any) => ({
-          ...d,
-          avg_price: parseFloat(d.avg_price),
-          median_price: parseFloat(d.median_price),
-          min_price: parseFloat(d.min_price),
-          max_price: parseFloat(d.max_price),
-          cheapest_suburb_avg: parseFloat(d.cheapest_suburb_avg),
-          most_expensive_suburb_avg: parseFloat(d.most_expensive_suburb_avg),
-        })))
-      }
-    }
-    fetchSnapshots()
   }, [])
 
   useEffect(() => {
@@ -210,20 +89,6 @@ export default function DiscoverClient() {
     happy: pubs.filter(p => p.happyHour !== null && p.happyHour !== '').length,
   }), [pubs, verifiedPubs])
 
-  // Pint Index data
-  const pintIndex = useMemo(() => {
-    if (snapshots.length === 0) return null
-    const current = snapshots[snapshots.length - 1]
-    const previous = snapshots.length >= 2 ? snapshots[snapshots.length - 2] : null
-    const oldest = snapshots[0]
-    const monthChange = previous ? current.avg_price - previous.avg_price : 0
-    const monthPct = previous ? (monthChange / previous.avg_price) * 100 : 0
-    const yearChange = current.avg_price - oldest.avg_price
-    const yearPct = (yearChange / oldest.avg_price) * 100
-    const sparkData = snapshots.map(s => s.avg_price)
-    return { current, previous, oldest, monthChange, monthPct, yearChange, yearPct, sparkData }
-  }, [snapshots])
-
   // ─── Loading State ───
   if (isLoading) {
     return (
@@ -241,117 +106,6 @@ export default function DiscoverClient() {
     <main className="min-h-screen bg-[#FDF8F0]">
       <h1 className="sr-only">Discover Perth&apos;s Best Pints</h1>
       <SubPageNav breadcrumbs={[{ label: 'Discover' }]} />
-
-      {/* ════════════════════════════════════════════
-          PINT INDEX TICKER
-          ════════════════════════════════════════════ */}
-      {pintIndex && (
-        <div className="max-w-container mx-auto px-6 pt-4">
-          <div
-            className="bg-ink border-3 border-ink rounded-card shadow-hard-sm cursor-pointer overflow-hidden"
-            onClick={() => setIndexExpanded(!indexExpanded)}
-          >
-            {/* Ticker bar */}
-            <div className="flex items-center justify-between gap-3 px-4 py-3">
-              <div className="flex items-center gap-3 sm:gap-4 min-w-0">
-                <span className="font-mono text-[0.55rem] sm:text-[0.6rem] font-bold uppercase tracking-[0.1em] text-white/40 flex-shrink-0">Pint Index™</span>
-                <span className="font-mono text-lg sm:text-xl font-extrabold text-amber-light tabular-nums">${pintIndex.current.avg_price.toFixed(2)}</span>
-                <span className="font-mono text-[0.7rem] font-bold text-white/60">
-                  {pintIndex.monthChange > 0 ? '▲' : pintIndex.monthChange < 0 ? '▼' : '-'}{' '}
-                  {pintIndex.monthPct >= 0 ? '+' : ''}{pintIndex.monthPct.toFixed(1)}%
-                </span>
-              </div>
-              <div className="flex items-center gap-3">
-                <div className="hidden sm:block" onClick={e => e.stopPropagation()}>
-                  <MiniSparkline data={pintIndex.sparkData} width={100} height={28} color="#F2A91A" />
-                </div>
-                <span className="font-mono text-[0.6rem] font-bold text-white/30">
-                  {indexExpanded ? '▲' : '▼'}
-                </span>
-              </div>
-            </div>
-
-            {/* Expanded panel */}
-            {indexExpanded && (
-              <div className="bg-white px-5 pb-4 pt-4 border-t-3 border-ink" onClick={e => e.stopPropagation()}>
-                {/* Sparkline — responsive */}
-                <div className="hidden sm:block mb-4">
-                  <FullSparkline data={pintIndex.sparkData} snapshots={snapshots} width={650} height={70} />
-                </div>
-                <div className="sm:hidden mb-4">
-                  <FullSparkline data={pintIndex.sparkData} snapshots={snapshots} width={260} height={50} />
-                </div>
-
-                {/* Stats strip — terminal aesthetic */}
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-px bg-gray-light rounded-card overflow-hidden mb-4">
-                  {[
-                    { label: 'Average', value: `$${pintIndex.current.avg_price.toFixed(2)}` },
-                    { label: 'Median', value: `$${pintIndex.current.median_price.toFixed(2)}` },
-                    { label: 'All-time', value: `${pintIndex.yearPct >= 0 ? '+' : ''}${pintIndex.yearPct.toFixed(1)}%` },
-                    { label: 'Range', value: `$${pintIndex.current.min_price.toFixed(0)}–$${pintIndex.current.max_price.toFixed(0)}` },
-                  ].map(stat => (
-                    <div key={stat.label} className="bg-white px-3 py-2.5 text-center">
-                      <div className="font-mono text-[9px] font-bold uppercase tracking-wider text-gray-mid">{stat.label}</div>
-                      <div className="font-mono text-base font-extrabold text-ink tabular-nums mt-0.5">{stat.value}</div>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Suburb spread — gradient connector */}
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="flex-1 min-w-0">
-                    <div className="font-mono text-[9px] font-bold uppercase tracking-wider text-green mb-0.5">▼ Cheapest</div>
-                    <div className="font-mono text-sm font-extrabold text-ink truncate">{pintIndex.current.cheapest_suburb}</div>
-                    <div className="font-mono text-xs text-gray-mid tabular-nums">${pintIndex.current.cheapest_suburb_avg.toFixed(2)}/pint</div>
-                  </div>
-                  <div className="w-12 sm:w-20 flex items-center">
-                    <div className="h-0.5 w-full rounded-full bg-gradient-to-r from-green via-amber to-red opacity-40" />
-                  </div>
-                  <div className="flex-1 min-w-0 text-right">
-                    <div className="font-mono text-[9px] font-bold uppercase tracking-wider text-red mb-0.5">▲ Priciest</div>
-                    <div className="font-mono text-sm font-extrabold text-ink truncate">{pintIndex.current.most_expensive_suburb}</div>
-                    <div className="font-mono text-xs text-gray-mid tabular-nums">${pintIndex.current.most_expensive_suburb_avg.toFixed(2)}/pint</div>
-                  </div>
-                </div>
-
-                {/* Distribution — horizontal bars */}
-                {pintIndex.current.price_distribution && (() => {
-                  const ranges = ['$6-7', '$7-8', '$8-9', '$9-10', '$10-11', '$11-12']
-                  const values = ranges.map(r => pintIndex.current.price_distribution[r] || 0)
-                  const maxVal = Math.max(...values, 1)
-                  return (
-                    <div className="mb-3">
-                      <div className="space-y-1">
-                        {ranges.map((range, i) => {
-                          const count = values[i]
-                          if (count === 0) return null
-                          return (
-                            <div key={range} className="flex items-center gap-2">
-                              <span className="font-mono text-[10px] text-gray-mid w-8 text-right tabular-nums flex-shrink-0">{range}</span>
-                              <div className="flex-1 h-3.5 bg-off-white rounded-sm overflow-hidden">
-                                <div
-                                  className="h-full rounded-sm"
-                                  style={{
-                                    width: `${(count / maxVal) * 100}%`,
-                                    backgroundColor: i <= 1 ? '#D4740A' : i <= 3 ? '#F2A91A' : '#171717',
-                                  }}
-                                />
-                              </div>
-                              <span className="font-mono text-[10px] font-bold text-gray-mid w-6 text-right tabular-nums flex-shrink-0">{count}</span>
-                            </div>
-                          )
-                        })}
-                      </div>
-                    </div>
-                  )
-                })()}
-
-                <p className="font-mono text-[9px] text-gray-mid/60 text-center mt-2 uppercase tracking-wider">{pintIndex.current.total_suburbs} suburbs · Updated weekly</p>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
 
       <div className="max-w-container mx-auto px-6">
 

@@ -3,7 +3,7 @@
 import { useState, useMemo, useEffect, useRef, useCallback, Suspense } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { Pub } from '@/types/pub'
-import { getPubs, getCrowdLevels, CrowdReport } from '@/lib/supabase'
+import { getCrowdLevels, CrowdReport } from '@/lib/supabase'
 
 import { getDistanceKm } from '@/lib/location'
 import Link from 'next/link'
@@ -18,6 +18,7 @@ import Footer from '@/components/Footer'
 import SubmitPubForm from '@/components/SubmitPubForm'
 import CrowdReporter from '@/components/CrowdReporter'
 import MobileNav from '@/components/MobileNav'
+import PintIndexBadge from '@/components/PintIndexBadge'
 import ScrollReveal from '@/components/ScrollReveal'
 
 const INITIAL_PUB_COUNT = 10
@@ -40,12 +41,17 @@ function LoadingSkeleton() {
   )
 }
 
-function HomeContent() {
+interface HomeClientProps {
+  initialPubs: Pub[]
+  initialStats: { venueCount: number; suburbCount: number; avgPrice: string; cheapestPrice: string }
+}
+
+function HomeContent({ initialPubs }: { initialPubs: Pub[] }) {
   const searchParams = useSearchParams()
   const router = useRouter()
 
-  const [pubs, setPubs] = useState<Pub[]>([])
-  const [isLoading, setIsLoading] = useState(true)
+  const [pubs] = useState<Pub[]>(initialPubs)
+  const [isLoading] = useState(false)
   const [searchTerm, setSearchTerm] = useState(searchParams.get('q') || '')
   const [selectedSuburb, setSelectedSuburb] = useState(searchParams.get('suburb') || '')
   const [maxPrice, setMaxPrice] = useState(() => {
@@ -102,15 +108,6 @@ function HomeContent() {
     const timeout = setTimeout(updateUrlParams, 300)
     return () => clearTimeout(timeout)
   }, [updateUrlParams])
-
-  useEffect(() => {
-    async function loadPubs() {
-      const data = await getPubs()
-      setPubs(data)
-      setIsLoading(false)
-    }
-    loadPubs()
-  }, [])
 
   useEffect(() => {
     const interval = setInterval(() => setCurrentTime(new Date()), 60000)
@@ -300,6 +297,7 @@ function HomeContent() {
           ))}
         </nav>
         <div className="flex items-center gap-2">
+          <PintIndexBadge />
           <button
             onClick={() => setShowSubmitForm(true)}
             className="hidden sm:inline-flex font-mono text-[0.72rem] font-bold uppercase tracking-[0.05em] text-ink bg-white border-3 border-ink rounded-pill px-5 py-2.5 shadow-hard-sm hover:translate-x-[1.5px] hover:translate-y-[1.5px] hover:shadow-hard-hover transition-all cursor-pointer"
@@ -409,10 +407,10 @@ function HomeContent() {
   )
 }
 
-export default function HomeClient() {
+export default function HomeClient({ initialPubs, initialStats }: HomeClientProps) {
   return (
     <Suspense fallback={<LoadingSkeleton />}>
-      <HomeContent />
+      <HomeContent initialPubs={initialPubs} />
     </Suspense>
   )
 }
