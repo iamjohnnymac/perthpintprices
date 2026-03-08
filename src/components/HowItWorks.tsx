@@ -15,7 +15,7 @@ export default function HowItWorks({ venueCount = 0, suburbCount = 0 }: HowItWor
       <div ref={featuresRef} className={`max-w-container mx-auto reveal ${featuresInView ? 'in-view' : ''}`}>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
           {[
-            { heading: 'Real prices from real people.', desc: 'Community-submitted. No scraping. No guessing. Every price verified by someone who was actually there.' },
+            { heading: 'Real prices from real people.', desc: 'Every price checked by someone who was actually there. If we can\'t confirm it, you\'ll see "Price TBC".' },
             { heading: 'Never miss a deal.', desc: "Live happy hour tracking across Perth. Know exactly where the cheap pints are flowing right now." },
             { heading: 'Always up to date.', desc: 'Prices updated weekly. Stale data gets flagged. The freshest prices float to the top.' },
           ].map((feature) => (

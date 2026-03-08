@@ -143,7 +143,7 @@ export default function RainyDay({ pubs, userLocation }: RainyDayProps) {
               <div className="flex items-center gap-2">
                 <h3 className="text-base sm:text-lg font-bold font-heading text-stone-800 flex items-center">
                   {isRaining ? 'RAINY DAY PUBS' : 'COZY CORNERS'}
-                  <InfoTooltip text="Live rain data from Open-Meteo for Perth CBD. When it rains, we highlight cozy pubs perfect for hunkering down with a pint." />
+                  <InfoTooltip text="Live rain data from Open-Meteo for Perth CBD. When it rains, we show cozy pubs worth hunkering down in with a pint." />
                 </h3>
                 {isRaining && weather.rain > 0 && (
                   <Badge className="bg-blue-100 text-blue-700 border-blue-200 text-[10px] px-1.5 py-0">

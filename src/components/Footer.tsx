@@ -4,8 +4,9 @@ const NAV_LINKS = [
   { href: '/discover', label: 'Discover' },
   { href: '/happy-hour', label: 'Happy Hours' },
   { href: '/leaderboard', label: 'Leaderboard' },
+  { href: '/suburbs', label: 'Suburbs' },
   { href: '/pint-crawl', label: 'Pint Crawl' },
-  { href: '/weekly-report', label: 'Weekly Report' },
+  { href: '/weekly-report', label: 'Pint Report' },
   { href: '/pub-golf', label: 'Pub Golf' },
 ]
 

@@ -125,9 +125,9 @@ export default function PubDetailClient({ pub, nearbyPubs, avgPrice }: PubDetail
         {/* Two-column layout */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
           {/* Left column */}
-          <div className="space-y-5">
+          <div className="space-y-8">
             {/* Price block */}
-            <div className="border-3 border-ink rounded-card p-5 shadow-hard">
+            <div className="border-3 border-ink rounded-card p-5 shadow-hard-sm">
               <div className="flex items-end justify-between">
                 <div>
                   <p className="font-mono text-[0.68rem] font-bold uppercase tracking-[0.1em] text-gray-mid mb-1">Pint Price</p>
@@ -169,32 +169,32 @@ export default function PubDetailClient({ pub, nearbyPubs, avgPrice }: PubDetail
                   <span className="text-[0.7rem] text-gray-mid">Updated {timeAgo(pub.lastVerified)}</span>
                 )}
               </div>
-            </div>
 
-            {/* Happy Hour card */}
-            {(pub.happyHour || pub.happyHourPrice) && (
-              <div className={`border-3 rounded-card p-5 ${pub.isHappyHourNow ? 'border-red bg-red-pale' : 'border-ink shadow-hard-sm'}`}>
-                <p className="font-mono text-[0.68rem] font-bold uppercase tracking-[0.1em] text-gray-mid mb-2">Happy Hour</p>
-                {pub.happyHourPrice && (
-                  <p className={`font-mono text-[1.5rem] font-extrabold ${pub.isHappyHourNow ? 'text-red' : 'text-ink'}`}>
-                    ${pub.happyHourPrice.toFixed(2)}
-                  </p>
-                )}
-                {pub.happyHourDays && pub.happyHourStart && pub.happyHourEnd ? (
-                  <p className="text-[0.8rem] text-gray-mid mt-1">
-                    {formatHappyHourDays(pub.happyHourDays)} · {formatHappyHourTime(pub.happyHourStart, pub.happyHourEnd)}
-                  </p>
-                ) : (
-                  <>
-                    {pub.happyHourDays && <p className="text-[0.8rem] text-gray-mid mt-1">{formatHappyHourDays(pub.happyHourDays)}</p>}
-                    {pub.happyHourStart && pub.happyHourEnd && (
-                      <p className="text-[0.8rem] text-gray-mid">{formatHappyHourTime(pub.happyHourStart, pub.happyHourEnd)}</p>
-                    )}
-                    {!pub.happyHourPrice && !pub.happyHourStart && pub.happyHour && <p className="text-[0.8rem] text-gray-mid">{pub.happyHour}</p>}
-                  </>
-                )}
-              </div>
-            )}
+              {/* Happy Hour — merged into price card */}
+              {(pub.happyHour || pub.happyHourPrice) && (
+                <div className={`mt-4 pt-4 border-t ${pub.isHappyHourNow ? 'border-red' : 'border-gray-light'}`}>
+                  <p className="font-mono text-[0.68rem] font-bold uppercase tracking-[0.1em] text-gray-mid mb-2">Happy Hour</p>
+                  {pub.happyHourPrice && (
+                    <p className={`font-mono text-[1.3rem] font-extrabold ${pub.isHappyHourNow ? 'text-red' : 'text-ink'}`}>
+                      ${pub.happyHourPrice.toFixed(2)}
+                    </p>
+                  )}
+                  {pub.happyHourDays && pub.happyHourStart && pub.happyHourEnd ? (
+                    <p className="text-[0.8rem] text-gray-mid mt-1">
+                      {formatHappyHourDays(pub.happyHourDays)} · {formatHappyHourTime(pub.happyHourStart, pub.happyHourEnd)}
+                    </p>
+                  ) : (
+                    <>
+                      {pub.happyHourDays && <p className="text-[0.8rem] text-gray-mid mt-1">{formatHappyHourDays(pub.happyHourDays)}</p>}
+                      {pub.happyHourStart && pub.happyHourEnd && (
+                        <p className="text-[0.8rem] text-gray-mid">{formatHappyHourTime(pub.happyHourStart, pub.happyHourEnd)}</p>
+                      )}
+                      {!pub.happyHourPrice && !pub.happyHourStart && pub.happyHour && <p className="text-[0.8rem] text-gray-mid">{pub.happyHour}</p>}
+                    </>
+                  )}
+                </div>
+              )}
+            </div>
 
             {/* About */}
             {pub.description && (
@@ -207,11 +207,6 @@ export default function PubDetailClient({ pub, nearbyPubs, avgPrice }: PubDetail
             {/* Price History */}
             <PriceHistory pubId={pub.id} currentPrice={pub.price} />
 
-            {/* Report a Price */}
-            <div id="report-price">
-              <PriceReporter pubSlug={pub.slug} pubName={pub.name} currentPrice={pub.price} />
-            </div>
-
             {/* Action buttons */}
             <div className="flex gap-3">
               {pub.website && (
@@ -219,7 +214,7 @@ export default function PubDetailClient({ pub, nearbyPubs, avgPrice }: PubDetail
                   href={pub.website}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex-1 font-mono text-[0.75rem] font-bold uppercase tracking-[0.05em] text-white bg-amber border-3 border-ink rounded-pill py-3.5 shadow-hard-sm hover:translate-x-[1.5px] hover:translate-y-[1.5px] hover:shadow-hard-hover transition-all text-center no-underline"
+                  className="flex-1 font-mono text-[0.72rem] font-bold uppercase tracking-[0.05em] text-white bg-amber border-3 border-ink rounded-pill py-2.5 shadow-hard-sm hover:translate-x-[1.5px] hover:translate-y-[1.5px] hover:shadow-hard-hover transition-all text-center no-underline"
                 >
                   Visit Website
                 </a>
@@ -228,15 +223,20 @@ export default function PubDetailClient({ pub, nearbyPubs, avgPrice }: PubDetail
                 href={directionsUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex-1 font-mono text-[0.75rem] font-bold uppercase tracking-[0.05em] text-white bg-ink border-3 border-ink rounded-pill py-3.5 shadow-hard-sm hover:translate-x-[1.5px] hover:translate-y-[1.5px] hover:shadow-hard-hover transition-all text-center no-underline"
+                className="flex-1 font-mono text-[0.72rem] font-bold uppercase tracking-[0.05em] text-white bg-ink border-3 border-ink rounded-pill py-2.5 shadow-hard-sm hover:translate-x-[1.5px] hover:translate-y-[1.5px] hover:shadow-hard-hover transition-all text-center no-underline"
               >
                 Get Directions
               </a>
             </div>
+
+            {/* Report a price */}
+            <div id="report-price">
+              <PriceReporter pubSlug={pub.slug} pubName={pub.name} currentPrice={pub.price} />
+            </div>
           </div>
 
           {/* Right column - map */}
-          <div className="md:sticky md:top-20 rounded-card overflow-hidden h-[350px] border-3 border-ink shadow-hard">
+          <div className="md:sticky md:top-20 rounded-card overflow-hidden h-[350px] border-3 border-ink shadow-hard-sm">
             <PubDetailMap lat={pub.lat} lng={pub.lng} name={pub.name} price={pub.price} />
           </div>
         </div>

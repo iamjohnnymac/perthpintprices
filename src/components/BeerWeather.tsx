@@ -212,7 +212,7 @@ export default function BeerWeather({ pubs, userLocation }: BeerWeatherProps) {
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="text-base sm:text-lg font-bold font-heading text-stone-800 flex items-center">Beer Weather<InfoTooltip text="Live conditions from the Bureau of Meteorology (BOM) for Perth, updated every 30 minutes. Pub recommendations are ranked by outdoor suitability based on temperature, wind, and conditions." /></h3>
+                <h3 className="text-base sm:text-lg font-bold font-heading text-stone-800 flex items-center">Beer Weather<InfoTooltip text="Weather from the Bureau of Meteorology, updated every 30 min. We pick pubs based on whether it's a beer-garden day or a hunker-down day." /></h3>
                 {isWindy && (
                   <Badge className="bg-sky-100 text-sky-700 border-sky-200 text-[10px] px-1.5 py-0">
                     ⟳ Windy!

@@ -8,8 +8,7 @@ import { getHappyHourStatus } from '@/lib/happyHour'
 import { getDistanceKm, formatDistance } from '@/lib/location'
 import SubPageNav from '@/components/SubPageNav'
 import Footer from '@/components/Footer'
-import { ErrorBoundary } from '@/components/ErrorBoundary'
-import { Beer, Sunset, Users, TrendingUp, DollarSign, BarChart3, Clock, Tag } from 'lucide-react'
+import { Beer, Clock, Tag } from 'lucide-react'
 import LucideIcon from '@/components/LucideIcon'
 
 /* ─── Types ─── */
@@ -28,22 +27,13 @@ interface PriceSnapshot {
   price_distribution: Record<string, number>
 }
 
-interface SuburbStats {
-  suburb: string
-  pubCount: number
-  avgPrice: number
-  minPrice: number
-  maxPrice: number
-  happyHourPct: number
-}
-
 /* ─── Helpers ─── */
 function getPerthTime(): Date {
   return new Date(new Date().toLocaleString('en-US', { timeZone: 'Australia/Perth' }))
 }
 
 /* ─── Inline Sparkline (compact) ─── */
-function MiniSparkline({ data, width = 120, height = 32 }: { data: number[]; width?: number; height?: number }) {
+function MiniSparkline({ data, width = 120, height = 32, color: colorOverride }: { data: number[]; width?: number; height?: number; color?: string }) {
   if (data.length < 2) return null
   const min = Math.min(...data) - 0.05
   const max = Math.max(...data) + 0.05
@@ -54,7 +44,7 @@ function MiniSparkline({ data, width = 120, height = 32 }: { data: number[]; wid
     return `${x},${y}`
   }).join(' ')
   const trend = data[data.length - 1] - data[0]
-  const color = trend > 0 ? '#5C4A3A' : '#E8740C'
+  const color = colorOverride || (trend > 0 ? '#171717' : '#D4740A')
   return (
     <svg width={width} height={height} className="overflow-visible">
       <polyline points={points} fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
@@ -78,7 +68,7 @@ function FullSparkline({ data, snapshots, width = 280, height = 60 }: { data: nu
   })
   const polyline = pts.map(p => `${p.x},${p.y}`).join(' ')
   const trend = data[data.length - 1] - data[0]
-  const color = trend > 0 ? '#5C4A3A' : '#E8740C'
+  const color = trend > 0 ? '#171717' : '#D4740A'
   const gradId = 'sparkGrad-discover'
   const area = `0,${height} 0,${pts[0].y} ${polyline} ${width},${pts[pts.length - 1].y} ${width},${height}`
 
@@ -115,28 +105,11 @@ function FullSparkline({ data, snapshots, width = 280, height = 60 }: { data: nu
         )}
       </svg>
       {tooltip.visible && (
-        <div className="absolute z-50 bg-stone-900 text-white text-xs rounded px-2 py-1 pointer-events-none whitespace-nowrap shadow-lg" style={{ left: tooltip.x, top: tooltip.y - 36, transform: tooltip.x > width * 0.75 ? 'translateX(-100%)' : tooltip.x < width * 0.25 ? 'translateX(0)' : 'translateX(-50%)' }}>
-          <span className="font-semibold">${tooltip.price.toFixed(2)}</span>
-          <span className="text-stone-400 ml-1">{tooltip.label}</span>
+        <div className="absolute z-50 bg-ink text-white text-xs rounded px-2 py-1 pointer-events-none whitespace-nowrap shadow-lg" style={{ left: tooltip.x, top: tooltip.y - 36, transform: tooltip.x > width * 0.75 ? 'translateX(-100%)' : tooltip.x < width * 0.25 ? 'translateX(0)' : 'translateX(-50%)' }}>
+          <span className="font-bold">${tooltip.price.toFixed(2)}</span>
+          <span className="text-white/60 ml-1">{tooltip.label}</span>
         </div>
       )}
-    </div>
-  )
-}
-
-/* ─── Distribution Bars (for Pint Index expanded + Venues tab) ─── */
-function DistributionBars({ distribution }: { distribution: Record<string, number> }) {
-  const ranges = ['$6-7', '$7-8', '$8-9', '$9-10', '$10-11', '$11-12']
-  const values = ranges.map(r => distribution[r] || 0)
-  const maxVal = Math.max(...values, 1)
-  return (
-    <div className="flex items-end gap-1 h-10">
-      {ranges.map((range, i) => (
-        <div key={range} className="flex flex-col items-center gap-0.5 flex-1">
-          <div className="w-full rounded-sm transition-all duration-500" style={{ height: `${Math.max((values[i] / maxVal) * 32, 2)}px`, backgroundColor: i <= 1 ? '#E8740C' : i <= 3 ? '#D4A574' : '#5C4A3A', opacity: 0.8 }} />
-          <span className="text-[9px] text-stone-500 leading-none">{range.replace('$', '')}</span>
-        </div>
-      ))}
     </div>
   )
 }
@@ -151,9 +124,6 @@ export default function DiscoverClient() {
   const [isLoading, setIsLoading] = useState(true)
   const [snapshots, setSnapshots] = useState<PriceSnapshot[]>([])
   const [indexExpanded, setIndexExpanded] = useState(false)
-  const [numbersTab, setNumbersTab] = useState<'suburbs' | 'venues' | 'value'>('suburbs')
-  const [showAllSuburbs, setShowAllSuburbs] = useState(false)
-  const [suburbSortBy, setSuburbSortBy] = useState<'avg' | 'low' | 'high' | 'hh'>('avg')
   const [perthTime, setPerthTime] = useState(getPerthTime)
 
   // ─── Data Fetching ───
@@ -204,20 +174,6 @@ export default function DiscoverClient() {
     return () => clearInterval(interval)
   }, [])
 
-  // Tab persistence via URL hash
-  useEffect(() => {
-    const hash = window.location.hash
-    if (hash === '#numbers-venues') setNumbersTab('venues')
-    else if (hash === '#numbers-value') setNumbersTab('value')
-    else if (hash === '#numbers-suburbs') setNumbersTab('suburbs')
-  }, [])
-
-  useEffect(() => {
-    if (numbersTab === 'suburbs') window.history.replaceState(null, '', '#numbers-suburbs')
-    else if (numbersTab === 'venues') window.history.replaceState(null, '', '#numbers-venues')
-    else if (numbersTab === 'value') window.history.replaceState(null, '', '#numbers-value')
-  }, [numbersTab])
-
   // ─── Derived Data ───
   const verifiedPubs = useMemo(() => pubs.filter(p => p.priceVerified && p.price !== null), [pubs])
 
@@ -235,7 +191,6 @@ export default function DiscoverClient() {
       })
       .map(p => ({ pub: p, status: getHappyHourStatus(p.happyHour) }))
       .sort((a, b) => {
-        // Active first, then upcoming
         if (a.status.isActive && !b.status.isActive) return -1
         if (!a.status.isActive && b.status.isActive) return 1
         return (a.pub.price ?? 99) - (b.pub.price ?? 99)
@@ -269,118 +224,14 @@ export default function DiscoverClient() {
     return { current, previous, oldest, monthChange, monthPct, yearChange, yearPct, sparkData }
   }, [snapshots])
 
-  // Suburb stats (for Numbers tab)
-  const suburbData = useMemo<SuburbStats[]>(() => {
-    const grouped: Record<string, Pub[]> = {}
-    for (const pub of pubs) {
-      if (!pub.suburb) continue
-      if (!grouped[pub.suburb]) grouped[pub.suburb] = []
-      grouped[pub.suburb].push(pub)
-    }
-    const stats: SuburbStats[] = []
-    for (const [suburb, subPubs] of Object.entries(grouped)) {
-      if (subPubs.length < 2) continue
-      const prices = subPubs.map(p => p.price).filter((p): p is number => p !== null && p > 0)
-      if (prices.length === 0) continue
-      const avg = prices.reduce((a, b) => a + b, 0) / prices.length
-      const hhCount = subPubs.filter(p => p.happyHour && p.happyHour.trim() !== '').length
-      stats.push({
-        suburb,
-        pubCount: subPubs.length,
-        avgPrice: Math.round(avg * 100) / 100,
-        minPrice: Math.min(...prices),
-        maxPrice: Math.max(...prices),
-        happyHourPct: Math.round((hhCount / subPubs.length) * 100),
-      })
-    }
-    return stats
-  }, [pubs])
-
-  const sortedSuburbs = useMemo(() => {
-    const sorted = [...suburbData]
-    switch (suburbSortBy) {
-      case 'low': sorted.sort((a, b) => a.minPrice - b.minPrice); break
-      case 'high': sorted.sort((a, b) => b.maxPrice - a.maxPrice); break
-      case 'hh': sorted.sort((a, b) => b.happyHourPct - a.happyHourPct); break
-      default: sorted.sort((a, b) => a.avgPrice - b.avgPrice)
-    }
-    return sorted
-  }, [suburbData, suburbSortBy])
-
-  // Venue price brackets
-  const priceBrackets = useMemo(() => {
-    const prices = pubs.filter(p => p.price !== null).map(p => p.price!)
-    if (prices.length === 0) return []
-    const minB = Math.floor(Math.min(...prices))
-    const maxB = Math.floor(Math.max(...prices))
-    const brackets: Record<string, number> = {}
-    for (let i = minB; i <= maxB; i++) brackets[`$${i}`] = 0
-    for (const price of prices) brackets[`$${Math.floor(price)}`] = (brackets[`$${Math.floor(price)}`] || 0) + 1
-    return Object.entries(brackets).sort((a, b) => parseInt(a[0].replace('$', '')) - parseInt(b[0].replace('$', '')))
-  }, [pubs])
-
-  const medianPrice = useMemo(() => {
-    const sorted = pubs.filter(p => p.price !== null).map(p => p.price!).sort((a, b) => a - b)
-    return sorted.length > 0 ? sorted[Math.floor(sorted.length / 2)] : 0
-  }, [pubs])
-
-  // Value Picks: undervalued / overvalued
-  const suburbAvgMap = useMemo(() => {
-    const m: Record<string, number> = {}
-    for (const s of suburbData) m[s.suburb] = s.avgPrice
-    return m
-  }, [suburbData])
-
-  const undervalued = useMemo(() => {
-    return pubs
-      .filter(p => p.price !== null && suburbAvgMap[p.suburb])
-      .map(p => ({ pub: p, diff: suburbAvgMap[p.suburb] - p.price! }))
-      .filter(e => e.diff > 0)
-      .sort((a, b) => b.diff - a.diff)
-      .slice(0, 5)
-  }, [pubs, suburbAvgMap])
-
-  const overvalued = useMemo(() => {
-    return pubs
-      .filter(p => p.price !== null && suburbAvgMap[p.suburb])
-      .map(p => ({ pub: p, diff: p.price! - suburbAvgMap[p.suburb] }))
-      .filter(e => e.diff > 0)
-      .sort((a, b) => b.diff - a.diff)
-      .slice(0, 5)
-  }, [pubs, suburbAvgMap])
-
-  const cheapestSuburbs = useMemo(() => [...suburbData].filter(s => s.pubCount >= 2).sort((a, b) => a.avgPrice - b.avgPrice).slice(0, 5), [suburbData])
-  const priciestSuburbs = useMemo(() => [...suburbData].filter(s => s.pubCount >= 2).sort((a, b) => b.avgPrice - a.avgPrice).slice(0, 5), [suburbData])
-
-  // ─── Bracket color helper ───
-  function getBracketColor(bracket: string): string {
-    const num = parseInt(bracket.replace('$', ''))
-    if (num <= 7) return 'bg-[#E8740C]'
-    if (num <= 8) return 'bg-[#F09D51]'
-    if (num <= 9) return 'bg-[#D4A574]'
-    if (num <= 10) return 'bg-[#B8977A]'
-    if (num <= 11) return 'bg-[#8B7355]'
-    return 'bg-[#5C4A3A]'
-  }
-
-  // ─── Submit form trigger ───
-  function openSubmitForm() {
-    const btn = document.querySelector('[data-submit-trigger]') as HTMLElement | null
-    if (btn) {
-      btn.click()
-    } else {
-      window.scrollTo({ top: 0, behavior: 'smooth' })
-    }
-  }
-
   // ─── Loading State ───
   if (isLoading) {
     return (
       <main className="min-h-screen bg-[#FDF8F0]">
-      <h1 className="sr-only">Discover Perth's Best Pints</h1>
+        <h1 className="sr-only">Discover Perth&apos;s Best Pints</h1>
         <SubPageNav breadcrumbs={[{ label: 'Discover' }]} />
         <div className="flex items-center justify-center py-20">
-          <div className="w-12 h-12 border-4 border-stone-300 border-t-amber rounded-full animate-spin" />
+          <div className="w-12 h-12 border-4 border-gray border-t-amber rounded-full animate-spin" />
         </div>
       </main>
     )
@@ -388,7 +239,119 @@ export default function DiscoverClient() {
 
   return (
     <main className="min-h-screen bg-[#FDF8F0]">
+      <h1 className="sr-only">Discover Perth&apos;s Best Pints</h1>
       <SubPageNav breadcrumbs={[{ label: 'Discover' }]} />
+
+      {/* ════════════════════════════════════════════
+          PINT INDEX TICKER
+          ════════════════════════════════════════════ */}
+      {pintIndex && (
+        <div className="max-w-container mx-auto px-6 pt-4">
+          <div
+            className="bg-ink border-3 border-ink rounded-card shadow-hard-sm cursor-pointer overflow-hidden"
+            onClick={() => setIndexExpanded(!indexExpanded)}
+          >
+            {/* Ticker bar */}
+            <div className="flex items-center justify-between gap-3 px-4 py-3">
+              <div className="flex items-center gap-3 sm:gap-4 min-w-0">
+                <span className="font-mono text-[0.55rem] sm:text-[0.6rem] font-bold uppercase tracking-[0.1em] text-white/40 flex-shrink-0">Pint Index™</span>
+                <span className="font-mono text-lg sm:text-xl font-extrabold text-amber-light tabular-nums">${pintIndex.current.avg_price.toFixed(2)}</span>
+                <span className="font-mono text-[0.7rem] font-bold text-white/60">
+                  {pintIndex.monthChange > 0 ? '▲' : pintIndex.monthChange < 0 ? '▼' : '-'}{' '}
+                  {pintIndex.monthPct >= 0 ? '+' : ''}{pintIndex.monthPct.toFixed(1)}%
+                </span>
+              </div>
+              <div className="flex items-center gap-3">
+                <div className="hidden sm:block" onClick={e => e.stopPropagation()}>
+                  <MiniSparkline data={pintIndex.sparkData} width={100} height={28} color="#F2A91A" />
+                </div>
+                <span className="font-mono text-[0.6rem] font-bold text-white/30">
+                  {indexExpanded ? '▲' : '▼'}
+                </span>
+              </div>
+            </div>
+
+            {/* Expanded panel */}
+            {indexExpanded && (
+              <div className="bg-white px-5 pb-4 pt-4 border-t-3 border-ink" onClick={e => e.stopPropagation()}>
+                {/* Sparkline — responsive */}
+                <div className="hidden sm:block mb-4">
+                  <FullSparkline data={pintIndex.sparkData} snapshots={snapshots} width={650} height={70} />
+                </div>
+                <div className="sm:hidden mb-4">
+                  <FullSparkline data={pintIndex.sparkData} snapshots={snapshots} width={260} height={50} />
+                </div>
+
+                {/* Stats strip — terminal aesthetic */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-px bg-gray-light rounded-card overflow-hidden mb-4">
+                  {[
+                    { label: 'Average', value: `$${pintIndex.current.avg_price.toFixed(2)}` },
+                    { label: 'Median', value: `$${pintIndex.current.median_price.toFixed(2)}` },
+                    { label: 'All-time', value: `${pintIndex.yearPct >= 0 ? '+' : ''}${pintIndex.yearPct.toFixed(1)}%` },
+                    { label: 'Range', value: `$${pintIndex.current.min_price.toFixed(0)}–$${pintIndex.current.max_price.toFixed(0)}` },
+                  ].map(stat => (
+                    <div key={stat.label} className="bg-white px-3 py-2.5 text-center">
+                      <div className="font-mono text-[9px] font-bold uppercase tracking-wider text-gray-mid">{stat.label}</div>
+                      <div className="font-mono text-base font-extrabold text-ink tabular-nums mt-0.5">{stat.value}</div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Suburb spread — gradient connector */}
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="flex-1 min-w-0">
+                    <div className="font-mono text-[9px] font-bold uppercase tracking-wider text-green mb-0.5">▼ Cheapest</div>
+                    <div className="font-mono text-sm font-extrabold text-ink truncate">{pintIndex.current.cheapest_suburb}</div>
+                    <div className="font-mono text-xs text-gray-mid tabular-nums">${pintIndex.current.cheapest_suburb_avg.toFixed(2)}/pint</div>
+                  </div>
+                  <div className="w-12 sm:w-20 flex items-center">
+                    <div className="h-0.5 w-full rounded-full bg-gradient-to-r from-green via-amber to-red opacity-40" />
+                  </div>
+                  <div className="flex-1 min-w-0 text-right">
+                    <div className="font-mono text-[9px] font-bold uppercase tracking-wider text-red mb-0.5">▲ Priciest</div>
+                    <div className="font-mono text-sm font-extrabold text-ink truncate">{pintIndex.current.most_expensive_suburb}</div>
+                    <div className="font-mono text-xs text-gray-mid tabular-nums">${pintIndex.current.most_expensive_suburb_avg.toFixed(2)}/pint</div>
+                  </div>
+                </div>
+
+                {/* Distribution — horizontal bars */}
+                {pintIndex.current.price_distribution && (() => {
+                  const ranges = ['$6-7', '$7-8', '$8-9', '$9-10', '$10-11', '$11-12']
+                  const values = ranges.map(r => pintIndex.current.price_distribution[r] || 0)
+                  const maxVal = Math.max(...values, 1)
+                  return (
+                    <div className="mb-3">
+                      <div className="space-y-1">
+                        {ranges.map((range, i) => {
+                          const count = values[i]
+                          if (count === 0) return null
+                          return (
+                            <div key={range} className="flex items-center gap-2">
+                              <span className="font-mono text-[10px] text-gray-mid w-8 text-right tabular-nums flex-shrink-0">{range}</span>
+                              <div className="flex-1 h-3.5 bg-off-white rounded-sm overflow-hidden">
+                                <div
+                                  className="h-full rounded-sm"
+                                  style={{
+                                    width: `${(count / maxVal) * 100}%`,
+                                    backgroundColor: i <= 1 ? '#D4740A' : i <= 3 ? '#F2A91A' : '#171717',
+                                  }}
+                                />
+                              </div>
+                              <span className="font-mono text-[10px] font-bold text-gray-mid w-6 text-right tabular-nums flex-shrink-0">{count}</span>
+                            </div>
+                          )
+                        })}
+                      </div>
+                    </div>
+                  )
+                })()}
+
+                <p className="font-mono text-[9px] text-gray-mid/60 text-center mt-2 uppercase tracking-wider">{pintIndex.current.total_suburbs} suburbs · Updated weekly</p>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       <div className="max-w-container mx-auto px-6">
 
@@ -396,34 +359,24 @@ export default function DiscoverClient() {
             1. HERO: Tonight's Quick Pick
             ════════════════════════════════════════════ */}
         {heroPub && (
-          <section className="pt-8 sm:pt-12 mb-10 sm:mb-14">
-            <Link href={`/pub/${heroPub.slug}`} className="block">
-              <div className="bg-[#FDF8F0] rounded-card py-12 px-6 text-center hover:shadow-[0_4px_16px_rgba(0,0,0,0.08)] transition-shadow">
-                <p className="text-gray-mid text-sm mb-1">Your best pint right now</p>
-                <div className="flex items-center justify-center gap-2 mb-3">
-                  <Beer className="w-5 h-5 text-amber" />
-                  <span className="text-ink font-bold text-lg sm:text-xl">{heroPub.name}</span>
-                  <span className="text-gray-mid text-sm">·</span>
-                  <span className="text-gray-mid text-sm">{heroPub.suburb}</span>
-                  {userLocation && (
-                    <>
-                      <span className="text-gray-mid text-sm">·</span>
-                      <span className="text-gray-mid text-sm">{formatDistance(getDistanceKm(userLocation.lat, userLocation.lng, heroPub.lat, heroPub.lng))}</span>
-                    </>
-                  )}
-                </div>
-                <div className="text-[40px] font-bold text-ink tabular-nums leading-tight">
-                  ${heroPub.price!.toFixed(2)}
-                </div>
-                <p className="text-gray-mid text-sm mt-1">{heroPub.beerType}</p>
-                <button
-                  onClick={(e) => { e.preventDefault(); e.stopPropagation(); document.getElementById('best-buys')?.scrollIntoView({ behavior: 'smooth' }) }}
-                  className="mt-6 inline-flex items-center gap-1 text-orange font-semibold text-sm hover:underline"
-                >
-                  See All Cheap Pints →
-                </button>
+          <section className="pt-8 sm:pt-10 mb-10 sm:mb-14">
+            <div className="border-3 border-ink rounded-card shadow-hard-sm bg-white py-10 px-6 text-center">
+              <p className="font-mono text-[0.68rem] font-bold uppercase tracking-[0.1em] text-gray-mid mb-2">Your best pint right now</p>
+              <div className="flex items-center justify-center gap-2 mb-3 flex-wrap">
+                <Beer className="w-5 h-5 text-amber" />
+                <Link href={`/pub/${heroPub.slug}`} className="font-mono text-lg sm:text-xl font-extrabold text-ink hover:text-amber transition-colors no-underline">
+                  {heroPub.name}
+                </Link>
+                <span className="text-gray-mid text-sm">{heroPub.suburb}</span>
+                {userLocation && (
+                  <span className="text-gray-mid text-sm">{formatDistance(getDistanceKm(userLocation.lat, userLocation.lng, heroPub.lat, heroPub.lng))}</span>
+                )}
               </div>
-            </Link>
+              <div className="font-mono text-[2.5rem] font-extrabold text-ink leading-none">
+                ${heroPub.price!.toFixed(2)}
+              </div>
+              <p className="text-[0.75rem] text-gray-mid mt-1">{heroPub.beerType}</p>
+            </div>
           </section>
         )}
 
@@ -434,16 +387,16 @@ export default function DiscoverClient() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
             {/* Left: Best Buys */}
-            <div className="bg-white border-3 border-ink shadow-hard-sm rounded-card p-6 hover:shadow-[0_4px_16px_rgba(0,0,0,0.08)] transition-shadow">
-              <h3 className="text-lg font-bold text-ink mb-1"><Tag className="w-5 h-5 inline mr-1" />Best Buys</h3>
+            <div className="bg-white border-3 border-ink shadow-hard-sm rounded-card p-6">
+              <h3 className="font-mono text-base font-extrabold text-ink mb-1"><Tag className="w-5 h-5 inline mr-1" />Best Buys</h3>
               <p className="text-sm text-gray-mid mb-4">Lowest prices right now</p>
               <div className="space-y-1">
                 {bestBuys.slice(0, 5).map((pub, i) => (
-                  <Link key={pub.id} href={`/pub/${pub.slug}`} className="flex items-center justify-between p-2.5 rounded-lg hover:bg-[#FAFAFA] hover:border-l-2 hover:border-l-[#E8740C] transition-all group">
+                  <Link key={pub.id} href={`/pub/${pub.slug}`} className="flex items-center justify-between p-2.5 rounded-card border-l-2 border-l-transparent hover:border-l-amber hover:bg-off-white transition-all group no-underline">
                     <div className="flex items-center gap-3 min-w-0">
-                      <span className="text-sm font-bold text-gray-mid w-5">{i + 1}</span>
+                      <span className="font-mono text-sm font-bold text-gray-mid w-5">{i + 1}</span>
                       <div className="min-w-0">
-                        <span className="text-sm font-semibold text-ink truncate block group-hover:text-orange transition-colors">{pub.name}</span>
+                        <span className="font-mono text-sm font-bold text-ink truncate block group-hover:text-amber transition-colors">{pub.name}</span>
                         <p className="text-xs text-gray-mid">
                           {pub.suburb}
                           {userLocation && ` · ${formatDistance(getDistanceKm(userLocation.lat, userLocation.lng, pub.lat, pub.lng))}`}
@@ -451,39 +404,39 @@ export default function DiscoverClient() {
                         </p>
                       </div>
                     </div>
-                    <span className="text-lg font-semibold text-ink tabular-nums flex-shrink-0">${pub.price!.toFixed(2)}</span>
+                    <span className="font-mono text-lg font-extrabold text-ink tabular-nums flex-shrink-0">${pub.price!.toFixed(2)}</span>
                   </Link>
                 ))}
               </div>
-              <Link href="/insights/tonights-best-bets" className="block mt-4 text-sm font-semibold text-orange hover:underline">
+              <Link href="/insights/tonights-best-bets" className="block mt-4 font-mono text-[0.75rem] font-bold text-amber hover:underline no-underline">
                 View all →
               </Link>
             </div>
 
             {/* Right: Happy Hours */}
-            <div className="bg-white border-3 border-ink shadow-hard-sm rounded-card p-6 hover:shadow-[0_4px_16px_rgba(0,0,0,0.08)] transition-shadow">
-              <h3 className="text-lg font-bold text-ink mb-1"><Clock className="w-4 h-4 inline" /> Happy Hours</h3>
+            <div className="bg-white border-3 border-ink shadow-hard-sm rounded-card p-6">
+              <h3 className="font-mono text-base font-extrabold text-ink mb-1"><Clock className="w-4 h-4 inline" /> Happy Hours</h3>
               <p className="text-sm text-gray-mid mb-4">Starting soon near you</p>
               <div className="space-y-1">
                 {upcomingHappyHours.length === 0 && (
                   <p className="text-sm text-gray-mid py-4 text-center">No happy hours active or upcoming right now. Check back later!</p>
                 )}
                 {upcomingHappyHours.map(({ pub, status }) => (
-                  <Link key={pub.id} href={`/pub/${pub.slug}`} className="flex items-center justify-between p-2.5 rounded-lg hover:bg-[#FAFAFA] hover:border-l-2 hover:border-l-[#E8740C] transition-all group">
+                  <Link key={pub.id} href={`/pub/${pub.slug}`} className="flex items-center justify-between p-2.5 rounded-card border-l-2 border-l-transparent hover:border-l-amber hover:bg-off-white transition-all group no-underline">
                     <div className="min-w-0">
-                      <span className="text-sm font-semibold text-ink truncate block group-hover:text-orange transition-colors">{pub.name}</span>
+                      <span className="font-mono text-sm font-bold text-ink truncate block group-hover:text-amber transition-colors">{pub.name}</span>
                       <p className="text-xs text-gray-mid">{pub.suburb}</p>
                     </div>
                     <div className="flex items-center gap-2 flex-shrink-0">
-                      <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold ${status.isActive ? 'bg-[#FFF3E0] text-ink border border-[#F5D5B5]' : 'bg-orange-100 text-ink border border-orange-200'}`}>
+                      <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold ${status.isActive ? 'bg-amber-pale text-amber border border-amber/30' : 'bg-off-white text-gray-mid border border-gray-light'}`}>
                         {status.countdown || status.statusText}
                       </span>
-                      <span className="text-lg font-semibold text-ink tabular-nums">{pub.price !== null ? `$${pub.price.toFixed(2)}` : 'TBC'}</span>
+                      <span className="font-mono text-lg font-extrabold text-ink tabular-nums">{pub.price !== null ? `$${pub.price.toFixed(2)}` : 'TBC'}</span>
                     </div>
                   </Link>
                 ))}
               </div>
-              <Link href="/happy-hour" className="block mt-4 text-sm font-semibold text-orange hover:underline">
+              <Link href="/happy-hour" className="block mt-4 font-mono text-[0.75rem] font-bold text-amber hover:underline no-underline">
                 See all happy hours →
               </Link>
             </div>
@@ -495,340 +448,55 @@ export default function DiscoverClient() {
             3. PUB PICKS CAROUSEL
             ════════════════════════════════════════════ */}
         <section className="mb-10 sm:mb-14">
-          <h2 className="text-[24px] sm:text-[28px] font-bold text-ink font-display">Pub Picks</h2>
-          <p className="text-[16px] text-gray-mid mt-1 mb-6">Curated lists for every mood</p>
+          <h2 className="font-mono font-extrabold text-xl tracking-[-0.02em] text-ink">Pub Picks</h2>
+          <p className="text-sm text-gray-mid mt-1 mb-6">Pub lists for every mood</p>
 
-          <div
-            className="flex gap-4 overflow-x-auto pl-1 pb-4 snap-x snap-mandatory"
-            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none', WebkitOverflowScrolling: 'touch' }}
-          >
-            <style>{`.snap-x::-webkit-scrollbar { display: none; }`}</style>
+          <div className="relative">
+            <div
+              className="flex gap-4 overflow-x-auto pl-1 pb-4 pr-10 snap-x snap-mandatory"
+              style={{ scrollbarWidth: 'none', msOverflowStyle: 'none', WebkitOverflowScrolling: 'touch' }}
+            >
+              <style>{`.snap-x::-webkit-scrollbar { display: none; }`}</style>
 
-            {[
-              { emoji: 'sunset', title: 'Sunset Sippers', desc: 'West-facing patios and rooftop bars for golden hour pints.', bg: 'bg-[#FFF3E0]', count: pubPickCounts.sunset, href: '/guides/sunset-sippers' },
-              { emoji: 'users', title: 'The Dad Bar', desc: 'No fairy lights, no craft beer menu. Just honest pints and the footy on.', bg: 'bg-off-white', count: pubPickCounts.dad, href: '/guides/dad-bar' },
-              { emoji: 'sun', title: 'Beer Weather', desc: 'Live BOM data matched to beer garden picks. Is it a beer garden arvo?', bg: 'bg-[#E8F5E9]', count: pubPickCounts.beer, href: '/guides/beer-weather' },
-              { emoji: 'umbrella', title: 'Cozy Corners', desc: 'Fireplaces, booths, and warmth for when it\'s bucketing down.', bg: 'bg-[#EDE7F6]', count: pubPickCounts.cozy, href: '/guides/cozy-corners' },
-              { emoji: 'trophy', title: 'Punt & Pints', desc: 'TAB screens, cold pints, and a flutter on the trots.', bg: 'bg-[#E3F2FD]', count: pubPickCounts.punt, href: '/guides/punt-and-pints' },
-              { emoji: 'clock', title: 'Happy Hours', desc: 'Live deals happening right now across Perth.', bg: 'bg-[#FFF8E1]', count: pubPickCounts.happy, href: '/happy-hour' },
-            ].map((card) => (
-              <Link
-                key={card.title}
-                href={card.href}
-                className={`${card.bg} w-[240px] sm:w-[280px] min-h-[200px] rounded-card p-6 flex-shrink-0 snap-start hover:shadow-[0_4px_16px_rgba(0,0,0,0.08)] transition-shadow group`}
-              >
-                <LucideIcon name={card.emoji} className="w-8 h-8" />
-                <h3 className="text-lg font-bold text-ink mt-3 group-hover:text-orange transition-colors">{card.title}</h3>
-                <p className="text-sm text-gray-mid mt-1 leading-relaxed">{card.desc}</p>
-                <p className="text-sm font-semibold text-orange mt-4">{card.count} pubs →</p>
-              </Link>
-            ))}
+              {[
+                { emoji: 'sunset', title: 'Sunset Sippers', desc: 'West-facing patios and rooftop bars for golden hour pints.', bg: 'bg-amber-pale', count: pubPickCounts.sunset, href: '/guides/sunset-sippers' },
+                { emoji: 'users', title: 'The Dad Bar', desc: 'No fairy lights, no craft beer menu. Just honest pints and the footy on.', bg: 'bg-white', count: pubPickCounts.dad, href: '/guides/dad-bar' },
+                { emoji: 'sun', title: 'Beer Weather', desc: 'Live BOM data matched to beer garden picks. Is it a beer garden arvo?', bg: 'bg-green-pale', count: pubPickCounts.beer, href: '/guides/beer-weather' },
+                { emoji: 'umbrella', title: 'Cozy Corners', desc: 'Fireplaces, booths, and warmth for when it\'s bucketing down.', bg: 'bg-white', count: pubPickCounts.cozy, href: '/guides/cozy-corners' },
+                { emoji: 'trophy', title: 'Punt & Pints', desc: 'TAB screens, cold pints, and a flutter on the trots.', bg: 'bg-white', count: pubPickCounts.punt, href: '/guides/punt-and-pints' },
+                { emoji: 'clock', title: 'Happy Hours', desc: 'Live deals happening right now across Perth.', bg: 'bg-amber-pale', count: pubPickCounts.happy, href: '/happy-hour' },
+              ].map((card) => (
+                <Link
+                  key={card.title}
+                  href={card.href}
+                  className={`${card.bg} w-[240px] sm:w-[280px] min-h-[200px] rounded-card border-3 border-ink shadow-hard-sm p-6 flex-shrink-0 snap-start hover:translate-x-[1.5px] hover:translate-y-[1.5px] hover:shadow-hard-hover transition-all group no-underline`}
+                >
+                  <LucideIcon name={card.emoji} className="w-8 h-8" />
+                  <h3 className="font-mono text-base font-extrabold text-ink mt-3 group-hover:text-amber transition-colors">{card.title}</h3>
+                  <p className="text-sm text-gray-mid mt-1 leading-relaxed">{card.desc}</p>
+                  <p className="font-mono text-[0.75rem] font-bold text-amber mt-4">{card.count} pubs →</p>
+                </Link>
+              ))}
+            </div>
+            {/* Right fade hint */}
+            <div className="absolute right-0 top-0 bottom-4 w-12 pointer-events-none bg-gradient-to-l from-[#FDF8F0] to-transparent" />
           </div>
         </section>
 
         {/* ════════════════════════════════════════════
-            4. PERTH PINT INDEX (compact, collapsible)
-            ════════════════════════════════════════════ */}
-        {pintIndex && (
-          <section className="mb-10 sm:mb-14">
-            <div
-              className="bg-white border-3 border-ink shadow-hard-sm rounded-card hover:shadow-[0_4px_16px_rgba(0,0,0,0.08)] transition-shadow cursor-pointer"
-              onClick={() => setIndexExpanded(!indexExpanded)}
-            >
-              {/* Collapsed row */}
-              <div className="p-6">
-                <div className="flex items-center justify-between gap-4 flex-wrap">
-                  <div className="flex items-center gap-4 flex-wrap">
-                    <div>
-                      <h3 className="text-lg font-bold text-ink">Perth Pint Index™</h3>
-                      <div className="flex items-baseline gap-2 mt-0.5">
-                        <span className="text-2xl sm:text-3xl font-bold text-ink tabular-nums">${pintIndex.current.avg_price.toFixed(2)}</span>
-                        <span className={`text-sm font-semibold ${pintIndex.monthChange > 0 ? 'text-ink' : 'text-ink'}`}>
-                          {pintIndex.monthChange > 0 ? '▲' : pintIndex.monthChange < 0 ? '▼' : '-'}{' '}
-                          {pintIndex.monthChange >= 0 ? '+' : ''}{pintIndex.monthChange.toFixed(2)} ({pintIndex.monthPct >= 0 ? '+' : ''}{pintIndex.monthPct.toFixed(1)}%)
-                        </span>
-                      </div>
-                    </div>
-                    <div className="hidden sm:block" onClick={e => e.stopPropagation()}>
-                      <MiniSparkline data={pintIndex.sparkData} />
-                    </div>
-                  </div>
-                  <button className="text-sm text-gray-mid hover:text-ink transition-colors flex items-center gap-1" aria-expanded={indexExpanded}>
-                    {indexExpanded ? 'Collapse ▲' : 'Expand ▼'}
-                  </button>
-                </div>
-                <p className="text-xs text-gray-mid mt-2">
-                  {pintIndex.current.total_pubs} pubs · {pintIndex.current.total_suburbs} suburbs · Median ${pintIndex.current.median_price.toFixed(2)}
-                </p>
-              </div>
-
-              {/* Expanded content */}
-              {indexExpanded && (
-                <div className="px-6 pb-6 border-t border-[#E5E5E5]" onClick={e => e.stopPropagation()}>
-                  <div className="pt-4">
-                    {/* Full sparkline */}
-                    <div className="mb-4">
-                      <p className="text-xs text-gray-mid mb-2">Price trend · hover to explore</p>
-                      <FullSparkline data={pintIndex.sparkData} snapshots={snapshots} width={320} height={60} />
-                    </div>
-
-                    {/* Suburb comparison */}
-                    <div className="grid grid-cols-2 gap-3 mb-4">
-                      <div className="bg-orange-50 rounded-card p-3">
-                        <div className="text-[10px] text-ink font-semibold">▼ Cheapest Suburb</div>
-                        <div className="text-sm font-bold text-ink mt-1">{pintIndex.current.cheapest_suburb}</div>
-                        <div className="text-xs text-ink tabular-nums">avg ${pintIndex.current.cheapest_suburb_avg.toFixed(2)}/pint</div>
-                      </div>
-                      <div className="bg-stone-100 rounded-card p-3">
-                        <div className="text-[10px] text-ink font-semibold">▲ Priciest Suburb</div>
-                        <div className="text-sm font-bold text-ink mt-1">{pintIndex.current.most_expensive_suburb}</div>
-                        <div className="text-xs text-ink tabular-nums">avg ${pintIndex.current.most_expensive_suburb_avg.toFixed(2)}/pint</div>
-                      </div>
-                    </div>
-
-                    {/* Overall change + Median */}
-                    <div className="flex items-center justify-between mb-4 px-1">
-                      <div>
-                        <div className="text-[10px] text-gray-mid font-medium">Overall Change</div>
-                        <div className={`text-lg font-bold tabular-nums ${pintIndex.yearChange > 0 ? 'text-ink' : 'text-ink'}`}>
-                          {pintIndex.yearChange >= 0 ? '+' : ''}{pintIndex.yearPct.toFixed(1)}%
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <div className="text-[10px] text-gray-mid font-medium">Median</div>
-                        <div className="text-lg font-bold text-ink tabular-nums">${pintIndex.current.median_price.toFixed(2)}</div>
-                      </div>
-                    </div>
-
-                    {/* Price distribution */}
-                    {pintIndex.current.price_distribution && (
-                      <div>
-                        <div className="text-[10px] text-gray-mid font-medium mb-2">Price Distribution</div>
-                        <DistributionBars distribution={pintIndex.current.price_distribution} />
-                      </div>
-                    )}
-
-                    {/* Mobile sparkline */}
-                    <div className="sm:hidden mt-4">
-                      <p className="text-xs text-gray-mid mb-2">Price trend · tap to explore</p>
-                      <FullSparkline data={pintIndex.sparkData} snapshots={snapshots} width={280} height={50} />
-                    </div>
-
-                    <p className="text-[10px] text-gray-mid mt-3 text-center">Tracking Perth beer prices weekly.</p>
-                  </div>
-                </div>
-              )}
-            </div>
-          </section>
-        )}
-
-        {/* ════════════════════════════════════════════
-            5. THE NUMBERS (tabbed)
+            4. CONTRIBUTE CTA BANNER
             ════════════════════════════════════════════ */}
         <section className="mb-10 sm:mb-14">
-          <h2 className="text-[24px] sm:text-[28px] font-bold text-ink font-display">The Numbers</h2>
-          <p className="text-[16px] text-gray-mid mt-1 mb-6">How Perth&apos;s pint market stacks up</p>
-
-          {/* Tab bar */}
-          <div role="tablist" className="flex gap-0 border-b border-[#E5E5E5] mb-6">
-            {[
-              { id: 'suburbs' as const, label: 'Suburbs' },
-              { id: 'venues' as const, label: 'Venues' },
-              { id: 'value' as const, label: 'Value Picks' },
-            ].map(tab => (
-              <button
-                key={tab.id}
-                role="tab"
-                aria-selected={numbersTab === tab.id}
-                onClick={() => setNumbersTab(tab.id)}
-                className={`px-4 sm:px-6 py-3 text-sm sm:text-base transition-colors ${
-                  numbersTab === tab.id
-                    ? 'font-bold text-ink border-b-2 border-[#E8740C]'
-                    : 'font-normal text-gray-mid hover:text-ink'
-                }`}
-              >
-                {tab.label}
-              </button>
-            ))}
-          </div>
-
-          {/* Tab panels */}
-          <div role="tabpanel">
-
-            {/* ─── Tab 1: Suburbs ─── */}
-            {numbersTab === 'suburbs' && (
-              <div className="bg-white border-3 border-ink shadow-hard-sm rounded-card overflow-hidden">
-                <div className="overflow-x-auto">
-                  <table className="w-full text-sm">
-                    <thead>
-                      <tr className="bg-stone-100 text-gray-mid text-xs">
-                        <th className="px-3 py-2.5 text-center font-semibold w-10">Pos</th>
-                        <th className="px-3 py-2.5 text-left font-semibold">Suburb</th>
-                        <th className={`px-3 py-2.5 text-center font-semibold cursor-pointer hover:text-orange select-none ${suburbSortBy === 'avg' ? 'text-orange' : ''}`} onClick={() => setSuburbSortBy('avg')}>
-                          Avg {suburbSortBy === 'avg' && '▾'}
-                        </th>
-                        <th className={`px-3 py-2.5 text-center font-semibold cursor-pointer hover:text-orange select-none hidden sm:table-cell ${suburbSortBy === 'low' ? 'text-orange' : ''}`} onClick={() => setSuburbSortBy('low')}>
-                          Low {suburbSortBy === 'low' && '▾'}
-                        </th>
-                        <th className={`px-3 py-2.5 text-center font-semibold cursor-pointer hover:text-orange select-none hidden sm:table-cell ${suburbSortBy === 'high' ? 'text-orange' : ''}`} onClick={() => setSuburbSortBy('high')}>
-                          High {suburbSortBy === 'high' && '▾'}
-                        </th>
-                        <th className={`px-3 py-2.5 text-center font-semibold cursor-pointer hover:text-orange select-none hidden md:table-cell ${suburbSortBy === 'hh' ? 'text-orange' : ''}`} onClick={() => setSuburbSortBy('hh')}>
-                          HH% {suburbSortBy === 'hh' && '▾'}
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {(showAllSuburbs ? sortedSuburbs : sortedSuburbs.slice(0, 5)).map((s, i) => (
-                        <tr key={s.suburb} className={i % 2 === 0 ? 'bg-white' : 'bg-stone-50/60'}>
-                          <td className="px-3 py-2.5 text-center font-bold text-gray-mid text-xs">{i + 1}</td>
-                          <td className="px-3 py-2.5 text-left">
-                            <span className="font-semibold text-ink">{s.suburb}</span>
-                            <span className="text-[10px] text-gray-mid ml-1">({s.pubCount})</span>
-                          </td>
-                          <td className="px-3 py-2.5 text-center font-bold text-ink tabular-nums">${s.avgPrice.toFixed(2)}</td>
-                          <td className="px-3 py-2.5 text-center text-ink font-medium tabular-nums hidden sm:table-cell">${s.minPrice.toFixed(2)}</td>
-                          <td className="px-3 py-2.5 text-center text-gray-mid font-medium tabular-nums hidden sm:table-cell">${s.maxPrice.toFixed(2)}</td>
-                          <td className="px-3 py-2.5 text-center text-gray-mid hidden md:table-cell">{s.happyHourPct}%</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-                {sortedSuburbs.length > 5 && (
-                  <button
-                    onClick={() => setShowAllSuburbs(!showAllSuburbs)}
-                    className="w-full py-3 text-sm font-semibold text-ink hover:bg-[#FAFAFA] transition-colors border-t border-[#E5E5E5]"
-                  >
-                    {showAllSuburbs ? `Show less ▲` : `Show all ${sortedSuburbs.length} suburbs ▼`}
-                  </button>
-                )}
-              </div>
-            )}
-
-            {/* ─── Tab 2: Venues ─── */}
-            {numbersTab === 'venues' && (
-              <div className="bg-white border-3 border-ink shadow-hard-sm rounded-card p-6">
-                <h4 className="text-sm font-semibold text-ink mb-3"><BarChart3 className="w-4 h-4 inline" /> Price Distribution</h4>
-                <div className="space-y-2 mb-6">
-                  {priceBrackets.map(([bracket, count]) => {
-                    const maxCount = Math.max(...priceBrackets.map(([, c]) => c), 1)
-                    return (
-                      <div key={bracket} className="flex items-center gap-2">
-                        <span className="text-xs text-gray-mid w-10 text-right tabular-nums">{bracket}</span>
-                        <div className="flex-1 h-5 bg-stone-100 rounded-full overflow-hidden">
-                          <div className={`h-full rounded-full transition-all ${getBracketColor(bracket)}`} style={{ width: `${(count / maxCount) * 100}%` }} />
-                        </div>
-                        <span className="text-xs font-semibold text-gray-mid w-8 text-right">{count}</span>
-                      </div>
-                    )
-                  })}
-                </div>
-                <div className="bg-orange-50 rounded-card p-4 text-center border border-orange-200">
-                  <p className="text-xs text-gray-mid">Median Pint Price in Perth</p>
-                  <p className="text-2xl font-bold text-ink tabular-nums">${medianPrice.toFixed(2)}</p>
-                </div>
-              </div>
-            )}
-
-            {/* ─── Tab 3: Value Picks ─── */}
-            {numbersTab === 'value' && (
-              <div className="space-y-6">
-                {/* Under/Over valued */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                  <div className="bg-white border-3 border-ink shadow-hard-sm rounded-card p-6">
-                    <h4 className="text-sm font-semibold text-ink mb-3"><TrendingUp className="w-4 h-4 inline mr-1 rotate-180" />Below Market</h4>
-                    <div className="space-y-1.5">
-                      {undervalued.map(({ pub, diff }) => (
-                        <Link key={pub.id} href={`/pub/${pub.slug}`} className="flex items-center justify-between p-2 rounded-lg bg-orange-50/60 border border-orange-100 hover:bg-orange-50 transition-colors">
-                          <div className="min-w-0">
-                            <span className="text-xs font-semibold text-ink truncate block">{pub.name}</span>
-                            <p className="text-[10px] text-gray-mid">{pub.suburb}</p>
-                          </div>
-                          <div className="text-right flex-shrink-0">
-                            <p className="text-xs font-bold text-ink tabular-nums">${pub.price!.toFixed(2)}</p>
-                            <p className="text-[9px] text-gray-mid">↓ -${diff.toFixed(2)}</p>
-                          </div>
-                        </Link>
-                      ))}
-                    </div>
-                  </div>
-                  <div className="bg-white border-3 border-ink shadow-hard-sm rounded-card p-6">
-                    <h4 className="text-sm font-semibold text-ink mb-3"><TrendingUp className="w-4 h-4 inline" /> Above Market</h4>
-                    <div className="space-y-1.5">
-                      {overvalued.map(({ pub, diff }) => (
-                        <Link key={pub.id} href={`/pub/${pub.slug}`} className="flex items-center justify-between p-2 rounded-lg bg-stone-100/60 border border-stone-200 hover:bg-stone-100 transition-colors">
-                          <div className="min-w-0">
-                            <span className="text-xs font-semibold text-ink truncate block">{pub.name}</span>
-                            <p className="text-[10px] text-gray-mid">{pub.suburb}</p>
-                          </div>
-                          <div className="text-right flex-shrink-0">
-                            <p className="text-xs font-bold text-ink tabular-nums">${pub.price!.toFixed(2)}</p>
-                            <p className="text-[9px] text-gray-mid">↑ +${diff.toFixed(2)}</p>
-                          </div>
-                        </Link>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Cheapest / Priciest Suburbs */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                  <div className="bg-white border-3 border-ink shadow-hard-sm rounded-card p-6">
-                    <h4 className="text-sm font-semibold text-ink mb-3"><Beer className="w-4 h-4 inline" /> Cheapest Suburbs</h4>
-                    <div className="space-y-1.5">
-                      {cheapestSuburbs.map((s, i) => (
-                        <div key={s.suburb} className="flex items-center justify-between p-2 rounded-lg bg-white border border-stone-100">
-                          <div className="flex items-center gap-2">
-                            <span className="text-[10px] font-bold text-gray-mid">{i + 1}</span>
-                            <span className="text-xs font-semibold text-ink">{s.suburb}</span>
-                          </div>
-                          <div className="text-right">
-                            <span className="text-xs font-bold text-ink tabular-nums">${s.avgPrice.toFixed(2)}</span>
-                            <span className="text-[9px] text-gray-mid ml-1">({s.pubCount})</span>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                  <div className="bg-white border-3 border-ink shadow-hard-sm rounded-card p-6">
-                    <h4 className="text-sm font-semibold text-ink mb-3"><DollarSign className="w-4 h-4 inline" /> Priciest Suburbs</h4>
-                    <div className="space-y-1.5">
-                      {priciestSuburbs.map((s, i) => (
-                        <div key={s.suburb} className="flex items-center justify-between p-2 rounded-lg bg-white border border-stone-100">
-                          <div className="flex items-center gap-2">
-                            <span className="text-[10px] font-bold text-gray-mid">{i + 1}</span>
-                            <span className="text-xs font-semibold text-ink">{s.suburb}</span>
-                          </div>
-                          <div className="text-right">
-                            <span className="text-xs font-bold text-ink tabular-nums">${s.avgPrice.toFixed(2)}</span>
-                            <span className="text-[9px] text-gray-mid ml-1">({s.pubCount})</span>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
-
-          </div>
-        </section>
-
-        {/* ════════════════════════════════════════════
-            6. CONTRIBUTE CTA BANNER
-            ════════════════════════════════════════════ */}
-        <section id="contribute" className="mb-10 sm:mb-14">
-          <div className="bg-[#FDF8F0] rounded-card py-12 px-6 text-center">
-            <h2 className="text-[24px] sm:text-[28px] font-bold text-ink font-display">Know a price we&apos;re missing?</h2>
-            <p className="text-[16px] text-gray-mid mt-2">Help Perth drink cheaper.</p>
-            <button
-              onClick={openSubmitForm}
-              className="mt-6 bg-[#E8740C] text-white font-semibold rounded-lg px-8 py-3 hover:bg-[#d06a0b] transition-colors"
+          <div className="bg-ink border-3 border-ink rounded-card p-6 text-center shadow-hard-sm">
+            <h2 className="font-mono font-extrabold text-xl text-white mb-2">Know a price we&apos;re missing?</h2>
+            <p className="text-white/60 text-sm mb-4">Help Perth drink cheaper.</p>
+            <Link
+              href="/?submit=1"
+              className="inline-flex font-mono text-[0.85rem] font-bold uppercase tracking-[0.05em] text-ink bg-amber-light border-3 border-ink rounded-pill px-9 py-4 shadow-hard-sm hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-hard-hover transition-all no-underline"
             >
               Submit a Price
-            </button>
-            <p className="text-sm text-gray-mid mt-4">{pubs.length} venues tracked · Updated weekly</p>
+            </Link>
+            <p className="text-white/40 text-sm mt-4">{pubs.length} venues tracked · Updated weekly</p>
           </div>
         </section>
 
