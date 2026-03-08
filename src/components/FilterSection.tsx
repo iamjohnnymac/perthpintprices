@@ -1,6 +1,6 @@
 "use client"
 
-import { MapPin } from 'lucide-react'
+import { MapPin, Search } from 'lucide-react'
 
 interface FilterSectionProps {
   viewMode: 'cards' | 'list'
@@ -38,6 +38,8 @@ interface FilterSectionProps {
 }
 
 export function FilterSection({
+  searchTerm,
+  setSearchTerm,
   selectedSuburb,
   setSelectedSuburb,
   suburbs,
@@ -62,6 +64,26 @@ export function FilterSection({
 
   return (
     <div className="max-w-container mx-auto px-6 mb-6 space-y-3">
+      {/* Search */}
+      <div className="relative">
+        <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-mid pointer-events-none" />
+        <input
+          type="text"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          placeholder="Search pubs by name..."
+          className="w-full font-mono text-[0.85rem] bg-white border-3 border-ink rounded-pill pl-11 pr-5 py-3 text-ink placeholder:text-gray-mid/50 focus:outline-none focus:border-amber transition-colors"
+        />
+        {searchTerm && (
+          <button
+            onClick={() => setSearchTerm('')}
+            className="absolute right-4 top-1/2 -translate-y-1/2 font-mono text-[0.6rem] font-bold uppercase tracking-[0.05em] text-gray-mid hover:text-ink transition-colors"
+          >
+            Clear
+          </button>
+        )}
+      </div>
+
       {/* Filters + Sort — single row on desktop, wraps on mobile */}
       <div className="flex flex-wrap gap-2.5 items-center">
         <select

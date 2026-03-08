@@ -2,10 +2,10 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import { timingSafeEqual } from 'crypto'
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://ifxkoblvgttelzboenpi.supabase.co',
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlmeGtvYmx2Z3R0ZWx6Ym9lbnBpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzExODUwNjgsImV4cCI6MjA4Njc2MTA2OH0.qLy6B-VeVnMh0QSOxHK3uQEJ6iZr6xNHmfKov_7B-fY'
-)
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://ifxkoblvgttelzboenpi.supabase.co'
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlmeGtvYmx2Z3R0ZWx6Ym9lbnBpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzExODUwNjgsImV4cCI6MjA4Njc2MTA2OH0.qLy6B-VeVnMh0QSOxHK3uQEJ6iZr6xNHmfKov_7B-fY'
+
+const supabase = createClient(supabaseUrl, supabaseKey)
 
 export const dynamic = 'force-dynamic'
 
@@ -52,20 +52,30 @@ export async function POST(request: NextRequest) {
 
         const now = new Date().toISOString()
 
+        // Build update payload — only include beer_type if provided
+        const updatePayload: Record<string, unknown> = {
+          price: report.reported_price,
+          price_verified: true,
+          last_verified: now,
+          last_updated: now,
+        }
+        if (report.beer_type) {
+          updatePayload.beer_type = report.beer_type
+        }
+
         // Update pub price
-        const { error: pubErr } = await supabase
+        const { data: updatedPubs, error: pubErr } = await supabase
           .from('pubs')
-          .update({
-            price: report.reported_price,
-            beer_type: report.beer_type || undefined,
-            price_verified: true,
-            last_verified: now,
-            last_updated: now,
-          })
+          .update(updatePayload)
           .eq('slug', report.pub_slug)
+          .select('slug')
 
         if (pubErr) {
           return NextResponse.json({ error: 'Failed to update pub: ' + pubErr.message }, { status: 500 })
+        }
+
+        if (!updatedPubs || updatedPubs.length === 0) {
+          return NextResponse.json({ error: `No pub found with slug "${report.pub_slug}"` }, { status: 404 })
         }
 
         // Get pub_id for price_history

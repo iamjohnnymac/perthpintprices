@@ -5,7 +5,7 @@ import {
   DollarSign, Bell, BarChart3, Activity, FileText, Heart,
   Beer, Sunset, Users, Trophy, MapPin, AlertTriangle, Shield,
   Clock, RefreshCw, LogOut, Check, X, ChevronDown, ChevronUp,
-  Copy, PenLine, Eye, EyeOff, Loader2, Store
+  Eye, EyeOff, Loader2, Store
 } from 'lucide-react'
 
 /* ================================================================
@@ -112,29 +112,29 @@ function StatCard({ label, value, sub, icon: Icon }: {
   label: string; value: string | number; sub?: string; icon?: React.ElementType
 }) {
   return (
-    <div className="bg-white border border-gray-light rounded-card p-4">
+    <div className="bg-white border-3 border-ink rounded-card p-4 shadow-hard-sm">
       <div className="flex items-center gap-2 mb-1">
         {Icon && <Icon size={14} className="text-gray-mid" />}
-        <p className="text-xs font-medium text-gray-mid">{label}</p>
+        <p className="font-mono text-[0.6rem] font-bold uppercase tracking-[0.08em] text-gray-mid">{label}</p>
       </div>
-      <p className="text-2xl font-bold text-ink">{value}</p>
-      {sub && <p className="text-xs text-gray-mid mt-1">{sub}</p>}
+      <p className="font-mono text-2xl font-extrabold text-ink">{value}</p>
+      {sub && <p className="font-mono text-[0.65rem] text-gray-mid mt-1">{sub}</p>}
     </div>
   )
 }
 
 function StatusBadge({ status }: { status: string }) {
   const styles: Record<string, string> = {
-    pending: 'bg-amber-pale text-amber',
-    verified: 'bg-green-pale text-green',
-    approved: 'bg-green-pale text-green',
-    rejected: 'bg-red-pale text-red',
-    success: 'bg-green-pale text-green',
-    error: 'bg-red-pale text-red',
-    warning: 'bg-amber-pale text-amber',
+    pending: 'bg-amber-pale text-amber border-amber',
+    verified: 'bg-green-pale text-green border-green',
+    approved: 'bg-green-pale text-green border-green',
+    rejected: 'bg-red-pale text-red border-red',
+    success: 'bg-green-pale text-green border-green',
+    error: 'bg-red-pale text-red border-red',
+    warning: 'bg-amber-pale text-amber border-amber',
   }
   return (
-    <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${styles[status] || 'bg-gray-light text-gray-mid'}`}>
+    <span className={`inline-flex items-center gap-1 px-2 py-0.5 border-2 rounded-pill font-mono text-[0.6rem] font-bold uppercase tracking-[0.05em] ${styles[status] || 'bg-gray-light text-gray-mid border-gray'}`}>
       {status}
     </span>
   )
@@ -151,6 +151,12 @@ function CategoryIcon({ category }: { category: string }) {
   }
   const Icon = icons[category] || Activity
   return <Icon size={14} className="text-gray-mid" />
+}
+
+function SectionTitle({ children }: { children: React.ReactNode }) {
+  return (
+    <h3 className="font-mono text-[0.7rem] font-bold uppercase tracking-[0.08em] text-ink mb-3">{children}</h3>
+  )
 }
 
 /* ================================================================
@@ -185,32 +191,34 @@ function LoginScreen({ onLogin }: { onLogin: (pw: string) => void }) {
   }
 
   return (
-    <div className="min-h-screen bg-off-white flex items-center justify-center px-4">
+    <div className="min-h-screen bg-[#FDF8F0] flex items-center justify-center px-6">
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
           <div className="inline-flex items-center gap-2 mb-2">
-            <span className="text-amber text-2xl font-bold">✳</span>
-            <span className="font-display text-2xl text-ink">arvo</span>
+            <div className="w-9 h-9 bg-amber border-3 border-ink rounded-md flex items-center justify-center shadow-[2px_2px_0_#171717]">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 2v20M2 12h20M4.93 4.93l14.14 14.14M19.07 4.93L4.93 19.07" stroke="white" strokeWidth="2.5" strokeLinecap="round"/></svg>
+            </div>
+            <span className="font-mono text-[2rem] font-extrabold text-ink tracking-[-0.04em]">arvo</span>
           </div>
-          <p className="text-gray-mid text-sm">Admin Dashboard</p>
+          <p className="font-mono text-[0.7rem] font-bold uppercase tracking-[0.1em] text-gray-mid">Admin Dashboard</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="bg-white border border-gray-light rounded-card p-6 space-y-4">
+        <form onSubmit={handleSubmit} className="bg-white border-3 border-ink rounded-card p-6 shadow-hard-sm space-y-4">
           <div>
-            <label className="block text-sm font-medium text-ink mb-1.5">Password</label>
+            <label className="block font-mono text-[0.65rem] font-bold uppercase tracking-[0.08em] text-ink mb-2">Password</label>
             <div className="relative">
               <input
                 type={showPassword ? 'text' : 'password'}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-3 py-2.5 bg-off-white border border-gray-light rounded-lg text-ink text-sm focus:outline-none focus:border-amber focus:ring-1 focus:ring-amber pr-10"
+                className="w-full px-4 py-3 bg-off-white border-3 border-ink rounded-card font-mono text-sm text-ink focus:outline-none focus:border-amber pr-10"
                 placeholder="Enter admin password"
                 autoFocus
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-mid hover:text-ink"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-mid hover:text-ink transition-colors"
               >
                 {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
               </button>
@@ -218,7 +226,7 @@ function LoginScreen({ onLogin }: { onLogin: (pw: string) => void }) {
           </div>
 
           {error && (
-            <div className="flex items-center gap-2 text-red text-sm bg-red-pale rounded-lg px-3 py-2">
+            <div className="flex items-center gap-2 text-red font-mono text-[0.7rem] font-bold bg-red-pale border-2 border-red rounded-card px-3 py-2">
               <AlertTriangle size={14} />
               {error}
             </div>
@@ -227,7 +235,7 @@ function LoginScreen({ onLogin }: { onLogin: (pw: string) => void }) {
           <button
             type="submit"
             disabled={loading || !password}
-            className="w-full py-2.5 bg-amber text-white font-semibold rounded-lg hover:bg-amber/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm"
+            className="w-full py-3 bg-amber text-white font-mono text-[0.75rem] font-bold uppercase tracking-[0.05em] border-3 border-ink rounded-card shadow-hard-sm hover:translate-x-[1.5px] hover:translate-y-[1.5px] hover:shadow-hard-hover disabled:opacity-50 disabled:cursor-not-allowed transition-all"
           >
             {loading ? <Loader2 size={16} className="animate-spin mx-auto" /> : 'Sign In'}
           </button>
@@ -256,8 +264,7 @@ const TABS: { id: TabId; label: string; icon: React.ElementType }[] = [
 
 function OverviewTab({ data }: { data: DashboardData }) {
   return (
-    <div className="space-y-6">
-      {/* Key Stats */}
+    <div className="space-y-8">
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <StatCard label="Total Venues" value={data.overview.totalPubs} icon={Store} />
         <StatCard label="Priced" value={data.overview.pricedPubs} sub={`${data.overview.unpricedPubs} TBC`} icon={DollarSign} />
@@ -265,9 +272,8 @@ function OverviewTab({ data }: { data: DashboardData }) {
         <StatCard label="Avg Price" value={`$${data.overview.avgPrice.toFixed(2)}`} sub={`$${data.overview.minPrice} – $${data.overview.maxPrice}`} icon={Beer} />
       </div>
 
-      {/* Features */}
       <div>
-        <h3 className="text-sm font-semibold text-ink mb-3">Feature Coverage</h3>
+        <SectionTitle>Feature Coverage</SectionTitle>
         <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
           <StatCard label="Happy Hour" value={data.features.happyHour} icon={Clock} />
           <StatCard label="Cozy Pubs" value={data.features.cozyPubs} icon={Heart} />
@@ -277,41 +283,39 @@ function OverviewTab({ data }: { data: DashboardData }) {
         </div>
       </div>
 
-      {/* Recently Updated */}
       <div>
-        <h3 className="text-sm font-semibold text-ink mb-3">Recently Updated</h3>
-        <div className="bg-white border border-gray-light rounded-card overflow-hidden">
+        <SectionTitle>Recently Updated</SectionTitle>
+        <div className="bg-white border-3 border-ink rounded-card shadow-hard-sm overflow-hidden">
           {data.recentlyUpdated.map((pub, i) => (
-            <div key={i} className={`flex items-center justify-between px-4 py-3 ${i > 0 ? 'border-t border-gray-light' : ''}`}>
+            <div key={i} className={`flex items-center justify-between px-4 py-3 ${i > 0 ? 'border-t-2 border-ink/10' : ''}`}>
               <div>
-                <p className="text-sm font-medium text-ink">{pub.name}</p>
-                <p className="text-xs text-gray-mid">{pub.suburb}</p>
+                <p className="font-mono text-[0.8rem] font-bold text-ink">{pub.name}</p>
+                <p className="font-mono text-[0.65rem] text-gray-mid">{pub.suburb}</p>
               </div>
               <div className="text-right">
-                <p className="text-sm font-mono font-semibold text-ink">{pub.price ? `$${Number(pub.price).toFixed(2)}` : 'TBC'}</p>
-                <p className="text-xs text-gray-mid">{timeAgo(pub.lastUpdated)}</p>
+                <p className="font-mono text-[0.85rem] font-extrabold text-ink tabular-nums">{pub.price ? `$${Number(pub.price).toFixed(2)}` : 'TBC'}</p>
+                <p className="font-mono text-[0.6rem] text-gray-mid">{timeAgo(pub.lastUpdated)}</p>
               </div>
             </div>
           ))}
         </div>
       </div>
 
-      {/* Price History */}
       <div>
-        <h3 className="text-sm font-semibold text-ink mb-3">Price Change History</h3>
-        <div className="bg-white border border-gray-light rounded-card overflow-hidden">
+        <SectionTitle>Price Change History</SectionTitle>
+        <div className="bg-white border-3 border-ink rounded-card shadow-hard-sm overflow-hidden">
           {data.priceHistory.recent.length === 0 ? (
-            <p className="text-sm text-gray-mid px-4 py-6 text-center">No price changes recorded yet</p>
+            <p className="font-mono text-[0.75rem] text-gray-mid px-4 py-6 text-center">No price changes recorded yet</p>
           ) : (
             data.priceHistory.recent.map((h, i) => (
-              <div key={i} className={`flex items-center justify-between px-4 py-3 ${i > 0 ? 'border-t border-gray-light' : ''}`}>
+              <div key={i} className={`flex items-center justify-between px-4 py-3 ${i > 0 ? 'border-t-2 border-ink/10' : ''}`}>
                 <div>
-                  <p className="text-sm font-medium text-ink">{h.pubName}</p>
-                  <p className="text-xs text-gray-mid">{h.source || h.changeType}</p>
+                  <p className="font-mono text-[0.8rem] font-bold text-ink">{h.pubName}</p>
+                  <p className="font-mono text-[0.65rem] text-gray-mid">{h.source || h.changeType}</p>
                 </div>
                 <div className="text-right">
-                  <p className="text-sm font-mono font-semibold text-ink">${Number(h.price).toFixed(2)}</p>
-                  <p className="text-xs text-gray-mid">{timeAgo(h.changedAt)}</p>
+                  <p className="font-mono text-[0.85rem] font-extrabold text-ink tabular-nums">${Number(h.price).toFixed(2)}</p>
+                  <p className="font-mono text-[0.6rem] text-gray-mid">{timeAgo(h.changedAt)}</p>
                 </div>
               </div>
             ))
@@ -329,21 +333,21 @@ function OverviewTab({ data }: { data: DashboardData }) {
 function ActivityTab({ data }: { data: DashboardData }) {
   return (
     <div className="space-y-3">
-      <h3 className="text-sm font-semibold text-ink">Agent Activity Log</h3>
-      <div className="bg-white border border-gray-light rounded-card overflow-hidden">
+      <SectionTitle>Agent Activity Log</SectionTitle>
+      <div className="bg-white border-3 border-ink rounded-card shadow-hard-sm overflow-hidden">
         {data.agentActivity.length === 0 ? (
-          <p className="text-sm text-gray-mid px-4 py-6 text-center">No activity recorded</p>
+          <p className="font-mono text-[0.75rem] text-gray-mid px-4 py-6 text-center">No activity recorded</p>
         ) : (
           data.agentActivity.map((a, i) => (
-            <div key={i} className={`flex items-start gap-3 px-4 py-3 ${i > 0 ? 'border-t border-gray-light' : ''}`}>
+            <div key={i} className={`flex items-start gap-3 px-4 py-3 ${i > 0 ? 'border-t-2 border-ink/10' : ''}`}>
               <div className="mt-0.5">
                 <CategoryIcon category={a.category} />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm text-ink">{a.action}</p>
-                <div className="flex items-center gap-2 mt-1">
+                <p className="font-mono text-[0.75rem] font-medium text-ink">{a.action}</p>
+                <div className="flex items-center gap-2 mt-1.5">
                   <StatusBadge status={a.status} />
-                  <span className="text-xs text-gray-mid">{timeAgo(a.createdAt)}</span>
+                  <span className="font-mono text-[0.6rem] text-gray-mid">{timeAgo(a.createdAt)}</span>
                 </div>
               </div>
             </div>
@@ -389,46 +393,46 @@ function ReportsTab({ data, password, onRefresh }: { data: DashboardData; passwo
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {actionError && (
-        <div className="flex items-center gap-2 text-red text-sm bg-red-pale rounded-lg px-3 py-2">
+        <div className="flex items-center gap-2 text-red font-mono text-[0.7rem] font-bold bg-red-pale border-2 border-red rounded-card px-3 py-2">
           <AlertTriangle size={14} />
           {actionError}
-          <button onClick={() => setActionError(null)} className="ml-auto"><X size={14} /></button>
+          <button onClick={() => setActionError(null)} className="ml-auto hover:text-ink transition-colors"><X size={14} /></button>
         </div>
       )}
 
       {/* Price Reports */}
       <div>
         <div className="flex items-center justify-between mb-3">
-          <h3 className="text-sm font-semibold text-ink">Price Reports</h3>
+          <SectionTitle>Price Reports</SectionTitle>
           {data.priceReports.pending > 0 && (
-            <span className="bg-amber text-white text-xs font-bold px-2 py-0.5 rounded-full">
+            <span className="bg-amber text-white font-mono text-[0.6rem] font-bold uppercase tracking-[0.05em] px-2.5 py-1 border-2 border-ink rounded-pill">
               {data.priceReports.pending} pending
             </span>
           )}
         </div>
-        <div className="bg-white border border-gray-light rounded-card overflow-hidden">
+        <div className="bg-white border-3 border-ink rounded-card shadow-hard-sm overflow-hidden">
           {data.priceReports.recent.length === 0 ? (
-            <p className="text-sm text-gray-mid px-4 py-6 text-center">No price reports yet</p>
+            <p className="font-mono text-[0.75rem] text-gray-mid px-4 py-6 text-center">No price reports yet</p>
           ) : (
             data.priceReports.recent.map((r, i) => {
               const isPending = r.status === 'pending'
               const approveKey = `price_report-${r.id}-approve`
               const rejectKey = `price_report-${r.id}-reject`
               return (
-                <div key={r.id} className={`px-4 py-3 ${i > 0 ? 'border-t border-gray-light' : ''}`}>
+                <div key={r.id} className={`px-4 py-4 ${i > 0 ? 'border-t-2 border-ink/10' : ''}`}>
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-ink">{r.pubSlug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}</p>
-                      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1">
-                        <span className="text-sm font-mono font-semibold text-ink">${Number(r.reportedPrice).toFixed(2)}</span>
-                        {r.beerType && <span className="text-xs text-gray-mid">{r.beerType}</span>}
-                        <span className="text-xs text-gray-mid">by {r.reporter}</span>
+                      <p className="font-mono text-[0.85rem] font-bold text-ink">{r.pubSlug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}</p>
+                      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1.5">
+                        <span className="font-mono text-[0.9rem] font-extrabold text-ink tabular-nums">${Number(r.reportedPrice).toFixed(2)}</span>
+                        {r.beerType && <span className="font-mono text-[0.65rem] text-gray-mid">{r.beerType}</span>}
+                        <span className="font-mono text-[0.65rem] text-gray-mid">by {r.reporter}</span>
                       </div>
-                      <div className="flex items-center gap-2 mt-1.5">
+                      <div className="flex items-center gap-2 mt-2">
                         <StatusBadge status={r.status} />
-                        <span className="text-xs text-gray-mid">{timeAgo(r.createdAt)}</span>
+                        <span className="font-mono text-[0.6rem] text-gray-mid">{timeAgo(r.createdAt)}</span>
                       </div>
                     </div>
                     {isPending && (
@@ -436,7 +440,7 @@ function ReportsTab({ data, password, onRefresh }: { data: DashboardData; passwo
                         <button
                           onClick={() => handleReview('price_report', r.id, 'approve')}
                           disabled={actionLoading !== null}
-                          className="flex items-center gap-1 px-3 py-1.5 bg-green text-white text-xs font-medium rounded-lg hover:bg-green/90 disabled:opacity-50 transition-colors"
+                          className="flex items-center gap-1.5 px-4 py-2 bg-green text-white font-mono text-[0.65rem] font-bold uppercase tracking-[0.05em] border-3 border-ink rounded-card shadow-hard-sm hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-hard-hover disabled:opacity-50 transition-all"
                         >
                           {actionLoading === approveKey ? <Loader2 size={12} className="animate-spin" /> : <Check size={12} />}
                           Approve
@@ -444,7 +448,7 @@ function ReportsTab({ data, password, onRefresh }: { data: DashboardData; passwo
                         <button
                           onClick={() => handleReview('price_report', r.id, 'reject')}
                           disabled={actionLoading !== null}
-                          className="flex items-center gap-1 px-3 py-1.5 bg-red text-white text-xs font-medium rounded-lg hover:bg-red/90 disabled:opacity-50 transition-colors"
+                          className="flex items-center gap-1.5 px-4 py-2 bg-red text-white font-mono text-[0.65rem] font-bold uppercase tracking-[0.05em] border-3 border-ink rounded-card shadow-hard-sm hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-hard-hover disabled:opacity-50 transition-all"
                         >
                           {actionLoading === rejectKey ? <Loader2 size={12} className="animate-spin" /> : <X size={12} />}
                           Reject
@@ -462,40 +466,40 @@ function ReportsTab({ data, password, onRefresh }: { data: DashboardData; passwo
       {/* Pub Submissions */}
       <div>
         <div className="flex items-center justify-between mb-3">
-          <h3 className="text-sm font-semibold text-ink">Pub Submissions</h3>
+          <SectionTitle>Pub Submissions</SectionTitle>
           {data.pubSubmissions.pending > 0 && (
-            <span className="bg-amber text-white text-xs font-bold px-2 py-0.5 rounded-full">
+            <span className="bg-amber text-white font-mono text-[0.6rem] font-bold uppercase tracking-[0.05em] px-2.5 py-1 border-2 border-ink rounded-pill">
               {data.pubSubmissions.pending} pending
             </span>
           )}
         </div>
-        <div className="bg-white border border-gray-light rounded-card overflow-hidden">
+        <div className="bg-white border-3 border-ink rounded-card shadow-hard-sm overflow-hidden">
           {data.pubSubmissions.recent.length === 0 ? (
-            <p className="text-sm text-gray-mid px-4 py-6 text-center">No pub submissions yet</p>
+            <p className="font-mono text-[0.75rem] text-gray-mid px-4 py-6 text-center">No pub submissions yet</p>
           ) : (
             data.pubSubmissions.recent.map((s, i) => {
               const isPending = s.status === 'pending'
               const approveKey = `pub_submission-${s.id}-approve`
               const rejectKey = `pub_submission-${s.id}-reject`
               return (
-                <div key={s.id} className={`px-4 py-3 ${i > 0 ? 'border-t border-gray-light' : ''}`}>
+                <div key={s.id} className={`px-4 py-4 ${i > 0 ? 'border-t-2 border-ink/10' : ''}`}>
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-ink">{s.pubName}</p>
-                      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1">
-                        <span className="text-xs text-gray-mid flex items-center gap-1">
+                      <p className="font-mono text-[0.85rem] font-bold text-ink">{s.pubName}</p>
+                      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1.5">
+                        <span className="font-mono text-[0.65rem] text-gray-mid flex items-center gap-1">
                           <MapPin size={10} />{s.suburb}
                         </span>
-                        {s.address && <span className="text-xs text-gray-mid">{s.address}</span>}
-                        {s.price && <span className="text-sm font-mono font-semibold text-ink">${Number(s.price).toFixed(2)}</span>}
-                        {s.beerType && <span className="text-xs text-gray-mid">{s.beerType}</span>}
+                        {s.address && <span className="font-mono text-[0.65rem] text-gray-mid">{s.address}</span>}
+                        {s.price && <span className="font-mono text-[0.9rem] font-extrabold text-ink tabular-nums">${Number(s.price).toFixed(2)}</span>}
+                        {s.beerType && <span className="font-mono text-[0.65rem] text-gray-mid">{s.beerType}</span>}
                       </div>
                       {s.submitterEmail && (
-                        <p className="text-xs text-gray-mid mt-0.5">{s.submitterEmail}</p>
+                        <p className="font-mono text-[0.6rem] text-gray-mid mt-1">{s.submitterEmail}</p>
                       )}
-                      <div className="flex items-center gap-2 mt-1.5">
+                      <div className="flex items-center gap-2 mt-2">
                         <StatusBadge status={s.status} />
-                        <span className="text-xs text-gray-mid">{timeAgo(s.createdAt)}</span>
+                        <span className="font-mono text-[0.6rem] text-gray-mid">{timeAgo(s.createdAt)}</span>
                       </div>
                     </div>
                     {isPending && (
@@ -503,7 +507,7 @@ function ReportsTab({ data, password, onRefresh }: { data: DashboardData; passwo
                         <button
                           onClick={() => handleReview('pub_submission', s.id, 'approve')}
                           disabled={actionLoading !== null}
-                          className="flex items-center gap-1 px-3 py-1.5 bg-green text-white text-xs font-medium rounded-lg hover:bg-green/90 disabled:opacity-50 transition-colors"
+                          className="flex items-center gap-1.5 px-4 py-2 bg-green text-white font-mono text-[0.65rem] font-bold uppercase tracking-[0.05em] border-3 border-ink rounded-card shadow-hard-sm hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-hard-hover disabled:opacity-50 transition-all"
                         >
                           {actionLoading === approveKey ? <Loader2 size={12} className="animate-spin" /> : <Check size={12} />}
                           Approve
@@ -511,7 +515,7 @@ function ReportsTab({ data, password, onRefresh }: { data: DashboardData; passwo
                         <button
                           onClick={() => handleReview('pub_submission', s.id, 'reject')}
                           disabled={actionLoading !== null}
-                          className="flex items-center gap-1 px-3 py-1.5 bg-red text-white text-xs font-medium rounded-lg hover:bg-red/90 disabled:opacity-50 transition-colors"
+                          className="flex items-center gap-1.5 px-4 py-2 bg-red text-white font-mono text-[0.65rem] font-bold uppercase tracking-[0.05em] border-3 border-ink rounded-card shadow-hard-sm hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-hard-hover disabled:opacity-50 transition-all"
                         >
                           {actionLoading === rejectKey ? <Loader2 size={12} className="animate-spin" /> : <X size={12} />}
                           Reject
@@ -530,17 +534,17 @@ function ReportsTab({ data, password, onRefresh }: { data: DashboardData; passwo
       <div>
         <button
           onClick={() => setShowUnpriced(!showUnpriced)}
-          className="flex items-center gap-2 text-sm font-semibold text-ink"
+          className="flex items-center gap-2 font-mono text-[0.7rem] font-bold uppercase tracking-[0.08em] text-ink hover:text-amber transition-colors"
         >
           Unpriced Venues ({data.unpricedPubs.length})
           {showUnpriced ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
         </button>
         {showUnpriced && (
-          <div className="bg-white border border-gray-light rounded-card mt-3 overflow-hidden max-h-64 overflow-y-auto">
+          <div className="bg-white border-3 border-ink rounded-card shadow-hard-sm mt-3 overflow-hidden max-h-64 overflow-y-auto">
             {data.unpricedPubs.map((p, i) => (
-              <div key={i} className={`flex items-center justify-between px-4 py-2 ${i > 0 ? 'border-t border-gray-light' : ''}`}>
-                <span className="text-sm text-ink">{p.name}</span>
-                <span className="text-xs text-gray-mid">{p.suburb}</span>
+              <div key={i} className={`flex items-center justify-between px-4 py-2.5 ${i > 0 ? 'border-t-2 border-ink/10' : ''}`}>
+                <span className="font-mono text-[0.75rem] font-medium text-ink">{p.name}</span>
+                <span className="font-mono text-[0.65rem] text-gray-mid">{p.suburb}</span>
               </div>
             ))}
           </div>
@@ -557,74 +561,73 @@ function ReportsTab({ data, password, onRefresh }: { data: DashboardData; passwo
 function HealthTab({ data }: { data: DashboardData }) {
   const snapshot = data.snapshot
   return (
-    <div className="space-y-6">
-      {/* Push Notifications */}
+    <div className="space-y-8">
       <div>
-        <h3 className="text-sm font-semibold text-ink mb-3">Push Notifications</h3>
+        <SectionTitle>Push Notifications</SectionTitle>
         <div className="grid grid-cols-2 gap-3">
           <StatCard label="Subscribers" value={data.pushSubscriptions.total} icon={Bell} />
           <StatCard label="Active" value={data.pushSubscriptions.active} icon={Check} />
         </div>
       </div>
 
-      {/* Latest Snapshot */}
       {snapshot && (
         <div>
-          <h3 className="text-sm font-semibold text-ink mb-3">Latest Weekly Snapshot</h3>
-          <div className="bg-white border border-gray-light rounded-card p-4 space-y-3">
+          <SectionTitle>Latest Weekly Snapshot</SectionTitle>
+          <div className="bg-white border-3 border-ink rounded-card shadow-hard-sm p-5 space-y-4">
             <div className="flex items-center justify-between">
-              <span className="text-xs text-gray-mid">Snapshot Date</span>
-              <span className="text-sm font-medium text-ink">{new Date(snapshot.snapshot_date).toLocaleDateString()}</span>
+              <span className="font-mono text-[0.6rem] font-bold uppercase tracking-[0.08em] text-gray-mid">Snapshot Date</span>
+              <span className="font-mono text-[0.8rem] font-bold text-ink">{new Date(snapshot.snapshot_date).toLocaleDateString()}</span>
             </div>
-            <div className="grid grid-cols-2 gap-3 text-sm">
+            <div className="grid grid-cols-2 gap-4">
               <div>
-                <span className="text-xs text-gray-mid">Avg Price</span>
-                <p className="font-mono font-semibold text-ink">${Number(snapshot.avg_price || 0).toFixed(2)}</p>
+                <span className="font-mono text-[0.6rem] font-bold uppercase tracking-[0.08em] text-gray-mid">Avg Price</span>
+                <p className="font-mono text-lg font-extrabold text-ink tabular-nums">${Number(snapshot.avg_price || 0).toFixed(2)}</p>
               </div>
               <div>
-                <span className="text-xs text-gray-mid">Median Price</span>
-                <p className="font-mono font-semibold text-ink">${Number(snapshot.median_price || 0).toFixed(2)}</p>
+                <span className="font-mono text-[0.6rem] font-bold uppercase tracking-[0.08em] text-gray-mid">Median Price</span>
+                <p className="font-mono text-lg font-extrabold text-ink tabular-nums">${Number(snapshot.median_price || 0).toFixed(2)}</p>
               </div>
               <div>
-                <span className="text-xs text-gray-mid">Total Pubs</span>
-                <p className="font-semibold text-ink">{snapshot.total_pubs}</p>
+                <span className="font-mono text-[0.6rem] font-bold uppercase tracking-[0.08em] text-gray-mid">Total Pubs</span>
+                <p className="font-mono text-lg font-extrabold text-ink">{snapshot.total_pubs}</p>
               </div>
               <div>
-                <span className="text-xs text-gray-mid">Suburbs</span>
-                <p className="font-semibold text-ink">{snapshot.total_suburbs}</p>
+                <span className="font-mono text-[0.6rem] font-bold uppercase tracking-[0.08em] text-gray-mid">Suburbs</span>
+                <p className="font-mono text-lg font-extrabold text-ink">{snapshot.total_suburbs}</p>
               </div>
             </div>
           </div>
         </div>
       )}
 
-      {/* Data Quality */}
       <div>
-        <h3 className="text-sm font-semibold text-ink mb-3">Data Quality</h3>
-        <div className="bg-white border border-gray-light rounded-card p-4 space-y-3">
-          <div className="flex items-center justify-between">
-            <span className="text-sm text-ink">Price Coverage</span>
-            <span className="text-sm font-semibold text-ink">
-              {data.overview.totalPubs > 0
-                ? Math.round((data.overview.pricedPubs / data.overview.totalPubs) * 100)
-                : 0}%
-            </span>
+        <SectionTitle>Data Quality</SectionTitle>
+        <div className="bg-white border-3 border-ink rounded-card shadow-hard-sm p-5 space-y-4">
+          <div>
+            <div className="flex items-center justify-between mb-2">
+              <span className="font-mono text-[0.7rem] font-medium text-ink">Price Coverage</span>
+              <span className="font-mono text-[0.75rem] font-extrabold text-ink">
+                {data.overview.totalPubs > 0
+                  ? Math.round((data.overview.pricedPubs / data.overview.totalPubs) * 100)
+                  : 0}%
+              </span>
+            </div>
+            <div className="w-full bg-off-white border-2 border-ink rounded-pill h-4 overflow-hidden">
+              <div
+                className="bg-amber h-full rounded-pill transition-all"
+                style={{ width: `${data.overview.totalPubs > 0 ? (data.overview.pricedPubs / data.overview.totalPubs) * 100 : 0}%` }}
+              />
+            </div>
           </div>
-          <div className="w-full bg-gray-light rounded-full h-2">
-            <div
-              className="bg-amber h-2 rounded-full transition-all"
-              style={{ width: `${data.overview.totalPubs > 0 ? (data.overview.pricedPubs / data.overview.totalPubs) * 100 : 0}%` }}
-            />
-          </div>
-          <div className="flex items-center justify-between">
-            <span className="text-sm text-ink">Vibe Tagged</span>
-            <span className="text-sm font-semibold text-ink">
+          <div className="flex items-center justify-between pt-2 border-t-2 border-ink/10">
+            <span className="font-mono text-[0.7rem] font-medium text-ink">Vibe Tagged</span>
+            <span className="font-mono text-[0.75rem] font-extrabold text-ink">
               {data.overview.vibeTagged} / {data.overview.totalPubs}
             </span>
           </div>
-          <div className="flex items-center justify-between">
-            <span className="text-sm text-ink">Price Reports</span>
-            <span className="text-sm font-semibold text-ink">
+          <div className="flex items-center justify-between pt-2 border-t-2 border-ink/10">
+            <span className="font-mono text-[0.7rem] font-medium text-ink">Price Reports</span>
+            <span className="font-mono text-[0.75rem] font-extrabold text-ink">
               {data.priceReports.total} ({data.priceReports.pending} pending)
             </span>
           </div>
@@ -675,7 +678,6 @@ export default function AdminDashboard() {
     }
   }
 
-  // Auto-login from session
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const saved = sessionStorage.getItem('arvo-admin')
@@ -688,20 +690,22 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-off-white">
+    <div className="min-h-screen bg-[#FDF8F0]">
       {/* Header */}
-      <header className="bg-white border-b border-gray-light sticky top-0 z-50">
-        <div className="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
+      <header className="bg-white border-b-3 border-ink sticky top-0 z-50">
+        <div className="max-w-container mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <span className="text-amber text-xl font-bold">✳</span>
-            <span className="font-display text-lg text-ink">arvo</span>
-            <span className="text-xs text-gray-mid ml-1">admin</span>
+            <div className="w-7 h-7 bg-amber border-2 border-ink rounded-md flex items-center justify-center shadow-[2px_2px_0_#171717]">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 2v20M2 12h20M4.93 4.93l14.14 14.14M19.07 4.93L4.93 19.07" stroke="white" strokeWidth="2.5" strokeLinecap="round"/></svg>
+            </div>
+            <span className="font-mono text-[1.6rem] font-extrabold text-ink tracking-[-0.04em]">arvo</span>
+            <span className="font-mono text-[0.65rem] font-bold uppercase tracking-[0.08em] text-gray-mid ml-1">admin</span>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             <button
               onClick={fetchData}
               disabled={loading}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-ink border border-gray-light rounded-lg hover:bg-gray-light disabled:opacity-50 transition-colors"
+              className="flex items-center gap-1.5 px-4 py-2 font-mono text-[0.65rem] font-bold uppercase tracking-[0.05em] text-ink bg-white border-3 border-ink rounded-card shadow-hard-sm hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-hard-hover disabled:opacity-50 transition-all"
             >
               <RefreshCw size={12} className={loading ? 'animate-spin' : ''} />
               Refresh
@@ -712,17 +716,17 @@ export default function AdminDashboard() {
                 setData(null)
                 sessionStorage.removeItem('arvo-admin')
               }}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-gray-mid hover:text-ink transition-colors"
+              className="flex items-center gap-1.5 px-3 py-2 text-gray-mid hover:text-ink transition-colors"
             >
-              <LogOut size={12} />
+              <LogOut size={14} />
             </button>
           </div>
         </div>
       </header>
 
-      <div className="max-w-4xl mx-auto px-4 py-6">
+      <div className="max-w-container mx-auto px-6 py-8">
         {/* Tabs */}
-        <div className="flex gap-1 mb-6 bg-white border border-gray-light rounded-card p-1">
+        <div className="flex gap-2 mb-8">
           {TABS.map((tab) => {
             const Icon = tab.icon
             const isActive = activeTab === tab.id
@@ -732,38 +736,35 @@ export default function AdminDashboard() {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors relative ${
+                className={`flex-1 flex items-center justify-center gap-1.5 px-3 py-2.5 font-mono text-[0.65rem] font-bold uppercase tracking-[0.05em] border-3 border-ink rounded-card transition-all relative ${
                   isActive
-                    ? 'bg-amber text-white'
-                    : 'text-gray-mid hover:text-ink hover:bg-gray-light'
+                    ? 'bg-amber text-white shadow-hard-sm'
+                    : 'bg-white text-gray-mid hover:text-ink shadow-hard-sm hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-hard-hover'
                 }`}
               >
                 <Icon size={14} />
                 <span className="hidden sm:inline">{tab.label}</span>
                 {hasPending && (
-                  <span className={`absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full ${isActive ? 'bg-white' : 'bg-amber'}`} />
+                  <span className={`absolute -top-1.5 -right-1.5 w-3 h-3 border-2 border-ink rounded-full ${isActive ? 'bg-white' : 'bg-amber'}`} />
                 )}
               </button>
             )
           })}
         </div>
 
-        {/* Error State */}
         {error && (
-          <div className="flex items-center gap-2 text-red text-sm bg-red-pale rounded-lg px-3 py-2 mb-4">
+          <div className="flex items-center gap-2 text-red font-mono text-[0.7rem] font-bold bg-red-pale border-2 border-red rounded-card px-3 py-2 mb-6">
             <AlertTriangle size={14} />
             {error}
           </div>
         )}
 
-        {/* Loading State */}
         {loading && !data && (
           <div className="flex items-center justify-center py-20">
             <Loader2 size={24} className="animate-spin text-amber" />
           </div>
         )}
 
-        {/* Tab Content */}
         {data && (
           <>
             {activeTab === 'overview' && <OverviewTab data={data} />}
@@ -773,9 +774,8 @@ export default function AdminDashboard() {
           </>
         )}
 
-        {/* Footer */}
         {data && (
-          <p className="text-center text-xs text-gray-mid mt-8 pb-4">
+          <p className="text-center font-mono text-[0.6rem] text-gray-mid mt-10 pb-6">
             Last fetched {timeAgo(data.generatedAt)}
           </p>
         )}
