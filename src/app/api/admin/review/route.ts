@@ -31,7 +31,7 @@ export async function POST(request: NextRequest) {
   }
 
   const body = await request.json()
-  const { type, id, action } = body
+  const { type, id, action, target_slug } = body
 
   if (!type || !id || !action) {
     return NextResponse.json({ error: 'Missing type, id, or action' }, { status: 400 })
@@ -51,6 +51,7 @@ export async function POST(request: NextRequest) {
         }
 
         const now = new Date().toISOString()
+        const slug = target_slug || report.pub_slug
 
         // Build update payload — only include beer_type if provided
         const updatePayload: Record<string, unknown> = {
@@ -67,7 +68,7 @@ export async function POST(request: NextRequest) {
         const { data: updatedPubs, error: pubErr } = await supabase
           .from('pubs')
           .update(updatePayload)
-          .eq('slug', report.pub_slug)
+          .eq('slug', slug)
           .select('slug')
 
         if (pubErr) {
@@ -75,14 +76,14 @@ export async function POST(request: NextRequest) {
         }
 
         if (!updatedPubs || updatedPubs.length === 0) {
-          return NextResponse.json({ error: `No pub found with slug "${report.pub_slug}"` }, { status: 404 })
+          return NextResponse.json({ error: `No pub found with slug "${slug}"` }, { status: 404 })
         }
 
         // Get pub_id for price_history
         const { data: pub } = await supabase
           .from('pubs')
           .select('id')
-          .eq('slug', report.pub_slug)
+          .eq('slug', slug)
           .single()
 
         if (pub) {
@@ -101,7 +102,7 @@ export async function POST(request: NextRequest) {
           .update({ status: 'verified', verified_at: now, verified_by: 'admin' })
           .eq('id', id)
 
-        return NextResponse.json({ success: true, action: 'approved', pubSlug: report.pub_slug })
+        return NextResponse.json({ success: true, action: 'approved', pubSlug: slug })
 
       } else if (action === 'reject') {
         await supabase

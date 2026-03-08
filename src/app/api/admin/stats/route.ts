@@ -303,6 +303,7 @@ export async function GET(request: NextRequest) {
           createdAt: s.created_at,
         })),
       },
+      pubsList: pubs.map((p: any) => ({ slug: p.slug, name: p.name })).sort((a: any, b: any) => a.name.localeCompare(b.name)),
       generatedAt: new Date().toISOString(),
     })
   } catch (error: any) {

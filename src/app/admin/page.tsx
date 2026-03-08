@@ -86,6 +86,7 @@ interface DashboardData {
     createdAt: string
   }>
   unpricedPubs: Array<{ name: string; suburb: string }>
+  pubsList: Array<{ slug: string; name: string }>
   generatedAt: string
 }
 
@@ -366,19 +367,28 @@ function ReportsTab({ data, password, onRefresh }: { data: DashboardData; passwo
   const [actionLoading, setActionLoading] = useState<string | null>(null)
   const [actionError, setActionError] = useState<string | null>(null)
   const [showUnpriced, setShowUnpriced] = useState(false)
+  const [pubOverrides, setPubOverrides] = useState<Record<string, string>>({})
+  const [pubSearches, setPubSearches] = useState<Record<string, string>>({})
+
+  const pubsList = data.pubsList || []
+  const pubSlugs = new Set(pubsList.map(p => p.slug))
 
   const handleReview = async (type: 'price_report' | 'pub_submission', id: string | number, action: 'approve' | 'reject') => {
     const key = `${type}-${id}-${action}`
     setActionLoading(key)
     setActionError(null)
     try {
+      const payload: Record<string, unknown> = { type, id, action }
+      if (type === 'price_report' && action === 'approve' && pubOverrides[String(id)]) {
+        payload.target_slug = pubOverrides[String(id)]
+      }
       const res = await fetch('/api/admin/review', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${password}`,
         },
-        body: JSON.stringify({ type, id, action }),
+        body: JSON.stringify(payload),
       })
       const result = await res.json()
       if (!res.ok) {
@@ -425,6 +435,55 @@ function ReportsTab({ data, password, onRefresh }: { data: DashboardData; passwo
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex-1 min-w-0">
                       <p className="font-mono text-[0.85rem] font-bold text-ink">{r.pubSlug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}</p>
+                      {isPending && !pubSlugs.has(r.pubSlug) && !pubOverrides[String(r.id)] && (
+                        <p className="font-mono text-[0.6rem] font-bold text-red mt-1 flex items-center gap-1">
+                          <AlertTriangle size={10} /> Pub not found — select the correct pub below
+                        </p>
+                      )}
+                      {isPending && (
+                        <div className="mt-1.5 relative">
+                          <input
+                            type="text"
+                            placeholder="Search to remap pub..."
+                            value={pubSearches[String(r.id)] || ''}
+                            onChange={(e) => {
+                              setPubSearches(prev => ({ ...prev, [String(r.id)]: e.target.value }))
+                              if (!e.target.value) setPubOverrides(prev => { const n = { ...prev }; delete n[String(r.id)]; return n })
+                            }}
+                            className="w-full font-mono text-[0.7rem] bg-off-white border-2 border-ink/20 rounded-card px-3 py-1.5 text-ink placeholder:text-gray-mid/50 focus:outline-none focus:border-amber transition-colors"
+                          />
+                          {pubSearches[String(r.id)] && !pubOverrides[String(r.id)] && (
+                            <div className="absolute z-10 top-full left-0 right-0 mt-1 bg-white border-2 border-ink rounded-card shadow-hard-sm max-h-32 overflow-y-auto">
+                              {pubsList
+                                .filter(p => p.name.toLowerCase().includes((pubSearches[String(r.id)] || '').toLowerCase()))
+                                .slice(0, 8)
+                                .map(p => (
+                                  <button
+                                    key={p.slug}
+                                    onClick={() => {
+                                      setPubOverrides(prev => ({ ...prev, [String(r.id)]: p.slug }))
+                                      setPubSearches(prev => ({ ...prev, [String(r.id)]: p.name }))
+                                    }}
+                                    className="w-full text-left px-3 py-1.5 font-mono text-[0.7rem] text-ink hover:bg-amber-pale transition-colors"
+                                  >
+                                    {p.name}
+                                  </button>
+                                ))}
+                            </div>
+                          )}
+                          {pubOverrides[String(r.id)] && (
+                            <button
+                              onClick={() => {
+                                setPubOverrides(prev => { const n = { ...prev }; delete n[String(r.id)]; return n })
+                                setPubSearches(prev => ({ ...prev, [String(r.id)]: '' }))
+                              }}
+                              className="absolute right-2 top-1/2 -translate-y-1/2 font-mono text-[0.55rem] font-bold text-gray-mid hover:text-red transition-colors"
+                            >
+                              Clear
+                            </button>
+                          )}
+                        </div>
+                      )}
                       <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1.5">
                         <span className="font-mono text-[0.9rem] font-extrabold text-ink tabular-nums">${Number(r.reportedPrice).toFixed(2)}</span>
                         {r.beerType && <span className="font-mono text-[0.65rem] text-gray-mid">{r.beerType}</span>}
