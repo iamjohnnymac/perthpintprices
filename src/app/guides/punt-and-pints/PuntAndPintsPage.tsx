@@ -5,7 +5,7 @@ import PuntNPints from '@/components/PuntNPints'
 
 export default function PuntAndPintsPage() {
   return (
-    <FeaturePageShell breadcrumbs={[
+    <FeaturePageShell title="Perth Pubs with TAB Facilities" breadcrumbs={[
       { label: 'Guides', href: '/guides' },
       { label: 'Punt & Pints' },
     ]}>

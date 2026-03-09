@@ -5,7 +5,7 @@ import SunsetSippers from '@/components/SunsetSippers'
 
 export default function SunsetSippersPage() {
   return (
-    <FeaturePageShell breadcrumbs={[
+    <FeaturePageShell title="Sunset Sippers Perth" breadcrumbs={[
       { label: 'Guides', href: '/guides' },
       { label: 'Sunset Sippers' },
     ]}>

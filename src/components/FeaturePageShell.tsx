@@ -14,6 +14,7 @@ interface BreadcrumbLink {
 
 interface FeaturePageShellProps {
   breadcrumbs: BreadcrumbLink[]
+  title?: string
   needsCrowd?: boolean
   children: (props: {
     pubs: Pub[]
@@ -22,7 +23,7 @@ interface FeaturePageShellProps {
   }) => ReactNode
 }
 
-export default function FeaturePageShell({ breadcrumbs, needsCrowd = false, children }: FeaturePageShellProps) {
+export default function FeaturePageShell({ breadcrumbs, title, needsCrowd = false, children }: FeaturePageShellProps) {
   const [pubs, setPubs] = useState<Pub[]>([])
   const [crowdReports, setCrowdReports] = useState<Record<string, CrowdReport>>({})
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null)
@@ -67,6 +68,7 @@ export default function FeaturePageShell({ breadcrumbs, needsCrowd = false, chil
   return (
     <main className="min-h-screen bg-[#FDF8F0]">
       <SubPageNav breadcrumbs={breadcrumbs} />
+      {title && <h1 className="sr-only">{title}</h1>}
       <div className="max-w-container mx-auto px-6 py-8 sm:py-12">
         <ErrorBoundary>
           {children({ pubs, userLocation, crowdReports })}

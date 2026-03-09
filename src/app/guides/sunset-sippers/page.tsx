@@ -4,7 +4,7 @@ import SunsetSippersPage from './SunsetSippersPage'
 
 export const metadata: Metadata = {
   title: "Sunset Sippers Perth: Best Golden Hour Pubs | Arvo",
-  description: "Find Perth's best sunset pubs. Watch the sun go down with a cold pint at venues with west-facing views, beer gardens, and rooftop bars.",
+  description: "Find Perth's best sunset pubs. Watch the sun go down with a cold pint at venues with west-facing views and beer gardens.",
   alternates: { canonical: 'https://perthpintprices.com/guides/sunset-sippers' },
   openGraph: {
     title: "Sunset Sippers Perth: Best Golden Hour Pubs | Arvo",
@@ -13,6 +13,7 @@ export const metadata: Metadata = {
     type: 'website',
     siteName: 'Arvo',
   },
+  twitter: { card: 'summary_large_image' },
 }
 
 export default function Page() {

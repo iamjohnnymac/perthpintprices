@@ -12,6 +12,7 @@ export default function PintIndexPage() {
         { label: 'Insights', href: '/insights' },
         { label: 'Perth Pint Index™' },
       ]} />
+      <h1 className="sr-only">Perth Pint Index</h1>
       <div className="max-w-container mx-auto px-6 py-8 sm:py-12">
         <ErrorBoundary><PintIndex /></ErrorBoundary>
       </div>

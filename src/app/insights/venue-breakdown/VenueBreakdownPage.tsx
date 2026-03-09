@@ -5,7 +5,7 @@ import VenueIntel from '@/components/VenueIntel'
 
 export default function VenueBreakdownPage() {
   return (
-    <FeaturePageShell breadcrumbs={[
+    <FeaturePageShell title="Perth Pub Prices by Bracket" breadcrumbs={[
       { label: 'Insights', href: '/insights' },
       { label: 'Venue Breakdown' },
     ]}>

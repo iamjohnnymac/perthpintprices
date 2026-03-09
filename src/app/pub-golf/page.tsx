@@ -13,7 +13,8 @@ export const metadata: Metadata = {
     url: 'https://perthpintprices.com/pub-golf',
     type: 'website',
     siteName: 'Arvo',
-  }
+  },
+  twitter: { card: 'summary_large_image' },
 }
 
 export const revalidate = 3600

@@ -5,7 +5,7 @@ import DadBar from '@/components/DadBar'
 
 export default function DadBarPage() {
   return (
-    <FeaturePageShell breadcrumbs={[
+    <FeaturePageShell title="Classic Perth Pubs for Dads" breadcrumbs={[
       { label: 'Guides', href: '/guides' },
       { label: 'The Dad Bar' },
     ]}>

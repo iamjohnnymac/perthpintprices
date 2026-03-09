@@ -14,7 +14,8 @@ export const metadata: Metadata = {
     url: 'https://perthpintprices.com/pint-crawl',
     type: 'website',
     siteName: 'Arvo',
-  }
+  },
+  twitter: { card: 'summary_large_image' },
 }
 
 export const revalidate = 3600

@@ -4,7 +4,7 @@ import PuntAndPintsPage from './PuntAndPintsPage'
 
 export const metadata: Metadata = {
   title: "Punt & Pints: Perth Pubs with TAB Facilities | Arvo",
-  description: "Find Perth pubs with TAB facilities. Watch the races, place a bet, and enjoy a cold pint. All the TAB-equipped venues in Perth with verified prices.",
+  description: "Find Perth pubs with TAB facilities. Watch the races, place a bet, and enjoy a cold pint. Verified prices across Perth.",
   alternates: { canonical: 'https://perthpintprices.com/guides/punt-and-pints' },
   openGraph: {
     title: "Punt & Pints: Perth Pubs with TAB | Arvo",
@@ -13,6 +13,7 @@ export const metadata: Metadata = {
     type: 'website',
     siteName: 'Arvo',
   },
+  twitter: { card: 'summary_large_image' },
 }
 
 export default function Page() {

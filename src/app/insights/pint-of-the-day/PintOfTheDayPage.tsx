@@ -12,6 +12,7 @@ export default function PintOfTheDayPage() {
         { label: 'Insights', href: '/insights' },
         { label: 'Pint of the Day' },
       ]} />
+      <h1 className="sr-only">Perth Pint of the Day</h1>
       <div className="max-w-container mx-auto px-6 py-8 sm:py-12">
         <ErrorBoundary><PintOfTheDay /></ErrorBoundary>
       </div>

@@ -5,7 +5,7 @@ import TonightsMoves from '@/components/TonightsMoves'
 
 export default function TonightsBestBetsPage() {
   return (
-    <FeaturePageShell breadcrumbs={[
+    <FeaturePageShell title="Tonight's Best Pints in Perth" breadcrumbs={[
       { label: 'Insights', href: '/insights' },
       { label: "Tonight's Best Bets" },
     ]}>
