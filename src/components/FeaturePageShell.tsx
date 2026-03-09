@@ -56,7 +56,7 @@ export default function FeaturePageShell({ breadcrumbs, needsCrowd = false, chil
         <SubPageNav breadcrumbs={breadcrumbs} />
         <div className="flex items-center justify-center py-20">
           <div className="flex flex-col items-center gap-3">
-            <div className="w-16 h-16 border-4 border-stone-300 border-t-amber rounded-full animate-spin" />
+            <div className="w-16 h-16 border-4 border-gray border-t-amber rounded-full animate-spin" />
             <span className="text-gray-mid font-medium text-lg">Loading...</span>
           </div>
         </div>

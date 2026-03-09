@@ -561,7 +561,7 @@ export default function PintCrawlClient({ pubs }: { pubs: Pub[] }) {
             <button
               onClick={() => generateRoute(false)}
               disabled={filteredPubs.length === 0}
-              className="w-full bg-ink text-white font-mono font-bold text-base rounded-2xl py-4 hover:bg-ink/90 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+              className="w-full bg-ink text-white font-mono font-bold text-base rounded-pill py-4 hover:bg-ink/90 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
             >
               <Beer className="w-4 h-4 inline" /> Generate Route
             </button>
@@ -577,7 +577,7 @@ export default function PintCrawlClient({ pubs }: { pubs: Pub[] }) {
         {phase === 'route' && (
           <div className="space-y-3 sm:space-y-4">
             {routeMessage && (
-              <div className="bg-amber-pale border border-amber rounded-2xl p-3 text-sm text-amber">
+              <div className="bg-amber-pale border border-amber rounded-card p-3 text-sm text-amber">
                 {routeMessage}
               </div>
             )}
@@ -707,7 +707,7 @@ export default function PintCrawlClient({ pubs }: { pubs: Pub[] }) {
             {/* Share link */}
             <button
               onClick={shareCrawl}
-              className="w-full flex items-center justify-center gap-2 bg-amber-pale border-2 border-amber rounded-2xl py-3 text-sm font-bold text-amber hover:bg-amber-pale transition-colors"
+              className="w-full flex items-center justify-center gap-2 bg-amber-pale border-2 border-amber rounded-pill py-3 text-sm font-bold text-amber hover:bg-amber-pale transition-colors"
             >
               {shared ? <><CircleCheck className="w-4 h-4" /> Shared!</> : copied ? <><CircleCheck className="w-4 h-4" /> Link Copied!</> : <><LinkIcon className="w-4 h-4" /> Share This Crawl</>}
             </button>
@@ -716,13 +716,13 @@ export default function PintCrawlClient({ pubs }: { pubs: Pub[] }) {
             <div className="grid grid-cols-2 gap-2">
               <button
                 onClick={() => generateRoute(true)}
-                className="flex items-center justify-center gap-2 bg-white border border-gray-light/60 rounded-2xl py-3 text-sm font-semibold text-ink hover:bg-off-white transition-colors"
+                className="flex items-center justify-center gap-2 bg-white border border-gray-light/60 rounded-pill py-3 text-sm font-semibold text-ink hover:bg-off-white transition-colors"
               >
                 <Shuffle className="w-3.5 h-3.5" /> Shuffle
               </button>
               <button
                 onClick={copyRoute}
-                className="flex items-center justify-center gap-2 bg-white border border-gray-light/60 rounded-2xl py-3 text-sm font-semibold text-ink hover:bg-off-white transition-colors"
+                className="flex items-center justify-center gap-2 bg-white border border-gray-light/60 rounded-pill py-3 text-sm font-semibold text-ink hover:bg-off-white transition-colors"
               >
                 {copied ? <><CircleCheck className="w-3.5 h-3.5" /> Copied!</> : <><Copy className="w-3.5 h-3.5" /> Copy Route</>}
               </button>
@@ -730,13 +730,13 @@ export default function PintCrawlClient({ pubs }: { pubs: Pub[] }) {
             <div className="grid grid-cols-2 gap-2">
               <button
                 onClick={() => setPhase('plan')}
-                className="flex items-center justify-center gap-2 bg-white border border-gray-light/60 rounded-2xl py-3 text-sm font-semibold text-ink hover:bg-off-white transition-colors"
+                className="flex items-center justify-center gap-2 bg-white border border-gray-light/60 rounded-pill py-3 text-sm font-semibold text-ink hover:bg-off-white transition-colors"
               >
                 <Pencil className="w-3.5 h-3.5" /> Edit Plan
               </button>
               <button
                 onClick={startCrawl}
-                className="flex items-center justify-center gap-2 bg-ink text-white rounded-2xl py-3 text-sm font-bold hover:bg-ink/90 transition-colors"
+                className="flex items-center justify-center gap-2 bg-ink text-white rounded-pill py-3 text-sm font-bold hover:bg-ink/90 transition-colors"
               >
                 <Footprints className="w-3.5 h-3.5" /> Start Crawl
               </button>
@@ -795,7 +795,7 @@ export default function PintCrawlClient({ pubs }: { pubs: Pub[] }) {
 
                 <button
                   onClick={shareCrawl}
-                  className="w-full flex items-center justify-center gap-2 bg-ink text-white rounded-2xl py-4 text-sm font-bold hover:bg-ink/90 transition-colors"
+                  className="w-full flex items-center justify-center gap-2 bg-ink text-white rounded-pill py-4 text-sm font-bold hover:bg-ink/90 transition-colors"
                 >
                   {shared ? <><CircleCheck className="w-3.5 h-3.5" /> Shared!</> : copied ? <><CircleCheck className="w-3.5 h-3.5" /> Link Copied!</> : <><Share2 className="w-3.5 h-3.5" /> Share Your Crawl</>}
                 </button>
@@ -809,7 +809,7 @@ export default function PintCrawlClient({ pubs }: { pubs: Pub[] }) {
                     setCompletedStops(new Set())
                     router.replace(pathname, { scroll: false })
                   }}
-                  className="w-full flex items-center justify-center gap-2 bg-white border border-gray-light/60 rounded-2xl py-3 text-sm font-semibold text-ink hover:bg-off-white transition-colors"
+                  className="w-full flex items-center justify-center gap-2 bg-white border border-gray-light/60 rounded-pill py-3 text-sm font-semibold text-ink hover:bg-off-white transition-colors"
                 >
                   <MapIcon className="w-4 h-4 inline" /> Plan Another Crawl
                 </button>
@@ -931,7 +931,7 @@ export default function PintCrawlClient({ pubs }: { pubs: Pub[] }) {
                 {/* Advance button */}
                 <button
                   onClick={advanceStop}
-                  className="w-full bg-ink text-white font-mono font-bold text-base rounded-2xl py-4 hover:bg-ink/90 transition-colors"
+                  className="w-full bg-ink text-white font-mono font-bold text-base rounded-pill py-4 hover:bg-ink/90 transition-colors"
                 >
                   {currentStop < route.length - 1
                     ? <><CircleCheck className="w-3.5 h-3.5 inline" /> Done. Next Stop</>
@@ -941,7 +941,7 @@ export default function PintCrawlClient({ pubs }: { pubs: Pub[] }) {
                 {/* Back to route button */}
                 <button
                   onClick={() => setPhase('route')}
-                  className="w-full flex items-center justify-center gap-2 bg-white border border-gray-light/60 rounded-2xl py-3 text-sm font-semibold text-gray-mid hover:bg-off-white transition-colors"
+                  className="w-full flex items-center justify-center gap-2 bg-white border border-gray-light/60 rounded-pill py-3 text-sm font-semibold text-gray-mid hover:bg-off-white transition-colors"
                 >
                   ← View Full Route
                 </button>

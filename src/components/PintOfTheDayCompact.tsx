@@ -47,7 +47,7 @@ export default function PintOfTheDayCompact() {
       href={`/pub/${data.pub.slug}`}
       className="block w-full max-w-2xl mx-auto mt-4 mb-2 group"
     >
-      <div className="relative flex items-center gap-4 px-5 py-4 rounded-2xl bg-gradient-to-r from-amber/5 via-white to-amber/5 border border-amber/20 hover:border-amber/40 hover:shadow-lg shadow-sm transition-all">
+      <div className="relative flex items-center gap-4 px-5 py-4 rounded-card bg-gradient-to-r from-amber/5 via-white to-amber/5 border border-amber/20 hover:border-amber/40 hover:shadow-lg shadow-sm transition-all">
         {/* Pint of the day badge */}
         <div className="absolute -top-2.5 left-4 px-2 py-0.5 bg-amber text-white text-[10px] font-bold uppercase tracking-wider rounded-full">
           Pint of the day
@@ -60,7 +60,7 @@ export default function PintOfTheDayCompact() {
           <p className="text-sm font-semibold text-ink group-hover:text-amber transition-colors truncate">
             {data.pub.name}
           </p>
-          <p className="text-xs text-stone-400 truncate">
+          <p className="text-xs text-gray-mid truncate">
             {data.pub.suburb}{data.pub.beerType ? ` · ${data.pub.beerType}` : ''}
           </p>
         </div>

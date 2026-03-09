@@ -4,7 +4,7 @@ import { useState, useMemo, useCallback } from 'react'
 import Link from 'next/link'
 import SubPageNav from '@/components/SubPageNav'
 import { Pub } from '@/types/pub'
-import { Search, X, Plus, Minus, ChevronDown, ChevronUp, Copy, Check, ArrowRight, RotateCcw, Home, Target, Flag, Trophy, BarChart3, Users, MapPin, HelpCircle } from 'lucide-react'
+import { Search, X, Plus, Minus, ChevronDown, ChevronUp, Copy, Check, ArrowRight, RotateCcw, Home, Target, Flag, Trophy, BarChart3, Users, MapPin, HelpCircle, Beer, Skull } from 'lucide-react'
 import LucideIcon from '@/components/LucideIcon'
 import Footer from '@/components/Footer'
 
@@ -293,26 +293,26 @@ export default function PubGolfClient({ pubs }: { pubs: Pub[] }) {
     const emojiRow = coursePubs.map((pub: Pub, i: number) => {
       const holePar = getPar(pub.price)
       const sips = scores[winner.name]?.[i] ?? holePar
-      if (sips < holePar) return '⛳'
-      if (sips === holePar) return '🍺'
-      return '💀'
+      if (sips < holePar) return '\u26f3'
+      if (sips === holePar) return '\ud83c\udf7a'
+      return '\ud83d\udc80'
     }).join('')
 
     const playerLines = playerTotals.map((p: { name: string; total: number }) => {
-      const prefix = players.length > 1 && p.name === winner.name ? '🏆' : '🍺'
+      const prefix = players.length > 1 && p.name === winner.name ? '\ud83c\udfc6' : '\ud83c\udf7a'
       return `${prefix} ${p.name}: ${p.total} (${formatDiff(p.total, totalPar)} par)`
     })
 
     const lines = [
-      `🏌️ ARVO PUB GOLF 🍺`,
+      `\ud83c\udfcc\ufe0f ARVO PUB GOLF \ud83c\udf7a`,
       courseName,
       '',
       emojiRow,
       '',
       ...playerLines,
       '',
-      `💰 $${totalSpend.toFixed(0)} · ${coursePubs.length} holes · ${uniqueSuburbs} suburb${uniqueSuburbs !== 1 ? 's' : ''}`,
-      'Play free → arvo.pub/pub-golf',
+      `\ud83d\udcb0 $${totalSpend.toFixed(0)} \u00b7 ${coursePubs.length} holes \u00b7 ${uniqueSuburbs} suburb${uniqueSuburbs !== 1 ? 's' : ''}`,
+      'Play free \u2192 arvo.pub/pub-golf',
     ]
     return lines.join('\n')
   }, [winner, courseName, playerTotals, players, totalPar, totalSpend, coursePubs, scores, uniqueSuburbs])
@@ -417,7 +417,7 @@ export default function PubGolfClient({ pubs }: { pubs: Pub[] }) {
                 <span className="flex-shrink-0 w-6 h-6 bg-amber text-white font-mono text-[0.7rem] font-bold rounded-full flex items-center justify-center border-2 border-ink">3</span>
                 <div>
                   <p className="font-mono text-[0.75rem] font-bold text-ink">Lowest score wins</p>
-                  <p className="font-mono text-[0.65rem] text-gray-mid mt-0.5">⛳ Under par · 🍺 Par · 💀 Over par — fewest sips takes the trophy</p>
+                  <p className="font-mono text-[0.65rem] text-gray-mid mt-0.5 inline-flex items-center gap-1 flex-wrap"><Flag className="w-3 h-3 inline" /> Under par <span>·</span> <Beer className="w-3 h-3 inline" /> Par <span>·</span> <Skull className="w-3 h-3 inline" /> Over par — fewest sips takes the trophy</p>
                 </div>
               </div>
             </div>
@@ -451,12 +451,12 @@ export default function PubGolfClient({ pubs }: { pubs: Pub[] }) {
                 onKeyDown={(e) => { if (e.key === 'Enter') addPlayer() }}
                 placeholder="Player name"
                 maxLength={20}
-                className="flex-1 min-w-0 px-3 py-2.5 rounded-xl border border-gray-light bg-off-white text-sm focus:outline-none focus:ring-2 focus:ring-orange-400/50 focus:border-orange-400 transition-all duration-200"
+                className="flex-1 min-w-0 px-3 py-2.5 rounded-xl border border-gray-light bg-off-white text-sm focus:outline-none focus:ring-2 focus:ring-amber/50 focus:border-amber transition-all duration-200"
               />
               <button
                 onClick={addPlayer}
                 disabled={!playerInput.trim() || players.length >= 8}
-                className="px-4 py-2.5 bg-amber text-white text-sm font-semibold rounded-xl hover:bg-orange-600 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200"
+                className="px-4 py-2.5 bg-amber text-white text-sm font-semibold rounded-xl hover:bg-amber/90 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200"
               >
                 <Plus className="w-4 h-4" />
               </button>
@@ -468,10 +468,10 @@ export default function PubGolfClient({ pubs }: { pubs: Pub[] }) {
                 {players.map((name: string) => (
                   <span
                     key={name}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-amber-pale text-orange-800 border border-amber-light rounded-pill text-sm font-medium"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-amber-pale text-amber border border-amber-light rounded-pill text-sm font-medium"
                   >
                     {name}
-                    <button onClick={() => removePlayer(name)} className="text-orange-400 hover:text-orange-700 transition-colors">
+                    <button onClick={() => removePlayer(name)} className="text-amber hover:text-amber/70 transition-colors">
                       <X className="w-3.5 h-3.5" />
                     </button>
                   </span>
@@ -520,7 +520,7 @@ export default function PubGolfClient({ pubs }: { pubs: Pub[] }) {
                     }}
                     className={`w-full text-left p-3 sm:p-4 rounded-xl border transition-all duration-200 ${
                       isSelected
-                        ? 'border-orange-400 bg-amber-pale ring-2 ring-orange-400/30'
+                        ? 'border-amber bg-amber-pale ring-2 ring-amber/30'
                         : 'border-gray-light bg-off-white hover:border-gray'
                     }`}
                   >
@@ -560,12 +560,12 @@ export default function PubGolfClient({ pubs }: { pubs: Pub[] }) {
                       key={pub.id}
                       className="flex items-center gap-2 px-3 py-2 bg-amber-pale border border-amber-light rounded-xl text-sm"
                     >
-                      <span className="font-bold text-orange-700 w-5 text-center flex-shrink-0">{idx + 1}</span>
+                      <span className="font-bold text-amber w-5 text-center flex-shrink-0">{idx + 1}</span>
                       <span className="truncate flex-1 text-ink font-medium">{pub.name}</span>
                       <span className="text-xs text-gray-mid flex-shrink-0">{pub.suburb}</span>
                       <button
                         onClick={() => removeCustomPub(pub.id)}
-                        className="text-orange-400 hover:text-red-500 flex-shrink-0 transition-colors"
+                        className="text-amber hover:text-red-500 flex-shrink-0 transition-colors"
                       >
                         <X className="w-4 h-4" />
                       </button>
@@ -583,14 +583,14 @@ export default function PubGolfClient({ pubs }: { pubs: Pub[] }) {
                     value={customSearch}
                     onChange={(e) => setCustomSearch(e.target.value)}
                     placeholder="Search pubs..."
-                    className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-gray-light bg-off-white text-sm focus:outline-none focus:ring-2 focus:ring-orange-400/50 focus:border-orange-400 transition-all duration-200"
+                    className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-gray-light bg-off-white text-sm focus:outline-none focus:ring-2 focus:ring-amber/50 focus:border-amber transition-all duration-200"
                   />
                 </div>
               )}
 
               {/* Search results */}
               {customSearchResults.length > 0 && (
-                <div className="mt-2 max-h-48 overflow-y-auto rounded-xl border border-gray-light bg-white divide-y divide-stone-100">
+                <div className="mt-2 max-h-48 overflow-y-auto rounded-xl border border-gray-light bg-white divide-y divide-gray-light">
                   {customSearchResults.map((pub: Pub) => (
                     <button
                       key={pub.id}
@@ -612,7 +612,7 @@ export default function PubGolfClient({ pubs }: { pubs: Pub[] }) {
           <button
             onClick={startGame}
             disabled={!canStart}
-            className="w-full py-4 bg-ink text-white text-lg font-bold font-mono rounded-2xl hover:bg-ink/90 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 shadow-md"
+            className="w-full py-4 bg-ink text-white text-lg font-bold font-mono rounded-pill hover:bg-ink/90 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 shadow-md"
           >
             <Flag className="w-4 h-4 inline" /> Tee Off!
           </button>
@@ -665,7 +665,7 @@ export default function PubGolfClient({ pubs }: { pubs: Pub[] }) {
                 </Link>
                 <p className="text-xs text-gray-mid truncate">{pub.suburb} · {pub.address}</p>
               </div>
-              <span className="flex-shrink-0 inline-flex items-center px-3 py-1.5 bg-orange-100 text-orange-800 text-xs font-bold rounded-pill border border-amber-light">
+              <span className="flex-shrink-0 inline-flex items-center px-3 py-1.5 bg-amber-pale text-amber text-xs font-bold rounded-pill border border-amber-light">
                 PAR {par}
               </span>
             </div>
@@ -720,7 +720,7 @@ export default function PubGolfClient({ pubs }: { pubs: Pub[] }) {
           {/* Next Hole / Finish */}
           <button
             onClick={nextHole}
-            className="w-full py-4 bg-ink text-white text-lg font-bold font-mono rounded-2xl hover:bg-ink/90 transition-all duration-200 shadow-md flex items-center justify-center gap-2"
+            className="w-full py-4 bg-ink text-white text-lg font-bold font-mono rounded-pill hover:bg-ink/90 transition-all duration-200 shadow-md flex items-center justify-center gap-2"
           >
             {isLastHole ? <><Flag className="w-5 h-5 inline" /> Finish Round</> : (
               <>Next Hole <ArrowRight className="w-5 h-5" /></>
@@ -761,7 +761,7 @@ export default function PubGolfClient({ pubs }: { pubs: Pub[] }) {
                             const s = scores[p]?.[i]
                             const display = s !== undefined ? s : '-'
                             return (
-                              <td key={p} className={`py-1.5 text-center font-bold ${s !== undefined ? getScoreColor(s, holePar) : 'text-stone-300'}`}>
+                              <td key={p} className={`py-1.5 text-center font-bold ${s !== undefined ? getScoreColor(s, holePar) : 'text-gray'}`}>
                                 {display}
                               </td>
                             )
@@ -913,7 +913,7 @@ export default function PubGolfClient({ pubs }: { pubs: Pub[] }) {
           {/* Share Scorecard */}
           <button
             onClick={shareResults}
-            className="w-full py-4 bg-amber text-white text-lg font-bold font-mono rounded-2xl hover:bg-orange-600 transition-all duration-200 shadow-md flex items-center justify-center gap-2"
+            className="w-full py-4 bg-amber text-white text-lg font-bold font-mono rounded-pill hover:bg-amber/90 transition-all duration-200 shadow-md flex items-center justify-center gap-2"
           >
             {copied ? (
               <><Check className="w-5 h-5" /> Copied!</>
@@ -926,13 +926,13 @@ export default function PubGolfClient({ pubs }: { pubs: Pub[] }) {
           <div className="flex gap-3">
             <button
               onClick={resetGame}
-              className="flex-1 py-3 bg-ink text-white font-bold font-mono rounded-2xl hover:bg-ink/90 transition-all duration-200 flex items-center justify-center gap-2 text-sm"
+              className="flex-1 py-3 bg-ink text-white font-bold font-mono rounded-pill hover:bg-ink/90 transition-all duration-200 flex items-center justify-center gap-2 text-sm"
             >
               <RotateCcw className="w-4 h-4" /> Play Again
             </button>
             <Link
               href="/"
-              className="flex-1 py-3 bg-white text-ink font-bold font-mono rounded-2xl border border-gray-light hover:bg-off-white transition-all duration-200 flex items-center justify-center gap-2 text-sm"
+              className="flex-1 py-3 bg-white text-ink font-bold font-mono rounded-pill border border-gray-light hover:bg-off-white transition-all duration-200 flex items-center justify-center gap-2 text-sm"
             >
               <Home className="w-4 h-4" /> Back to Arvo
             </Link>

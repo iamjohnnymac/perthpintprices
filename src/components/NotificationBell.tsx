@@ -94,7 +94,7 @@ export default function NotificationBell() {
       >
         {isSubscribed ? <BellActiveIcon /> : <BellIcon />}
         {isSubscribed && (
-          <span className="absolute top-1 right-1 w-2 h-2 bg-orange-500 rounded-full ring-2 ring-cream" />
+          <span className="absolute top-1 right-1 w-2 h-2 bg-amber rounded-full ring-2 ring-cream" />
         )}
       </button>
       {showTooltip && !isLoading && (

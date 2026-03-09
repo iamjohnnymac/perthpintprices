@@ -1,6 +1,7 @@
 'use client'
 
 import { useWatchlist } from '@/hooks/useWatchlist'
+import { Star } from 'lucide-react'
 
 interface WatchlistButtonProps {
   slug: string
@@ -41,13 +42,13 @@ export default function WatchlistButton({ slug, name, suburb, size = 'md', showL
         ${watched
           ? 'bg-amber/15 text-amber hover:bg-amber/25'
           : disabled
-            ? 'bg-stone-100 text-stone-300 cursor-not-allowed'
-            : 'bg-stone-100 text-stone-400 hover:bg-amber/10 hover:text-amber'
+            ? 'bg-gray-light text-gray cursor-not-allowed'
+            : 'bg-gray-light text-gray-mid hover:bg-amber/10 hover:text-amber'
         }
         ${className}
       `}
     >
-      {watched ? '★' : '☆'}
+      <Star className={`${size === 'sm' ? 'w-3.5 h-3.5' : size === 'md' ? 'w-4 h-4' : 'w-5 h-5'} ${watched ? 'fill-current' : ''}`} />
       {showLabel && (
         <span className="text-xs font-medium">
           {watched ? 'Watching' : 'Watch'}

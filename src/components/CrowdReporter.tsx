@@ -80,7 +80,7 @@ export default function CrowdReporter({ pubId, pubName, onClose, onReport }: Cro
                       key={level}
                       onClick={() => setSelectedLevel(levelNum)}
                       className={`
-                        p-4 rounded-2xl border-2 transition-all duration-200
+                        p-4 rounded-card border-2 transition-all duration-200
                         ${isSelected 
                           ? `${info.color} border-white text-white scale-105 shadow-lg` 
                           : 'bg-gray-800 border-gray-700 text-gray-300 hover:border-gray-500 hover:bg-gray-700'

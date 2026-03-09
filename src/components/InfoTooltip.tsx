@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useRef } from 'react'
+import { Info } from 'lucide-react'
 
 interface InfoTooltipProps {
   text: string
@@ -25,9 +26,9 @@ export default function InfoTooltip({ text }: InfoTooltipProps) {
         ref={ref}
         onMouseEnter={show}
         onMouseLeave={() => setVisible(false)}
-        className="inline-flex items-center ml-1.5 cursor-help text-xs text-stone-400 hover:text-stone-600 transition-colors select-none"
+        className="inline-flex items-center ml-1.5 cursor-help text-xs text-gray-mid hover:text-ink-light transition-colors select-none"
       >
-        ⓘ
+        <Info className="w-3.5 h-3.5" />
       </span>
       {visible && (
         <span
@@ -38,7 +39,7 @@ export default function InfoTooltip({ text }: InfoTooltipProps) {
             transform: 'translateX(-50%)',
             zIndex: 9999,
           }}
-          className="pointer-events-none w-56 rounded-lg bg-stone-900 text-white text-xs leading-relaxed px-3 py-2 shadow-xl"
+          className="pointer-events-none w-56 rounded-lg bg-ink text-white text-xs leading-relaxed px-3 py-2 shadow-xl"
         >
           <span
             style={{
@@ -48,7 +49,7 @@ export default function InfoTooltip({ text }: InfoTooltipProps) {
               transform: 'translateX(-50%)',
               borderWidth: 4,
               borderStyle: 'solid',
-              borderColor: 'transparent transparent #1c1917 transparent',
+              borderColor: 'transparent transparent #171717 transparent',
             }}
           />
           {text}

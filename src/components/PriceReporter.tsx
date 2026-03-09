@@ -1,6 +1,6 @@
 'use client'
 import { useState } from 'react'
-import { CircleCheck, PenLine, Beer } from 'lucide-react'
+import { CircleCheck, PenLine, Beer, X } from 'lucide-react'
 
 interface PriceReporterProps {
   pubSlug: string
@@ -92,7 +92,7 @@ export default function PriceReporter({ pubSlug, pubName, currentPrice }: PriceR
     <div className="bg-white rounded-card border-3 border-ink shadow-hard-sm p-4">
       <div className="flex items-center justify-between mb-3">
         <h3 className="font-mono text-sm font-extrabold text-ink"><PenLine className="w-4 h-4 inline" /> Report Price</h3>
-        <button onClick={() => setIsOpen(false)} className="text-gray-mid hover:text-ink font-mono text-xs font-bold">✕ Close</button>
+        <button onClick={() => setIsOpen(false)} className="text-gray-mid hover:text-ink font-mono text-xs font-bold"><X className="w-4 h-4 inline" /> Close</button>
       </div>
       <p className="text-xs text-gray-mid mb-3">
         Seen the current pint price at {pubName}? Help us keep prices accurate!

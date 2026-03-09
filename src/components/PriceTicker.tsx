@@ -2,7 +2,7 @@
 
 import { useMemo } from 'react';
 import { Pub } from '@/types/pub';
-import E from '@/lib/emoji';
+import { TrendingUp, TrendingDown } from 'lucide-react';
 
 interface PriceTickerProps {
   pubs: Pub[];
@@ -50,7 +50,7 @@ export default function PriceTicker({ pubs }: PriceTickerProps) {
   const duration = Math.max(30, tickers.length * 2.5);
 
   return (
-    <div className="w-full bg-ink border-t border-stone-700/40 overflow-hidden select-none fixed bottom-0 left-0 right-0" style={{ height: '36px', zIndex: 9999 }}>
+    <div className="w-full bg-ink border-t border-ink-light/40 overflow-hidden select-none fixed bottom-0 left-0 right-0" style={{ height: '36px', zIndex: 9999 }}>
       <style>{`
         @keyframes ticker-scroll {
           0% { transform: translate3d(0, 0, 0); }
@@ -70,22 +70,21 @@ export default function PriceTicker({ pubs }: PriceTickerProps) {
         <div className="ticker-track items-center whitespace-nowrap h-full">
           {items.map((t, i) => {
             const isAboveAvg = t.diff >= 0;
-            const arrow = isAboveAvg ? E.up_arrow : E.down_arrow;
             const color = isAboveAvg ? 'text-coral' : 'text-ink';
             const diffStr = Math.abs(t.diff).toFixed(2);
 
             return (
               <span key={`${t.suburb}-${i}`} className="inline-flex items-center gap-2 px-4 text-xs" style={{ height: '36px' }}>
-                <span className="font-semibold text-stone-300 text-xs sm:text-sm">
+                <span className="font-semibold text-gray text-xs sm:text-sm">
                   {t.suburb}
                 </span>
                 <span className="font-mono text-white font-bold text-sm">
                   ${t.avgPrice.toFixed(2)}
                 </span>
-                <span className={`font-mono ${color} text-[11px]`}>
-                  {arrow} {diffStr}
+                <span className={`font-mono ${color} text-[11px] inline-flex items-center gap-0.5`}>
+                  {isAboveAvg ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />} {diffStr}
                 </span>
-                <span className="text-stone-500 ml-2">·</span>
+                <span className="text-gray-mid ml-2">{'\u00B7'}</span>
               </span>
             );
           })}

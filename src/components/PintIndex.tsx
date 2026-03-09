@@ -2,10 +2,8 @@
 
 import { useEffect, useState, useRef, useCallback } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/lib/supabase';
-import E from '@/lib/emoji'
-import InfoTooltip from './InfoTooltip'
+import { BarChart3 } from 'lucide-react';
 
 interface PriceSnapshot {
   snapshot_date: string;
@@ -41,8 +39,8 @@ function Sparkline({ data, snapshots, width = 280, height = 60 }: {
   const [tooltip, setTooltip] = useState<TooltipState>({ x: 0, y: 0, label: '', price: 0, visible: false });
 
   if (data.length < 2) return (
-    <div className="bg-white rounded-2xl border border-stone-200/40 p-6 text-center">
-      <p className="text-stone-400 text-sm">No price history data yet. Trends build over time.</p>
+    <div className="bg-white rounded-card border border-gray-light/40 p-6 text-center">
+      <p className="text-gray-mid text-sm">No price history data yet. Trends build over time.</p>
     </div>
   );
   
@@ -149,7 +147,7 @@ function Sparkline({ data, snapshots, width = 280, height = 60 }: {
       {/* Floating tooltip */}
       {tooltip.visible && (
         <div
-          className="absolute z-50 bg-stone-900 text-white text-xs rounded px-2 py-1 pointer-events-none whitespace-nowrap shadow-lg"
+          className="absolute z-50 bg-ink text-white text-xs rounded px-2 py-1 pointer-events-none whitespace-nowrap shadow-lg"
           style={{
             left: tooltip.x,
             top: tooltip.y - 36,
@@ -157,7 +155,7 @@ function Sparkline({ data, snapshots, width = 280, height = 60 }: {
           }}
         >
           <span className="font-semibold">${tooltip.price.toFixed(2)}</span>
-          <span className="text-stone-400 ml-1">{tooltip.label}</span>
+          <span className="text-gray-mid ml-1">{tooltip.label}</span>
         </div>
       )}
     </div>
@@ -182,7 +180,7 @@ function DistributionBars({ distribution }: { distribution: Record<string, numbe
               opacity: 0.8
             }}
           />
-          <span className="text-[9px] text-stone-500 leading-none">{range.replace('$', '')}</span>
+          <span className="text-[9px] text-gray-mid leading-none">{range.replace('$', '')}</span>
         </div>
       ))}
     </div>
@@ -218,14 +216,14 @@ export default function PintIndex() {
   }, []);
 
   if (loading) return (
-    <div className="bg-white rounded-2xl border border-stone-200/40 p-6">
-      <div className="h-6 w-48 bg-stone-100 animate-pulse rounded mb-4" />
-      <div className="h-40 bg-stone-50 animate-pulse rounded" />
+    <div className="bg-white rounded-card border border-gray-light/40 p-6">
+      <div className="h-6 w-48 bg-gray-light animate-pulse rounded mb-4" />
+      <div className="h-40 bg-off-white animate-pulse rounded" />
     </div>
   );
   if (snapshots.length === 0) return (
-    <div className="bg-white rounded-2xl border border-stone-200/40 p-6 text-center">
-      <p className="text-stone-400 text-sm">No price history data yet. Trends build over time.</p>
+    <div className="bg-white rounded-card border border-gray-light/40 p-6 text-center">
+      <p className="text-gray-mid text-sm">No price history data yet. Trends build over time.</p>
     </div>
   );
 
@@ -245,7 +243,7 @@ export default function PintIndex() {
 
   return (
     <Card 
-      className="bg-white rounded-2xl shadow-[0_2px_16px_rgba(0,0,0,0.08)] border border-stone-200/40 cursor-pointer hover:shadow-[0_4px_20px_rgba(0,0,0,0.12)] active:scale-[0.995] transition-all duration-300"
+      className="bg-white rounded-card shadow-[0_2px_16px_rgba(0,0,0,0.08)] border border-gray-light/40 cursor-pointer hover:shadow-[0_4px_20px_rgba(0,0,0,0.12)] active:scale-[0.995] transition-all duration-300"
       onClick={() => setExpanded(!expanded)}
     >
       <CardContent className="p-5 sm:p-6">
@@ -255,43 +253,43 @@ export default function PintIndex() {
           <div className="flex items-center gap-3">
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="text-lg font-semibold font-heading text-stone-800 flex items-center">Perth Pint Index{E.tm}<InfoTooltip text="Average pint price across all verified Perth venues. Tracked weekly and stored historically so you can see if Perth beer is getting cheaper or more expensive over time." /></h3>
-                <Badge variant="outline" className="text-[10px] px-1.5 py-0 border-stone-300 text-stone-500">
+                <h3 className="text-lg font-semibold font-heading text-ink flex items-center">Perth Pint Index{'\u2122'}</h3>
+                <span className="text-[10px] px-1.5 py-0 border border-gray rounded-pill text-gray-mid">
                   LIVE
-                </Badge>
+                </span>
               </div>
               <div className="flex items-baseline gap-2 mt-0.5">
-                <span className="text-3xl font-bold font-mono text-stone-800">${current.avg_price.toFixed(2)}</span>
+                <span className="text-3xl font-bold font-mono text-ink">${current.avg_price.toFixed(2)}</span>
                 <span className={`text-sm font-semibold ${trendColor}`}>
                   {trendIcon} {monthChange >= 0 ? '+' : ''}{monthChange.toFixed(2)} ({monthPct >= 0 ? '+' : ''}{monthPct.toFixed(1)}%)
                 </span>
               </div>
-              <p className="text-xs text-stone-400 mt-0.5">
-                Average pint price across {current.total_pubs} pubs {E.bullet} {current.total_suburbs} suburbs
+              <p className="text-xs text-gray-mid mt-0.5">
+                Average pint price across {current.total_pubs} pubs {'\u00B7'} {current.total_suburbs} suburbs
               </p>
             </div>
           </div>
           
           {/* Right: Sparkline with hover */}
           <div className="hidden sm:block" onClick={e => e.stopPropagation()}>
-            <div className="text-[10px] text-stone-400 mb-1 text-right">Price trend · hover to explore</div>
+            <div className="text-[10px] text-gray-mid mb-1 text-right">Price trend {'\u00B7'} hover to explore</div>
             <Sparkline data={sparkData} snapshots={snapshots} />
           </div>
         </div>
 
         {/* Expanded: Trend analysis only (stats are in the header bar) */}
         {expanded && (
-          <div className="mt-4 pt-4 border-t border-stone-200 animate-in fade-in slide-in-from-top-2 duration-200">
+          <div className="mt-4 pt-4 border-t border-gray-light animate-in fade-in slide-in-from-top-2 duration-200">
             {/* Suburb comparison */}
             <div className="grid grid-cols-2 gap-3">
               <div className="bg-amber/10 rounded-xl p-3">
                 <div className="text-[10px] text-amber font-semibold">▼ Cheapest Suburb</div>
-                <div className="text-sm font-bold text-stone-800 mt-1">{current.cheapest_suburb}</div>
+                <div className="text-sm font-bold text-ink mt-1">{current.cheapest_suburb}</div>
                 <div className="text-xs text-amber font-mono">avg ${current.cheapest_suburb_avg.toFixed(2)}/pint</div>
               </div>
               <div className="bg-coral/10 rounded-xl p-3">
                 <div className="text-[10px] text-coral font-semibold">▲ Priciest Suburb</div>
-                <div className="text-sm font-bold text-stone-800 mt-1">{current.most_expensive_suburb}</div>
+                <div className="text-sm font-bold text-ink mt-1">{current.most_expensive_suburb}</div>
                 <div className="text-xs text-coral font-mono">avg ${current.most_expensive_suburb_avg.toFixed(2)}/pint</div>
               </div>
             </div>
@@ -299,41 +297,41 @@ export default function PintIndex() {
             {/* Year-over-year change */}
             <div className="flex items-center justify-between mt-4 px-1">
               <div>
-                <div className="text-[10px] text-stone-400 font-medium">Overall Change</div>
+                <div className="text-[10px] text-gray-mid font-medium">Overall Change</div>
                 <div className={`text-lg font-bold font-mono ${yearChange > 0 ? 'text-coral' : 'text-amber'}`}>
                   {yearChange >= 0 ? '+' : ''}{yearPct.toFixed(1)}%
                 </div>
               </div>
               <div className="text-right">
-                <div className="text-[10px] text-stone-400 font-medium">Median</div>
-                <div className="text-lg font-bold font-mono text-stone-700">${current.median_price.toFixed(2)}</div>
+                <div className="text-[10px] text-gray-mid font-medium">Median</div>
+                <div className="text-lg font-bold font-mono text-ink-light">${current.median_price.toFixed(2)}</div>
               </div>
             </div>
 
             {/* Price distribution */}
             {current.price_distribution && (
               <div className="mt-4">
-                <div className="text-[10px] text-stone-400 font-medium mb-2">Price Distribution</div>
+                <div className="text-[10px] text-gray-mid font-medium mb-2">Price Distribution</div>
                 <DistributionBars distribution={current.price_distribution} />
               </div>
             )}
 
             {/* Mobile sparkline */}
             <div className="sm:hidden mt-4" onClick={e => e.stopPropagation()}>
-              <div className="text-[10px] text-stone-400 mb-1">Price trend · tap to explore</div>
+              <div className="text-[10px] text-gray-mid mb-1">Price trend {'\u00B7'} tap to explore</div>
               <Sparkline data={sparkData} snapshots={snapshots} width={320} height={50} />
             </div>
 
-            <p className="text-[10px] text-stone-400 mt-3 text-center">
-              {E.chart_bar} Tracking Perth beer prices weekly. Click to collapse.
+            <p className="text-[10px] text-gray-mid mt-3 text-center flex items-center justify-center gap-1">
+              <BarChart3 className="w-3 h-3 inline" /> Tracking Perth beer prices weekly. Click to collapse.
             </p>
           </div>
         )}
 
         {/* Collapse hint when not expanded */}
         {!expanded && (
-          <p className="text-[10px] text-stone-400 mt-2 text-center">
-            Click to see full breakdown {E.bullet} Cheapest suburb: {current.cheapest_suburb} (${current.cheapest_suburb_avg.toFixed(2)})
+          <p className="text-[10px] text-gray-mid mt-2 text-center">
+            Click to see full breakdown {'\u00B7'} Cheapest suburb: {current.cheapest_suburb} (${current.cheapest_suburb_avg.toFixed(2)})
           </p>
         )}
       </CardContent>

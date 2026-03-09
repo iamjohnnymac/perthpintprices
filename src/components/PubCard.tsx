@@ -18,10 +18,10 @@ interface PubCardProps {
 function getPlaceholderGradient(name: string) {
   const gradients = [
     'from-amber/20 to-amber-light/10',
-    'from-orange-100 to-amber-50',
-    'from-stone-200 to-off-white',
-    'from-amber-50 to-orange-50',
-    'from-stone-100 to-stone-50',
+    'from-amber-pale to-amber-50',
+    'from-gray-light to-off-white',
+    'from-amber-50 to-amber-pale',
+    'from-gray-light to-off-white',
     'from-amber/10 to-cream',
   ]
   const idx = name.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0) % gradients.length
@@ -99,7 +99,7 @@ export default function PubCard({ pub, avgPrice = 9.20, distance }: PubCardProps
               <span className="text-gray-mid text-xs">{pub.beerType}</span>
             )}
             {!pub.isHappyHourNow && hhTiming && (
-              <span className="text-stone-400 text-xs"><Clock className="w-3 h-3 inline" /> {hhTiming}</span>
+              <span className="text-gray-mid text-xs"><Clock className="w-3 h-3 inline" /> {hhTiming}</span>
             )}
           </div>
 

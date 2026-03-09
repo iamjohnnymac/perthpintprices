@@ -5,7 +5,7 @@ import { CrowdReport } from '@/lib/supabase'
 import { getHappyHourStatus } from '@/lib/happyHour'
 import { getDistanceKm, formatDistance } from '@/lib/location'
 import Link from 'next/link'
-import { Beer } from 'lucide-react'
+import { Beer, Star } from 'lucide-react'
 
 interface PubCardListProps {
   pubs: Pub[]
@@ -68,7 +68,7 @@ export default function PubCardList({
             <span className={`font-mono text-[0.75rem] font-bold min-w-[28px] mr-1 ${
               isFirst ? 'text-amber' : 'text-gray-mid'
             }`}>
-              {isFirst ? '★' : `${index + 1}.`}
+              {isFirst ? <Star className="w-3.5 h-3.5 fill-current" /> : `${index + 1}.`}
             </span>
 
             {/* Info */}

@@ -21,7 +21,7 @@ export default function PintIndexCompact({ pubs, filteredPubs, onViewMore }: Pin
   const cheapest = pricedPubs.find(p => p.price === min)
 
   return (
-    <div className="bg-white rounded-2xl border border-stone-200/40 px-4 py-3 shadow-[0_2px_12px_rgba(0,0,0,0.06)] mb-4">
+    <div className="bg-white rounded-card border border-gray-light/40 px-4 py-3 shadow-[0_2px_12px_rgba(0,0,0,0.06)] mb-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4 flex-wrap">
           {isFiltered && (
@@ -30,18 +30,18 @@ export default function PintIndexCompact({ pubs, filteredPubs, onViewMore }: Pin
             </div>
           )}
           <div className="flex items-center gap-2">
-            <span className="text-xs text-stone-400 font-medium">Avg</span>
-            <span className="text-lg font-bold font-mono text-stone-900">${avg.toFixed(2)}</span>
+            <span className="text-xs text-gray-mid font-medium">Avg</span>
+            <span className="text-lg font-bold font-mono text-ink">${avg.toFixed(2)}</span>
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-xs text-stone-400 font-medium">Range</span>
+            <span className="text-xs text-gray-mid font-medium">Range</span>
             <span className="text-sm font-semibold font-mono text-amber">${min.toFixed(0)}</span>
-            <span className="text-stone-300">{'\u2013'}</span>
+            <span className="text-gray">{'\u2013'}</span>
             <span className="text-sm font-semibold font-mono text-coral">${max.toFixed(0)}</span>
           </div>
           {cheapest && (
             <div className="hidden sm:flex items-center gap-2">
-              <span className="text-xs text-stone-400 font-medium">Cheapest</span>
+              <span className="text-xs text-gray-mid font-medium">Cheapest</span>
               <span className="text-xs font-semibold text-amber">{cheapest.suburb} ${min.toFixed(2)}</span>
             </div>
           )}

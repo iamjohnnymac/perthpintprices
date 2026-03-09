@@ -65,7 +65,7 @@ export default function WeeklyClient() {
       <div className="min-h-screen bg-[#FDF8F0]">
         <SubPageNav title="Weekly Report" subtitle="This week in Perth pints" />
         <div className="max-w-container mx-auto px-6 py-16 text-center">
-          <BarChart3 className="w-12 h-12 text-stone-300 mx-auto mb-4" />
+          <BarChart3 className="w-12 h-12 text-gray mx-auto mb-4" />
           <p className="font-mono text-gray-mid text-sm">No report data available yet.</p>
           <p className="text-gray-mid text-xs mt-1">Check back Monday morning.</p>
         </div>
@@ -162,7 +162,7 @@ export default function WeeklyClient() {
                 <Link
                   key={pub.slug}
                   href={`/pub/${pub.slug}`}
-                  className="flex items-center justify-between text-sm hover:bg-amber-50 -mx-2 px-2 py-1.5 rounded-lg transition-colors"
+                  className="flex items-center justify-between text-sm hover:bg-amber-pale -mx-2 px-2 py-1.5 rounded-lg transition-colors"
                 >
                   <span className="flex items-center gap-2 min-w-0">
                     <span className="font-mono text-gray-mid text-xs w-5 text-right">{i + 1}.</span>
@@ -187,7 +187,7 @@ export default function WeeklyClient() {
                 <Link
                   key={pub.slug}
                   href={`/pub/${pub.slug}`}
-                  className="flex items-center justify-between text-sm hover:bg-amber-50 -mx-2 px-2 py-1.5 rounded-lg transition-colors"
+                  className="flex items-center justify-between text-sm hover:bg-amber-pale -mx-2 px-2 py-1.5 rounded-lg transition-colors"
                 >
                   <span className="font-medium text-ink">{pub.name}</span>
                   <span className="text-gray-mid text-xs">{pub.reportCount} report{pub.reportCount !== 1 ? 's' : ''}</span>

@@ -138,7 +138,7 @@ export default function HappyHourClient() {
         {/* Loading */}
         {loading && (
           <div className="flex flex-col items-center justify-center py-20 gap-3">
-            <div className="w-16 h-16 border-4 border-stone-300 border-t-amber rounded-full animate-spin" />
+            <div className="w-16 h-16 border-4 border-gray border-t-amber rounded-full animate-spin" />
             <span className="text-gray-mid font-medium">Loading happy hours...</span>
           </div>
         )}

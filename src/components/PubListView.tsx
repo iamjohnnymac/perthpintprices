@@ -80,7 +80,7 @@ export default function PubListView({
     const isActive = sortKey === field
     return (
       <th
-        className={`py-3 px-3 sm:px-4 text-xs font-medium cursor-pointer select-none hover:text-amber transition-colors ${isActive ? 'text-amber' : 'text-stone-400'} ${className}`}
+        className={`py-3 px-3 sm:px-4 text-xs font-medium cursor-pointer select-none hover:text-amber transition-colors ${isActive ? 'text-amber' : 'text-gray-mid'} ${className}`}
         onClick={() => handleSort(field)}
       >
         <span className="inline-flex items-center gap-1">
@@ -97,13 +97,13 @@ export default function PubListView({
     <div className="bg-white rounded-xl shadow-sm overflow-hidden">
       <table className="w-full">
         <thead className="sticky top-0 z-10">
-          <tr className="bg-stone-50 border-b border-stone-200/40">
+          <tr className="bg-off-white border-b border-gray-light/40">
             <SortHeader label="Pub" field="name" className="text-left" />
             <SortHeader label="Suburb" field="suburb" className="text-left hidden sm:table-cell" />
             <SortHeader label="Beer" field="beer" className="text-left hidden sm:table-cell" />
             <SortHeader label="Price" field="price" className="text-right" />
-            <th className="text-left py-3 px-3 text-xs font-medium text-stone-400 hidden md:table-cell">Happy Hour</th>
-            <th className="text-center py-3 px-2 text-xs font-medium text-stone-400 hidden lg:table-cell">Freshness</th>
+            <th className="text-left py-3 px-3 text-xs font-medium text-gray-mid hidden md:table-cell">Happy Hour</th>
+            <th className="text-center py-3 px-2 text-xs font-medium text-gray-mid hidden lg:table-cell">Freshness</th>
             <th className="text-center py-3 px-3 w-12"></th>
           </tr>
         </thead>
@@ -114,12 +114,12 @@ export default function PubListView({
             return (
               <tr
                 key={pub.id}
-                className="border-b border-stone-100/80 hover:bg-white/50 transition-colors cursor-pointer"
+                className="border-b border-gray-light/80 hover:bg-white/50 transition-colors cursor-pointer"
                 onClick={() => router.push(`/pub/${pub.slug}`)}
               >
                 <td className="py-4 px-3 sm:px-4">
                   <div className="flex items-center gap-2">
-                    <span className="text-xs text-stone-300 w-5 text-right tabular-nums">{index + 1}</span>
+                    <span className="text-xs text-gray w-5 text-right tabular-nums">{index + 1}</span>
                     <div>
                       <div className="flex items-center gap-2">
                         <a
@@ -127,7 +127,7 @@ export default function PubListView({
                           target="_blank"
                           rel="noopener noreferrer"
                           onClick={(e) => e.stopPropagation()}
-                          className="flex-shrink-0 text-stone-300 hover:text-amber transition-colors"
+                          className="flex-shrink-0 text-gray hover:text-amber transition-colors"
                           title="Get directions"
                         >
                           <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
@@ -141,9 +141,9 @@ export default function PubListView({
                     </div>
                   </div>
                 </td>
-                <td className="py-4 px-3 text-sm text-stone-400 hidden sm:table-cell">
+                <td className="py-4 px-3 text-sm text-gray-mid hidden sm:table-cell">
                   {pub.suburb}
-                  {userLocation && <span className="text-stone-400 text-xs ml-1">· {formatDistance(getDistanceKm(userLocation.lat, userLocation.lng, pub.lat, pub.lng))}</span>}
+                  {userLocation && <span className="text-gray-mid text-xs ml-1">· {formatDistance(getDistanceKm(userLocation.lat, userLocation.lng, pub.lat, pub.lng))}</span>}
                 </td>
                 <td className="py-4 px-3 hidden sm:table-cell">
                   <span className="text-xs text-gray-mid truncate max-w-[160px] block" title={pub.beerType || ''}>
@@ -152,7 +152,7 @@ export default function PubListView({
                 </td>
                 <td className={`py-4 px-3 sm:px-4 text-right font-bold font-mono text-lg whitespace-nowrap ${pub.price !== null && pub.price <= 8 ? 'text-bargain' : 'text-ink'}`}>
                   {pub.isHappyHourNow && pub.regularPrice !== null && pub.regularPrice !== pub.price && (
-                    <span className="text-xs text-stone-400 line-through font-normal mr-1">${pub.regularPrice.toFixed(2)}</span>
+                    <span className="text-xs text-gray-mid line-through font-normal mr-1">${pub.regularPrice.toFixed(2)}</span>
                   )}
                   {pub.price !== null ? `$${pub.price.toFixed(2)}` : 'TBC'}
                 </td>
@@ -166,7 +166,7 @@ export default function PubListView({
                       {happyHourStatus.statusEmoji && <LucideIcon name={happyHourStatus.statusEmoji} className="w-3.5 h-3.5 inline" />} {happyHourStatus.statusText}
                     </span>
                   ) : (
-                    <span className="text-xs text-stone-400">-</span>
+                    <span className="text-xs text-gray-mid">-</span>
                   )}
                 </td>
                 <td className="py-4 px-2 hidden lg:table-cell">
@@ -190,7 +190,7 @@ export default function PubListView({
                   ) : (
                     <button
                       onClick={(e) => { e.stopPropagation(); onCrowdReport(pub); }}
-                      className="text-stone-300 hover:text-amber transition-colors"
+                      className="text-gray hover:text-amber transition-colors"
                       title="Report crowd level"
                     >
                       <svg className="w-4 h-4 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5"><path strokeLinecap="round" strokeLinejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128H5.228A2 2 0 013 17.208V4.792a2 2 0 012.228-1.92L15 4.792m0 14.336V4.792" /></svg>
@@ -205,7 +205,7 @@ export default function PubListView({
       {!showAll && pubs.length > initialCount && (
         <button
           onClick={onShowAll}
-          className="w-full py-4 text-sm font-semibold text-ink hover:text-amber hover:bg-white/50 transition-all flex items-center justify-center gap-2 border-t border-stone-200/60"
+          className="w-full py-4 text-sm font-semibold text-ink hover:text-amber hover:bg-white/50 transition-all flex items-center justify-center gap-2 border-t border-gray-light/60"
         >
           View all {pubs.length} venues
           <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" /></svg>

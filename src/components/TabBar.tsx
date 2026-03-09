@@ -35,7 +35,7 @@ export default function TabBar({ activeTab, onTabChange }: TabBarProps) {
                 border-b-2
                 ${isActive
                   ? 'text-ink border-amber'
-                  : 'text-stone-400 border-transparent hover:text-stone-600'
+                  : 'text-gray-mid border-transparent hover:text-ink-light'
                 }
               `}
             >

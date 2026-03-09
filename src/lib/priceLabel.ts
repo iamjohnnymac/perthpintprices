@@ -17,9 +17,9 @@ export function getPriceDiff(price: number | null, avgPrice: number = 9.20): str
 
 export function getPriceLabelColors(type: PriceLabelType): { bg: string; text: string; border: string } {
   switch (type) {
-    case 'bargain': return { bg: 'bg-orange-50', text: 'text-ink', border: 'border-orange-200' }
-    case 'fair': return { bg: 'bg-orange-50', text: 'text-orange-700', border: 'border-orange-200' }
-    case 'pricey': return { bg: 'bg-red-50', text: 'text-red-600', border: 'border-red-200' }
-    default: return { bg: 'bg-stone-50', text: 'text-stone-500', border: 'border-stone-200' }
+    case 'bargain': return { bg: 'bg-amber-pale', text: 'text-ink', border: 'border-amber/30' }
+    case 'fair': return { bg: 'bg-amber-pale', text: 'text-amber', border: 'border-amber/30' }
+    case 'pricey': return { bg: 'bg-red-pale', text: 'text-red', border: 'border-red/30' }
+    default: return { bg: 'bg-off-white', text: 'text-gray-mid', border: 'border-gray' }
   }
 }

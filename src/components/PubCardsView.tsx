@@ -37,7 +37,7 @@ export default function PubCardsView({
       {!showAll && pubs.length > initialCount && (
         <button
           onClick={onShowAll}
-          className="w-full mt-5 py-3.5 text-sm font-semibold text-ink bg-white hover:bg-white rounded-full border border-stone-200/60 transition-all flex items-center justify-center gap-2 shadow-sm"
+          className="w-full mt-5 py-3.5 text-sm font-semibold text-ink bg-white hover:bg-white rounded-full border border-gray-light transition-all flex items-center justify-center gap-2 shadow-sm"
         >
           View all {pubs.length} pubs
           <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" /></svg>

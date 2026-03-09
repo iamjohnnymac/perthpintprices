@@ -40,13 +40,13 @@ export default function HappyHourPreview({ pubs }: HappyHourPreviewProps) {
 
   return (
     <Link href="/happy-hour" className="block w-full max-w-4xl mx-auto mt-3 group">
-      <div className="flex items-center gap-3 px-4 py-2.5 rounded-full bg-white/70 border border-stone-200/50 hover:border-orange/30 hover:shadow-sm transition-all">
+      <div className="flex items-center gap-3 px-4 py-2.5 rounded-full bg-white/70 border border-gray-light/50 hover:border-amber/30 hover:shadow-sm transition-all">
         {/* Pulse dot + label */}
         <div className="flex items-center gap-2 flex-shrink-0">
           {activeCount > 0 && (
             <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-orange-500"></span>
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-amber"></span>
             </span>
           )}
           <span className="text-ink font-semibold text-sm whitespace-nowrap">
@@ -55,22 +55,22 @@ export default function HappyHourPreview({ pubs }: HappyHourPreviewProps) {
         </div>
 
         {/* Separator */}
-        <span className="text-stone-300 text-sm">·</span>
+        <span className="text-gray text-sm">·</span>
 
         {/* Pub names - flowing inline text */}
         <div className="flex-1 min-w-0 overflow-hidden">
-          <p className="text-sm text-stone-500 truncate">
+          <p className="text-sm text-gray-mid truncate">
             {activeCount > 0 && activePubs.map((h, i) => (
               <span key={h.pub.slug}>
                 <span className="text-ink font-medium">{h.pub.name}</span>
-                {i < activePubs.length - 1 && <span className="text-stone-300 mx-1.5">·</span>}
+                {i < activePubs.length - 1 && <span className="text-gray mx-1.5">·</span>}
               </span>
             ))}
             {activeCount > 0 && upcomingCount > 0 && (
-              <span className="text-stone-300 mx-1.5">·</span>
+              <span className="text-gray mx-1.5">·</span>
             )}
             {upcomingCount > 0 && (
-              <span className="text-stone-400">
+              <span className="text-gray-mid">
                 {activeCount > 0
                   ? `${upcomingCount} more starting soon`
                   : `${upcomingCount} starting soon`
@@ -81,7 +81,7 @@ export default function HappyHourPreview({ pubs }: HappyHourPreviewProps) {
         </div>
 
         {/* Arrow */}
-        <span className="text-stone-400 group-hover:text-orange transition-colors flex-shrink-0 text-sm">→</span>
+        <span className="text-gray-mid group-hover:text-amber transition-colors flex-shrink-0 text-sm">→</span>
       </div>
     </Link>
   )
