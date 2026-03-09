@@ -57,7 +57,7 @@ function HomeJsonLd() {
           name: 'How accurate are the prices?',
           acceptedAnswer: {
             '@type': 'Answer',
-            text: 'Every price is verified through menus, direct calls, or community submissions. If we haven\'t confirmed a price, you\'ll see "Price TBC" instead of a guess.',
+            text: 'Prices are checked through community submissions, menu checks, and direct calls. If we haven\'t confirmed a price, you\'ll see "Price TBC" instead of a guess.',
           },
         },
         {
@@ -65,7 +65,7 @@ function HomeJsonLd() {
           name: 'How often are prices updated?',
           acceptedAnswer: {
             '@type': 'Answer',
-            text: 'Arvo runs automated checks weekly and accepts community submissions around the clock. Every price includes a "last verified" date so you know how fresh it is.',
+            text: 'Prices get updated as the community submits them and we verify existing listings. Each price shows a "last verified" date so you know how fresh it is.',
           },
         },
         {

@@ -75,7 +75,6 @@ function HomeContent({ initialPubs }: { initialPubs: Pub[] }) {
   const [userLocation, setUserLocation] = useState<{lat: number, lng: number} | null>(null)
   const [locationState, setLocationState] = useState<'idle' | 'granted' | 'denied' | 'dismissed'>('idle')
   const [nearbyRadius, setNearbyRadius] = useState<number>(5) // km - 1, 3, 5, or 0 = all
-  const [beerTypeFilter, setBeerTypeFilter] = useState<string>('')
   const [scrolledPastHero, setScrolledPastHero] = useState(false)
   // showMap state removed - now handled by MapPeek component
   const heroRef = useRef<HTMLDivElement>(null)
@@ -205,27 +204,6 @@ function HomeContent({ initialPubs }: { initialPubs: Pub[] }) {
     return Array.from(suburbSet).sort()
   }, [pubs])
 
-  const normalizeBeerType = useCallback((type: string): string | null => {
-    const t = type.toLowerCase()
-    if (t === 'schooners') return null // glass size, not a beer type
-    if (/^house\s/.test(t) || t === 'all pints') return 'House Beer'
-    if (t === 'selected tap' || t === 'tap beer') return 'Tap Beer'
-    return type // keep as-is: Swan Draught, Emu Export, Guinness, Craft Beer, etc.
-  }, [])
-
-  const beerTypes = useMemo(() => {
-    const counts = new Map<string, number>()
-    pubs.forEach(p => {
-      if (!p.beerType) return
-      const normalized = normalizeBeerType(p.beerType)
-      if (normalized) counts.set(normalized, (counts.get(normalized) || 0) + 1)
-    })
-    return Array.from(counts.entries())
-      .filter(([, cnt]) => cnt >= 2)
-      .sort((a, b) => b[1] - a[1])
-      .map(([type]) => type)
-  }, [pubs, normalizeBeerType])
-
   const filteredPubs = useMemo(() => {
     return pubs
       .filter(pub => {
@@ -242,8 +220,7 @@ function HomeContent({ initialPubs }: { initialPubs: Pub[] }) {
         const matchesTab = !hasTabOnly || pub.hasTab === true
         const matchesRadius = !(sortBy === 'nearest' && userLocation && nearbyRadius > 0) ||
           getDistanceKm(userLocation!.lat, userLocation!.lng, pub.lat, pub.lng) <= nearbyRadius
-        const matchesBeerType = !beerTypeFilter || (pub.beerType && normalizeBeerType(pub.beerType) === beerTypeFilter)
-        return matchesSearch && matchesSuburb && matchesPrice && matchesHappyHour && matchesVibe && matchesKids && matchesTab && matchesRadius && matchesBeerType
+        return matchesSearch && matchesSuburb && matchesPrice && matchesHappyHour && matchesVibe && matchesKids && matchesTab && matchesRadius
       })
       .sort((a, b) => {
         if (showHappyHourOnly) {
@@ -266,7 +243,7 @@ function HomeContent({ initialPubs }: { initialPubs: Pub[] }) {
         }
         return 0
       })
-  }, [pubs, searchTerm, selectedSuburb, maxPrice, sortBy, showHappyHourOnly, userLocation, vibeTagFilter, kidFriendlyOnly, hasTabOnly, nearbyRadius, beerTypeFilter])
+  }, [pubs, searchTerm, selectedSuburb, maxPrice, sortBy, showHappyHourOnly, userLocation, vibeTagFilter, kidFriendlyOnly, hasTabOnly, nearbyRadius])
 
   const stats = useMemo(() => {
     if (pubs.length === 0) return { total: 0, minPrice: 0, maxPriceValue: 0, avgPrice: '0', happyHourNow: 0, cheapestSuburb: '', cheapestSlug: '', priciestSuburb: '', priciestSlug: '' }
@@ -383,9 +360,6 @@ function HomeContent({ initialPubs }: { initialPubs: Pub[] }) {
         requestLocation={requestLocation}
         nearbyRadius={nearbyRadius}
         setNearbyRadius={setNearbyRadius}
-        beerTypes={beerTypes}
-        beerTypeFilter={beerTypeFilter}
-        setBeerTypeFilter={setBeerTypeFilter}
         vibeTagFilter={vibeTagFilter}
         setVibeTagFilter={setVibeTagFilter}
         kidFriendlyOnly={kidFriendlyOnly}

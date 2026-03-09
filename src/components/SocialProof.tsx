@@ -21,8 +21,8 @@ export default function SocialProof({ avgPrice, onSubmitClick }: SocialProofProp
       <section className="py-14 px-6">
         <div ref={trustRef} className={`max-w-container mx-auto text-center reveal ${trustInView ? 'in-view' : ''}`}>
           <p className="font-display text-[clamp(1.3rem,4vw,1.7rem)] italic text-ink leading-[1.3] mb-4">
-            Every price from a real person.<br />
-            No scraping. No guessing.
+            Prices from real people.<br />
+            If we can&apos;t confirm it, we say so.
           </p>
           <div className="inline-flex items-baseline gap-2 border-3 border-ink rounded-pill px-7 py-3 bg-white shadow-hard-sm">
             <span className="font-mono text-[0.65rem] font-bold uppercase tracking-[0.08em] text-gray-mid">Avg pint</span>

@@ -10,11 +10,11 @@ export default function FAQ() {
   const faqs = [
     {
       q: 'How accurate are the prices?',
-      a: 'Every price is verified through menus, direct calls, or community submissions. If we haven\'t confirmed a price, you\'ll see "Price TBC" instead of a guess.',
+      a: 'Prices are checked through community submissions, menu checks, and direct calls. If we haven\'t confirmed a price, you\'ll see "Price TBC" instead of a guess.',
     },
     {
       q: 'How often are prices updated?',
-      a: 'Arvo runs automated checks weekly and accepts community submissions around the clock. Every price includes a "last verified" date so you know how fresh it is.',
+      a: 'Prices get updated as the community submits them and we verify existing listings. Each price shows a "last verified" date so you know how fresh it is.',
     },
     {
       q: 'What does the price represent?',
