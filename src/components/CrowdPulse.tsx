@@ -222,7 +222,7 @@ export default function CrowdPulse({ pubs, crowdReports, userLocation }: CrowdPu
             {liveCount < 5 && (
               <div className="bg-off-white rounded-card p-3 text-center">
                 <p className="font-mono text-[0.75rem] text-gray-mid flex items-center justify-center gap-2">
-                  <BarChart3 className="w-4 h-4" /> Only {liveCount} report{liveCount !== 1 ? 's' : ''} in — be a market analyst and report crowd levels!
+                  <BarChart3 className="w-4 h-4" /> Only {liveCount} report{liveCount !== 1 ? 's' : ''} in. Be a market analyst and report crowd levels!
                 </p>
               </div>
             )}

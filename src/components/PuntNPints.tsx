@@ -178,7 +178,7 @@ export default function PuntNPints({ pubs, userLocation }: PuntNPintsProps) {
       {/* ═══ TAB Pubs Section ═══ */}
       <section>
         <h2 className="font-mono font-extrabold text-xl tracking-[-0.02em] text-ink">Bet & Drink Under One Roof</h2>
-        <p className="text-sm text-gray-mid mt-1 mb-5">Pubs with TAB on-site — punt and pint, sorted by price</p>
+        <p className="text-sm text-gray-mid mt-1 mb-5">Pubs with TAB on-site. Punt and pint, sorted by price</p>
 
         <div className="border-3 border-ink rounded-card shadow-hard-sm overflow-hidden">
           <div className="px-4 py-3 border-b border-gray-light bg-off-white">

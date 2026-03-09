@@ -417,7 +417,7 @@ export default function PubGolfClient({ pubs }: { pubs: Pub[] }) {
                 <span className="flex-shrink-0 w-6 h-6 bg-amber text-white font-mono text-[0.7rem] font-bold rounded-full flex items-center justify-center border-2 border-ink">3</span>
                 <div>
                   <p className="font-mono text-[0.75rem] font-bold text-ink">Lowest score wins</p>
-                  <p className="font-mono text-[0.65rem] text-gray-mid mt-0.5 inline-flex items-center gap-1 flex-wrap"><Flag className="w-3 h-3 inline" /> Under par <span>·</span> <Beer className="w-3 h-3 inline" /> Par <span>·</span> <Skull className="w-3 h-3 inline" /> Over par — fewest sips takes the trophy</p>
+                  <p className="font-mono text-[0.65rem] text-gray-mid mt-0.5 inline-flex items-center gap-1 flex-wrap"><Flag className="w-3 h-3 inline" /> Under par <span>·</span> <Beer className="w-3 h-3 inline" /> Par <span>·</span> <Skull className="w-3 h-3 inline" /> Over par. Fewest sips takes the trophy</p>
                 </div>
               </div>
             </div>

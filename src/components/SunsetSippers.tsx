@@ -400,7 +400,7 @@ export default function SunsetSippers({ pubs, userLocation }: SunsetSippersProps
               <><Sunset className="w-4 h-4 text-amber" /> Quick! Grab a pint and face west</>
             )}
             {isGoldenHour && !isSunset && (
-              <><Sun className="w-4 h-4 text-amber" /> Golden hour lighting — your pint has never looked better</>
+              <><Sun className="w-4 h-4 text-amber" /> Golden hour lighting. Your pint has never looked better</>
             )}
             {!isGoldenHour && !isSunset && !isNighttime && (
               <><Beer className="w-4 h-4 text-amber" /> Golden hour starts at {formatTime(sunTimes.goldenHourStart)}. Plan your sesh</>

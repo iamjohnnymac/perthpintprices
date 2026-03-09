@@ -261,7 +261,7 @@ export default function TonightsMoves({ pubs, userLocation }: TonightsMovesProps
             {activeDeals.length === 0 && (
               <div className="bg-off-white rounded-card p-3 text-center">
                 <p className="font-mono text-[0.75rem] text-gray-mid flex items-center justify-center gap-2">
-                  <Moon className="w-4 h-4" /> No happy hours active right now — check back later!
+                  <Moon className="w-4 h-4" /> No happy hours active right now. Check back later!
                 </p>
               </div>
             )}

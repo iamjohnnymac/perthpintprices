@@ -33,7 +33,7 @@ function Spark({ data, width = 160, height = 36 }: { data: number[]; width?: num
   )
 }
 
-export default function PintIndexBadge() {
+export default function PintIndexBadge({ className = 'hidden sm:flex' }: { className?: string }) {
   const [snapshots, setSnapshots] = useState<{ avg_price: number; snapshot_date: string }[]>([])
   const [hovered, setHovered] = useState(false)
 
@@ -70,7 +70,7 @@ export default function PintIndexBadge() {
 
   return (
     <div
-      className="relative hidden sm:flex items-center gap-1.5 cursor-default"
+      className={`relative ${className} items-center gap-1.5 cursor-default`}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
