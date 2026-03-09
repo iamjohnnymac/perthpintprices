@@ -1,5 +1,8 @@
 # Arvo — Perth Pint Prices
 
+## Project Status
+Read `docs/PROJECT-STATUS.md` at the start of each session for full context on routes, components, database, recent work, and outstanding tasks.
+
 ## Rules
 - **Always check Context7 first** — before writing any code, use the Context7 MCP tool (`mcp__plugin_context7_context7__resolve-library-id` then `mcp__plugin_context7_context7__query-docs`) to look up current documentation for any library or framework being used (Next.js, Tailwind, Lucide, Supabase, etc.). This ensures code uses up-to-date APIs and patterns.
 - **Always visually verify changes** — after any UI change, take Playwright screenshots at desktop (1280x800) and mobile (375x812) to confirm layout, spacing, and content look correct. Never assume it's right.
