@@ -4,9 +4,8 @@ import Link from 'next/link'
 
 import { useState, useMemo } from 'react'
 import { Pub } from '@/types/pub'
-import { Card, CardContent } from '@/components/ui/card'
-import E from '@/lib/emoji'
 import { getDistanceKm, formatDistance } from '@/lib/location'
+import { BarChart3, TrendingDown, TrendingUp } from 'lucide-react'
 
 interface VenueIntelProps {
   pubs: Pub[]
@@ -15,12 +14,10 @@ interface VenueIntelProps {
 
 function getBracketColor(bracket: string): string {
   const num = parseInt(bracket.replace('$', ''))
-  if (num <= 7) return 'bg-orange-500'
-  if (num <= 8) return 'bg-orange-500'
-  if (num <= 9) return 'bg-yellow-500'
-  if (num <= 10) return 'bg-orange-500'
-  if (num <= 11) return 'bg-red-400'
-  return 'bg-red-600'
+  if (num <= 8) return 'bg-amber'
+  if (num <= 9) return 'bg-amber'
+  if (num <= 10) return 'bg-amber/70'
+  return 'bg-red'
 }
 
 export default function VenueIntel({ pubs, userLocation }: VenueIntelProps) {
@@ -116,72 +113,77 @@ export default function VenueIntel({ pubs, userLocation }: VenueIntelProps) {
     return { median, percentile }
   }, [pubs])
 
-  const summaryText = `Market Range: $${priceRange.min.toFixed(2)} - $${priceRange.max.toFixed(2)} ${E.bullet} ${pubs.length} venues tracked`
+  const summaryText = `Market Range: $${priceRange.min.toFixed(2)} - $${priceRange.max.toFixed(2)} · ${pubs.length} venues tracked`
 
   return (
-    <Card
-      className="bg-white rounded-2xl shadow-[0_2px_16px_rgba(0,0,0,0.08)] border border-stone-200/40 cursor-pointer transition-all duration-300 hover:shadow-[0_4px_20px_rgba(0,0,0,0.12)] active:scale-[0.995]"
+    <div
+      className="border-3 border-ink rounded-card shadow-hard-sm bg-white overflow-hidden cursor-pointer transition-all"
       onClick={() => setIsExpanded(!isExpanded)}
     >
-      <CardContent className="p-5 sm:p-6">
+      <div className="p-5">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <span className="text-2xl">{E.chart_bar}</span>
+            <div className="w-10 h-10 bg-off-white border-2 border-ink rounded-full flex items-center justify-center flex-shrink-0">
+              <BarChart3 className="w-5 h-5 text-ink" />
+            </div>
             <div>
-              <h3 className="text-lg sm:text-xl font-semibold font-heading text-stone-800">Venue Breakdown</h3>
-              <p className="text-xs text-stone-500">{summaryText}</p>
+              <h3 className="font-mono text-[0.85rem] font-extrabold text-ink">Venue Breakdown</h3>
+              <p className="font-body text-[0.75rem] text-gray-mid">{summaryText}</p>
             </div>
           </div>
-          <svg width="16" height="16" viewBox="0 0 16 16" className={`text-stone-400 transition-transform ${isExpanded ? 'rotate-180' : ''}`}>
+          <svg width="16" height="16" viewBox="0 0 16 16" className={`text-gray-mid transition-transform ${isExpanded ? 'rotate-180' : ''}`}>
             <path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
           </svg>
         </div>
 
         {isExpanded && (
-          <div className="mt-3 pt-3 border-t border-stone-200/60 space-y-3" onClick={(e) => e.stopPropagation()}>
+          <div className="mt-3 pt-3 border-t border-gray-light space-y-4" onClick={(e) => e.stopPropagation()}>
+            {/* Price Distribution */}
             <div>
-              <h4 className="text-xs font-semibold text-stone-700 mb-2 flex items-center gap-1">
-                {E.chart_bar} Price Distribution
+              <h4 className="font-mono text-[0.7rem] font-bold uppercase tracking-[0.05em] text-ink mb-2 flex items-center gap-1">
+                <BarChart3 className="w-3.5 h-3.5" /> Price Distribution
               </h4>
-              <div className="p-3 rounded-xl bg-white/70 border border-stone-100">
+              <div className="p-3 rounded-card bg-off-white">
                 <div className="space-y-1.5">
                   {priceBrackets.map(([bracket, count]) => (
                     <div key={bracket} className="flex items-center gap-2">
-                      <span className="text-[10px] font-mono text-stone-500 w-10 text-right">{bracket}</span>
-                      <div className="flex-1 h-4 bg-stone-100 rounded-full overflow-hidden">
+                      <span className="font-mono text-[0.6rem] font-bold text-gray-mid w-10 text-right">{bracket}</span>
+                      <div className="flex-1 h-4 bg-white rounded-pill overflow-hidden border border-gray-light">
                         <div
-                          className={`h-full rounded-full transition-all ${getBracketColor(bracket)}`}
+                          className={`h-full rounded-pill transition-all ${getBracketColor(bracket)}`}
                           style={{ width: `${(count / maxBracketCount) * 100}%` }}
                         />
                       </div>
-                      <span className="text-[10px] font-semibold text-stone-600 w-6 text-right">{count}</span>
+                      <span className="font-mono text-[0.6rem] font-bold text-ink w-6 text-right">{count}</span>
                     </div>
                   ))}
                 </div>
               </div>
             </div>
 
-            <div className="p-3 rounded-xl bg-orange-50/60 border border-orange-200 text-center">
-              <p className="text-xs text-stone-500">Median Pint Price in Perth</p>
-              <p className="text-xl font-bold text-orange">${percentileData.median.toFixed(2)}</p>
-              <p className="text-[10px] text-stone-400">{percentileData.percentile}% of venues are cheaper than the median</p>
+            {/* Median */}
+            <div className="bg-amber-pale rounded-card p-4 text-center border-2 border-amber/30">
+              <p className="font-mono text-[0.65rem] text-gray-mid uppercase tracking-[0.05em]">Median Pint Price in Perth</p>
+              <p className="font-mono text-xl font-extrabold text-ink mt-1">${percentileData.median.toFixed(2)}</p>
+              <p className="font-mono text-[0.6rem] text-gray-mid mt-1">{percentileData.percentile}% of venues are cheaper than the median</p>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {/* Under/Over valued */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <h4 className="text-xs font-semibold text-ink mb-2 flex items-center gap-1">
-                  {E.chart_down} Undervalued {E.dash} Below Market
+                <h4 className="font-mono text-[0.7rem] font-bold uppercase tracking-[0.05em] text-ink mb-2 flex items-center gap-1">
+                  <TrendingDown className="w-3.5 h-3.5" /> Undervalued
                 </h4>
-                <div className="space-y-1">
-                  {undervalued.map(({ pub, diff }) => (
-                    <Link key={pub.id} href={`/pub/${pub.slug}`} className="flex items-center justify-between p-2 rounded-xl bg-orange-50/60 border border-orange-100">
+                <div className="space-y-0">
+                  {undervalued.map(({ pub, diff }, i) => (
+                    <Link key={pub.id} href={`/pub/${pub.slug}`} className={`flex items-center justify-between px-3 py-2.5 no-underline group ${i > 0 ? 'border-t border-gray-light' : ''}`}>
                       <div className="min-w-0">
-                        <span className="text-xs font-semibold text-stone-800 truncate block">{pub.name}</span>
-                        <p className="text-[10px] text-stone-400">{pub.suburb}{userLocation && ` · ${formatDistance(getDistanceKm(userLocation.lat, userLocation.lng, pub.lat, pub.lng))}`}</p>
+                        <span className="font-body text-[0.8rem] font-bold text-ink group-hover:text-amber transition-colors truncate block">{pub.name}</span>
+                        <p className="font-body text-[0.7rem] text-gray-mid">{pub.suburb}{userLocation && ` · ${formatDistance(getDistanceKm(userLocation.lat, userLocation.lng, pub.lat, pub.lng))}`}</p>
                       </div>
                       <div className="text-right flex-shrink-0">
-                        <p className="text-xs font-bold text-ink">{pub.price !== null ? `$${pub.price.toFixed(2)}` : 'TBC'}</p>
-                        <p className="text-[9px] text-ink">{E.down_arrow}-${diff.toFixed(2)}</p>
+                        <p className="font-mono text-[0.8rem] font-extrabold text-ink">{pub.price !== null ? `$${pub.price.toFixed(2)}` : 'TBC'}</p>
+                        <p className="font-mono text-[0.6rem] font-bold text-green">-${diff.toFixed(2)}</p>
                       </div>
                     </Link>
                   ))}
@@ -189,19 +191,19 @@ export default function VenueIntel({ pubs, userLocation }: VenueIntelProps) {
               </div>
 
               <div>
-                <h4 className="text-xs font-semibold text-red-600 mb-2 flex items-center gap-1">
-                  {E.chart_up} Overvalued {E.dash} Above Market
+                <h4 className="font-mono text-[0.7rem] font-bold uppercase tracking-[0.05em] text-red mb-2 flex items-center gap-1">
+                  <TrendingUp className="w-3.5 h-3.5" /> Overvalued
                 </h4>
-                <div className="space-y-1">
-                  {overvalued.map(({ pub, diff }) => (
-                    <Link key={pub.id} href={`/pub/${pub.slug}`} className="flex items-center justify-between p-2 rounded-xl bg-red-50/60 border border-red-100">
+                <div className="space-y-0">
+                  {overvalued.map(({ pub, diff }, i) => (
+                    <Link key={pub.id} href={`/pub/${pub.slug}`} className={`flex items-center justify-between px-3 py-2.5 no-underline group ${i > 0 ? 'border-t border-gray-light' : ''}`}>
                       <div className="min-w-0">
-                        <span className="text-xs font-semibold text-stone-800 truncate block">{pub.name}</span>
-                        <p className="text-[10px] text-stone-400">{pub.suburb}{userLocation && ` · ${formatDistance(getDistanceKm(userLocation.lat, userLocation.lng, pub.lat, pub.lng))}`}</p>
+                        <span className="font-body text-[0.8rem] font-bold text-ink group-hover:text-amber transition-colors truncate block">{pub.name}</span>
+                        <p className="font-body text-[0.7rem] text-gray-mid">{pub.suburb}{userLocation && ` · ${formatDistance(getDistanceKm(userLocation.lat, userLocation.lng, pub.lat, pub.lng))}`}</p>
                       </div>
                       <div className="text-right flex-shrink-0">
-                        <p className="text-xs font-bold text-red-600">{pub.price !== null ? `$${pub.price.toFixed(2)}` : 'TBC'}</p>
-                        <p className="text-[9px] text-red-500">{E.up_arrow}+${diff.toFixed(2)}</p>
+                        <p className="font-mono text-[0.8rem] font-extrabold text-red">{pub.price !== null ? `$${pub.price.toFixed(2)}` : 'TBC'}</p>
+                        <p className="font-mono text-[0.6rem] font-bold text-red">+${diff.toFixed(2)}</p>
                       </div>
                     </Link>
                   ))}
@@ -209,21 +211,22 @@ export default function VenueIntel({ pubs, userLocation }: VenueIntelProps) {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {/* Cheapest / Priciest suburbs */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <h4 className="text-xs font-semibold text-ink mb-2 flex items-center gap-1">
-                  {E.green_circle} Cheapest Suburbs
+                <h4 className="font-mono text-[0.7rem] font-bold uppercase tracking-[0.05em] text-ink mb-2 flex items-center gap-1">
+                  <span className="w-2 h-2 rounded-full bg-green" /> Cheapest Suburbs
                 </h4>
-                <div className="space-y-1">
+                <div className="space-y-0">
                   {cheapestSuburbs.map((suburb, i) => (
-                    <div key={suburb.name} className="flex items-center justify-between p-2 rounded-xl bg-white/70 border border-stone-100">
+                    <div key={suburb.name} className={`flex items-center justify-between px-3 py-2 ${i > 0 ? 'border-t border-gray-light' : ''}`}>
                       <div className="flex items-center gap-2">
-                        <span className="text-[10px] font-bold text-stone-400">{i + 1}</span>
-                        <span className="text-xs font-semibold text-stone-800">{suburb.name}</span>
+                        <span className="font-mono text-[0.6rem] font-bold text-gray-mid">{i + 1}</span>
+                        <span className="font-body text-[0.8rem] font-bold text-ink">{suburb.name}</span>
                       </div>
                       <div className="text-right">
-                        <span className="text-xs font-bold text-ink">${suburb.avgPrice.toFixed(2)}</span>
-                        <span className="text-[9px] text-stone-400 ml-1">({suburb.count})</span>
+                        <span className="font-mono text-[0.8rem] font-extrabold text-ink">${suburb.avgPrice.toFixed(2)}</span>
+                        <span className="font-mono text-[0.6rem] text-gray-mid ml-1">({suburb.count})</span>
                       </div>
                     </div>
                   ))}
@@ -231,19 +234,19 @@ export default function VenueIntel({ pubs, userLocation }: VenueIntelProps) {
               </div>
 
               <div>
-                <h4 className="text-xs font-semibold text-red-600 mb-2 flex items-center gap-1">
-                  {E.red_circle} Priciest Suburbs
+                <h4 className="font-mono text-[0.7rem] font-bold uppercase tracking-[0.05em] text-red mb-2 flex items-center gap-1">
+                  <span className="w-2 h-2 rounded-full bg-red" /> Priciest Suburbs
                 </h4>
-                <div className="space-y-1">
+                <div className="space-y-0">
                   {priciestSuburbs.map((suburb, i) => (
-                    <div key={suburb.name} className="flex items-center justify-between p-2 rounded-xl bg-white/70 border border-stone-100">
+                    <div key={suburb.name} className={`flex items-center justify-between px-3 py-2 ${i > 0 ? 'border-t border-gray-light' : ''}`}>
                       <div className="flex items-center gap-2">
-                        <span className="text-[10px] font-bold text-stone-400">{i + 1}</span>
-                        <span className="text-xs font-semibold text-stone-800">{suburb.name}</span>
+                        <span className="font-mono text-[0.6rem] font-bold text-gray-mid">{i + 1}</span>
+                        <span className="font-body text-[0.8rem] font-bold text-ink">{suburb.name}</span>
                       </div>
                       <div className="text-right">
-                        <span className="text-xs font-bold text-red-600">${suburb.avgPrice.toFixed(2)}</span>
-                        <span className="text-[9px] text-stone-400 ml-1">({suburb.count})</span>
+                        <span className="font-mono text-[0.8rem] font-extrabold text-red">${suburb.avgPrice.toFixed(2)}</span>
+                        <span className="font-mono text-[0.6rem] text-gray-mid ml-1">({suburb.count})</span>
                       </div>
                     </div>
                   ))}
@@ -252,7 +255,7 @@ export default function VenueIntel({ pubs, userLocation }: VenueIntelProps) {
             </div>
           </div>
         )}
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   )
 }

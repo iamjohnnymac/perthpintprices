@@ -5,10 +5,8 @@ import Link from 'next/link'
 import { useState, useMemo, useEffect } from 'react'
 import { Pub } from '@/types/pub'
 import { getHappyHourStatus } from '@/lib/happyHour'
-import InfoTooltip from './InfoTooltip'
-import { Card, CardContent } from '@/components/ui/card'
-import E from '@/lib/emoji'
 import { getDistanceKm, formatDistance } from '@/lib/location'
+import { Clock, Star, TrendingDown, PartyPopper, Flame, Moon } from 'lucide-react'
 
 interface TonightsMovesProps {
   pubs: Pub[]
@@ -118,51 +116,52 @@ export default function TonightsMoves({ pubs, userLocation }: TonightsMovesProps
     const bestBuy = bestBuys[0]
     const bestBuyText = bestBuy ? `Best Buy: ${bestBuy.name} ${bestBuy.price !== null ? `$${bestBuy.price.toFixed(2)}` : 'TBC'}` : ''
     const activeCount = activeDeals.length
-    return `${bestBuyText} ${E.bullet} ${activeCount} happy hour${activeCount !== 1 ? 's' : ''} active`
+    return `${bestBuyText} · ${activeCount} happy hour${activeCount !== 1 ? 's' : ''} active`
   }, [bestBuys, activeDeals])
 
   return (
-    <Card
-      className="bg-white rounded-2xl shadow-[0_2px_16px_rgba(0,0,0,0.08)] border border-stone-200/40 cursor-pointer transition-all duration-300 hover:shadow-[0_4px_20px_rgba(0,0,0,0.12)] active:scale-[0.995]"
+    <div
+      className="border-3 border-ink rounded-card shadow-hard-sm bg-white overflow-hidden cursor-pointer transition-all"
       onClick={() => setIsExpanded(!isExpanded)}
     >
-      <CardContent className="p-5 sm:p-6">
+      <div className="p-5">
         {/* Compact Header */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <span className="text-2xl">{E.clock}</span>
+            <div className="w-10 h-10 bg-off-white border-2 border-ink rounded-full flex items-center justify-center flex-shrink-0">
+              <Clock className="w-5 h-5 text-ink" />
+            </div>
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="text-lg sm:text-xl font-semibold font-heading text-stone-800 flex items-center">{`Tonight's Best Bets`}<InfoTooltip text="Updated in real-time based on current Perth time. Shows active happy hours, best prices right now, and our top pick of the moment." /></h3>
-                <span className="text-[10px] text-stone-400 font-mono">{formatPerthTime(perthTime)} AWST</span>
+                <h3 className="font-mono text-[0.85rem] font-extrabold text-ink">{`Tonight's Best Bets`}</h3>
+                <span className="font-mono text-[0.6rem] text-gray-mid">{formatPerthTime(perthTime)} AWST</span>
               </div>
-              <p className="text-xs text-stone-500">{summaryText}</p>
+              <p className="font-body text-[0.75rem] text-gray-mid">{summaryText}</p>
             </div>
           </div>
-          <svg width="16" height="16" viewBox="0 0 16 16" className={`text-stone-400 transition-transform ${isExpanded ? 'rotate-180' : ''}`}>
+          <svg width="16" height="16" viewBox="0 0 16 16" className={`text-gray-mid transition-transform ${isExpanded ? 'rotate-180' : ''}`}>
             <path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
           </svg>
         </div>
 
         {/* Expanded Content */}
         {isExpanded && (
-          <div className="mt-3 pt-3 border-t border-stone-200/60 space-y-3" onClick={(e) => e.stopPropagation()}>
+          <div className="mt-3 pt-3 border-t border-gray-light space-y-4" onClick={(e) => e.stopPropagation()}>
             {/* Market Tip */}
             {marketTip && (
-              <div className="p-3 rounded-xl bg-gradient-to-r from-orange-50 to-yellow-50 border border-orange-200">
-                <h4 className="text-xs font-semibold text-orange mb-1 flex items-center gap-1">
-                  {E.star} Market Tip
-                  <InfoTooltip text="Our algorithm picks the best value pub right now, weighing price, active happy hour bonus, beer quality, and suburb. Rescores as happy hours start and end." />
+              <div className="p-3 rounded-card bg-amber-pale border-2 border-amber/30">
+                <h4 className="font-mono text-[0.65rem] font-bold uppercase tracking-[0.05em] text-amber mb-1 flex items-center gap-1">
+                  <Star className="w-3 h-3" /> Market Tip
                 </h4>
                 <div className="flex items-center justify-between">
                   <div>
-                    <Link href={`/pub/${marketTip.slug}`} className="text-sm font-bold text-stone-800 hover:text-orange transition-colors">{marketTip.name}</Link>
-                    <p className="text-[10px] text-stone-500">{marketTip.suburb}{userLocation && ` · ${formatDistance(getDistanceKm(userLocation.lat, userLocation.lng, marketTip.lat, marketTip.lng))}`} {E.bullet} {marketTip.beerType}</p>
+                    <Link href={`/pub/${marketTip.slug}`} className="font-body text-sm font-bold text-ink hover:text-amber transition-colors no-underline">{marketTip.name}</Link>
+                    <p className="font-body text-[0.7rem] text-gray-mid">{marketTip.suburb}{userLocation && ` · ${formatDistance(getDistanceKm(userLocation.lat, userLocation.lng, marketTip.lat, marketTip.lng))}`} · {marketTip.beerType}</p>
                   </div>
                   <div className="text-right">
-                    <span className="text-lg font-bold font-mono text-orange">{marketTip.price !== null ? `$${marketTip.price.toFixed(2)}` : 'TBC'}</span>
+                    <span className="font-mono text-lg font-extrabold text-ink">{marketTip.price !== null ? `$${marketTip.price.toFixed(2)}` : 'TBC'}</span>
                     {getHappyHourStatus(marketTip.happyHour).isActive && (
-                      <p className="text-[9px] text-orange font-semibold">HH ACTIVE</p>
+                      <p className="font-mono text-[0.55rem] font-bold text-red">HH ACTIVE</p>
                     )}
                   </div>
                 </div>
@@ -171,20 +170,20 @@ export default function TonightsMoves({ pubs, userLocation }: TonightsMovesProps
 
             {/* Best Buys */}
             <div>
-              <h4 className="text-xs font-semibold text-orange mb-2 flex items-center gap-1">
-                {E.chart_down} Best Buys {E.dash} Lowest Prices Right Now
+              <h4 className="font-mono text-[0.7rem] font-bold uppercase tracking-[0.05em] text-ink mb-2 flex items-center gap-1">
+                <TrendingDown className="w-3.5 h-3.5" /> Best Buys
               </h4>
-              <div className="space-y-1.5">
+              <div className="space-y-0">
                 {bestBuys.map((pub, i) => (
-                  <Link key={pub.id} href={`/pub/${pub.slug}`} className="flex items-center justify-between p-2 rounded-xl bg-white/70 border border-stone-100">
+                  <Link key={pub.id} href={`/pub/${pub.slug}`} className={`flex items-center justify-between px-3 py-2.5 no-underline group ${i > 0 ? 'border-t border-gray-light' : ''} ${i === 0 ? 'bg-amber/5' : ''}`}>
                     <div className="flex items-center gap-2 min-w-0">
-                      <span className="text-xs font-bold text-stone-400 w-4">{i + 1}</span>
+                      <span className={`font-mono text-[0.65rem] font-bold w-4 ${i === 0 ? 'text-amber' : 'text-gray-mid'}`}>{i === 0 ? '\u2605' : `${i + 1}`}</span>
                       <div className="min-w-0">
-                        <span className="text-xs font-semibold text-stone-800 truncate block">{pub.name}</span>
-                        <p className="text-[10px] text-stone-400">{pub.suburb}{userLocation && ` · ${formatDistance(getDistanceKm(userLocation.lat, userLocation.lng, pub.lat, pub.lng))}`} {E.bullet} {pub.beerType}</p>
+                        <span className="font-body text-sm font-bold text-ink group-hover:text-amber transition-colors truncate block">{pub.name}</span>
+                        <p className="font-body text-[0.7rem] text-gray-mid">{pub.suburb}{userLocation && ` · ${formatDistance(getDistanceKm(userLocation.lat, userLocation.lng, pub.lat, pub.lng))}`} · {pub.beerType}</p>
                       </div>
                     </div>
-                    <span className="text-sm font-bold font-mono text-orange flex-shrink-0">{pub.price !== null ? `$${pub.price.toFixed(2)}` : 'TBC'}</span>
+                    <span className="font-mono text-[1rem] font-extrabold text-ink flex-shrink-0">{pub.price !== null ? `$${pub.price.toFixed(2)}` : 'TBC'}</span>
                   </Link>
                 ))}
               </div>
@@ -193,23 +192,23 @@ export default function TonightsMoves({ pubs, userLocation }: TonightsMovesProps
             {/* Active Deals */}
             {activeDeals.length > 0 && (
               <div>
-                <h4 className="text-xs font-semibold text-orange mb-2 flex items-center gap-1">
-                  {E.party} Active Deals {E.dash} Happy Hour Now ({activeDeals.length})
+                <h4 className="font-mono text-[0.7rem] font-bold uppercase tracking-[0.05em] text-ink mb-2 flex items-center gap-1">
+                  <PartyPopper className="w-3.5 h-3.5" /> Happy Hour Now ({activeDeals.length})
                 </h4>
-                <div className="space-y-1.5">
-                  {activeDeals.slice(0, 10).map((pub) => {
+                <div className="space-y-0">
+                  {activeDeals.slice(0, 10).map((pub, i) => {
                     const status = getHappyHourStatus(pub.happyHour)
                     return (
-                      <Link key={pub.id} href={`/pub/${pub.slug}`} className="flex items-center justify-between p-2 rounded-xl bg-orange/5 border border-orange/20">
+                      <Link key={pub.id} href={`/pub/${pub.slug}`} className={`flex items-center justify-between px-3 py-2.5 no-underline group ${i > 0 ? 'border-t border-gray-light' : ''}`}>
                         <div className="min-w-0">
-                          <span className="text-xs font-semibold text-stone-800 truncate block">{pub.name}</span>
-                          <p className="text-[10px] text-stone-400">{pub.suburb}{userLocation && ` · ${formatDistance(getDistanceKm(userLocation.lat, userLocation.lng, pub.lat, pub.lng))}`}</p>
+                          <span className="font-body text-sm font-bold text-ink group-hover:text-amber transition-colors truncate block">{pub.name}</span>
+                          <p className="font-body text-[0.7rem] text-gray-mid">{pub.suburb}{userLocation && ` · ${formatDistance(getDistanceKm(userLocation.lat, userLocation.lng, pub.lat, pub.lng))}`}</p>
                         </div>
                         <div className="flex items-center gap-2 flex-shrink-0">
-                          <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-semibold bg-orange/10 text-orange border border-orange/20">
+                          <span className="font-mono text-[0.58rem] font-bold uppercase tracking-[0.05em] px-1.5 py-0.5 rounded-pill border-2 bg-red-pale text-red border-red">
                             {status.countdown}
                           </span>
-                          <span className="text-sm font-bold font-mono text-orange">{pub.price !== null ? `$${pub.price.toFixed(2)}` : 'TBC'}</span>
+                          <span className="font-mono text-[1rem] font-extrabold text-ink">{pub.price !== null ? `$${pub.price.toFixed(2)}` : 'TBC'}</span>
                         </div>
                       </Link>
                     )
@@ -221,23 +220,23 @@ export default function TonightsMoves({ pubs, userLocation }: TonightsMovesProps
             {/* Upcoming Deals */}
             {upcomingDeals.length > 0 && (
               <div>
-                <h4 className="text-xs font-semibold text-orange mb-2 flex items-center gap-1">
-                  {E.clock} Upcoming {E.dash} Happy Hours Starting Soon
+                <h4 className="font-mono text-[0.7rem] font-bold uppercase tracking-[0.05em] text-ink mb-2 flex items-center gap-1">
+                  <Clock className="w-3.5 h-3.5" /> Starting Soon
                 </h4>
-                <div className="space-y-1.5">
-                  {upcomingDeals.map((pub) => {
+                <div className="space-y-0">
+                  {upcomingDeals.map((pub, i) => {
                     const status = getHappyHourStatus(pub.happyHour)
                     return (
-                      <Link key={pub.id} href={`/pub/${pub.slug}`} className="flex items-center justify-between p-2 rounded-xl bg-orange-50/40 border border-orange-200">
+                      <Link key={pub.id} href={`/pub/${pub.slug}`} className={`flex items-center justify-between px-3 py-2.5 no-underline group ${i > 0 ? 'border-t border-gray-light' : ''}`}>
                         <div className="min-w-0">
-                          <span className="text-xs font-semibold text-stone-800 truncate block">{pub.name}</span>
-                          <p className="text-[10px] text-stone-400">{pub.suburb}{userLocation && ` · ${formatDistance(getDistanceKm(userLocation.lat, userLocation.lng, pub.lat, pub.lng))}`}</p>
+                          <span className="font-body text-sm font-bold text-ink group-hover:text-amber transition-colors truncate block">{pub.name}</span>
+                          <p className="font-body text-[0.7rem] text-gray-mid">{pub.suburb}{userLocation && ` · ${formatDistance(getDistanceKm(userLocation.lat, userLocation.lng, pub.lat, pub.lng))}`}</p>
                         </div>
                         <div className="flex items-center gap-2 flex-shrink-0">
-                          <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-medium bg-orange-100 text-orange border border-orange-200">
+                          <span className="font-mono text-[0.58rem] font-bold uppercase tracking-[0.05em] px-1.5 py-0.5 rounded-pill border-2 border-amber/30 bg-amber-pale text-amber">
                             {status.countdown}
                           </span>
-                          <span className="text-sm font-bold text-stone-600">{pub.price !== null ? `$${pub.price.toFixed(2)}` : 'TBC'}</span>
+                          <span className="font-mono text-[1rem] font-extrabold text-gray-mid">{pub.price !== null ? `$${pub.price.toFixed(2)}` : 'TBC'}</span>
                         </div>
                       </Link>
                     )
@@ -248,23 +247,27 @@ export default function TonightsMoves({ pubs, userLocation }: TonightsMovesProps
 
             {/* Hot Suburb */}
             {hotSuburb && (
-              <div className="p-3 rounded-xl bg-white/70 border border-stone-100 text-center">
-                <h4 className="text-xs font-semibold text-stone-600 mb-1">{E.fire} Hot Suburb</h4>
-                <p className="text-sm font-bold text-stone-800">{hotSuburb.name}</p>
-                <p className="text-[10px] text-stone-400">
-                  {hotSuburb.activeCount} active deal{hotSuburb.activeCount !== 1 ? 's' : ''} {E.bullet} Avg ${hotSuburb.avgPrice.toFixed(2)}
+              <div className="bg-off-white rounded-card p-3 text-center">
+                <h4 className="font-mono text-[0.65rem] font-bold uppercase tracking-[0.05em] text-gray-mid mb-1 flex items-center justify-center gap-1">
+                  <Flame className="w-3 h-3" /> Hot Suburb
+                </h4>
+                <p className="font-mono text-sm font-extrabold text-ink">{hotSuburb.name}</p>
+                <p className="font-mono text-[0.65rem] text-gray-mid">
+                  {hotSuburb.activeCount} active deal{hotSuburb.activeCount !== 1 ? 's' : ''} · Avg ${hotSuburb.avgPrice.toFixed(2)}
                 </p>
               </div>
             )}
 
             {activeDeals.length === 0 && (
-              <div className="text-center text-xs py-2 rounded-xl bg-white/40 text-stone-400">
-                {E.crescent_moon} No happy hours active right now {E.dash} check back later!
+              <div className="bg-off-white rounded-card p-3 text-center">
+                <p className="font-mono text-[0.75rem] text-gray-mid flex items-center justify-center gap-2">
+                  <Moon className="w-4 h-4" /> No happy hours active right now — check back later!
+                </p>
               </div>
             )}
           </div>
         )}
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   )
 }

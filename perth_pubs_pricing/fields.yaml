@@ -1,0 +1,51 @@
+## Field Definitions for Perth Pubs & Current Pricing Research
+## Focus: Current pint pricing (regular + happy hour)
+
+fields:
+  basic_info:
+    name:
+      description: "Full venue name"
+      detail_level: brief
+    suburb:
+      description: "Perth suburb where the venue is located"
+      detail_level: brief
+    address:
+      description: "Full street address"
+      detail_level: brief
+    website:
+      description: "Venue website URL"
+      detail_level: brief
+
+  pricing:
+    price:
+      description: "Current regular pint price in AUD (570ml). Use the cheapest/house pint price. Null if venue doesn't serve pints or price unknown."
+      detail_level: detailed
+    beer_type:
+      description: "The beer that the listed pint price is for (e.g., 'Swan Draught', 'Gage Roads Hero', 'House Lager')"
+      detail_level: detailed
+    happy_hour_price:
+      description: "Discounted pint price during happy hour in AUD. Null if no happy hour or price unknown."
+      detail_level: detailed
+    happy_hour:
+      description: "Free-text description of happy hour deal (e.g., '$8 pints 4-6pm weekdays'). Null if no happy hour."
+      detail_level: moderate
+    happy_hour_days:
+      description: "Days happy hour runs, comma-separated (e.g., 'Monday,Tuesday,Wednesday,Thursday,Friday'). Null if no happy hour."
+      detail_level: moderate
+    happy_hour_start:
+      description: "Happy hour start time in 24h format (e.g., '16:00'). Null if no happy hour."
+      detail_level: moderate
+    happy_hour_end:
+      description: "Happy hour end time in 24h format (e.g., '18:00'). Null if no happy hour."
+      detail_level: moderate
+
+  source:
+    pricing_source:
+      description: "Where the pricing data was found (e.g., venue website, Google listing, Broadsheet, EatDrinkCheap, social media)"
+      detail_level: brief
+    pricing_date:
+      description: "Date the pricing data was observed/published (YYYY-MM-DD format)"
+      detail_level: brief
+
+  uncertain:
+    description: "Array of field names where the value is uncertain or unverified. Auto-populated during research."

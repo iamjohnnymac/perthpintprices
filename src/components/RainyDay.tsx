@@ -3,9 +3,6 @@
 import Link from 'next/link'
 import { useState, useEffect, useMemo } from 'react'
 import { Pub } from '@/types/pub'
-import { Card, CardContent } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import InfoTooltip from './InfoTooltip'
 import { getDistanceKm, formatDistance } from '@/lib/location'
 import { CloudRain, Coffee, Droplets } from 'lucide-react'
 
@@ -107,51 +104,46 @@ export default function RainyDay({ pubs, userLocation }: RainyDayProps) {
   if (error || !weather) {
     if (error) return null
     return (
-      <Card className="bg-white rounded-2xl shadow-[0_2px_16px_rgba(0,0,0,0.08)] border border-stone-200/40">
-        <CardContent className="p-4 sm:p-5">
+      <div className="border-3 border-ink rounded-card shadow-hard-sm bg-white overflow-hidden">
+        <div className="p-5">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-stone-100 animate-pulse" />
+            <div className="w-10 h-10 rounded-card bg-off-white animate-pulse" />
             <div className="flex-1">
-              <div className="h-4 w-32 bg-stone-100 rounded animate-pulse mb-1" />
-              <div className="h-3 w-48 bg-stone-100 rounded animate-pulse" />
+              <div className="h-4 w-32 bg-off-white rounded-card animate-pulse mb-1" />
+              <div className="h-3 w-48 bg-off-white rounded-card animate-pulse" />
             </div>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     )
   }
 
   if (cozyPubs.length === 0) return null
 
   return (
-    <Card
-      className={`rounded-2xl shadow-[0_2px_16px_rgba(0,0,0,0.08)] border border-stone-200/40 cursor-pointer transition-all duration-300 hover:shadow-[0_4px_20px_rgba(0,0,0,0.12)] active:scale-[0.995] overflow-hidden ${
-        isRaining
-          ? 'bg-gradient-to-r from-slate-50 via-blue-50/50 to-slate-50'
-          : 'bg-white'
-      }`}
+    <div
+      className="border-3 border-ink rounded-card shadow-hard-sm bg-white overflow-hidden cursor-pointer transition-all"
       onClick={() => setIsExpanded(!isExpanded)}
     >
-      <CardContent className="p-4 sm:p-5">
+      <div className="p-5">
         {/* Compact Header */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="flex flex-col items-center">
-              <span className="text-2xl leading-none">{isRaining ? <CloudRain className="w-6 h-6" /> : <Coffee className="w-6 h-6" />}</span>
+            <div className="w-10 h-10 bg-off-white border-2 border-ink rounded-full flex items-center justify-center flex-shrink-0">
+              {isRaining ? <CloudRain className="w-5 h-5 text-ink" /> : <Coffee className="w-5 h-5 text-ink" />}
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="text-base sm:text-lg font-bold font-heading text-stone-800 flex items-center">
-                  {isRaining ? 'RAINY DAY PUBS' : 'COZY CORNERS'}
-                  <InfoTooltip text="Live rain data from Open-Meteo for Perth CBD. When it rains, we show cozy pubs worth hunkering down in with a pint." />
+                <h3 className="font-mono text-[0.85rem] font-extrabold text-ink">
+                  {isRaining ? 'Rainy Day Pubs' : 'Cozy Corners'}
                 </h3>
                 {isRaining && weather.rain > 0 && (
-                  <Badge className="bg-blue-100 text-blue-700 border-blue-200 text-[10px] px-1.5 py-0">
+                  <span className="font-mono text-[0.55rem] font-bold uppercase tracking-[0.05em] px-1.5 py-0.5 rounded-pill border-2 border-gray-light bg-off-white text-gray-mid">
                     {weather.rain.toFixed(1)} mm/h
-                  </Badge>
+                  </span>
                 )}
               </div>
-              <p className="text-xs text-stone-500">
+              <p className="font-body text-[0.75rem] text-gray-mid">
                 {isRaining
                   ? "It's chucking it down. Here's where to hide"
                   : "No rain today, but these are still top spots to hunker down"}
@@ -162,14 +154,14 @@ export default function RainyDay({ pubs, userLocation }: RainyDayProps) {
           <div className="flex items-center gap-3">
             {isRaining && (
               <div className="text-right hidden sm:block">
-                <div className="text-sm font-semibold text-blue-700 leading-none">
+                <div className="font-mono text-sm font-bold text-ink leading-none">
                   {getRainIntensity(weather.weatherCode)}
                 </div>
-                <div className="text-[10px] text-stone-400 mt-0.5">{Math.round(weather.temperature)}°C</div>
+                <div className="font-mono text-[0.6rem] text-gray-mid mt-0.5">{Math.round(weather.temperature)}°C</div>
               </div>
             )}
 
-            <svg width="16" height="16" viewBox="0 0 16 16" className={`text-stone-400 transition-transform ${isExpanded ? 'rotate-180' : ''}`}>
+            <svg width="16" height="16" viewBox="0 0 16 16" className={`text-gray-mid transition-transform ${isExpanded ? 'rotate-180' : ''}`}>
               <path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
             </svg>
           </div>
@@ -177,68 +169,63 @@ export default function RainyDay({ pubs, userLocation }: RainyDayProps) {
 
         {/* Expanded Content */}
         {isExpanded && (
-          <div className="mt-3 pt-3 border-t border-stone-200/60">
+          <div className="mt-3 pt-3 border-t border-gray-light">
             {/* Rain stats for mobile */}
             {isRaining && (
-              <div className="flex sm:hidden justify-center gap-2 mb-2">
-                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-blue-50 text-blue-600 border border-blue-100">
-                  <CloudRain className="w-4 h-4 inline" /> {getRainIntensity(weather.weatherCode)}
+              <div className="flex sm:hidden justify-center gap-2 mb-3">
+                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-pill font-mono text-[0.65rem] font-bold bg-off-white text-gray-mid border-2 border-gray-light">
+                  <CloudRain className="w-3.5 h-3.5" /> {getRainIntensity(weather.weatherCode)}
                 </span>
-                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-white/60 text-stone-500 border border-stone-100">
-                  <Droplets className="w-3.5 h-3.5 inline" /> {weather.precipitation.toFixed(1)} mm
+                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-pill font-mono text-[0.65rem] font-bold bg-off-white text-gray-mid border-2 border-gray-light">
+                  <Droplets className="w-3.5 h-3.5" /> {weather.precipitation.toFixed(1)} mm
                 </span>
               </div>
             )}
 
             {/* Tagline */}
-            <p className="text-xs text-stone-500 italic mb-2 text-center">
+            <p className="font-body text-[0.75rem] text-gray-mid italic mb-3 text-center">
               {isRaining
                 ? "Chucking it down out there. Duck into one of these cozy spots"
                 : "No umbrella needed, but these cozy corners are always a good shout"}
             </p>
 
             {/* Recommended Pubs */}
-            <div className="flex items-center justify-between mb-2">
-              <h4 className="text-xs font-semibold text-stone-700">
-                ▸ {isRaining ? 'Duck In Here' : 'Cozy Picks'}
+            <div className="flex items-center justify-between mb-3">
+              <h4 className="font-mono text-[0.7rem] font-bold uppercase tracking-[0.05em] text-ink">
+                {isRaining ? 'Duck In Here' : 'Cozy Picks'}
               </h4>
-              <span className="text-xs text-stone-400">
+              <span className="font-mono text-[0.65rem] text-gray-mid">
                 {cozyPubs.length} cozy {cozyPubs.length === 1 ? 'spot' : 'spots'}
               </span>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <div className="space-y-0">
               {cozyPubs.map((pub, index) => (
                 <Link
                   key={pub.id}
                   href={`/pub/${pub.slug}`}
-                  className="flex items-center gap-3 rounded-xl bg-white/70 hover:bg-white/95 transition-all duration-200 p-3 border border-stone-100 shadow-sm hover:shadow-md"
+                  className={`flex items-center gap-3 px-3 py-3 no-underline group ${
+                    index > 0 ? 'border-t border-gray-light' : ''
+                  } ${index === 0 ? 'bg-amber/5' : ''}`}
                   onClick={(e) => e.stopPropagation()}
                 >
-                  <div className={`flex items-center justify-center w-8 h-8 rounded-lg ${isRaining ? 'bg-blue-50 text-blue-600' : 'bg-amber-50 text-amber-600'} font-bold text-sm flex-shrink-0`}>
-                    {index + 1}
-                  </div>
+                  <span className={`font-mono text-[0.65rem] font-bold w-5 flex-shrink-0 ${index === 0 ? 'text-amber' : 'text-gray-mid'}`}>
+                    {index === 0 ? '\u2605' : `${index + 1}`}
+                  </span>
                   <div className="min-w-0 flex-1">
-                    <span className="text-xs font-semibold text-stone-800 truncate block">{pub.name}</span>
-                    <div className="flex items-center gap-2 mt-0.5">
-                      <span className="text-[10px] text-stone-400">
-                        {pub.suburb}
-                        {userLocation && ` · ${formatDistance(getDistanceKm(userLocation.lat, userLocation.lng, pub.lat, pub.lng))}`}
-                      </span>
-                      {pub.vibeTag && (
-                        <>
-                          <span className="text-[10px] text-stone-300">·</span>
-                          <span className="text-[10px] text-stone-400">{pub.vibeTag}</span>
-                        </>
-                      )}
-                    </div>
+                    <span className="font-body text-sm font-bold text-ink group-hover:text-amber transition-colors truncate block">{pub.name}</span>
+                    <span className="font-body text-[0.75rem] text-gray-mid">
+                      {pub.suburb}
+                      {userLocation && ` · ${formatDistance(getDistanceKm(userLocation.lat, userLocation.lng, pub.lat, pub.lng))}`}
+                      {pub.vibeTag && ` · ${pub.vibeTag}`}
+                    </span>
                   </div>
                   <div className="text-right flex-shrink-0">
-                    <span className="text-sm font-bold text-amber-600">
+                    <span className="font-mono text-[1rem] font-extrabold text-ink">
                       {pub.price !== null ? `$${pub.price.toFixed(2)}` : 'TBC'}
                     </span>
                     {pub.happyHour && (
-                      <p className="text-[9px] text-ink font-medium">Happy Hour</p>
+                      <p className="font-mono text-[0.55rem] font-bold text-red">Happy Hour</p>
                     )}
                   </div>
                 </Link>
@@ -246,12 +233,14 @@ export default function RainyDay({ pubs, userLocation }: RainyDayProps) {
             </div>
 
             {/* Fun footer */}
-            <div className="mt-3 text-center text-xs py-2 rounded-lg bg-white/40 text-stone-400">
-              {quip}
+            <div className="mt-3 bg-off-white rounded-card p-3 text-center">
+              <p className="font-mono text-[0.75rem] text-gray-mid">
+                {quip}
+              </p>
             </div>
           </div>
         )}
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   )
 }

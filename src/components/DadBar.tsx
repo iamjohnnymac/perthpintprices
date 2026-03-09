@@ -5,18 +5,17 @@ import Link from 'next/link'
 import { useState, useMemo } from 'react'
 import { Pub } from '@/types/pub'
 import { getDistanceKm, formatDistance } from '@/lib/location'
-import { Card, CardContent } from '@/components/ui/card'
-import InfoTooltip from './InfoTooltip'
+import { Users, MapPin } from 'lucide-react'
 
 const DAD_JOKES = [
-  "I told my kids I’d buy them a drink at the pub. They got lemonade. I got a pint. Everyone won.",
-  "My kid asked why we go to pubs with playgrounds. I said “it’s called multitasking, son.”",
-  "A dad walks into a pub with a playground. He doesn’t walk out for 4 hours.",
-  "What’s a dad’s favourite pub feature? Fenced. Play. Area.",
+  "I told my kids I'd buy them a drink at the pub. They got lemonade. I got a pint. Everyone won.",
+  "My kid asked why we go to pubs with playgrounds. I said \"it's called multitasking, son.\"",
+  "A dad walks into a pub with a playground. He doesn't walk out for 4 hours.",
+  "What's a dad's favourite pub feature? Fenced. Play. Area.",
   "I used to go to trendy bars. Now I rate pubs by slide height.",
-  "The Baysie has a 10m slide. My kids rate it 5 stars. I rate the beer garden 5 stars. Everyone’s happy.",
+  "The Baysie has a 10m slide. My kids rate it 5 stars. I rate the beer garden 5 stars. Everyone's happy.",
   "They say it takes a village to raise a child. In Perth, it takes a pub with a playground.",
-  "My wife said “take the kids somewhere fun.” So I took them to a pub. With a playground. Loophole.",
+  "My wife said \"take the kids somewhere fun.\" So I took them to a pub. With a playground. Loophole.",
 ]
 
 // Playground quality ratings based on research
@@ -26,11 +25,11 @@ const PLAYGROUND_NOTES: Record<number, string> = {
   10: 'Nature-style play area with imaginative zones',
   23: 'Huge grassy area right by the harbour',
   104: 'Vintage Land Cruiser & cray boats to climb',
-  162: 'Geoff’s Smash Repairs themed playground + Mario Kart arcade',
+  162: "Geoff's Smash Repairs themed playground + Mario Kart arcade",
   103: 'Big sandpit & play area overlooking the water',
   167: 'Replica tractor, cubby, swings & boats + resident animals',
-  11: 'Percy’s Paddock: fort, sandpit, soft-play, ball pit for toddlers',
-  118: 'Adjacent playground + optional Camfield Crèche service',
+  11: "Percy's Paddock: fort, sandpit, soft-play, ball pit for toddlers",
+  118: 'Adjacent playground + optional Camfield Creche service',
   150: 'Wooden climbing tower, slides, ropes + shade sails',
   34: 'The Park: dedicated play area with shade sails',
 }
@@ -53,8 +52,8 @@ export default function DadBar({ pubs, userLocation }: { pubs: Pub[], userLocati
   const joke = useMemo(() => DAD_JOKES[Math.floor(Math.random() * DAD_JOKES.length)], [])
 
   if (dadPubs.length === 0) return (
-    <div className="bg-white rounded-2xl border border-stone-200/40 p-6 text-center">
-      <p className="text-stone-400 text-sm">No dad-friendly pubs found nearby.</p>
+    <div className="border-3 border-ink rounded-card shadow-hard-sm bg-white p-6 text-center">
+      <p className="text-gray-mid text-sm font-body">No dad-friendly pubs found nearby.</p>
     </div>
   )
 
@@ -62,123 +61,107 @@ export default function DadBar({ pubs, userLocation }: { pubs: Pub[], userLocati
   const displayPubs = showAll ? dadPubs : dadPubs.slice(0, 10)
 
   return (
-    <Card className="bg-white rounded-2xl shadow-[0_2px_16px_rgba(0,0,0,0.08)] border border-stone-200/40 cursor-pointer transition-all duration-300 hover:shadow-[0_4px_20px_rgba(0,0,0,0.12)] active:scale-[0.995] overflow-hidden" onClick={() => setIsExpanded(!isExpanded)}>
-      <CardContent className="p-4 sm:p-5">
-      {/* Header */}
-      <div className="flex items-start justify-between mb-3">
-        <div className="flex items-center gap-2.5">
-          <div className="w-7 h-7 rounded-xl bg-gradient-to-br from-orange to-orange-dark flex items-center justify-center flex-shrink-0">
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-              <circle cx="8" cy="5" r="3" fill="white" opacity="0.9"/>
-              <path d="M3 14c0-2.8 2.2-5 5-5s5 2.2 5 5" fill="white" opacity="0.9"/>
-              <circle cx="12" cy="7" r="2" fill="white" opacity="0.6"/>
-              <path d="M9 14c0-1.7 1.3-3 3-3s3 1.3 3 3" fill="white" opacity="0.6"/>
-            </svg>
-          </div>
-          <div>
-            <h3 className="text-base sm:text-lg font-bold font-heading text-stone-800 flex items-center gap-1.5">
-              THE DAD BAR
-              <InfoTooltip text="Kid-friendly pubs verified from Buggybuddys and Urban List Perth. All venues have dedicated playgrounds or play areas, plus food menus for children. Perfect for a cheeky pint while the kids wear themselves out." />
-            </h3>
-            <p className="text-xs text-stone-500">Playgrounds for them. Pints for you.</p>
-          </div>
-        </div>
-        <div className="flex items-center gap-2">
-            <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-orange-50 border border-orange-200">
-              <span className="text-[10px] font-semibold text-orange">{dadPubs.length} venues</span>
+    <div
+      className="border-3 border-ink rounded-card shadow-hard-sm bg-white overflow-hidden cursor-pointer transition-all"
+      onClick={() => setIsExpanded(!isExpanded)}
+    >
+      <div className="p-5">
+        {/* Header */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-off-white border-2 border-ink rounded-full flex items-center justify-center flex-shrink-0">
+              <Users className="w-5 h-5 text-ink" />
             </div>
+            <div>
+              <h3 className="font-mono text-[0.85rem] font-extrabold text-ink">The Dad Bar</h3>
+              <p className="font-body text-[0.75rem] text-gray-mid">Playgrounds for them. Pints for you.</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="font-mono text-[0.58rem] font-bold uppercase tracking-[0.05em] px-1.5 py-0.5 rounded-pill border-2 border-amber/30 bg-amber-pale text-amber">
+              {dadPubs.length} venues
+            </span>
             {!isExpanded && dadPubs[0]?.price && (
-              <span className="text-sm font-bold text-orange">from ${dadPubs[0].price.toFixed(2)}</span>
+              <span className="font-mono text-sm font-extrabold text-amber">from ${dadPubs[0].price.toFixed(2)}</span>
             )}
-            <svg width="16" height="16" viewBox="0 0 16 16" className={`text-stone-400 transition-transform ${isExpanded ? 'rotate-180' : ''}`}>
+            <svg width="16" height="16" viewBox="0 0 16 16" className={`text-gray-mid transition-transform ${isExpanded ? 'rotate-180' : ''}`}>
               <path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
             </svg>
           </div>
-      </div>
+        </div>
 
-      {isExpanded && (<>
-      {/* Dad joke */}
-      <div className="bg-orange-50/60 border border-orange-200 rounded-xl p-2.5 mb-3">
-        <div className="flex items-start gap-2">
-          <span className="text-stone-400 flex-shrink-0 mt-0.5">
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-              <path d="M7 1C3.7 1 1 3.7 1 7s2.7 6 6 6 6-2.7 6-6-2.7-6-6-6zm0 9.5c-.4 0-.7-.3-.7-.7s.3-.7.7-.7.7.3.7.7-.3.7-.7.7zm.7-3c0 .4-.3.7-.7.7s-.7-.3-.7-.7V5.2c0-.4.3-.7.7-.7s.7.3.7.7v2.3z" fill="currentColor"/>
-            </svg>
-          </span>
-          <p className="text-xs text-stone-600 italic leading-relaxed">&ldquo;{joke}&rdquo;</p>
-        </div>
-      </div>
-
-      {/* Stats row */}
-      <div className="grid grid-cols-3 gap-2 mb-3">
-        <div className="bg-white border border-stone-200 rounded-xl p-2 text-center">
-          <p className="text-lg font-bold text-orange">{dadPubs.length}</p>
-          <p className="text-[10px] text-stone-500">Dad-approved</p>
-        </div>
-        <div className="bg-white border border-stone-200 rounded-xl p-2 text-center">
-          <p className="text-lg font-bold text-stone-800">${dadPubs[0]?.price?.toFixed(2)}</p>
-          <p className="text-[10px] text-stone-500">Cheapest pint</p>
-        </div>
-        <div className="bg-white border border-stone-200 rounded-xl p-2 text-center">
-          <p className="text-lg font-bold text-stone-800">${avgPrice.toFixed(2)}</p>
-          <p className="text-[10px] text-stone-500">Avg dad pint</p>
-        </div>
-      </div>
-
-      {/* Pub list */}
-      <div className="space-y-1.5">
-        {displayPubs.map((pub, i) => (
-          <Link key={pub.id} href={`/pub/${pub.slug}`} className="flex items-center gap-2 bg-white border border-stone-200 rounded-xl p-2">
-            <div className="w-5 h-5 rounded-full bg-orange-50 flex items-center justify-center flex-shrink-0">
-              <span className="text-[10px] font-bold text-orange">{i + 1}</span>
+        {isExpanded && (
+          <div className="mt-3 pt-3 border-t border-gray-light" onClick={(e) => e.stopPropagation()}>
+            {/* Dad joke */}
+            <div className="bg-amber-pale border-2 border-amber/30 rounded-card p-3 mb-3">
+              <p className="font-body text-[0.75rem] text-gray-mid italic leading-relaxed">&ldquo;{joke}&rdquo;</p>
             </div>
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-1.5">
-                <span className="text-xs font-semibold text-stone-800 truncate block">{pub.name}</span>
+
+            {/* Stats row */}
+            <div className="grid grid-cols-3 gap-2 mb-3">
+              <div className="bg-off-white border-2 border-gray-light rounded-card p-2 text-center">
+                <p className="font-mono text-lg font-extrabold text-amber">{dadPubs.length}</p>
+                <p className="font-mono text-[0.55rem] text-gray-mid">Dad-approved</p>
               </div>
-              <div className="flex items-center gap-1 mt-0.5">
-                <svg width="8" height="8" viewBox="0 0 8 8" fill="none" className="flex-shrink-0">
-                  <path d="M4 0C2.5 0 1 1.3 1 3c0 2.5 3 5 3 5s3-2.5 3-5c0-1.7-1.5-3-3-3z" fill="#a8a29e"/>
+              <div className="bg-off-white border-2 border-gray-light rounded-card p-2 text-center">
+                <p className="font-mono text-lg font-extrabold text-ink">${dadPubs[0]?.price?.toFixed(2)}</p>
+                <p className="font-mono text-[0.55rem] text-gray-mid">Cheapest pint</p>
+              </div>
+              <div className="bg-off-white border-2 border-gray-light rounded-card p-2 text-center">
+                <p className="font-mono text-lg font-extrabold text-ink">${avgPrice.toFixed(2)}</p>
+                <p className="font-mono text-[0.55rem] text-gray-mid">Avg dad pint</p>
+              </div>
+            </div>
+
+            {/* Pub list */}
+            <div className="space-y-0">
+              {displayPubs.map((pub, i) => (
+                <Link key={pub.id} href={`/pub/${pub.slug}`} className={`flex items-center gap-2 px-3 py-2.5 no-underline group ${i > 0 ? 'border-t border-gray-light' : ''} ${i === 0 ? 'bg-amber/5' : ''}`}>
+                  <span className={`font-mono text-[0.65rem] font-bold w-4 ${i === 0 ? 'text-amber' : 'text-gray-mid'}`}>{i === 0 ? '\u2605' : `${i + 1}`}</span>
+                  <div className="flex-1 min-w-0">
+                    <span className="font-body text-sm font-bold text-ink group-hover:text-amber transition-colors truncate block">{pub.name}</span>
+                    <div className="flex items-center gap-1 mt-0.5">
+                      <MapPin className="w-2.5 h-2.5 text-gray-mid flex-shrink-0" />
+                      <p className="font-body text-[0.7rem] text-gray-mid truncate">{pub.suburb}{userLocation && ` · ${formatDistance(getDistanceKm(userLocation.lat, userLocation.lng, pub.lat, pub.lng))}`}</p>
+                      {PLAYGROUND_NOTES[pub.id] && (
+                        <>
+                          <span className="text-gray-mid text-[0.7rem]">·</span>
+                          <p className="font-body text-[0.7rem] text-amber truncate">{PLAYGROUND_NOTES[pub.id]}</p>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                  <div className="text-right flex-shrink-0 ml-1">
+                    <span className="font-mono text-[1rem] font-extrabold text-ink">${pub.price?.toFixed(2)}</span>
+                    <p className="font-body text-[0.6rem] text-gray-mid truncate max-w-[60px]">{pub.beerType}</p>
+                  </div>
+                </Link>
+              ))}
+            </div>
+
+            {/* Show all button */}
+            {dadPubs.length > 10 && (
+              <button
+                onClick={() => setShowAll(!showAll)}
+                className="w-full mt-2 flex items-center justify-center gap-1.5 py-1.5 font-mono text-[0.75rem] font-bold text-gray-mid hover:text-ink transition-colors"
+              >
+                {showAll ? 'Show less' : `Show all ${dadPubs.length} dad bars`}
+                <svg
+                  width="16" height="16" viewBox="0 0 16 16" fill="none"
+                  className={`transition-transform duration-200 ${showAll ? 'rotate-180' : ''}`}
+                >
+                  <path d="M4 6l4 4 4-4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
-                <p className="text-[10px] text-stone-400 truncate">{pub.suburb}{userLocation && ` · ${formatDistance(getDistanceKm(userLocation.lat, userLocation.lng, pub.lat, pub.lng))}`}</p>
-                {PLAYGROUND_NOTES[pub.id] && (
-                  <>
-                    <span className="text-stone-300 text-[10px]">{"·"}</span>
-                    <p className="text-[10px] text-orange truncate">{PLAYGROUND_NOTES[pub.id]}</p>
-                  </>
-                )}
-              </div>
-            </div>
-            <div className="text-right flex-shrink-0 ml-1">
-              <p className="text-sm font-bold text-stone-800">${pub.price?.toFixed(2)}</p>
-              <p className="text-[10px] text-stone-400 truncate max-w-[60px]">{pub.beerType}</p>
-            </div>
-          </Link>
-        ))}
+              </button>
+            )}
+
+            {/* Footer */}
+            <p className="font-mono text-[0.55rem] text-gray-mid text-center mt-2">
+              Sources: Buggybuddys, Urban List Perth · All venues verified for playground facilities
+            </p>
+          </div>
+        )}
       </div>
-
-      {/* Show all button */}
-      {dadPubs.length > 5 && (
-        <button
-          onClick={() => setShowAll(!showAll)}
-          className="w-full mt-2 flex items-center justify-center gap-1.5 py-1.5 text-xs font-semibold text-stone-500 hover:text-stone-700 transition-colors"
-        >
-          {showAll ? 'Show less' : `Show all ${dadPubs.length} dad bars`}
-          <svg
-            width="16" height="16" viewBox="0 0 16 16" fill="none"
-            className={`transition-transform duration-200 ${showAll ? 'rotate-180' : ''}`}
-          >
-            <path d="M4 6l4 4 4-4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
-        </button>
-      )}
-
-      {/* Footer */}
-      <p className="text-[10px] text-stone-400 text-center mt-2">
-        Sources: Buggybuddys, Urban List Perth {"·"} All venues verified for playground facilities
-      </p>
-      </>)}
-      </CardContent>
-    </Card>
+    </div>
   )
 }

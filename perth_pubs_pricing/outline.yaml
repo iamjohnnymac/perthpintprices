@@ -1,0 +1,726 @@
+topic: Perth Pubs & Current Pricing
+items:
+- name: 18 Knots Rooftop Bar
+  category: Existing - Missing Price
+  description: Existing pub in Perth, currently has no pint price in database
+- name: 399 Small Bar
+  category: Existing - Missing Price
+  description: Existing pub in Perth, currently has no pint price in database
+- name: 3Sheets on the Lake
+  category: Existing - Missing Price
+  description: Existing pub in Woodlands, currently has no pint price in database
+- name: 4 Mates Bar & Grill - Bassendean
+  category: Existing - Missing Price
+  description: Existing pub in Bassendean, currently has no pint price in database
+- name: Alfred's Pizzeria
+  category: Existing - Missing Price
+  description: Existing pub in Perth, currently has no pint price in database
+- name: Altone Park Golf Course
+  category: Existing - Missing Price
+  description: Existing pub in Beechboro, currently has no pint price in database
+- name: Amani Bar
+  category: Existing - Missing Price
+  description: Existing pub in Leederville, currently has no pint price in database
+- name: Amplifier Bar
+  category: Existing - Missing Price
+  description: Existing pub in Perth, currently has no pint price in database
+- name: An Sibin
+  category: Existing - Missing Price
+  description: Existing pub in Northbridge, currently has no pint price in database
+- name: Andaluz Bar & Tapas
+  category: Existing - Missing Price
+  description: Existing pub in Perth, currently has no pint price in database
+- name: Araluen Golf Resort
+  category: Existing - Missing Price
+  description: Existing pub in Roleystone, currently has no pint price in database
+- name: Aurora Rooftop Bar
+  category: Existing - Missing Price
+  description: Existing pub in Perth, currently has no pint price in database
+- name: Back Bar
+  category: Existing - Missing Price
+  description: Existing pub in West Leederville, currently has no pint price in database
+- name: Bad Apples Bar
+  category: Existing - Missing Price
+  description: Existing pub in Ardross, currently has no pint price in database
+- name: Badlands Bar
+  category: Existing - Missing Price
+  description: Existing pub in Perth, currently has no pint price in database
+- name: BAHA Poolside Bar & Kitchen
+  category: Existing - Missing Price
+  description: Existing pub in Perth, currently has no pint price in database
+- name: Bailey Brewing Co.
+  category: Existing - Missing Price
+  description: Existing pub in Henley Brook, currently has no pint price in database
+- name: Bar Amelie
+  category: Existing - Missing Price
+  description: Existing pub in Subiaco, currently has no pint price in database
+- name: Bar Love
+  category: Existing - Missing Price
+  description: Existing pub in Perth, currently has no pint price in database
+- name: Bar Rogue
+  category: Existing - Missing Price
+  description: Existing pub in Highgate, currently has no pint price in database
+- name: Bar Vino
+  category: Existing - Missing Price
+  description: Existing pub in Mount Lawley, currently has no pint price in database
+- name: Baskerville Tavern
+  category: Existing - Missing Price
+  description: Existing pub in Baskerville, currently has no pint price in database
+- name: Belgian Beer Cafe
+  category: Existing - Missing Price
+  description: Existing pub in Perth, currently has no pint price in database
+- name: Belmont Tavern
+  category: Existing - Missing Price
+  description: Existing pub in Cloverdale, currently has no pint price in database
+- name: Benny's Bar & Cafe
+  category: Existing - Missing Price
+  description: Existing pub in Fremantle, currently has no pint price in database
+- name: Berrigan Bar & Bistro
+  category: Existing - Missing Price
+  description: Existing pub in South Lake, currently has no pint price in database
+- name: Billabong Brewing
+  category: Existing - Missing Price
+  description: Existing pub in Myaree, currently has no pint price in database
+- name: Birra Bar ECU Joondalup
+  category: Existing - Missing Price
+  description: Existing pub in Joondalup, currently has no pint price in database
+- name: Blasta Collective
+  category: Existing - Missing Price
+  description: Existing pub in Burswood, currently has no pint price in database
+- name: Boobook Bottles and Bar
+  category: Existing - Missing Price
+  description: Existing pub in West Perth, currently has no pint price in database
+- name: Boston Brewing Co Vic Park
+  category: Existing - Missing Price
+  description: Existing pub in Victoria Park, currently has no pint price in database
+- name: Bottlemart - Attfield 39 Bar & Bistro
+  category: Existing - Missing Price
+  description: Existing pub in Maddington, currently has no pint price in database
+- name: Box 1 Bar & Restaurant
+  category: Existing - Missing Price
+  description: Existing pub in Cannington, currently has no pint price in database
+- name: Brew University
+  category: Existing - Missing Price
+  description: Existing pub in Canning Vale, currently has no pint price in database
+- name: BrewDog Perth
+  category: Existing - Missing Price
+  description: Existing pub in West Perth, currently has no pint price in database
+- name: Brooklands Tavern
+  category: Existing - Missing Price
+  description: Existing pub in Southern River, currently has no pint price in database
+- name: Brown Street Grill
+  category: Existing - Missing Price
+  description: Existing pub in Perth, currently has no pint price in database
+- name: Campus Brewing
+  category: Existing - Missing Price
+  description: Existing pub in Canning Vale, currently has no pint price in database
+- name: Carine Glades Tavern
+  category: Existing - Missing Price
+  description: Existing pub in Duncraig, currently has no pint price in database
+- name: Carmel Cider Co.
+  category: Existing - Missing Price
+  description: Existing pub in Carmel, currently has no pint price in database
+- name: Carramar Golf Course
+  category: Existing - Missing Price
+  description: Existing pub in Carramar, currently has no pint price in database
+- name: CharChar Bull Grill & Bar
+  category: Existing - Missing Price
+  description: Existing pub in Fremantle, currently has no pint price in database
+- name: Chelsea Social Bar & Restaurant
+  category: Existing - Missing Price
+  description: Existing pub in Perth, currently has no pint price in database
+- name: CHICH Small Bar
+  category: Existing - Missing Price
+  description: Existing pub in Osborne Park, currently has no pint price in database
+- name: China Bar Cannington
+  category: Existing - Missing Price
+  description: Existing pub in Cannington, currently has no pint price in database
+- name: Collier Park Golf Club
+  category: Existing - Missing Price
+  description: Existing pub in Como, currently has no pint price in database
+- name: Commercial Bar + Kitchen
+  category: Existing - Missing Price
+  description: Existing pub in Midland, currently has no pint price in database
+- name: Cooee
+  category: Existing - Missing Price
+  description: Existing pub in Perth, currently has no pint price in database
+- name: Cottesloe Golf Club
+  category: Existing - Missing Price
+  description: Existing pub in Swanbourne, currently has no pint price in database
+- name: Crown Sports Bar
+  category: Existing - Missing Price
+  description: Existing pub in Burswood, currently has no pint price in database
+- name: Currambine Bar & Bistro
+  category: Existing - Missing Price
+  description: Existing pub in Currambine, currently has no pint price in database
+- name: Darren's Small Bar
+  category: Existing - Missing Price
+  description: Existing pub in Burswood, currently has no pint price in database
+- name: Defectors Bar
+  category: Existing - Missing Price
+  description: Existing pub in Mount Lawley, currently has no pint price in database
+- name: Dingo Brewery
+  category: Existing - Missing Price
+  description: Existing pub in Midvale, currently has no pint price in database
+- name: Drunk Elephant Bar, Bistro & Shisha
+  category: Existing - Missing Price
+  description: Existing pub in Perth, currently has no pint price in database
+- name: Duckstein Brewery
+  category: Existing - Missing Price
+  description: Existing pub in Henley Brook, currently has no pint price in database
+- name: El Caballo Golf Course
+  category: Existing - Missing Price
+  description: Existing pub in Wooroloo, currently has no pint price in database
+- name: Empire Bar
+  category: Existing - Missing Price
+  description: Existing pub in Lathlain, currently has no pint price in database
+- name: Esplanade Bar
+  category: Existing - Missing Price
+  description: Existing pub in Scarborough, currently has no pint price in database
+- name: Exchange Bar
+  category: Existing - Missing Price
+  description: Existing pub in West Leederville, currently has no pint price in database
+- name: Fenians Irish Pub
+  category: Existing - Missing Price
+  description: Existing pub in Perth, currently has no pint price in database
+- name: Fenway Subiaco
+  category: Existing - Missing Price
+  description: Existing pub in Subiaco, currently has no pint price in database
+- name: Ferrara Karaoke Bar
+  category: Existing - Missing Price
+  description: Existing pub in Perth, currently has no pint price in database
+- name: Fibber McGee's
+  category: Existing - Missing Price
+  description: Existing pub in Leederville, currently has no pint price in database
+- name: Folly Rooftop Bar
+  category: Existing - Missing Price
+  description: Existing pub in East Perth, currently has no pint price in database
+- name: Foxtrot Unicorn
+  category: Existing - Missing Price
+  description: Existing pub in Perth, currently has no pint price in database
+- name: Freestyle Brewing
+  category: Existing - Missing Price
+  description: Existing pub in Bassendean, currently has no pint price in database
+- name: Fremantle Public Golf Course
+  category: Existing - Missing Price
+  description: Existing pub in Fremantle, currently has no pint price in database
+- name: Frisk. Small Bar
+  category: Existing - Missing Price
+  description: Existing pub in Northbridge, currently has no pint price in database
+- name: Fuse Bar
+  category: Existing - Missing Price
+  description: Existing pub in Perth, currently has no pint price in database
+- name: Fusion Bar
+  category: Existing - Missing Price
+  description: Existing pub in Burswood, currently has no pint price in database
+- name: Gage Roads Freo Brewery
+  category: Existing - Missing Price
+  description: Existing pub in Fremantle, currently has no pint price in database
+- name: Geisha Bar
+  category: Existing - Missing Price
+  description: Existing pub in Northbridge, currently has no pint price in database
+- name: Good Company Bar
+  category: Existing - Missing Price
+  description: Existing pub in Karrinyup, currently has no pint price in database
+- name: Goody Two's
+  category: Existing - Missing Price
+  description: Existing pub in Perth, currently has no pint price in database
+- name: Gramercy Bar And Kitchen
+  category: Existing - Missing Price
+  description: Existing pub in Perth, currently has no pint price in database
+- name: Groove Bar & Lounge
+  category: Existing - Missing Price
+  description: Existing pub in Burswood, currently has no pint price in database
+- name: Hamersley Public Golf Course
+  category: Existing - Missing Price
+  description: Existing pub in Karrinyup, currently has no pint price in database
+- name: Hartfield Country Club
+  category: Existing - Missing Price
+  description: Existing pub in Forrestfield, currently has no pint price in database
+- name: Hatchery Collective Bar & Grill
+  category: Existing - Missing Price
+  description: Existing pub in Perth Airport, currently has no pint price in database
+- name: Hello Rooftop Bar
+  category: Existing - Missing Price
+  description: Existing pub in Northbridge, currently has no pint price in database
+- name: HI-LINE Rooftop Bar
+  category: Existing - Missing Price
+  description: Existing pub in Burswood, currently has no pint price in database
+- name: High Wycombe Bar and Grill
+  category: Existing - Missing Price
+  description: Existing pub in High Wycombe, currently has no pint price in database
+- name: Hill Street Bar
+  category: Existing - Missing Price
+  description: Existing pub in Perth, currently has no pint price in database
+- name: Hillview Golf Course
+  category: Existing - Missing Price
+  description: Existing pub in Maida Vale, currently has no pint price in database
+- name: Hop's Bar
+  category: Existing - Missing Price
+  description: Existing pub in Malaga, currently has no pint price in database
+- name: Hula Bula Bar
+  category: Existing - Missing Price
+  description: Existing pub in Perth, currently has no pint price in database
+- name: Hygge Bar
+  category: Existing - Missing Price
+  description: Existing pub in Perth, currently has no pint price in database
+- name: i Darts NIX Perth
+  category: Existing - Missing Price
+  description: Existing pub in Northbridge, currently has no pint price in database
+- name: IMPI BREWERS
+  category: Existing - Missing Price
+  description: Existing pub in Wangara, currently has no pint price in database
+- name: Innate Brewers
+  category: Existing - Missing Price
+  description: Existing pub in Spearwood, currently has no pint price in database
+- name: J.B. O'Reilly's
+  category: Existing - Missing Price
+  description: Existing pub in West Leederville, currently has no pint price in database
+- name: Jetty Bar & Eats
+  category: Existing - Missing Price
+  description: Existing pub in Fremantle, currently has no pint price in database
+- name: Joondalup Country Club
+  category: Existing - Missing Price
+  description: Existing pub in Connolly, currently has no pint price in database
+- name: Kingsway Bar & Bistro
+  category: Existing - Missing Price
+  description: Existing pub in Darch, currently has no pint price in database
+- name: Kommunity Brew
+  category: Existing - Missing Price
+  description: Existing pub in Lathlain, currently has no pint price in database
+- name: Kwinana Golf Club
+  category: Existing - Missing Price
+  description: Existing pub in Calista, currently has no pint price in database
+- name: L'Chaim Bar
+  category: Existing - Missing Price
+  description: Existing pub in Fremantle, currently has no pint price in database
+- name: Lake Claremont Golf Course
+  category: Existing - Missing Price
+  description: Existing pub in Claremont, currently has no pint price in database
+- name: Lake Karrinyup Country Club
+  category: Existing - Missing Price
+  description: Existing pub in Karrinyup, currently has no pint price in database
+- name: Lakelands Country Club
+  category: Existing - Missing Price
+  description: Existing pub in Gnangara, currently has no pint price in database
+- name: Last Drop Elizabethan
+  category: Existing - Missing Price
+  description: Existing pub in Bedfordale, currently has no pint price in database
+- name: Legends Bar and Bottleshop
+  category: Existing - Missing Price
+  description: Existing pub in Attadale, currently has no pint price in database
+- name: Lil's Rooftop Bar Perth
+  category: Existing - Missing Price
+  description: Existing pub in Perth, currently has no pint price in database
+- name: Links Kennedy Bay
+  category: Existing - Missing Price
+  description: Existing pub in Port Kennedy, currently has no pint price in database
+- name: Little Bay Bar & Eatery
+  category: Existing - Missing Price
+  description: Existing pub in Watermans Bay, currently has no pint price in database
+- name: Long Neck
+  category: Existing - Missing Price
+  description: Existing pub in East Perth, currently has no pint price in database
+- name: Longneck Public House
+  category: Existing - Missing Price
+  description: Existing pub in Perth Airport, currently has no pint price in database
+- name: Lot Twenty
+  category: Existing - Missing Price
+  description: Existing pub in Perth, currently has no pint price in database
+- name: Lucky Chan's Laundry & Noodle Bar
+  category: Existing - Missing Price
+  description: Existing pub in Northbridge, currently has no pint price in database
+- name: Lums Wine Bar
+  category: Existing - Missing Price
+  description: Existing pub in Subiaco, currently has no pint price in database
+- name: Marangaroo Golf Course
+  category: Existing - Missing Price
+  description: Existing pub in Marangaroo, currently has no pint price in database
+- name: Marine Lounge Bar
+  category: Existing - Missing Price
+  description: Existing pub in Fremantle, currently has no pint price in database
+- name: Market Grounds
+  category: Existing - Missing Price
+  description: Existing pub in Perth, currently has no pint price in database
+- name: Marri Park Golf Course
+  category: Existing - Missing Price
+  description: Existing pub in Casuarina, currently has no pint price in database
+- name: MASH. Restaurant, Bar & Brewery in Swan Valley
+  category: Existing - Missing Price
+  description: Existing pub in Henley Brook, currently has no pint price in database
+- name: Mayfair Lane Pub & Dining Room
+  category: Existing - Missing Price
+  description: Existing pub in West Perth, currently has no pint price in database
+- name: Maylands Peninsula Golf Course
+  category: Existing - Missing Price
+  description: Existing pub in Maylands, currently has no pint price in database
+- name: Meadow Springs Country Club
+  category: Existing - Missing Price
+  description: Existing pub in Meadow Springs, currently has no pint price in database
+- name: Melville Glades Golf Club
+  category: Existing - Missing Price
+  description: Existing pub in Leeming, currently has no pint price in database
+- name: Mesh Bar
+  category: Existing - Missing Price
+  description: Existing pub in Burswood, currently has no pint price in database
+- name: Metro Bar and Bistro
+  category: Existing - Missing Price
+  description: Existing pub in Perth, currently has no pint price in database
+- name: Midland Tavern Bar & Grill
+  category: Existing - Missing Price
+  description: Existing pub in Midland, currently has no pint price in database
+- name: Minq Bar & Lounge
+  category: Existing - Missing Price
+  description: Existing pub in Burswood, currently has no pint price in database
+- name: Modu Bar & Kitchen
+  category: Existing - Missing Price
+  description: Existing pub in Perth, currently has no pint price in database
+- name: Mons O'Shea
+  category: Existing - Missing Price
+  description: Existing pub in Fremantle, currently has no pint price in database
+- name: Mosman Park Golf Club
+  category: Existing - Missing Price
+  description: Existing pub in Mosman Park, currently has no pint price in database
+- name: Mount Helena Tavern
+  category: Existing - Missing Price
+  description: Existing pub in Mount Helena, currently has no pint price in database
+- name: Mount Lawley Golf Club
+  category: Existing - Missing Price
+  description: Existing pub in Inglewood, currently has no pint price in database
+- name: Mundaring Sporting Club
+  category: Existing - Missing Price
+  description: Existing pub in Mundaring, currently has no pint price in database
+- name: Murray Mews
+  category: Existing - Missing Price
+  description: Existing pub in Perth CBD, currently has no pint price in database
+- name: My Place Bar
+  category: Existing - Missing Price
+  description: Existing pub in Perth, currently has no pint price in database
+- name: Naber Bar Leederville
+  category: Existing - Missing Price
+  description: Existing pub in Leederville, currently has no pint price in database
+- name: Nedlands Golf Club
+  category: Existing - Missing Price
+  description: Existing pub in Nedlands, currently has no pint price in database
+- name: Newpark Bar & Bistro
+  category: Existing - Missing Price
+  description: Existing pub in Girrawheen, currently has no pint price in database
+- name: Nishi
+  category: Existing - Missing Price
+  description: Existing pub in Myaree, currently has no pint price in database
+- name: Noble Falls Tavern
+  category: Existing - Missing Price
+  description: Existing pub in Gidgegannup, currently has no pint price in database
+- name: Otherside Brew Lounge
+  category: Existing - Missing Price
+  description: Existing pub in Perth Airport, currently has no pint price in database
+- name: Otherside Brewhouse
+  category: Existing - Missing Price
+  description: Existing pub in Myaree, currently has no pint price in database
+- name: Otherside of Nowhere
+  category: Existing - Missing Price
+  description: Existing pub in West Leederville, currently has no pint price in database
+- name: Oyster Bar Elizabeth Quay
+  category: Existing - Missing Price
+  description: Existing pub in Perth, currently has no pint price in database
+- name: Paddy Malone's
+  category: Existing - Missing Price
+  description: Existing pub in Joondalup, currently has no pint price in database
+- name: Palace Arcade
+  category: Existing - Missing Price
+  description: Existing pub in Northbridge, currently has no pint price in database
+- name: Paradise Karaoke Bar
+  category: Existing - Missing Price
+  description: Existing pub in Northbridge, currently has no pint price in database
+- name: Patriots Sports Bar
+  category: Existing - Missing Price
+  description: Existing pub in Northbridge, currently has no pint price in database
+- name: Pep's Wine Bar
+  category: Existing - Missing Price
+  description: Existing pub in Peppermint Grove, currently has no pint price in database
+- name: Phat Brew Club
+  category: Existing - Missing Price
+  description: Existing pub in West Perth, currently has no pint price in database
+- name: Pickering Brook Sports Club
+  category: Existing - Missing Price
+  description: Existing pub in Pickering Brook, currently has no pint price in database
+- name: Pinchos Bar De Tapas
+  category: Existing - Missing Price
+  description: Existing pub in Leederville, currently has no pint price in database
+- name: Pirate Bar
+  category: Existing - Missing Price
+  description: Existing pub in Mount Hawthorn, currently has no pint price in database
+- name: Pirate Life Perth
+  category: Existing - Missing Price
+  description: Existing pub in Perth, currently has no pint price in database
+- name: Point Walter Golf Course
+  category: Existing - Missing Price
+  description: Existing pub in Bicton, currently has no pint price in database
+- name: Port Beach Brewery
+  category: Existing - Missing Price
+  description: Existing pub in North Fremantle, currently has no pint price in database
+- name: Powells Fromagerie & Wine Bar
+  category: Existing - Missing Price
+  description: Existing pub in Leederville, currently has no pint price in database
+- name: Public House
+  category: Existing - Missing Price
+  description: Existing pub in Perth, currently has no pint price in database
+- name: Refuge Small Bar
+  category: Existing - Missing Price
+  description: Existing pub in Subiaco, currently has no pint price in database
+- name: RISQ Small Bar
+  category: Existing - Missing Price
+  description: Existing pub in Joondalup, currently has no pint price in database
+- name: Roar Bar & Grill
+  category: Existing - Missing Price
+  description: Existing pub in Bibra Lake, currently has no pint price in database
+- name: Rockingham Golf Club
+  category: Existing - Missing Price
+  description: Existing pub in Cooloongup, currently has no pint price in database
+- name: Rockpool Bar & Grill Perth
+  category: Existing - Missing Price
+  description: Existing pub in Burswood, currently has no pint price in database
+- name: Rooftop at QT
+  category: Existing - Missing Price
+  description: Existing pub in Perth, currently has no pint price in database
+- name: Royal Fremantle Golf Club
+  category: Existing - Missing Price
+  description: Existing pub in Fremantle, currently has no pint price in database
+- name: Royal Perth Golf Club
+  category: Existing - Missing Price
+  description: Existing pub in South Perth, currently has no pint price in database
+- name: Sea View Golf Club
+  category: Existing - Missing Price
+  description: Existing pub in Cottesloe, currently has no pint price in database
+- name: Seasonal Brewing Co.
+  category: Existing - Missing Price
+  description: Existing pub in Maylands, currently has no pint price in database
+- name: Secret Harbour Golf Links
+  category: Existing - Missing Price
+  description: Existing pub in Secret Harbour, currently has no pint price in database
+- name: Serpentine & Districts Golf Club
+  category: Existing - Missing Price
+  description: Existing pub in Serpentine, currently has no pint price in database
+- name: Shadow Bar & Kitchen
+  category: Existing - Missing Price
+  description: Existing pub in Perth, currently has no pint price in database
+- name: Sir Henry's
+  category: Existing - Missing Price
+  description: Existing pub in Northbridge, currently has no pint price in database
+- name: Sneaky Tony's
+  category: Existing - Missing Price
+  description: Existing pub in Northbridge, currently has no pint price in database
+- name: Songbird Bar
+  category: Existing - Missing Price
+  description: Existing pub in Perth, currently has no pint price in database
+- name: Sonny's Bar
+  category: Existing - Missing Price
+  description: Existing pub in Mount Hawthorn, currently has no pint price in database
+- name: South Beach Hotel
+  category: Existing - Missing Price
+  description: Existing pub in South Fremantle, currently has no pint price in database
+- name: Springs Tavern
+  category: Existing - Missing Price
+  description: Existing pub in Beechboro, currently has no pint price in database
+- name: St Brigid
+  category: Existing - Missing Price
+  description: Existing pub in Doubleview, currently has no pint price in database
+- name: Stories
+  category: Existing - Missing Price
+  description: Existing pub in Perth, currently has no pint price in database
+- name: Sun City Country Club
+  category: Existing - Missing Price
+  description: Existing pub in Yanchep, currently has no pint price in database
+- name: Supa Golf
+  category: Existing - Missing Price
+  description: Existing pub in Henley Brook, currently has no pint price in database
+- name: Swan Valley Brewery
+  category: Existing - Missing Price
+  description: Existing pub in Middle Swan, currently has no pint price in database
+- name: Sweetwater Rooftop Bar
+  category: Existing - Missing Price
+  description: Existing pub in East Fremantle, currently has no pint price in database
+- name: Taphouse Mulberry Estate
+  category: Existing - Missing Price
+  description: Existing pub in Caversham, currently has no pint price in database
+- name: Testun Bar
+  category: Existing - Missing Price
+  description: Existing pub in Mount Lawley, currently has no pint price in database
+- name: The 7th Ave Bar & Restaurant
+  category: Existing - Missing Price
+  description: Existing pub in Midland, currently has no pint price in database
+- name: The Aberdeen Hotel
+  category: Existing - Missing Price
+  description: Existing pub in Northbridge, currently has no pint price in database
+- name: The Ashby Bar & Bistro
+  category: Existing - Missing Price
+  description: Existing pub in Ashby, currently has no pint price in database
+- name: The Bar
+  category: Existing - Missing Price
+  description: Existing pub in Perth, currently has no pint price in database
+- name: The Best Brew Bar & Kitchen
+  category: Existing - Missing Price
+  description: Existing pub in Perth, currently has no pint price in database
+- name: The Brisbane Hotel
+  category: Existing - Missing Price
+  description: Existing pub in Perth, currently has no pint price in database
+- name: The Chidlow Tavern
+  category: Existing - Missing Price
+  description: Existing pub in Chidlow, currently has no pint price in database
+- name: The Claisebrook Bar
+  category: Existing - Missing Price
+  description: Existing pub in East Perth, currently has no pint price in database
+- name: The Cut Golf Course
+  category: Existing - Missing Price
+  description: Existing pub in Dawesville, currently has no pint price in database
+- name: The Grosvenor Hotel
+  category: Existing - Missing Price
+  description: Existing pub in Perth, currently has no pint price in database
+- name: The Grove Bar & Grill
+  category: Existing - Missing Price
+  description: Existing pub in Wattle Grove, currently has no pint price in database
+- name: The Henley Brook
+  category: Existing - Missing Price
+  description: Existing pub in Henley Brook, currently has no pint price in database
+- name: The Heritage Wine Bar & Restaurant
+  category: Existing - Missing Price
+  description: Existing pub in Perth, currently has no pint price in database
+- name: The Island at Elizabeth Quay
+  category: Existing - Missing Price
+  description: Existing pub in Perth, currently has no pint price in database
+- name: The Loft Lounge & Bar
+  category: Existing - Missing Price
+  description: Existing pub in Perth, currently has no pint price in database
+- name: The Lucky Shag
+  category: Existing - Missing Price
+  description: Existing pub in Perth, currently has no pint price in database
+- name: The Moon
+  category: Existing - Missing Price
+  description: Existing pub in Perth, currently has no pint price in database
+- name: The Naked Fox Wine Bar, Kitchen & Cafe
+  category: Existing - Missing Price
+  description: Existing pub in Henley Brook, currently has no pint price in database
+- name: The Odd Fellow Bar
+  category: Existing - Missing Price
+  description: Existing pub in Fremantle, currently has no pint price in database
+- name: The Old Laundry Bar & Kitchen
+  category: Existing - Missing Price
+  description: Existing pub in North Perth, currently has no pint price in database
+- name: The Point Rooftop Bar & Restaurant
+  category: Existing - Missing Price
+  description: Existing pub in East Perth, currently has no pint price in database
+- name: The Riverton Bar and Grill
+  category: Existing - Missing Price
+  description: Existing pub in Parkwood, currently has no pint price in database
+- name: The Shoe Bar and Cafe
+  category: Existing - Missing Price
+  description: Existing pub in Perth, currently has no pint price in database
+- name: The Sovereign Arms
+  category: Existing - Missing Price
+  description: Existing pub in Joondalup, currently has no pint price in database
+- name: The Sporting Globe Bar & Grill Belmont
+  category: Existing - Missing Price
+  description: Existing pub in Cloverdale, currently has no pint price in database
+- name: The Sporting Globe Bar & Grill Floreat
+  category: Existing - Missing Price
+  description: Existing pub in Floreat, currently has no pint price in database
+- name: The Springs Club
+  category: Existing - Missing Price
+  description: Existing pub in Forrestdale, currently has no pint price in database
+- name: The Wray Hotel
+  category: Existing - Missing Price
+  description: Existing pub in Fremantle, currently has no pint price in database
+- name: Tiny's
+  category: Existing - Missing Price
+  description: Existing pub in Perth CBD, currently has no pint price in database
+- name: Tom's Providore & Wine Bar
+  category: Existing - Missing Price
+  description: Existing pub in Perth, currently has no pint price in database
+- name: Varsity Nedlands
+  category: Existing - Missing Price
+  description: Existing pub in Crawley, currently has no pint price in database
+- name: Vines Resort & Country Club
+  category: Existing - Missing Price
+  description: Existing pub in The Vines, currently has no pint price in database
+- name: Vinotto Bar
+  category: Existing - Missing Price
+  description: Existing pub in Swanbourne, currently has no pint price in database
+- name: W Churchill
+  category: Existing - Missing Price
+  description: Existing pub in Perth, currently has no pint price in database
+- name: W XYZ bar
+  category: Existing - Missing Price
+  description: Existing pub in Rivervale, currently has no pint price in database
+- name: Wanneroo Golf Club
+  category: Existing - Missing Price
+  description: Existing pub in Neerabup, currently has no pint price in database
+- name: Wembley Golf Course
+  category: Existing - Missing Price
+  description: Existing pub in Wembley Downs, currently has no pint price in database
+- name: Western Australian Golf Club
+  category: Existing - Missing Price
+  description: Existing pub in Yokine, currently has no pint price in database
+- name: Whaleback Public Golf Course
+  category: Existing - Missing Price
+  description: Existing pub in Parkwood, currently has no pint price in database
+- name: Whitfords Brewing Company
+  category: Existing - Missing Price
+  description: Existing pub in Hillarys, currently has no pint price in database
+- name: The Leadlight
+  category: New Venue
+  description: Replaced Ruin Bar, Jan 2025, 18 taps, epic beer garden. Located in Northbridge.
+- name: Deadbeat
+  category: New Venue
+  description: Basement dive bar, opened Mar 2025, cocktails and Imperial IPAs. Located in Perth CBD.
+- name: Ripple Brewing
+  category: New Venue
+  description: Neighbourhood brewery and taproom, opened Oct 2025. Located in Beaconsfield.
+- name: FOUND. Subiaco
+  category: New Venue
+  description: 350-capacity brewpub, 24 taps, opened late 2025. Located in Subiaco.
+- name: Bert's City Beach
+  category: New Venue
+  description: Beachside pub and dining, opened Aug 2025. Located in City Beach.
+- name: Molly's Irish Pub Victoria Park
+  category: New Venue
+  description: Second Molly's location, opened Feb 2026. Located in East Victoria Park.
+- name: Gladstones
+  category: New Venue
+  description: Crown Perth wine bar, opened Feb 2026. Located in Burswood.
+- name: Farra at Hyde Perth
+  category: New Venue
+  description: Restaurant and bar at Hyde hotel, opening Mar 2026. Located in Perth CBD.
+- name: Bar Ole Applecross
+  category: New Venue
+  description: New Applecross location of Bar Ole, opening Mar 2026. Located in Applecross.
+- name: Long Point Brewing Co.
+  category: New Venue
+  description: $13M coastal gastro-brewery, opening 2026. Located in Port Kennedy.
+- name: Bertie Wine Bar
+  category: New Venue
+  description: Neighbourhood wine bar, opened mid-2023. Located in Bassendean.
+- name: The Flaming Galah
+  category: New Venue
+  description: Fremantle's first queer bar, since 2022. Located in Fremantle.
+- name: City Beer Hall
+  category: New Venue
+  description: $10 pints all day, 16 taps. Located in Perth CBD.
+- name: Terrarium
+  category: New Venue
+  description: Multi-level cocktail bar, WA Cocktail Bar of the Year 2023. Located in Perth CBD.
+- name: Percy Flints
+  category: New Venue
+  description: Cocktail bar with craft beers and courtyard. Located in South Fremantle.
+- name: Furaibo Izakaya
+  category: New Venue
+  description: Japanese izakaya, $9 happy hour beer. Located in Perth.
+- name: Third Space Lounge Bar
+  category: New Venue
+  description: Hotel bar, $10 pints all day. Located in Perth.
+- name: The Rowing Pavilion
+  category: New Venue
+  description: 400-seat riverside bar and restaurant. Located in Mount Pleasant.
+execution:
+  batch_size: 5
+  items_per_agent: 10
+  output_dir: ./perth_pubs_pricing/results

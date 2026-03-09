@@ -3,6 +3,7 @@
 import { useState, useMemo } from 'react'
 import Link from 'next/link'
 import { Pub } from '@/types/pub'
+import { BarChart3 } from 'lucide-react'
 
 interface SuburbStats {
   suburb: string
@@ -88,19 +89,19 @@ export default function SuburbLeague({ pubs }: { pubs: Pub[] }) {
       const pos = i + 1
 
       if (pos === 5 && total > 5) {
-        items.push({ type: 'divider', label: '- Promotion Zone ↑ -', colorClass: 'bg-orange/10 text-orange border-orange/30' })
+        items.push({ type: 'divider', label: '- Promotion Zone -', colorClass: 'bg-amber-pale text-amber border-amber/30' })
       }
 
       if (pos === total - 2 && total > 6) {
-        items.push({ type: 'divider', label: '- Relegation Zone ↓ -', colorClass: 'bg-coral/10 text-coral border-coral/30' })
+        items.push({ type: 'divider', label: '- Relegation Zone -', colorClass: 'bg-red-pale text-red border-red' })
       }
 
       const isRelegation = pos > total - 3 && total > 6
-      let rowBg = rowIdx % 2 === 0 ? 'bg-white' : 'bg-stone-50/80'
-      if (pos === 1) rowBg = 'bg-orange-50/60'
-      else if (pos === 2) rowBg = 'bg-stone-200/50'
-      else if (pos === 3) rowBg = 'bg-orange-50/70'
-      else if (isRelegation) rowBg = 'bg-coral/5'
+      let rowBg = rowIdx % 2 === 0 ? 'bg-white' : 'bg-off-white'
+      if (pos === 1) rowBg = 'bg-amber/5'
+      else if (pos === 2) rowBg = 'bg-off-white'
+      else if (pos === 3) rowBg = 'bg-amber/5'
+      else if (isRelegation) rowBg = 'bg-red-pale'
 
       items.push({ type: 'suburb', pos, stats: s, rowBg })
       rowIdx++
@@ -115,17 +116,20 @@ export default function SuburbLeague({ pubs }: { pubs: Pub[] }) {
   const sortLabel = sortBy === 'avg' ? 'ranked by average' : sortBy === 'low' ? 'sorted by cheapest pint' : sortBy === 'high' ? 'sorted by priciest pint' : 'sorted by happy hour %'
 
   return (
-    <div>
-      <div className="bg-white rounded-2xl shadow-[0_2px_16px_rgba(0,0,0,0.08)] border border-stone-200/40 overflow-hidden">
-        <button
-          onClick={() => setIsExpanded(!isExpanded)}
-          className="w-full text-left p-4 flex items-center justify-between hover:bg-stone-50 transition-all active:scale-[0.995]"
-        >
+    <div
+      className="border-3 border-ink rounded-card shadow-hard-sm bg-white overflow-hidden cursor-pointer transition-all"
+    >
+      <button
+        onClick={() => setIsExpanded(!isExpanded)}
+        className="w-full text-left p-5 flex items-center justify-between hover:bg-off-white transition-all"
+      >
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 bg-off-white border-2 border-ink rounded-full flex items-center justify-center flex-shrink-0">
+            <BarChart3 className="w-5 h-5 text-ink" />
+          </div>
           <div>
-            <h3 className="text-lg font-semibold font-heading text-stone-800 flex items-center gap-2">
-              <svg className="inline w-4 h-4 mr-1.5 text-orange" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><rect x="3" y="12" width="4" height="8" rx="1"/><rect x="10" y="8" width="4" height="12" rx="1"/><rect x="17" y="4" width="4" height="16" rx="1"/></svg>Suburb Rankings
-            </h3>
-            <p className="text-xs text-stone-500 mt-0.5">
+            <h3 className="font-mono text-[0.85rem] font-extrabold text-ink">Suburb Rankings</h3>
+            <p className="font-body text-[0.75rem] text-gray-mid">
               {isExpanded
                 ? `${total} suburbs ${sortLabel}. Tap columns to re-sort`
                 : leader
@@ -133,121 +137,121 @@ export default function SuburbLeague({ pubs }: { pubs: Pub[] }) {
                   : 'Ranked by average pint price, footy ladder style'}
             </p>
           </div>
-          <svg width="16" height="16" viewBox="0 0 16 16" className={`text-stone-400 transition-transform ${isExpanded ? 'rotate-180' : ''}`}>
-            <path d="M4 6l4 4 4-4" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
-        </button>
+        </div>
+        <svg width="16" height="16" viewBox="0 0 16 16" className={`text-gray-mid transition-transform ${isExpanded ? 'rotate-180' : ''}`}>
+          <path d="M4 6l4 4 4-4" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
+      </button>
 
-        {isExpanded && (
-          <div className="px-3 pb-4 sm:px-5">
-            <div className="overflow-x-auto rounded-xl border border-stone-200 max-h-[500px] overflow-y-auto relative">
-              <table className="w-full text-sm">
-                <thead className="sticky top-0 z-10">
-                  <tr className="bg-stone-200/95 backdrop-blur-sm text-stone-600 text-xs shadow-[0_1px_3px_rgba(0,0,0,0.08)]">
-                    <th className="px-2 py-2.5 text-center font-semibold w-10">Pos</th>
-                    <th className="px-2 py-2.5 text-left font-semibold">Suburb</th>
-                    <th
-                      className={`px-2 py-2.5 text-center font-semibold cursor-pointer hover:text-orange transition-colors select-none ${sortBy === 'avg' ? 'text-orange' : ''}`}
-                      onClick={(e) => { e.stopPropagation(); setSortBy('avg') }}
-                    >
-                      Avg {sortBy === 'avg' && '▾'}
-                    </th>
-                    <th
-                      className={`px-2 py-2.5 text-center font-semibold cursor-pointer hover:text-orange transition-colors select-none hidden sm:table-cell ${sortBy === 'low' ? 'text-orange' : ''}`}
-                      onClick={(e) => { e.stopPropagation(); setSortBy('low') }}
-                    >
-                      Low {sortBy === 'low' && '▾'}
-                    </th>
-                    <th
-                      className={`px-2 py-2.5 text-center font-semibold cursor-pointer hover:text-orange transition-colors select-none hidden sm:table-cell ${sortBy === 'high' ? 'text-orange' : ''}`}
-                      onClick={(e) => { e.stopPropagation(); setSortBy('high') }}
-                    >
-                      High {sortBy === 'high' && '▾'}
-                    </th>
-                    <th
-                      className={`px-2 py-2.5 text-center font-semibold cursor-pointer hover:text-orange transition-colors select-none hidden md:table-cell ${sortBy === 'hh' ? 'text-orange' : ''}`}
-                      onClick={(e) => { e.stopPropagation(); setSortBy('hh') }}
-                    >
-                      HH% {sortBy === 'hh' && '▾'}
-                    </th>
-                    <th className="px-2 py-2.5 text-center font-semibold hidden md:table-cell w-24">Spread</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {rows.map((row, idx) => {
-                    if (row.type === 'divider') {
-                      return (
-                        <tr key={`div-${idx}`}>
-                          <td colSpan={7} className={`text-center text-[10px] font-semibold py-1 border-y ${row.colorClass}`}>
-                            {row.label}
-                          </td>
-                        </tr>
-                      )
-                    }
-
-                    const { pos, stats: s, rowBg } = row
-
+      {isExpanded && (
+        <div className="px-3 pb-4 sm:px-5">
+          <div className="overflow-x-auto rounded-card border-2 border-gray-light max-h-[500px] overflow-y-auto relative">
+            <table className="w-full text-sm">
+              <thead className="sticky top-0 z-10">
+                <tr className="bg-ink text-white font-mono text-[0.65rem] uppercase tracking-[0.05em]">
+                  <th className="px-2 py-2.5 text-center font-bold w-10">Pos</th>
+                  <th className="px-2 py-2.5 text-left font-bold">Suburb</th>
+                  <th
+                    className={`px-2 py-2.5 text-center font-bold cursor-pointer hover:text-amber transition-colors select-none ${sortBy === 'avg' ? 'text-amber' : ''}`}
+                    onClick={(e) => { e.stopPropagation(); setSortBy('avg') }}
+                  >
+                    Avg {sortBy === 'avg' && '\u25BE'}
+                  </th>
+                  <th
+                    className={`px-2 py-2.5 text-center font-bold cursor-pointer hover:text-amber transition-colors select-none hidden sm:table-cell ${sortBy === 'low' ? 'text-amber' : ''}`}
+                    onClick={(e) => { e.stopPropagation(); setSortBy('low') }}
+                  >
+                    Low {sortBy === 'low' && '\u25BE'}
+                  </th>
+                  <th
+                    className={`px-2 py-2.5 text-center font-bold cursor-pointer hover:text-amber transition-colors select-none hidden sm:table-cell ${sortBy === 'high' ? 'text-amber' : ''}`}
+                    onClick={(e) => { e.stopPropagation(); setSortBy('high') }}
+                  >
+                    High {sortBy === 'high' && '\u25BE'}
+                  </th>
+                  <th
+                    className={`px-2 py-2.5 text-center font-bold cursor-pointer hover:text-amber transition-colors select-none hidden md:table-cell ${sortBy === 'hh' ? 'text-amber' : ''}`}
+                    onClick={(e) => { e.stopPropagation(); setSortBy('hh') }}
+                  >
+                    HH% {sortBy === 'hh' && '\u25BE'}
+                  </th>
+                  <th className="px-2 py-2.5 text-center font-bold hidden md:table-cell w-24">Spread</th>
+                </tr>
+              </thead>
+              <tbody>
+                {rows.map((row, idx) => {
+                  if (row.type === 'divider') {
                     return (
-                      <tr key={s.suburb} className={rowBg}>
-                        <td className="px-2 py-2 text-center font-bold text-stone-500 text-xs">{pos}</td>
-                        <td className="px-2 py-2 text-left">
-                          <Link href={`/suburb/${toSlug(s.suburb)}`} className="font-semibold text-stone-800 hover:text-orange transition-colors underline decoration-stone-200 underline-offset-2 hover:decoration-orange">{s.suburb}</Link>
-                          <span className="text-[10px] text-stone-400 ml-1">({s.pubCount})</span>
-                        </td>
-                        <td className="px-2 py-2 text-center font-bold text-stone-800">${s.avgPrice.toFixed(2)}</td>
-                        <td className="px-2 py-2 text-center text-ink font-medium hidden sm:table-cell">${s.minPrice.toFixed(2)}</td>
-                        <td className="px-2 py-2 text-center text-red-500 font-medium hidden sm:table-cell">${s.maxPrice.toFixed(2)}</td>
-                        <td className="px-2 py-2 text-center text-stone-500 hidden md:table-cell">{s.happyHourPct}%</td>
-                        <td className="px-2 py-2 hidden md:table-cell">
-                          <div className="flex items-center gap-0.5 justify-center" title={`${s.spread.cheap}% under $8 · ${s.spread.mid}% $8-$11 · ${s.spread.pricey}% over $11`}>
-                            <div className="flex h-2.5 w-16 rounded-full overflow-hidden bg-stone-100">
-                              {s.spread.cheap > 0 && (
-                                <div
-                                  className="bg-amber-400 h-full"
-                                  style={{ width: `${s.spread.cheap}%` }}
-                                />
-                              )}
-                              {s.spread.mid > 0 && (
-                                <div
-                                  className="bg-orange h-full"
-                                  style={{ width: `${s.spread.mid}%` }}
-                                />
-                              )}
-                              {s.spread.pricey > 0 && (
-                                <div
-                                  className="bg-red-400 h-full"
-                                  style={{ width: `${s.spread.pricey}%` }}
-                                />
-                              )}
-                            </div>
-                          </div>
+                      <tr key={`div-${idx}`}>
+                        <td colSpan={7} className={`text-center font-mono text-[0.6rem] font-bold py-1 border-y-2 ${row.colorClass}`}>
+                          {row.label}
                         </td>
                       </tr>
                     )
-                  })}
-                </tbody>
-              </table>
-            </div>
-            <div className="flex items-center justify-center gap-4 mt-3">
-              <div className="flex items-center gap-1.5">
-                <span className="inline-block w-2.5 h-2.5 rounded-full bg-amber-400" />
-                <span className="text-[10px] text-stone-400">Under $8</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <span className="inline-block w-2.5 h-2.5 rounded-full bg-orange" />
-                <span className="text-[10px] text-stone-400">$8–$11</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <span className="inline-block w-2.5 h-2.5 rounded-full bg-red-400" />
-                <span className="text-[10px] text-stone-400">Over $11</span>
-              </div>
-            </div>
-            <p className="text-[10px] text-stone-400 text-center mt-1.5">
-              Suburbs with 2+ tracked pubs. Tap column headers to sort.
-            </p>
+                  }
+
+                  const { pos, stats: s, rowBg } = row
+
+                  return (
+                    <tr key={s.suburb} className={rowBg}>
+                      <td className="px-2 py-2 text-center font-mono font-bold text-gray-mid text-[0.7rem]">{pos}</td>
+                      <td className="px-2 py-2 text-left">
+                        <Link href={`/suburb/${toSlug(s.suburb)}`} className="font-body text-sm font-bold text-ink hover:text-amber transition-colors no-underline">{s.suburb}</Link>
+                        <span className="font-mono text-[0.6rem] text-gray-mid ml-1">({s.pubCount})</span>
+                      </td>
+                      <td className="px-2 py-2 text-center font-mono font-bold text-ink text-sm">${s.avgPrice.toFixed(2)}</td>
+                      <td className="px-2 py-2 text-center font-mono text-ink text-sm hidden sm:table-cell">${s.minPrice.toFixed(2)}</td>
+                      <td className="px-2 py-2 text-center font-mono text-red text-sm hidden sm:table-cell">${s.maxPrice.toFixed(2)}</td>
+                      <td className="px-2 py-2 text-center font-mono text-gray-mid text-sm hidden md:table-cell">{s.happyHourPct}%</td>
+                      <td className="px-2 py-2 hidden md:table-cell">
+                        <div className="flex items-center gap-0.5 justify-center" title={`${s.spread.cheap}% under $8 · ${s.spread.mid}% $8-$11 · ${s.spread.pricey}% over $11`}>
+                          <div className="flex h-2.5 w-16 rounded-pill overflow-hidden bg-off-white border border-gray-light">
+                            {s.spread.cheap > 0 && (
+                              <div
+                                className="bg-amber h-full"
+                                style={{ width: `${s.spread.cheap}%` }}
+                              />
+                            )}
+                            {s.spread.mid > 0 && (
+                              <div
+                                className="bg-amber/70 h-full"
+                                style={{ width: `${s.spread.mid}%` }}
+                              />
+                            )}
+                            {s.spread.pricey > 0 && (
+                              <div
+                                className="bg-red h-full"
+                                style={{ width: `${s.spread.pricey}%` }}
+                              />
+                            )}
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                  )
+                })}
+              </tbody>
+            </table>
           </div>
-        )}
-      </div>
+          <div className="flex items-center justify-center gap-4 mt-3">
+            <div className="flex items-center gap-1.5">
+              <span className="inline-block w-2.5 h-2.5 rounded-full bg-amber" />
+              <span className="font-mono text-[0.6rem] text-gray-mid">Under $8</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <span className="inline-block w-2.5 h-2.5 rounded-full bg-amber/70" />
+              <span className="font-mono text-[0.6rem] text-gray-mid">$8-$11</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <span className="inline-block w-2.5 h-2.5 rounded-full bg-red" />
+              <span className="font-mono text-[0.6rem] text-gray-mid">Over $11</span>
+            </div>
+          </div>
+          <p className="font-mono text-[0.55rem] text-gray-mid text-center mt-1.5">
+            Suburbs with 2+ tracked pubs. Tap column headers to sort.
+          </p>
+        </div>
+      )}
     </div>
   )
 }

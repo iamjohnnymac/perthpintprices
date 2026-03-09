@@ -11,7 +11,7 @@ import { getMapMode, MAP_TILES, MAP_FILTERS, MAP_OVERLAYS } from '@/lib/mapTheme
 const miniMarkerIcon = L.divIcon({
   className: 'mini-map-marker',
   html: `<div style="
-    background: linear-gradient(135deg, #E8820C 0%, #D06820 100%);
+    background: linear-gradient(135deg, #D4740A 0%, #B8620A 100%);
     width: 24px;
     height: 24px;
     border-radius: 50%;
@@ -77,7 +77,7 @@ export default function MiniMap({ lat, lng, name }: MiniMapProps) {
         <div
           className="absolute inset-0 pointer-events-none z-[401]"
           style={{
-            background: `radial-gradient(circle at ${sunPos.x}% ${sunPos.y}%, rgba(251,191,36,0.22) 0%, transparent 65%)`,
+            background: `radial-gradient(circle at ${sunPos.x}% ${sunPos.y}%, rgba(212,116,10,0.18) 0%, transparent 65%)`,
           }}
         >
           <div
@@ -87,8 +87,8 @@ export default function MiniMap({ lat, lng, name }: MiniMapProps) {
               height: 12,
               left: `calc(${sunPos.x}% - 6px)`,
               top: `calc(${sunPos.y}% - 6px)`,
-              background: 'radial-gradient(circle, #fde68a 0%, #E8820C 50%, #D06820 100%)',
-              boxShadow: '0 0 6px 3px rgba(251,191,36,0.55)',
+              background: 'radial-gradient(circle, #FFF3E0 0%, #D4740A 50%, #B8620A 100%)',
+              boxShadow: '0 0 6px 3px rgba(212,116,10,0.45)',
             }}
           />
         </div>

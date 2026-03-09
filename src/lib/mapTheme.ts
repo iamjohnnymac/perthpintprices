@@ -35,9 +35,9 @@ export const MAP_FILTERS: Record<MapMode, string> = {
 /** Overlay color for mood effect on top of map */
 export const MAP_OVERLAYS: Record<MapMode, string | null> = {
   day: null,
-  golden: 'rgba(251,191,36,0.08)',
-  twilight: 'rgba(99,102,241,0.12)',
-  night: 'rgba(30,27,75,0.15)',
+  golden: 'rgba(212,116,10,0.06)',
+  twilight: 'rgba(23,23,23,0.10)',
+  night: 'rgba(23,23,23,0.15)',
 }
 
 export const MAP_ATTRIBUTION = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>'

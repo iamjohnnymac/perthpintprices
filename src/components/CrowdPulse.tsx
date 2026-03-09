@@ -5,11 +5,9 @@ import Link from 'next/link'
 import { useState, useMemo } from 'react'
 import { Pub } from '@/types/pub'
 import { CrowdReport, CROWD_LEVELS } from '@/lib/supabase'
-import { Card, CardContent } from '@/components/ui/card'
-import E from '@/lib/emoji'
-import InfoTooltip from './InfoTooltip'
 import { getDistanceKm, formatDistance } from '@/lib/location'
 import LucideIcon from '@/components/LucideIcon'
+import { TrendingUp, Flame, Volume2, BarChart3 } from 'lucide-react'
 
 interface CrowdPulseProps {
   pubs: Pub[]
@@ -27,18 +25,16 @@ function getVibeLabel(score: number): string {
 }
 
 function getVibeColor(score: number): string {
-  if (score <= 1.5) return 'bg-blue-500'
-  if (score <= 2.0) return 'bg-orange-500'
-  if (score <= 2.5) return 'bg-orange-500'
-  if (score <= 3.0) return 'bg-yellow-500'
-  if (score <= 3.5) return 'bg-orange-500'
-  return 'bg-red-500'
+  if (score <= 1.5) return 'bg-off-white'
+  if (score <= 2.5) return 'bg-amber'
+  if (score <= 3.5) return 'bg-amber'
+  return 'bg-red'
 }
 
 function getConfidenceLabel(reportCount: number): { label: string; color: string } {
   if (reportCount >= 5) return { label: 'High', color: 'text-ink' }
-  if (reportCount >= 3) return { label: 'Medium', color: 'text-yellow-600' }
-  return { label: 'Low', color: 'text-stone-400' }
+  if (reportCount >= 3) return { label: 'Medium', color: 'text-amber' }
+  return { label: 'Low', color: 'text-gray-mid' }
 }
 
 function formatTimeAgo(minutes: number): string {
@@ -98,43 +94,43 @@ export default function CrowdPulse({ pubs, crowdReports, userLocation }: CrowdPu
 
   if (liveCount === 0) {
     return (
-      <div className="bg-white rounded-2xl border border-stone-200/40 p-6 text-center">
-        <p className="text-stone-400 text-sm">No crowd reports yet. Be the first!</p>
+      <div className="border-3 border-ink rounded-card shadow-hard-sm bg-white p-6 text-center">
+        <p className="text-gray-mid text-sm font-body">No crowd reports yet. Be the first!</p>
       </div>
     )
   }
 
   return (
-    <Card
-      className="bg-white rounded-2xl shadow-[0_2px_16px_rgba(0,0,0,0.08)] border border-stone-200/40 cursor-pointer transition-all duration-300 hover:shadow-[0_4px_20px_rgba(0,0,0,0.12)] active:scale-[0.995]"
+    <div
+      className="border-3 border-ink rounded-card shadow-hard-sm bg-white overflow-hidden cursor-pointer transition-all"
       onClick={() => setIsExpanded(!isExpanded)}
     >
-      <CardContent className="p-4 sm:p-5">
+      <div className="p-5">
         {/* Compact Header */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="relative">
-              <span className="text-2xl">{E.chart_up}</span>
-              <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-orange border border-white animate-pulse" />
+            <div className="w-10 h-10 bg-off-white border-2 border-ink rounded-full flex items-center justify-center flex-shrink-0 relative">
+              <TrendingUp className="w-5 h-5 text-ink" />
+              <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-amber border-2 border-white animate-pulse" />
             </div>
             <div>
-              <h3 className="text-base sm:text-lg font-bold font-heading text-stone-800 flex items-center">LIVE CROWD VIBES<InfoTooltip text="Crowd reports submitted by users in the last 3 hours. Vibe score is a weighted average of busyness across all reporting venues." /></h3>
-              <p className="text-xs text-stone-500">
-                {liveCount} venue{liveCount !== 1 ? 's' : ''} reporting {E.bullet} Perth Vibe: {getVibeLabel(vibeScore)}
+              <h3 className="font-mono text-[0.85rem] font-extrabold text-ink">Live Crowd Vibes</h3>
+              <p className="font-body text-[0.75rem] text-gray-mid">
+                {liveCount} venue{liveCount !== 1 ? 's' : ''} reporting · Perth Vibe: {getVibeLabel(vibeScore)}
               </p>
             </div>
           </div>
           <div className="flex items-center gap-3">
             <div className="hidden sm:flex items-center gap-2">
-              <div className="w-20 h-2 rounded-full bg-stone-200 overflow-hidden">
+              <div className="w-20 h-2 rounded-pill bg-off-white overflow-hidden border border-gray-light">
                 <div
-                  className={`h-full rounded-full transition-all ${getVibeColor(vibeScore)}`}
+                  className={`h-full rounded-pill transition-all ${getVibeColor(vibeScore)}`}
                   style={{ width: `${(vibeScore / 4) * 100}%` }}
                 />
               </div>
-              <span className="text-xs font-semibold text-stone-600">{vibeScore.toFixed(1)}/4</span>
+              <span className="font-mono text-[0.65rem] font-bold text-gray-mid">{vibeScore.toFixed(1)}/4</span>
             </div>
-            <svg width="16" height="16" viewBox="0 0 16 16" className={`text-stone-400 transition-transform ${isExpanded ? 'rotate-180' : ''}`}>
+            <svg width="16" height="16" viewBox="0 0 16 16" className={`text-gray-mid transition-transform ${isExpanded ? 'rotate-180' : ''}`}>
               <path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
             </svg>
           </div>
@@ -142,48 +138,48 @@ export default function CrowdPulse({ pubs, crowdReports, userLocation }: CrowdPu
 
         {/* Expanded Content */}
         {isExpanded && (
-          <div className="mt-4 pt-4 border-t border-stone-200/60" onClick={(e) => e.stopPropagation()}>
+          <div className="mt-3 pt-3 border-t border-gray-light" onClick={(e) => e.stopPropagation()}>
             {/* Vibe Meter */}
-            <div className="mb-4 p-3 rounded-xl bg-white/70 border border-stone-100">
+            <div className="mb-4 p-3 rounded-card bg-off-white border-2 border-gray-light">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-xs font-semibold text-stone-600">Perth Vibe Meter</span>
-                <span className="text-xs text-stone-400">{liveCount}/{totalCount} venues tracked</span>
+                <span className="font-mono text-[0.65rem] font-bold uppercase tracking-[0.05em] text-ink">Perth Vibe Meter</span>
+                <span className="font-mono text-[0.6rem] text-gray-mid">{liveCount}/{totalCount} venues tracked</span>
               </div>
-              <div className="w-full h-3 rounded-full bg-stone-200 overflow-hidden">
+              <div className="w-full h-3 rounded-pill bg-white overflow-hidden border border-gray-light">
                 <div
-                  className={`h-full rounded-full transition-all duration-500 ${getVibeColor(vibeScore)}`}
+                  className={`h-full rounded-pill transition-all duration-500 ${getVibeColor(vibeScore)}`}
                   style={{ width: `${(vibeScore / 4) * 100}%` }}
                 />
               </div>
               <div className="flex justify-between mt-1">
-                <span className="text-[10px] text-stone-400">Dead Quiet</span>
-                <span className="text-[10px] font-medium text-stone-600">{getVibeLabel(vibeScore)}</span>
-                <span className="text-[10px] text-stone-400">Electric</span>
+                <span className="font-mono text-[0.55rem] text-gray-mid">Dead Quiet</span>
+                <span className="font-mono text-[0.55rem] font-bold text-ink">{getVibeLabel(vibeScore)}</span>
+                <span className="font-mono text-[0.55rem] text-gray-mid">Electric</span>
               </div>
             </div>
 
             {/* Busiest Venues */}
             {busyVenues.length > 0 && (
               <div className="mb-3">
-                <h4 className="text-xs font-semibold text-coral mb-2 flex items-center gap-1">
-                  {E.fire} HOT TRADING {E.dash} Busiest Venues
+                <h4 className="font-mono text-[0.7rem] font-bold uppercase tracking-[0.05em] text-red mb-2 flex items-center gap-1">
+                  <Flame className="w-3.5 h-3.5" /> Busiest Venues
                 </h4>
-                <div className="space-y-1.5">
-                  {busyVenues.map(({ pub, report }) => {
+                <div className="space-y-0">
+                  {busyVenues.map(({ pub, report }, i) => {
                     const levelInfo = CROWD_LEVELS[report.crowd_level]
                     const confidence = getConfidenceLabel(report.report_count)
                     return (
-                      <Link key={pub.id} href={`/pub/${pub.slug}`} className="flex items-center justify-between p-2 rounded-xl bg-coral/5 border border-coral/20">
+                      <Link key={pub.id} href={`/pub/${pub.slug}`} className={`flex items-center justify-between px-3 py-2.5 no-underline group ${i > 0 ? 'border-t border-gray-light' : ''}`}>
                         <div className="flex items-center gap-2 min-w-0">
-                          <LucideIcon name={levelInfo.emoji} className="w-4 h-4" />
+                          <LucideIcon name={levelInfo.emoji} className="w-4 h-4 text-red" />
                           <div className="min-w-0">
-                            <span className="text-xs font-semibold text-stone-800 truncate block">{pub.name}</span>
-                            <p className="text-[10px] text-stone-400">{pub.suburb}{userLocation && ` · ${formatDistance(getDistanceKm(userLocation.lat, userLocation.lng, pub.lat, pub.lng))}`}</p>
+                            <span className="font-body text-sm font-bold text-ink group-hover:text-amber transition-colors truncate block">{pub.name}</span>
+                            <p className="font-body text-[0.7rem] text-gray-mid">{pub.suburb}{userLocation && ` · ${formatDistance(getDistanceKm(userLocation.lat, userLocation.lng, pub.lat, pub.lng))}`}</p>
                           </div>
                         </div>
                         <div className="flex items-center gap-2 flex-shrink-0">
-                          <span className={`text-[10px] font-medium ${confidence.color}`}>{confidence.label}</span>
-                          <span className="text-[10px] text-stone-400">{formatTimeAgo(report.minutes_ago)}</span>
+                          <span className={`font-mono text-[0.55rem] font-bold ${confidence.color}`}>{confidence.label}</span>
+                          <span className="font-mono text-[0.55rem] text-gray-mid">{formatTimeAgo(report.minutes_ago)}</span>
                         </div>
                       </Link>
                     )
@@ -195,25 +191,25 @@ export default function CrowdPulse({ pubs, crowdReports, userLocation }: CrowdPu
             {/* Quiet Venues */}
             {quietVenues.length > 0 && (
               <div className="mb-3">
-                <h4 className="text-xs font-semibold text-orange mb-2 flex items-center gap-1">
-                  {E.green_circle} QUIET SPOTS {E.dash} Low Crowd, Low Price
+                <h4 className="font-mono text-[0.7rem] font-bold uppercase tracking-[0.05em] text-ink mb-2 flex items-center gap-1">
+                  <Volume2 className="w-3.5 h-3.5" /> Quiet Spots
                 </h4>
-                <div className="space-y-1.5">
-                  {quietVenues.map(({ pub, report }) => {
+                <div className="space-y-0">
+                  {quietVenues.map(({ pub, report }, i) => {
                     const levelInfo = CROWD_LEVELS[report.crowd_level]
                     const confidence = getConfidenceLabel(report.report_count)
                     return (
-                      <Link key={pub.id} href={`/pub/${pub.slug}`} className="flex items-center justify-between p-2 rounded-xl bg-orange/5 border border-orange/20">
+                      <Link key={pub.id} href={`/pub/${pub.slug}`} className={`flex items-center justify-between px-3 py-2.5 no-underline group ${i > 0 ? 'border-t border-gray-light' : ''}`}>
                         <div className="flex items-center gap-2 min-w-0">
-                          <LucideIcon name={levelInfo.emoji} className="w-4 h-4" />
+                          <LucideIcon name={levelInfo.emoji} className="w-4 h-4 text-gray-mid" />
                           <div className="min-w-0">
-                            <span className="text-xs font-semibold text-stone-800 truncate block">{pub.name}</span>
-                            <p className="text-[10px] text-stone-400">{pub.suburb}{userLocation && ` · ${formatDistance(getDistanceKm(userLocation.lat, userLocation.lng, pub.lat, pub.lng))}`} {E.bullet} {pub.price !== null ? `$${pub.price.toFixed(2)}` : 'TBC'}</p>
+                            <span className="font-body text-sm font-bold text-ink group-hover:text-amber transition-colors truncate block">{pub.name}</span>
+                            <p className="font-body text-[0.7rem] text-gray-mid">{pub.suburb}{userLocation && ` · ${formatDistance(getDistanceKm(userLocation.lat, userLocation.lng, pub.lat, pub.lng))}`} · {pub.price !== null ? `$${pub.price.toFixed(2)}` : 'TBC'}</p>
                           </div>
                         </div>
                         <div className="flex items-center gap-2 flex-shrink-0">
-                          <span className={`text-[10px] font-medium ${confidence.color}`}>{confidence.label}</span>
-                          <span className="text-[10px] text-stone-400">{formatTimeAgo(report.minutes_ago)}</span>
+                          <span className={`font-mono text-[0.55rem] font-bold ${confidence.color}`}>{confidence.label}</span>
+                          <span className="font-mono text-[0.55rem] text-gray-mid">{formatTimeAgo(report.minutes_ago)}</span>
                         </div>
                       </Link>
                     )
@@ -224,13 +220,15 @@ export default function CrowdPulse({ pubs, crowdReports, userLocation }: CrowdPu
 
             {/* CTA */}
             {liveCount < 5 && (
-              <div className="mt-3 text-center text-xs py-2 rounded-xl bg-white/40 text-stone-400">
-                {E.chart_bar} Only {liveCount} report{liveCount !== 1 ? 's' : ''} in {E.dash} be a market analyst and report crowd levels!
+              <div className="bg-off-white rounded-card p-3 text-center">
+                <p className="font-mono text-[0.75rem] text-gray-mid flex items-center justify-center gap-2">
+                  <BarChart3 className="w-4 h-4" /> Only {liveCount} report{liveCount !== 1 ? 's' : ''} in — be a market analyst and report crowd levels!
+                </p>
               </div>
             )}
           </div>
         )}
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   )
 }
