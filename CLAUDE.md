@@ -48,6 +48,7 @@ freshness, happyHour, happyHourLive, location, mapTheme, mapTile, priceColors, p
 - **Always run humanizer** — run the humanizer skill on any new user-facing text to remove AI writing patterns
 - **Never use emojis** — use Lucide React icons or inline SVGs instead
 - **Check TypeScript compiles** — run `npx tsc --noEmit` after code changes
+- **Update docs after every push** — after pushing to remote, update `docs/PROJECT-STATUS.md` with what changed (new entry under "What's done recently" with date, bullet points, and commit hash)
 - **SEO on new pages** — every new page needs: title (<60 chars), description (<160 chars), canonical URL, OG tags, Twitter card. Check `docs/SEO-MASTER.md`
 
 ## Design System

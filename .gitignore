@@ -37,6 +37,10 @@ scripts/merge-research.js
 scripts/compare-prices.js
 scripts/analyze-json.js
 scripts/fix-seo.js
+scripts/audit-locations.js
+scripts/apply-confident-fixes.js
+scripts/apply-manual-fixes.js
+scripts/location-audit-results.json
 
 # Research agent data
 perth_pubs_pricing/
