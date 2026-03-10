@@ -22,6 +22,46 @@ import PintIndexBadge from '@/components/PintIndexBadge'
 import ScrollReveal from '@/components/ScrollReveal'
 
 const INITIAL_PUB_COUNT = 10
+const HH_ROTATE_INTERVAL = 4000
+
+function LiveHappyHourBanner({ pubs }: { pubs: Pub[] }) {
+  const liveHHPubs = useMemo(() => pubs.filter(p => p.isHappyHourNow), [pubs])
+  const [activeIndex, setActiveIndex] = useState(0)
+
+  useEffect(() => {
+    if (liveHHPubs.length <= 1) return
+    const timer = setInterval(() => {
+      setActiveIndex(i => (i + 1) % liveHHPubs.length)
+    }, HH_ROTATE_INTERVAL)
+    return () => clearInterval(timer)
+  }, [liveHHPubs.length])
+
+  if (liveHHPubs.length === 0) return null
+  const current = liveHHPubs[activeIndex % liveHHPubs.length]
+  if (!current) return null
+
+  return (
+    <Link href="/happy-hour" className="block max-w-container mx-auto px-6 mb-5">
+      <div className="bg-ink border-3 border-ink rounded-pill px-6 py-3 flex items-center gap-3 shadow-hard">
+        <div className="flex items-center gap-1.5 flex-shrink-0">
+          <span className="w-2 h-2 rounded-full bg-green shadow-[0_0_8px_rgba(45,122,61,0.5)] animate-pulse" />
+          <span className="font-mono font-bold text-[0.72rem] uppercase tracking-[0.05em] text-white">Live</span>
+        </div>
+        <span className="text-white font-medium text-[0.85rem] flex-1 truncate transition-opacity duration-300" key={current.slug}>
+          <strong className="text-amber-light font-bold">{current.name}</strong> has ${current.price?.toFixed(2)} pints right now
+        </span>
+        <span className="font-mono font-extrabold text-[1.1rem] text-amber-light flex-shrink-0">
+          ${current.price?.toFixed(2)}
+        </span>
+        {liveHHPubs.length > 1 && (
+          <span className="font-mono text-[0.6rem] font-bold text-white/50 flex-shrink-0">
+            {(activeIndex % liveHHPubs.length) + 1}/{liveHHPubs.length}
+          </span>
+        )}
+      </div>
+    </Link>
+  )
+}
 
 function LoadingSkeleton() {
   return (
@@ -314,26 +354,7 @@ function HomeContent({ initialPubs }: { initialPubs: Pub[] }) {
       </div>
 
       {/* ═══ LIVE HAPPY HOUR BANNER ═══ */}
-      {(() => {
-        const liveHH = pubs.find(p => p.isHappyHourNow)
-        if (!liveHH) return null
-        return (
-          <Link href="/happy-hour" className="block max-w-container mx-auto px-6 mb-5">
-            <div className="bg-ink border-3 border-ink rounded-pill px-6 py-3 flex items-center gap-3 shadow-hard">
-              <div className="flex items-center gap-1.5 flex-shrink-0">
-                <span className="w-2 h-2 rounded-full bg-green shadow-[0_0_8px_rgba(45,122,61,0.5)] animate-pulse" />
-                <span className="font-mono font-bold text-[0.72rem] uppercase tracking-[0.05em] text-white">Live</span>
-              </div>
-              <span className="text-white font-medium text-[0.85rem] flex-1 truncate">
-                <strong className="text-amber-light font-bold">{liveHH.name}</strong> has ${liveHH.price?.toFixed(2)} pints right now
-              </span>
-              <span className="font-mono font-extrabold text-[1.1rem] text-amber-light flex-shrink-0">
-                ${liveHH.price?.toFixed(2)}
-              </span>
-            </div>
-          </Link>
-        )
-      })()}
+      <LiveHappyHourBanner pubs={pubs} />
 
       {/* ═══ FILTER BAR - below header, above content ═══ */}
       <FilterSection

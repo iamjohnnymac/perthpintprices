@@ -159,7 +159,7 @@ export default function PubDetailClient({ pub, nearbyPubs, avgPrice }: PubDetail
               <div className="flex flex-wrap gap-2 mt-4 pt-4 border-t border-gray-light">
                 {pub.isHappyHourNow && (
                   <span className="inline-flex items-center gap-1.5 font-mono text-[0.6rem] font-bold uppercase tracking-wider text-red bg-red-pale px-2.5 py-1 rounded-full border border-red">
-                    HH{pub.happyHourMinutesRemaining ? ` · ${pub.happyHourMinutesRemaining}m left` : ''}
+                    HH{pub.happyHourMinutesRemaining ? ` · ${pub.happyHourMinutesRemaining < 1 ? 'ending soon' : pub.happyHourMinutesRemaining < 60 ? `${pub.happyHourMinutesRemaining}m left` : `${Math.floor(pub.happyHourMinutesRemaining / 60)}h ${pub.happyHourMinutesRemaining % 60 > 0 ? `${pub.happyHourMinutesRemaining % 60}m ` : ''}left`}` : ''}
                   </span>
                 )}
                 {pub.priceVerified && pub.price !== null && (
