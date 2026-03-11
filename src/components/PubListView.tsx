@@ -57,8 +57,8 @@ export default function PubListView({
         case 'suburb':
           return dir * (a.suburb || '').localeCompare(b.suburb || '')
         case 'price': {
-          const ap = a.price ?? 999
-          const bp = b.price ?? 999
+          const ap = a.price ?? a.happyHourPrice ?? 999
+          const bp = b.price ?? b.happyHourPrice ?? 999
           return dir * (ap - bp)
         }
         case 'beer':
@@ -150,11 +150,17 @@ export default function PubListView({
                     {pub.beerType || '-'}
                   </span>
                 </td>
-                <td className={`py-4 px-3 sm:px-4 text-right font-bold font-mono text-lg whitespace-nowrap ${pub.price !== null && pub.price <= 8 ? 'text-bargain' : 'text-ink'}`}>
-                  {pub.isHappyHourNow && pub.regularPrice !== null && pub.regularPrice !== pub.price && (
+                <td className={`py-4 px-3 sm:px-4 text-right font-bold font-mono text-lg whitespace-nowrap ${(pub.price ?? pub.happyHourPrice) !== null && (pub.price ?? pub.happyHourPrice)! <= 8 ? 'text-bargain' : 'text-ink'}`}>
+                  {pub.isHappyHourNow && pub.regularPrice !== null && pub.happyHourPrice !== null && (
                     <span className="text-xs text-stone-400 line-through font-normal mr-1">${pub.regularPrice.toFixed(2)}</span>
                   )}
-                  {pub.price !== null ? `$${pub.price.toFixed(2)}` : 'TBC'}
+                  {pub.isHappyHourNow && pub.happyHourPrice !== null
+                    ? `$${pub.happyHourPrice.toFixed(2)}`
+                    : pub.price !== null
+                      ? `$${pub.price.toFixed(2)}`
+                      : pub.happyHourPrice !== null
+                        ? <><span className="text-sm font-normal text-stone-400">HH </span>${pub.happyHourPrice.toFixed(2)}</>
+                        : 'TBC'}
                 </td>
                 <td className="py-4 px-3 hidden md:table-cell">
                   {pub.happyHour ? (

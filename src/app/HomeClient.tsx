@@ -213,7 +213,8 @@ function HomeContent() {
           pub.address.toLowerCase().includes(searchTerm.toLowerCase()) ||
           (pub.description?.toLowerCase() || '').includes(searchTerm.toLowerCase())
         const matchesSuburb = !selectedSuburb || selectedSuburb === 'all' || pub.suburb === selectedSuburb
-        const matchesPrice = pub.price === null || pub.price <= maxPrice
+        const bestPrice = pub.price ?? pub.happyHourPrice
+        const matchesPrice = bestPrice === null || bestPrice <= maxPrice
         const matchesHappyHour = !showHappyHourOnly || !!pub.happyHour
         // P2a: new filters
         const matchesVibe = !vibeTagFilter || pub.vibeTag === vibeTagFilter
@@ -230,7 +231,7 @@ function HomeContent() {
           const bActive = b.isHappyHourNow ? 1 : 0
           if (aActive !== bActive) return bActive - aActive
         }
-        if (sortBy === 'price') { if (a.price === null && b.price === null) return 0; if (a.price === null) return 1; if (b.price === null) return -1; return a.price - b.price; }
+        if (sortBy === 'price') { const ap = a.price ?? a.happyHourPrice; const bp = b.price ?? b.happyHourPrice; if (ap === null && bp === null) return 0; if (ap === null) return 1; if (bp === null) return -1; return ap - bp; }
         if (sortBy === 'name') return a.name.localeCompare(b.name)
         if (sortBy === 'suburb') return a.suburb.localeCompare(b.suburb)
         if (sortBy === 'nearest' && userLocation) {

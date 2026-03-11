@@ -29,8 +29,9 @@ function getPlaceholderGradient(name: string) {
 }
 
 export default function PubCard({ pub, avgPrice = 9.20, distance }: PubCardProps) {
-  const effectivePrice = pub.effectivePrice ?? pub.price
-  const { label, type } = getPriceLabel(effectivePrice, avgPrice)
+  const displayPrice = pub.effectivePrice ?? pub.price ?? pub.happyHourPrice
+  const isHHOnly = pub.price === null && pub.happyHourPrice !== null && !pub.isHappyHourNow
+  const { label, type } = getPriceLabel(displayPrice, avgPrice)
   const colors = getPriceLabelColors(type)
 
   const hhTiming = pub.happyHourStart && pub.happyHourEnd
@@ -59,10 +60,11 @@ export default function PubCard({ pub, avgPrice = 9.20, distance }: PubCardProps
           )}
           <span className="relative font-serif text-4xl sm:text-5xl text-ink/15 select-none">{pub.name.charAt(0)}</span>
           {/* Price badge */}
-          {effectivePrice ? (
+          {displayPrice ? (
             <div className="absolute top-3 right-3 bg-white border-2 border-ink rounded-pill px-4 py-1.5 shadow-hard-sm flex items-center gap-1.5">
-              <span className="font-mono font-bold text-ink text-base">${effectivePrice.toFixed(2)}</span>
-              {label && (
+              {isHHOnly && <span className="text-[9px] font-bold text-amber">HH</span>}
+              <span className="font-mono font-bold text-ink text-base">${displayPrice.toFixed(2)}</span>
+              {label && !isHHOnly && (
                 <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full ${colors.bg} ${colors.text}`}>
                   {label}
                 </span>
