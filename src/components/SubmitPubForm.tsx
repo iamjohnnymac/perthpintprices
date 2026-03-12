@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, useMemo } from 'react';
 import { Beer, ScanLine, Trash2, Plus, Camera, ImagePlus } from 'lucide-react'
-import heic2any from 'heic2any'
+// heic2any is browser-only, dynamically imported in handleImageSelect
 
 interface Pub {
   slug: string;
@@ -293,6 +293,7 @@ export default function SubmitPubForm({ isOpen, onClose, userLocation, initialPu
     if (isHeic) {
       try {
         setScanError('Converting photo...');
+        const heic2any = (await import('heic2any')).default;
         const blob = await heic2any({ blob: file, toType: 'image/jpeg', quality: 0.85 });
         const converted = new File(
           [blob as Blob],

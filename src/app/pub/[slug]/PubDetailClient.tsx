@@ -198,6 +198,15 @@ export default function PubDetailClient({ pub, nearbyPubs, avgPrice }: PubDetail
               )}
             </div>
 
+            {/* Report a price — prominent CTA */}
+            <button
+              onClick={() => setShowSubmitForm(true)}
+              className="w-full flex items-center justify-center gap-2 font-mono text-[0.78rem] font-bold uppercase tracking-[0.05em] text-amber bg-amber-pale border-3 border-ink rounded-pill py-3 shadow-hard-sm hover:translate-x-[1.5px] hover:translate-y-[1.5px] hover:shadow-hard-hover transition-all"
+            >
+              <PenLine className="w-4 h-4" />
+              Know the price? Report it here
+            </button>
+
             {/* About */}
             {pub.description && (
               <div>
@@ -231,16 +240,6 @@ export default function PubDetailClient({ pub, nearbyPubs, avgPrice }: PubDetail
               </a>
             </div>
 
-            {/* Report a price */}
-            <div id="report-price">
-              <button
-                onClick={() => setShowSubmitForm(true)}
-                className="flex items-center gap-1.5 font-mono text-[0.75rem] font-bold text-gray-mid hover:text-amber transition-colors"
-              >
-                <PenLine className="w-3.5 h-3.5" />
-                <span>Report a price update</span>
-              </button>
-            </div>
           </div>
 
           {/* Right column - map */}
