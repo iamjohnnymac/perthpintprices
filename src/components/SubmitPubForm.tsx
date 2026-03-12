@@ -70,8 +70,8 @@ export default function SubmitPubForm({ isOpen, onClose, userLocation, initialPu
 
   // Scan menu state
   const [scanStep, setScanStep] = useState<'upload' | 'review' | 'submitting'>('upload');
-  const [menuImage, setMenuImage] = useState<File | null>(null);
-  const [menuPreview, setMenuPreview] = useState('');
+  const [menuImages, setMenuImages] = useState<File[]>([]);
+  const [menuPreviews, setMenuPreviews] = useState<string[]>([]);
   const [scanning, setScanning] = useState(false);
   const [extractedItems, setExtractedItems] = useState<ExtractedItem[]>([]);
   const [scanError, setScanError] = useState('');
@@ -201,8 +201,8 @@ export default function SubmitPubForm({ isOpen, onClose, userLocation, initialPu
     setShowDropdown(false);
     // Scan menu reset
     setScanStep('upload');
-    setMenuImage(null);
-    setMenuPreview('');
+    setMenuImages([]);
+    setMenuPreviews([]);
     setScanning(false);
     setExtractedItems([]);
     setScanError('');
@@ -260,12 +260,12 @@ export default function SubmitPubForm({ isOpen, onClose, userLocation, initialPu
       return !!selectedPub;
     }
     if (mode === 'scan-menu') {
-      if (scanStep === 'upload') return !!selectedPub && !!menuImage;
+      if (scanStep === 'upload') return !!selectedPub && menuImages.length > 0;
       if (scanStep === 'review') return extractedItems.length > 0;
       return false;
     }
     return false;
-  }, [mode, selectedPub, price, pubName, suburb, scanStep, menuImage, extractedItems]);
+  }, [mode, selectedPub, price, pubName, suburb, scanStep, menuImages, extractedItems]);
 
   const ACCEPTED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/heic', 'image/heif'];
 
@@ -300,39 +300,58 @@ export default function SubmitPubForm({ isOpen, onClose, userLocation, initialPu
           file.name.replace(/\.heic$/i, '.jpg').replace(/\.heif$/i, '.jpg'),
           { type: 'image/jpeg' }
         );
-        setMenuImage(converted);
-        setMenuPreview(URL.createObjectURL(converted));
+        setMenuImages(prev => [...prev, converted]);
+        setMenuPreviews(prev => [...prev, URL.createObjectURL(converted)]);
         setScanError('');
       } catch {
         setScanError('Could not convert this photo. Try taking a screenshot of the menu instead.');
       }
+      // Reset input so same file can be re-selected
+      e.target.value = '';
       return;
     }
 
-    setMenuImage(file);
-    setMenuPreview(URL.createObjectURL(file));
+    setMenuImages(prev => [...prev, file]);
+    setMenuPreviews(prev => [...prev, URL.createObjectURL(file)]);
+    // Reset input so same file can be re-selected
+    e.target.value = '';
+  }
+
+  function removeMenuImage(index: number) {
+    setMenuImages(prev => prev.filter((_, i) => i !== index));
+    setMenuPreviews(prev => prev.filter((_, i) => i !== index));
   }
 
   async function handleScanMenu() {
-    if (!selectedPub || !menuImage) return;
+    if (!selectedPub || menuImages.length === 0) return;
     setScanning(true);
     setScanError('');
+    setScanProgress(0);
+
+    const allItems: ExtractedItem[] = [];
 
     try {
-      const formData = new FormData();
-      formData.append('image', menuImage);
-      formData.append('pub_slug', selectedPub.slug);
+      for (let i = 0; i < menuImages.length; i++) {
+        setScanProgress(i + 1);
+        const formData = new FormData();
+        formData.append('image', menuImages[i]);
+        formData.append('pub_slug', selectedPub.slug);
 
-      const res = await fetch('/api/menu-scan', { method: 'POST', body: formData });
-      const data = await res.json();
+        const res = await fetch('/api/menu-scan', { method: 'POST', body: formData });
+        const data = await res.json();
 
-      if (!res.ok) {
-        setScanError(data.error || 'Failed to scan menu.');
-        setScanning(false);
-        return;
+        if (!res.ok) {
+          setScanError(data.error || `Failed to scan photo ${i + 1}.`);
+          setScanning(false);
+          return;
+        }
+
+        if (data.items) {
+          allItems.push(...data.items);
+        }
       }
 
-      setExtractedItems(data.items || []);
+      setExtractedItems(allItems);
       setScanStep('review');
     } catch {
       setScanError('Network error. Please try again.');
@@ -830,49 +849,57 @@ export default function SubmitPubForm({ isOpen, onClose, userLocation, initialPu
                         onChange={handleImageSelect}
                         className="hidden"
                       />
-                      {menuPreview ? (
-                        <div className="relative">
-                          <img
-                            src={menuPreview}
-                            alt="Menu preview"
-                            className="w-full max-h-48 object-cover rounded-card border-3 border-ink"
-                          />
-                          <button
-                            type="button"
-                            onClick={() => { setMenuImage(null); setMenuPreview(''); if (fileInputRef.current) fileInputRef.current.value = ''; if (cameraInputRef.current) cameraInputRef.current.value = ''; }}
-                            className="absolute top-2 right-2 w-7 h-7 bg-white border-2 border-ink rounded-card flex items-center justify-center hover:bg-off-white transition-colors"
-                            aria-label="Remove image"
-                          >
-                            <Trash2 className="w-3.5 h-3.5 text-ink" />
-                          </button>
-                        </div>
-                      ) : (
-                        <div className="grid grid-cols-2 gap-3">
-                          <button
-                            type="button"
-                            onClick={() => cameraInputRef.current?.click()}
-                            className="py-6 border-3 border-dashed border-gray-mid rounded-card flex flex-col items-center gap-2 hover:border-ink hover:bg-off-white transition-all cursor-pointer"
-                          >
-                            <Camera className="w-7 h-7 text-gray-mid" />
-                            <span className="font-mono text-xs text-gray-mid font-bold">
-                              Take Photo
-                            </span>
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => fileInputRef.current?.click()}
-                            className="py-6 border-3 border-dashed border-gray-mid rounded-card flex flex-col items-center gap-2 hover:border-ink hover:bg-off-white transition-all cursor-pointer"
-                          >
-                            <ImagePlus className="w-7 h-7 text-gray-mid" />
-                            <span className="font-mono text-xs text-gray-mid font-bold">
-                              Upload Photo
-                            </span>
-                          </button>
-                          <p className="col-span-2 text-center font-mono text-[0.6rem] text-gray-mid -mt-1">
-                            Works with iPhone and Android photos
-                          </p>
+                      {/* Uploaded image thumbnails */}
+                      {menuPreviews.length > 0 && (
+                        <div className="grid grid-cols-3 gap-2 mb-3">
+                          {menuPreviews.map((preview, i) => (
+                            <div key={i} className="relative">
+                              <img
+                                src={preview}
+                                alt={`Menu photo ${i + 1}`}
+                                className="w-full h-24 object-cover rounded-card border-3 border-ink"
+                              />
+                              <button
+                                type="button"
+                                onClick={() => removeMenuImage(i)}
+                                className="absolute top-1 right-1 w-6 h-6 bg-white border-2 border-ink rounded-full flex items-center justify-center hover:bg-off-white transition-colors"
+                                aria-label={`Remove photo ${i + 1}`}
+                              >
+                                <Trash2 className="w-3 h-3 text-ink" />
+                              </button>
+                            </div>
+                          ))}
                         </div>
                       )}
+
+                      {/* Upload buttons — always visible */}
+                      <div className="grid grid-cols-2 gap-3">
+                        <button
+                          type="button"
+                          onClick={() => cameraInputRef.current?.click()}
+                          className="py-6 border-3 border-dashed border-gray-mid rounded-card flex flex-col items-center gap-2 hover:border-ink hover:bg-off-white transition-all cursor-pointer"
+                        >
+                          <Camera className="w-7 h-7 text-gray-mid" />
+                          <span className="font-mono text-xs text-gray-mid font-bold">
+                            {menuPreviews.length > 0 ? 'Add Photo' : 'Take Photo'}
+                          </span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => fileInputRef.current?.click()}
+                          className="py-6 border-3 border-dashed border-gray-mid rounded-card flex flex-col items-center gap-2 hover:border-ink hover:bg-off-white transition-all cursor-pointer"
+                        >
+                          <ImagePlus className="w-7 h-7 text-gray-mid" />
+                          <span className="font-mono text-xs text-gray-mid font-bold">
+                            Upload Photo
+                          </span>
+                        </button>
+                        <p className="col-span-2 text-center font-mono text-[0.6rem] text-gray-mid -mt-1">
+                          {menuPreviews.length > 0
+                            ? `${menuPreviews.length} photo${menuPreviews.length !== 1 ? 's' : ''} added — add more or scan`
+                            : 'Works with iPhone and Android photos'}
+                        </p>
+                      </div>
                     </div>
 
                     {scanError && (
@@ -884,7 +911,9 @@ export default function SubmitPubForm({ isOpen, onClose, userLocation, initialPu
                 {scanStep === 'upload' && scanning && (
                   <div className="flex items-center justify-center gap-2 py-4">
                     <div className="w-4 h-4 border-2 border-ink border-t-transparent rounded-full animate-spin" />
-                    <span className="font-mono text-sm text-gray-mid font-bold">Scanning menu...</span>
+                    <span className="font-mono text-sm text-gray-mid font-bold">
+                      Scanning {menuImages.length > 1 ? `photo ${scanProgress}/${menuImages.length}` : 'menu'}...
+                    </span>
                   </div>
                 )}
 
@@ -905,7 +934,7 @@ export default function SubmitPubForm({ isOpen, onClose, userLocation, initialPu
                         <p className="font-mono text-xs text-gray-mid">Try a clearer photo, or use Report Price to add manually.</p>
                         <button
                           type="button"
-                          onClick={() => { setScanStep('upload'); setMenuImage(null); setMenuPreview(''); }}
+                          onClick={() => { setScanStep('upload'); setMenuImages([]); setMenuPreviews([]); }}
                           className="mt-3 px-4 py-2 font-mono text-xs font-bold text-ink border-2 border-ink rounded-pill hover:bg-off-white transition-all"
                         >
                           Try Again
@@ -1131,7 +1160,7 @@ export default function SubmitPubForm({ isOpen, onClose, userLocation, initialPu
               scanStep === 'upload' ? (
                 <button
                   type="button"
-                  disabled={scanning || !selectedPub || !menuImage}
+                  disabled={scanning || !selectedPub || menuImages.length === 0}
                   onClick={handleScanMenu}
                   className="w-full py-3 px-4 h-12 bg-ink text-white font-mono font-bold text-sm uppercase tracking-[0.05em] rounded-pill border-3 border-ink shadow-hard-sm hover:translate-x-[1.5px] hover:translate-y-[1.5px] hover:shadow-hard-hover transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-x-0 disabled:hover:translate-y-0 disabled:hover:shadow-hard-sm flex items-center justify-center gap-2"
                 >
