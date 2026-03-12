@@ -36,15 +36,18 @@ export async function POST(req: NextRequest) {
     const ipHash = await hashString(ip)
 
     // Check if same IP reported same pub in last hour
+    // Allow more reports for menu scans (bulk submission)
+    const isMenuScan = notes && typeof notes === 'string' && notes.includes('menu scan')
+    const rateLimit = isMenuScan ? 15 : 1
+
     const { data: recentReport } = await supabase
       .from('price_reports')
       .select('id')
       .eq('pub_slug', pub_slug)
       .eq('ip_hash', ipHash)
       .gte('created_at', new Date(Date.now() - 3600000).toISOString())
-      .limit(1)
 
-    if (recentReport && recentReport.length > 0) {
+    if (recentReport && recentReport.length >= rateLimit) {
       return NextResponse.json({ error: 'You already reported for this pub recently. Try again in an hour.' }, { status: 429 })
     }
 

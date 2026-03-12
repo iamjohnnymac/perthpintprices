@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useEffect, useRef, useMemo } from 'react';
-import { Beer } from 'lucide-react'
+import { Beer, ScanLine, Trash2, Plus, Camera, ImagePlus } from 'lucide-react'
+import heic2any from 'heic2any'
 
 interface Pub {
   slug: string;
@@ -18,7 +19,13 @@ interface SubmitPubFormProps {
   initialPub?: { slug: string; name: string; suburb: string } | null;
 }
 
-type Mode = 'existing' | 'new' | 'report-outdated';
+type Mode = 'existing' | 'new' | 'report-outdated' | 'scan-menu';
+
+interface ExtractedItem {
+  beer_type: string;
+  price: number;
+  price_type: 'regular' | 'happy_hour';
+}
 
 function getDistanceKmSimple(lat1: number, lng1: number, lat2: number, lng2: number): number {
   const R = 6371;
@@ -60,6 +67,17 @@ export default function SubmitPubForm({ isOpen, onClose, userLocation, initialPu
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState('');
+
+  // Scan menu state
+  const [scanStep, setScanStep] = useState<'upload' | 'review' | 'submitting'>('upload');
+  const [menuImage, setMenuImage] = useState<File | null>(null);
+  const [menuPreview, setMenuPreview] = useState('');
+  const [scanning, setScanning] = useState(false);
+  const [extractedItems, setExtractedItems] = useState<ExtractedItem[]>([]);
+  const [scanError, setScanError] = useState('');
+  const [scanProgress, setScanProgress] = useState(0);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const cameraInputRef = useRef<HTMLInputElement>(null);
 
   const modalRef = useRef<HTMLDivElement>(null);
   const searchRef = useRef<HTMLInputElement>(null);
@@ -130,7 +148,7 @@ export default function SubmitPubForm({ isOpen, onClose, userLocation, initialPu
     }
 
     // Sort by distance when user location is available and in existing/report-outdated mode
-    if (userLocation && (mode === 'existing' || mode === 'report-outdated') && !search.trim()) {
+    if (userLocation && (mode === 'existing' || mode === 'report-outdated' || mode === 'scan-menu') && !search.trim()) {
       list = [...list].sort((a, b) => {
         if (!a.lat || !a.lng) return 1;
         if (!b.lat || !b.lng) return -1;
@@ -181,6 +199,14 @@ export default function SubmitPubForm({ isOpen, onClose, userLocation, initialPu
     setFieldErrors({});
     setSubmitted(false);
     setShowDropdown(false);
+    // Scan menu reset
+    setScanStep('upload');
+    setMenuImage(null);
+    setMenuPreview('');
+    setScanning(false);
+    setExtractedItems([]);
+    setScanError('');
+    setScanProgress(0);
   }
 
   function handleClose() {
@@ -233,8 +259,135 @@ export default function SubmitPubForm({ isOpen, onClose, userLocation, initialPu
     if (mode === 'report-outdated') {
       return !!selectedPub;
     }
+    if (mode === 'scan-menu') {
+      if (scanStep === 'upload') return !!selectedPub && !!menuImage;
+      if (scanStep === 'review') return extractedItems.length > 0;
+      return false;
+    }
     return false;
-  }, [mode, selectedPub, price, pubName, suburb]);
+  }, [mode, selectedPub, price, pubName, suburb, scanStep, menuImage, extractedItems]);
+
+  const ACCEPTED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/heic', 'image/heif'];
+
+  async function handleImageSelect(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Check file type - also allow HEIC/HEIF from iPhone/Android
+    const fileType = file.type.toLowerCase();
+    const fileName = file.name.toLowerCase();
+    const isHeic = fileType === 'image/heic' || fileType === 'image/heif' || fileName.endsWith('.heic') || fileName.endsWith('.heif');
+    const isAccepted = ACCEPTED_TYPES.includes(fileType) || isHeic;
+
+    if (!isAccepted) {
+      setScanError('Please upload a JPEG, PNG, WebP, or HEIC image.');
+      return;
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      setScanError('Image must be under 10MB.');
+      return;
+    }
+    setScanError('');
+
+    // Convert HEIC/HEIF to JPEG for API compatibility
+    if (isHeic) {
+      try {
+        setScanError('Converting photo...');
+        const blob = await heic2any({ blob: file, toType: 'image/jpeg', quality: 0.85 });
+        const converted = new File(
+          [blob as Blob],
+          file.name.replace(/\.heic$/i, '.jpg').replace(/\.heif$/i, '.jpg'),
+          { type: 'image/jpeg' }
+        );
+        setMenuImage(converted);
+        setMenuPreview(URL.createObjectURL(converted));
+        setScanError('');
+      } catch {
+        setScanError('Could not convert this photo. Try taking a screenshot of the menu instead.');
+      }
+      return;
+    }
+
+    setMenuImage(file);
+    setMenuPreview(URL.createObjectURL(file));
+  }
+
+  async function handleScanMenu() {
+    if (!selectedPub || !menuImage) return;
+    setScanning(true);
+    setScanError('');
+
+    try {
+      const formData = new FormData();
+      formData.append('image', menuImage);
+      formData.append('pub_slug', selectedPub.slug);
+
+      const res = await fetch('/api/menu-scan', { method: 'POST', body: formData });
+      const data = await res.json();
+
+      if (!res.ok) {
+        setScanError(data.error || 'Failed to scan menu.');
+        setScanning(false);
+        return;
+      }
+
+      setExtractedItems(data.items || []);
+      setScanStep('review');
+    } catch {
+      setScanError('Network error. Please try again.');
+    } finally {
+      setScanning(false);
+    }
+  }
+
+  async function handleBulkSubmit() {
+    if (!selectedPub || extractedItems.length === 0) return;
+    setScanStep('submitting');
+    setScanProgress(0);
+
+    let successCount = 0;
+    for (let i = 0; i < extractedItems.length; i++) {
+      const item = extractedItems[i];
+      try {
+        const res = await fetch('/api/price-report', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            pub_slug: selectedPub.slug,
+            reported_price: item.price,
+            beer_type: item.beer_type,
+            price_type: item.price_type,
+            notes: 'Submitted via menu scan',
+          }),
+        });
+        if (res.ok) successCount++;
+      } catch {
+        // continue with remaining items
+      }
+      setScanProgress(i + 1);
+    }
+
+    if (successCount > 0) {
+      setSubmitted(true);
+    } else {
+      setScanError('Failed to submit prices. You may have already reported for this pub recently.');
+      setScanStep('review');
+    }
+  }
+
+  function updateExtractedItem(index: number, field: keyof ExtractedItem, value: string | number) {
+    setExtractedItems(prev => prev.map((item, i) =>
+      i === index ? { ...item, [field]: value } : item
+    ));
+  }
+
+  function removeExtractedItem(index: number) {
+    setExtractedItems(prev => prev.filter((_, i) => i !== index));
+  }
+
+  function addExtractedItem() {
+    setExtractedItems(prev => [...prev, { beer_type: '', price: 0, price_type: 'regular' }]);
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -363,18 +516,24 @@ export default function SubmitPubForm({ isOpen, onClose, userLocation, initialPu
     ? 'Report a Price'
     : mode === 'new'
     ? 'Submit a New Pub'
+    : mode === 'scan-menu'
+    ? 'Scan a Menu'
     : 'Report an Issue';
 
   const modeSubtitle = mode === 'existing'
     ? 'Know a cheap pint? Let us know!'
     : mode === 'new'
     ? 'Add a pub we\'re missing'
+    : mode === 'scan-menu'
+    ? 'Upload a menu photo and we\'ll grab the prices'
     : 'Closed, renovating, or something else?';
 
   const submittedMessage = mode === 'existing'
     ? 'Price submitted! We\'ll review it shortly.'
     : mode === 'report-outdated'
     ? 'Thanks for the heads up! We\'ll look into it.'
+    : mode === 'scan-menu'
+    ? 'Prices submitted! We\'ll review them shortly.'
     : 'Pub submitted! We\'ll review and add it soon.';
 
   // Pub search widget (shared by 'existing' and 'report-outdated')
@@ -561,18 +720,20 @@ export default function SubmitPubForm({ isOpen, onClose, userLocation, initialPu
                 { key: 'existing' as const, label: 'Report Price' },
                 { key: 'report-outdated' as const, label: 'Report Issue' },
                 { key: 'new' as const, label: 'New Pub' },
-              ]).map(({ key, label }) => (
+                { key: 'scan-menu' as const, label: 'Scan Menu', icon: true },
+              ]).map(({ key, label, icon }) => (
                 <button
                   key={key}
                   type="button"
-                  onClick={() => { setMode(key); setError(''); setFieldErrors({}); }}
+                  onClick={() => { setMode(key); setError(''); setFieldErrors({}); setScanError(''); setScanStep('upload'); }}
                   aria-pressed={mode === key}
-                  className={`flex-1 px-2 py-2 rounded-[8px] font-mono text-[0.7rem] font-bold transition-all ${
+                  className={`flex-1 px-2 py-2 rounded-[8px] font-mono text-[0.7rem] font-bold transition-all flex items-center justify-center gap-1 ${
                     mode === key
                       ? 'bg-white text-ink border-2 border-ink shadow-sm'
                       : 'text-gray-mid hover:text-ink border-2 border-transparent'
                   }`}
                 >
+                  {icon && <ScanLine className="w-3 h-3" />}
                   {label}
                 </button>
               ))}
@@ -643,6 +804,186 @@ export default function SubmitPubForm({ isOpen, onClose, userLocation, initialPu
                     </button>
                   </div>
                 </div>
+              </>
+            ) : mode === 'scan-menu' ? (
+              <>
+                {scanStep === 'upload' && (
+                  <>
+                    {pubSearchWidget}
+
+                    {/* Image upload zone */}
+                    <div>
+                      <label className={labelClass}>Menu Photo</label>
+                      <input
+                        ref={fileInputRef}
+                        type="file"
+                        accept="image/jpeg,image/png,image/webp,image/heic,image/heif,.heic,.heif"
+                        onChange={handleImageSelect}
+                        className="hidden"
+                      />
+                      <input
+                        ref={cameraInputRef}
+                        type="file"
+                        accept="image/jpeg,image/png,image/webp,image/heic,image/heif,.heic,.heif"
+                        capture="environment"
+                        onChange={handleImageSelect}
+                        className="hidden"
+                      />
+                      {menuPreview ? (
+                        <div className="relative">
+                          <img
+                            src={menuPreview}
+                            alt="Menu preview"
+                            className="w-full max-h-48 object-cover rounded-card border-3 border-ink"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => { setMenuImage(null); setMenuPreview(''); if (fileInputRef.current) fileInputRef.current.value = ''; if (cameraInputRef.current) cameraInputRef.current.value = ''; }}
+                            className="absolute top-2 right-2 w-7 h-7 bg-white border-2 border-ink rounded-card flex items-center justify-center hover:bg-off-white transition-colors"
+                            aria-label="Remove image"
+                          >
+                            <Trash2 className="w-3.5 h-3.5 text-ink" />
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="grid grid-cols-2 gap-3">
+                          <button
+                            type="button"
+                            onClick={() => cameraInputRef.current?.click()}
+                            className="py-6 border-3 border-dashed border-gray-mid rounded-card flex flex-col items-center gap-2 hover:border-ink hover:bg-off-white transition-all cursor-pointer"
+                          >
+                            <Camera className="w-7 h-7 text-gray-mid" />
+                            <span className="font-mono text-xs text-gray-mid font-bold">
+                              Take Photo
+                            </span>
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => fileInputRef.current?.click()}
+                            className="py-6 border-3 border-dashed border-gray-mid rounded-card flex flex-col items-center gap-2 hover:border-ink hover:bg-off-white transition-all cursor-pointer"
+                          >
+                            <ImagePlus className="w-7 h-7 text-gray-mid" />
+                            <span className="font-mono text-xs text-gray-mid font-bold">
+                              Upload Photo
+                            </span>
+                          </button>
+                          <p className="col-span-2 text-center font-mono text-[0.6rem] text-gray-mid -mt-1">
+                            Works with iPhone and Android photos
+                          </p>
+                        </div>
+                      )}
+                    </div>
+
+                    {scanError && (
+                      <p className="text-sm text-red font-mono font-bold" role="alert">{scanError}</p>
+                    )}
+                  </>
+                )}
+
+                {scanStep === 'upload' && scanning && (
+                  <div className="flex items-center justify-center gap-2 py-4">
+                    <div className="w-4 h-4 border-2 border-ink border-t-transparent rounded-full animate-spin" />
+                    <span className="font-mono text-sm text-gray-mid font-bold">Scanning menu...</span>
+                  </div>
+                )}
+
+                {scanStep === 'review' && (
+                  <>
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="font-mono text-[0.65rem] font-bold uppercase tracking-[0.08em] text-gray-mid">
+                        {extractedItems.length} item{extractedItems.length !== 1 ? 's' : ''} found
+                      </span>
+                      <span className="font-mono text-[0.6rem] text-gray-mid">
+                        at {selectedPub?.name}
+                      </span>
+                    </div>
+
+                    {extractedItems.length === 0 ? (
+                      <div className="text-center py-6">
+                        <p className="font-mono text-sm text-gray-mid mb-2">No prices found in this image.</p>
+                        <p className="font-mono text-xs text-gray-mid">Try a clearer photo, or use Report Price to add manually.</p>
+                        <button
+                          type="button"
+                          onClick={() => { setScanStep('upload'); setMenuImage(null); setMenuPreview(''); }}
+                          className="mt-3 px-4 py-2 font-mono text-xs font-bold text-ink border-2 border-ink rounded-pill hover:bg-off-white transition-all"
+                        >
+                          Try Again
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="space-y-2 max-h-64 overflow-y-auto">
+                        {extractedItems.map((item, i) => (
+                          <div key={i} className="flex items-center gap-2 p-2.5 bg-off-white rounded-card border-2 border-gray-light">
+                            <div className="flex-1 min-w-0">
+                              <input
+                                type="text"
+                                value={item.beer_type}
+                                onChange={(e) => updateExtractedItem(i, 'beer_type', e.target.value)}
+                                placeholder="Beer name"
+                                className="w-full bg-transparent text-sm font-mono text-ink focus:outline-none placeholder-gray-mid/50"
+                              />
+                            </div>
+                            <div className="w-20 flex-shrink-0">
+                              <input
+                                type="number"
+                                step="0.50"
+                                min="3"
+                                max="30"
+                                value={item.price || ''}
+                                onChange={(e) => updateExtractedItem(i, 'price', parseFloat(e.target.value) || 0)}
+                                placeholder="$"
+                                className="w-full bg-white text-sm font-mono text-ink text-right px-2 py-1 rounded border-2 border-gray-light focus:outline-none focus:border-ink"
+                              />
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => updateExtractedItem(i, 'price_type', item.price_type === 'regular' ? 'happy_hour' : 'regular')}
+                              className={`flex-shrink-0 px-2 py-1 rounded-pill font-mono text-[0.55rem] font-bold border-2 transition-all ${
+                                item.price_type === 'happy_hour'
+                                  ? 'bg-amber-pale text-amber border-amber/30'
+                                  : 'bg-white text-gray-mid border-gray-light'
+                              }`}
+                            >
+                              {item.price_type === 'happy_hour' ? 'HH' : 'REG'}
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => removeExtractedItem(i)}
+                              className="flex-shrink-0 p-1 text-gray-mid hover:text-red transition-colors"
+                              aria-label="Remove item"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    {extractedItems.length > 0 && (
+                      <button
+                        type="button"
+                        onClick={addExtractedItem}
+                        className="flex items-center gap-1 px-3 py-1.5 font-mono text-[0.65rem] font-bold text-gray-mid hover:text-ink transition-colors"
+                      >
+                        <Plus className="w-3 h-3" />
+                        Add Item
+                      </button>
+                    )}
+
+                    {scanError && (
+                      <p className="text-sm text-red font-mono font-bold" role="alert">{scanError}</p>
+                    )}
+                  </>
+                )}
+
+                {scanStep === 'submitting' && (
+                  <div className="flex items-center justify-center gap-2 py-6">
+                    <div className="w-4 h-4 border-2 border-ink border-t-transparent rounded-full animate-spin" />
+                    <span className="font-mono text-sm text-gray-mid font-bold">
+                      Submitting {scanProgress}/{extractedItems.length}...
+                    </span>
+                  </div>
+                )}
               </>
             ) : mode === 'report-outdated' ? (
               <>
@@ -785,19 +1126,50 @@ export default function SubmitPubForm({ isOpen, onClose, userLocation, initialPu
             )}
 
             {/* Submit button */}
-            <button
-              type="submit"
-              disabled={isSubmitting || !isFormValid}
-              className="w-full py-3 px-4 h-12 bg-ink text-white font-mono font-bold text-sm uppercase tracking-[0.05em] rounded-pill border-3 border-ink shadow-hard-sm hover:translate-x-[1.5px] hover:translate-y-[1.5px] hover:shadow-hard-hover transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-x-0 disabled:hover:translate-y-0 disabled:hover:shadow-hard-sm"
-            >
-              {isSubmitting
-                ? 'Submitting...'
-                : mode === 'existing'
-                ? 'Submit Price'
-                : mode === 'report-outdated'
-                ? 'Submit Report'
-                : 'Submit New Pub'}
-            </button>
+            {mode === 'scan-menu' ? (
+              scanStep === 'upload' ? (
+                <button
+                  type="button"
+                  disabled={scanning || !selectedPub || !menuImage}
+                  onClick={handleScanMenu}
+                  className="w-full py-3 px-4 h-12 bg-ink text-white font-mono font-bold text-sm uppercase tracking-[0.05em] rounded-pill border-3 border-ink shadow-hard-sm hover:translate-x-[1.5px] hover:translate-y-[1.5px] hover:shadow-hard-hover transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-x-0 disabled:hover:translate-y-0 disabled:hover:shadow-hard-sm flex items-center justify-center gap-2"
+                >
+                  {scanning ? (
+                    <>
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                      Scanning...
+                    </>
+                  ) : (
+                    <>
+                      <ScanLine className="w-4 h-4" />
+                      Scan Menu
+                    </>
+                  )}
+                </button>
+              ) : scanStep === 'review' && extractedItems.length > 0 ? (
+                <button
+                  type="button"
+                  onClick={handleBulkSubmit}
+                  className="w-full py-3 px-4 h-12 bg-ink text-white font-mono font-bold text-sm uppercase tracking-[0.05em] rounded-pill border-3 border-ink shadow-hard-sm hover:translate-x-[1.5px] hover:translate-y-[1.5px] hover:shadow-hard-hover transition-all"
+                >
+                  Submit {extractedItems.length} Price{extractedItems.length !== 1 ? 's' : ''}
+                </button>
+              ) : null
+            ) : (
+              <button
+                type="submit"
+                disabled={isSubmitting || !isFormValid}
+                className="w-full py-3 px-4 h-12 bg-ink text-white font-mono font-bold text-sm uppercase tracking-[0.05em] rounded-pill border-3 border-ink shadow-hard-sm hover:translate-x-[1.5px] hover:translate-y-[1.5px] hover:shadow-hard-hover transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-x-0 disabled:hover:translate-y-0 disabled:hover:shadow-hard-sm"
+              >
+                {isSubmitting
+                  ? 'Submitting...'
+                  : mode === 'existing'
+                  ? 'Submit Price'
+                  : mode === 'report-outdated'
+                  ? 'Submit Report'
+                  : 'Submit New Pub'}
+              </button>
+            )}
 
             <p className="text-[10px] text-gray-mid text-center font-mono">
               All submissions are reviewed before going live.
