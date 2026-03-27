@@ -1,6 +1,9 @@
 import type { Metadata } from 'next'
 import BreadcrumbJsonLd from '@/components/BreadcrumbJsonLd'
 import HappyHourClient from './HappyHourClient'
+import { getPubs } from '@/lib/supabase'
+
+export const revalidate = 60 // Revalidate every 60 seconds for fresh happy hour data
 
 export const metadata: Metadata = {
   title: 'Happy Hours in Perth Right Now | Arvo',
@@ -18,14 +21,29 @@ export const metadata: Metadata = {
   twitter: { card: 'summary_large_image' },
 }
 
-export default function HappyHourPage() {
+export default async function HappyHourPage() {
+  // Fetch pubs server-side so content appears in initial HTML
+  const allPubs = await getPubs()
+  const happyHourPubs = allPubs.filter(p => p.happyHour) // All pubs WITH happy hour info
+
   return (
     <>
       <BreadcrumbJsonLd items={[
         { name: 'Home', url: 'https://perthpintprices.com' },
-        { name: 'Happy Hour' },
+        { name: 'Happy Hour', url: 'https://perthpintprices.com/happy-hour' },
       ]} />
-      <HappyHourClient />
+
+      {/* Server-rendered links for crawlers */}
+      <div className="sr-only" aria-hidden="true">
+        <h1>Happy Hour Deals in Perth</h1>
+        {happyHourPubs.map(pub => (
+          <a key={pub.slug} href={`/pub/${pub.slug}`}>
+            {pub.name} - {pub.suburb} - Happy Hour
+          </a>
+        ))}
+      </div>
+
+      <HappyHourClient initialPubs={happyHourPubs} />
     </>
   )
 }

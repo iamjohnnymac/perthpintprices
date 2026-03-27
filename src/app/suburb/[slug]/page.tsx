@@ -78,7 +78,7 @@ export default async function SuburbPage({ params }: PageProps) {
       '@type': 'BreadcrumbList',
       itemListElement: [
         { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://perthpintprices.com' },
-        { '@type': 'ListItem', position: 2, name: suburb.name },
+        { '@type': 'ListItem', position: 2, name: suburb.name, item: `https://perthpintprices.com/suburb/${params.slug}` },
       ],
     },
     {
