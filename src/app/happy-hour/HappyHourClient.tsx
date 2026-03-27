@@ -10,9 +10,13 @@ import { getDistanceKm, formatDistance } from '@/lib/location'
 
 type SortMode = 'price' | 'nearest'
 
-export default function HappyHourClient() {
-  const [allPubs, setAllPubs] = useState<Pub[]>([])
-  const [loading, setLoading] = useState(true)
+interface HappyHourClientProps {
+  initialPubs: Pub[]
+}
+
+export default function HappyHourClient({ initialPubs }: HappyHourClientProps) {
+  const [allPubs, setAllPubs] = useState<Pub[]>(initialPubs.filter(p => p.isHappyHourNow))
+  const [loading, setLoading] = useState(false) // Start as false since we have server data
   const [lastRefresh, setLastRefresh] = useState<Date | null>(null)
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null)
   const [locationState, setLocationState] = useState<'pending' | 'granted' | 'denied'>('pending')
@@ -45,7 +49,8 @@ export default function HappyHourClient() {
   }, [])
 
   useEffect(() => {
-    fetchPubs()
+    // Don't fetch immediately — we already have server-rendered data via initialPubs.
+    // Only set up the 60s refresh interval for live updates.
     const interval = setInterval(fetchPubs, 60_000)
     return () => clearInterval(interval)
   }, [fetchPubs])

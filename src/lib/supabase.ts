@@ -158,6 +158,78 @@ export async function getPubs(): Promise<Pub[]> {
   })
 }
 
+// Lightweight pub fetch for homepage — only fields needed for rendering + SSR links
+// Reduces HTML payload from ~352KB to ~80KB
+export interface PubLite {
+  id: number
+  name: string
+  slug: string
+  suburb: string
+  price: number | null
+  regularPrice: number | null
+  effectivePrice: number | null
+  priceVerified: boolean
+  lat: number
+  lng: number
+  happyHour: string | null
+  happyHourPrice: number | null
+  isHappyHourNow: boolean
+  happyHourLabel: string | null
+  happyHourMinutesRemaining: number | null
+  lastVerified: string | null
+  vibeTag: string | null
+  imageUrl: string | null
+}
+
+export async function getPubsLite(): Promise<PubLite[]> {
+  const { data, error } = await supabase
+    .from('pubs')
+    .select('id, name, slug, suburb, price, price_verified, lat, lng, happy_hour, happy_hour_price, happy_hour_days, happy_hour_start, happy_hour_end, last_verified, vibe_tag, image_url')
+    .order('price', { ascending: true, nullsFirst: false })
+
+  if (error) {
+    console.error('Error fetching pubs lite:', error)
+    return []
+  }
+
+  return (data || []).map(row => {
+    const regularPrice = row.price != null ? Number(row.price) : null
+    const hhPrice = row.happy_hour_price != null ? Number(row.happy_hour_price) : null
+
+    const hhStatus = getHappyHourStatus({
+      price: regularPrice,
+      happyHourPrice: hhPrice,
+      happyHourDays: row.happy_hour_days || null,
+      happyHourStart: row.happy_hour_start || null,
+      happyHourEnd: row.happy_hour_end || null,
+    })
+
+    const happyHourText = row.happy_hour ||
+      generateHappyHourText(row.happy_hour_days, row.happy_hour_start, row.happy_hour_end)
+
+    return {
+      id: row.id,
+      name: row.name,
+      slug: row.slug || '',
+      suburb: row.suburb,
+      price: hhStatus.effectivePrice,
+      regularPrice,
+      effectivePrice: (hhStatus.isActive && hhPrice) ? hhPrice : regularPrice,
+      priceVerified: row.price_verified !== false,
+      lat: row.lat || 0,
+      lng: row.lng || 0,
+      happyHour: happyHourText,
+      happyHourPrice: hhPrice,
+      isHappyHourNow: hhStatus.isActive,
+      happyHourLabel: hhStatus.happyHourLabel,
+      happyHourMinutesRemaining: hhStatus.minutesRemaining,
+      lastVerified: row.last_verified || null,
+      vibeTag: row.vibe_tag || null,
+      imageUrl: row.image_url ?? null,
+    }
+  })
+}
+
 // Fetch a single pub by slug
 export async function getPubBySlug(slug: string): Promise<Pub | null> {
   const { data, error } = await supabase

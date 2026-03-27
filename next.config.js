@@ -11,6 +11,20 @@ const nextConfig = {
         { key: 'Service-Worker-Allowed', value: '/' },
       ],
     },
+    {
+      // Static assets with content hashes — cache aggressively
+      source: '/_next/static/:path*',
+      headers: [
+        { key: 'Cache-Control', value: 'public, max-age=31536000, immutable' },
+      ],
+    },
+    {
+      // Font files
+      source: '/fonts/:path*',
+      headers: [
+        { key: 'Cache-Control', value: 'public, max-age=31536000, immutable' },
+      ],
+    },
   ],
 }
 

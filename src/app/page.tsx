@@ -116,9 +116,42 @@ export const revalidate = 300
 
 export default async function HomePage() {
   const [pubs, stats] = await Promise.all([getPubs(), getSiteStats()])
+
+  // Get unique suburbs from pub data for server-rendered links
+  const suburbs = Array.from(new Set(pubs.map(p => p.suburb))).sort()
+
   return (
     <>
       <HomeJsonLd />
+
+      {/* ═══ SERVER-RENDERED CRAWLABLE LINKS ═══
+          These render in the initial HTML so Googlebot can discover all pages.
+          The client component overlays this with the interactive UI on hydration. */}
+      <div id="ssr-links" className="sr-only" aria-hidden="true">
+        <nav>
+          <a href="/">Home</a>
+          <a href="/discover">Discover</a>
+          <a href="/happy-hour">Happy Hours</a>
+          <a href="/leaderboard">Leaderboard</a>
+          <a href="/suburbs">All Suburbs</a>
+          <a href="/weekly-report">Pint Report</a>
+        </nav>
+
+        <h2>Perth Suburbs</h2>
+        {suburbs.map(suburb => {
+          const slug = suburb.toLowerCase().replace(/\s+/g, '-')
+          return <a key={slug} href={`/suburb/${slug}`}>{suburb}</a>
+        })}
+
+        <h2>Perth Pubs - Cheapest Pints</h2>
+        {pubs.slice(0, 50).map(pub => (
+          <a key={pub.slug} href={`/pub/${pub.slug}`}>
+            {pub.name} - {pub.suburb}
+            {pub.price ? ` - $${pub.price.toFixed(2)}` : ''}
+          </a>
+        ))}
+      </div>
+
       <HomeClient initialPubs={pubs} initialStats={stats} />
     </>
   )
