@@ -1,11 +1,11 @@
 import { MetadataRoute } from 'next'
-import { getAllPubSlugs, getAllSuburbs } from '@/lib/supabase'
+import { getAllPubSlugPairs, getAllSuburbs, toSuburbSlug } from '@/lib/supabase'
 
 const BASE_URL = 'https://perthpintprices.com'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [slugs, suburbs] = await Promise.all([
-    getAllPubSlugs(),
+  const [slugPairs, suburbs] = await Promise.all([
+    getAllPubSlugPairs(),
     getAllSuburbs(),
   ])
   const now = new Date().toISOString()
@@ -32,14 +32,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ]
 
   const suburbRoutes: MetadataRoute.Sitemap = suburbs.map(s => ({
-    url: `${BASE_URL}/suburb/${s.slug}`,
+    url: `${BASE_URL}/${s.slug}`,
     lastModified: now,
     changeFrequency: 'weekly' as const,
     priority: 0.8,
   }))
 
-  const pubRoutes: MetadataRoute.Sitemap = slugs.map(slug => ({
-    url: `${BASE_URL}/pub/${slug}`,
+  const pubRoutes: MetadataRoute.Sitemap = slugPairs.map(pair => ({
+    url: `${BASE_URL}/${toSuburbSlug(pair.suburb)}/${pair.slug}`,
     lastModified: now,
     changeFrequency: 'weekly' as const,
     priority: 0.6,

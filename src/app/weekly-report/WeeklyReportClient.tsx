@@ -6,6 +6,10 @@ import SubPageNav from '@/components/SubPageNav'
 import Footer from '@/components/Footer'
 import { TrendingUp, TrendingDown, Minus, Beer, MapPin, Users, BarChart3, Trophy } from 'lucide-react'
 
+function toSuburbSlug(suburb: string): string {
+  return suburb.toLowerCase().replace(/['']/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
+}
+
 interface WeeklyData {
   weekOf: string
   previousWeek: string | null
@@ -22,7 +26,7 @@ interface WeeklyData {
   mostExpensiveSuburb: string
   mostExpensiveSuburbAvg: number | null
   cheapestPubs: { slug: string; name: string; suburb: string; price: number; beer_type: string }[]
-  trending: { slug: string; name: string; reportCount: number }[]
+  trending: { slug: string; name: string; suburb: string; reportCount: number }[]
   totalReportsThisWeek: number
 }
 
@@ -161,7 +165,7 @@ export default function WeeklyClient() {
               {data.cheapestPubs.map((pub, i) => (
                 <Link
                   key={pub.slug}
-                  href={`/pub/${pub.slug}`}
+                  href={`/${toSuburbSlug(pub.suburb)}/${pub.slug}`}
                   className="flex items-center justify-between text-sm hover:bg-amber-pale -mx-2 px-2 py-1.5 rounded-lg transition-colors"
                 >
                   <span className="flex items-center gap-2 min-w-0">
@@ -186,7 +190,7 @@ export default function WeeklyClient() {
               {data.trending.map((pub) => (
                 <Link
                   key={pub.slug}
-                  href={`/pub/${pub.slug}`}
+                  href={`/${toSuburbSlug(pub.suburb)}/${pub.slug}`}
                   className="flex items-center justify-between text-sm hover:bg-amber-pale -mx-2 px-2 py-1.5 rounded-lg transition-colors"
                 >
                   <span className="font-medium text-ink">{pub.name}</span>

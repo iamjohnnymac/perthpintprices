@@ -16,6 +16,14 @@ const PubDetailMap = dynamic(() => import('@/components/PubDetailMap'), {
   loading: () => <div className="h-[350px] bg-off-white animate-pulse rounded-card border-3 border-ink" />,
 })
 
+function toSuburbSlug(suburb: string): string {
+  return suburb
+    .toLowerCase()
+    .replace(/['']/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '')
+}
+
 function timeAgo(dateStr: string): string {
   const date = new Date(dateStr)
   const now = new Date()
@@ -42,10 +50,11 @@ function formatHappyHourTime(start: string | null, end: string | null): string {
 interface PubDetailClientProps {
   pub: Pub
   nearbyPubs: Pub[]
+  similarPricePubs: Pub[]
   avgPrice: number
 }
 
-export default function PubDetailClient({ pub, nearbyPubs, avgPrice }: PubDetailClientProps) {
+export default function PubDetailClient({ pub, nearbyPubs, similarPricePubs, avgPrice }: PubDetailClientProps) {
   const [distance, setDistance] = useState<string | null>(null)
   const [showSubmitForm, setShowSubmitForm] = useState(false)
 
@@ -106,7 +115,7 @@ export default function PubDetailClient({ pub, nearbyPubs, avgPrice }: PubDetail
         <nav className="flex items-center gap-2 font-mono text-[0.7rem] text-gray-mid">
           <Link href="/" className="hover:text-amber transition-colors no-underline">Home</Link>
           <span>/</span>
-          <Link href={`/suburb/${pub.suburb.toLowerCase().replace(/['']/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')}`} className="hover:text-amber transition-colors no-underline">{pub.suburb}</Link>
+          <Link href={`/${toSuburbSlug(pub.suburb)}`} className="hover:text-amber transition-colors no-underline">{pub.suburb}</Link>
           <span>/</span>
           <span className="text-ink font-bold">{pub.name}</span>
         </nav>
@@ -258,7 +267,7 @@ export default function PubDetailClient({ pub, nearbyPubs, avgPrice }: PubDetail
               {nearbyPubs.map((nearby, i) => (
                 <Link
                   key={nearby.id}
-                  href={`/pub/${nearby.slug}`}
+                  href={`/${toSuburbSlug(pub.suburb)}/${nearby.slug}`}
                   className={`flex items-center justify-between py-3.5 no-underline group ${
                     i < nearbyPubs.length - 1 ? 'border-b border-gray-light' : ''
                   }`}
@@ -275,6 +284,34 @@ export default function PubDetailClient({ pub, nearbyPubs, avgPrice }: PubDetail
                   </div>
                   <span className="font-mono text-[1.1rem] font-extrabold text-ink ml-3">
                     {nearby.price !== null ? `$${nearby.price.toFixed(2)}` : 'TBC'}
+                  </span>
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Similar Price Pubs Across Perth */}
+        {similarPricePubs.length > 0 && (
+          <div className="mt-8">
+            <h2 className="font-mono font-extrabold text-xl tracking-[-0.02em] text-ink mb-4">
+              Similar Prices Across Perth
+            </h2>
+            <div className="space-y-0">
+              {similarPricePubs.map((similar, i) => (
+                <Link
+                  key={similar.id}
+                  href={`/${toSuburbSlug(similar.suburb)}/${similar.slug}`}
+                  className={`flex items-center justify-between py-3.5 no-underline group ${
+                    i < similarPricePubs.length - 1 ? 'border-b border-gray-light' : ''
+                  }`}
+                >
+                  <div className="min-w-0 flex-1">
+                    <p className="font-mono text-[0.85rem] font-extrabold text-ink group-hover:text-amber transition-colors truncate">{similar.name}</p>
+                    <p className="text-[0.7rem] text-gray-mid truncate">{similar.suburb}</p>
+                  </div>
+                  <span className="font-mono text-[1.1rem] font-extrabold text-ink ml-3">
+                    {similar.price !== null ? `$${similar.price.toFixed(2)}` : 'TBC'}
                   </span>
                 </Link>
               ))}

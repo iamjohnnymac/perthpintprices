@@ -8,6 +8,10 @@ import { getDistanceKm, formatDistance } from '@/lib/location'
 import { getHappyHourStatus } from '@/lib/happyHour'
 import { Sun, Sunset, Moon, Beer } from 'lucide-react'
 
+function toSuburbSlug(suburb: string): string {
+  return suburb.toLowerCase().replace(/['']/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
+}
+
 const MiniMap = dynamic(() => import('./MiniMap'), {
   ssr: false,
   loading: () => <div className="w-full h-full bg-off-white animate-pulse rounded-card" />,
@@ -324,7 +328,7 @@ export default function SunsetSippers({ pubs, userLocation }: SunsetSippersProps
             return (
               <Link
                 key={pub.id}
-                href={`/pub/${pub.slug}`}
+                href={`/${toSuburbSlug(pub.suburb)}/${pub.slug}`}
                 className="border-3 border-ink rounded-card shadow-hard-sm bg-white overflow-hidden no-underline group"
                 onClick={(e) => e.stopPropagation()}
               >

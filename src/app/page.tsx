@@ -1,6 +1,6 @@
 import { Metadata } from 'next'
 import HomeClient from './HomeClient'
-import { getSiteStats, getPubs } from '@/lib/supabase'
+import { getSiteStats, getPubs, toSuburbSlug } from '@/lib/supabase'
 
 export async function generateMetadata(): Promise<Metadata> {
   const stats = await getSiteStats()
@@ -139,13 +139,13 @@ export default async function HomePage() {
 
         <h2>Perth Suburbs</h2>
         {suburbs.map(suburb => {
-          const slug = suburb.toLowerCase().replace(/\s+/g, '-')
-          return <a key={slug} href={`/suburb/${slug}`}>{suburb}</a>
+          const slug = toSuburbSlug(suburb)
+          return <a key={slug} href={`/${slug}`}>{suburb}</a>
         })}
 
         <h2>Perth Pubs - Cheapest Pints</h2>
         {pubs.slice(0, 50).map(pub => (
-          <a key={pub.slug} href={`/pub/${pub.slug}`}>
+          <a key={pub.slug} href={`/${toSuburbSlug(pub.suburb)}/${pub.slug}`}>
             {pub.name} - {pub.suburb}
             {pub.price ? ` - $${pub.price.toFixed(2)}` : ''}
           </a>

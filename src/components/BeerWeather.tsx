@@ -8,6 +8,10 @@ import { getDistanceKm, formatDistance } from '@/lib/location'
 import { Umbrella, Thermometer, Sun, Leaf, Wind } from 'lucide-react'
 import LucideIcon from '@/components/LucideIcon'
 
+function toSuburbSlug(suburb: string): string {
+  return suburb.toLowerCase().replace(/['']/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
+}
+
 interface WeatherData {
   temperature: number
   weatherCode: number
@@ -265,7 +269,7 @@ export default function BeerWeather({ pubs, userLocation }: BeerWeatherProps) {
             <div className="space-y-0">
               {recommendedPubs.map((pub, index) => (
                 <Link
-                  key={pub.id} href={`/pub/${pub.slug}`}
+                  key={pub.id} href={`/${toSuburbSlug(pub.suburb)}/${pub.slug}`}
                   className={`flex items-center gap-3 px-3 py-3 no-underline group ${
                     index > 0 ? 'border-t border-gray-light' : ''
                   } ${index === 0 ? 'bg-amber/5' : ''}`}

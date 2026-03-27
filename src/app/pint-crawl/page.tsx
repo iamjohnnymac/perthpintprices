@@ -14,6 +14,8 @@ export const metadata: Metadata = {
     url: 'https://perthpintprices.com/pint-crawl',
     type: 'website',
     siteName: 'Arvo',
+    locale: 'en_AU',
+    images: [{ url: 'https://perthpintprices.com/og-image.png', width: 1200, height: 630, alt: 'Pint Crawl Perth | Arvo' }],
   },
   twitter: { card: 'summary_large_image' },
 }
@@ -26,7 +28,7 @@ export default async function PintCrawlPage() {
     <>
       <BreadcrumbJsonLd items={[
         { name: 'Home', url: 'https://perthpintprices.com' },
-        { name: 'Pint Crawl' },
+        { name: 'Pint Crawl', url: 'https://perthpintprices.com/pint-crawl' },
       ]} />
       <Suspense fallback={
         <div className="min-h-screen bg-[#FDF8F0] flex items-center justify-center">

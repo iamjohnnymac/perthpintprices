@@ -196,7 +196,7 @@ export default function SuburbLeague({ pubs }: { pubs: Pub[] }) {
                     <tr key={s.suburb} className={rowBg}>
                       <td className="px-2 py-2 text-center font-mono font-bold text-gray-mid text-[0.7rem]">{pos}</td>
                       <td className="px-2 py-2 text-left">
-                        <Link href={`/suburb/${toSlug(s.suburb)}`} className="font-body text-sm font-bold text-ink hover:text-amber transition-colors no-underline">{s.suburb}</Link>
+                        <Link href={`/${toSlug(s.suburb)}`} className="font-body text-sm font-bold text-ink hover:text-amber transition-colors no-underline">{s.suburb}</Link>
                         <span className="font-mono text-[0.6rem] text-gray-mid ml-1">({s.pubCount})</span>
                       </td>
                       <td className="px-2 py-2 text-center font-mono font-bold text-ink text-sm">${s.avgPrice.toFixed(2)}</td>

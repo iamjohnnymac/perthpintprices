@@ -3,6 +3,10 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { Beer, CircleCheck, Copy, Lightbulb, Medal } from 'lucide-react'
 
+function toSuburbSlug(suburb: string): string {
+  return suburb.toLowerCase().replace(/['']/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
+}
+
 interface PintOfTheDayData {
   date: string
   pub: {
@@ -60,7 +64,7 @@ export default function PintOfTheDay() {
 
   async function handleShare() {
     if (!data) return
-    const text = `Arvo Pint of the Day\n\n${data.pub.name}, ${data.pub.suburb}\n$${data.pub.effectivePrice.toFixed(2)} pint${data.pub.beerType ? ` (${data.pub.beerType})` : ''}\n${data.reason}\n\narvo.pub/pub/${data.pub.slug}`
+    const text = `Arvo Pint of the Day\n\n${data.pub.name}, ${data.pub.suburb}\n$${data.pub.effectivePrice.toFixed(2)} pint${data.pub.beerType ? ` (${data.pub.beerType})` : ''}\n${data.reason}\n\narvo.pub/${toSuburbSlug(data.pub.suburb)}/${data.pub.slug}`
     
     try {
       await navigator.clipboard.writeText(text)
@@ -107,7 +111,7 @@ export default function PintOfTheDay() {
       </div>
 
       {/* Main card */}
-      <Link href={`/pub/${data.pub.slug}`} className="block px-4 sm:px-5 pb-4 sm:pb-5 group">
+      <Link href={`/${toSuburbSlug(data.pub.suburb)}/${data.pub.slug}`} className="block px-4 sm:px-5 pb-4 sm:pb-5 group">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0 flex-1">
             <h4 className="text-lg font-bold font-heading text-ink group-hover:text-amber transition-colors truncate">{data.pub.name}</h4>

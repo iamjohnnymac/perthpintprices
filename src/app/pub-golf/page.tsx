@@ -13,6 +13,8 @@ export const metadata: Metadata = {
     url: 'https://perthpintprices.com/pub-golf',
     type: 'website',
     siteName: 'Arvo',
+    locale: 'en_AU',
+    images: [{ url: 'https://perthpintprices.com/og-image.png', width: 1200, height: 630, alt: 'Pub Golf Perth | Arvo' }],
   },
   twitter: { card: 'summary_large_image' },
 }
@@ -25,7 +27,7 @@ export default async function PubGolfPage() {
     <>
       <BreadcrumbJsonLd items={[
         { name: 'Home', url: 'https://perthpintprices.com' },
-        { name: 'Pub Golf' },
+        { name: 'Pub Golf', url: 'https://perthpintprices.com/pub-golf' },
       ]} />
       <PubGolfClient pubs={pubs} />
     </>

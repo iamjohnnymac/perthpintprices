@@ -12,6 +12,8 @@ export const metadata: Metadata = {
     url: 'https://perthpintprices.com/leaderboard',
     type: 'website',
     siteName: 'Arvo',
+    locale: 'en_AU',
+    images: [{ url: 'https://perthpintprices.com/og-image.png', width: 1200, height: 630, alt: 'Price Scout Leaderboard | Arvo' }],
   },
   twitter: { card: 'summary_large_image' },
 }
@@ -21,7 +23,7 @@ export default function LeaderboardPage() {
     <>
       <BreadcrumbJsonLd items={[
         { name: 'Home', url: 'https://perthpintprices.com' },
-        { name: 'Leaderboard' },
+        { name: 'Leaderboard', url: 'https://perthpintprices.com/leaderboard' },
       ]} />
       <LeaderboardClient />
     </>

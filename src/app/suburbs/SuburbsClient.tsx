@@ -83,7 +83,7 @@ export default function SuburbsClient({ suburbs }: SuburbsClientProps) {
                   {grouped[letter].map(suburb => (
                     <Link
                       key={suburb.slug}
-                      href={`/suburb/${suburb.slug}`}
+                      href={`/${suburb.slug}`}
                       className="flex items-center justify-between py-3 px-1 border-b border-gray-light/60 no-underline group hover:bg-white/50 transition-colors"
                     >
                       <div className="min-w-0">

@@ -8,6 +8,10 @@ import { getHappyHourStatus } from '@/lib/happyHour'
 import { getDistanceKm, formatDistance } from '@/lib/location'
 import { Clock, Star, TrendingDown, PartyPopper, Flame, Moon } from 'lucide-react'
 
+function toSuburbSlug(suburb: string): string {
+  return suburb.toLowerCase().replace(/['']/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
+}
+
 interface TonightsMovesProps {
   pubs: Pub[]
   userLocation?: { lat: number; lng: number } | null
@@ -155,7 +159,7 @@ export default function TonightsMoves({ pubs, userLocation }: TonightsMovesProps
                 </h4>
                 <div className="flex items-center justify-between">
                   <div>
-                    <Link href={`/pub/${marketTip.slug}`} className="font-body text-sm font-bold text-ink hover:text-amber transition-colors no-underline">{marketTip.name}</Link>
+                    <Link href={`/${toSuburbSlug(marketTip.suburb)}/${marketTip.slug}`} className="font-body text-sm font-bold text-ink hover:text-amber transition-colors no-underline">{marketTip.name}</Link>
                     <p className="font-body text-[0.7rem] text-gray-mid">{marketTip.suburb}{userLocation && ` · ${formatDistance(getDistanceKm(userLocation.lat, userLocation.lng, marketTip.lat, marketTip.lng))}`} · {marketTip.beerType}</p>
                   </div>
                   <div className="text-right">
@@ -175,7 +179,7 @@ export default function TonightsMoves({ pubs, userLocation }: TonightsMovesProps
               </h4>
               <div className="space-y-0">
                 {bestBuys.map((pub, i) => (
-                  <Link key={pub.id} href={`/pub/${pub.slug}`} className={`flex items-center justify-between px-3 py-2.5 no-underline group ${i > 0 ? 'border-t border-gray-light' : ''} ${i === 0 ? 'bg-amber/5' : ''}`}>
+                  <Link key={pub.id} href={`/${toSuburbSlug(pub.suburb)}/${pub.slug}`} className={`flex items-center justify-between px-3 py-2.5 no-underline group ${i > 0 ? 'border-t border-gray-light' : ''} ${i === 0 ? 'bg-amber/5' : ''}`}>
                     <div className="flex items-center gap-2 min-w-0">
                       <span className={`font-mono text-[0.65rem] font-bold w-4 ${i === 0 ? 'text-amber' : 'text-gray-mid'}`}>{i === 0 ? '\u2605' : `${i + 1}`}</span>
                       <div className="min-w-0">
@@ -199,7 +203,7 @@ export default function TonightsMoves({ pubs, userLocation }: TonightsMovesProps
                   {activeDeals.slice(0, 10).map((pub, i) => {
                     const status = getHappyHourStatus(pub.happyHour)
                     return (
-                      <Link key={pub.id} href={`/pub/${pub.slug}`} className={`flex items-center justify-between px-3 py-2.5 no-underline group ${i > 0 ? 'border-t border-gray-light' : ''}`}>
+                      <Link key={pub.id} href={`/${toSuburbSlug(pub.suburb)}/${pub.slug}`} className={`flex items-center justify-between px-3 py-2.5 no-underline group ${i > 0 ? 'border-t border-gray-light' : ''}`}>
                         <div className="min-w-0">
                           <span className="font-body text-sm font-bold text-ink group-hover:text-amber transition-colors truncate block">{pub.name}</span>
                           <p className="font-body text-[0.7rem] text-gray-mid">{pub.suburb}{userLocation && ` · ${formatDistance(getDistanceKm(userLocation.lat, userLocation.lng, pub.lat, pub.lng))}`}</p>
@@ -227,7 +231,7 @@ export default function TonightsMoves({ pubs, userLocation }: TonightsMovesProps
                   {upcomingDeals.map((pub, i) => {
                     const status = getHappyHourStatus(pub.happyHour)
                     return (
-                      <Link key={pub.id} href={`/pub/${pub.slug}`} className={`flex items-center justify-between px-3 py-2.5 no-underline group ${i > 0 ? 'border-t border-gray-light' : ''}`}>
+                      <Link key={pub.id} href={`/${toSuburbSlug(pub.suburb)}/${pub.slug}`} className={`flex items-center justify-between px-3 py-2.5 no-underline group ${i > 0 ? 'border-t border-gray-light' : ''}`}>
                         <div className="min-w-0">
                           <span className="font-body text-sm font-bold text-ink group-hover:text-amber transition-colors truncate block">{pub.name}</span>
                           <p className="font-body text-[0.7rem] text-gray-mid">{pub.suburb}{userLocation && ` · ${formatDistance(getDistanceKm(userLocation.lat, userLocation.lng, pub.lat, pub.lng))}`}</p>
