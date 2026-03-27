@@ -17,6 +17,8 @@ export const metadata: Metadata = {
     url: 'https://perthpintprices.com/happy-hour',
     type: 'website',
     siteName: 'Arvo',
+    locale: 'en_AU',
+    images: [{ url: 'https://perthpintprices.com/og-image.png', width: 1200, height: 630, alt: 'Happy Hours in Perth | Arvo' }],
   },
   twitter: { card: 'summary_large_image' },
 }
@@ -35,7 +37,7 @@ export default async function HappyHourPage() {
 
       {/* Server-rendered links for crawlers */}
       <div className="sr-only" aria-hidden="true">
-        <h1>Happy Hour Deals in Perth</h1>
+        <h2>Happy Hour Deals in Perth</h2>
         {happyHourPubs.map(pub => (
           <a key={pub.slug} href={`/pub/${pub.slug}`}>
             {pub.name} - {pub.suburb} - Happy Hour

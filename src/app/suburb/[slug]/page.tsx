@@ -1,6 +1,6 @@
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { getAllSuburbs, getSuburbBySlug, getSuburbPubs, getNearbySuburbs, getSiteStats } from '@/lib/supabase'
+import { getAllSuburbs, getSuburbBySlug, getSuburbPubs, getNearbySuburbs, getSiteStats, toSuburbSlug } from '@/lib/supabase'
 import SuburbClient from './SuburbClient'
 
 interface PageProps {
@@ -102,6 +102,25 @@ export default async function SuburbPage({ params }: PageProps) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
+      {/* Server-rendered links for crawlers — ensures ALL pubs are discoverable
+          (SuburbClient only shows first 10 behind a "Show all" button) */}
+      <div className="sr-only" aria-hidden="true">
+        <h2>Cheapest Pints in {suburb.name}, Perth</h2>
+        <p>Compare pint prices across {pubs.length} pubs in {suburb.name}. Community-verified prices updated daily.</p>
+        <h2>All Pubs in {suburb.name}</h2>
+        {pubs.map(pub => (
+          <a key={pub.slug} href={`/pub/${pub.slug}`}>
+            {pub.name} - {pub.suburb}{pub.price ? ` - $${pub.price.toFixed(2)}` : ''}
+          </a>
+        ))}
+        <h2>Nearby Suburbs</h2>
+        {nearbySuburbs.map(ns => (
+          <a key={ns.slug} href={`/suburb/${ns.slug}`}>{ns.name}</a>
+        ))}
+        <a href="/">Home</a>
+        <a href="/suburbs">All Suburbs</a>
+      </div>
+
       <SuburbClient
         suburb={suburb}
         pubs={pubs}

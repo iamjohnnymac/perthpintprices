@@ -5,14 +5,16 @@ import SuburbsClient from './SuburbsClient'
 
 export const metadata: Metadata = {
   title: 'All Suburbs | Arvo',
-  description: 'Browse pint prices across every Perth suburb. Find the cheapest pints near you.',
+  description: 'Browse pint prices across every Perth suburb. Compare average prices, find the cheapest pints near you, and discover happy hour deals. Community-verified prices updated daily.',
   alternates: { canonical: 'https://perthpintprices.com/suburbs' },
   openGraph: {
     title: 'All Suburbs | Arvo',
-    description: 'Browse pint prices across every Perth suburb. Find the cheapest pints near you.',
+    description: 'Browse pint prices across every Perth suburb. Compare average prices, find the cheapest pints near you, and discover happy hour deals.',
     url: 'https://perthpintprices.com/suburbs',
     type: 'website',
     siteName: 'Arvo',
+    locale: 'en_AU',
+    images: [{ url: 'https://perthpintprices.com/og-image.png', width: 1200, height: 630, alt: 'Perth suburb pint prices | Arvo' }],
   },
   twitter: { card: 'summary_large_image' },
 }
@@ -25,7 +27,7 @@ export default async function SuburbsPage() {
     <>
       <BreadcrumbJsonLd items={[
         { name: 'Home', url: 'https://perthpintprices.com' },
-        { name: 'All Suburbs' },
+        { name: 'All Suburbs', url: 'https://perthpintprices.com/suburbs' },
       ]} />
       <SuburbsClient suburbs={suburbs} />
     </>

@@ -1,6 +1,6 @@
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { getPubBySlug, getAllPubSlugs, getNearbyPubs, getSiteStats } from '@/lib/supabase'
+import { getPubBySlug, getAllPubSlugs, getNearbyPubs, getSimilarPricePubs, getSiteStats, toSuburbSlug } from '@/lib/supabase'
 import PubDetailClient from './PubDetailClient'
 
 interface PageProps {
@@ -13,7 +13,25 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   
   const priceText = pub.price !== null ? `$${pub.price.toFixed(2)} pints` : 'Price TBC'
   const title = `${pub.name}, ${pub.suburb}: ${priceText} | Arvo`
-  const description = `${priceText} at ${pub.name} in ${pub.suburb}, Perth WA.${pub.happyHour ? ` Happy Hour: ${pub.happyHour}.` : ''} ${pub.beerType ? `Serving ${pub.beerType}.` : ''} Find the best pint prices on Arvo.`
+
+  // Build description with progressive enrichment (target 70-160 chars)
+  const descParts: string[] = []
+  descParts.push(`Compare pint prices at ${pub.name} in ${pub.suburb}, Perth WA.`)
+  if (pub.price !== null) descParts.push(`Standard pint from $${pub.price.toFixed(2)}.`)
+  if (pub.happyHour) descParts.push(`Happy hour: ${pub.happyHour}.`)
+  if (pub.vibeTag) descParts.push(`${pub.vibeTag} venue.`)
+  if (pub.beerType) descParts.push(`Serving ${pub.beerType}.`)
+  descParts.push('Community-verified prices updated daily on Arvo.')
+  let description = descParts.join(' ')
+  if (description.length < 120) {
+    description += ' Find cheaper pints nearby.'
+  }
+  if (description.length > 160) {
+    // Truncate at last sentence boundary before 155 chars
+    const truncated = description.slice(0, 155)
+    const lastDot = truncated.lastIndexOf('.')
+    description = lastDot > 80 ? truncated.slice(0, lastDot + 1) : truncated + '...'
+  }
   
   return {
     title,
@@ -47,8 +65,9 @@ export default async function PubPage({ params }: PageProps) {
   const pub = await getPubBySlug(params.slug)
   if (!pub) notFound()
   
-  const [nearbyPubs, stats] = await Promise.all([
-    getNearbyPubs(pub.suburb, pub.id, 4),
+  const [nearbyPubs, similarPricePubs, stats] = await Promise.all([
+    getNearbyPubs(pub.suburb, pub.id, 8),
+    pub.price != null ? getSimilarPricePubs(pub.price, pub.suburb, pub.id, 6) : Promise.resolve([]),
     getSiteStats(),
   ])
   
@@ -58,8 +77,8 @@ export default async function PubPage({ params }: PageProps) {
       '@type': 'BreadcrumbList',
       itemListElement: [
         { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://perthpintprices.com' },
-        { '@type': 'ListItem', position: 2, name: pub.suburb, item: `https://perthpintprices.com/suburb/${pub.suburb.toLowerCase().replace(/['']/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')}` },
-        { '@type': 'ListItem', position: 3, name: pub.name },
+        { '@type': 'ListItem', position: 2, name: pub.suburb, item: `https://perthpintprices.com/suburb/${toSuburbSlug(pub.suburb)}` },
+        { '@type': 'ListItem', position: 3, name: pub.name, item: `https://perthpintprices.com/pub/${params.slug}` },
       ],
     },
     {
@@ -85,13 +104,29 @@ export default async function PubPage({ params }: PageProps) {
     },
   ]
 
+  const suburbSlug = toSuburbSlug(pub.suburb)
+
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <PubDetailClient pub={pub} nearbyPubs={nearbyPubs} avgPrice={Number(stats.avgPrice)} />
+
+      {/* Server-rendered links for crawlers — ensures this pub page has strong internal linking */}
+      <div className="sr-only" aria-hidden="true">
+        <a href="/">Home</a>
+        <a href={`/suburb/${suburbSlug}`}>{pub.suburb}</a>
+        <a href="/suburbs">All Suburbs</a>
+        {nearbyPubs.map(np => (
+          <a key={np.slug} href={`/pub/${np.slug}`}>{np.name} - {np.suburb}</a>
+        ))}
+        {similarPricePubs.map(sp => (
+          <a key={sp.slug} href={`/pub/${sp.slug}`}>{sp.name} - {sp.suburb}</a>
+        ))}
+      </div>
+
+      <PubDetailClient pub={pub} nearbyPubs={nearbyPubs} similarPricePubs={similarPricePubs} avgPrice={Number(stats.avgPrice)} />
     </>
   )
 }

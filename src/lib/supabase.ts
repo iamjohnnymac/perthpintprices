@@ -362,6 +362,68 @@ export async function getNearbyPubs(suburb: string, excludeId: number, limit: nu
   })
 }
 
+// Fetch pubs in a similar price range from different suburbs (for cross-linking)
+export async function getSimilarPricePubs(price: number, excludeSuburb: string, excludeId: number, limit: number = 6): Promise<Pub[]> {
+  const { data, error } = await supabase
+    .from('pubs')
+    .select('*')
+    .neq('suburb', excludeSuburb)
+    .neq('id', excludeId)
+    .not('price', 'is', null)
+    .gte('price', price - 1.0)
+    .lte('price', price + 1.0)
+    .order('price', { ascending: true, nullsFirst: false })
+    .limit(limit)
+
+  if (error || !data) return []
+
+  return data.map(row => {
+    const regularPrice = row.price != null ? Number(row.price) : null
+    const hhPrice = row.happy_hour_price != null ? Number(row.happy_hour_price) : null
+    const hhStatus = getHappyHourStatus({
+      price: regularPrice,
+      happyHourPrice: hhPrice,
+      happyHourDays: row.happy_hour_days || null,
+      happyHourStart: row.happy_hour_start || null,
+      happyHourEnd: row.happy_hour_end || null,
+    })
+    const happyHourText = row.happy_hour || generateHappyHourText(row.happy_hour_days, row.happy_hour_start, row.happy_hour_end)
+
+    return {
+      id: row.id,
+      slug: row.slug || '',
+      name: row.name,
+      suburb: row.suburb,
+      price: hhStatus.effectivePrice,
+      regularPrice: regularPrice,
+      imageUrl: row.image_url ?? null,
+      vibeTag: row.vibe_tag || null,
+      effectivePrice: (hhStatus.isActive && hhPrice) ? hhPrice : regularPrice,
+      address: row.address || '',
+      website: row.website || null,
+      lat: row.lat || 0,
+      lng: row.lng || 0,
+      beerType: titleCase(row.beer_type || ''),
+      happyHour: happyHourText,
+      description: row.description || null,
+      lastUpdated: row.last_updated || undefined,
+      sunsetSpot: row.sunset_spot || false,
+      priceVerified: row.price_verified !== false,
+      hasTab: row.has_tab === true,
+      kidFriendly: row.kid_friendly === true,
+      cozyPub: row.cozy_pub === true,
+      happyHourPrice: hhPrice,
+      happyHourDays: row.happy_hour_days || null,
+      happyHourStart: row.happy_hour_start || null,
+      happyHourEnd: row.happy_hour_end || null,
+      lastVerified: row.last_verified || null,
+      isHappyHourNow: hhStatus.isActive,
+      happyHourLabel: hhStatus.happyHourLabel,
+      happyHourMinutesRemaining: hhStatus.minutesRemaining,
+    }
+  })
+}
+
 // Fetch price history for a pub (for trend charts)
 export interface PriceHistoryPoint {
   price: number | null
@@ -450,7 +512,7 @@ export interface SuburbInfo {
   happyHourCount: number
 }
 
-function toSuburbSlug(suburb: string): string {
+export function toSuburbSlug(suburb: string): string {
   return suburb
     .toLowerCase()
     .replace(/['']/g, '')

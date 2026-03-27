@@ -12,6 +12,8 @@ export const metadata: Metadata = {
     url: 'https://perthpintprices.com/insights/tonights-best-bets',
     type: 'website',
     siteName: 'Arvo',
+    locale: 'en_AU',
+    images: [{ url: 'https://perthpintprices.com/og-image.png', width: 1200, height: 630, alt: 'Tonight\'s Best Pints in Perth' }],
   },
   twitter: { card: 'summary_large_image' },
 }
@@ -21,9 +23,16 @@ export default function Page() {
     <>
       <BreadcrumbJsonLd items={[
         { name: 'Home', url: 'https://perthpintprices.com' },
-        { name: 'Insights', url: 'https://perthpintprices.com/insights' },
-        { name: "Tonight's Best Bets" },
+        { name: 'Discover', url: 'https://perthpintprices.com/discover' },
+        { name: "Tonight's Best Bets", url: 'https://perthpintprices.com/insights/tonights-best-bets' },
       ]} />
+      <div className="sr-only" aria-hidden="true">
+        <h1>Tonight&#39;s Best Pints in Perth</h1>
+        <p>Find the cheapest pints available in Perth right now. Live happy hour deals, tonight&#39;s best value picks, and real-time pricing across 300+ Perth venues.</p>
+        <a href="/">Home</a>
+        <a href="/discover">Discover</a>
+        <a href="/happy-hour">Happy Hours</a>
+      </div>
       <TonightsBestBetsPage />
     </>
   )
