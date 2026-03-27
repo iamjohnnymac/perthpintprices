@@ -8,6 +8,10 @@ import { getFreshness } from '@/lib/freshness'
 import { Zap, Clock } from 'lucide-react'
 import { getMapTileUrl } from '@/lib/mapTile'
 
+function toSuburbSlug(suburb: string): string {
+  return suburb.toLowerCase().replace(/['']/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
+}
+
 interface PubCardProps {
   pub: Pub
   avgPrice?: number
@@ -40,7 +44,7 @@ export default function PubCard({ pub, avgPrice = 9.20, distance }: PubCardProps
   const gradient = getPlaceholderGradient(pub.name)
 
   return (
-    <Link href={`/pub/${pub.slug}`} className="block group">
+    <Link href={`/${toSuburbSlug(pub.suburb)}/${pub.slug}`} className="block group">
       <div className="bg-white border-3 border-ink rounded-card overflow-hidden shadow-hard-sm hover:translate-x-[1.5px] hover:translate-y-[1.5px] hover:shadow-hard-hover transition-all h-full flex flex-col">
         {/* Image placeholder with map tile background */}
         <div className={`relative h-[140px] sm:h-[180px] bg-gradient-to-br ${gradient} flex items-center justify-center overflow-hidden border-b-3 border-ink`}>

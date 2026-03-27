@@ -8,6 +8,10 @@ import 'leaflet/dist/leaflet.css'
 import { getMapMode, MAP_TILES, MAP_FILTERS, MAP_ATTRIBUTION } from '@/lib/mapTheme'
 import React, { useEffect } from 'react'
 
+function toSuburbSlug(suburb: string): string {
+  return suburb.toLowerCase().replace(/['']/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
+}
+
 // Price-coded markers using DivIcon - sized by price (P1c)
 function getPriceIcon(price: number | null): L.DivIcon {
   // TBC = smallest (28px)
@@ -219,7 +223,7 @@ export default function MapComponent({ pubs, userLocation, totalPubCount }: MapP
             </Tooltip>
             <Popup>
               <div style={{ padding: '8px 8px 14px 8px', minWidth: '200px' }}>
-                <a href={`/pub/${pub.slug}`} style={{ fontWeight: 700, fontSize: '16px', marginBottom: '4px', color: '#1f2937', textDecoration: 'none', display: 'block' }}>
+                <a href={`/${toSuburbSlug(pub.suburb)}/${pub.slug}`} style={{ fontWeight: 700, fontSize: '16px', marginBottom: '4px', color: '#1f2937', textDecoration: 'none', display: 'block' }}>
                   {pub.name}
                 </a>
                 <p style={{ color: '#E8820C', fontWeight: 600, marginBottom: '4px' }}>
@@ -256,7 +260,7 @@ export default function MapComponent({ pubs, userLocation, totalPubCount }: MapP
                   </a>
                 )}
                 <a
-                  href={`/pub/${pub.slug}`}
+                  href={`/${toSuburbSlug(pub.suburb)}/${pub.slug}`}
                   style={{
                     color: '#E8820C',
                     fontSize: '13px',

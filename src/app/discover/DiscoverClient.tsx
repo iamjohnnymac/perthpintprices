@@ -11,6 +11,10 @@ import Footer from '@/components/Footer'
 import { Beer, Clock, Tag, Star } from 'lucide-react'
 import LucideIcon from '@/components/LucideIcon'
 
+function toSuburbSlug(suburb: string): string {
+  return suburb.toLowerCase().replace(/['']/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
+}
+
 /* ─── Helpers ─── */
 function getPerthTime(): Date {
   return new Date(new Date().toLocaleString('en-US', { timeZone: 'Australia/Perth' }))
@@ -128,7 +132,7 @@ export default function DiscoverClient() {
               </p>
               <div className="flex items-center justify-center gap-2 mb-3 flex-wrap">
                 <Beer className="w-5 h-5 text-amber" />
-                <Link href={`/pub/${pintOfTheDay.pub.slug}`} className="font-mono text-lg sm:text-xl font-extrabold text-ink hover:text-amber transition-colors no-underline">
+                <Link href={`/${toSuburbSlug(pintOfTheDay.pub.suburb)}/${pintOfTheDay.pub.slug}`} className="font-mono text-lg sm:text-xl font-extrabold text-ink hover:text-amber transition-colors no-underline">
                   {pintOfTheDay.pub.name}
                 </Link>
                 <span className="text-gray-mid text-sm">{pintOfTheDay.pub.suburb}</span>
@@ -158,7 +162,7 @@ export default function DiscoverClient() {
               <p className="text-sm text-gray-mid mb-4">Lowest prices right now</p>
               <div className="space-y-1">
                 {bestBuys.slice(0, 5).map((pub, i) => (
-                  <Link key={pub.id} href={`/pub/${pub.slug}`} className="flex items-center justify-between p-2.5 rounded-card border-l-2 border-l-transparent hover:border-l-amber hover:bg-off-white transition-all group no-underline">
+                  <Link key={pub.id} href={`/${toSuburbSlug(pub.suburb)}/${pub.slug}`} className="flex items-center justify-between p-2.5 rounded-card border-l-2 border-l-transparent hover:border-l-amber hover:bg-off-white transition-all group no-underline">
                     <div className="flex items-center gap-3 min-w-0">
                       <span className="font-mono text-sm font-bold text-gray-mid w-5">{i + 1}</span>
                       <div className="min-w-0">
@@ -188,7 +192,7 @@ export default function DiscoverClient() {
                   <p className="text-sm text-gray-mid py-4 text-center">No happy hours active or upcoming right now. Check back later!</p>
                 )}
                 {upcomingHappyHours.map(({ pub, status }) => (
-                  <Link key={pub.id} href={`/pub/${pub.slug}`} className="flex items-center justify-between p-2.5 rounded-card border-l-2 border-l-transparent hover:border-l-amber hover:bg-off-white transition-all group no-underline">
+                  <Link key={pub.id} href={`/${toSuburbSlug(pub.suburb)}/${pub.slug}`} className="flex items-center justify-between p-2.5 rounded-card border-l-2 border-l-transparent hover:border-l-amber hover:bg-off-white transition-all group no-underline">
                     <div className="min-w-0">
                       <span className="font-mono text-sm font-bold text-ink truncate block group-hover:text-amber transition-colors">{pub.name}</span>
                       <p className="text-xs text-gray-mid">{pub.suburb}</p>

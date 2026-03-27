@@ -115,7 +115,7 @@ export default function PubDetailClient({ pub, nearbyPubs, similarPricePubs, avg
         <nav className="flex items-center gap-2 font-mono text-[0.7rem] text-gray-mid">
           <Link href="/" className="hover:text-amber transition-colors no-underline">Home</Link>
           <span>/</span>
-          <Link href={`/suburb/${toSuburbSlug(pub.suburb)}`} className="hover:text-amber transition-colors no-underline">{pub.suburb}</Link>
+          <Link href={`/${toSuburbSlug(pub.suburb)}`} className="hover:text-amber transition-colors no-underline">{pub.suburb}</Link>
           <span>/</span>
           <span className="text-ink font-bold">{pub.name}</span>
         </nav>
@@ -267,7 +267,7 @@ export default function PubDetailClient({ pub, nearbyPubs, similarPricePubs, avg
               {nearbyPubs.map((nearby, i) => (
                 <Link
                   key={nearby.id}
-                  href={`/pub/${nearby.slug}`}
+                  href={`/${toSuburbSlug(pub.suburb)}/${nearby.slug}`}
                   className={`flex items-center justify-between py-3.5 no-underline group ${
                     i < nearbyPubs.length - 1 ? 'border-b border-gray-light' : ''
                   }`}
@@ -301,7 +301,7 @@ export default function PubDetailClient({ pub, nearbyPubs, similarPricePubs, avg
               {similarPricePubs.map((similar, i) => (
                 <Link
                   key={similar.id}
-                  href={`/pub/${similar.slug}`}
+                  href={`/${toSuburbSlug(similar.suburb)}/${similar.slug}`}
                   className={`flex items-center justify-between py-3.5 no-underline group ${
                     i < similarPricePubs.length - 1 ? 'border-b border-gray-light' : ''
                   }`}

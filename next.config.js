@@ -26,6 +26,14 @@ const nextConfig = {
       ],
     },
   ],
+  redirects: async () => [
+    {
+      // Old suburb URL structure: /suburb/{slug} → /{slug}
+      source: '/suburb/:slug',
+      destination: '/:slug',
+      permanent: true,
+    },
+  ],
 }
 
 module.exports = nextConfig

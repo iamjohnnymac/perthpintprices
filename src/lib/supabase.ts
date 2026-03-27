@@ -303,6 +303,17 @@ export async function getAllPubSlugs(): Promise<string[]> {
   return data.map(row => row.slug).filter(Boolean)
 }
 
+// Fetch all pub slug + suburb pairs (for sitemap and generateStaticParams with suburb context)
+export async function getAllPubSlugPairs(): Promise<{ slug: string; suburb: string }[]> {
+  const { data, error } = await supabase
+    .from('pubs')
+    .select('slug, suburb')
+    .order('slug')
+
+  if (error || !data) return []
+  return data.filter(row => row.slug && row.suburb).map(row => ({ slug: row.slug, suburb: row.suburb }))
+}
+
 // Fetch nearby pubs (same suburb, excluding current)
 export async function getNearbyPubs(suburb: string, excludeId: number, limit: number = 4): Promise<Pub[]> {
   const { data, error } = await supabase

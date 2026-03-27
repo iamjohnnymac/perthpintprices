@@ -12,6 +12,10 @@ import Footer from '@/components/Footer'
 // Helpers
 // ---------------------------------------------------------------------------
 
+function toSuburbSlug(suburb: string): string {
+  return suburb.toLowerCase().replace(/['']/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
+}
+
 function getDistance(lat1: number, lng1: number, lat2: number, lng2: number): number {
   const R = 6371
   const dLat = (lat2 - lat1) * Math.PI / 180
@@ -658,7 +662,7 @@ export default function PubGolfClient({ pubs }: { pubs: Pub[] }) {
               <div className="min-w-0">
                 <p className="text-3xl sm:text-4xl font-black font-mono text-ink leading-none">HOLE {currentHole + 1}</p>
                 <Link
-                  href={`/pub/${pub.slug}`}
+                  href={`/${toSuburbSlug(pub.suburb)}/${pub.slug}`}
                   className="text-lg font-bold text-ink hover:text-amber transition-colors mt-1 block truncate"
                 >
                   {pub.name}
@@ -844,7 +848,7 @@ export default function PubGolfClient({ pubs }: { pubs: Pub[] }) {
                     <tr key={i} className="border-b border-gray-light">
                       <td className="py-1.5 pr-2 font-bold text-ink">{i + 1}</td>
                       <td className="py-1.5 pr-2 truncate max-w-[100px]">
-                        <Link href={`/pub/${pub.slug}`} className="text-gray-mid hover:text-amber transition-colors">
+                        <Link href={`/${toSuburbSlug(pub.suburb)}/${pub.slug}`} className="text-gray-mid hover:text-amber transition-colors">
                           {pub.name}
                         </Link>
                       </td>

@@ -8,6 +8,10 @@ import { getPubs } from '@/lib/supabase'
 import { Pub } from '@/types/pub'
 import { getDistanceKm, formatDistance } from '@/lib/location'
 
+function toSuburbSlug(suburb: string): string {
+  return suburb.toLowerCase().replace(/['']/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
+}
+
 type SortMode = 'price' | 'nearest'
 
 interface HappyHourClientProps {
@@ -181,7 +185,7 @@ export default function HappyHourClient({ initialPubs }: HappyHourClientProps) {
               return (
                 <Link
                   key={pub.id}
-                  href={`/pub/${pub.slug}`}
+                  href={`/${toSuburbSlug(pub.suburb)}/${pub.slug}`}
                   className={`flex items-center gap-4 py-4 no-underline group ${
                     i < pubs.length - 1 ? 'border-b border-gray-light' : ''
                   }`}

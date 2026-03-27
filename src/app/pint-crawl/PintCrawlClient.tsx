@@ -23,6 +23,10 @@ function walkingMinutes(km: number): number {
   return Math.round((km / 5) * 60)
 }
 
+function toSuburbSlug(suburb: string): string {
+  return suburb.toLowerCase().replace(/['']/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
+}
+
 /* ─── Types ─── */
 type Phase = 'plan' | 'route' | 'live'
 type Area = 'near-me' | 'northbridge' | 'fremantle' | 'perth-cbd' | 'all'
@@ -624,7 +628,7 @@ export default function PintCrawlClient({ pubs }: { pubs: Pub[] }) {
                     )}
                     {/* Pub stop */}
                     <Link
-                      href={`/pub/${seg.pub.slug}`}
+                      href={`/${toSuburbSlug(seg.pub.suburb)}/${seg.pub.slug}`}
                       className="flex items-start gap-3 p-3 -mx-1 rounded-xl hover:bg-off-white transition-colors"
                     >
                       <div className="flex-shrink-0 w-7 h-7 rounded-pill bg-ink text-white flex items-center justify-center text-xs font-bold">

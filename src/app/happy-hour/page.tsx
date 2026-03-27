@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import BreadcrumbJsonLd from '@/components/BreadcrumbJsonLd'
 import HappyHourClient from './HappyHourClient'
-import { getPubs } from '@/lib/supabase'
+import { getPubs, toSuburbSlug } from '@/lib/supabase'
 
 export const revalidate = 60 // Revalidate every 60 seconds for fresh happy hour data
 
@@ -39,7 +39,7 @@ export default async function HappyHourPage() {
       <div className="sr-only" aria-hidden="true">
         <h2>Happy Hour Deals in Perth</h2>
         {happyHourPubs.map(pub => (
-          <a key={pub.slug} href={`/pub/${pub.slug}`}>
+          <a key={pub.slug} href={`/${toSuburbSlug(pub.suburb)}/${pub.slug}`}>
             {pub.name} - {pub.suburb} - Happy Hour
           </a>
         ))}

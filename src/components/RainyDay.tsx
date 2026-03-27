@@ -6,6 +6,10 @@ import { Pub } from '@/types/pub'
 import { getDistanceKm, formatDistance } from '@/lib/location'
 import { CloudRain, Coffee, Droplets } from 'lucide-react'
 
+function toSuburbSlug(suburb: string): string {
+  return suburb.toLowerCase().replace(/['']/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
+}
+
 interface RainyDayProps {
   pubs: Pub[]
   userLocation?: { lat: number; lng: number } | null
@@ -203,7 +207,7 @@ export default function RainyDay({ pubs, userLocation }: RainyDayProps) {
               {cozyPubs.map((pub, index) => (
                 <Link
                   key={pub.id}
-                  href={`/pub/${pub.slug}`}
+                  href={`/${toSuburbSlug(pub.suburb)}/${pub.slug}`}
                   className={`flex items-center gap-3 px-3 py-3 no-underline group ${
                     index > 0 ? 'border-t border-gray-light' : ''
                   } ${index === 0 ? 'bg-amber/5' : ''}`}

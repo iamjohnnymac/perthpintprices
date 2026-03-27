@@ -14,6 +14,7 @@ interface SuburbClientProps {
   pubs: Pub[]
   nearbySuburbs: SuburbInfo[]
   perthAvgPrice: number
+  suburbSlug: string
 }
 
 const freshnessIcons: Record<FreshnessLevel, React.ReactNode> = {
@@ -21,7 +22,7 @@ const freshnessIcons: Record<FreshnessLevel, React.ReactNode> = {
   unknown: <HelpCircle className="w-3 h-3" />,
 }
 
-export default function SuburbClient({ suburb, pubs, nearbySuburbs, perthAvgPrice }: SuburbClientProps) {
+export default function SuburbClient({ suburb, pubs, nearbySuburbs, perthAvgPrice, suburbSlug }: SuburbClientProps) {
   const [showAll, setShowAll] = useState(false)
   const displayPubs = showAll ? pubs : pubs.slice(0, 10)
 
@@ -53,7 +54,7 @@ export default function SuburbClient({ suburb, pubs, nearbySuburbs, perthAvgPric
 
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           {[
-            { label: 'Cheapest', value: suburb.cheapestPrice !== 'TBC' ? `$${suburb.cheapestPrice}` : 'TBC', accent: true, link: suburb.cheapestPubSlug ? `/pub/${suburb.cheapestPubSlug}` : null, linkLabel: suburb.cheapestPub },
+            { label: 'Cheapest', value: suburb.cheapestPrice !== 'TBC' ? `$${suburb.cheapestPrice}` : 'TBC', accent: true, link: suburb.cheapestPubSlug ? `/${suburbSlug}/${suburb.cheapestPubSlug}` : null, linkLabel: suburb.cheapestPub },
             { label: 'Average', value: avgNum > 0 ? `$${suburb.avgPrice}` : 'TBC', accent: false, extra: diffText },
             { label: 'Most Expensive', value: suburb.mostExpensivePrice !== 'TBC' ? `$${suburb.mostExpensivePrice}` : 'TBC', accent: false },
             { label: 'Happy Hours', value: String(suburb.happyHourCount), accent: false, extra: `of ${suburb.pubCount} venues` },
@@ -76,7 +77,57 @@ export default function SuburbClient({ suburb, pubs, nearbySuburbs, perthAvgPric
             </div>
           ))}
         </div>
+
+        {/* Auto-generated content paragraph — unique per suburb, good for SEO */}
+        <p className="text-gray-mid text-[0.82rem] leading-relaxed mt-5">
+          {suburb.name} has {suburb.pubCount} {suburb.pubCount === 1 ? 'venue' : 'venues'} tracked on Arvo
+          {suburb.cheapestPrice !== 'TBC' && suburb.cheapestPub && (<>, with pints starting from ${suburb.cheapestPrice} at {suburb.cheapestPub}</>)}
+          {suburb.happyHourCount > 0 && (<>. {suburb.happyHourCount} {suburb.happyHourCount === 1 ? 'venue offers' : 'venues offer'} happy hour deals</>)}
+          {diffText && (<>. {suburb.name} is {diffText}</>)}
+          . All prices are community-verified and updated regularly.
+        </p>
       </section>
+
+      {/* Happy Hours Today — highlighted section for pubs with active deals */}
+      {(() => {
+        const activeHH = pubs.filter(p => p.isHappyHourNow)
+        if (activeHH.length === 0) return null
+        return (
+          <section className="max-w-container mx-auto px-6 pb-4">
+            <div className="border-3 border-red/30 rounded-card bg-red/5 overflow-hidden">
+              <div className="px-4 py-3 flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-red animate-pulse" />
+                <h2 className="font-mono font-extrabold text-[0.85rem] text-red uppercase tracking-[0.05em]">
+                  Happy Hour Live Now
+                </h2>
+                <span className="text-[0.7rem] text-gray-mid ml-auto">{activeHH.length} {activeHH.length === 1 ? 'venue' : 'venues'}</span>
+              </div>
+              <div className="divide-y divide-red/10">
+                {activeHH.map(pub => (
+                  <Link
+                    key={pub.id}
+                    href={`/${suburbSlug}/${pub.slug}`}
+                    className="flex items-center justify-between px-4 py-3 no-underline group hover:bg-red/5 transition-colors"
+                  >
+                    <div className="min-w-0 flex-1">
+                      <p className="font-mono text-[0.82rem] font-extrabold text-ink group-hover:text-red transition-colors truncate">{pub.name}</p>
+                      <p className="text-[0.65rem] text-red font-bold">{pub.happyHour}</p>
+                    </div>
+                    <div className="text-right ml-3 flex-shrink-0">
+                      {pub.happyHourPrice != null && (
+                        <p className="font-mono text-[1rem] font-extrabold text-red">${pub.happyHourPrice.toFixed(2)}</p>
+                      )}
+                      {pub.price != null && pub.happyHourPrice != null && pub.price > pub.happyHourPrice && (
+                        <p className="text-[0.6rem] text-gray-mid line-through">${pub.price.toFixed(2)}</p>
+                      )}
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </section>
+        )
+      })()}
 
       {/* Pub Table (desktop) + Card List (mobile) */}
       <section className="max-w-container mx-auto px-6 pb-6">
@@ -104,7 +155,7 @@ export default function SuburbClient({ suburb, pubs, nearbySuburbs, perthAvgPric
                     <tr key={pub.id} className={`border-t border-gray-light hover:bg-off-white transition-colors ${i === 0 ? 'bg-amber/5' : ''}`}>
                       <td className="px-4 py-3 font-mono text-[0.7rem] font-bold text-gray-mid">{i + 1}</td>
                       <td className="px-4 py-3">
-                        <Link href={`/pub/${pub.slug}`} className="font-mono text-[0.8rem] font-extrabold text-ink hover:text-amber transition-colors no-underline">
+                        <Link href={`/${suburbSlug}/${pub.slug}`} className="font-mono text-[0.8rem] font-extrabold text-ink hover:text-amber transition-colors no-underline">
                           {pub.name}
                         </Link>
                         <p className="text-[0.7rem] text-gray-mid mt-0.5 truncate max-w-none">{pub.address}</p>
@@ -146,7 +197,7 @@ export default function SuburbClient({ suburb, pubs, nearbySuburbs, perthAvgPric
             {displayPubs.map((pub, i) => (
               <Link
                 key={pub.id}
-                href={`/pub/${pub.slug}`}
+                href={`/${suburbSlug}/${pub.slug}`}
                 className={`flex items-center justify-between px-4 py-3.5 no-underline group ${
                   i > 0 ? 'border-t border-gray-light' : ''
                 } ${i === 0 ? 'bg-amber/5' : ''}`}
@@ -194,13 +245,20 @@ export default function SuburbClient({ suburb, pubs, nearbySuburbs, perthAvgPric
             {nearbySuburbs.map(ns => (
               <Link
                 key={ns.slug}
-                href={`/suburb/${ns.slug}`}
+                href={`/${ns.slug}`}
                 className="border-3 border-ink rounded-pill px-4 py-2 shadow-hard-sm hover:translate-x-[1.5px] hover:translate-y-[1.5px] hover:shadow-hard-hover transition-all no-underline group"
               >
                 <span className="font-mono text-[0.75rem] font-bold text-ink group-hover:text-amber transition-colors">{ns.name}</span>
                 <span className="text-[0.65rem] text-gray-mid ml-2">
                   {ns.pubCount} {ns.pubCount === 1 ? 'pub' : 'pubs'}
                   {ns.cheapestPrice !== 'TBC' && ` · from $${ns.cheapestPrice}`}
+                  {avgNum > 0 && Number(ns.avgPrice) > 0 && (
+                    Number(ns.avgPrice) < avgNum
+                      ? <span className="text-green ml-1">cheaper</span>
+                      : Number(ns.avgPrice) > avgNum
+                        ? <span className="text-red/70 ml-1">pricier</span>
+                        : null
+                  )}
                 </span>
               </Link>
             ))}
