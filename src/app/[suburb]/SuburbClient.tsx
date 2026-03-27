@@ -143,9 +143,9 @@ export default function SuburbClient({ suburb, pubs, nearbySuburbs, perthAvgPric
                 <tr className="bg-off-white text-gray-mid font-mono text-[0.65rem] uppercase tracking-wider">
                   <th className="px-4 py-2.5 text-left font-bold w-10">#</th>
                   <th className="px-4 py-2.5 text-left font-bold">Venue</th>
-                  <th className="px-4 py-2.5 text-center font-bold">Pint Price</th>
-                  <th className="px-4 py-2.5 text-center font-bold">Status</th>
-                  <th className="px-4 py-2.5 text-left font-bold hidden md:table-cell">Happy Hour</th>
+                  <th className="px-4 py-2.5 text-center font-bold whitespace-nowrap">Pint Price</th>
+                  <th className="px-4 py-2.5 text-center font-bold whitespace-nowrap">Status</th>
+                  <th className="px-4 py-2.5 text-left font-bold hidden md:table-cell whitespace-nowrap">Happy Hour</th>
                 </tr>
               </thead>
               <tbody>
@@ -158,7 +158,7 @@ export default function SuburbClient({ suburb, pubs, nearbySuburbs, perthAvgPric
                         <Link href={`/${suburbSlug}/${pub.slug}`} className="font-mono text-[0.8rem] font-extrabold text-ink hover:text-amber transition-colors no-underline">
                           {pub.name}
                         </Link>
-                        <p className="text-[0.7rem] text-gray-mid mt-0.5 truncate max-w-none">{pub.address}</p>
+                        <p className="text-[0.7rem] text-gray-mid mt-0.5 truncate max-w-[300px]">{pub.address}</p>
                       </td>
                       <td className="px-4 py-3 text-center">
                         {pub.price !== null && pub.priceVerified ? (
@@ -180,7 +180,7 @@ export default function SuburbClient({ suburb, pubs, nearbySuburbs, perthAvgPric
                       </td>
                       <td className="px-4 py-3 hidden md:table-cell">
                         {pub.happyHour ? (
-                          <span className="text-[0.7rem] text-red font-bold">{pub.happyHour}</span>
+                          <span className="text-[0.7rem] text-red font-bold block truncate max-w-[160px]" title={pub.happyHour ?? undefined}>{pub.happyHour}</span>
                         ) : (
                           <span className="text-[0.7rem] text-gray-mid">-</span>
                         )}
