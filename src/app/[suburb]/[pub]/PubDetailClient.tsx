@@ -50,11 +50,10 @@ function formatHappyHourTime(start: string | null, end: string | null): string {
 interface PubDetailClientProps {
   pub: Pub
   nearbyPubs: Pub[]
-  similarPricePubs: Pub[]
   avgPrice: number
 }
 
-export default function PubDetailClient({ pub, nearbyPubs, similarPricePubs, avgPrice }: PubDetailClientProps) {
+export default function PubDetailClient({ pub, nearbyPubs, avgPrice }: PubDetailClientProps) {
   const [distance, setDistance] = useState<string | null>(null)
   const [showSubmitForm, setShowSubmitForm] = useState(false)
 
@@ -259,63 +258,43 @@ export default function PubDetailClient({ pub, nearbyPubs, similarPricePubs, avg
 
         {/* Nearby Pubs */}
         {nearbyPubs.length > 0 && (
-          <div className="mt-8">
-            <h2 className="font-mono font-extrabold text-xl tracking-[-0.02em] text-ink mb-4">
-              More in {pub.suburb}
-            </h2>
-            <div className="space-y-0">
-              {nearbyPubs.map((nearby, i) => (
-                <Link
-                  key={nearby.id}
-                  href={`/${toSuburbSlug(pub.suburb)}/${nearby.slug}`}
-                  className={`flex items-center justify-between py-3.5 no-underline group ${
-                    i < nearbyPubs.length - 1 ? 'border-b border-gray-light' : ''
-                  }`}
-                >
-                  <div className="min-w-0 flex-1">
-                    <p className="font-mono text-[0.85rem] font-extrabold text-ink group-hover:text-amber transition-colors truncate">{nearby.name}</p>
-                    <p className="text-[0.7rem] text-gray-mid truncate">{nearby.beerType || 'House Pint'}</p>
+          <div className="mt-8 border-3 border-ink rounded-card shadow-hard-sm overflow-hidden">
+            <div className="px-4 py-3 border-b border-gray-light flex items-center justify-between">
+              <h2 className="font-mono font-extrabold text-[0.85rem] text-ink uppercase tracking-[0.05em]">
+                More in {pub.suburb}
+              </h2>
+              <Link
+                href={`/${toSuburbSlug(pub.suburb)}`}
+                className="font-mono text-[0.7rem] font-bold text-amber hover:underline no-underline"
+              >
+                View all →
+              </Link>
+            </div>
+            {nearbyPubs.map((nearby, i) => (
+              <Link
+                key={nearby.id}
+                href={`/${toSuburbSlug(pub.suburb)}/${nearby.slug}`}
+                className={`flex items-center justify-between px-4 py-3 no-underline group hover:bg-off-white transition-colors ${
+                  i < nearbyPubs.length - 1 ? 'border-b border-gray-light' : ''
+                }`}
+              >
+                <div className="min-w-0 flex-1">
+                  <p className="font-mono text-[0.82rem] font-extrabold text-ink group-hover:text-amber transition-colors truncate">{nearby.name}</p>
+                  <div className="flex items-center gap-2 mt-0.5">
+                    <span className="text-[0.65rem] text-gray-mid">{nearby.beerType || 'House Pint'}</span>
                     {nearby.isHappyHourNow && (
-                      <span className="inline-flex items-center gap-1 mt-0.5 text-[0.6rem] font-bold text-red">
+                      <span className="inline-flex items-center gap-1 text-[0.6rem] font-bold text-red">
                         <span className="w-1.5 h-1.5 rounded-full bg-red animate-pulse" />
-                        Happy Hour Live
+                        Happy Hour
                       </span>
                     )}
                   </div>
-                  <span className="font-mono text-[1.1rem] font-extrabold text-ink ml-3">
-                    {nearby.price !== null ? `$${nearby.price.toFixed(2)}` : 'TBC'}
-                  </span>
-                </Link>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Similar Price Pubs Across Perth */}
-        {similarPricePubs.length > 0 && (
-          <div className="mt-8">
-            <h2 className="font-mono font-extrabold text-xl tracking-[-0.02em] text-ink mb-4">
-              Similar Prices Across Perth
-            </h2>
-            <div className="space-y-0">
-              {similarPricePubs.map((similar, i) => (
-                <Link
-                  key={similar.id}
-                  href={`/${toSuburbSlug(similar.suburb)}/${similar.slug}`}
-                  className={`flex items-center justify-between py-3.5 no-underline group ${
-                    i < similarPricePubs.length - 1 ? 'border-b border-gray-light' : ''
-                  }`}
-                >
-                  <div className="min-w-0 flex-1">
-                    <p className="font-mono text-[0.85rem] font-extrabold text-ink group-hover:text-amber transition-colors truncate">{similar.name}</p>
-                    <p className="text-[0.7rem] text-gray-mid truncate">{similar.suburb}</p>
-                  </div>
-                  <span className="font-mono text-[1.1rem] font-extrabold text-ink ml-3">
-                    {similar.price !== null ? `$${similar.price.toFixed(2)}` : 'TBC'}
-                  </span>
-                </Link>
-              ))}
-            </div>
+                </div>
+                <span className="font-mono text-[1rem] font-extrabold text-ink ml-3 flex-shrink-0">
+                  {nearby.price !== null ? `$${nearby.price.toFixed(2)}` : 'TBC'}
+                </span>
+              </Link>
+            ))}
           </div>
         )}
       </div>

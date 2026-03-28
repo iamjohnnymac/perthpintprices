@@ -1,6 +1,6 @@
 import { Metadata } from 'next'
 import { notFound, permanentRedirect } from 'next/navigation'
-import { getPubBySlug, getAllPubSlugPairs, getNearbyPubs, getSimilarPricePubs, getSiteStats, toSuburbSlug } from '@/lib/supabase'
+import { getPubBySlug, getAllPubSlugPairs, getNearbyPubs, getSiteStats, toSuburbSlug } from '@/lib/supabase'
 import { absolutePubUrl, absoluteSuburbUrl } from '@/lib/urls'
 import PubDetailClient from './PubDetailClient'
 
@@ -74,9 +74,8 @@ export default async function PubPage({ params }: PageProps) {
     permanentRedirect(`/${suburbSlug}/${pub.slug}`)
   }
 
-  const [nearbyPubs, similarPricePubs, stats] = await Promise.all([
+  const [nearbyPubs, stats] = await Promise.all([
     getNearbyPubs(pub.suburb, pub.id, 8),
-    pub.price != null ? getSimilarPricePubs(pub.price, pub.suburb, pub.id, 6) : Promise.resolve([]),
     getSiteStats(),
   ])
 
@@ -128,12 +127,9 @@ export default async function PubPage({ params }: PageProps) {
         {nearbyPubs.map(np => (
           <a key={np.slug} href={`/${suburbSlug}/${np.slug}`}>{np.name} - {np.suburb}</a>
         ))}
-        {similarPricePubs.map(sp => (
-          <a key={sp.slug} href={`/${toSuburbSlug(sp.suburb)}/${sp.slug}`}>{sp.name} - {sp.suburb}</a>
-        ))}
       </div>
 
-      <PubDetailClient pub={pub} nearbyPubs={nearbyPubs} similarPricePubs={similarPricePubs} avgPrice={Number(stats.avgPrice)} />
+      <PubDetailClient pub={pub} nearbyPubs={nearbyPubs} avgPrice={Number(stats.avgPrice)} />
     </>
   )
 }
