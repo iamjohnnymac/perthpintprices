@@ -137,15 +137,15 @@ export default function SuburbClient({ suburb, pubs, nearbySuburbs, perthAvgPric
           </div>
 
           {/* Desktop table */}
-          <div className="hidden sm:block overflow-x-auto">
-            <table className="w-full text-sm">
+          <div className="hidden sm:block">
+            <table className="w-full text-sm table-fixed">
               <thead>
                 <tr className="bg-off-white text-gray-mid font-mono text-[0.65rem] uppercase tracking-wider">
-                  <th className="px-4 py-2.5 text-left font-bold w-10">#</th>
-                  <th className="px-4 py-2.5 text-left font-bold">Venue</th>
-                  <th className="px-4 py-2.5 text-center font-bold whitespace-nowrap">Pint Price</th>
-                  <th className="px-4 py-2.5 text-center font-bold whitespace-nowrap">Status</th>
-                  <th className="px-4 py-2.5 text-left font-bold hidden md:table-cell whitespace-nowrap">Happy Hour</th>
+                  <th className="px-3 py-2.5 text-left font-bold w-[40px]">#</th>
+                  <th className="px-3 py-2.5 text-left font-bold">Venue</th>
+                  <th className="px-3 py-2.5 text-center font-bold whitespace-nowrap w-[90px]">Pint Price</th>
+                  <th className="px-3 py-2.5 text-center font-bold whitespace-nowrap hidden lg:table-cell w-[100px]">Status</th>
+                  <th className="px-3 py-2.5 text-left font-bold hidden md:table-cell whitespace-nowrap w-[150px]">Happy Hour</th>
                 </tr>
               </thead>
               <tbody>
@@ -153,14 +153,14 @@ export default function SuburbClient({ suburb, pubs, nearbySuburbs, perthAvgPric
                   const freshness = getFreshness(pub.lastVerified)
                   return (
                     <tr key={pub.id} className={`border-t border-gray-light hover:bg-off-white transition-colors ${i === 0 ? 'bg-amber/5' : ''}`}>
-                      <td className="px-4 py-3 font-mono text-[0.7rem] font-bold text-gray-mid">{i + 1}</td>
-                      <td className="px-4 py-3">
+                      <td className="px-3 py-3 font-mono text-[0.7rem] font-bold text-gray-mid">{i + 1}</td>
+                      <td className="px-3 py-3">
                         <Link href={`/${suburbSlug}/${pub.slug}`} className="font-mono text-[0.8rem] font-extrabold text-ink hover:text-amber transition-colors no-underline">
                           {pub.name}
                         </Link>
-                        <p className="text-[0.7rem] text-gray-mid mt-0.5 truncate max-w-[300px]">{pub.address}</p>
+                        <p className="text-[0.7rem] text-gray-mid mt-0.5 truncate">{pub.address}</p>
                       </td>
-                      <td className="px-4 py-3 text-center">
+                      <td className="px-3 py-3 text-center">
                         {pub.price !== null && pub.priceVerified ? (
                           <span className="font-mono font-extrabold text-ink text-base">
                             ${pub.price.toFixed(2)}
@@ -172,15 +172,15 @@ export default function SuburbClient({ suburb, pubs, nearbySuburbs, perthAvgPric
                           <p className="text-[0.6rem] text-gray-mid mt-0.5">{pub.beerType}</p>
                         )}
                       </td>
-                      <td className="px-4 py-3 text-center">
+                      <td className="px-3 py-3 text-center hidden lg:table-cell">
                         <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[0.6rem] font-bold ${freshness.bgColor} ${freshness.color} border ${freshness.borderColor}`}>
                           {freshnessIcons[freshness.level]} {freshness.label}
                         </span>
                         <p className="text-[0.6rem] text-gray-mid mt-0.5">{formatVerifiedDate(pub.lastVerified)}</p>
                       </td>
-                      <td className="px-4 py-3 hidden md:table-cell">
+                      <td className="px-3 py-3 hidden md:table-cell">
                         {pub.happyHour ? (
-                          <span className="text-[0.7rem] text-red font-bold block truncate max-w-[160px]" title={pub.happyHour ?? undefined}>{pub.happyHour}</span>
+                          <span className="text-[0.7rem] text-red font-bold block truncate" title={pub.happyHour ?? undefined}>{pub.happyHour}</span>
                         ) : (
                           <span className="text-[0.7rem] text-gray-mid">-</span>
                         )}
