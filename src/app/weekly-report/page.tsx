@@ -3,17 +3,17 @@ import BreadcrumbJsonLd from '@/components/BreadcrumbJsonLd'
 import WeeklyClient from './WeeklyReportClient'
 
 export const metadata: Metadata = {
-  title: 'This Week in Perth Pints | Arvo',
+  title: 'This Week in Perth Pints | Perth Pint Prices',
   description: 'Weekly roundup of Perth beer prices. Track price movements, discover the cheapest pints this week, and see which venues are trending across Perth suburbs.',
   alternates: { canonical: 'https://perthpintprices.com/weekly' },
   openGraph: {
-    title: 'This Week in Perth Pints | Arvo',
+    title: 'This Week in Perth Pints | Perth Pint Prices',
     description: 'Weekly roundup of Perth beer prices. Track price movements, discover the cheapest pints, and see trending venues.',
     url: 'https://perthpintprices.com/weekly',
     type: 'website',
-    siteName: 'Arvo',
+    siteName: 'Perth Pint Prices',
     locale: 'en_AU',
-    images: [{ url: 'https://perthpintprices.com/og-image.png', width: 1200, height: 630, alt: 'Perth pint price weekly report | Arvo' }],
+    images: [{ url: 'https://perthpintprices.com/og-image.png', width: 1200, height: 630, alt: 'Perth pint price weekly report | Perth Pint Prices' }],
   },
   twitter: { card: 'summary_large_image' },
 }

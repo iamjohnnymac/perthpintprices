@@ -69,7 +69,7 @@ export async function GET() {
       {
         headers: {
           'Accept': 'application/json',
-          'User-Agent': 'Arvo/1.0',
+          'User-Agent': 'PerthPintPrices/1.0',
         },
         next: { revalidate: 3600 },
         signal: AbortSignal.timeout(5000),

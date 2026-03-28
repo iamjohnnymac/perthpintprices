@@ -4,17 +4,17 @@ import BreadcrumbJsonLd from '@/components/BreadcrumbJsonLd'
 import SuburbsClient from './SuburbsClient'
 
 export const metadata: Metadata = {
-  title: 'All Suburbs | Arvo',
+  title: 'All Suburbs | Perth Pint Prices',
   description: 'Browse pint prices across every Perth suburb. Compare average prices, find the cheapest pints near you, and discover happy hour deals. Community-verified prices updated daily.',
   alternates: { canonical: 'https://perthpintprices.com/suburbs' },
   openGraph: {
-    title: 'All Suburbs | Arvo',
+    title: 'All Suburbs | Perth Pint Prices',
     description: 'Browse pint prices across every Perth suburb. Compare average prices, find the cheapest pints near you, and discover happy hour deals.',
     url: 'https://perthpintprices.com/suburbs',
     type: 'website',
-    siteName: 'Arvo',
+    siteName: 'Perth Pint Prices',
     locale: 'en_AU',
-    images: [{ url: 'https://perthpintprices.com/og-image.png', width: 1200, height: 630, alt: 'Perth suburb pint prices | Arvo' }],
+    images: [{ url: 'https://perthpintprices.com/og-image.png', width: 1200, height: 630, alt: 'Perth suburb pint prices | Perth Pint Prices' }],
   },
   twitter: { card: 'summary_large_image' },
 }

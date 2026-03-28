@@ -80,7 +80,7 @@ export default function SuburbClient({ suburb, pubs, nearbySuburbs, perthAvgPric
 
         {/* Auto-generated content paragraph — unique per suburb, good for SEO */}
         <p className="text-gray-mid text-[0.82rem] leading-relaxed mt-5">
-          {suburb.name} has {suburb.pubCount} {suburb.pubCount === 1 ? 'venue' : 'venues'} tracked on Arvo
+          {suburb.name} has {suburb.pubCount} {suburb.pubCount === 1 ? 'venue' : 'venues'} tracked on Perth Pint Prices
           {suburb.cheapestPrice !== 'TBC' && suburb.cheapestPub && (<>, with pints starting from ${suburb.cheapestPrice} at {suburb.cheapestPub}</>)}
           {suburb.happyHourCount > 0 && (<>. {suburb.happyHourCount} {suburb.happyHourCount === 1 ? 'venue offers' : 'venues offer'} happy hour deals</>)}
           {diffText && (<>. {suburb.name} is {diffText}</>)}

@@ -1,6 +1,6 @@
 {
-  "name": "Arvo — Perth's Pint Prices",
-  "short_name": "Arvo",
+  "name": "Perth Pint Prices",
+  "short_name": "Pint Prices",
   "description": "Perth's pint prices, sorted. Real prices from real people.",
   "start_url": "/",
   "display": "standalone",

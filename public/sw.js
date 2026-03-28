@@ -1,4 +1,4 @@
-// Arvo Service Worker — Push Notifications
+// Perth Pint Prices Service Worker — Push Notifications
 // This file MUST be served from root (public/sw.js → /sw.js)
 
 self.addEventListener('install', () => {
@@ -17,11 +17,11 @@ self.addEventListener('push', (event) => {
   try {
     data = event.data.json()
   } catch {
-    data = { title: 'Arvo', body: event.data.text() }
+    data = { title: 'Perth Pint Prices', body: event.data.text() }
   }
 
   const options = {
-    body: data.body || 'Something changed at Arvo!',
+    body: data.body || 'Something changed at Perth Pint Prices!',
     icon: '/icon-192.png',
     badge: '/icon-192.png',
     vibrate: [100, 50, 100],
@@ -31,7 +31,7 @@ self.addEventListener('push', (event) => {
   }
 
   event.waitUntil(
-    self.registration.showNotification(data.title || 'Arvo', options)
+    self.registration.showNotification(data.title || 'Perth Pint Prices', options)
   )
 })
 

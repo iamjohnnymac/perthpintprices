@@ -4,7 +4,7 @@ import { getSiteStats, getPubs, toSuburbSlug } from '@/lib/supabase'
 
 export async function generateMetadata(): Promise<Metadata> {
   const stats = await getSiteStats()
-  const title = "Arvo | Perth's pint prices, sorted."
+  const title = "Perth Pint Prices | Perth's pint prices, sorted."
   const description = `Perth's pint prices, sorted. Real prices from real people across ${stats.venueCount}+ venues and ${stats.suburbCount} suburbs.`
 
   return {
@@ -17,7 +17,7 @@ export async function generateMetadata(): Promise<Metadata> {
       title,
       description: `Perth's pint prices, sorted. ${stats.venueCount}+ venues. Avg: $${stats.avgPrice}. Cheapest: $${stats.cheapestPrice}.`,
       url: 'https://perthpintprices.com/',
-      siteName: 'Arvo',
+      siteName: 'Perth Pint Prices',
       locale: 'en_AU',
       type: 'website',
       images: [
@@ -25,7 +25,7 @@ export async function generateMetadata(): Promise<Metadata> {
           url: 'https://perthpintprices.com/og-image.png',
           width: 1200,
           height: 630,
-          alt: "Arvo | Perth's pint prices, sorted",
+          alt: "Perth Pint Prices | Perth's pint prices, sorted",
         },
       ],
     },
@@ -43,8 +43,7 @@ function HomeJsonLd() {
     {
       '@context': 'https://schema.org',
       '@type': 'WebSite',
-      name: 'Arvo',
-      alternateName: 'Perth Pint Prices',
+      name: 'Perth Pint Prices',
       url: 'https://perthpintprices.com',
       description: "Perth's pint prices, sorted. Real prices from real people.",
     },
@@ -94,7 +93,7 @@ function HomeJsonLd() {
         },
         {
           '@type': 'Question',
-          name: 'Is Arvo free?',
+          name: 'Is Perth Pint Prices free?',
           acceptedAnswer: {
             '@type': 'Answer',
             text: '100%. No app download. No sign-up. Just prices.',

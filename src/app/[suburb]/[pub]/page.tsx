@@ -10,10 +10,9 @@ interface PageProps {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const pub = await getPubBySlug(params.pub)
-  if (!pub) return { title: 'Pub Not Found | Arvo' }
+  if (!pub) return { title: 'Pub Not Found | Perth Pint Prices' }
 
-  const priceText = pub.price !== null ? `$${pub.price.toFixed(2)} pints` : 'Price TBC'
-  const title = `${pub.name}, ${pub.suburb}: ${priceText} | Arvo`
+  const title = `${pub.name}, ${pub.suburb} | Perth Pint Prices`
 
   // Build description with progressive enrichment (target 70-160 chars)
   const descParts: string[] = []
@@ -22,7 +21,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   if (pub.happyHour) descParts.push(`Happy hour: ${pub.happyHour}.`)
   if (pub.vibeTag) descParts.push(`${pub.vibeTag} venue.`)
   if (pub.beerType) descParts.push(`Serving ${pub.beerType}.`)
-  descParts.push('Community-verified prices updated daily on Arvo.')
+  descParts.push('Community-verified prices updated daily on Perth Pint Prices.')
   let description = descParts.join(' ')
   if (description.length < 120) {
     description += ' Find cheaper pints nearby.'
@@ -41,17 +40,17 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     description,
     alternates: { canonical },
     openGraph: {
-      title: `${pub.name}: ${priceText}`,
+      title: `${pub.name}, ${pub.suburb} | Perth Pint Prices`,
       description,
       url: canonical,
-      siteName: 'Arvo',
+      siteName: 'Perth Pint Prices',
       locale: 'en_AU',
       type: 'website',
-      images: [{ url: '/og-image.png', width: 1200, height: 630, alt: `${pub.name} pint prices | Arvo` }],
+      images: [{ url: '/og-image.png', width: 1200, height: 630, alt: `${pub.name} pint prices | Perth Pint Prices` }],
     },
     twitter: {
       card: 'summary_large_image',
-      title: `${pub.name}: ${priceText}`,
+      title: `${pub.name}, ${pub.suburb} | Perth Pint Prices`,
       description,
     },
   }

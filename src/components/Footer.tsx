@@ -20,10 +20,7 @@ export default function Footer() {
       <div className="max-w-container mx-auto px-6 py-10 pb-14">
         {/* Logo + tagline */}
         <div className="flex items-center gap-2 mb-8">
-          <div className="w-7 h-7 bg-amber border-2 border-white/30 rounded-md flex items-center justify-center shadow-[2px_2px_0_rgba(255,255,255,0.15)]">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 2v20M2 12h20M4.93 4.93l14.14 14.14M19.07 4.93L4.93 19.07" stroke="white" strokeWidth="2.5" strokeLinecap="round"/></svg>
-          </div>
-          <span className="font-mono text-[1.4rem] font-extrabold tracking-[-0.04em]">arvo</span>
+          <span className="font-mono text-[1rem] font-extrabold tracking-[-0.02em] leading-none"><span className="text-amber">Perth</span> Pint Prices</span>
         </div>
 
         {/* Nav links — single clean row that wraps */}

@@ -29,7 +29,7 @@ export default function FAQ() {
       a: 'We only display prices we\'ve confirmed. "Price TBC" means we know the pub exists but haven\'t verified its current pint price yet. You can help by submitting it!',
     },
     {
-      q: 'Is Arvo free?',
+      q: 'Is Perth Pint Prices free?',
       a: '100%. No app download. No sign-up. Just prices. Simple as.',
     },
   ]
