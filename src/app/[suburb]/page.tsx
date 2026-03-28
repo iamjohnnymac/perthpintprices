@@ -25,10 +25,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const suburb = await getSuburbBySlug(params.suburb)
   if (!suburb) return { title: 'Suburb Not Found | Perth Pint Prices' }
 
-  const priceText = suburb.cheapestPrice !== 'TBC'
-    ? `${suburb.pubCount} Pubs from $${suburb.cheapestPrice}`
-    : `${suburb.pubCount} Pubs`
-  const title = `Cheapest Pints in ${suburb.name}: ${priceText} | Perth Pint Prices`
+  const title = `Cheapest Pints in ${suburb.name} | Perth Pint Prices`
 
   const descParts = [`Compare pint prices across ${suburb.pubCount} pubs in ${suburb.name}, Perth.`]
   if (suburb.cheapestPrice !== 'TBC') {
