@@ -3,15 +3,15 @@ import BreadcrumbJsonLd from '@/components/BreadcrumbJsonLd'
 import VenueBreakdownPage from './VenueBreakdownPage'
 
 export const metadata: Metadata = {
-  title: "Perth Pub Prices by Bracket | Arvo",
+  title: "Perth Pub Prices by Bracket | Perth Pint Prices",
   description: "How Perth's 300+ pubs stack up by price bracket. See which venues are cheap, which are overpriced, and where the value actually is.",
   alternates: { canonical: 'https://perthpintprices.com/insights/venue-breakdown' },
   openGraph: {
-    title: "Perth Pub Prices by Bracket | Arvo",
+    title: "Perth Pub Prices by Bracket | Perth Pint Prices",
     description: "How Perth's pubs stack up by price bracket. Where the value is and where it isn't.",
     url: 'https://perthpintprices.com/insights/venue-breakdown',
     type: 'website',
-    siteName: 'Arvo',
+    siteName: 'Perth Pint Prices',
     locale: 'en_AU',
     images: [{ url: 'https://perthpintprices.com/og-image.png', width: 1200, height: 630, alt: 'Perth Pub Prices by Bracket' }],
   },

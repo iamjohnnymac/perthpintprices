@@ -3,17 +3,17 @@ import BreadcrumbJsonLd from '@/components/BreadcrumbJsonLd'
 import BeerWeatherPage from './BeerWeatherPage'
 
 export const metadata: Metadata = {
-  title: "Beer Weather Perth | Arvo",
+  title: "Beer Weather Perth | Perth Pint Prices",
   description: "What's the weather saying about your next pint? Live Perth weather matched to pub picks. Scorcher? Hit a beer garden. Rainy? Find a cozy corner.",
   alternates: { canonical: 'https://perthpintprices.com/guides/beer-weather' },
   openGraph: {
-    title: "Beer Weather Perth | Arvo",
+    title: "Beer Weather Perth | Perth Pint Prices",
     description: "Live Perth weather matched to the right pub for the day.",
     url: 'https://perthpintprices.com/guides/beer-weather',
     type: 'website',
-    siteName: 'Arvo',
+    siteName: 'Perth Pint Prices',
     locale: 'en_AU',
-    images: [{ url: 'https://perthpintprices.com/og-image.png', width: 1200, height: 630, alt: 'Beer Weather Perth | Arvo' }],
+    images: [{ url: 'https://perthpintprices.com/og-image.png', width: 1200, height: 630, alt: 'Beer Weather Perth | Perth Pint Prices' }],
   },
   twitter: { card: 'summary_large_image' },
 }

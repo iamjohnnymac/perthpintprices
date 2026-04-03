@@ -3,17 +3,17 @@ import BreadcrumbJsonLd from '@/components/BreadcrumbJsonLd'
 import DadBarPage from './DadBarPage'
 
 export const metadata: Metadata = {
-  title: "The Dad Bar: Classic Perth Pubs for Dads | Arvo",
+  title: "The Dad Bar: Classic Perth Pubs for Dads | Perth Pint Prices",
   description: "No craft cocktails, no pretentious menus. Just honest Perth pubs where dads can enjoy a cold pint in peace. Kid-friendly spots included.",
   alternates: { canonical: 'https://perthpintprices.com/guides/dad-bar' },
   openGraph: {
-    title: "The Dad Bar: Classic Perth Pubs for Dads | Arvo",
+    title: "The Dad Bar: Classic Perth Pubs for Dads | Perth Pint Prices",
     description: "Honest Perth pubs where dads can enjoy a cold pint in peace.",
     url: 'https://perthpintprices.com/guides/dad-bar',
     type: 'website',
-    siteName: 'Arvo',
+    siteName: 'Perth Pint Prices',
     locale: 'en_AU',
-    images: [{ url: 'https://perthpintprices.com/og-image.png', width: 1200, height: 630, alt: 'The Dad Bar - Classic Perth Pubs | Arvo' }],
+    images: [{ url: 'https://perthpintprices.com/og-image.png', width: 1200, height: 630, alt: 'The Dad Bar - Classic Perth Pubs | Perth Pint Prices' }],
   },
   twitter: { card: 'summary_large_image' },
 }

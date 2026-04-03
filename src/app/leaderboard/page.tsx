@@ -3,17 +3,17 @@ import LeaderboardClient from './LeaderboardClient'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: "Price Scout Leaderboard: Perth Pint Reporters | Arvo",
-  description: "Perth's top price reporters helping keep Arvo accurate. Report pint prices to climb the leaderboard and earn bragging rights!",
+  title: "Price Scout Leaderboard: Perth Pint Reporters | Perth Pint Prices",
+  description: "Perth's top price reporters helping keep prices accurate. Report pint prices to climb the leaderboard and earn bragging rights!",
   alternates: { canonical: 'https://perthpintprices.com/leaderboard' },
   openGraph: {
-    title: "Price Scout Leaderboard | Arvo",
-    description: "Perth's top price reporters helping keep Arvo accurate. Report pint prices to climb the leaderboard!",
+    title: "Price Scout Leaderboard | Perth Pint Prices",
+    description: "Perth's top price reporters helping keep prices accurate. Report pint prices to climb the leaderboard!",
     url: 'https://perthpintprices.com/leaderboard',
     type: 'website',
-    siteName: 'Arvo',
+    siteName: 'Perth Pint Prices',
     locale: 'en_AU',
-    images: [{ url: 'https://perthpintprices.com/og-image.png', width: 1200, height: 630, alt: 'Price Scout Leaderboard | Arvo' }],
+    images: [{ url: 'https://perthpintprices.com/og-image.png', width: 1200, height: 630, alt: 'Price Scout Leaderboard | Perth Pint Prices' }],
   },
   twitter: { card: 'summary_large_image' },
 }

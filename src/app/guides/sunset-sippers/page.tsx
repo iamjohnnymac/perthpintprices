@@ -3,17 +3,17 @@ import BreadcrumbJsonLd from '@/components/BreadcrumbJsonLd'
 import SunsetSippersPage from './SunsetSippersPage'
 
 export const metadata: Metadata = {
-  title: "Sunset Sippers Perth: Best Golden Hour Pubs | Arvo",
+  title: "Sunset Sippers Perth: Best Golden Hour Pubs | Perth Pint Prices",
   description: "Find Perth's best sunset pubs. Watch the sun go down with a cold pint at venues with west-facing views and beer gardens.",
   alternates: { canonical: 'https://perthpintprices.com/guides/sunset-sippers' },
   openGraph: {
-    title: "Sunset Sippers Perth: Best Golden Hour Pubs | Arvo",
+    title: "Sunset Sippers Perth: Best Golden Hour Pubs | Perth Pint Prices",
     description: "Perth's best sunset pubs with west-facing views and beer gardens.",
     url: 'https://perthpintprices.com/guides/sunset-sippers',
     type: 'website',
-    siteName: 'Arvo',
+    siteName: 'Perth Pint Prices',
     locale: 'en_AU',
-    images: [{ url: 'https://perthpintprices.com/og-image.png', width: 1200, height: 630, alt: 'Sunset Sippers Perth - Best Golden Hour Pubs | Arvo' }],
+    images: [{ url: 'https://perthpintprices.com/og-image.png', width: 1200, height: 630, alt: 'Sunset Sippers Perth - Best Golden Hour Pubs | Perth Pint Prices' }],
   },
   twitter: { card: 'summary_large_image' },
 }

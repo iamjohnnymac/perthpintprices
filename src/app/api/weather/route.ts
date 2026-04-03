@@ -66,7 +66,7 @@ export async function GET() {
     }
 
     const res = await fetch(BOM_URL, {
-      headers: { 'User-Agent': 'Arvo/1.0 (perthpintprices.com)' },
+      headers: { 'User-Agent': 'PerthPintPrices/1.0 (perthpintprices.com)' },
       next: { revalidate: 900 } // ISR cache 15 min
     })
 

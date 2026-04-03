@@ -3,16 +3,16 @@ import BreadcrumbJsonLd from '@/components/BreadcrumbJsonLd'
 import DiscoverClient from './DiscoverClient'
 
 export const metadata: Metadata = {
-  title: 'Discover: Perth Pint Guides, Stats & Pub Picks | Arvo',
+  title: 'Discover: Perth Pint Guides, Stats & Pub Picks | Perth Pint Prices',
   description: 'Live pint data, suburb rankings, sunset spots, dad bars, and more. Everything beyond the price table.',
   alternates: {
     canonical: 'https://perthpintprices.com/discover',
   },
   openGraph: {
-    title: 'Discover: Perth Pint Guides, Stats & Pub Picks | Arvo',
+    title: 'Discover: Perth Pint Guides, Stats & Pub Picks | Perth Pint Prices',
     description: 'Live pint data, suburb rankings, sunset spots, dad bars, and more.',
     url: 'https://perthpintprices.com/discover',
-    siteName: 'Arvo',
+    siteName: 'Perth Pint Prices',
     locale: 'en_AU',
     type: 'website',
     images: [

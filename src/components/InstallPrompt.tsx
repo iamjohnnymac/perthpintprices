@@ -80,7 +80,7 @@ export default function InstallPrompt() {
           {/* Text */}
           <div className="flex-1 min-w-0">
             <p className="font-mono text-sm font-bold text-ink leading-tight truncate">
-              {platform === 'ios' ? 'Add Arvo to Home Screen' : 'Install Arvo'}
+              {platform === 'ios' ? 'Add to Home Screen' : 'Install App'}
             </p>
             <p className="text-xs text-gray-mid leading-tight mt-0.5">
               {platform === 'ios' ? 'Tap Share → Add to Home Screen' : 'Quick access to Perth pint prices'}

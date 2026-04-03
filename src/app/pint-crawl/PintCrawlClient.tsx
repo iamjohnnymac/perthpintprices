@@ -377,7 +377,7 @@ export default function PintCrawlClient({ pubs }: { pubs: Pub[] }) {
             : area === 'fremantle'
               ? 'Fremantle'
               : 'Perth CBD'
-    return `Arvo Pint Crawl\n\nRoute: ${pubNames}\nArea: ${areaLabel}\nTotal: $${totalCost.toFixed(2)} for ${route.length} pints\nWalking: ~${totalDistance.toFixed(1)}km (${totalWalkMin}min)\n\n${getShareUrl()}`
+    return `Perth Pint Crawl\n\nRoute: ${pubNames}\nArea: ${areaLabel}\nTotal: $${totalCost.toFixed(2)} for ${route.length} pints\nWalking: ~${totalDistance.toFixed(1)}km (${totalWalkMin}min)\n\n${getShareUrl()}`
   }
 
   const shareCrawl = async () => {
@@ -386,7 +386,7 @@ export default function PintCrawlClient({ pubs }: { pubs: Pub[] }) {
     if (typeof navigator !== 'undefined' && navigator.share) {
       try {
         await navigator.share({
-          title: `Arvo Pint Crawl: ${route.length} stops`,
+          title: `Perth Pint Crawl: ${route.length} stops`,
           text: `Check out this pub crawl: ${route.map(s => s.pub.name).join(' → ')} - $${totalCost.toFixed(2)} total`,
           url,
         })

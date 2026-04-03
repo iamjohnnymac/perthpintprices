@@ -64,7 +64,7 @@ export default function PintOfTheDay() {
 
   async function handleShare() {
     if (!data) return
-    const text = `Arvo Pint of the Day\n\n${data.pub.name}, ${data.pub.suburb}\n$${data.pub.effectivePrice.toFixed(2)} pint${data.pub.beerType ? ` (${data.pub.beerType})` : ''}\n${data.reason}\n\narvo.pub/${toSuburbSlug(data.pub.suburb)}/${data.pub.slug}`
+    const text = `Pint of the Day\n\n${data.pub.name}, ${data.pub.suburb}\n$${data.pub.effectivePrice.toFixed(2)} pint${data.pub.beerType ? ` (${data.pub.beerType})` : ''}\n${data.reason}\n\nperthpintprices.com/${toSuburbSlug(data.pub.suburb)}/${data.pub.slug}`
     
     try {
       await navigator.clipboard.writeText(text)
