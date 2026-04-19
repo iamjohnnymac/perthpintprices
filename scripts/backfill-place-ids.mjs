@@ -39,12 +39,14 @@ if (!GOOGLE_KEY) {
   process.exit(1)
 }
 
+// Matches the checked-in fallbacks in src/lib/supabase.ts so the script runs without extra env.
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://ifxkoblvgttelzboenpi.supabase.co'
-const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-if (!SUPABASE_KEY) {
-  console.error('Missing SUPABASE_SERVICE_ROLE_KEY or NEXT_PUBLIC_SUPABASE_ANON_KEY')
-  process.exit(1)
-}
+const SUPABASE_ANON_FALLBACK =
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlmeGtvYmx2Z3R0ZWx6Ym9lbnBpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzExODUwNjgsImV4cCI6MjA4Njc2MTA2OH0.qLy6B-VeVnMh0QSOxHK3uQEJ6iZr6xNHmfKov_7B-fY'
+const SUPABASE_KEY =
+  process.env.SUPABASE_SERVICE_ROLE_KEY ||
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
+  SUPABASE_ANON_FALLBACK
 if (!DRY_RUN && !process.env.SUPABASE_SERVICE_ROLE_KEY) {
   console.error('Refusing to write with anon key. Use --dry-run or set SUPABASE_SERVICE_ROLE_KEY.')
   process.exit(1)
@@ -101,8 +103,8 @@ async function searchPlace(query) {
       textQuery: query,
       maxResultCount: 3,
       locationBias: {
-        // Perth metro bounding box-ish circle (centred on CBD, 60km radius)
-        circle: { center: { latitude: -31.9523, longitude: 115.8613 }, radius: 60000 },
+        // Perth metro circle (centred on CBD, 50km radius = Places API max)
+        circle: { center: { latitude: -31.9523, longitude: 115.8613 }, radius: 50000 },
       },
       regionCode: 'AU',
     }),
