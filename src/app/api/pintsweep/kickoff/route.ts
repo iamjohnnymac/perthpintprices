@@ -16,6 +16,7 @@ interface KickoffBody {
   limit?: number
   scheduled_time_unix?: number
   dry_run?: boolean
+  skipOpenCheck?: boolean
 }
 
 export async function POST(req: NextRequest) {
@@ -44,18 +45,53 @@ export async function POST(req: NextRequest) {
     process.env.SUPABASE_SERVICE_ROLE_KEY || ''
   )
 
-  // Eligible pubs: have a phone, no verified price (we don't re-call verified pubs).
+  // Eligible pubs: have a phone, haven't been called in the last 24h, and
+  // either missing a price or the price isn't human-verified (phone-agent
+  // data is still marked verified=true on write, so we skip those).
+  const oneDayAgo = new Date(Date.now() - 24 * 3600 * 1000).toISOString()
   const { data: pubs, error } = await supabase
     .from('pubs')
-    .select('id, name, slug, suburb, phone, price, price_verified')
+    .select('id, name, slug, suburb, phone, price, price_verified, last_verified, place_id')
     .not('phone', 'is', null)
+    .or(`last_verified.is.null,last_verified.lt.${oneDayAgo}`)
     .or('price.is.null,price_verified.eq.false')
     .order('id')
 
   if (error) return NextResponse.json({ ok: false, error: error.message }, { status: 500 })
 
   const limit = body.limit ?? 200
-  const shortlist = pubs.slice(0, limit)
+
+  // Optionally filter to only currently-open pubs via Google Places.
+  // Skipped if a `skipOpenCheck` flag is passed (useful for scheduled
+  // batches that run at a known-open window and don't want the ~200
+  // extra Places API calls).
+  const googleKey = process.env.GOOGLE_PLACES_API_KEY
+  let shortlist = pubs
+  if (!body.skipOpenCheck && googleKey) {
+    const filtered: typeof pubs = []
+    for (const p of pubs) {
+      if (filtered.length >= limit * 1.2) break // take a 20% buffer then trim to `limit`
+      if (!p.place_id) continue
+      try {
+        const res = await fetch(`https://places.googleapis.com/v1/places/${p.place_id}`, {
+          headers: {
+            'X-Goog-Api-Key': googleKey,
+            'X-Goog-FieldMask': 'businessStatus,currentOpeningHours.openNow',
+          },
+        })
+        if (!res.ok) continue
+        const d = await res.json()
+        if (d.businessStatus === 'OPERATIONAL' && d.currentOpeningHours?.openNow === true) {
+          filtered.push(p)
+        }
+      } catch {
+        // Silently skip — don't block the batch on a single lookup error.
+      }
+    }
+    shortlist = filtered.slice(0, limit)
+  } else {
+    shortlist = pubs.slice(0, limit)
+  }
 
   const recipients = shortlist
     .map((p) => {
