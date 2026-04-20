@@ -1,6 +1,11 @@
 import { MetadataRoute } from 'next'
 import { getAllPubSlugPairs, getAllSuburbs, toSuburbSlug } from '@/lib/supabase'
 
+// Regenerate hourly so new pubs added to Supabase appear in the sitemap
+// within 60 min. Without this, Next defaults to build-time generation and
+// the sitemap would only refresh on redeploy.
+export const revalidate = 3600
+
 const BASE_URL = 'https://perthpintprices.com'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {

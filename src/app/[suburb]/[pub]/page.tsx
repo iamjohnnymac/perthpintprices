@@ -56,11 +56,15 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   }
 }
 
+// Empty array = no pub pages pre-rendered at build. First request generates
+// on-demand; subsequent requests within 300s hit the ISR cache. Keeps builds
+// constant-time regardless of pub count and lets price writes (e.g. from the
+// phone agent) propagate within 5 min without redeploying.
 export async function generateStaticParams() {
-  const pairs = await getAllPubSlugPairs()
-  return pairs.map(pair => ({ suburb: toSuburbSlug(pair.suburb), pub: pair.slug }))
+  return []
 }
 
+export const dynamicParams = true
 export const revalidate = 300
 
 export default async function PubPage({ params }: PageProps) {
