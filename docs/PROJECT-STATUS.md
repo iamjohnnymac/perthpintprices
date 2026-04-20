@@ -10,6 +10,16 @@ Stack, database, routes, components, and lib files are documented in `CLAUDE.md`
 
 ## What's done recently
 
+### ISR migration — 11.5× faster builds (2026-04-20)
+- `src/app/[suburb]/[pub]/page.tsx`: `generateStaticParams()` now returns `[]` with explicit `export const dynamicParams = true`; `revalidate: 300` stays. No pub pages pre-rendered at build — first request generates on-demand, subsequent requests hit the ISR cache.
+- `src/app/sitemap.ts`: added `export const revalidate = 3600` so new pubs appear in `/sitemap.xml` within 60 min of insertion (previously only on redeploy).
+- Build time: **475s → 41s** (~11.5× faster) on the first post-migration deploy.
+- Pages generated at build: 911 → ~30.
+- SEO-neutral: smoke-tested prod — `x-vercel-cache: MISS` on first hit, `HIT` on second, metadata renders identically.
+- Phone-agent price writes now propagate to public pub pages within 300s without needing a deploy.
+- Rollback if ever needed: restore original `generateStaticParams` body.
+- Commit `9c88fb3`.
+
 ### Google Places venue discovery — 413 → 857 pubs (2026-04-19)
 - Added `place_id text unique` column to `pubs` (indexed).
 - Backfilled `place_id` on existing rows via Places API (New) `searchText`: 352 high-confidence + 22 medium-confidence auto-written, 20 low-confidence flagged, 25 rejects. Finalize pass promoted 6 more near-0m operational matches. Total: 380/413 tagged (92%).
@@ -81,13 +91,6 @@ Stack, database, routes, components, and lib files are documented in `CLAUDE.md`
 - Stack: **Twilio** (outbound AU calls), **ElevenLabs** (voice), **Claude** (script + transcript parsing). Phone numbers come from the `place_id` backfill (~600 available).
 - Sweep all 664 price-less pubs during weekday afternoons; target: 50%+ answer rate, 30%+ price capture.
 - Needs: Twilio SID/token + AU outbound number, ElevenLabs key + voice, Anthropic key for parsing, explicit user OK on automated outbound calls to businesses.
-
-### Build performance — migrate pub pages to ISR
-- Current SSG pre-renders all 911 static pages (857 pubs + 54 suburbs) per deploy → ~3 min build time.
-- Convert `/pub/[slug]` and `/[suburb]` to ISR (`revalidate: 3600`) so builds become near-constant-time regardless of pub count.
-- SEO-neutral: Googlebot sees identical fully-rendered HTML either way; only difference is when it's generated.
-- Upside: build stays fast as the map grows, and price updates from the phone agent propagate to the public site within an hour without a redeploy.
-- Tradeoff: slightly more Vercel function invocations (first hit per page per hour); well within free tier.
 
 ### SEO
 Full checklist in `docs/SEO-MASTER.md` section 6. Key remaining items:
