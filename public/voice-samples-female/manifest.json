@@ -1,0 +1,74 @@
+[
+  {
+    "id": "aEO01A4wXwd1O8GPgGlF",
+    "filename": "01-arabella.mp3",
+    "label": "Arabella — young AU female",
+    "kind": "stock",
+    "voice_id": "aEO01A4wXwd1O8GPgGlF",
+    "size_kb": 56
+  },
+  {
+    "id": "ZkDZ5VCyH0GGbxO7o4aO",
+    "filename": "02-anne.mp3",
+    "label": "Anne — friendly & relaxed AU",
+    "kind": "stock",
+    "voice_id": "ZkDZ5VCyH0GGbxO7o4aO",
+    "size_kb": 62
+  },
+  {
+    "id": "XuvMi7mpVgif9dcUzS0s",
+    "filename": "03-keira.mp3",
+    "label": "Keira — calm, natural AU",
+    "kind": "stock",
+    "voice_id": "XuvMi7mpVgif9dcUzS0s",
+    "size_kb": 64
+  },
+  {
+    "id": "cvpTJfe9LINpHIOmB2Hp",
+    "filename": "04-charlotte-warm.mp3",
+    "label": "Charlotte — warm & conversational AU",
+    "kind": "stock",
+    "voice_id": "cvpTJfe9LINpHIOmB2Hp",
+    "size_kb": 67
+  },
+  {
+    "id": "xt3wCRKY70KCKXOqNH5h",
+    "filename": "05-isla.mp3",
+    "label": "Isla — soft, natural AU",
+    "kind": "stock",
+    "voice_id": "xt3wCRKY70KCKXOqNH5h",
+    "size_kb": 69
+  },
+  {
+    "id": "ZqZk4opejOmuQh96jYMp",
+    "filename": "06-annalise.mp3",
+    "label": "Annalise — mature, educated AU",
+    "kind": "stock",
+    "voice_id": "ZqZk4opejOmuQh96jYMp",
+    "size_kb": 59
+  },
+  {
+    "filename": "07-design-bartender.mp3",
+    "label": "Designed — 30yo Perth bartender",
+    "description": "A 30-year-old Australian female with a natural Perth accent. Casual, dry, slightly witty. Sounds like a bartender herself, not a call centre. Warm but not overly perky, a bit laid-back.",
+    "kind": "design",
+    "generated_voice_id": "fsxUDwbghZd0hX6d5lIV",
+    "size_kb": 351
+  },
+  {
+    "filename": "08-design-pub-manager.mp3",
+    "label": "Designed — country pub manager, 40s",
+    "description": "A 40-year-old Australian woman with a broader regional WA accent. Practical, grounded, warm. Sounds like someone who runs a country pub and knows the regulars. Not performative — just straightforward.",
+    "kind": "design",
+    "generated_voice_id": "unp2sZut2scffLSwpkXN",
+    "size_kb": 446
+  },
+  {
+    "filename": "09-design-hospo-vet.mp3",
+    "label": "Designed — hospo-vet in her late 30s",
+    "description": "A late-30s Australian woman who has worked in Perth hospitality for 15 years. Friendly, unflappable, slightly deadpan humour. Phone-voice steady, not bubbly. Real person on smoko, not corporate.",
+    "kind": "design",
+    "generated_voice_id": "jJxgOg94R1yiIl18Xkwt",
+    "size_kb": 345
+  }
+]
