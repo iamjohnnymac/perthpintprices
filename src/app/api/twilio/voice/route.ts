@@ -10,6 +10,8 @@ export async function POST(req: NextRequest) {
   // pub the recording belongs to when the recording webhook fires.
   const pubId = req.nextUrl.searchParams.get('pubId') || ''
 
+  // No transcribe="true" — we do STT ourselves with ElevenLabs Scribe in the
+  // recording-complete handler for much better accuracy than Twilio's built-in.
   const twiml = `<?xml version="1.0" encoding="UTF-8"?>
 <Response>
   <Play>${base}/voice/greeting.mp3</Play>
@@ -21,8 +23,6 @@ export async function POST(req: NextRequest) {
     finishOnKey="#"
     playBeep="false"
     trim="trim-silence"
-    transcribe="true"
-    transcribeCallback="${base}/api/twilio/recording-complete?pubId=${encodeURIComponent(pubId)}"
   />
   <Play>${base}/voice/thanks-no-answer.mp3</Play>
   <Hangup/>

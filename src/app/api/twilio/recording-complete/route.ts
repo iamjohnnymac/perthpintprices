@@ -1,11 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 
-// Twilio hits this endpoint twice per call: once with the recording
-// (immediately after <Record> completes) and a second time with the
-// transcription (after Twilio's transcribe="true" finishes ASR).
-// We treat whichever payload contains TranscriptionText as the "final"
-// call, parse it with Claude, and write the price to Supabase.
+// Twilio hits this endpoint once the <Record> verb finishes, posting a
+// RecordingUrl. We download the MP3, transcribe it with ElevenLabs Scribe
+// (far better than Twilio's built-in ASR for noisy phone audio), then parse
+// the transcript with Claude into structured price data.
 
 interface ParsedPrice {
   price: number | null
@@ -13,6 +12,35 @@ interface ParsedPrice {
   happy_hour_mention: string | null
   confidence: 'high' | 'medium' | 'low'
   raw_notes: string
+}
+
+async function downloadRecording(url: string): Promise<Buffer> {
+  // Twilio recording URLs require basic auth with Account SID / Auth Token.
+  const sid = process.env.TWILIO_ACCOUNT_SID || ''
+  const tok = process.env.TWILIO_AUTH_TOKEN || ''
+  const auth = Buffer.from(`${sid}:${tok}`).toString('base64')
+  // Append .mp3 so Twilio returns the MP3 render (defaults to WAV otherwise).
+  const mp3Url = url.endsWith('.mp3') ? url : `${url}.mp3`
+  const res = await fetch(mp3Url, { headers: { Authorization: `Basic ${auth}` } })
+  if (!res.ok) throw new Error(`Twilio recording fetch failed: ${res.status}`)
+  return Buffer.from(await res.arrayBuffer())
+}
+
+async function transcribeWithScribe(audio: Buffer): Promise<string> {
+  const form = new FormData()
+  form.append('file', new Blob([audio], { type: 'audio/mpeg' }), 'recording.mp3')
+  form.append('model_id', 'scribe_v1')
+  const res = await fetch('https://api.elevenlabs.io/v1/speech-to-text', {
+    method: 'POST',
+    headers: { 'xi-api-key': process.env.ELEVENLABS_API_KEY || '' },
+    body: form,
+  })
+  if (!res.ok) {
+    const body = await res.text()
+    throw new Error(`Scribe failed: ${res.status} ${body.slice(0, 200)}`)
+  }
+  const json = await res.json()
+  return json.text || ''
 }
 
 async function parseTranscript(transcript: string, pubName: string): Promise<ParsedPrice> {
@@ -27,13 +55,8 @@ async function parseTranscript(transcript: string, pubName: string): Promise<Par
       model: 'claude-haiku-4-5-20251001',
       max_tokens: 300,
       system:
-        'Extract structured beer-price info from a short phone transcript. Output ONLY valid JSON, no prose. Schema: {"price": number|null, "beer_type": string|null, "happy_hour_mention": string|null, "confidence": "high"|"medium"|"low", "raw_notes": string}. price is the cheapest pint in AUD the bartender mentioned. beer_type is what brand/tap (e.g. "Swan Draught", "Coopers Pale"). happy_hour_mention is any HH info they volunteered. confidence is high if a single clear price was stated, medium if partial, low if unclear or refused. raw_notes captures anything else useful.',
-      messages: [
-        {
-          role: 'user',
-          content: `Pub: ${pubName}\nTranscript: "${transcript}"`,
-        },
-      ],
+        'Extract structured beer-price info from a short phone transcript of an Australian bartender. Output ONLY valid JSON, no prose. Schema: {"price": number|null, "beer_type": string|null, "happy_hour_mention": string|null, "confidence": "high"|"medium"|"low", "raw_notes": string}. price is the cheapest pint in AUD the bartender mentioned (ignore pots/schooners if a pint price was stated, but treat schooner price as the answer if pint was not specified). beer_type is the brand/tap they quoted (e.g. "Swan Draught", "Coopers Pale", "XXXX Gold", "Great Northern"). happy_hour_mention is any HH info they volunteered. confidence is high if a single clear price was stated, medium if partial or unclear units, low if unclear/refused/irrelevant. raw_notes captures anything else useful.',
+      messages: [{ role: 'user', content: `Pub: ${pubName}\nTranscript: "${transcript}"` }],
     }),
   })
   if (!res.ok) {
@@ -53,15 +76,14 @@ async function parseTranscript(transcript: string, pubName: string): Promise<Par
 
 export async function POST(req: NextRequest) {
   const form = await req.formData()
-  const transcript = (form.get('TranscriptionText') as string) || ''
   const recordingUrl = (form.get('RecordingUrl') as string) || ''
   const callSid = (form.get('CallSid') as string) || ''
+  const recordingDuration = parseInt((form.get('RecordingDuration') as string) || '0', 10)
   const pubId = req.nextUrl.searchParams.get('pubId') || ''
 
-  // Twilio sends the recording webhook first (no TranscriptionText) and then a
-  // separate transcription webhook. Only act on the transcription one.
-  if (!transcript) {
-    console.log(`[twilio] recording for pub=${pubId} call=${callSid} url=${recordingUrl}`)
+  console.log(`[twilio] recording for pub=${pubId} call=${callSid} dur=${recordingDuration}s url=${recordingUrl}`)
+
+  if (!recordingUrl) {
     return new NextResponse('OK', { status: 200 })
   }
 
@@ -70,61 +92,78 @@ export async function POST(req: NextRequest) {
     process.env.SUPABASE_SERVICE_ROLE_KEY || ''
   )
 
-  const { data: pub } = await supabase.from('pubs').select('id, name, price').eq('id', pubId).single()
-  if (!pub) {
-    console.error(`[twilio] no pub for id=${pubId}`)
-    return new NextResponse('OK', { status: 200 })
-  }
-
-  const parsed = await parseTranscript(transcript, pub.name)
-  console.log(`[twilio] pub=${pub.name} transcript="${transcript}" parsed=`, parsed)
-
-  // Only write if we got a plausible price and pub didn't already have one.
-  // This keeps the agent non-destructive: it fills gaps, never overwrites.
-  const MIN_PLAUSIBLE = 5
-  const MAX_PLAUSIBLE = 20
-  if (
-    parsed.price != null &&
-    parsed.price >= MIN_PLAUSIBLE &&
-    parsed.price <= MAX_PLAUSIBLE &&
-    parsed.confidence !== 'low' &&
-    pub.price == null
-  ) {
-    const updates: Record<string, unknown> = {
-      price: parsed.price,
-      price_verified: false, // flag for human spot-check
-      last_verified: new Date().toISOString(),
+  // Transcribe + parse, but don't block the Twilio response — kick off async.
+  ;(async () => {
+    let transcript = ''
+    let parsed: ParsedPrice = { price: null, beer_type: null, happy_hour_mention: null, confidence: 'low', raw_notes: '' }
+    try {
+      const audio = await downloadRecording(recordingUrl)
+      transcript = await transcribeWithScribe(audio)
+      console.log(`[twilio] scribe transcript: "${transcript}"`)
+    } catch (e) {
+      console.error('[twilio] transcription failed:', (e as Error).message)
     }
-    if (parsed.beer_type) updates.beer_type = parsed.beer_type
-    const { error } = await supabase.from('pubs').update(updates).eq('id', pub.id)
-    if (error) console.error(`[twilio] supabase update failed:`, error.message)
-    else console.log(`[twilio] wrote price=${parsed.price} beer=${parsed.beer_type} for ${pub.name}`)
 
-    // Also append to price_history for trend charts
-    await supabase.from('price_history').insert({
+    // For test calls (pubId='test'), skip DB operations entirely.
+    if (pubId === 'test') {
+      if (transcript) {
+        parsed = await parseTranscript(transcript, 'TEST')
+        console.log('[twilio] test parse:', parsed)
+      }
+      return
+    }
+
+    const { data: pub } = await supabase.from('pubs').select('id, name, price').eq('id', pubId).single()
+    if (!pub) {
+      console.error(`[twilio] no pub for id=${pubId}`)
+      return
+    }
+
+    if (transcript) {
+      parsed = await parseTranscript(transcript, pub.name)
+      console.log(`[twilio] pub=${pub.name} parsed=`, parsed)
+    }
+
+    // Only write if plausible price and pub doesn't already have one.
+    const MIN_PLAUSIBLE = 5
+    const MAX_PLAUSIBLE = 20
+    if (
+      parsed.price != null &&
+      parsed.price >= MIN_PLAUSIBLE &&
+      parsed.price <= MAX_PLAUSIBLE &&
+      parsed.confidence !== 'low' &&
+      pub.price == null
+    ) {
+      const updates: Record<string, unknown> = {
+        price: parsed.price,
+        price_verified: false,
+        last_verified: new Date().toISOString(),
+      }
+      if (parsed.beer_type) updates.beer_type = parsed.beer_type
+      const { error } = await supabase.from('pubs').update(updates).eq('id', pub.id)
+      if (error) console.error(`[twilio] supabase update failed:`, error.message)
+      else console.log(`[twilio] wrote price=${parsed.price} beer=${parsed.beer_type} for ${pub.name}`)
+
+      await supabase.from('price_history').insert({
+        pub_id: pub.id,
+        price: parsed.price,
+        beer_type: parsed.beer_type,
+        change_type: 'phone_agent',
+        source: `Call ${callSid}`,
+      })
+    }
+
+    await supabase.from('phone_call_log').insert({
       pub_id: pub.id,
-      price: parsed.price,
-      beer_type: parsed.beer_type,
-      change_type: 'phone_agent',
-      source: `Call ${callSid}`,
+      call_sid: callSid,
+      transcript,
+      recording_url: recordingUrl,
+      parsed_price: parsed.price,
+      parsed_beer_type: parsed.beer_type,
+      parsed_confidence: parsed.confidence,
+      parsed_notes: parsed.raw_notes,
     })
-  }
-
-  // Always log the raw transcript result for audit/debugging
-  await supabase.from('phone_call_log').insert({
-    pub_id: pub.id,
-    call_sid: callSid,
-    transcript,
-    recording_url: recordingUrl,
-    parsed_price: parsed.price,
-    parsed_beer_type: parsed.beer_type,
-    parsed_confidence: parsed.confidence,
-    parsed_notes: parsed.raw_notes,
-  }).then(({ error }) => {
-    if (error && !error.message.includes('does not exist')) {
-      console.error('[twilio] phone_call_log insert failed:', error.message)
-    }
-  })
+  })().catch((e) => console.error('[twilio] async processing failed:', (e as Error).message))
 
   return new NextResponse('OK', { status: 200 })
 }

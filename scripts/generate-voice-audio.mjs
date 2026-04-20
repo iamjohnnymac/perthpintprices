@@ -17,21 +17,22 @@ import { config } from 'dotenv'
 config({ path: '.env.local' })
 
 const KEY = process.env.ELEVENLABS_API_KEY
-const VOICE = process.env.ELEVENLABS_VOICE_ID || 'IKne3meq5aSn9XLyUdCD' // Charlie
+const VOICE = process.env.ELEVENLABS_VOICE_ID || '4uJW3zTppOdNDWtKUtux' // Jordan — Aussie cobba
 if (!KEY) {
   console.error('Missing ELEVENLABS_API_KEY')
   process.exit(1)
 }
 
-// Model — eleven_turbo_v2_5 is cheapest with near-identical quality. Mono 22kHz MP3
-// is plenty for a phone line.
-const MODEL = 'eleven_turbo_v2_5'
+// eleven_multilingual_v2 is the most natural-sounding English model.
+// Turbo sounds robotic on phone lines; multilingual_v2 is what you want
+// for conversation-style TTS even though it's called "multilingual".
+const MODEL = 'eleven_multilingual_v2'
 
 const CLIPS = {
   'greeting.mp3':
-    "G'day! This is Perth Pint Prices calling. We're a free website that tracks Perth pub prices — helping locals find a cheap pint. Quick question for you: what's your cheapest tap beer at the moment? Price and the brand, if you've got a sec. Cheers!",
-  'thanks.mp3': "Brilliant, thanks so much. Have a good one.",
-  'thanks-no-answer.mp3': "No worries, thanks anyway. Have a good one.",
+    "G'day! Sorry to bother ya — quick question. I'm just ringing round Perth pubs tryin' to work out where a cheap pint is these days. What're you chargin' for your cheapest tap beer? Price and the brand if you've got a sec. Cheers mate.",
+  'thanks.mp3': "Beauty. Thanks heaps mate, have a good one.",
+  'thanks-no-answer.mp3': "No worries, thanks anyway mate. Have a good one.",
 }
 
 mkdirSync('public/voice', { recursive: true })
@@ -49,9 +50,10 @@ for (const [filename, text] of Object.entries(CLIPS)) {
       text,
       model_id: MODEL,
       voice_settings: {
-        stability: 0.5,
+        // Lower stability = more variation, less robotic. Higher style = more expressive.
+        stability: 0.35,
         similarity_boost: 0.85,
-        style: 0.3,
+        style: 0.55,
         use_speaker_boost: true,
       },
     }),
