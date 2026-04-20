@@ -17,7 +17,7 @@ import { config } from 'dotenv'
 config({ path: '.env.local' })
 
 const KEY = process.env.ELEVENLABS_API_KEY
-const VOICE = process.env.ELEVENLABS_VOICE_ID || '4uJW3zTppOdNDWtKUtux' // Jordan — Aussie cobba
+const VOICE = process.env.ELEVENLABS_VOICE_ID || 'IRuDCTQL6MMy1qvcsue1' // Andrew — Sydney suburban
 if (!KEY) {
   console.error('Missing ELEVENLABS_API_KEY')
   process.exit(1)
@@ -28,11 +28,16 @@ if (!KEY) {
 // for conversation-style TTS even though it's called "multilingual".
 const MODEL = 'eleven_multilingual_v2'
 
+// Script written in the voice of a 30-45yo suburban Aussie bloke ringing a
+// pub about the cheap pint. Dropped Gs on -ing words so TTS matches delivery.
+// Avoids telemarketer giveaways (self-ID, "sorry to bother") and cringe
+// stereotypes (crikey / strewth / cobber). "Yeah look" + "just a quick one"
+// signals low-effort ask and defuses survey vibe.
 const CLIPS = {
   'greeting.mp3':
-    "G'day! Sorry to bother ya — quick question. I'm just ringing round Perth pubs tryin' to work out where a cheap pint is these days. What're you chargin' for your cheapest tap beer? Price and the brand if you've got a sec. Cheers mate.",
-  'thanks.mp3': "Beauty. Thanks heaps mate, have a good one.",
-  'thanks-no-answer.mp3': "No worries, thanks anyway mate. Have a good one.",
+    "G'day mate, how ya goin'? Yeah look, just a quick one — was wonderin' what ya cheapest pint is at the moment, and what's on tap for it? Cheers.",
+  'thanks.mp3': "Nice one, cheers mate. Ta.",
+  'thanks-no-answer.mp3': "No dramas, cheers anyway mate.",
 }
 
 mkdirSync('public/voice', { recursive: true })
@@ -50,10 +55,11 @@ for (const [filename, text] of Object.entries(CLIPS)) {
       text,
       model_id: MODEL,
       voice_settings: {
-        // Lower stability = more variation, less robotic. Higher style = more expressive.
-        stability: 0.35,
+        // Slightly steadier than a young voice — Andrew is a 30-45yo suburban
+        // bloke, not hyped up. Still enough style for conversational tone.
+        stability: 0.4,
         similarity_boost: 0.85,
-        style: 0.55,
+        style: 0.5,
         use_speaker_boost: true,
       },
     }),
