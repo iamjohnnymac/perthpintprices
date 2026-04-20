@@ -14,7 +14,7 @@ interface ParsedPrice {
   raw_notes: string
 }
 
-async function downloadRecording(url: string): Promise<Buffer> {
+async function downloadRecording(url: string): Promise<Blob> {
   // Twilio recording URLs require basic auth with Account SID / Auth Token.
   const sid = process.env.TWILIO_ACCOUNT_SID || ''
   const tok = process.env.TWILIO_AUTH_TOKEN || ''
@@ -23,12 +23,12 @@ async function downloadRecording(url: string): Promise<Buffer> {
   const mp3Url = url.endsWith('.mp3') ? url : `${url}.mp3`
   const res = await fetch(mp3Url, { headers: { Authorization: `Basic ${auth}` } })
   if (!res.ok) throw new Error(`Twilio recording fetch failed: ${res.status}`)
-  return Buffer.from(await res.arrayBuffer())
+  return res.blob()
 }
 
-async function transcribeWithScribe(audio: Buffer): Promise<string> {
+async function transcribeWithScribe(audio: Blob): Promise<string> {
   const form = new FormData()
-  form.append('file', new Blob([audio], { type: 'audio/mpeg' }), 'recording.mp3')
+  form.append('file', audio, 'recording.mp3')
   form.append('model_id', 'scribe_v1')
   const res = await fetch('https://api.elevenlabs.io/v1/speech-to-text', {
     method: 'POST',
