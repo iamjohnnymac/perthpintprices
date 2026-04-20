@@ -55,7 +55,17 @@ async function parseTranscript(transcript: string, pubName: string): Promise<Par
       model: 'claude-haiku-4-5-20251001',
       max_tokens: 300,
       system:
-        'Extract structured beer-price info from a short phone transcript of an Australian bartender. Output ONLY valid JSON, no prose. Schema: {"price": number|null, "beer_type": string|null, "happy_hour_mention": string|null, "confidence": "high"|"medium"|"low", "raw_notes": string}. price is the cheapest pint in AUD the bartender mentioned (ignore pots/schooners if a pint price was stated, but treat schooner price as the answer if pint was not specified). beer_type is the brand/tap they quoted (e.g. "Swan Draught", "Coopers Pale", "XXXX Gold", "Great Northern"). happy_hour_mention is any HH info they volunteered. confidence is high if a single clear price was stated, medium if partial or unclear units, low if unclear/refused/irrelevant. raw_notes captures anything else useful.',
+        `Extract structured beer-price info from a short phone transcript of an Australian bartender in Perth. Output ONLY valid JSON, no prose.
+
+Schema: {"price": number|null, "beer_type": string|null, "happy_hour_mention": string|null, "confidence": "high"|"medium"|"low", "raw_notes": string}
+
+Rules:
+- price is the cheapest pint in AUD the bartender mentioned. If they quoted a pot or schooner instead, convert: 1 pint ≈ 570ml ≈ 1.43× schooner (425ml) ≈ 1.9× pot (285ml). Prefer pint if explicitly stated.
+- beer_type is the brand/tap they quoted. Common Perth taps to expect: Swan Draught, Emu Export, Great Northern, XXXX Gold, Coopers (Pale/Sparkling/Red), Carlton Draught, Hahn (Super Dry/3.5/Premium Light), VB, Little Creatures (Pale/Rogers), Gage Roads (Single Fin/Side Track), Matso's, Feral, Pirate Life, Corona, Asahi, Heineken, Guinness, Peroni, Stella.
+- Fix obvious phone-audio mishearings: "20 draft"→"Swan Draft/Draught", "X double X"→"XXXX", "great northern"→"Great Northern", "hun super dry"→"Hahn Super Dry", "corners/coopers"→"Coopers", "pirate"→"Pirate Life", "little creature"→"Little Creatures".
+- happy_hour_mention is any HH info volunteered verbatim.
+- confidence: high if a clear price was stated (even with ambiguous brand), medium if only partial info, low if unclear/refused/not relevant.
+- raw_notes: anything else useful (unit said, hesitation, special offers).`,
       messages: [{ role: 'user', content: `Pub: ${pubName}\nTranscript: "${transcript}"` }],
     }),
   })
@@ -80,11 +90,25 @@ export async function POST(req: NextRequest) {
   const callSid = (form.get('CallSid') as string) || ''
   const recordingDuration = parseInt((form.get('RecordingDuration') as string) || '0', 10)
   const pubId = req.nextUrl.searchParams.get('pubId') || ''
+  const base = new URL(req.url).origin
 
   console.log(`[twilio] recording for pub=${pubId} call=${callSid} dur=${recordingDuration}s url=${recordingUrl}`)
 
-  if (!recordingUrl) {
-    return new NextResponse('OK', { status: 200 })
+  // TwiML response — what Twilio plays after recording completes. Without this,
+  // Twilio's default robot voice kicks in and says things like "OK, goodbye".
+  const twimlWithThanks = `<?xml version="1.0" encoding="UTF-8"?>
+<Response>
+  <Play>${base}/voice/thanks.mp3</Play>
+  <Hangup/>
+</Response>`
+  const twimlNoAnswer = `<?xml version="1.0" encoding="UTF-8"?>
+<Response>
+  <Play>${base}/voice/thanks-no-answer.mp3</Play>
+  <Hangup/>
+</Response>`
+
+  if (!recordingUrl || recordingDuration < 1) {
+    return new NextResponse(twimlNoAnswer, { headers: { 'Content-Type': 'text/xml' } })
   }
 
   const supabase = createClient(
@@ -165,5 +189,5 @@ export async function POST(req: NextRequest) {
     })
   })().catch((e) => console.error('[twilio] async processing failed:', (e as Error).message))
 
-  return new NextResponse('OK', { status: 200 })
+  return new NextResponse(twimlWithThanks, { headers: { 'Content-Type': 'text/xml' } })
 }
