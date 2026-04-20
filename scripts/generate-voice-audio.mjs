@@ -33,11 +33,14 @@ const MODEL = 'eleven_multilingual_v2'
 // Avoids telemarketer giveaways (self-ID, "sorry to bother") and cringe
 // stereotypes (crikey / strewth / cobber). "Yeah look" + "just a quick one"
 // signals low-effort ask and defuses survey vibe.
+// Trailing punctuation intentionally minimal — ElevenLabs pads pauses around
+// periods/exclamation marks, which becomes dead air the bartender waits through.
+// Drop G on -ing words for more natural TTS phonemes.
 const CLIPS = {
   'greeting.mp3':
-    "G'day mate, how ya goin'? Yeah look, just a quick one — was wonderin' what ya cheapest pint is at the moment, and what's on tap for it? Cheers.",
-  'thanks.mp3': "Nice one, cheers mate. Ta.",
-  'thanks-no-answer.mp3': "No dramas, cheers anyway mate.",
+    "G'day mate, how ya goin'? Yeah look, just a quick one — what's ya cheapest pint right now, and what's on tap for it, cheers",
+  'thanks.mp3': "Nice one, cheers mate, ta",
+  'thanks-no-answer.mp3': "No dramas, cheers anyway mate",
 }
 
 mkdirSync('public/voice', { recursive: true })

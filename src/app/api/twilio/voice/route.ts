@@ -12,17 +12,21 @@ export async function POST(req: NextRequest) {
 
   // No transcribe="true" — we do STT ourselves with ElevenLabs Scribe in the
   // recording-complete handler for much better accuracy than Twilio's built-in.
+  // timeout=1 shortens dead air after the bartender stops speaking (was 3s).
+  // maxLength=10 caps total recording (covers "X Draft at seven fifty pint" etc.).
+  // actionOnEmptyResult ensures we still hit the webhook if there's no speech.
   const twiml = `<?xml version="1.0" encoding="UTF-8"?>
 <Response>
   <Play>${base}/voice/greeting.mp3</Play>
   <Record
     action="${base}/api/twilio/recording-complete?pubId=${encodeURIComponent(pubId)}"
     method="POST"
-    maxLength="15"
-    timeout="3"
+    maxLength="10"
+    timeout="1"
     finishOnKey="#"
     playBeep="false"
     trim="trim-silence"
+    actionOnEmptyResult="true"
   />
   <Play>${base}/voice/thanks-no-answer.mp3</Play>
   <Hangup/>
