@@ -12,6 +12,7 @@ interface ToolBody {
   confidence?: 'high' | 'medium' | 'low'
   raw_quote?: string | null
   unit?: 'pint' | 'schooner' | 'pot' | null
+  happy_hour?: string | null
   conversation_id?: string
 }
 
@@ -82,6 +83,7 @@ export async function POST(req: NextRequest, { params }: { params: { slug: strin
     last_verified: new Date().toISOString(),
   }
   if (body.beer_type) updates.beer_type = body.beer_type
+  if (body.happy_hour && body.happy_hour.trim()) updates.happy_hour = body.happy_hour.trim()
 
   const { error: upErr } = await supabase.from('pubs').update(updates).eq('id', pub.id)
   if (upErr) {
