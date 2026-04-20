@@ -40,19 +40,26 @@ export async function POST(req: NextRequest, { params }: { params: { slug: strin
     return NextResponse.json({ ok: false, error: 'bad json' }, { status: 400 })
   }
 
+  // Price is optional now — sometimes the bartender only gives us the happy hour
+  // (e.g. AI receptionist transferred before we got the price). Any data beats
+  // none. We only refuse if the tool fires with literally nothing useful.
   const priceNum = typeof body.price === 'string' ? parseFloat(body.price) : body.price
-  if (priceNum == null || isNaN(priceNum)) {
-    return NextResponse.json({ ok: false, error: 'missing price' }, { status: 400 })
+  const hasPrice = priceNum != null && !isNaN(priceNum)
+  const hasHH = !!(body.happy_hour && body.happy_hour.trim())
+  const hasBrand = !!(body.beer_type && body.beer_type.trim())
+
+  if (!hasPrice && !hasHH && !hasBrand) {
+    return NextResponse.json({ ok: false, error: 'no data to record' }, { status: 400 })
   }
 
-  const unitMultiplier = UNIT_TO_PINT[body.unit || 'pint'] ?? 1
-  const pintPrice = Number((priceNum * unitMultiplier).toFixed(2))
-
-  if (pintPrice < 5 || pintPrice > 20) {
-    return NextResponse.json(
-      { ok: false, recorded: false, reason: `price $${pintPrice} outside plausible range` },
-      { status: 200 }
-    )
+  let pintPrice: number | null = null
+  if (hasPrice) {
+    const unitMultiplier = UNIT_TO_PINT[body.unit || 'pint'] ?? 1
+    pintPrice = Number((priceNum! * unitMultiplier).toFixed(2))
+    if (pintPrice < 5 || pintPrice > 20) {
+      // Keep processing HH / brand even if price is implausible — discard the price only.
+      pintPrice = null
+    }
   }
 
   const supabase = createClient(
@@ -70,15 +77,16 @@ export async function POST(req: NextRequest, { params }: { params: { slug: strin
     return NextResponse.json({ ok: false, error: 'pub not found' }, { status: 404 })
   }
 
-  // Phone agent data is the source of truth — the bartender just told us,
-  // in their own words, right now. Always overwrite and mark verified.
+  // Phone agent data is the source of truth — write whatever fields we got.
   const updates: Record<string, unknown> = {
-    price: pintPrice,
-    price_verified: true,
     last_verified: new Date().toISOString(),
   }
-  if (body.beer_type) updates.beer_type = body.beer_type
-  if (body.happy_hour && body.happy_hour.trim()) updates.happy_hour = body.happy_hour.trim()
+  if (pintPrice != null) {
+    updates.price = pintPrice
+    updates.price_verified = true
+  }
+  if (hasBrand) updates.beer_type = body.beer_type
+  if (hasHH) updates.happy_hour = body.happy_hour!.trim()
 
   const { error: upErr } = await supabase.from('pubs').update(updates).eq('id', pub.id)
   if (upErr) {
@@ -86,13 +94,17 @@ export async function POST(req: NextRequest, { params }: { params: { slug: strin
     return NextResponse.json({ ok: false, error: upErr.message }, { status: 500 })
   }
 
-  await supabase.from('price_history').insert({
-    pub_id: pub.id,
-    price: pintPrice,
-    beer_type: body.beer_type || null,
-    change_type: 'phone_agent',
-    source: body.conversation_id ? `ElevenLabs ${body.conversation_id}` : 'phone_agent',
-  })
+  // Only append to price_history if we actually got a price (happy-hour-only
+  // captures aren't price events).
+  if (pintPrice != null) {
+    await supabase.from('price_history').insert({
+      pub_id: pub.id,
+      price: pintPrice,
+      beer_type: body.beer_type || null,
+      change_type: 'phone_agent',
+      source: body.conversation_id ? `ElevenLabs ${body.conversation_id}` : 'phone_agent',
+    })
+  }
 
   console.log(`[agent tool] wrote price=${pintPrice} beer=${body.beer_type || 'n/a'} for ${pub.name}`)
 
@@ -102,5 +114,6 @@ export async function POST(req: NextRequest, { params }: { params: { slug: strin
     pub_id: pub.id,
     pint_price: pintPrice,
     beer_type: body.beer_type || null,
+    happy_hour: hasHH ? body.happy_hour : null,
   })
 }
