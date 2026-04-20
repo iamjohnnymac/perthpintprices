@@ -70,16 +70,11 @@ export async function POST(req: NextRequest, { params }: { params: { slug: strin
     return NextResponse.json({ ok: false, error: 'pub not found' }, { status: 404 })
   }
 
-  if (pub.price != null && pub.price_verified) {
-    return NextResponse.json(
-      { ok: true, recorded: false, reason: 'pub already has a verified price' },
-      { status: 200 }
-    )
-  }
-
+  // Phone agent data is the source of truth — the bartender just told us,
+  // in their own words, right now. Always overwrite and mark verified.
   const updates: Record<string, unknown> = {
     price: pintPrice,
-    price_verified: false,
+    price_verified: true,
     last_verified: new Date().toISOString(),
   }
   if (body.beer_type) updates.beer_type = body.beer_type
