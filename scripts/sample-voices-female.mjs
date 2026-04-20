@@ -24,7 +24,9 @@ const OUT = 'public/voice-samples-female'
 
 mkdirSync(OUT, { recursive: true })
 
-// Stock AU female voices from the shared library.
+// Stock AU female voices from the shared library, including some not surfaced
+// by the library's "Australian accent" filter but confirmed AU-female via
+// community databases / research.
 const STOCK_VOICES = [
   { id: 'aEO01A4wXwd1O8GPgGlF', filename: '01-arabella.mp3', label: 'Arabella — young AU female' },
   { id: 'ZkDZ5VCyH0GGbxO7o4aO', filename: '02-anne.mp3', label: 'Anne — friendly & relaxed AU' },
@@ -32,29 +34,13 @@ const STOCK_VOICES = [
   { id: 'cvpTJfe9LINpHIOmB2Hp', filename: '04-charlotte-warm.mp3', label: 'Charlotte — warm & conversational AU' },
   { id: 'xt3wCRKY70KCKXOqNH5h', filename: '05-isla.mp3', label: 'Isla — soft, natural AU' },
   { id: 'ZqZk4opejOmuQh96jYMp', filename: '06-annalise.mp3', label: 'Annalise — mature, educated AU' },
+  { id: 'M7ya1YbaeFaPXljg9BpK', filename: '07-hannah.mp3', label: 'Hannah — natural AU (community favourite)' },
+  { id: '319bKIhetA5g6tmywrwj', filename: '08-gemma.mp3', label: 'Gemma — young AU female' },
 ]
 
-// Voice Design prompts for unique female characters
-const DESIGN_PROMPTS = [
-  {
-    filename: '07-design-bartender.mp3',
-    label: 'Designed — 30yo Perth bartender',
-    description:
-      'A 30-year-old Australian female with a natural Perth accent. Casual, dry, slightly witty. Sounds like a bartender herself, not a call centre. Warm but not overly perky, a bit laid-back.',
-  },
-  {
-    filename: '08-design-pub-manager.mp3',
-    label: 'Designed — country pub manager, 40s',
-    description:
-      'A 40-year-old Australian woman with a broader regional WA accent. Practical, grounded, warm. Sounds like someone who runs a country pub and knows the regulars. Not performative — just straightforward.',
-  },
-  {
-    filename: '09-design-hospo-vet.mp3',
-    label: 'Designed — hospo-vet in her late 30s',
-    description:
-      'A late-30s Australian woman who has worked in Perth hospitality for 15 years. Friendly, unflappable, slightly deadpan humour. Phone-voice steady, not bubbly. Real person on smoko, not corporate.',
-  },
-]
+// Skipped Voice Design this round — the prompt-to-voice outputs keep
+// slipping into American vowels despite Aussie-accent prompts.
+const DESIGN_PROMPTS = []
 
 async function ttsForVoice(voiceId, text, filename) {
   const res = await fetch(
