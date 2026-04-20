@@ -41,6 +41,9 @@ scripts/audit-locations.js
 scripts/apply-confident-fixes.js
 scripts/apply-manual-fixes.js
 scripts/location-audit-results.json
+scripts/backfill-place-ids-results.json
+scripts/backfill-review.json
+scripts/discover-venues-results.json
 
 # Research agent data
 perth_pubs_pricing/

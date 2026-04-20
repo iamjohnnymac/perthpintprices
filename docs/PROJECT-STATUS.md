@@ -1,14 +1,26 @@
 # Arvo Project Status
 
-Last updated: 2026-03-10
+Last updated: 2026-04-19
 
 ## What this is
 
-Arvo (perthpintprices.com) tracks pint prices across 300+ Perth pubs. Users can discover cheap pints, find happy hours, plan pub crawls, and report prices. The site is live on Vercel.
+Arvo (perthpintprices.com) tracks pint prices across 800+ Perth pubs. Users can discover cheap pints, find happy hours, plan pub crawls, and report prices. The site is live on Vercel.
 
 Stack, database, routes, components, and lib files are documented in `CLAUDE.md` (auto-loaded every session). This file covers history, recent work, and the backlog.
 
 ## What's done recently
+
+### Google Places venue discovery — 413 → 857 pubs (2026-04-19)
+- Added `place_id text unique` column to `pubs` (indexed).
+- Backfilled `place_id` on existing rows via Places API (New) `searchText`: 352 high-confidence + 22 medium-confidence auto-written, 20 low-confidence flagged, 25 rejects. Finalize pass promoted 6 more near-0m operational matches. Total: 380/413 tagged (92%).
+- Deleted 10 `CLOSED_PERMANENTLY` venues: The Flying Scotsman, Jack Rabbit Slim's, Five Bar, Wolf Lane, Halford Bar, Helvetica Bar, Yelo Trigg, Ruin Bar, Badlands Bar, W Churchill.
+- Bulk discovery via `places:searchNearby` seeded from every existing pub (1500m radius then 500m follow-up): 602 + 145 candidates. Post-filtered for drink-led primary types (bar, pub, wine_bar, brewery, brewpub, cocktail_bar, sports_bar, night_club, gastropub, bar_and_grill, lounge_bar) + restaurants that have bar/pub/brewery in their `types[]`.
+- Inserted **444 new venues** (442 from pass 1, 2 from pass 2). Dedupe: place_id + normalised name+suburb + 30m proximity.
+- Final state: **857 pubs, 815 with place_id (95%), 740 with website (86%), ~600 with phone numbers.**
+- 27 uncertain backfill matches written to `scripts/backfill-review.json` for manual review (likely-closed venues, rebrands, etc.).
+- Cost: $0 (within Google's free Essentials/Pro tier).
+- Scripts (checked in, not gitignored; read keys from `.env.local`): `backfill-place-ids.mjs`, `finalize-backfill.mjs`, `discover-venues.mjs`, `insert-discovered-venues.mjs`.
+- Commits: `f5aed35`, `b756aa4`, `014f3a7`, `1ac6e7d`.
 
 ### Pub location audit and fix (2026-03-10)
 - Audited all 423 pub lat/lng coordinates against Google Places Text Search API
@@ -60,8 +72,15 @@ Stack, database, routes, components, and lib files are documented in `CLAUDE.md`
 ## What's still to do
 
 ### Data
-- **222 pubs still missing regular prices** — need another research agent pass focused on price collection
+- **664 pubs missing regular prices** (up from 222 after the Places discovery run added 444 new venues). Plan: AI phone-agent sweep inspired by Guinndex — Twilio + ElevenLabs + Claude calls every price-less venue during business hours, Claude parses transcripts into structured price data. See "AI phone-agent price sweep" in planned work below.
 - Consider price refresh strategy for stale prices (some pubs haven't been updated in months)
+- 27 backfill matches still uncertain — `scripts/backfill-review.json`. Likely includes rebrands (Rosie O'Grady's → Johnny Fox's) and venues that probably closed (Hippo Bar, Ocean Reef Tavern, Mosman Park Hotel, North Beach Hotel). Needs human call.
+
+### AI phone-agent price sweep (planned)
+- Borrowing from Guinndex (guinndex.ai, Matt Cortland, March 2026). Their "Rachel" agent called 3,000 Irish pubs over St Paddy's weekend for ~€200, got 1,000+ prices.
+- Stack: **Twilio** (outbound AU calls), **ElevenLabs** (voice), **Claude** (script + transcript parsing). Phone numbers come from the `place_id` backfill (~600 available).
+- Sweep all 664 price-less pubs during weekday afternoons; target: 50%+ answer rate, 30%+ price capture.
+- Needs: Twilio SID/token + AU outbound number, ElevenLabs key + voice, Anthropic key for parsing, explicit user OK on automated outbound calls to businesses.
 
 ### SEO
 Full checklist in `docs/SEO-MASTER.md` section 6. Key remaining items:
