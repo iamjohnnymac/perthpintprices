@@ -82,6 +82,13 @@ Stack, database, routes, components, and lib files are documented in `CLAUDE.md`
 - Sweep all 664 price-less pubs during weekday afternoons; target: 50%+ answer rate, 30%+ price capture.
 - Needs: Twilio SID/token + AU outbound number, ElevenLabs key + voice, Anthropic key for parsing, explicit user OK on automated outbound calls to businesses.
 
+### Build performance — migrate pub pages to ISR
+- Current SSG pre-renders all 911 static pages (857 pubs + 54 suburbs) per deploy → ~3 min build time.
+- Convert `/pub/[slug]` and `/[suburb]` to ISR (`revalidate: 3600`) so builds become near-constant-time regardless of pub count.
+- SEO-neutral: Googlebot sees identical fully-rendered HTML either way; only difference is when it's generated.
+- Upside: build stays fast as the map grows, and price updates from the phone agent propagate to the public site within an hour without a redeploy.
+- Tradeoff: slightly more Vercel function invocations (first hit per page per hour); well within free tier.
+
 ### SEO
 Full checklist in `docs/SEO-MASTER.md` section 6. Key remaining items:
 - Dynamic OG images for pub and suburb pages
