@@ -47,11 +47,10 @@
     },
     "tts": {
       "voice_id": "IRuDCTQL6MMy1qvcsue1",
-      "model_id": "eleven_v3_conversational",
+      "model_id": "eleven_flash_v2",
       "stability": 0.3,
       "similarity_boost": 0.85,
-      "speed": 0.95,
-      "expressive_mode": false
+      "speed": 0.95
     },
     "turn": {
       "turn_timeout": 10,
