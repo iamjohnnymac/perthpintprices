@@ -1,6 +1,6 @@
 # Arvo Project Status
 
-Last updated: 2026-04-19
+Last updated: 2026-04-20
 
 ## What this is
 
@@ -9,6 +9,16 @@ Arvo (perthpintprices.com) tracks pint prices across 800+ Perth pubs. Users can 
 Stack, database, routes, components, and lib files are documented in `CLAUDE.md` (auto-loaded every session). This file covers history, recent work, and the backlog.
 
 ## What's done recently
+
+### AI phone agent ("Andrew") — full end-to-end build + first real capture (2026-04-20)
+- Built on **ElevenLabs Conversational AI Agents platform** — first-party Claude Haiku 4.5 LLM, Andrew voice (stock AU male, `IRuDCTQL6MMy1qvcsue1`), Flash v2 TTS, Twilio native telephony integration.
+- Three new API routes: `/api/agents/record-price/[slug]` (mid-call tool), `/api/agents/post-call` (transcription webhook, HMAC-signed), `/api/pintsweep/kickoff` (batch trigger with 24h dedupe + Places open-now filter).
+- `agents/andrew.json` is the version-controlled agent config — 17k-char system prompt with 6 few-shot transcripts + 3 anti-patterns, 71 Scribe v2 keyterms (Perth beer brands, suburbs, pour sizes), built-in tools for end_call, voicemail_detection, skip_turn, play_keypad_touch_tone.
+- Prompt tuning done over 20+ test calls: two-beat opener, name-grab with brush-off handling, eager record_price (fire with any data, don't wait for complete set), transfer/IVR re-intro patterns, marketing-plug on polite refusal, filler-filler rule, mate budget.
+- Live pilot: 15 real-pub calls across 3 pilot rounds. **First verified real capture: Kalamunda Hotel — $12.80 pint of Great Northern Super Crisp, captured from Cassie at 115s call duration.**
+- Also captured partial (happy hour only) from Bayswater Hotel via their AI receptionist: "Mon-Fri 5-6pm on select beers, wines and cocktails". Price not obtainable (they transferred to a human who didn't respond in time).
+- Cost per call: ~$0.15-0.25. Full 576-pub sweep estimated at ~$85-130.
+- Commits: `d5f6779`, `c979d9d`, many iterative prompt commits through `7be4c50`.
 
 ### ISR migration — 11.5× faster builds (2026-04-20)
 - `src/app/[suburb]/[pub]/page.tsx`: `generateStaticParams()` now returns `[]` with explicit `export const dynamicParams = true`; `revalidate: 300` stays. No pub pages pre-rendered at build — first request generates on-demand, subsequent requests hit the ISR cache.
