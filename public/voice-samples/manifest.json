@@ -1,0 +1,74 @@
+[
+  {
+    "id": "IRuDCTQL6MMy1qvcsue1",
+    "filename": "01-andrew-current.mp3",
+    "label": "Andrew (current)",
+    "kind": "stock",
+    "voice_id": "IRuDCTQL6MMy1qvcsue1",
+    "size_kb": 61
+  },
+  {
+    "id": "hIreuBly94QFepU63yel",
+    "filename": "02-scotty.mp3",
+    "label": "Scotty — friendly AU narrator",
+    "kind": "stock",
+    "voice_id": "hIreuBly94QFepU63yel",
+    "size_kb": 66
+  },
+  {
+    "id": "4uJW3zTppOdNDWtKUtux",
+    "filename": "03-jordan.mp3",
+    "label": "Jordan — Aussie cobba",
+    "kind": "stock",
+    "voice_id": "4uJW3zTppOdNDWtKUtux",
+    "size_kb": 54
+  },
+  {
+    "id": "0fHJvHo80Z8DDSm3NApj",
+    "filename": "04-al.mp3",
+    "label": "Al — subtle AU accent",
+    "kind": "stock",
+    "voice_id": "0fHJvHo80Z8DDSm3NApj",
+    "size_kb": 67
+  },
+  {
+    "id": "QLOrGSLtlFUlfQRSaOtQ",
+    "filename": "05-gary.mp3",
+    "label": "Gary — gritty AU narrator",
+    "kind": "stock",
+    "voice_id": "QLOrGSLtlFUlfQRSaOtQ",
+    "size_kb": 79
+  },
+  {
+    "id": "8HOgpuH7Mid4fwQK1Jln",
+    "filename": "06-bruce.mp3",
+    "label": "Bruce — mature AU baritone",
+    "kind": "stock",
+    "voice_id": "8HOgpuH7Mid4fwQK1Jln",
+    "size_kb": 54
+  },
+  {
+    "filename": "07-design-suburban-bloke.mp3",
+    "label": "Designed — 35yo suburban Perth bloke",
+    "description": "A 35-year-old Australian suburban male with a natural Perth accent. Warm, casual, slightly dry sense of humour. Relaxed phone voice, not performative. Not a radio announcer, just a regular bloke.",
+    "kind": "design",
+    "generated_voice_id": "vtbhJZ4NzFQFK2g6WSzq",
+    "size_kb": 377
+  },
+  {
+    "filename": "08-design-tradie.mp3",
+    "label": "Designed — relaxed Aussie tradie",
+    "description": "A 40-year-old Australian man, tradie-style voice. Practical, low-key, unpolished. Slight Perth accent. Sounds like someone phoning from a worksite smoko, not a call centre.",
+    "kind": "design",
+    "generated_voice_id": "8bCov69weazwk9bgRvh2",
+    "size_kb": 378
+  },
+  {
+    "filename": "09-design-country-pub.mp3",
+    "label": "Designed — country pub character",
+    "description": "A 45-year-old Australian man with a broader regional WA accent. Grounded, patient, pragmatic. Sounds like a bloke who owns a country pub, not city slick.",
+    "kind": "design",
+    "generated_voice_id": "QgUEynfICrwGBbRT1StS",
+    "size_kb": 364
+  }
+]
