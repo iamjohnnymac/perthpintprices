@@ -17,6 +17,7 @@ Addressing issues surfaced by yesterday's end-to-end audit (15 real-pub pilot ca
 - **Post-call data extraction implemented** (`src/app/api/agents/post-call/route.ts`). Comment promised a transcript-fallback extraction that was never built; `parsed_price` / `parsed_beer_type` were hardcoded `null`. Now parses `analysis.data_collection_results` into structured fields, and if a valid price landed in the analysis but the mid-call `record_price` tool never fired (dropped call, agent summarised without tool call), writes to `pubs` + `price_history` as a fallback. Respects the same $5-$20 sanity range as the mid-call tool.
 - **Agent config** — added `platform_settings.data_collection` schema to `agents/andrew.json` with `price`, `beer_type`, `unit`, `happy_hour`, `confidence`, `raw_quote`. Without this ElevenLabs returns an empty `data_collection_results` block, so the post-call fallback has nothing to work with.
 - **record-price correctness** — stopped bumping `last_verified` on happy-hour-only or brand-only captures (was claiming the seed price was verified today). `last_verified` now only moves when a real price lands. Also added an edge-case 400 for the pathological "only a price supplied and it failed the sanity range" path.
+- Commit `201825f`.
 
 ### AI phone agent ("Andrew") — full end-to-end build + first real capture (2026-04-20)
 - Built on **ElevenLabs Conversational AI Agents platform** — first-party Claude Haiku 4.5 LLM, Andrew voice (stock AU male, `IRuDCTQL6MMy1qvcsue1`), Flash v2 TTS, Twilio native telephony integration.
