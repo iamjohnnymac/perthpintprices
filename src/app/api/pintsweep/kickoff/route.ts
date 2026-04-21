@@ -10,13 +10,20 @@ import { createClient } from '@supabase/supabase-js'
 // header or pass ?key=<secret> as a query string.
 //
 // Request body (optional):
-//   { limit?: number, scheduled_time_unix?: number, dry_run?: boolean }
+//   {
+//     limit?: number,                 // max recipients (default 200)
+//     scheduled_time_unix?: number,   // override schedule (default next 2pm Perth)
+//     dry_run?: boolean,              // preview only, don't submit
+//     skipOpenCheck?: boolean,        // skip Places open-now filter
+//     cooldownHours?: number          // min hours since last call attempt (default 72)
+//   }
 
 interface KickoffBody {
   limit?: number
   scheduled_time_unix?: number
   dry_run?: boolean
   skipOpenCheck?: boolean
+  cooldownHours?: number
 }
 
 export async function POST(req: NextRequest) {
@@ -45,19 +52,50 @@ export async function POST(req: NextRequest) {
     process.env.SUPABASE_SERVICE_ROLE_KEY || ''
   )
 
-  // Eligible pubs: have a phone, haven't been called in the last 24h, and
-  // either missing a price or the price isn't human-verified (phone-agent
-  // data is still marked verified=true on write, so we skip those).
-  const oneDayAgo = new Date(Date.now() - 24 * 3600 * 1000).toISOString()
-  const { data: pubs, error } = await supabase
+  // Eligible pubs: have a phone, and either missing a price or the price
+  // isn't human-verified (phone-agent data is marked verified=true on write,
+  // so we skip those).
+  const { data: candidatePubs, error } = await supabase
     .from('pubs')
-    .select('id, name, slug, suburb, phone, price, price_verified, last_verified, place_id')
+    .select('id, name, slug, suburb, phone, price, price_verified, place_id')
     .not('phone', 'is', null)
-    .or(`last_verified.is.null,last_verified.lt.${oneDayAgo}`)
     .or('price.is.null,price_verified.eq.false')
     .order('id')
 
   if (error) return NextResponse.json({ ok: false, error: error.message }, { status: 500 })
+
+  // Exclude pubs with recent call history or a do-not-call marker in
+  // phone_call_log. Uses call history (not `last_verified`) because pubs that
+  // answered without giving a price don't update `last_verified` and would
+  // otherwise get called every day.
+  const cooldownHours = body.cooldownHours ?? 72
+  const cooldownCutoff = new Date(Date.now() - cooldownHours * 3600 * 1000).toISOString()
+  const { data: recentLog, error: logErr } = await supabase
+    .from('phone_call_log')
+    .select('pub_id, parsed_confidence, created_at')
+    .not('pub_id', 'is', null)
+    .or(`created_at.gte.${cooldownCutoff},parsed_confidence.eq.do_not_call`)
+
+  if (logErr) {
+    // Don't kick off a batch if we can't verify the cooldown — otherwise we
+    // could re-call pubs we already hit today.
+    console.error('[kickoff] phone_call_log query failed:', logErr.message)
+    return NextResponse.json(
+      { ok: false, error: `cooldown lookup failed: ${logErr.message}` },
+      { status: 500 }
+    )
+  }
+
+  const excludePubIds = new Set<number>()
+  const dncPubIds = new Set<number>()
+  for (const row of recentLog || []) {
+    if (row.pub_id == null) continue
+    excludePubIds.add(row.pub_id as number)
+    if (row.parsed_confidence === 'do_not_call') dncPubIds.add(row.pub_id as number)
+  }
+
+  const pubs = (candidatePubs || []).filter((p) => !excludePubIds.has(p.id))
+  const excludedTotal = (candidatePubs?.length ?? 0) - pubs.length
 
   const limit = body.limit ?? 200
 
@@ -116,6 +154,11 @@ export async function POST(req: NextRequest) {
       ok: true,
       dry_run: true,
       would_call: recipients.length,
+      excluded: {
+        by_cooldown_or_dnc: excludedTotal,
+        dnc_marked: dncPubIds.size,
+        cooldown_hours: cooldownHours,
+      },
       first_10: recipients.slice(0, 10).map((r) => ({
         phone: r.phone_number,
         pub: r.conversation_initiation_client_data.dynamic_variables.pub_name,
@@ -146,7 +189,16 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: false, error: result }, { status: 502 })
   }
 
-  return NextResponse.json({ ok: true, queued: recipients.length, batch: result })
+  return NextResponse.json({
+    ok: true,
+    queued: recipients.length,
+    excluded: {
+      by_cooldown_or_dnc: excludedTotal,
+      dnc_marked: dncPubIds.size,
+      cooldown_hours: cooldownHours,
+    },
+    batch: result,
+  })
 }
 
 function toE164(raw: string): string | null {

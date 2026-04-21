@@ -78,15 +78,21 @@ export async function POST(req: NextRequest, { params }: { params: { slug: strin
   }
 
   // Phone agent data is the source of truth — write whatever fields we got.
-  const updates: Record<string, unknown> = {
-    last_verified: new Date().toISOString(),
-  }
+  // Only bump `last_verified` when we actually captured a price; otherwise
+  // the row looks "freshly verified" but the price is still the stale seed.
+  const updates: Record<string, unknown> = {}
   if (pintPrice != null) {
     updates.price = pintPrice
     updates.price_verified = true
+    updates.last_verified = new Date().toISOString()
   }
   if (hasBrand) updates.beer_type = body.beer_type
   if (hasHH) updates.happy_hour = body.happy_hour!.trim()
+
+  if (Object.keys(updates).length === 0) {
+    // Price was the only field supplied and it failed the sanity range.
+    return NextResponse.json({ ok: false, error: 'price out of range, no other data' }, { status: 400 })
+  }
 
   const { error: upErr } = await supabase.from('pubs').update(updates).eq('id', pub.id)
   if (upErr) {

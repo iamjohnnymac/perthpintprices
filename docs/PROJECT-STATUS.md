@@ -1,6 +1,6 @@
 # Arvo Project Status
 
-Last updated: 2026-04-20
+Last updated: 2026-04-21
 
 ## What this is
 
@@ -9,6 +9,14 @@ Arvo (perthpintprices.com) tracks pint prices across 800+ Perth pubs. Users can 
 Stack, database, routes, components, and lib files are documented in `CLAUDE.md` (auto-loaded every session). This file covers history, recent work, and the backlog.
 
 ## What's done recently
+
+### Phone-agent e2e audit + hardening (2026-04-21)
+Addressing issues surfaced by yesterday's end-to-end audit (15 real-pub pilot calls + 1 verified capture).
+- **Kickoff dedupe bug fixed** (`src/app/api/pintsweep/kickoff/route.ts`). Cooldown was keyed off `pubs.last_verified`, which only bumps when a price is captured — so a pub that answered without giving a price would get called again the next day. Now drives off `phone_call_log.created_at` (actual call attempts), default 72h cooldown, configurable via `cooldownHours` in the request body. If the cooldown query errors we fail closed rather than re-dial.
+- **DNC (do-not-call) marker** — a `phone_call_log` row with `parsed_confidence='do_not_call'` permanently excludes that pub from future sweeps. Fixes the "Royal Fremantle remembers us" backlog item. Flag a pub via `node scripts/mark-dnc.mjs --slug <slug> --reason "..."`; clear with `--undo`. Kickoff response now also reports `excluded.dnc_marked` and `excluded.by_cooldown_or_dnc`.
+- **Post-call data extraction implemented** (`src/app/api/agents/post-call/route.ts`). Comment promised a transcript-fallback extraction that was never built; `parsed_price` / `parsed_beer_type` were hardcoded `null`. Now parses `analysis.data_collection_results` into structured fields, and if a valid price landed in the analysis but the mid-call `record_price` tool never fired (dropped call, agent summarised without tool call), writes to `pubs` + `price_history` as a fallback. Respects the same $5-$20 sanity range as the mid-call tool.
+- **Agent config** — added `platform_settings.data_collection` schema to `agents/andrew.json` with `price`, `beer_type`, `unit`, `happy_hour`, `confidence`, `raw_quote`. Without this ElevenLabs returns an empty `data_collection_results` block, so the post-call fallback has nothing to work with.
+- **record-price correctness** — stopped bumping `last_verified` on happy-hour-only or brand-only captures (was claiming the seed price was verified today). `last_verified` now only moves when a real price lands. Also added an edge-case 400 for the pathological "only a price supplied and it failed the sanity range" path.
 
 ### AI phone agent ("Andrew") — full end-to-end build + first real capture (2026-04-20)
 - Built on **ElevenLabs Conversational AI Agents platform** — first-party Claude Haiku 4.5 LLM, Andrew voice (stock AU male, `IRuDCTQL6MMy1qvcsue1`), Flash v2 TTS, Twilio native telephony integration.
