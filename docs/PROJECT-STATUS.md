@@ -115,9 +115,9 @@ See [`docs/seo-action-plan.md`](./seo-action-plan.md) for the prioritised punch 
 - Historical price charts on pub detail pages
 
 ### Manual setup the user owns
-- **GitHub Project board**: `gh` CLI lacks the `project` scope. Run `gh auth refresh -s project,read:project` then create the board manually OR I can do it next session once the scope is granted. Suggested: a v2 Project at `https://github.com/users/iamjohnnymac/projects/new` with views Backlog / This week / In progress / Blocked / Done, fields Priority + Effort, populated from milestone #1.
 - **GA4 Key Events**: per issue #28, configure 6 key events in GA4 Admin → Events
 - **Twilio cleanup**: the orphaned Nexelle phone number `+61851226384` is still allocated and billing on the Twilio side — release it in the Twilio console if you want it gone.
+- **Custom Project board views**: the project at https://github.com/users/iamjohnnymac/projects/2 has all 12 issues populated with Priority / Effort / Area / Status fields. Default view is a table. Add Board / By priority / By area views via the UI ("+ New view") in ~30s each — Projects v2 doesn't expose view creation via the API.
 
 ## Utility scripts (local only, gitignored)
 - `scripts/merge-research.js`, `analyze-json.js`, `compare-prices.js`, `fix-seo.js`, `audit-locations.js`, `apply-confident-fixes.js`, `apply-manual-fixes.js`, `backfill-phones.mjs`, `backfill-place-ids.mjs`, `discover-venues.mjs`, `finalize-backfill.mjs`, `insert-discovered-venues.mjs`, `sample-voices.mjs`, `sample-voices-female.mjs`, `test-responsive.mjs`
