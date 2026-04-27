@@ -117,7 +117,17 @@ See [`docs/seo-action-plan.md`](./seo-action-plan.md) for the prioritised punch 
 ### Manual setup the user owns
 - **GA4 Key Events**: per issue #28, configure 6 key events in GA4 Admin → Events
 - **Twilio cleanup**: the orphaned Nexelle phone number `+61851226384` is still allocated and billing on the Twilio side — release it in the Twilio console if you want it gone.
-- **Custom Project board views**: the project at https://github.com/users/iamjohnnymac/projects/2 has all 12 issues populated with Priority / Effort / Area / Status fields. Default view is a table. Add Board / By priority / By area views via the UI ("+ New view") in ~30s each — Projects v2 doesn't expose view creation via the API.
+
+## Project board
+
+**[Perth Pint Prices — Roadmap](https://github.com/users/iamjohnnymac/projects/6)** (v2 Project, Team Planning template).
+
+- Linked to `iamjohnnymac/perthpintprices`, holds all 12 milestone-1 issues
+- Built-in views: **Backlog** (table grouped by Status), **Board** (Kanban: Todo / In progress / Done), **Current iteration**, **Roadmap**, **My items**
+- Fields: `Status`, `Priority` (P0/P1/P2), `Size` (XS-XL — used as effort proxy: XS=Quick win, S=Half day, M=Full day, L=Multi-day, XL=Ongoing), `Estimate` (number), `Iteration` (sprint), `Start date`, `Target date`, plus custom **`Area`** (SEO / Andrew / Content / Performance / Schema / Indexing / Chore)
+- Each item already tagged with Priority + Size + Area; Status defaults to Todo
+
+Note: project was created via the GitHub web UI (Team Planning template + bulk import) after `gh project create` produced one where API-added items were silently invisible in views (forward query returned 0 even when reverse lookup confirmed items attached). UI-created project works. Don't recreate via CLI.
 
 ## Utility scripts (local only, gitignored)
 - `scripts/merge-research.js`, `analyze-json.js`, `compare-prices.js`, `fix-seo.js`, `audit-locations.js`, `apply-confident-fixes.js`, `apply-manual-fixes.js`, `backfill-phones.mjs`, `backfill-place-ids.mjs`, `discover-venues.mjs`, `finalize-backfill.mjs`, `insert-discovered-venues.mjs`, `sample-voices.mjs`, `sample-voices-female.mjs`, `test-responsive.mjs`
