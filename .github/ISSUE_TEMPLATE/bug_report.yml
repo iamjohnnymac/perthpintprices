@@ -1,0 +1,65 @@
+name: Bug report
+description: Something broken or wrong on the site
+labels: [bug, triage]
+title: "[bug] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report this. The more detail, the faster the fix.
+  - type: textarea
+    id: what-broke
+    attributes:
+      label: What broke
+      description: One sentence — what's wrong?
+      placeholder: e.g. "The Norfolk Hotel detail page shows an old happy hour even though I just reported a new one"
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: How can I trigger the bug myself?
+      placeholder: |
+        1. Go to /fremantle/the-norfolk-hotel
+        2. Click ...
+        3. ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected
+      placeholder: e.g. "The page should show $9.50 since I reported it 2 minutes ago and admin approved it"
+    validations:
+      required: true
+  - type: dropdown
+    id: device
+    attributes:
+      label: Device
+      multiple: true
+      options:
+        - Desktop (any modern browser)
+        - iPhone Safari
+        - iPhone Chrome
+        - Android Chrome
+        - PWA install (home-screen icon)
+        - Other (note in description)
+    validations:
+      required: true
+  - type: input
+    id: url
+    attributes:
+      label: URL where it happened
+      placeholder: https://perthpintprices.com/...
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots / video
+      description: Drop them in here — Cmd+Ctrl+Shift+4 on Mac, then paste.
+  - type: textarea
+    id: console
+    attributes:
+      label: Console errors
+      description: Open the browser console (Cmd+Opt+J), copy any red errors. Optional but helpful.
+      render: shell

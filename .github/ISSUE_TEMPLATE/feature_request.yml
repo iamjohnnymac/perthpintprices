@@ -1,0 +1,53 @@
+name: Feature request
+description: Suggest a new feature or capability
+labels: [feature, triage]
+title: "[feature] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Smaller, sharper proposals get built faster. Aim for one feature per issue.
+  - type: textarea
+    id: what
+    attributes:
+      label: What
+      description: One-line description of the feature
+      placeholder: e.g. "Add a 'cheapest pint right now' card that updates as happy hours start/end"
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Why
+      description: What user need does this solve? Be specific — vague problems get deprioritised.
+      placeholder: "When I open the app at 5pm I want to know which happy hour just kicked in nearest me, not the cheapest regular price."
+    validations:
+      required: true
+  - type: textarea
+    id: how
+    attributes:
+      label: How (optional)
+      description: A sketch of the implementation. Skip if you're not sure.
+  - type: dropdown
+    id: surface
+    attributes:
+      label: Where it lives
+      options:
+        - Homepage
+        - Pub detail page
+        - Suburb page
+        - Discover / Happy hour list
+        - Insights / Pint Index
+        - Guide page
+        - PWA / push notifications
+        - Admin
+        - Andrew (voice agent)
+        - New page
+        - Other (note above)
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: What else could solve this? Why is this the best option?

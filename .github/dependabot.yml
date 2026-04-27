@@ -1,0 +1,37 @@
+# https://docs.github.com/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
+version: 2
+
+updates:
+  # npm dependencies
+  - package-ecosystem: npm
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+      time: "06:00"
+      timezone: Australia/Perth
+    open-pull-requests-limit: 5
+    labels:
+      - dependencies
+      - chore
+    commit-message:
+      prefix: "deps"
+      include: scope
+    groups:
+      # Group minor + patch updates so we don't get a flood of PRs
+      minor-and-patch:
+        update-types:
+          - minor
+          - patch
+
+  # GitHub Actions
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+      time: "06:00"
+      timezone: Australia/Perth
+    labels:
+      - dependencies
+      - ci

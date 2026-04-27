@@ -1,0 +1,25 @@
+# Code owners — auto-requested for review on matching paths.
+# Format: <pattern> <@owner1> <@owner2>...
+# https://docs.github.com/articles/about-codeowners
+
+# Default owner for everything
+*                                @iamjohnnymac
+
+# Andrew (voice agent) — extra scrutiny because mistakes ring real pubs
+agents/                          @iamjohnnymac
+src/app/api/agents/              @iamjohnnymac
+src/app/api/pintsweep/           @iamjohnnymac
+docs/andrew-voice-research.md    @iamjohnnymac
+
+# SEO surface — visible to Google + AI crawlers
+src/app/sitemap.ts               @iamjohnnymac
+src/app/robots.ts                @iamjohnnymac
+src/app/layout.tsx               @iamjohnnymac
+docs/SEO-MASTER.md               @iamjohnnymac
+docs/seo-action-plan.md          @iamjohnnymac
+
+# CI / governance — never silently
+/.github/                        @iamjohnnymac
+/CLAUDE.md                       @iamjohnnymac
+/CONTRIBUTING.md                 @iamjohnnymac
+/SECURITY.md                     @iamjohnnymac

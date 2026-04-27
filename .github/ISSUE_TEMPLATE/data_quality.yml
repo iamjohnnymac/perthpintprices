@@ -1,0 +1,46 @@
+name: Data quality
+description: Wrong / stale / missing pub data
+labels: [data, triage]
+title: "[data] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Heads up: if it's just a fresh pint price, the form on the pub's page is the fastest fix. Use this template for things the form can't capture (wrong location, dead pub, wrong phone number, missing pub, duplicate listing).
+  - type: input
+    id: pub
+    attributes:
+      label: Pub name + slug
+      placeholder: e.g. The Norfolk Hotel — /fremantle/the-norfolk-hotel
+    validations:
+      required: true
+  - type: dropdown
+    id: kind
+    attributes:
+      label: What's wrong
+      options:
+        - Wrong / outdated price
+        - Wrong happy hour
+        - Wrong location on map
+        - Wrong suburb
+        - Wrong phone number
+        - Wrong website
+        - Pub is closed / no longer trading
+        - Duplicate listing
+        - Pub is missing entirely
+        - Wrong amenity tag (beer garden, dog-friendly, kids, etc.)
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: What it should be
+      placeholder: e.g. "Phone is now (08) 9335 1234, address is 47 South Tce Fremantle, no longer 23 High St"
+    validations:
+      required: true
+  - type: textarea
+    id: source
+    attributes:
+      label: How do you know
+      description: A link, a recent visit, a Google Maps screenshot — anything that gives me confidence to act on it.

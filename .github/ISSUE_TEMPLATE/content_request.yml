@@ -1,0 +1,64 @@
+name: Content / new page
+description: A new page, guide, or significant editorial addition
+labels: [content, triage]
+title: "[content] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        For new guides, suburb editorials, faceted landing pages, big copy rewrites. Quick wording fixes can be a PR direct without an issue.
+  - type: input
+    id: title
+    attributes:
+      label: Working title
+      placeholder: e.g. "Cheapest pints in Perth — live ranking"
+    validations:
+      required: true
+  - type: input
+    id: url
+    attributes:
+      label: Proposed URL
+      placeholder: e.g. /cheapest-pints
+    validations:
+      required: true
+  - type: textarea
+    id: target
+    attributes:
+      label: Target keywords + intent
+      placeholder: |
+        - Primary: "cheapest pints perth" (transactional)
+        - Secondary: "cheap pints perth", "perth cheap beer"
+    validations:
+      required: true
+  - type: textarea
+    id: outline
+    attributes:
+      label: Outline / what's on the page
+      placeholder: |
+        1. Answer-first 50-word block
+        2. Live top-20 ranked list (auto-updated from DB)
+        3. FAQ section with FAQPage schema
+        4. ...
+    validations:
+      required: true
+  - type: dropdown
+    id: format
+    attributes:
+      label: Page format
+      options:
+        - Programmatic (data-driven, auto-updates)
+        - Editorial (manual content)
+        - Hybrid (data + editorial intro)
+    validations:
+      required: true
+  - type: textarea
+    id: linkfrom
+    attributes:
+      label: Internal links pointing TO this page
+      description: Where will users (and Google) reach this page from?
+      placeholder: e.g. Homepage hero, /discover header, Pint Index sidebar
+  - type: textarea
+    id: success
+    attributes:
+      label: Success metric
+      placeholder: e.g. "Ranks page 1 for 'cheapest pints perth' within 8 weeks; >100 GSC clicks/month"

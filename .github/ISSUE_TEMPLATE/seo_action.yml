@@ -1,0 +1,65 @@
+name: SEO action
+description: A specific SEO change or experiment
+labels: [seo, triage]
+title: "[seo] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        For SEO improvements, audits, schema additions, content changes for ranking. Reference [`docs/SEO-MASTER.md`](https://github.com/iamjohnnymac/perthpintprices/blob/main/docs/SEO-MASTER.md) and [`docs/seo-action-plan.md`](https://github.com/iamjohnnymac/perthpintprices/blob/main/docs/seo-action-plan.md).
+  - type: textarea
+    id: action
+    attributes:
+      label: The action
+      placeholder: e.g. "Force www → apex 301 in Vercel project settings"
+    validations:
+      required: true
+  - type: dropdown
+    id: kind
+    attributes:
+      label: Kind
+      options:
+        - Technical (canonical, redirects, indexing, robots, sitemap)
+        - Schema / structured data
+        - On-page (titles, meta, headings, copy)
+        - New page / landing page
+        - Internal linking
+        - Off-page / link building
+        - Core Web Vitals / INP / performance
+        - AEO/GEO (AI Overview, LLM citation)
+        - Local SEO (AU specific)
+        - Tracking (GA4 key events, GSC monitoring)
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence (GSC / GA / Ahrefs / SERP)
+      description: Numbers, screenshots, query examples. Why is this worth doing now?
+    validations:
+      required: true
+  - type: textarea
+    id: impact
+    attributes:
+      label: Expected impact
+      placeholder: e.g. "Consolidates ~38 clicks and 946 impressions onto one URL"
+    validations:
+      required: true
+  - type: dropdown
+    id: effort
+    attributes:
+      label: Estimated effort
+      options:
+        - Quick win (<1 hour)
+        - Half day
+        - Full day
+        - Multi-day
+        - Ongoing programme
+    validations:
+      required: true
+  - type: textarea
+    id: success
+    attributes:
+      label: How we'll know it worked
+      placeholder: e.g. "GSC: clicks-on-target-query > X within 4 weeks; canonical-confused page count drops to 0"

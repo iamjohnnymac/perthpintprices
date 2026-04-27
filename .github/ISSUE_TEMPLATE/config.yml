@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Report a price
+    url: https://perthpintprices.com
+    about: Got a fresh pint price? Use the form on the pub's page — no GitHub account needed.
+  - name: Read the SEO playbook
+    url: https://github.com/iamjohnnymac/perthpintprices/blob/main/docs/SEO-MASTER.md
+    about: Reference doc for any SEO-related contribution.
+  - name: Read the project status
+    url: https://github.com/iamjohnnymac/perthpintprices/blob/main/docs/PROJECT-STATUS.md
+    about: What's shipped recently + the backlog.
