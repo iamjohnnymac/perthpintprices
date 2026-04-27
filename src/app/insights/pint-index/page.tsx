@@ -28,7 +28,7 @@ export default function Page() {
       ]} />
       <div className="sr-only" aria-hidden="true">
         <h1>Perth Pint Index - Live Beer Price Tracker</h1>
-        <p>Track Perth's average pint price over time. The Perth Pint Index monitors beer pricing trends across 300+ venues with weekly snapshots and historical data.</p>
+        <p>Track Perth&apos;s average pint price over time. The Perth Pint Index monitors beer pricing trends across 300+ venues with weekly snapshots and historical data.</p>
         <a href="/">Home</a>
         <a href="/discover">Discover</a>
         <a href="/happy-hour">Happy Hours</a>

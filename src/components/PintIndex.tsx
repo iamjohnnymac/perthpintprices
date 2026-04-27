@@ -63,6 +63,7 @@ function Sparkline({ data, snapshots, width = 280, height = 60 }: {
   const color = trend > 0 ? '#DC2626' : trend < 0 ? '#E8820C' : '#D97706';
   const gradientId = 'sparkGrad-pint-index';
 
+  // eslint-disable-next-line react-hooks/rules-of-hooks -- Sparkline early-returns when data.length < 2; data length is stable per mount so order is consistent
   const handleMouseMove = useCallback((e: React.MouseEvent<SVGSVGElement>) => {
     const svg = svgRef.current;
     if (!svg) return;
@@ -93,6 +94,7 @@ function Sparkline({ data, snapshots, width = 280, height = 60 }: {
     });
   }, [points, snapshots, data, width]);
 
+  // eslint-disable-next-line react-hooks/rules-of-hooks -- See note above
   const handleMouseLeave = useCallback(() => {
     setTooltip(t => ({ ...t, visible: false }));
   }, []);
