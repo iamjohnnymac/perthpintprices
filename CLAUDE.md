@@ -9,10 +9,12 @@ Perth Pint Prices (perthpintprices.com) tracks pint prices across 300+ Perth pub
 - **Supabase:** project ref `ifxkoblvgttelzboenpi` (Sydney region)
 
 ## Database
-- `pubs` — venue info (name, slug, suburb, lat/lng, prices, happy hour, amenities)
-- `price_history` — user-submitted price reports
+- `pubs` — venue info (name, slug, suburb, lat/lng, prices, happy hour, amenities) — currently 857 pubs, 663 missing regular prices
+- `price_reports` — user- and AI-submitted price reports (the `record_price` webhook + the public form both write here)
+- `price_history` — internal price-change log (audit trail of `pubs.price` updates)
 - `price_snapshots` — weekly aggregate snapshots for trend tracking
 - `crowd_reports` — live crowd level reports from users
+- `phone_call_log` — full transcript + cost log of every Andrew call (post-call webhook)
 - `push_subscriptions` — web push notification subscribers
 
 ## Routes (23 pages)
@@ -35,12 +37,21 @@ BeerWeather, BreadcrumbJsonLd, CrowdReporter, DadBar, ErrorBoundary, FAQ, Featur
 freshness, happyHour, happyHourLive, location, mapTheme, mapTile, priceColors, priceLabel, pushNotifications, sunPosition, supabase, utils
 
 ## API routes
-`/api/pubs`, `/api/price-report`, `/api/pub-submission`, `/api/admin/*`, `/api/cron`, `/api/pint-of-the-day`, `/api/push`, `/api/race-meets`, `/api/weather`, `/api/weekly-report`, `/api/weekly-snapshot`
+- **User-facing**: `/api/pubs`, `/api/price-report`, `/api/pub-submission`, `/api/menu-scan`, `/api/pint-of-the-day`
+- **Andrew (voice agent)**: `/api/agents/record-price/[slug]` (mid-call webhook), `/api/agents/post-call` (HMAC-signed post-call webhook), `/api/pintsweep/kickoff` (batch trigger via ElevenLabs Batch Calling)
+- **Admin**: `/api/admin/review`, `/api/admin/stats`
+- **Cron / scheduled**: `/api/cron/price-check`, `/api/cron/weekly-snapshot`, `/api/weekly-snapshot`, `/api/weekly-report`
+- **Other**: `/api/push/send`, `/api/push/subscribe`, `/api/race-meets`, `/api/weather`
 
 ## Reference docs
+- `docs/PROJECT-STATUS.md` — detailed history, recent work log, and backlog (read first for "what's going on")
 - `docs/SEO-MASTER.md` — full SEO playbook (keyword targets, content strategy, link building, technical checklist)
-- `docs/PROJECT-STATUS.md` — detailed history, recent work log, and backlog
+- `docs/seo-research-2026.md` — what's new in late-2026 SEO (AEO/GEO, Information Gain, MenuItem schema, AU local). Companion to SEO-MASTER.
+- `docs/seo-action-plan.md` — prioritised SEO punch list driven by real GSC + GA4 data; maps 1:1 to milestone #1 issues
+- `docs/andrew-voice-research.md` — voice models + TTS tuning research for the Andrew agent
 - `docs/price-verification-kit.md` — price verification process
+- `docs/handover-*.md` — nightly handover notes (most recent first)
+- Agent config: `agents/andrew.json` (version-controlled, PATCHed to ElevenLabs)
 
 ## Rules
 - **Always check Context7 first** — before writing any code, use the Context7 MCP tool (`mcp__plugin_context7_context7__resolve-library-id` then `mcp__plugin_context7_context7__query-docs`) to look up current documentation for any library or framework being used (Next.js, Tailwind, Lucide, Supabase, etc.)

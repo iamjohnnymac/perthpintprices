@@ -1,91 +1,123 @@
 # Perth Pint Prices Project Status
 
-Last updated: 2026-03-10
+Last updated: 2026-04-27
 
 ## What this is
 
-Perth Pint Prices (perthpintprices.com) tracks pint prices across 300+ Perth pubs. Users can discover cheap pints, find happy hours, plan pub crawls, and report prices. The site is live on Vercel.
+Perth Pint Prices (perthpintprices.com) tracks pint prices across **857 Perth pubs** (up from 423 in March). Users can discover cheap pints, find happy hours, plan pub crawls, and report prices. The site is live on Vercel.
 
 Stack, database, routes, components, and lib files are documented in `CLAUDE.md` (auto-loaded every session). This file covers history, recent work, and the backlog.
 
 ## What's done recently
 
+### Project governance + CI infrastructure (2026-04-27)
+- README, CONTRIBUTING.md, SECURITY.md, CODE_OF_CONDUCT.md, CHANGELOG.md
+- `.github/CODEOWNERS`, `dependabot.yml`, PR template, 5 issue forms (bug, feature, SEO action, content, data quality)
+- CI workflow on every PR + push to main (typecheck, lint, build) — required status check on `main`
+- ESLint wired up (was previously absent — `next lint` ran interactively); 9 pre-existing warnings tolerated, 3 pre-existing errors fixed
+- Custom labels: triage, blocked, in-progress, p0/p1/p2, feature, chore, seo, andrew, content, data, security, performance, schema, indexing, ci, dependencies
+- Repo description + 15 topics set, branch protection on main (no force-push, no deletion, required CI, required conversation resolution)
+- Milestone "SEO Push — Q2 2026" with 12 issues filed against it (#25-#36)
+- Commits: `c98bdf3`, `cf00ce5`, `c24cc72`, `7ef63b2`, `e30491d`
+
+### SEO research + action plan (2026-04-27)
+- Pulled GSC + GA4 data: 131 clicks / 5k impressions / 2.6% CTR / position 17.1 over 90 days, 838 unique queries, 28% of pages not indexed (439 of 1,573)
+- `docs/seo-research-2026.md` — what's new in late-2026 SEO since SEO-MASTER was written. AI Overview / AEO / GEO playbook, Information Gain post March 2026 core update, MenuItem schema, AU local quirks, INP replaces FID. 27 sources cited.
+- `docs/seo-action-plan.md` — prioritised 12-action punch list driven by the GSC + GA4 data. Each issue in milestone #1 maps to a section here.
+- Headline gaps: www vs apex canonical splitting (~38 clicks at risk), legacy `/pub/`/`/suburb/` 308s still indexed, 373 "Discovered, currently not indexed", 0 GA4 key events, 12 zero-click queries on page 1
+- Commit: `cf00ce5`
+
+### Andrew voice agent: full pipeline + voice tuning (2026-04-26 + 2026-04-27)
+- Production pipeline already shipped from a parallel session before this work began:
+  - `src/app/api/agents/record-price/[slug]/route.ts` — mid-call webhook (partial-data tolerant, unit conversion)
+  - `src/app/api/agents/post-call/route.ts` — HMAC-signed post-call webhook with Claude transcript fallback
+  - `src/app/api/pintsweep/kickoff/route.ts` — batch trigger using ElevenLabs Batch Calling, 24h dedupe, openNow filter
+  - 70-term Scribe v2 keyterm list, 6 few-shot transcripts, DTMF/IVR navigation
+- First successful real-pub capture (2026-04-26): $12.80 Great Northern Super Crisp at Kalamunda Hotel from Cassie
+- ElevenLabs MCP wired into `~/.claude.json` user-level
+- Nexelle agent + phone number deleted from ElevenLabs; voice-proxy Vercel project deleted; local source removed
+- Voice config tuned per `docs/andrew-voice-research.md`: model `eleven_flash_v2` → `eleven_v3_conversational` (Expressive Mode), stability 0.30 → 0.70, similarity_boost 0.85 → 0.75, turn eagerness `eager` → `patient`. `flash_v2_5` was rejected by API ("English Agents must use turbo or flash v2"), v3 conversational got through via expressive_mode toggle.
+- `docs/andrew-voice-research.md` — voice model + TTS tuning research
+- Commits: `d03b883`, `ae4b44e` (reverted in `6d4cd96` — duplicate of pre-existing route)
+
+### Arvo → Perth Pint Prices rebrand finished (2026-04-27)
+- Companion to the earlier code/SEO-title rebrand (`5b3df48`). Replaced remaining "Arvo" references in CLAUDE.md, PROJECT-STATUS.md, SEO-MASTER.md, the price verification kit, the service worker, the PWA manifest, and every guide/insight/suburb page.
+- Homepage title now uses Next's `title.absolute` pattern; "Arvo" preserved as `alternateName` in WebSite JSON-LD for SEO continuity
+- SubPageNav brand mark switched from SVG icon to text-only (`<amber>Perth</amber> Pint Prices`)
+- Commit: `5a11568` (39 files, 157 insertions, 204 deletions)
+
 ### Pub location audit and fix (2026-03-10)
 - Audited all 423 pub lat/lng coordinates against Google Places Text Search API
-- Fixed 146 incorrect locations: 126 auto-applied (confident name matches), 11 user-confirmed with suburb corrections, 9 geocoded from user-provided addresses
-- Corrected 6 suburb mismatches (Bright Tank Brewing, Broken Hill Hotel, Indian Ocean Hotel, Fenian Irish Pub, The Paddo, Botanical Bar)
-- Filled 3 missing coordinates (399 Bar, Brew University, The Naked Fox Wine Bar)
+- Fixed 146 incorrect locations: 126 auto-applied, 11 user-confirmed, 9 geocoded from addresses
 - Accuracy improved from 64.5% to 97.6% within 100m of Google's coordinates
-- 4 pubs could not be confirmed as operating (Hippo Bar, Ocean Reef Tavern, Mosman Park Hotel, North Beach Hotel)
 - Scripts: `audit-locations.js`, `apply-confident-fixes.js`, `apply-manual-fixes.js` (gitignored)
 
-### Homepage UX overhaul (2026-03-10)
-- Consolidated filter section from 3 rows to 2 on mobile (removed beer type filter, simplified layout)
-- Replaced distance radius pills with a dropdown that swaps in for the suburb dropdown when sorting by Nearest
-- Fixed contradictory copy across FAQ, HowItWorks, SocialProof, and JSON-LD (removed automation claims, aligned with community-powered messaging)
-- Made Suburbs stat card link to /suburbs, Cheapest stat card dynamically links to cheapest pub's page
-- Moved draught beer animation up on mobile (negative top margin)
-- Fixed beer stream alignment in draught animation (stream now centered in glass)
-- Committed as `48f139f`
+### Homepage UX overhaul + dead code cleanup (2026-03-10)
+- Filter section consolidated, distance dropdown swaps in for suburb when sorting Nearest, copy aligned with community-powered messaging
+- 16 unused components removed (1,676 lines), `src/lib/emoji.ts` deleted, 163 testing screenshots deleted
+- Commits: `48f139f`, `9fe1345`
 
-### Dead code cleanup (2026-03-10)
-- Removed 16 unused components (1,676 lines): CrowdBadge, CrowdPulse, HappyHourPreview, InfoTooltip, MapPeek, MapPeekInline, MyLocals, NotificationBell, PintIndexCompact, PintOfTheDayCompact, PriceReporter, PriceTicker, PubCardsView, PubListView, StatsBar, TabBar
-- Removed unused `src/lib/emoji.ts` and placeholder `newfile`
-- Added scripts, research data, and supabase config to `.gitignore`
-- Deleted 163 testing screenshots from project root
-- Committed as `9fe1345`
-
-### SEO audit and fixes (2026-03-09)
-- Full audit against `docs/SEO-MASTER.md` playbook
-- Fixed BreadcrumbJsonLd schema bug (`item` -> `url`)
-- Added Twitter cards to 15 pages
-- Added sr-only H1 tags to all pages missing them
-- Trimmed over-length titles and descriptions
-- Added OG tags to suburbs page
-- Committed as `2a6e082`
-
-### Humanizer audit (2026-03-09)
-- Full site audit for AI text patterns
-- Codebase was already clean. Only 5 em dashes replaced with periods
-- Files: CrowdPulse, PuntNPints, SunsetSippers, TonightsMoves, PubGolfClient
-- Committed as `f3e93b5`
+### SEO + Humanizer audit (2026-03-09)
+- BreadcrumbJsonLd schema bug fixed, Twitter cards added, sr-only H1s added, titles/descriptions trimmed
+- Em dashes replaced with periods in 5 components
+- Commits: `2a6e082`, `f3e93b5`
 
 ### Research agent merge (2026-03-09)
-- 190 research agent JSON files collected new pub data
-- Merged 49 updates + 3 new pubs into Supabase via `scripts/merge-research.js`
-- Agents collected new pubs but did NOT refresh existing prices
-- Script only fills null fields, never overwrites existing data
-- Results stored locally in `perth_pubs_pricing/results/` (gitignored)
+- 190 research agent JSON files merged: 49 updates + 3 new pubs into Supabase via `scripts/merge-research.js`
 
 ## What's still to do
 
+### SEO push — Q2 2026 (milestone #1, 12 open issues #25-#36)
+See [`docs/seo-action-plan.md`](./seo-action-plan.md) for the prioritised punch list. Top of the list:
+- #25 Force www → apex 301 in Vercel (1h, p0)
+- #26 Convert legacy `/pub/` and `/suburb/` 308s to 301s (2h, p0)
+- #27 Reclaim zero-click page-1 queries with answer-first blocks + FAQPage schema (4h, p1)
+- #28 Configure GA4 Key Events (30m, p1)
+- #29 Add answer-first block + MenuItem schema to all 300 pub pages (1-2d, p1)
+- #30 Get 373 "Discovered not indexed" crawled (1d, p1)
+- #31 Resolve 39 "Duplicate, Google chose different canonical" (blocked on #25/#26)
+- #32 Build missing high-intent landing pages (3-5d, p1)
+- #33 Press-pitch the Pint Index to WA media (1w, p2)
+- #34 Migrate to next/image + INP audit (4-6h, p1)
+- #35 Add llms.txt + Article schema for AI citation (1h, p2)
+- #36 Set up weekly SEO snapshot + GSC alerts (15m/wk, p2)
+
 ### Data
-- **222 pubs still missing regular prices** — need another research agent pass focused on price collection
+- **663 of 857 pubs missing regular prices** (was 222 in March; new pubs are being added faster than prices are being collected)
+- Andrew (the voice agent) is the strategy — see `agents/andrew.json` and the `/api/pintsweep/kickoff` batch trigger
 - Consider price refresh strategy for stale prices (some pubs haven't been updated in months)
 
-### SEO
-Full checklist in `docs/SEO-MASTER.md` section 6. Key remaining items:
-- Dynamic OG images for pub and suburb pages
-- next/image migration for WebP/lazy loading
-- ~~FAQPage schema on homepage FAQ~~ (done — JSON-LD in `page.tsx`)
-- Google Business Profile setup
-- Google Search Console registration and sitemap submission
-- Core Web Vitals audit
-- Intro text on data-heavy pages (discover, happy hour, suburbs list)
-- Keyword-targeted content (see SEO-MASTER.md section 3)
+### Andrew voice agent (next steps after voice tuning lands tomorrow)
+- Place test calls with phone OFF silent to evaluate cadence/volume after the v3 conversational + stability 0.70 change
+- If sound quality is good: kick off Professional Voice Clone (PVC) per `docs/andrew-voice-research.md` §3 — book a 30 min recording session via Voicebooking / Voices.com or record a willing AU male mate. Cleanest signal for production phone bots.
+- If still inconsistent: pilot Cartesia Sonic-3 + Line per research §6
+
+### Open Dependabot PRs (need triage)
+- #21 next 14.2.35 → 16.2.4 — major bump, breaking changes likely
+- #22 lucide-react 0.572.0 → 1.11.0 — major bump
+- #23 twilio 5.13.1 → 6.0.0 — major bump
+- #24 @vercel/analytics 1.6.1 → 2.0.1 — major bump
+- #20 minor-and-patch group (5 updates) — should be safe
+- #19 actions/checkout 4 → 6
+- #18 actions/setup-node 4 → 6
+
+### Stale PRs to clean up (#1-#12)
+8 old PRs from Feb-Mar 2026 that have either been superseded by direct pushes or abandoned:
+- #12 Remove em dashes — done in `f3e93b5`
+- #9 Arvo restructure — superseded
+- #8 PintDex rebrand — superseded
+- #6 CLAUDE.md PR — superseded by direct commits
+- #5, #4, #3, #2, #1 — old, likely superseded
 
 ### Features (ideas, not committed)
 - Price alerts / watchlist notifications
-- ~~"Near me" improvements with better geolocation UX~~ (done — distance dropdown replaces suburb when sorting nearest)
 - Pub comparison tool
 - Historical price charts on pub detail pages
 
+### Manual setup the user owns
+- **GitHub Project board**: `gh` CLI lacks the `project` scope. Run `gh auth refresh -s project,read:project` then create the board manually OR I can do it next session once the scope is granted. Suggested: a v2 Project at `https://github.com/users/iamjohnnymac/projects/new` with views Backlog / This week / In progress / Blocked / Done, fields Priority + Effort, populated from milestone #1.
+- **GA4 Key Events**: per issue #28, configure 6 key events in GA4 Admin → Events
+- **Twilio cleanup**: the orphaned Nexelle phone number `+61851226384` is still allocated and billing on the Twilio side — release it in the Twilio console if you want it gone.
+
 ## Utility scripts (local only, gitignored)
-- `scripts/merge-research.js` — merge research JSON into Supabase (dry-run supported)
-- `scripts/analyze-json.js` — analyze research JSON files for mergeable data
-- `scripts/compare-prices.js` — compare JSON prices vs DB prices
-- `scripts/fix-seo.js` — batch SEO metadata fixes
-- `scripts/test-responsive.mjs` — Playwright responsive screenshot testing
-- `scripts/audit-locations.js` — audit pub lat/lng against Google Places API
-- `scripts/apply-confident-fixes.js` — apply confident location fixes with name matching
-- `scripts/apply-manual-fixes.js` — apply user-reviewed fixes and geocode addresses
+- `scripts/merge-research.js`, `analyze-json.js`, `compare-prices.js`, `fix-seo.js`, `audit-locations.js`, `apply-confident-fixes.js`, `apply-manual-fixes.js`, `backfill-phones.mjs`, `backfill-place-ids.mjs`, `discover-venues.mjs`, `finalize-backfill.mjs`, `insert-discovered-venues.mjs`, `sample-voices.mjs`, `sample-voices-female.mjs`, `test-responsive.mjs`
