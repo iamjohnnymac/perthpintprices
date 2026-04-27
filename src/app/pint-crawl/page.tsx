@@ -5,11 +5,11 @@ import PintCrawlClient from './PintCrawlClient'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: "Pint Crawl Perth: Plan Your Pub Crawl | Perth Pint Prices",
+  title: 'Pint Crawl Perth: Plan Your Pub Crawl',
   description: "Plan a pub crawl in Perth. Set your budget, pick your stops, and get a walking route with real pint prices from 300+ venues.",
   alternates: { canonical: 'https://perthpintprices.com/pint-crawl' },
   openGraph: {
-    title: "Pint Crawl Perth | Perth Pint Prices",
+    title: 'Pint Crawl Perth | Perth Pint Prices',
     description: "Plan a Perth pub crawl with budget-aware route planning.",
     url: 'https://perthpintprices.com/pint-crawl',
     type: 'website',

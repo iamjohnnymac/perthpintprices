@@ -6,7 +6,7 @@ import { getPubs, toSuburbSlug } from '@/lib/supabase'
 export const revalidate = 60 // Revalidate every 60 seconds for fresh happy hour data
 
 export const metadata: Metadata = {
-  title: 'Happy Hours in Perth Right Now | Perth Pint Prices',
+  title: 'Happy Hours in Perth Right Now',
   description:
     'Which Perth pubs have happy hour deals on right now. Live countdown timers, savings calculations, and the cheapest pints available today.',
   alternates: { canonical: 'https://perthpintprices.com/happy-hour' },

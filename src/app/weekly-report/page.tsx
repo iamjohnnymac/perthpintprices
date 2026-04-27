@@ -3,7 +3,7 @@ import BreadcrumbJsonLd from '@/components/BreadcrumbJsonLd'
 import WeeklyClient from './WeeklyReportClient'
 
 export const metadata: Metadata = {
-  title: 'This Week in Perth Pints | Perth Pint Prices',
+  title: 'This Week in Perth Pints',
   description: 'Weekly roundup of Perth beer prices. Track price movements, discover the cheapest pints this week, and see which venues are trending across Perth suburbs.',
   alternates: { canonical: 'https://perthpintprices.com/weekly' },
   openGraph: {

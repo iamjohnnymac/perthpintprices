@@ -4,11 +4,11 @@ import PubGolfClient from './PubGolfClient'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: "Pub Golf Perth: Score Your Pub Crawl | Perth Pint Prices",
+  title: 'Pub Golf Perth: Score Your Pub Crawl',
   description: "Play pub golf across Perth's best pubs. Pick a course, track your scores, and see how much your round costs. Real prices from 300+ Perth venues.",
   alternates: { canonical: 'https://perthpintprices.com/pub-golf' },
   openGraph: {
-    title: "Pub Golf Perth: Score Your Crawl | Perth Pint Prices",
+    title: 'Pub Golf Perth: Score Your Crawl | Perth Pint Prices',
     description: "Play pub golf across Perth's best pubs with real pint prices.",
     url: 'https://perthpintprices.com/pub-golf',
     type: 'website',

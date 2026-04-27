@@ -1,46 +1,14 @@
-# Arvo Project Status
+# Perth Pint Prices Project Status
 
-Last updated: 2026-04-20
+Last updated: 2026-03-10
 
 ## What this is
 
-Arvo (perthpintprices.com) tracks pint prices across 800+ Perth pubs. Users can discover cheap pints, find happy hours, plan pub crawls, and report prices. The site is live on Vercel.
+Perth Pint Prices (perthpintprices.com) tracks pint prices across 300+ Perth pubs. Users can discover cheap pints, find happy hours, plan pub crawls, and report prices. The site is live on Vercel.
 
 Stack, database, routes, components, and lib files are documented in `CLAUDE.md` (auto-loaded every session). This file covers history, recent work, and the backlog.
 
 ## What's done recently
-
-### AI phone agent ("Andrew") — full end-to-end build + first real capture (2026-04-20)
-- Built on **ElevenLabs Conversational AI Agents platform** — first-party Claude Haiku 4.5 LLM, Andrew voice (stock AU male, `IRuDCTQL6MMy1qvcsue1`), Flash v2 TTS, Twilio native telephony integration.
-- Three new API routes: `/api/agents/record-price/[slug]` (mid-call tool), `/api/agents/post-call` (transcription webhook, HMAC-signed), `/api/pintsweep/kickoff` (batch trigger with 24h dedupe + Places open-now filter).
-- `agents/andrew.json` is the version-controlled agent config — 17k-char system prompt with 6 few-shot transcripts + 3 anti-patterns, 71 Scribe v2 keyterms (Perth beer brands, suburbs, pour sizes), built-in tools for end_call, voicemail_detection, skip_turn, play_keypad_touch_tone.
-- Prompt tuning done over 20+ test calls: two-beat opener, name-grab with brush-off handling, eager record_price (fire with any data, don't wait for complete set), transfer/IVR re-intro patterns, marketing-plug on polite refusal, filler-filler rule, mate budget.
-- Live pilot: 15 real-pub calls across 3 pilot rounds. **First verified real capture: Kalamunda Hotel — $12.80 pint of Great Northern Super Crisp, captured from Cassie at 115s call duration.**
-- Also captured partial (happy hour only) from Bayswater Hotel via their AI receptionist: "Mon-Fri 5-6pm on select beers, wines and cocktails". Price not obtainable (they transferred to a human who didn't respond in time).
-- Cost per call: ~$0.15-0.25. Full 576-pub sweep estimated at ~$85-130.
-- Commits: `d5f6779`, `c979d9d`, many iterative prompt commits through `7be4c50`.
-
-### ISR migration — 11.5× faster builds (2026-04-20)
-- `src/app/[suburb]/[pub]/page.tsx`: `generateStaticParams()` now returns `[]` with explicit `export const dynamicParams = true`; `revalidate: 300` stays. No pub pages pre-rendered at build — first request generates on-demand, subsequent requests hit the ISR cache.
-- `src/app/sitemap.ts`: added `export const revalidate = 3600` so new pubs appear in `/sitemap.xml` within 60 min of insertion (previously only on redeploy).
-- Build time: **475s → 41s** (~11.5× faster) on the first post-migration deploy.
-- Pages generated at build: 911 → ~30.
-- SEO-neutral: smoke-tested prod — `x-vercel-cache: MISS` on first hit, `HIT` on second, metadata renders identically.
-- Phone-agent price writes now propagate to public pub pages within 300s without needing a deploy.
-- Rollback if ever needed: restore original `generateStaticParams` body.
-- Commit `9c88fb3`.
-
-### Google Places venue discovery — 413 → 857 pubs (2026-04-19)
-- Added `place_id text unique` column to `pubs` (indexed).
-- Backfilled `place_id` on existing rows via Places API (New) `searchText`: 352 high-confidence + 22 medium-confidence auto-written, 20 low-confidence flagged, 25 rejects. Finalize pass promoted 6 more near-0m operational matches. Total: 380/413 tagged (92%).
-- Deleted 10 `CLOSED_PERMANENTLY` venues: The Flying Scotsman, Jack Rabbit Slim's, Five Bar, Wolf Lane, Halford Bar, Helvetica Bar, Yelo Trigg, Ruin Bar, Badlands Bar, W Churchill.
-- Bulk discovery via `places:searchNearby` seeded from every existing pub (1500m radius then 500m follow-up): 602 + 145 candidates. Post-filtered for drink-led primary types (bar, pub, wine_bar, brewery, brewpub, cocktail_bar, sports_bar, night_club, gastropub, bar_and_grill, lounge_bar) + restaurants that have bar/pub/brewery in their `types[]`.
-- Inserted **444 new venues** (442 from pass 1, 2 from pass 2). Dedupe: place_id + normalised name+suburb + 30m proximity.
-- Final state: **857 pubs, 815 with place_id (95%), 740 with website (86%), ~600 with phone numbers.**
-- 27 uncertain backfill matches written to `scripts/backfill-review.json` for manual review (likely-closed venues, rebrands, etc.).
-- Cost: $0 (within Google's free Essentials/Pro tier).
-- Scripts (checked in, not gitignored; read keys from `.env.local`): `backfill-place-ids.mjs`, `finalize-backfill.mjs`, `discover-venues.mjs`, `insert-discovered-venues.mjs`.
-- Commits: `f5aed35`, `b756aa4`, `014f3a7`, `1ac6e7d`.
 
 ### Pub location audit and fix (2026-03-10)
 - Audited all 423 pub lat/lng coordinates against Google Places Text Search API
@@ -92,15 +60,8 @@ Stack, database, routes, components, and lib files are documented in `CLAUDE.md`
 ## What's still to do
 
 ### Data
-- **664 pubs missing regular prices** (up from 222 after the Places discovery run added 444 new venues). Plan: AI phone-agent sweep inspired by Guinndex — Twilio + ElevenLabs + Claude calls every price-less venue during business hours, Claude parses transcripts into structured price data. See "AI phone-agent price sweep" in planned work below.
+- **222 pubs still missing regular prices** — need another research agent pass focused on price collection
 - Consider price refresh strategy for stale prices (some pubs haven't been updated in months)
-- 27 backfill matches still uncertain — `scripts/backfill-review.json`. Likely includes rebrands (Rosie O'Grady's → Johnny Fox's) and venues that probably closed (Hippo Bar, Ocean Reef Tavern, Mosman Park Hotel, North Beach Hotel). Needs human call.
-
-### AI phone-agent price sweep (planned)
-- Borrowing from Guinndex (guinndex.ai, Matt Cortland, March 2026). Their "Rachel" agent called 3,000 Irish pubs over St Paddy's weekend for ~€200, got 1,000+ prices.
-- Stack: **Twilio** (outbound AU calls), **ElevenLabs** (voice), **Claude** (script + transcript parsing). Phone numbers come from the `place_id` backfill (~600 available).
-- Sweep all 664 price-less pubs during weekday afternoons; target: 50%+ answer rate, 30%+ price capture.
-- Needs: Twilio SID/token + AU outbound number, ElevenLabs key + voice, Anthropic key for parsing, explicit user OK on automated outbound calls to businesses.
 
 ### SEO
 Full checklist in `docs/SEO-MASTER.md` section 6. Key remaining items:

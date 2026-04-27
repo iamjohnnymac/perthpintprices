@@ -1,7 +1,7 @@
 import { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Perth Pub Guides: Weather, Sunsets, Dad Bars & More | Perth Pint Prices',
+  title: 'Perth Pub Guides: Weather, Sunsets, Dad Bars & More',
   description: "Perth pub guides for every mood. Beer weather picks, sunset spots, dad-friendly pubs, TAB venues, rainy day refuges, and more.",
   alternates: { canonical: 'https://perthpintprices.com/guides' },
   openGraph: {

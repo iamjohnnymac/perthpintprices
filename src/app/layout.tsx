@@ -24,11 +24,15 @@ export async function generateMetadata(): Promise<Metadata> {
 
   return {
     metadataBase: new URL('https://perthpintprices.com'),
+    applicationName: 'Perth Pint Prices',
     icons: {
       icon: '/favicon.ico',
       apple: '/apple-touch-icon.png',
     },
-    title: "Perth Pint Prices | Perth's pint prices, sorted.",
+    title: {
+      default: "Perth Pint Prices | Perth's pint prices, sorted.",
+      template: '%s | Perth Pint Prices',
+    },
     description: desc,
     keywords: 'Perth, pint prices, beer, pubs, happy hour, Western Australia, cheap drinks, Perth Pint Prices',
     openGraph: {

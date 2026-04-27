@@ -8,7 +8,9 @@ export async function generateMetadata(): Promise<Metadata> {
   const description = `Perth's pint prices, sorted. Real prices from real people across ${stats.venueCount}+ venues and ${stats.suburbCount} suburbs.`
 
   return {
-    title,
+    title: {
+      absolute: title,
+    },
     description,
     alternates: {
       canonical: 'https://perthpintprices.com/',
@@ -44,6 +46,7 @@ function HomeJsonLd() {
       '@context': 'https://schema.org',
       '@type': 'WebSite',
       name: 'Perth Pint Prices',
+      alternateName: 'Arvo',
       url: 'https://perthpintprices.com',
       description: "Perth's pint prices, sorted. Real prices from real people.",
     },

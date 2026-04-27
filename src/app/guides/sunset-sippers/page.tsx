@@ -3,11 +3,11 @@ import BreadcrumbJsonLd from '@/components/BreadcrumbJsonLd'
 import SunsetSippersPage from './SunsetSippersPage'
 
 export const metadata: Metadata = {
-  title: "Sunset Sippers Perth: Best Golden Hour Pubs | Perth Pint Prices",
+  title: 'Sunset Sippers Perth: Best Golden Hour Pubs',
   description: "Find Perth's best sunset pubs. Watch the sun go down with a cold pint at venues with west-facing views and beer gardens.",
   alternates: { canonical: 'https://perthpintprices.com/guides/sunset-sippers' },
   openGraph: {
-    title: "Sunset Sippers Perth: Best Golden Hour Pubs | Perth Pint Prices",
+    title: 'Sunset Sippers Perth: Best Golden Hour Pubs | Perth Pint Prices',
     description: "Perth's best sunset pubs with west-facing views and beer gardens.",
     url: 'https://perthpintprices.com/guides/sunset-sippers',
     type: 'website',

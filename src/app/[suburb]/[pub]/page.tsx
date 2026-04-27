@@ -10,9 +10,10 @@ interface PageProps {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const pub = await getPubBySlug(params.pub)
-  if (!pub) return { title: 'Pub Not Found | Perth Pint Prices' }
+  if (!pub) return { title: 'Pub Not Found' }
 
-  const title = `${pub.name}, ${pub.suburb} | Perth Pint Prices`
+  const priceText = pub.price !== null ? `$${pub.price.toFixed(2)} pints` : 'Price TBC'
+  const title = `${pub.name}, ${pub.suburb}: ${priceText}`
 
   // Build description with progressive enrichment (target 70-160 chars)
   const descParts: string[] = []
@@ -40,7 +41,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     description,
     alternates: { canonical },
     openGraph: {
-      title: `${pub.name}, ${pub.suburb} | Perth Pint Prices`,
+      title: `${pub.name}: ${priceText}`,
       description,
       url: canonical,
       siteName: 'Perth Pint Prices',
@@ -50,21 +51,17 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     },
     twitter: {
       card: 'summary_large_image',
-      title: `${pub.name}, ${pub.suburb} | Perth Pint Prices`,
+      title: `${pub.name}: ${priceText} | Perth Pint Prices`,
       description,
     },
   }
 }
 
-// Empty array = no pub pages pre-rendered at build. First request generates
-// on-demand; subsequent requests within 300s hit the ISR cache. Keeps builds
-// constant-time regardless of pub count and lets price writes (e.g. from the
-// phone agent) propagate within 5 min without redeploying.
 export async function generateStaticParams() {
-  return []
+  const pairs = await getAllPubSlugPairs()
+  return pairs.map(pair => ({ suburb: toSuburbSlug(pair.suburb), pub: pair.slug }))
 }
 
-export const dynamicParams = true
 export const revalidate = 300
 
 export default async function PubPage({ params }: PageProps) {

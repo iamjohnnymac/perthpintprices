@@ -4,7 +4,7 @@ import BreadcrumbJsonLd from '@/components/BreadcrumbJsonLd'
 import SuburbsClient from './SuburbsClient'
 
 export const metadata: Metadata = {
-  title: 'All Suburbs | Perth Pint Prices',
+  title: 'All Suburbs',
   description: 'Browse pint prices across every Perth suburb. Compare average prices, find the cheapest pints near you, and discover happy hour deals. Community-verified prices updated daily.',
   alternates: { canonical: 'https://perthpintprices.com/suburbs' },
   openGraph: {

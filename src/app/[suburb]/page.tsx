@@ -23,9 +23,12 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const suburb = await getSuburbBySlug(params.suburb)
-  if (!suburb) return { title: 'Suburb Not Found | Perth Pint Prices' }
+  if (!suburb) return { title: 'Suburb Not Found' }
 
-  const title = `Cheapest Pints in ${suburb.name} | Perth Pint Prices`
+  const priceText = suburb.cheapestPrice !== 'TBC'
+    ? `${suburb.pubCount} Pubs from $${suburb.cheapestPrice}`
+    : `${suburb.pubCount} Pubs`
+  const title = `Cheapest Pints in ${suburb.name}: ${priceText}`
 
   const descParts = [`Compare pint prices across ${suburb.pubCount} pubs in ${suburb.name}, Perth.`]
   if (suburb.cheapestPrice !== 'TBC') {
@@ -42,7 +45,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       canonical: absoluteSuburbUrl(params.suburb),
     },
     openGraph: {
-      title,
+      title: `${title} | Perth Pint Prices`,
       description,
       url: absoluteSuburbUrl(params.suburb),
       siteName: 'Perth Pint Prices',
@@ -52,7 +55,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     },
     twitter: {
       card: 'summary_large_image',
-      title,
+      title: `${title} | Perth Pint Prices`,
       description,
     },
   }

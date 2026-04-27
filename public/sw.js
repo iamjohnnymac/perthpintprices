@@ -21,12 +21,12 @@ self.addEventListener('push', (event) => {
   }
 
   const options = {
-    body: data.body || 'Something changed at Perth Pint Prices!',
+    body: data.body || 'Something changed on Perth Pint Prices!',
     icon: '/icon-192.png',
     badge: '/icon-192.png',
     vibrate: [100, 50, 100],
     data: { url: data.url || '/' },
-    tag: data.tag || 'arvo',
+    tag: data.tag || 'perth-pint-prices',
     renotify: !!data.renotify,
   }
 

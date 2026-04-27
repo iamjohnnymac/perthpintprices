@@ -2,7 +2,7 @@
 
 ## Google Form fields
 
-Create a Google Form with these fields. Title: **"Arvo Price Check"**
+Create a Google Form with these fields. Title: **"Perth Pint Prices Check"**
 
 ### Fields
 

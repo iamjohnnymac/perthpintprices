@@ -3,7 +3,7 @@ import BreadcrumbJsonLd from '@/components/BreadcrumbJsonLd'
 import DiscoverClient from './DiscoverClient'
 
 export const metadata: Metadata = {
-  title: 'Discover: Perth Pint Guides, Stats & Pub Picks | Perth Pint Prices',
+  title: 'Discover: Perth Pint Guides, Stats & Pub Picks',
   description: 'Live pint data, suburb rankings, sunset spots, dad bars, and more. Everything beyond the price table.',
   alternates: {
     canonical: 'https://perthpintprices.com/discover',

@@ -197,7 +197,10 @@ function LoginScreen({ onLogin }: { onLogin: (pw: string) => void }) {
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
           <div className="inline-flex items-center gap-2 mb-2">
-            <span className="font-mono text-[1.2rem] font-extrabold text-ink tracking-[-0.02em] leading-none"><span className="text-amber">Perth</span> Pint Prices</span>
+            <div className="w-9 h-9 bg-amber border-3 border-ink rounded-md flex items-center justify-center shadow-[2px_2px_0_#171717]">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 2v20M2 12h20M4.93 4.93l14.14 14.14M19.07 4.93L4.93 19.07" stroke="white" strokeWidth="2.5" strokeLinecap="round"/></svg>
+            </div>
+            <span className="font-mono text-[1.15rem] sm:text-[1.25rem] font-extrabold text-ink tracking-[-0.04em] leading-none">Perth Pint Prices</span>
           </div>
           <p className="font-mono text-[0.7rem] font-bold uppercase tracking-[0.1em] text-gray-mid">Admin Dashboard</p>
         </div>
@@ -757,7 +760,10 @@ export default function AdminDashboard() {
       <header className="bg-white border-b-3 border-ink sticky top-0 z-50">
         <div className="max-w-container mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <span className="font-mono text-[1rem] font-extrabold text-ink tracking-[-0.02em] leading-none"><span className="text-amber">Perth</span> Pint Prices</span>
+            <div className="w-7 h-7 bg-amber border-2 border-ink rounded-md flex items-center justify-center shadow-[2px_2px_0_#171717]">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 2v20M2 12h20M4.93 4.93l14.14 14.14M19.07 4.93L4.93 19.07" stroke="white" strokeWidth="2.5" strokeLinecap="round"/></svg>
+            </div>
+            <span className="font-mono text-[0.95rem] sm:text-[1.05rem] font-extrabold text-ink tracking-[-0.04em] leading-none">Perth Pint Prices</span>
             <span className="font-mono text-[0.65rem] font-bold uppercase tracking-[0.08em] text-gray-mid ml-1">admin</span>
           </div>
           <div className="flex items-center gap-2">

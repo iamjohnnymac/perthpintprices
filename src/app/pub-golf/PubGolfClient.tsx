@@ -308,7 +308,7 @@ export default function PubGolfClient({ pubs }: { pubs: Pub[] }) {
     })
 
     const lines = [
-      `\ud83c\udfcc\ufe0f PERTH PUB GOLF \ud83c\udf7a`,
+      `\ud83c\udfcc\ufe0f PERTH PINT PRICES PUB GOLF \ud83c\udf7a`,
       courseName,
       '',
       emojiRow,
@@ -316,7 +316,7 @@ export default function PubGolfClient({ pubs }: { pubs: Pub[] }) {
       ...playerLines,
       '',
       `\ud83d\udcb0 $${totalSpend.toFixed(0)} \u00b7 ${coursePubs.length} holes \u00b7 ${uniqueSuburbs} suburb${uniqueSuburbs !== 1 ? 's' : ''}`,
-      'Play free \u2192 perthpintprices.com/pub-golf',
+      'Play free \u2192 arvo.pub/pub-golf',
     ]
     return lines.join('\n')
   }, [winner, courseName, playerTotals, players, totalPar, totalSpend, coursePubs, scores, uniqueSuburbs])
@@ -938,7 +938,7 @@ export default function PubGolfClient({ pubs }: { pubs: Pub[] }) {
               href="/"
               className="flex-1 py-3 bg-white text-ink font-bold font-mono rounded-pill border border-gray-light hover:bg-off-white transition-all duration-200 flex items-center justify-center gap-2 text-sm"
             >
-              <Home className="w-4 h-4" /> Back to Home
+              <Home className="w-4 h-4" /> Back to Perth Pint Prices
             </Link>
           </div>
         </main>

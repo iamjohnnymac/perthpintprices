@@ -1,8 +1,8 @@
-# SEO Master Reference — Arvo (perthpintprices.com)
+# SEO Master Reference — Perth Pint Prices (perthpintprices.com)
 
 Last updated: 2026-03-08
 
-This is the SEO playbook for Arvo. Reference this document before making any SEO-related changes. All best practices sourced from Backlinko (backlinko.com) unless noted otherwise.
+This is the SEO playbook for Perth Pint Prices. Reference this document before making any SEO-related changes. All best practices sourced from Backlinko (backlinko.com) unless noted otherwise.
 
 ---
 
@@ -35,9 +35,9 @@ Sitemap: https://perthpintprices.com/sitemap.xml
 ### Global metadata (`src/app/layout.tsx`)
 
 - **metadataBase**: `https://perthpintprices.com`
-- **Title**: "Arvo | Perth's pint prices, sorted."
+- **Title**: "Perth Pint Prices | Perth's pint prices, sorted."
 - **Description**: Dynamic — pulls venue count, suburb count from database
-- **Keywords**: Perth, pint prices, beer, pubs, happy hour, Western Australia, cheap drinks, Arvo
+- **Keywords**: Perth, pint prices, beer, pubs, happy hour, Western Australia, cheap drinks, Perth Pint Prices
 - **OG image**: Static `/og-image.png` (1200x630) — shared across all pages
 - **Twitter card**: `summary_large_image` on homepage, `summary` on detail pages
 - **Locale**: `en_AU`
@@ -90,7 +90,7 @@ Set on every page via `alternates: { canonical: '...' }`. Format: `https://perth
 
 | Issue | Impact | Fix |
 |-------|--------|-----|
-| Some page titles >60 chars | Get truncated in Google search results | Trim titles: "Perth Suburb Pint Price Rankings: Cheapest Suburbs for Beer \| Arvo" is 67 chars |
+| Some page titles >60 chars | Get truncated in Google search results | Trim titles: "Perth Suburb Pint Price Rankings: Cheapest Suburbs for Beer \| Perth Pint Prices" is 67 chars |
 | No Google Business Profile | Missing from local search entirely | Create GBP as "service area business" — free, high impact |
 | /guides and /insights redirect to /discover | If these are 302s (not 301s), link equity doesn't pass | Verify they're 301 redirects |
 | No internal search logging | Don't know what users search for on the site | Log filter/search queries to understand demand |
@@ -99,7 +99,7 @@ Set on every page via `alternates: { canonical: '...' }`. Format: `https://perth
 
 | Issue | Impact | Fix |
 |-------|--------|-----|
-| Uniform title pattern (X: Y \| Arvo) | Every page uses identical structure — looks templated | Vary a few titles (drop subtitle on some, use dash instead of colon) |
+| Uniform title pattern (X: Y \| Perth Pint Prices) | Every page uses identical structure — looks templated | Vary a few titles (drop subtitle on some, use dash instead of colon) |
 | Single static OG image for all pages | Less impactful than dynamic images but worth noting | Addressed by dynamic OG images above |
 
 ---
@@ -184,7 +184,7 @@ Source: backlinko.com/on-page-seo
 | Transactional | Find a cheap pint NOW | Price tables, live data, "near me" filters, CTAs |
 | Informational | Learn about Perth pub scene | Guides, suburb profiles, trend analysis |
 | Local | Find pubs in a specific area | Suburb pages with maps, directions, prices |
-| Navigational | Find Arvo specifically | Homepage — already covered |
+| Navigational | Find Perth Pint Prices specifically | Homepage — already covered |
 
 Always check what Google currently shows for your target keyword. If page-1 results are all lists, create a list. If they're guides, create a guide. Don't fight the intent.
 
@@ -212,11 +212,11 @@ Source: backlinko.com/hub/seo/search-intent
 | r/perth | Post: "I built a site that tracks every pint price in Perth. Here's the data." Don't be salesy. |
 | r/australia | If r/perth does well, cross-post with Perth context |
 | Perth Facebook groups | Share in "Perth Foodies", "What's on in Perth", "Perth Social" |
-| Product Hunt | Launch as a product — "Arvo: Perth's pint prices, sorted" |
+| Product Hunt | Launch as a product — "Perth Pint Prices: Perth's pint prices, sorted" |
 
 ### Tier 3: Local directories and citations (NAP consistency)
 
-List Arvo on these as a "service area business" with consistent name/URL:
+List Perth Pint Prices on these as a "service area business" with consistent name/URL:
 - True Local
 - Yelp AU
 - Hotfrog
@@ -235,7 +235,7 @@ Source: backlinko.com/local-seo-guide
 | UWA Pelican / Curtin Crib | "Cheapest pints near campus — we have the data" |
 | Perth food/drink bloggers | Personalised email showing data for their suburb |
 | Hostel/backpacker sites | "Where to find cheap pints in Perth" — perfect for backpacker audience |
-| Tourism WA resource pages | "Things to do in Perth" — suggest adding Arvo as a resource |
+| Tourism WA resource pages | "Things to do in Perth" — suggest adding Perth Pint Prices as a resource |
 | Event sites (Eventbrite, Meetup) | Sponsor or feature in pub crawl events |
 
 ### Tier 5: Resource page link building
