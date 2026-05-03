@@ -11,12 +11,12 @@ Stack, database, routes, components, and lib files are documented in `CLAUDE.md`
 ## What's done recently
 
 ### SEO redirect consolidation (2026-05-03)
-- Fixed the highest-priority canonical redirect issues from milestone #1:
-  - `www.perthpintprices.com` now uses an explicit Vercel `301` rule instead of `permanent: true` / `308`.
-  - Legacy `/suburb/[slug]` redirects now use `301` to the current `/[suburb]` URL.
-  - Legacy `/pub/[slug]` redirects now use an App Router route handler with an explicit `301` to `/[suburb]/[pub]`.
+- Fixed the legacy redirect half of the highest-priority canonical redirect work:
+  - Legacy `/suburb/[slug]` redirects now return `301` to the current `/[suburb]` URL in production.
+  - Legacy `/pub/[slug]` redirects now return `301` to `/[suburb]/[pub]` in production.
+- Updated the app-level `www.perthpintprices.com` redirect rule to request `301`, but production verification showed Vercel's project-domain redirect still returns `308` before app config. Issue #25 is reopened; remaining action is to update the Vercel domain configuration for `www.perthpintprices.com` with `redirectStatusCode: 301`.
 - Added `npm run test:redirects` to guard the redirect status codes against regression.
-- Commit: `8818575`
+- Commits: `8818575`, `6eea19a`
 
 ### Project governance + CI infrastructure (2026-04-27)
 - README, CONTRIBUTING.md, SECURITY.md, CODE_OF_CONDUCT.md, CHANGELOG.md
