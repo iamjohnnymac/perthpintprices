@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint --max-warnings 50"
+    "lint": "next lint --max-warnings 50",
+    "test:redirects": "node scripts/redirect-seo.test.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.45.0",

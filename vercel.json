@@ -4,7 +4,12 @@
       "source": "/:path(.*)",
       "has": [{ "type": "host", "value": "www.perthpintprices.com" }],
       "destination": "https://perthpintprices.com/:path",
-      "permanent": true
+      "statusCode": 301
+    },
+    {
+      "source": "/suburb/:slug",
+      "destination": "/:slug",
+      "statusCode": 301
     }
   ],
   "crons": [
