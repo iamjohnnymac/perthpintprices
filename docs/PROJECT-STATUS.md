@@ -1,6 +1,6 @@
 # Perth Pint Prices Project Status
 
-Last updated: 2026-04-27
+Last updated: 2026-05-03
 
 ## What this is
 
@@ -9,6 +9,14 @@ Perth Pint Prices (perthpintprices.com) tracks pint prices across **857 Perth pu
 Stack, database, routes, components, and lib files are documented in `CLAUDE.md` (auto-loaded every session). This file covers history, recent work, and the backlog.
 
 ## What's done recently
+
+### SEO redirect consolidation (2026-05-03)
+- Fixed the highest-priority canonical redirect issues from milestone #1:
+  - `www.perthpintprices.com` now uses an explicit Vercel `301` rule instead of `permanent: true` / `308`.
+  - Legacy `/suburb/[slug]` redirects now use `301` to the current `/[suburb]` URL.
+  - Legacy `/pub/[slug]` redirects now use an App Router route handler with an explicit `301` to `/[suburb]/[pub]`.
+- Added `npm run test:redirects` to guard the redirect status codes against regression.
+- Commit: `8818575`
 
 ### Project governance + CI infrastructure (2026-04-27)
 - README, CONTRIBUTING.md, SECURITY.md, CODE_OF_CONDUCT.md, CHANGELOG.md
