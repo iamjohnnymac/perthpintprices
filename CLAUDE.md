@@ -54,6 +54,8 @@ freshness, happyHour, happyHourLive, location, mapTheme, mapTile, priceColors, p
 - Agent config: `agents/andrew.json` (version-controlled, PATCHed to ElevenLabs)
 
 ## Rules
+- **Surface assumptions** — state your assumptions explicitly before coding. If multiple interpretations exist, present them rather than picking silently. If something is unclear, ask — don't guess.
+- **Verifiable goals** — turn vague tasks into testable success criteria up front (e.g. "fix the bug" → "write a failing test that reproduces it, then make it pass") so the work can loop independently without constant clarification.
 - **Always check Context7 first** — before writing any code, use the Context7 MCP tool (`mcp__plugin_context7_context7__resolve-library-id` then `mcp__plugin_context7_context7__query-docs`) to look up current documentation for any library or framework being used (Next.js, Tailwind, Lucide, Supabase, etc.)
 - **Always visually verify changes** — after any UI change, take Playwright screenshots at desktop (1280x800) and mobile (375x812) to confirm layout, spacing, and content look correct
 - **Always follow the Design System below** — every UI change must use the correct tokens, components, and patterns defined in this file
