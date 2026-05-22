@@ -73,7 +73,7 @@ Rules:
 
 **Do NOT use the `Write` tool to author `progress.md` yourself.** Skip the cognitive overhead — just rewrite `state.json` at each phase transition (which you must do anyway for the resume mechanism). The renderer takes care of formatting, glyphs, the table, the timestamp.
 
-State-write cadence (which doubles as progress.md update cadence): start of Step 0, after Step 0 completes, start of Step 1, completion of Step 1, after each of 2a/2b/2c/2d/2e/2f, end of Step 2, start of Step 3, end of Step 3.
+State-write cadence (which doubles as progress.md update cadence): end of Step 1 — where `state.json` is first created (before this, neither file exists yet; if the user opens `progress.md` during Step 0 they'll see "file not found", which is expected) — then after each of 2a/2b/2c/2d/2e/2f within every iteration, end of Step 2, start of Step 3, end of Step 3.
 
 If the hook ever fails (broken Python install, missing renderer), `progress.md` shows a one-line diagnostic banner pointing the user at `state.json` as the source of truth — the loop continues either way; `progress.md` is read-only telemetry, never required for correctness.
 

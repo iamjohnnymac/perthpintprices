@@ -25,6 +25,11 @@ def _row(num, phase, status, detail=""):
     return f"| {num} | {phase} | {status} | {detail} |"
 
 
+def _sanitize_cell(s):
+    """Strip characters that would break a markdown table cell."""
+    return s.replace("|", "\\|").replace("\n", " ").replace("\r", " ")
+
+
 def _first_blocker(review_path):
     if not review_path.exists():
         return ""
@@ -38,7 +43,7 @@ def _first_blocker(review_path):
     first = blockers[0]
     if len(first) > MAX_BLOCKER_CHARS:
         first = first[:MAX_BLOCKER_CHARS] + "…"
-    return first
+    return _sanitize_cell(first)
 
 
 def render(state):
@@ -48,6 +53,7 @@ def render(state):
     branch = state.get("branch", "?")
     final = state.get("final_verdict")
     task = (state.get("task") or "")[:MAX_TASK_CHARS]
+    task = task.replace("\n", " ").replace("\r", " ")  # keep on one line
     in_conductor = state.get("in_conductor", False)
     timeout_cmd = state.get("timeout_cmd", "?")
     has_hooks = state.get("has_hooks", False)
@@ -67,12 +73,17 @@ def render(state):
     rows.append(_row(1, "Task validation", "✓ done", "concrete spec"))
 
     for it in iters:
-        n = it.get("n", "?")
+        try:
+            n = int(it.get("n"))
+        except (TypeError, ValueError):
+            continue  # skip malformed iteration entry; never let bad data break the render
         re_run = it.get("re_run", 0)
         nonce = (it.get("nonce") or "")[:8]
         codex_exit = it.get("codex_exit")
         tip_sha = (it.get("tip_sha") or "")[:7]
         verdict = it.get("verdict")
+        # Prefer the authoritative review_path stored by the PM; fall back to the conventional name
+        review_path_str = it.get("review_path") or f".pm-loop/review-{n}.json"
         suffix = f" (re_run {re_run})" if re_run else ""
 
         # 2a — done iff entry exists
@@ -83,10 +94,12 @@ def render(state):
         # 2b — codex run
         if codex_exit is None:
             rows.append(_row(f"2b · iter {n}{suffix}", "Codex run", "⟳ running", ""))
+        elif codex_exit == 0:
+            rows.append(_row(f"2b · iter {n}{suffix}", "Codex run", "✓ done", "exit 0"))
+        elif codex_exit == 124:
+            rows.append(_row(f"2b · iter {n}{suffix}", "Codex run", "✗ timeout", ""))
         else:
-            status = "✓ done" if codex_exit == 0 else f"✗ exit {codex_exit}"
-            detail = f"exit {codex_exit}"
-            rows.append(_row(f"2b · iter {n}{suffix}", "Codex run", status, detail))
+            rows.append(_row(f"2b · iter {n}{suffix}", "Codex run", f"✗ exit {codex_exit}", ""))
         # 2c — PM commit
         if tip_sha:
             rows.append(_row(f"2c · iter {n}{suffix}", "PM commit", "✓ done", tip_sha))
@@ -98,7 +111,7 @@ def render(state):
         if verdict:
             detail = verdict
             if verdict in ("REVISE", "BLOCKED_ON_USER"):
-                first = _first_blocker(Path(f".pm-loop/review-{n}.json"))
+                first = _first_blocker(Path(review_path_str))
                 if first:
                     detail = f"{verdict} — {first}"
             rows.append(_row(f"2d · iter {n}{suffix}", "Reviewer", "✓ done", detail))
