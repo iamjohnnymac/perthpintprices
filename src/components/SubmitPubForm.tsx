@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, useMemo } from 'react';
 import { Beer, ScanLine, Trash2, Plus, Camera, ImagePlus } from 'lucide-react'
+import { haversineDistanceKm } from '@/lib/location';
 // heic2any is browser-only, dynamically imported in handleImageSelect
 
 interface Pub {
@@ -25,19 +26,6 @@ interface ExtractedItem {
   beer_type: string;
   price: number;
   price_type: 'regular' | 'happy_hour';
-}
-
-function getDistanceKmSimple(lat1: number, lng1: number, lat2: number, lng2: number): number {
-  const R = 6371;
-  const dLat = ((lat2 - lat1) * Math.PI) / 180;
-  const dLon = ((lng2 - lng1) * Math.PI) / 180;
-  const a =
-    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos((lat1 * Math.PI) / 180) *
-      Math.cos((lat2 * Math.PI) / 180) *
-      Math.sin(dLon / 2) *
-      Math.sin(dLon / 2);
-  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
 
 export default function SubmitPubForm({ isOpen, onClose, userLocation, initialPub }: SubmitPubFormProps) {
@@ -152,8 +140,8 @@ export default function SubmitPubForm({ isOpen, onClose, userLocation, initialPu
       list = [...list].sort((a, b) => {
         if (!a.lat || !a.lng) return 1;
         if (!b.lat || !b.lng) return -1;
-        const distA = getDistanceKmSimple(userLocation.lat, userLocation.lng, a.lat, a.lng);
-        const distB = getDistanceKmSimple(userLocation.lat, userLocation.lng, b.lat, b.lng);
+        const distA = haversineDistanceKm(userLocation.lat, userLocation.lng, a.lat, a.lng);
+        const distB = haversineDistanceKm(userLocation.lat, userLocation.lng, b.lat, b.lng);
         return distA - distB;
       });
     }
