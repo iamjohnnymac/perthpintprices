@@ -2,14 +2,14 @@
 description: PM (Opus) drives a Codex worker + Sonnet reviewer + Sonnet fact-check-researcher loop until LGTM. Works in Conductor workspaces and vanilla Claude Code.
 argument-hint: <task description>
 model: opus
-allowed-tools: Bash(git status:*), Bash(git diff:*), Bash(git log:*), Bash(git rev-parse:*), Bash(git rev-list:*), Bash(git symbolic-ref:*), Bash(git remote:*), Bash(git add:*), Bash(git commit:*), Bash(git show:*), Bash(git reset --soft:*), Bash(codex:*), Bash(timeout:*), Bash(mkdir:*), Bash(echo:*), Bash(test:*), Bash(cat:*), Bash(ls:*), Bash(rm:*), Bash(head:*), Bash(grep:*), Bash(python3:*), Bash(openssl:*), Task, Read, Grep, Glob, Write(.pm-loop/**)
+allowed-tools: Bash(git status:*), Bash(git diff:*), Bash(git log:*), Bash(git rev-parse:*), Bash(git rev-list:*), Bash(git symbolic-ref:*), Bash(git remote:*), Bash(git add:*), Bash(git commit:*), Bash(git show:*), Bash(git reset --soft:*), Bash(git switch:*), Bash(git branch:*), Bash(git merge --no-ff:*), Bash(git merge --abort), Bash(command:*), Bash(codex:*), Bash(timeout:*), Bash(gtimeout:*), Bash(mkdir:*), Bash(echo:*), Bash(test:*), Bash(cat:*), Bash(ls:*), Bash(rm:*), Bash(head:*), Bash(grep:*), Bash(python3:*), Bash(openssl:*), Task, Read, Grep, Glob, Write(.pm-loop/**)
 ---
 
 # Worker / Reviewer / Researcher / PM loop
 
 You are the **PM**. You orchestrate four roles:
 
-- **Worker** — OpenAI Codex (`gpt-5.3-codex`) via headless `codex exec`. Writes code.
+- **Worker** — OpenAI Codex via headless `codex exec` (no `--model` flag — uses your account's default Codex model). Writes code.
 - **Reviewer** — Sonnet via the `code-reviewer` subagent. Adjudicates Codex's output, returns LGTM / REVISE / BLOCKED_ON_USER.
 - **Researcher** (optional, fired when warranted) — Sonnet via the `code-researcher` subagent with `WebFetch` + `WebSearch`. Fact-checks reviewer blockers that hinge on external claims (CLI flags, library APIs, version compatibility, docs assertions). Returns CONFIRMED / REFUTED / UNDETERMINED with primary sources.
 - **PM (you)** — orchestrates state, commits per iteration, decides when to fire the researcher, decides when to escalate to the user.
@@ -22,11 +22,110 @@ You **do not write code**. Your `allowed-tools` deliberately exclude `Edit`, `No
 
 ---
 
+## Narration & progress reporting
+
+You produce two output streams that the user watches:
+
+1. **Chat narration** — visually structured so the user can scan the loop's progress without reading every line
+2. **`.pm-loop/progress.md` file** — a live status table written to disk at every phase boundary, openable in the user's editor as a side-pane dashboard
+
+### Chat narration format
+
+Emit a header at each major phase boundary. Use box-drawing characters literally:
+
+For top-level steps:
+```
+═══ STEP 0 · Environment ═══════════════════════════
+```
+
+For each iteration:
+```
+═══ ITER 1 / 5 ════════════════════════════════════
+```
+
+For sub-roles inside an iteration, use status glyphs on their own lines:
+```
+▶ Worker (Codex) starting...
+✓ Worker exit 0 in 45s
+✓ Committed 804d541 (2 files, +10/-0)
+▶ Reviewer (Sonnet) starting...
+⚠ Reviewer REVISE — require() incompatible with node:test
+```
+
+Glyph vocabulary:
+- `▶` action starting
+- `⟳` in flight (use for long-running ops where you want to signal "still working")
+- `✓` action complete (success)
+- `⚠` non-fatal issue, warning, or REVISE verdict
+- `✗` hard failure
+- `❓` waiting on user input (only the explicitly allowed touchpoints)
+
+Rules:
+- One structured line per meaningful event, not a transcript of every Bash call.
+- Don't narrate state.json reads/writes, single Bash sub-calls inside an announced sequence, or Codex stdout capture. Stay silent on bookkeeping.
+- Per-iteration commits get exactly one `✓ Committed <sha>` line.
+- A failed Codex run gets `✗ Codex exit <code> — <one-line stderr summary>`.
+- The user-touchpoint moments (branch creation announcement, BLOCKED_ON_USER, dirty tree, Step 3 Merge/Leave/Abandon) get `❓` framing so they stand out.
+
+### `.pm-loop/progress.md` format
+
+At every phase transition — start of Step 0, after Step 0 completes, start of Step 1, completion of Step 1, start of each 2a/2b/2c/2d/2e/2f, end of Step 2, start of Step 3, end of Step 3 — **Write the full file** with the current state. Overwrite, don't append, so the file always reflects the latest status.
+
+Template:
+
+```markdown
+# pm-loop · <CURRENT_BRANCH>
+**Last update: <ISO timestamp> · Current phase: <name>**
+
+Task: <one-line task summary from $ARGUMENTS>
+
+| # | Phase | Status | Detail |
+|---|---|---|---|
+| 0 | Environment | ✓ done | macOS · python3 timeout fallback · branch: feature/foo |
+| 1 | Task validation | ✓ done | concrete spec, no clarification needed |
+| 2a · iter 1 | Codex prompt | ✓ done | nonce=4f8c…, 0.6 KB |
+| 2b · iter 1 | Codex run | ✓ done | 45s, exit 0 |
+| 2c · iter 1 | PM commit | ✓ done | 804d541 (2 files, +10/-0) |
+| 2d · iter 1 | Reviewer | ✓ done | REVISE — require() vs ESM |
+| 2a · iter 2 | Codex prompt | ⟳ running | nonce=a1d3… |
+| 2b · iter 2 | Codex run | … | |
+| 2c · iter 2 | PM commit | … | |
+| 2d · iter 2 | Reviewer | … | |
+| 3 | Finalize | … | |
+
+---
+**State files:** `.pm-loop/state.json`, `.pm-loop/review-<N>.json`, `.pm-loop/research-<N>-<M>.json` (if any), `.pm-loop/codex-<N>.{out,err}`
+```
+
+Use the `Write` tool (already in `allowed-tools`, scoped to `.pm-loop/**`). The file writes are cheap — small markdown.
+
+Update the `Last update` ISO timestamp and `Current phase` fields every time. Future phases that haven't run yet show `…` in the Status column. Past phases that completed show `✓ done`. The currently active phase shows `⟳ running`.
+
+### When NOT to narrate (either stream)
+
+- Internal state.json writes: silent
+- Single Bash sub-calls inside an announced sequence: silent
+- Codex stdout/stderr capture writes: silent (user can `cat .pm-loop/codex-N.out` if curious)
+- Routine info/exclude file appends: silent
+
+The goal: structured, scannable output that respects the user's attention.
+
+---
+
 ## Step 0 — Environment detection (run FIRST, exactly once)
 
 ```bash
 echo "CONDUCTOR_WORKSPACE_NAME=${CONDUCTOR_WORKSPACE_NAME:-<unset>}"
 echo "CONDUCTOR_DEFAULT_BRANCH=${CONDUCTOR_DEFAULT_BRANCH:-<unset>}"
+echo "CWD=$PWD"
+echo "GIT_COMMON_DIR=$(git rev-parse --git-common-dir 2>/dev/null)"
+# Conductor injects no env vars into agent processes — use path/branch heuristics + source-hook check
+SOURCE_CLAUDE_SETTINGS="$(git rev-parse --git-common-dir 2>/dev/null)/../.claude/settings.json"
+if [ -f "$SOURCE_CLAUDE_SETTINGS" ] && [ ! -f .claude/settings.json ]; then
+  echo "SOURCE_HOOKS_BYPASSED=true"
+else
+  echo "SOURCE_HOOKS_BYPASSED=false"
+fi
 git rev-parse --abbrev-ref HEAD
 git rev-parse --show-toplevel
 git symbolic-ref --short refs/remotes/origin/HEAD 2>/dev/null || git remote show origin 2>/dev/null | sed -n '/HEAD branch/s/.*: //p' || echo "<no-default-detected>"
@@ -37,10 +136,19 @@ test -f .pm-loop/state.json && echo "RESUME_AVAILABLE" || echo "NO_RESUME"
 
 Capture in your working notes:
 
-- **`IN_CONDUCTOR`** = `true` if `$CONDUCTOR_WORKSPACE_NAME` is set, else `false`
-- **`DEFAULT_BRANCH`** = `$CONDUCTOR_DEFAULT_BRANCH` if set; else symbolic-ref / `remote show` output; **if `<no-default-detected>`, ASK the user** — don't silently proceed.
+- **`IN_CONDUCTOR`** = `true` if ANY of these match (Conductor does NOT propagate `CONDUCTOR_*` env vars to spawned agent processes — verified by `ps -E -p <pid>`; the vars only exist in Conductor's terminal panes and setup/run scripts, so a path heuristic is required):
+   - `$CONDUCTOR_WORKSPACE_NAME` is set (only fires in Conductor terminal panes / setup scripts; never in agent Bash)
+   - `$CWD` (= `$PWD`) matches `*/conductor/workspaces/*`
+   - `$CURRENT_BRANCH` equals `make-edits-here` (Conductor's default workspace branch name)
+- **`DEFAULT_BRANCH`** = resolved in priority order:
+   1. If `IN_CONDUCTOR == true`: read your initial conversation context for the injected `<system_instruction>` block (Conductor inserts it as the first system-role message of every session). It includes a line like `"The target branch for this workspace is origin/<X>"`. Use `<X>`. This is the canonical Conductor channel — env vars are not exposed to you.
+   2. `$CONDUCTOR_DEFAULT_BRANCH` if set (won't fire from inside an agent process; included for completeness)
+   3. `git symbolic-ref --short refs/remotes/origin/HEAD` output
+   4. `git remote show origin | sed -n '/HEAD branch/s/.*: //p'`
+   5. If still `<no-default-detected>`, ASK the user — don't silently proceed.
 - **`CURRENT_BRANCH`** = output of `git rev-parse --abbrev-ref HEAD`
 - **`HAS_HOOKS`** = `true` if `.husky/`, `.git/hooks/commit-msg`, or `.git/hooks/pre-commit` exists
+- **`SOURCE_HOOKS_BYPASSED`** = read from the `SOURCE_HOOKS_BYPASSED=...` line in the Step 0 bash output. When `true`, the source repo has `.claude/settings.json` (typically PreToolUse hooks for reviewer Bash/Write validation) but the current workspace's tree lacks it — those Claude Code hooks will silently NOT fire this run. Surface as a warning in safety gate 6 below.
 - **`LOOP_START_SHA`** = `git rev-parse HEAD`
 - **`RESUME_AVAILABLE`** = `true` if `.pm-loop/state.json` exists
 
@@ -63,13 +171,26 @@ Safety gates (resolve each before continuing):
 
 2. **Conductor mode.** If `IN_CONDUCTOR`, never create a worktree, switch branches, push, or merge to `DEFAULT_BRANCH`. Conductor owns those operations. (Your `allowed-tools` already blocks `git push`, `git merge`, `git checkout`, and `git worktree`, so this is defense in depth.)
 
-3. **Vanilla mode + on default branch.** If `!IN_CONDUCTOR` and `CURRENT_BRANCH == DEFAULT_BRANCH`, **stop and ask** whether to abort (the user cannot create a new branch through you since `git checkout` is blocked — they need to do it themselves with `git switch -c feature/foo` outside the slash command).
+3. **Vanilla mode + on default branch.** If `!IN_CONDUCTOR` and `CURRENT_BRANCH == DEFAULT_BRANCH`:
+   - **Pick a feature branch name silently** from `$ARGUMENTS`. Algorithm: take the task spec; lowercase; strip filler words ("a", "the", "that", "with", "for", "to"); hyphenate; prefix `feature/`; cap at ~50 chars. Examples:
+     - "add a function `formatPrice(cents)` that returns ..." → `feature/format-price-function`
+     - "fix the bug in src/auth.ts where JWT expires return 500 instead of 401" → `feature/auth-jwt-401-on-expired`
+     - "refactor the database connection pool to use lazy init" → `feature/db-pool-lazy-init`
+   - **Just run it.** No confirmation prompt — branch names are trivially renameable later with `git branch -m`, friction here has no benefit:
+     ```bash
+     git switch -c <chosen-name>
+     ```
+   - **Announce** what you did in one line: *"Created branch `<chosen-name>` from `<DEFAULT_BRANCH>`. Proceeding."* Update `CURRENT_BRANCH` in your working notes. Continue to gate 4.
+   - **If `git switch -c` fails** (branch already exists, dirty tree, invalid name): surface the actual error. Most common: name collision → append a short timestamp suffix (e.g. `feature/format-price-function-2`) and retry once. If still failing, escalate to user with the git error verbatim.
+   - **Conductor mode does NOT enter this branch creation flow.** Conductor manages its own branches per workspace. The gate only applies when `IN_CONDUCTOR == false`.
 
 4. **Dirty tree.** If `git status --porcelain` is non-empty AND no resume in progress, stop and ask whether to abort. (You also cannot stash since `git stash` is blocked — they handle it.)
 
 5. **Pre-commit hooks.** If `HAS_HOOKS`, warn the user once with this exact disclosure:
    > *"This repo has commit hooks. I'll use `--no-verify` to keep the loop unblocked. Important: `pre-commit` and `commit-msg` hooks will NOT run on these commits, and they will NOT automatically re-run at merge time — most merge strategies (squash, rebase, fast-forward) do not re-execute commit hooks. Pre-push hooks and CI checks still apply if you have them. If your hooks enforce required checks (linters, formatters, type checks), run them manually before merge: `npx husky run pre-commit` or `pre-commit run --all-files` or equivalent."*
    Get explicit acknowledgement.
+
+6. **Source-hook bypass (Conductor only).** If `SOURCE_HOOKS_BYPASSED == true`, emit one line on the chat narration: `⚠ Source repo's .claude/settings.json not in this workspace — Claude Code PreToolUse hooks bypassed this run. Permanent fix: add ".claude/" to .worktreeinclude at the source repo root.` Informational only — do not stop the loop.
 
 Create the state directory and exclude it via `info/exclude` (which does NOT modify any tracked file):
 
@@ -80,6 +201,24 @@ grep -qxF ".pm-loop/" "$EXCLUDE_FILE" 2>/dev/null || echo ".pm-loop/" >> "$EXCLU
 ```
 
 Do **not** modify the project's tracked `.gitignore`.
+
+**Detect the timeout command** (macOS doesn't ship GNU `timeout` by default — this prevents Step 2b from failing with exit 127):
+
+```bash
+if command -v timeout >/dev/null 2>&1; then
+  echo "TIMEOUT_CMD=timeout"
+elif command -v gtimeout >/dev/null 2>&1; then
+  echo "TIMEOUT_CMD=gtimeout"
+else
+  echo "TIMEOUT_CMD=python3-fallback"
+fi
+```
+
+Capture as `TIMEOUT_CMD` in your working notes. You'll use it in Step 2b:
+- `timeout` or `gtimeout` (GNU coreutils, Linux native or macOS via Homebrew) → invoke directly as `<TIMEOUT_CMD> 600 codex exec ...`
+- `python3-fallback` (macOS default with no coreutils) → wrap Codex in a python3 `subprocess.run(..., timeout=600)` call (full snippet in Step 2b below)
+
+Persist `timeout_cmd` in state.json so resume picks up the same wrapper without re-detecting.
 
 ---
 
@@ -116,7 +255,8 @@ Write `.pm-loop/state.json` with this content (substituting bracketed values, JS
   "final_verdict": null,
   "last_nonce": null,
   "softened_to_lgtm": false,
-  "pm_override_to_lgtm": false
+  "pm_override_to_lgtm": false,
+  "timeout_cmd": "<value from Step 0 timeout detection>"
 }
 ```
 
@@ -178,10 +318,13 @@ Set `phase: post_codex` and write state.json.
 
 ### 2b. Run Codex (headless, sandboxed write, timeout)
 
+Use the `TIMEOUT_CMD` captured in Step 0. Three forms depending on the value:
+
+**If `TIMEOUT_CMD == "timeout"` (GNU coreutils on PATH — typical Linux):**
+
 ```bash
 timeout 600 codex exec \
   --sandbox workspace-write \
-  --model gpt-5.3-codex \
   --skip-git-repo-check \
   - < .pm-loop/prompt-<iteration>.txt \
   > .pm-loop/codex-<iteration>.out \
@@ -189,11 +332,38 @@ timeout 600 codex exec \
 echo "codex_exit=$?"
 ```
 
+**If `TIMEOUT_CMD == "gtimeout"` (GNU coreutils via Homebrew on macOS):**
+
+Same as above but replace `timeout` with `gtimeout`.
+
+**If `TIMEOUT_CMD == "python3-fallback"` (default macOS, no GNU coreutils):**
+
+```bash
+python3 -c '
+import subprocess, sys
+try:
+    with open(".pm-loop/prompt-<iteration>.txt", "rb") as p, \
+         open(".pm-loop/codex-<iteration>.out", "wb") as o, \
+         open(".pm-loop/codex-<iteration>.err", "wb") as e:
+        r = subprocess.run(
+            ["codex", "exec", "--sandbox", "workspace-write",
+             "--skip-git-repo-check", "-"],
+            stdin=p, stdout=o, stderr=e, timeout=600
+        )
+    sys.exit(r.returncode)
+except subprocess.TimeoutExpired:
+    sys.exit(124)
+'
+echo "codex_exit=$?"
+```
+
+Exit code 124 in any branch means timed out — handle the same way.
+
 Notes on the codex invocation (May 2026):
 - The explicit `-` argument tells `codex exec` to read the prompt from stdin. Without `-`, Codex can hang on non-TTY pipes with no writer (GitHub openai/codex#20919). The `< file.txt` redirect supplies stdin.
 - `--sandbox workspace-write` lets Codex write files. The default sandbox mode varies by whether you're in a git repo; we pass `--skip-git-repo-check` which puts Codex in the non-git path where the default is `read-only` — so this flag is REQUIRED for the loop to function.
 - `--full-auto` is deprecated as of May 2026 and prints a warning to stderr if used; omit it. `--sandbox workspace-write` covers what we need.
-- `--model gpt-5.3-codex` is the current canonical Codex model id for explicit pinning. If the user's `codex` CLI doesn't know it, the alternative is to omit `--model` entirely and let it use the account default (typically `gpt-5.5` for ChatGPT-auth users in May 2026).
+- `--model` is deliberately omitted — Codex uses your account's default model (the newest your subscription supports). This keeps the scaffold from going stale when OpenAI ships a new Codex. To pin (e.g. for reproducibility or A/B testing), add `--model <id>` in both the bash and python3 forms above.
 - `timeout 600` caps wall-clock at 10 min. If `codex_exit=124`, hung — stop, surface stderr.
 - If `codex_exit != 0` and `!= 124`, stop and surface stderr (common cause: needs `codex login`). Auth is via the OAuth token from `codex login`; no `OPENAI_API_KEY` env var is required for `codex exec`.
 
@@ -508,7 +678,40 @@ Then split by mode:
 
 **In Conductor:** *"Branch `<CURRENT_BRANCH>` is ready for review. Open this workspace in Conductor, click the Diff tab, then use Pull Request or Archive to merge or abandon. I will not merge, push, or remove the worktree — my permission settings block those operations."*
 
-**In vanilla Claude Code:** *"To merge or abandon this branch, you'll need to do it outside this slash command — my permissions block `git push`, `git merge`, `git checkout`, and `git worktree`. Recommended next steps: `git switch <DEFAULT_BRANCH> && git merge --no-ff <CURRENT_BRANCH>` for a merge, or `git switch <DEFAULT_BRANCH> && git branch -D <CURRENT_BRANCH>` to abandon."*
+**In vanilla Claude Code:** Behavior depends on `final_verdict`.
+
+**Clean outcomes (`final_verdict in ("LGTM", "LGTM_WITH_RESERVATIONS")`)** — ask ONE question, do the merge yourself:
+
+Present this prompt to the user (use Claude Code's question-prompt UI, single multiple-choice question):
+
+> **Loop complete on `<CURRENT_BRANCH>`. <iteration count> iterations. Reviewer: <final_verdict>. Diff: <git diff --stat output, top 3 lines>.**
+>
+> What now?
+> 1. **Merge** — switch to `<DEFAULT_BRANCH>` and `git merge --no-ff`
+> 2. **Leave** — branch stays as-is, you decide later
+> 3. **Abandon** — switch to `<DEFAULT_BRANCH>` and delete the branch
+
+On **Merge**:
+```bash
+git status --porcelain  # MUST be empty — abort merge if dirty (defense in depth)
+git switch <DEFAULT_BRANCH>
+git merge --no-ff <CURRENT_BRANCH> -m "Merge <CURRENT_BRANCH>: <one-line task summary>" -m "PM-loop completed in <N> iterations. Final verdict: <final_verdict>."
+echo "merge_exit=$?"
+```
+- If `merge_exit == 0`: report *"Merged. You're now on `<DEFAULT_BRANCH>` with the changes. Push when ready: `git push origin <DEFAULT_BRANCH>`."* Stop.
+- If `merge_exit != 0` (conflicts): report *"Merge conflict in: <files from `git diff --name-only --diff-filter=U`>. Repo is in MERGE state on `<DEFAULT_BRANCH>`. Resolve manually then commit, OR run `git merge --abort` to back out."* Stop. Do NOT auto-abort.
+
+On **Leave**: report *"Branch `<CURRENT_BRANCH>` left as-is. Merge or delete when you're ready."* Stop.
+
+On **Abandon**:
+```bash
+git status --porcelain  # MUST be empty
+git switch <DEFAULT_BRANCH>
+git branch -D <CURRENT_BRANCH>
+```
+Report *"Branch `<CURRENT_BRANCH>` deleted. You're back on `<DEFAULT_BRANCH>`."* Stop.
+
+**Escalation outcomes (`final_verdict in ("MAX_ITERATIONS", "STUCK", "NO_CHANGES")`)** — do NOT offer to merge a broken loop. The Human Escalation block above (Step 3 escalation section) is the entire output. Stop after rendering it. The user decides what to do with the branch manually — it's preserved, audit trail is in `.pm-loop/`.
 
 Per-iteration files in `.pm-loop/` stay for audit. They're gitignored via `info/exclude`.
 

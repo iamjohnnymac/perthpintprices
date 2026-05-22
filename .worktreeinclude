@@ -1,0 +1,8 @@
+# Files Conductor force-copies into every new workspace, regardless of the
+# workspace branch's HEAD. Use this to ship project-wide tooling that lives
+# outside what the workspace branch happens to track.
+#
+# Reference: https://www.conductor.build/docs/reference/files-to-copy
+
+.claude/
+.pm-loop/
