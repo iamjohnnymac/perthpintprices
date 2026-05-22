@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict'
 import { describe, it } from 'node:test'
 
+// @ts-expect-error TS5097: Node's native TypeScript test runner requires the explicit .ts extension.
 import { groupPubsBySuburb } from './utils.ts'
 import type { Pub } from '../types/pub'
 
