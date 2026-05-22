@@ -2,7 +2,7 @@
 description: PM (Opus) drives a Codex worker + Sonnet reviewer + Sonnet fact-check-researcher loop until LGTM. Works in Conductor workspaces and vanilla Claude Code.
 argument-hint: <task description>
 model: opus
-allowed-tools: Bash(git status:*), Bash(git diff:*), Bash(git log:*), Bash(git rev-parse:*), Bash(git rev-list:*), Bash(git symbolic-ref:*), Bash(git remote:*), Bash(git add:*), Bash(git commit:*), Bash(git show:*), Bash(git reset --soft:*), Bash(git switch:*), Bash(git branch:*), Bash(git merge --no-ff:*), Bash(git merge --abort), Bash(git push:*), Bash(gh pr create:*), Bash(gh pr view:*), Bash(gh pr checks:*), Bash(gh pr merge:*), Bash(gh pr close:*), Bash(command:*), Bash(codex:*), Bash(timeout:*), Bash(gtimeout:*), Bash(mkdir:*), Bash(echo:*), Bash(test:*), Bash(cat:*), Bash(ls:*), Bash(rm:*), Bash(head:*), Bash(grep:*), Bash(python3:*), Bash(openssl:*), Bash(sleep:*), Task, Read, Grep, Glob, Write(.pm-loop/**)
+allowed-tools: Bash(git status:*), Bash(git diff:*), Bash(git log:*), Bash(git rev-parse:*), Bash(git rev-list:*), Bash(git symbolic-ref:*), Bash(git remote:*), Bash(git fetch:*), Bash(git add:*), Bash(git commit:*), Bash(git show:*), Bash(git reset --soft:*), Bash(git switch:*), Bash(git branch:*), Bash(git merge --no-ff:*), Bash(git merge --abort), Bash(git push:*), Bash(gh pr create:*), Bash(gh pr view:*), Bash(gh pr checks:*), Bash(gh pr merge:*), Bash(gh pr close:*), Bash(command:*), Bash(codex:*), Bash(timeout:*), Bash(gtimeout:*), Bash(mkdir:*), Bash(echo:*), Bash(test:*), Bash(cat:*), Bash(ls:*), Bash(rm:*), Bash(head:*), Bash(grep:*), Bash(python3:*), Bash(openssl:*), Bash(sleep:*), Task, Read, Grep, Glob, Write(.pm-loop/**)
 ---
 
 # Worker / Reviewer / Researcher / PM loop
@@ -123,6 +123,17 @@ fi
 git rev-parse --abbrev-ref HEAD
 git rev-parse --show-toplevel
 git symbolic-ref --short refs/remotes/origin/HEAD 2>/dev/null || git remote show origin 2>/dev/null | sed -n '/HEAD branch/s/.*: //p' || echo "<no-default-detected>"
+# Stale-base detection: fetch quietly, then count commits ahead/behind origin/<default>.
+# If the fetch fails (no network, no remote) we just report COMMITS_BEHIND=unknown and skip the gate.
+git fetch --quiet origin 2>/dev/null || true
+DEFAULT_FOR_CHECK="$(git symbolic-ref --short refs/remotes/origin/HEAD 2>/dev/null | sed 's|^origin/||')"
+if [ -n "$DEFAULT_FOR_CHECK" ] && git rev-parse --verify "origin/$DEFAULT_FOR_CHECK" >/dev/null 2>&1; then
+  echo "COMMITS_BEHIND=$(git rev-list --count "HEAD..origin/$DEFAULT_FOR_CHECK" 2>/dev/null || echo unknown)"
+  echo "COMMITS_AHEAD=$(git rev-list --count "origin/$DEFAULT_FOR_CHECK..HEAD" 2>/dev/null || echo unknown)"
+else
+  echo "COMMITS_BEHIND=unknown"
+  echo "COMMITS_AHEAD=unknown"
+fi
 git status --porcelain
 ls .husky/ .git/hooks/commit-msg .git/hooks/pre-commit 2>/dev/null || true
 test -f .pm-loop/state.json && echo "RESUME_AVAILABLE" || echo "NO_RESUME"
@@ -145,6 +156,28 @@ Capture in your working notes:
 - **`SOURCE_HOOKS_BYPASSED`** = read from the `SOURCE_HOOKS_BYPASSED=...` line in the Step 0 bash output. When `true`, the source repo has `.claude/settings.json` (typically PreToolUse hooks for reviewer Bash/Write validation) but the current workspace's tree lacks it — those Claude Code hooks will silently NOT fire this run. Surface as a warning in safety gate 6 below.
 - **`LOOP_START_SHA`** = `git rev-parse HEAD`
 - **`RESUME_AVAILABLE`** = `true` if `.pm-loop/state.json` exists
+- **`COMMITS_BEHIND`** = how many commits `origin/<DEFAULT_BRANCH>` has that this branch doesn't. `0` = base is current. `>0` = base is stale; any work committed here will sit on an outdated tree and the eventual PR will propose unintended reverts. `unknown` = no network / no remote / no detected default branch.
+- **`COMMITS_AHEAD`** = how many of our commits aren't on `origin/<DEFAULT_BRANCH>` yet. `>0` is normal for in-progress feature work.
+
+**Stale-base hard stop** (evaluated BEFORE any of the numbered safety gates below):
+
+If `COMMITS_BEHIND` is a positive integer, **stop immediately** and surface this exact disclosure (substituting the literal values):
+
+> *"⚠ Branch `<CURRENT_BRANCH>` is N commits behind `origin/<DEFAULT_BRANCH>`. If I run the loop on this base, my work will sit on a stale tree and the eventual PR will propose to **revert** every change that's been merged to `<DEFAULT_BRANCH>` since this branch was last updated — exactly the foot-gun that bit pm-loop in production at seatmap PR #141. Please update the branch base before I continue:*
+> 
+> *• **Conductor:** archive this workspace and create a fresh one from `<DEFAULT_BRANCH>` (Conductor forks from the current HEAD automatically).*
+> *• **Vanilla, clean tree:** `git fetch origin && git rebase origin/<DEFAULT_BRANCH>` from the worktree root, then re-run `/pm-loop`.*
+> *• **Vanilla, in-flight work:** `git merge origin/<DEFAULT_BRANCH>` to bring main in as a merge commit.*
+> 
+> *If you have a deliberate reason to build on this stale base (intentionally rebasing later, branch off a frozen reference, etc.) reply **'continue anyway'** and I'll proceed."*
+
+Wait for explicit user direction. Acceptable responses:
+
+- *"rebased"* / *"fixed"* / *"updated"* / similar → re-run Step 0 detection (the user has updated the branch externally; verify `COMMITS_BEHIND == 0` now before proceeding).
+- *"continue anyway"* (or unambiguous synonym) → proceed to the numbered gates, but persist `stale_base_override: true` in state.json so the final summary can surface the override.
+- *"abort"* / *"stop"* → stop the slash command cleanly.
+
+If `COMMITS_BEHIND == 0` or `unknown`, the stop does not fire — proceed to the numbered gates below silently. (`unknown` is treated as "we couldn't check, proceed" rather than "stop" because no-network / no-remote cases shouldn't gate the loop.)
 
 Safety gates (resolve each before continuing):
 
