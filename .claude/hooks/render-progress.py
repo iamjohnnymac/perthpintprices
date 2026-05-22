@@ -95,7 +95,7 @@ def render(state):
         if codex_exit is None:
             rows.append(_row(f"2b · iter {n}{suffix}", "Codex run", "⟳ running", ""))
         elif codex_exit == 0:
-            rows.append(_row(f"2b · iter {n}{suffix}", "Codex run", "✓ done", "exit 0"))
+            rows.append(_row(f"2b · iter {n}{suffix}", "Codex run", "✓ done", ""))
         elif codex_exit == 124:
             rows.append(_row(f"2b · iter {n}{suffix}", "Codex run", "✗ timeout", ""))
         else:

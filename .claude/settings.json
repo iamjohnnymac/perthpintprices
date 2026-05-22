@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/validate-reviewer-bash.sh"
+            "command": "${CLAUDE_PROJECT_DIR:-$PWD}/.claude/hooks/validate-reviewer-bash.sh"
           }
         ]
       },
@@ -15,7 +15,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/validate-reviewer-write.sh"
+            "command": "${CLAUDE_PROJECT_DIR:-$PWD}/.claude/hooks/validate-reviewer-write.sh"
           }
         ]
       }
