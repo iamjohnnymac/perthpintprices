@@ -1,17 +1,8 @@
 import assert from 'node:assert/strict'
-import { before, describe, it } from 'node:test'
+import { describe, it } from 'node:test'
 
+import { groupPubsBySuburb } from './utils.ts'
 import type { Pub } from '../types/pub'
-
-let groupPubsBySuburb: typeof import('./utils')['groupPubsBySuburb']
-
-before(async () => {
-  const utils = await import(
-    new URL('./utils.ts', import.meta.url).href
-  ) as typeof import('./utils')
-
-  groupPubsBySuburb = utils.groupPubsBySuburb
-})
 
 const makePub = (overrides: Partial<Pub> = {}): Pub => ({
   id: 1,
