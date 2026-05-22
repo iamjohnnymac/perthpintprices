@@ -1,0 +1,12 @@
+# Files Conductor force-copies into every new workspace, regardless of the
+# workspace branch's HEAD. Use this to ship project-wide tooling that lives
+# outside what the workspace branch happens to track.
+#
+# Reference: https://www.conductor.build/docs/reference/files-to-copy
+#
+# Only project config here — NOT per-workspace runtime state. .pm-loop/
+# was previously listed but caused stale state to leak from one workspace
+# into freshly-created ones (the PM had to detect+discard on every fresh
+# workspace creation).
+
+.claude/
