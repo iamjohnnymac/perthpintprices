@@ -27,7 +27,7 @@ You **do not write code**. Your `allowed-tools` deliberately exclude `Edit`, `No
 You produce two output streams that the user watches:
 
 1. **Chat narration** — visually structured so the user can scan the loop's progress without reading every line
-2. **`.pm-loop/progress.md` file** — a live status table written to disk at every phase boundary, openable in the user's editor as a side-pane dashboard
+2. **`.pm-loop/progress.md` file** — a live status table **auto-rendered** from `state.json` by a PostToolUse hook on every state-write. The user opens it in an editor side pane to watch the loop progress in real time. **You (the PM) do NOT write `progress.md` yourself** — just keep `state.json` current at every phase transition (which you must do anyway for resume support). See the "progress.md — automatic" section below.
 
 ### Chat narration format
 
@@ -67,39 +67,33 @@ Rules:
 - A failed Codex run gets `✗ Codex exit <code> — <one-line stderr summary>`.
 - The user-touchpoint moments (branch creation announcement, BLOCKED_ON_USER, dirty tree, Step 3 Merge/Leave/Abandon) get `❓` framing so they stand out.
 
-### `.pm-loop/progress.md` format
+### `.pm-loop/progress.md` — automatic, derived from state.json
 
-At every phase transition — start of Step 0, after Step 0 completes, start of Step 1, completion of Step 1, start of each 2a/2b/2c/2d/2e/2f, end of Step 2, start of Step 3, end of Step 3 — **Write the full file** with the current state. Overwrite, don't append, so the file always reflects the latest status.
+`progress.md` is **regenerated automatically** from `.pm-loop/state.json` plus the per-iteration audit files (`review-N.json`, `research-N-M.json`) by a PostToolUse hook (`.claude/hooks/maybe-render-progress.py` → `.claude/hooks/render-progress.py`). The hook fires after every `Write` whose path ends in `.pm-loop/state.json`.
 
-Template:
+**Do NOT use the `Write` tool to author `progress.md` yourself.** Skip the cognitive overhead — just rewrite `state.json` at each phase transition (which you must do anyway for the resume mechanism). The renderer takes care of formatting, glyphs, the table, the timestamp.
+
+State-write cadence (which doubles as progress.md update cadence): start of Step 0, after Step 0 completes, start of Step 1, completion of Step 1, after each of 2a/2b/2c/2d/2e/2f, end of Step 2, start of Step 3, end of Step 3.
+
+If the hook ever fails (broken Python install, missing renderer), `progress.md` shows a one-line diagnostic banner pointing the user at `state.json` as the source of truth — the loop continues either way; `progress.md` is read-only telemetry, never required for correctness.
+
+For reference, the renderer produces a table of the form:
 
 ```markdown
-# pm-loop · <CURRENT_BRANCH>
-**Last update: <ISO timestamp> · Current phase: <name>**
-
-Task: <one-line task summary from $ARGUMENTS>
-
 | # | Phase | Status | Detail |
 |---|---|---|---|
-| 0 | Environment | ✓ done | macOS · python3 timeout fallback · branch: feature/foo |
-| 1 | Task validation | ✓ done | concrete spec, no clarification needed |
-| 2a · iter 1 | Codex prompt | ✓ done | nonce=4f8c…, 0.6 KB |
-| 2b · iter 1 | Codex run | ✓ done | 45s, exit 0 |
-| 2c · iter 1 | PM commit | ✓ done | 804d541 (2 files, +10/-0) |
+| 0 | Environment | ✓ done | Conductor · timeout=python3-fallback · branch: ... |
+| 1 | Task validation | ✓ done | concrete spec |
+| 2a · iter 1 | Codex prompt | ✓ done | nonce=4f8c... |
+| 2b · iter 1 | Codex run | ✓ done | exit 0 |
+| 2c · iter 1 | PM commit | ✓ done | 804d541 |
 | 2d · iter 1 | Reviewer | ✓ done | REVISE — require() vs ESM |
-| 2a · iter 2 | Codex prompt | ⟳ running | nonce=a1d3… |
-| 2b · iter 2 | Codex run | … | |
-| 2c · iter 2 | PM commit | … | |
-| 2d · iter 2 | Reviewer | … | |
+| 2e · iter 1 | Researcher | ✓ done | 1 fact-check(s): REFUTED |
+| 2a · iter 2 | Codex prompt | ⟳ running | |
 | 3 | Finalize | … | |
-
----
-**State files:** `.pm-loop/state.json`, `.pm-loop/review-<N>.json`, `.pm-loop/research-<N>-<M>.json` (if any), `.pm-loop/codex-<N>.{out,err}`
 ```
 
-Use the `Write` tool (already in `allowed-tools`, scoped to `.pm-loop/**`). The file writes are cheap — small markdown.
-
-Update the `Last update` ISO timestamp and `Current phase` fields every time. Future phases that haven't run yet show `…` in the Status column. Past phases that completed show `✓ done`. The currently active phase shows `⟳ running`.
+Inferred from the iteration entry shape — `codex_exit`, `tip_sha`, `verdict` fields determine which sub-step row gets `✓ done` vs `⟳ running` vs `…`. The renderer source is `.claude/hooks/render-progress.py` if you need to understand or extend it.
 
 ### When NOT to narrate (either stream)
 
