@@ -10,6 +10,11 @@ Stack, database, routes, components, and lib files are documented in `CLAUDE.md`
 
 ## What's done recently
 
+### Refactor Phase 2 (Pub mapper): one row→Pub mapper (2026-05-30)
+- **PR #52** (`39ef38d`). `getPubs` / `getPubBySlug` / `getNearbyPubs` / `getSimilarPricePubs` each carried a **byte-identical ~52-line block** that computed live happy-hour status + effective price and built the 30-field `Pub` object. Collapsed into a single `toPub(row)` in `src/lib/supabase.ts`; each accessor now delegates. **Net −133 lines**, behaviour unchanged.
+- `getPubsLite` (smaller `PubLite` type) and `getPriceHistory` (different shape) left as-is.
+- Verified: tsc clean; **167/167 tests**; `next build` green (service key unset) — all **857 pub pages prerender through `toPub`** on real data; live pub-detail page renders correct name/suburb/price. Independently reviewed (LGTM).
+
 ### Refactor Phase 1 (PubUrls): one suburb-slug source of truth (2026-05-30)
 - **PR #50** (`957c886`). Collapsed 14 copy-pasted suburb-slug functions into one. `toSuburbSlug` moved into the pure `src/lib/urls.ts` seam (it had lived in `supabase.ts` — a backwards dependency for a URL helper); `supabase.ts` re-exports it for back-compat. Every pub/suburb link now builds via `pubUrl` / `suburbUrl` / `absolutePubUrl`. Deleted **13 byte-identical inline `toSuburbSlug` copies** across components + pages.
 - **Fixed a live 404:** `SuburbLeague` used a *divergent* `toSlug` that omitted the apostrophe-strip, so it linked the suburb **O'Connor** to `/o-connor` (404) instead of the canonical `/oconnor` (200) — the only one of 150 live suburbs with an apostrophe. Now routed through `suburbUrl`.
