@@ -17,12 +17,11 @@ Perth Pint Prices (perthpintprices.com) tracks pint prices across 300+ Perth pub
 - `phone_call_log` — full transcript + cost log of every Andrew call (post-call webhook)
 - `push_subscriptions` — web push notification subscribers
 
-## Routes (23 pages)
+## Routes (19 pages)
 - **Core:** `/` homepage, `/discover`, `/happy-hour`, `/[suburb]/[pub]` (e.g. `/fremantle/the-norfolk-hotel`), `/[suburb]` (e.g. `/fremantle`), `/suburbs`
 - **Legacy redirect stubs:** `/pub/[slug]` and `/suburb/[slug]` return 308 redirects to the current URL structure
 - **Guides (5):** `/guides` index, `/guides/beer-weather`, `/guides/cozy-corners`, `/guides/dad-bar`, `/guides/punt-and-pints`, `/guides/sunset-sippers`
 - **Insights (5):** `/insights` index, `/insights/pint-index`, `/insights/pint-of-the-day`, `/insights/suburb-rankings`, `/insights/tonights-best-bets`, `/insights/venue-breakdown`
-- **Features:** `/pint-crawl`, `/pub-golf`, `/weekly-report`, `/leaderboard`
 - **Admin:** `/admin`
 
 ## Components (34 in `src/components/`)
@@ -40,7 +39,7 @@ freshness, happyHour, happyHourLive, location, mapTheme, mapTile, priceColors, p
 - **User-facing**: `/api/pubs`, `/api/price-report`, `/api/pub-submission`, `/api/menu-scan`, `/api/pint-of-the-day`
 - **Andrew (voice agent)**: `/api/agents/record-price/[slug]` (mid-call webhook), `/api/agents/post-call` (HMAC-signed post-call webhook), `/api/pintsweep/kickoff` (batch trigger via ElevenLabs Batch Calling)
 - **Admin**: `/api/admin/review`, `/api/admin/stats`
-- **Cron / scheduled**: `/api/cron/price-check`, `/api/cron/weekly-snapshot`, `/api/weekly-snapshot`, `/api/weekly-report`
+- **Cron / scheduled**: `/api/cron/price-check`, `/api/cron/weekly-snapshot`, `/api/weekly-snapshot`
 - **Other**: `/api/push/send`, `/api/push/subscribe`, `/api/race-meets`, `/api/weather`
 
 ## Reference docs

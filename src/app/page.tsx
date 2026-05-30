@@ -134,9 +134,7 @@ export default async function HomePage() {
           <a href="/">Home</a>
           <a href="/discover">Discover</a>
           <a href="/happy-hour">Happy Hours</a>
-          <a href="/leaderboard">Leaderboard</a>
           <a href="/suburbs">All Suburbs</a>
-          <a href="/weekly-report">Pint Report</a>
         </nav>
 
         <h2>Perth Suburbs</h2>
