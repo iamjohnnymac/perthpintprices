@@ -6,7 +6,7 @@
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-CSS-38bdf8)](https://tailwindcss.com)
 [![Supabase](https://img.shields.io/badge/Supabase-postgres-3ecf8e)](https://supabase.com)
 
-Perth's pint prices, sorted. A community-data site tracking pint prices across **300+ Perth pubs** so locals can find a cheap one, plan a pub crawl, and check happy hours.
+Perth's pint prices, sorted. A community-data site tracking pint prices across **300+ Perth pubs** so locals can find a cheap one and check happy hours.
 
 > Live at **[perthpintprices.com](https://perthpintprices.com)**
 
@@ -53,7 +53,7 @@ npm start        # serve the prod build
 
 ## Routes
 
-23 pages including suburb / pub silo (`/[suburb]/[pub]`), guides, insights, the Pint Index, weekly report, leaderboard, pub crawl, pub golf. Full route list lives in [`CLAUDE.md`](./CLAUDE.md).
+~17 content pages — the suburb / pub silo (`/[suburb]/[pub]`, `/[suburb]`), guides, and insights (incl. the Pint Index) — plus legacy `/pub/*` and `/suburb/*` redirects. Full route list lives in [`CLAUDE.md`](./CLAUDE.md).
 
 ## Reference docs
 

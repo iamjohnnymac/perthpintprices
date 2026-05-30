@@ -1,7 +1,7 @@
 # Perth Pint Prices
 
 ## Project overview
-Perth Pint Prices (perthpintprices.com) tracks pint prices across 300+ Perth pubs. Users discover cheap pints, find happy hours, plan pub crawls, and report prices.
+Perth Pint Prices (perthpintprices.com) tracks pint prices across 300+ Perth pubs. Users discover cheap pints, find happy hours, and report prices.
 
 - **Stack:** Next.js 14 (App Router), Tailwind CSS, TypeScript strict, Supabase
 - **Hosting:** Vercel (auto-deploys from `main`), dev server on port 3001
@@ -17,11 +17,11 @@ Perth Pint Prices (perthpintprices.com) tracks pint prices across 300+ Perth pub
 - `phone_call_log` — full transcript + cost log of every Andrew call (post-call webhook)
 - `push_subscriptions` — web push notification subscribers
 
-## Routes (19 pages)
+## Routes (17 content pages + 4 redirects)
 - **Core:** `/` homepage, `/discover`, `/happy-hour`, `/[suburb]/[pub]` (e.g. `/fremantle/the-norfolk-hotel`), `/[suburb]` (e.g. `/fremantle`), `/suburbs`
-- **Legacy redirect stubs:** `/pub/[slug]` and `/suburb/[slug]` return 308 redirects to the current URL structure
-- **Guides (5):** `/guides` index, `/guides/beer-weather`, `/guides/cozy-corners`, `/guides/dad-bar`, `/guides/punt-and-pints`, `/guides/sunset-sippers`
-- **Insights (5):** `/insights` index, `/insights/pint-index`, `/insights/pint-of-the-day`, `/insights/suburb-rankings`, `/insights/tonights-best-bets`, `/insights/venue-breakdown`
+- **Legacy redirect stubs:** `/pub/[slug]` and `/suburb/[slug]` return 301 redirects to the current URL structure
+- **Guides:** `/guides` 308-redirects to `/discover`; the 5 guide pages are `/guides/beer-weather`, `/guides/cozy-corners`, `/guides/dad-bar`, `/guides/punt-and-pints`, `/guides/sunset-sippers`
+- **Insights:** `/insights` 308-redirects to `/discover`; the 5 insight pages are `/insights/pint-index`, `/insights/pint-of-the-day`, `/insights/suburb-rankings`, `/insights/tonights-best-bets`, `/insights/venue-breakdown`
 - **Admin:** `/admin`
 
 ## Components (32 in `src/components/`)
@@ -32,8 +32,10 @@ BeerWeather, BreadcrumbJsonLd, CrowdReporter, DadBar, ErrorBoundary, FAQ, Featur
 - `SubPageNav` for breadcrumb navigation on sub-pages
 - `BreadcrumbJsonLd` for schema.org breadcrumb structured data (uses `url` property, not `item`)
 
-## Lib files (11 in `src/lib/`)
-freshness, happyHour, happyHourLive, location, mapTheme, mapTile, perthClock, priceLabel, sunPosition, supabase, utils
+## Lib files (13 in `src/lib/`)
+freshness, happyHour, happyHourLive, location, mapTheme, mapTile, perthClock, priceLabel, sunPosition, supabase, supabaseGateway, urls, utils
+
+(`supabaseGateway` = `anonClient()` / `serviceClient()` seam; `urls` = canonical suburb-slug + pub/suburb URL builders. `happyHour` + `happyHourLive` both still exist — the HappyHourEngine consolidation is still pending.)
 
 ## API routes
 - **User-facing**: `/api/pubs`, `/api/price-report`, `/api/pub-submission`, `/api/menu-scan`, `/api/pint-of-the-day`
@@ -92,4 +94,4 @@ freshness, happyHour, happyHourLive, location, mapTheme, mapTile, perthClock, pr
 - Container: `max-w-container` (800px) with `px-6`
 - All pages must include `<Footer />`
 - Sub-pages use `<SubPageNav />` for header
-- Homepage header has 3 nav links: Discover, Happy Hours, Pint Report
+- Homepage nav (`MobileNav`) has 2 links — Discover, Happy Hours — plus a "Submit a Price" CTA

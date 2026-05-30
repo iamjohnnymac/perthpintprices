@@ -159,6 +159,9 @@
 <header class="hero">
   <div class="wrap">
     <p class="eyebrow">Perth Pint Prices · Architecture Plan · 30 May 2026</p>
+    <div style="border:3px solid var(--ink);border-radius:12px;background:var(--amber-pale);box-shadow:3px 3px 0 var(--ink);padding:14px 18px;margin:18px 0 4px;font-family:var(--mono);font-size:.82rem;line-height:1.5">
+      <strong>SUPERSEDED — 2026-05-31.</strong> This is a frozen point-in-time plan; for current refactor status see <strong>docs/PROJECT-STATUS.md</strong>. Since it was written: Phases -1/0/1/2 + the RLS security lockdown shipped; the game features (pub-golf, pint-crawl) and the weekly report were <strong>deleted</strong>, so the <em>CrawlPlanner</em>, <em>GolfScoring</em> and "Phase 6 game teardown" sections below are moot; and both "CEO decisions" listed here are resolved. <strong>HappyHourEngine</strong> remains the genuine next item.
+    </div>
     <h1>The whole-app<br><em>module refactor.</em></h1>
     <p class="thesis">Perth Pint Prices doesn't have many architectural problems — it has about <strong>8 problems copy-pasted 50+ times</strong>. This plan collapses each cluster into one deep module behind a small interface, lands the first real test suite on a near-zero-test live site, and closes two security holes along the way. ~90% mechanical de-duplication, sequenced so the site stays shippable at every step.</p>
     <div class="stats">

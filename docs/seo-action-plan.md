@@ -2,6 +2,13 @@
 
 Companion doc to `SEO-MASTER.md` (the playbook) and `seo-research-2026.md` (what's new in late-2026 SEO). This file is a **prioritised punch list** built from real GSC + GA4 data pulled today, ranked by ROI per hour of effort.
 
+> **Note — 2026-05-31 reconciliation.** Some items have since shipped or been re-scoped:
+> - **#1 (www→apex):** downgraded. Verified live that `www` already 308-redirects to apex, all canonicals point to apex, and Google treats 308 as equivalent to a 301 — so this is **not** the "single biggest mechanical win." The only residual lever is a GSC reindex nudge.
+> - **#2 (legacy /pub + /suburb → 301):** **done** (shipped 2026-05-03).
+> - **#4 (GA4 events):** drop `pint_crawl_start` and `pub_golf_start` — those features were deleted.
+> - References to a **weekly report** page (in #5/#8/#11) are moot — it was deleted; use the Pint Index as the Article-schema / PR asset.
+> - The GSC/GA4 numbers below are a dated 2026-04-27 snapshot.
+
 ---
 
 ## State of play (data, last 90 days)
@@ -39,17 +46,17 @@ Order is roughly **highest ROI per hour first**. Items 1–4 are technical bleed
 
 ---
 
-### 1. Fix the www vs apex canonical (1 hour) ⚠️ critical
+### 1. Fix the www vs apex canonical — RESOLVED / DOWNGRADED (see 2026-05-31 banner)
 
 **Evidence**: GSC top pages shows `https://www.perthpintprices.com/` with **23 clicks / 522 impressions** AND `https://perthpintprices.com/` with **15 clicks / 424 impressions**. They're competing for the same content. Plus 39 pages flagged as "Duplicate, Google chose different canonical than user".
 
 **Action**: Pick one (recommend apex `perthpintprices.com` since it matches your `metadataBase` in `src/app/layout.tsx`) and 301 every `www.*` request to apex. Vercel project settings → Domains → set apex as primary, redirect `www` → apex. After deploying, request reindex of homepage in GSC.
 
-**Expected impact**: Consolidates ~38 clicks and ~946 impressions onto one URL. Single biggest mechanical win.
+**Expected impact**: ~~Consolidates ~38 clicks and ~946 impressions onto one URL. Single biggest mechanical win.~~ **Correction (2026-05-31):** `www` already 308-redirects to apex and 308 is equivalent to 301 for Google, so there is no split to "consolidate" via a redirect change. Low/no remaining value, and not a ranking risk either way.
 
 ---
 
-### 2. Force the legacy `/pub/[slug]` and `/suburb/[slug]` to actually 301 (2 hours)
+### 2. Force the legacy `/pub/[slug]` and `/suburb/[slug]` to actually 301 (2 hours) — DONE (shipped 2026-05-03)
 
 **Evidence**: GSC top pages still shows `/suburb/fremantle` (41 imp, 2 clicks) outranking the new `/fremantle` (20 imp, 3 clicks). Same for `/pub/northbridge-brewing-company` (16 imp) and `/pub/ocean-beach-hotel` (15 imp). They're 308s per `SEO-MASTER.md §2`, but 308 doesn't pass authority as cleanly as 301 in the wild.
 
@@ -89,7 +96,7 @@ Order is roughly **highest ROI per hour first**. Items 1–4 are technical bleed
 **Action**: Set these as Key Events in GA4 → Admin → Events:
 - `view_pub` (when a user lands on a `/[suburb]/[pub]` page)
 - `report_price` (when the price-report form submits — already an event presumably)
-- `pint_crawl_start`, `pub_golf_start` (already engagement-driving)
+- ~~`pint_crawl_start`, `pub_golf_start`~~ (removed — these features were deleted)
 - `outbound_pub_link` (clicks to pub website)
 - `crowd_report_submit`
 - `install_pwa`
