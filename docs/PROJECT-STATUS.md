@@ -1,14 +1,20 @@
 # Perth Pint Prices Project Status
 
-Last updated: 2026-05-03
+Last updated: 2026-05-30
 
 ## What this is
 
-Perth Pint Prices (perthpintprices.com) tracks pint prices across **857 Perth pubs** (up from 423 in March). Users can discover cheap pints, find happy hours, plan pub crawls, and report prices. The site is live on Vercel.
+Perth Pint Prices (perthpintprices.com) tracks pint prices across **857 Perth pubs** (up from 423 in March). Users can discover cheap pints, find happy hours, and report prices. The site is live on Vercel.
 
 Stack, database, routes, components, and lib files are documented in `CLAUDE.md` (auto-loaded every session). This file covers history, recent work, and the backlog.
 
 ## What's done recently
+
+### Removed non-core features (2026-05-30)
+- Product call: killed everything that isn't the core pint-price experience. Deleted **pub-golf**, **pint-crawl**, **leaderboard**, and **weekly-report** (the "Pint Report" stats page) — all had **0 organic clicks/impressions over 90 days** and are rebuildable from git history.
+- Removed the 4 page routes + the orphaned `/api/weekly-report`, and cleaned every reference: sitemap entries, the `/discover` "Activities" carousel, and nav/footer links (MobileNav incl. now-unused icon imports, Footer, SubPageNav, HomeClient, homepage SSR crawl-links). Fixed the weekly push deep-link (was broken at `/weekly`) → `/insights/pint-index`. **18 files, −2,635 lines.** tsc + `next build` green; `/discover` visually verified (no empty section, footer nav trimmed).
+- Twilio left untouched (separate AI phone-call price-collection system). The refactor plan's CrawlPlanner/GolfScoring modules + Phase-6 game-teardown are now moot.
+- Commit: `0f93002`
 
 ### SEO redirect consolidation (2026-05-03)
 - Fixed the legacy redirect half of the highest-priority canonical redirect work:
