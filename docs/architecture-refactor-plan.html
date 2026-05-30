@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Perth Pint Prices — Whole-App Module Refactor Plan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=JetBrains+Mono:wght@400;600;800&family=Plus+Jakarta+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#171717; --gray:#8A8A85; --off:#F7F7F5; --page:#FDF8F0;
+    --amber:#D4740A; --amber-pale:#FFF3E0; --red:#C0362C; --green:#2F7D4F;
+    --mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+    --serif:'DM Serif Display',Georgia,serif;
+    --body:'Plus Jakarta Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--page);color:var(--ink);font-family:var(--body);line-height:1.55;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:920px;margin:0 auto;padding:0 24px}
+  a{color:var(--amber);text-decoration:none}
+  a:hover{text-decoration:underline}
+
+  /* labels / mono */
+  .mono{font-family:var(--mono)}
+  .eyebrow{font-family:var(--mono);font-size:.7rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--gray)}
+
+  /* hero */
+  header.hero{padding:64px 0 36px}
+  .hero h1{font-family:var(--serif);font-weight:400;font-size:clamp(2.2rem,6vw,3.6rem);line-height:1.02;margin:.5rem 0 .2rem}
+  .hero h1 em{color:var(--amber);font-style:italic}
+  .thesis{font-size:1.08rem;max-width:62ch;margin:.8rem 0 0}
+  .stats{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
+  .stat{border:3px solid var(--ink);border-radius:12px;background:#fff;box-shadow:3px 3px 0 var(--ink);padding:10px 14px;min-width:96px}
+  .stat b{font-family:var(--mono);font-weight:800;font-size:1.25rem;display:block;line-height:1}
+  .stat span{font-family:var(--mono);font-size:.6rem;letter-spacing:.08em;text-transform:uppercase;color:var(--gray)}
+
+  /* sticky nav */
+  nav.toc{position:sticky;top:0;z-index:20;background:rgba(253,248,240,.92);backdrop-filter:blur(6px);border-bottom:2px solid var(--ink);margin-top:24px}
+  nav.toc .wrap{display:flex;gap:4px;flex-wrap:wrap;padding-top:8px;padding-bottom:8px}
+  nav.toc a{font-family:var(--mono);font-size:.68rem;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--ink);padding:5px 9px;border-radius:9999px;border:2px solid transparent}
+  nav.toc a:hover{border-color:var(--ink);text-decoration:none}
+
+  section{padding:40px 0;border-top:2px solid #e7ddcb}
+  section:first-of-type{border-top:none}
+  h2{font-family:var(--serif);font-weight:400;font-size:1.9rem;margin:0 0 .2rem}
+  h2 .num{font-family:var(--mono);font-size:.9rem;font-weight:800;color:var(--amber);vertical-align:super;margin-right:8px}
+  .lead{color:#3a3a38;max-width:66ch;margin:.3rem 0 1.4rem}
+
+  /* callout: decisions */
+  .decisions{background:var(--amber-pale);border:3px solid var(--ink);border-radius:14px;box-shadow:5px 5px 0 var(--ink);padding:24px}
+  .decisions h2{margin-top:0}
+  .decision{background:#fff;border:2px solid var(--ink);border-radius:10px;padding:16px 18px;margin-top:16px}
+  .decision h3{font-family:var(--body);font-weight:700;font-size:1.08rem;margin:0 0 .4rem;display:flex;gap:10px;align-items:baseline}
+  .decision h3 .tag{font-family:var(--mono);font-size:.6rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;background:var(--ink);color:#fff;padding:3px 8px;border-radius:9999px;white-space:nowrap}
+  .decision p{margin:.4rem 0}
+  .decision .opts{font-family:var(--mono);font-size:.82rem;background:var(--off);border-left:3px solid var(--amber);padding:10px 12px;border-radius:4px;white-space:pre-line}
+
+  /* architecture layers */
+  .layer{display:grid;grid-template-columns:150px 1fr;gap:14px;align-items:center;border:3px solid var(--ink);border-radius:12px;background:#fff;padding:14px;margin-bottom:12px;box-shadow:3px 3px 0 var(--ink)}
+  .layer .lname{font-family:var(--mono);font-weight:800;font-size:.78rem;text-transform:uppercase;letter-spacing:.04em;line-height:1.25}
+  .layer .lname small{display:block;color:var(--gray);font-weight:600;font-size:.66rem;margin-top:3px;letter-spacing:.02em}
+  .pills{display:flex;flex-wrap:wrap;gap:7px}
+  .pill{font-family:var(--mono);font-size:.74rem;font-weight:600;border:2px solid var(--ink);border-radius:9999px;padding:4px 11px;background:#fff;color:var(--ink)}
+  .pill.k{background:var(--ink);color:#fff}            /* keystone */
+  .layer.l0{background:#FBF1DF}
+  .layer.l1{background:#fff}
+  .layer.l2{background:#F4F8F4}
+  .layer.l3{background:#F3F1FA}
+  .layer.lui{background:#FFF6F0}
+  .layer.lg{background:#FBEFEF}
+
+  /* module cards */
+  .mod{border:2.5px solid var(--ink);border-radius:12px;background:#fff;padding:18px 20px;margin:14px 0;box-shadow:3px 3px 0 var(--ink)}
+  .mod>header{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap}
+  .mod h4{font-family:var(--mono);font-weight:800;font-size:1.05rem;margin:0}
+  .mod .layer-tag{display:block;font-family:var(--mono);font-size:.62rem;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--gray);margin-top:3px}
+  .badges{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+  .badge{font-family:var(--mono);font-size:.6rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;padding:3px 8px;border-radius:9999px;border:2px solid var(--ink)}
+  .badge.con.unanimous{background:var(--amber);color:#fff;border-color:var(--amber)}
+  .badge.con.majority{background:var(--amber-pale);color:var(--amber)}
+  .badge.con.resolved{background:#fff;color:var(--gray);border-color:var(--gray)}
+  .badge.eff{background:var(--ink);color:#fff}
+  .badge.dep{background:var(--off);color:#444;border-color:#ccc;font-weight:600}
+  .mod .resp{margin:.7rem 0 .2rem}
+  .mod details{margin-top:.6rem;border-top:1.5px dashed #d9cfbb;padding-top:.5rem}
+  .mod summary{font-family:var(--mono);font-size:.72rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--amber);cursor:pointer;list-style:none}
+  .mod summary::-webkit-details-marker{display:none}
+  .mod summary::before{content:"▸ ";}
+  .mod details[open] summary::before{content:"▾ ";}
+  .mod details .field{margin:.7rem 0}
+  .mod details .field b{font-family:var(--mono);font-size:.68rem;letter-spacing:.05em;text-transform:uppercase;color:var(--ink);display:block;margin-bottom:.2rem}
+  .mod details code,.mod .resp code{font-family:var(--mono);font-size:.85em;background:var(--off);padding:1px 4px;border-radius:3px}
+  .mod ul{margin:.3rem 0;padding-left:1.1rem}
+  .mod li{margin:.2rem 0;font-size:.92rem}
+  .mod li .dead{color:var(--red);font-weight:700}
+
+  .grouphead{font-family:var(--mono);font-weight:800;font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;color:var(--amber);margin:30px 0 2px;display:flex;align-items:center;gap:10px}
+  .grouphead::after{content:"";flex:1;height:2px;background:#e7ddcb}
+
+  /* seams */
+  .seam{border:2.5px solid var(--ink);border-radius:12px;background:#fff;padding:16px 18px;margin:12px 0;box-shadow:3px 3px 0 var(--ink)}
+  .seam h4{font-family:var(--mono);font-weight:800;margin:0 0 .5rem;font-size:1rem}
+  .adapters{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:.5rem 0}
+  .adapter{border:2px solid var(--ink);border-radius:8px;padding:9px 11px;font-size:.86rem}
+  .adapter .ad-l{font-family:var(--mono);font-size:.6rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--gray);display:block;margin-bottom:3px}
+
+  /* roadmap */
+  .phase{position:relative;border:2.5px solid var(--ink);border-radius:12px;background:#fff;padding:16px 18px 16px 64px;margin:12px 0;box-shadow:3px 3px 0 var(--ink)}
+  .phase .pn{position:absolute;left:14px;top:16px;width:38px;height:38px;border-radius:9999px;border:3px solid var(--ink);background:var(--amber);color:#fff;font-family:var(--mono);font-weight:800;font-size:.9rem;display:flex;align-items:center;justify-content:center}
+  .phase.gate .pn{background:var(--ink)}
+  .phase h4{font-family:var(--mono);font-weight:800;font-size:1rem;margin:0 0 .15rem;padding-right:120px}
+  .phase .chips{position:absolute;right:16px;top:16px;display:flex;gap:6px}
+  .chip{font-family:var(--mono);font-size:.58rem;font-weight:800;letter-spacing:.05em;text-transform:uppercase;padding:3px 7px;border-radius:9999px;border:2px solid var(--ink)}
+  .chip.r-low{background:#E7F3EC;color:var(--green);border-color:var(--green)}
+  .chip.r-medium{background:var(--amber-pale);color:var(--amber);border-color:var(--amber)}
+  .chip.r-high{background:#FBE6E4;color:var(--red);border-color:var(--red)}
+  .chip.e{background:var(--ink);color:#fff}
+  .phase .pmods{display:flex;flex-wrap:wrap;gap:6px;margin:.5rem 0}
+  .phase .pmods .pill{font-size:.68rem;padding:3px 9px}
+  .phase .rat{font-size:.92rem;margin:.5rem 0 .3rem;color:#3a3a38}
+  .phase .unb{font-size:.84rem;font-family:var(--mono);color:var(--ink);background:var(--off);border-left:3px solid var(--green);padding:7px 10px;border-radius:4px;margin-top:.5rem}
+  .phase .unb b{color:var(--green)}
+
+  /* principles */
+  ol.principles{counter-reset:p;list-style:none;padding:0;margin:0}
+  ol.principles li{counter-increment:p;position:relative;border:2px solid var(--ink);border-radius:10px;background:#fff;padding:14px 16px 14px 52px;margin:10px 0}
+  ol.principles li::before{content:counter(p);position:absolute;left:12px;top:13px;width:28px;height:28px;border-radius:9999px;background:var(--ink);color:#fff;font-family:var(--mono);font-weight:800;font-size:.8rem;display:flex;align-items:center;justify-content:center}
+  ol.principles b{font-family:var(--mono);font-size:.82rem;letter-spacing:.02em}
+
+  .legend{display:flex;gap:14px;flex-wrap:wrap;font-size:.78rem;color:var(--gray);font-family:var(--mono);margin-top:10px}
+  .legend span b{color:var(--ink)}
+
+  footer{padding:40px 0 70px;border-top:2px solid var(--ink);margin-top:20px}
+  footer .prov{font-family:var(--mono);font-size:.78rem;color:var(--gray);line-height:1.7}
+  footer .prov b{color:var(--ink)}
+  .flow{font-family:var(--mono);font-size:.74rem;font-weight:600;background:#fff;border:2px solid var(--ink);border-radius:9999px;padding:8px 14px;display:inline-block;margin-top:10px}
+
+  @media(max-width:640px){
+    .layer{grid-template-columns:1fr;gap:8px}
+    .adapters{grid-template-columns:1fr}
+    .phase{padding-left:18px}
+    .phase .pn{position:static;margin-bottom:8px}
+    .phase h4{padding-right:0}
+    .phase .chips{position:static;margin-top:8px}
+  }
+  @media print{
+    nav.toc{display:none}
+    .mod details{display:block}
+    .mod summary{display:none}
+    body{background:#fff}
+    .stat,.mod,.phase,.seam,.decisions,.layer{box-shadow:none}
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <p class="eyebrow">Perth Pint Prices · Architecture Plan · 30 May 2026</p>
+    <h1>The whole-app<br><em>module refactor.</em></h1>
+    <p class="thesis">Perth Pint Prices doesn't have many architectural problems — it has about <strong>8 problems copy-pasted 50+ times</strong>. This plan collapses each cluster into one deep module behind a small interface, lands the first real test suite on a near-zero-test live site, and closes two security holes along the way. ~90% mechanical de-duplication, sequenced so the site stays shippable at every step.</p>
+    <div class="stats">
+      <div class="stat"><b>24</b><span>Modules</span></div>
+      <div class="stat"><b>4+UI</b><span>Onion layers</span></div>
+      <div class="stat"><b>8</b><span>Phases</span></div>
+      <div class="stat"><b>3</b><span>Real ports</span></div>
+      <div class="stat"><b>17,235</b><span>Lines today</span></div>
+      <div class="stat"><b>2</b><span>Security fixes</span></div>
+      <div class="stat"><b>5</b><span>Dead files cut</span></div>
+      <div class="stat"><b>2</b><span>Your calls</span></div>
+    </div>
+  </div>
+</header>
+
+<nav class="toc">
+  <div class="wrap">
+    <a href="#decisions">Your decisions</a>
+    <a href="#map">Architecture map</a>
+    <a href="#modules">The 24 modules</a>
+    <a href="#seams">Ports &amp; seams</a>
+    <a href="#roadmap">Migration roadmap</a>
+    <a href="#principles">Principles</a>
+    <a href="#how">How this was built</a>
+  </div>
+</nav>
+
+<!-- ===================== DECISIONS ===================== -->
+<section id="decisions">
+  <div class="wrap">
+    <div class="decisions">
+      <p class="eyebrow" style="color:var(--amber)">The only things we need from you</p>
+      <h2>2 decisions for the CEO</h2>
+      <p class="lead" style="margin-bottom:.4rem">Everything else in this plan, the agents resolved among themselves (22 red-team findings, all settled). These two are genuine product / operations calls that engineering cannot make from the code. Neither blocks starting — they only change the scope of the <em>last</em> phase.</p>
+
+      <div class="decision">
+        <h3><span class="tag">Product</span> Keep or kill the two game features — pint-crawl &amp; pub-golf?</h3>
+        <p>They're the two largest files in the app (<span class="mono">PintCrawlClient</span> 1,016 lines, <span class="mono">PubGolfClient</span> 951 lines). Phase 6 spends real effort extracting their tested cores (route planning, golf scoring). If either is low-traffic or slated for removal, that effort should be dropped rather than spent. Their cores are otherwise untestable and regression-prone — so it's decompose-and-cover vs delete.</p>
+        <p class="opts">A) Keep both — proceed with CrawlPlanner + GolfScoring extraction.
+B) Keep one, delete the other — halves the Phase 6 teardown.
+C) Delete both — drop the modules and routes (check GA4 / GSC traffic first).</p>
+      </div>
+
+      <div class="decision">
+        <h3><span class="tag">Ops</span> Is Twilio still part of the stack?</h3>
+        <p>Twilio is in <span class="mono">package.json</span>, but the Andrew voice pipeline verified in source runs entirely through ElevenLabs (Batch Calling + post-call webhook) and Google Places — no Twilio usage surfaced. If it's dead we leave it out cleanly; if it's live somewhere we haven't inspected, the VoiceSweep module's boundary needs to widen.</p>
+        <p class="opts">A) Dead / unused — no Twilio module, leave it out of VoiceSweep.
+B) Live (SMS? fallback caller?) — point us at where, and VoiceSweep expands to cover it.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== ARCHITECTURE MAP ===================== -->
+<section id="map">
+  <div class="wrap">
+    <h2><span class="num">01</span>The target architecture</h2>
+    <p class="lead">A four-layer onion. Time and the database are the two substrate seams everything injects. Above them sit pure, infra-free domain kernels (the heart of the new test suite), then thin data accessors over the one database port, then the external-I/O edges, then presentation. The four giant files dissolve onto these layers last.</p>
+
+    <div class="layer l0">
+      <div class="lname">Layer 0<small>Substrate seams</small></div>
+      <div class="pills"><span class="pill k">PerthClock</span><span class="pill k">SupabaseGateway</span></div>
+    </div>
+    <div class="layer l1">
+      <div class="lname">Layer 1<small>Pure domain kernels</small></div>
+      <div class="pills"><span class="pill">HappyHourEngine</span><span class="pill">PubMapper</span><span class="pill">PubUrls</span><span class="pill">GeoRouting</span><span class="pill">PubStats</span><span class="pill">Formatters</span><span class="pill">PriceRules</span></div>
+    </div>
+    <div class="layer l2">
+      <div class="lname">Layer 2<small>Data accessors</small></div>
+      <div class="pills"><span class="pill">PubRepository</span><span class="pill">PriceWrite</span><span class="pill">SnapshotStore</span><span class="pill">PriceIntake</span><span class="pill">WatchlistStore</span></div>
+    </div>
+    <div class="layer l3">
+      <div class="lname">Layer 3<small>External-I/O edges</small></div>
+      <div class="pills"><span class="pill">ApiGuards</span><span class="pill">Notifications</span><span class="pill">VoiceSweep</span><span class="pill">ExternalFeeds</span></div>
+    </div>
+    <div class="layer lui">
+      <div class="lname">Presentation<small>UI dedup</small></div>
+      <div class="pills"><span class="pill">MapKit</span><span class="pill">ChartMath</span><span class="pill">SiteChrome</span><span class="pill">PubFinderUI</span></div>
+    </div>
+    <div class="layer lg">
+      <div class="lname">Giant teardown<small>cores extracted last</small></div>
+      <div class="pills"><span class="pill">CrawlPlanner</span><span class="pill">GolfScoring</span><span class="pill">AdminDashboardData</span></div>
+    </div>
+
+    <div class="legend">
+      <span><b>Consensus:</b></span>
+      <span><b style="color:var(--amber)">unanimous</b> all 4 architects</span>
+      <span><b style="color:var(--amber)">majority</b> 2–3 architects</span>
+      <span><b>resolved</b> contested → settled by red-team</span>
+      <span>· <b>S/M/L</b> effort · <b class="pill k" style="padding:1px 8px">keystone</b> unblocks the rest</span>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== MODULES ===================== -->
+<section id="modules">
+  <div class="wrap">
+    <h2><span class="num">02</span>The 24 modules</h2>
+    <p class="lead">Every module collapses a confirmed N-caller duplication or is a testability keystone — nothing speculative. The deletion test governs the count: delete the module and the same logic must reappear across its callers. Each card opens to its interface, the current code it absorbs, why it's deep, and how it gets tested.</p>
+
+    <!-- LAYER 0 -->
+    <div class="grouphead">Layer 0 · Substrate seams</div>
+
+    <article class="mod" id="perthclock">
+      <header><div><h4>PerthClock</h4><span class="layer-tag">Layer 0 · time · keystone</span></div>
+        <div class="badges"><span class="badge dep">in-process</span><span class="badge con unanimous">unanimous</span><span class="badge eff">S</span></div></header>
+      <p class="resp">The single injectable source of "now in Perth" (AWST, UTC+8, no DST) and the calendar fields the whole app reasons about: Perth-local date, day-of-week, minutes-of-day, and the <code>YYYY-MM-DD</code> "today" string. Every time-dependent module takes <code>now</code> as a parameter and becomes deterministic. This is the keystone — nothing time-dependent is testable today because each module reads <code>new Date()</code> internally via 3 different idioms.</p>
+      <details><summary>Interface · absorbs · why deep · tests</summary>
+        <div class="field"><b>Interface</b><code>perthNow(now = new Date()): { date, dayOfWeek 0..6, minutesOfDay, ymd }</code>. Critical invariant (red-team fix): derive fields from <em>absolute UTC</em> — <code>getUTCHours()+8</code> with day-wraparound (or Intl parts with <code>timeZone:'Australia/Perth'</code>) — <strong>never</strong> <code>new Date(now.getTime()+8h)</code> then local getters, which double-shifts in a non-UTC browser (Perth users run UTC+8, not UTC). <code>now</code> is the only time input.</div>
+        <div class="field"><b>Absorbs</b><ul>
+          <li><code>getPerthNow</code> in happyHourLive.ts:43 (the safe pattern to generalise)</li>
+          <li>the different Intl idiom in happyHour.ts:108–114</li>
+          <li>the <code>now+8h</code> block in pint-of-the-day/route.ts:25</li>
+          <li>inline Perth-time idioms in TonightsMoves, DiscoverClient, PintOfTheDay, race-meets</li>
+        </ul></div>
+        <div class="field"><b>Why deep</b>A ~15-line pure function behind which the entire app's time reasoning lives, replacing 5+ divergent timezone idioms (two of which disagree on host-zone safety). Delete it and the same getUTC/Intl wraparound reappears in happy-hour, freshness, pint-of-the-day, sun overlay, and the Andrew scheduler.</div>
+        <div class="field"><b>Tests</b>Run the same suite under <code>TZ=Australia/Perth</code> AND <code>TZ=America/New_York</code>, asserting identical output — the regression that catches the double-shift bug. No I/O.</div>
+      </details>
+    </article>
+
+    <article class="mod" id="supabasegateway">
+      <header><div><h4>SupabaseGateway</h4><span class="layer-tag">Layer 0 · the one DB port · keystone</span></div>
+        <div class="badges"><span class="badge dep">true-external</span><span class="badge con unanimous">unanimous</span><span class="badge eff">S</span></div></header>
+      <p class="resp">The one module that constructs Supabase clients and owns the project URL + key material. Hands out <code>anonClient()</code> (reads) and <code>serviceClient()</code> (privileged writes) so credentials live in exactly one file, the leaked anon JWT leaves source (hardcoded at supabase.ts:11, duplicated in 14 files), and every DB caller is injectable in tests.</p>
+      <details><summary>Interface · absorbs · why deep · tests</summary>
+        <div class="field"><b>Interface</b><code>anonClient()</code>; <code>serviceClient()</code> — throws loudly if <code>SUPABASE_SERVICE_ROLE_KEY</code> is missing, never silently degrades to anon (fixes admin/review:6). Thin by design — it is the port; depth lives in the accessors above it. <em>Sequencing constraint:</em> before <code>serviceClient()</code> lands its throw-on-missing behaviour, confirm the key is present in every Vercel write runtime (cron, agent webhook, admin), or the throw turns a silent RLS failure into a hard 500 on the live price path.</div>
+        <div class="field"><b>Absorbs</b><ul>
+          <li>the exported singleton + literal anon JWT in supabase.ts:10–13</li>
+          <li>the 16 inline <code>createClient(…)</code> blocks across <code>src/app/api/**</code></li>
+          <li>the duplicated anon-JWT literal in 14 files</li>
+          <li>the <code>SERVICE_ROLE || ANON</code> silent degrade in admin/review/route.ts:6</li>
+        </ul></div>
+        <div class="field"><b>Why deep</b>Explicitly a thin <em>seam</em>, not a deep module — it earns inclusion on locality + security + injectability, not leverage. <code>createClient</code> lives in one file, the JWT leaves source, and it's the single injection point.</div>
+        <div class="field"><b>Tests</b>This is the real port (live client vs test double). The second adapter must be concrete: a typed fake implementing only the builder methods the accessors use (<code>.from/.select/.eq/.or/.order/.single/.insert/.update/.delete</code>) returning canned <code>{data,error}</code>. <strong>Not PGLite</strong> (raw Postgres ≠ PostgREST wire protocol). Land <code>PubRepository.getPubBySlug</code> + its fake-client test in the same PR to prove the adapter exists before Layer 2 is built on it.</div>
+      </details>
+    </article>
+
+    <!-- LAYER 1 -->
+    <div class="grouphead">Layer 1 · Pure domain kernels</div>
+
+    <article class="mod" id="happyhourengine">
+      <header><div><h4>HappyHourEngine</h4><span class="layer-tag">Layer 1 · happy hour</span></div>
+        <div class="badges"><span class="badge dep">in-process</span><span class="badge con unanimous">unanimous</span><span class="badge eff">M</span></div></header>
+      <p class="resp">The single happy-hour engine. Given a pub's structured schedule (days/start/end + regular &amp; HH prices) and the Perth clock, answers: is-active-now, is-today, effective price, minutes-remaining, starts-in-minutes, next occurrence, and the human labels. Correction from red-team: structured columns are the <strong>source of truth</strong>; the free-text <code>happy_hour</code> string is a <em>derived display value</em>, not the input — so the engine <em>owns</em> the display-string producer (absorbs <code>generateHappyHourText</code> as <code>scheduleLabel()</code>; it does not delete it).</p>
+      <details><summary>Interface · absorbs · why deep · tests</summary>
+        <div class="field"><b>Interface</b><code>getHappyHourStatus(schedule, now)</code> → <code>{ isActive, isToday, effectivePrice, regularPrice, happyHourPrice, minutesRemaining, startsInMinutes, nextOccurrenceLabel, label }</code>; <code>scheduleLabel(schedule)</code> reproduces the legacy "Daily 4-7pm" display string (replaces <code>generateHappyHourText</code> so the 30 string-render sites keep a stable value); <code>parseScheduleText()</code> is a <em>fallback only</em> when <code>happy_hour_days</code> is null. One <code>HappyHourStatus</code> type (the two colliding ones merge); one <code>DAY_MAP</code>; presentation/emoji not returned.</div>
+        <div class="field"><b>Absorbs</b><ul>
+          <li>happyHourLive.ts (the real deep core — kept, extended with isToday / startsInMinutes / nextOccurrence)</li>
+          <li>happyHour.ts:84–195 (duplicate getHappyHourStatus + colliding type + DAY_MAP <span class="dead">deleted</span>; string parser folded to fallback)</li>
+          <li><code>generateHappyHourText</code> in supabase.ts:66–92 (<em>moved in</em> as scheduleLabel, not deleted)</li>
+          <li>the inline reimpl in pint-of-the-day; the string calls in DiscoverClient + 9 TonightsMoves sites</li>
+        </ul></div>
+        <div class="field"><b>Why deep</b>A large isActive/isToday/countdown/next-occurrence state machine behind one call. The two <code>getHappyHourStatus</code> functions duplicate this with <em>opposite</em> input contracts (string vs struct) — a confirmed merge hazard collapsed into one owner.</div>
+        <div class="field"><b>Tests</b>In-process with injected clock. Regression: for a structured-only row, <code>scheduleLabel()</code> output must byte-match current <code>generateHappyHourText</code> across a fixture corpus — proves the 30 string-render sites and the <code>&lt;title&gt;</code>/meta description don't change.</div>
+      </details>
+    </article>
+
+    <article class="mod" id="pubmapper">
+      <header><div><h4>PubMapper</h4><span class="layer-tag">Layer 1 · the Pub shape</span></div>
+        <div class="badges"><span class="badge dep">in-process</span><span class="badge con unanimous">unanimous</span><span class="badge eff">M</span></div></header>
+      <p class="resp">The one pure row→Pub / row→PubLite translator: <code>Number()</code> coercion, <code>titleCase(beer_type)</code>, lat/lng defaults, <code>priceVerified = (price_verified !== false)</code>, structured HH-field merge, and <code>pub.happyHour = row.happy_hour ?? scheduleLabel(structured)</code>. The single authority for "what a Pub is" and which fields are DB-sourced vs computed.</p>
+      <details><summary>Interface · absorbs · why deep · tests</summary>
+        <div class="field"><b>Interface</b><code>mapPubRow(row)</code>; <code>mapPubRowLite(row)</code>; <code>withLiveHappyHour(pub, now)</code> as a <em>separate</em> enrichment step (red-team fix). <code>mapPubRow</code> stays structurally pure and clock-free; the time-dependent enrichment (effectivePrice/isHappyHourNow, and the <code>price = effectivePrice</code> override) lives in <code>withLiveHappyHour</code> so non-time callers (sitemap, admin) don't drag in a clock and the "<code>Pub.price</code> secretly means effective price" invariant becomes opt-in and documented. <code>mapPubRowLite</code> preserves the 352KB→80KB narrow-column payload.</div>
+        <div class="field"><b>Absorbs</b><ul>
+          <li>the 5 byte-identical mapping blocks in supabase.ts (getPubs/getPubsLite/getPubBySlug/getNearbyPubs/getSimilarPricePubs at lines 143, 218, 280, 360, 422)</li>
+          <li>the PubLite interface; SubmitPubForm's private <code>interface Pub</code> (<span class="dead">deleted</span> in favour of this type)</li>
+        </ul></div>
+        <div class="field"><b>Why deep</b>Invariants encoded 5× with drift (Number coercion, priceVerified default, lat/lng default, HH merge) collapse behind one call. Delete it and all 5 <code>price_verified !== false</code> blocks reappear verbatim.</div>
+        <div class="field"><b>Tests</b>Characterization test: <code>mapPubRow</code> (and <code>withLiveHappyHour</code> at a fixed <code>now</code>) byte-identical to current mapper output for a frozen pubs fixture — the guard that the mass de-dup is behaviour-preserving.</div>
+      </details>
+    </article>
+
+    <article class="mod" id="puburls">
+      <header><div><h4>PubUrls</h4><span class="layer-tag">Layer 1 · URL grammar · SEO-critical</span></div>
+        <div class="badges"><span class="badge dep">in-process</span><span class="badge con unanimous">unanimous</span><span class="badge eff">M</span></div></header>
+      <p class="resp">The single authority for the app's URL grammar and slugs: the one <code>toSuburbSlug</code> (apostrophe-stripping), pub/suburb relative + absolute URLs, and <code>BASE_URL</code> declared once. Canonicals, OG, sitemap, and JSON-LD all derive from here. Fixes the locality inversion where <code>urls.ts</code> currently imports <code>toSuburbSlug</code> <em>from</em> the I/O module.</p>
+      <details><summary>Interface · absorbs · why deep · tests</summary>
+        <div class="field"><b>Interface</b><code>toSuburbSlug(name)</code> — the one algorithm, strips apostrophes <em>before</em> the alnum pass; <code>pubUrl/suburbUrl/absolutePubUrl/absoluteSuburbUrl</code>; <code>BASE_URL</code> exported once, shared with sitemap + metadata. Kills the divergent <code>toSlug</code> in SuburbLeague.tsx:22 (no apostrophe-strip ⇒ O'Connor→"oconnor" vs "o-connor" = latent broken-canonical/404). <em>Scope note:</em> <code>vercel.json</code> holds a third redirect layer (www→apex, /suburb/:slug) pinned by <code>scripts/redirect-seo.test.mjs</code> — pick one home for /suburb/:slug, don't silently keep both.</div>
+        <div class="field"><b>Absorbs</b><ul>
+          <li>urls.ts (promoted to canonical seam; toSuburbSlug moves <em>in</em> from supabase.ts)</li>
+          <li>the 18 inline <code>toSuburbSlug</code> copies (PubDetailClient, DiscoverClient, HappyHourClient, WeeklyReportClient, PintCrawlClient, PubGolfClient, BeerWeather, DadBar, HeroSection, PintOfTheDay, PubCardList, PuntNPints, RainyDay, SunsetSippers, TonightsMoves, VenueIntel …)</li>
+          <li>the divergent <code>toSlug</code> in SuburbLeague.tsx:22; the new-pub slug-gen in admin/review</li>
+        </ul></div>
+        <div class="field"><b>Why deep</b>One slug identity function that sits on <em>both</em> sides of the live URL contract (generateStaticParams builds URLs with it; the same page 301-redirects on mismatch; sitemap emits with it). Delete it and 18 copies + a divergent buggy variant reappear, and a one-char drift mass-de-indexes the site.</div>
+        <div class="field"><b>Tests</b>SEO-load-bearing, so asserted literally. Pin <em>before</em> moving: snapshot test on an apostrophe corpus (O'Connor→"oconnor", St James→"st-james") and assert sitemap/canonical/generateStaticParams all import the one function. Copy the regex, don't retype it. Any diff = release blocker.</div>
+      </details>
+    </article>
+
+    <article class="mod" id="georouting">
+      <header><div><h4>GeoRouting</h4><span class="layer-tag">Layer 1 · spatial</span></div>
+        <div class="badges"><span class="badge dep">in-process</span><span class="badge con majority">majority</span><span class="badge eff">M</span></div></header>
+      <p class="resp">The one pure spatial kernel: haversine distance, nearest-neighbour ordering, walking-minutes, Euclidean nearest-suburb. Extends the already-tested <code>location.ts</code> and collapses the <code>getDistanceKm</code> alias. Boundary: GeoRouting owns the pure <em>metric</em>; <code>PubStats.byDistanceThenPrice</code> is the only comparator and calls it; <code>formatDistance</code> is display and lives in Formatters.</p>
+      <details><summary>Interface · absorbs · why deep · tests</summary>
+        <div class="field"><b>Interface</b><code>haversineKm(a,b)</code> (the one distance fn); <code>orderByNearestNeighbour(start, pubs)</code>; <code>walkingMinutes(km)</code>; <code>nearestSuburbs(target, suburbs, n)</code>. Pure; injected RNG where a shuffle needs determinism. Decision: keep <code>getDistanceKm</code> as a thin re-export of <code>haversineKm</code> to avoid editing 45 call sites across 12 files in one risky step — the rename is a separate, optional follow-up, not hidden under "collapse the alias".</div>
+        <div class="field"><b>Absorbs</b><ul>
+          <li>inline <code>getDistance</code> in PintCrawlClient:12 &amp; PubGolfClient:19; <code>sortByNearestNeighbor</code> in PubGolfClient:29; <code>walkingMinutes</code> in PintCrawlClient:22</li>
+          <li>the haversine in PubDetailClient:63; the nearest-suburb maths in supabase.ts <code>getNearbySuburbs</code></li>
+          <li>the <code>getDistanceKm</code> alias in location.ts (kept as re-export)</li>
+        </ul></div>
+        <div class="field"><b>Why deep</b>Haversine + nearest-neighbour duplicated verbatim in both game clients + PubDetailClient (R=6371). <code>getDistanceKm</code> is the dominant call (45 sites) — the re-export keeps the collapse safe.</div>
+        <div class="field"><b>Tests</b>In-process, extending the existing <code>location.test.ts</code>. RNG injected for the shuffle path so nearest-neighbour ordering is deterministic.</div>
+      </details>
+    </article>
+
+    <article class="mod" id="pubstats">
+      <header><div><h4>PubStats</h4><span class="layer-tag">Layer 1 · analytics</span></div>
+        <div class="badges"><span class="badge dep">in-process</span><span class="badge con unanimous">unanimous</span><span class="badge eff">M</span></div></header>
+      <p class="resp">The one pure client-side analytics kernel — the "reimplemented Postgres in the browser": group-by-suburb rollups (avg/min/max/spread/HH-count/cheapest), price-bracket distribution, median, percentile, best-buys, hot-suburb, and the single distance-or-price sort comparator. Feeds every insight card, the suburb fetchers, admin/stats, and the snapshot writer.</p>
+      <details><summary>Interface · absorbs · why deep · tests</summary>
+        <div class="field"><b>Interface</b><code>suburbStats(pubs)</code>; <code>distribution(prices, brackets)</code>; <code>percentile/median</code>; <code>bestBuys(pubs, loc?, n)</code>; <code>byDistanceThenPrice(loc?)</code> — the only distance-or-price comparator (calls GeoRouting). <strong>Invariant it fixes:</strong> null-priced pubs excluded <em>before</em> any suburb/bracket key is created — fixes the mirrored reducer NaN bug (VenueIntel's suburb-guard at line 65 runs <em>after</em> the bucket exists; same at TonightsMoves). Pure: no I/O, no React, numbers only.</div>
+        <div class="field"><b>Absorbs</b><ul>
+          <li>the ~8 aggregation <code>useMemo</code>s in VenueIntel; the suburb grouping/sort/spread in SuburbLeague</li>
+          <li>the distance/price sort + hotSuburb memos in TonightsMoves</li>
+          <li>the suburb-aggregation maths inside supabase.ts <code>getAllSuburbs/getNearbySuburbs</code>; ad-hoc reduces in HeroSection/HomeClient/admin-stats</li>
+        </ul></div>
+        <div class="field"><b>Why deep</b>A real analytics surface (group-by/median/percentile/distribution/best-buys) duplicated across 5+ cards <em>and</em> the suburb fetchers. Highest test ROI in the app.</div>
+        <div class="field"><b>Tests</b>In-process. Explicit regression for the null-price exclusion (the NaN-headline bug) + a property test that <code>suburbStats</code> keys never include null-priced pubs.</div>
+      </details>
+    </article>
+
+    <article class="mod" id="formatters">
+      <header><div><h4>Formatters</h4><span class="layer-tag">Layer 1 · display helpers</span></div>
+        <div class="badges"><span class="badge dep">in-process</span><span class="badge con majority">majority</span><span class="badge eff">S</span></div></header>
+      <p class="resp">Canonical presentation-free display helpers: format dollars/"TBC", relative time, distance, and the freshness verdict (level + "Verified 3d ago") from a timestamp + injected clock. Folds in the orphan <code>formatPrice.ts</code> (tested but uncalled) and the 3 divergent <code>timeAgo</code> copies. Absorbs <code>formatDistance</code> (11 callers, previously unassigned).</p>
+      <details><summary>Interface · absorbs · why deep · tests</summary>
+        <div class="field"><b>Interface</b><code>formatMoney(n) → "$4.50" | "TBC"</code>; <code>formatRelativeTime(ts, now)</code>; <code>formatDistance(km)</code>; <code>freshnessVerdict(lastVerified, now) → { level: fresh|aging|stale, label }</code>. No Tailwind here — the verdict→class mapping stays co-located with each caller. One relative-time threshold app-wide (today admin/page, LeaderboardClient, PubDetailClient differ). <em>Note:</em> before routing a <code>toFixed(2)</code> site through <code>formatMoney</code>, confirm it's a dollar value — some are distance/percent and belong to <code>formatDistance</code>.</div>
+        <div class="field"><b>Absorbs</b><ul>
+          <li><code>formatPrice.ts</code> (<span class="dead">dead</span> — 0 importers; relocate into lib + wire the dollar callers)</li>
+          <li>the verdict half of freshness.ts; the 3 <code>timeAgo</code> copies (admin/page, LeaderboardClient, PubDetailClient); the unused <code>formatRelativeTime</code>; the <code>formatDistance</code> helper (11 callers)</li>
+        </ul></div>
+        <div class="field"><b>Why deep</b>Relative-time duplicated in exactly 3 files with different thresholds; money <code>toFixed</code> across ~11; distance across 11. Folding relative-time in (not a separate module) avoids a one-function module.</div>
+        <div class="field"><b>Tests</b>In-process with injected clock for the relative-time / freshness boundaries.</div>
+      </details>
+    </article>
+
+    <article class="mod" id="pricerules">
+      <header><div><h4>PriceRules</h4><span class="layer-tag">Layer 1 · pricing maths</span></div>
+        <div class="badges"><span class="badge dep">in-process</span><span class="badge con resolved">resolved</span><span class="badge eff">M</span></div></header>
+      <p class="resp">The pure pricing-domain kernel: <code>UNIT_TO_PINT</code> conversion + plausibility clamp, the one price-validation band predicate, the BARGAIN/FAIR/PRICEY label-vs-average, and the deterministic date-seeded "pint of the day" scoring. Concentrates the magic numbers and makes the daily pick deterministic under an injected clock. <code>PriceIntake</code> and <code>VoiceSweep</code> both lean on this rather than re-implementing.</p>
+      <details><summary>Interface · absorbs · why deep · tests</summary>
+        <div class="field"><b>Interface</b><code>toPintPrice(raw, unit)</code>; <code>clampPlausible(price)</code>; <code>validatePrice(value, band)</code> — the one band table replacing price-report's 3–30, plus pub-submission/menu-scan variants; <code>priceLabel(price, avg)</code>; <code>pintOfTheDay(pubs, now)</code>. One band table; clock injected for the daily pick (same date ⇒ same pick — the property the route's docstring promises but never tests); the magic <code>9.20</code> default deleted (callers pass a real avg from PubStats).</div>
+        <div class="field"><b>Absorbs</b><ul>
+          <li>the seeded scoring engine in pint-of-the-day/route.ts</li>
+          <li>the label/diff half of priceLabel.ts (the class-string half dies once PubCard is deleted)</li>
+          <li>the 3 divergent validation bands (price-report:28, pub-submission, menu-scan:117); <code>UNIT_TO_PINT</code> + the 5–20 clamp from record-price:57</li>
+        </ul></div>
+        <div class="field"><b>Why deep</b>Concentrates magic-number bands (3–30 / 0.01–99.99) that diverge 3 ways <em>and</em> the seeded daily-pick. Delete it and bands reappear across 3 API routes + SubmitPubForm; unit-conversion reappears in the agent route.</div>
+        <div class="field"><b>Tests</b>In-process. Determinism property for <code>pintOfTheDay</code> (same <code>now</code> ⇒ same pick); table tests for bands and unit conversion.</div>
+      </details>
+    </article>
+
+    <!-- LAYER 2 -->
+    <div class="grouphead">Layer 2 · Data accessors (over the one gateway)</div>
+
+    <article class="mod" id="pubrepository">
+      <header><div><h4>PubRepository</h4><span class="layer-tag">Layer 2 · reads</span></div>
+        <div class="badges"><span class="badge dep">true-external</span><span class="badge con unanimous">unanimous</span><span class="badge eff">L</span></div></header>
+      <p class="resp">All pubs/suburb/price-history <em>reads</em> as named queries returning mapped domain shapes, over the injected client + PubMapper. Not a god-repository over all 10 tables (prior rejection honoured) — push/agent/snapshot/report tables have their own accessors.</p>
+      <details><summary>Interface · absorbs · why deep · tests</summary>
+        <div class="field"><b>Interface</b><code>makePubRepository(db)</code> → <code>getPubs, getPubsLite, getPubBySlug, getAllPubSlugPairs, getNearbyPubs, getSimilarPricePubs, getPriceHistory, getAllSuburbs, getSuburbBySlug, getSuburbPubs, getNearbySuburbs</code>. Ordering "price asc, nullsFirst:false"; on failure returns []/null. <strong>Perf contract (the real fix):</strong> suburb helpers currently each call <code>getPubs()</code> (full 857-row scan; <code>getNearbySuburbs</code> ~5 per suburb render) → fetch the pub set <em>once</em> per request and pass <code>Pub[]</code> into PubStats, killing the N+1. <em>Sequencing:</em> Step A (introduce PubMapper, prove byte-identical output + identical suburb <code>&lt;title&gt;</code>/JSON-LD) then Step B (switch to fetch-once, assert identical shape/ordering) — the suburb cheapest-price headline is baked into the ISR page <code>&lt;title&gt;</code>.</div>
+        <div class="field"><b>Absorbs</b><ul>
+          <li>the read fetchers in supabase.ts (~95–436); the suburb aggregation fetchers (~511–624, become thin "fetch once + call PubStats"); <code>getPriceHistory</code> (~438–468)</li>
+          <li>GET pubs/route.ts (bespoke query → getPubsLite projection); the inline price_history query+map in PriceHistory.tsx</li>
+        </ul></div>
+        <div class="field"><b>Why deep</b>Named queries hide ordering/error/mapping/perf contracts behind a small interface, and the suburb N+1 is a real perf fix. Delete it and the mapper + ordering + suburb-aggregation reappear across the route handlers and PriceHistory.</div>
+        <div class="field"><b>Tests</b>Via the SupabaseGateway fake client. Characterization tests per query (shape + ordering) against frozen fixtures; the Step-A/Step-B equality test gates the perf change.</div>
+      </details>
+    </article>
+
+    <article class="mod" id="pricewrite">
+      <header><div><h4>PriceWrite</h4><span class="layer-tag">Layer 2 · verified-price mutation</span></div>
+        <div class="badges"><span class="badge dep">true-external</span><span class="badge con unanimous">unanimous</span><span class="badge eff">M</span></div></header>
+      <p class="resp">The single owner of the <code>pubs.update</code> + <code>price_history.insert</code> pair over <code>serviceClient()</code>: given <code>(pubId, {price, happyHourPrice?, beerType?, source, changeType, changedAt?})</code> perform the paired write with one convention. Fed by <em>both</em> the Andrew agent and admin-promotion. Ends the confirmed 2-way audit-trail drift.</p>
+      <details><summary>Interface · absorbs · why deep · tests</summary>
+        <div class="field"><b>Interface</b><code>recordVerifiedPrice(db, pubId, {…})</code>. <code>changeType</code> is a named enum; source structured. <strong>Invariants:</strong> <code>pubs.update</code> first, then <code>price_history.insert</code>; history written only when price actually changed; <code>changedAt</code> defaulted consistently. The two-step write is non-transactional today (partial-state window) — documented in one place so it can be fixed once (RPC) if needed.</div>
+        <div class="field"><b>Absorbs</b><ul>
+          <li>the <code>pubs.update</code> + <code>price_history.insert</code> in record-price/[slug]/route.ts (<code>'phone_agent'</code>)</li>
+          <li>the divergent promotion write in admin/review/route.ts (<code>'update'/'crowdsourced'</code>)</li>
+        </ul></div>
+        <div class="field"><b>Why deep</b>One write convention behind one call; the <code>change_type</code>/<code>source</code> drift is a real correctness bug. Delete it and the pubs+history pair reappears in record-price <em>and</em> admin/review with 2-way drift.</div>
+        <div class="field"><b>Tests</b>Via the fake client. Assert ordering (pubs before history), history-only-on-change, and that both callers produce identical <code>change_type</code>/<code>source</code> for the same logical event.</div>
+      </details>
+    </article>
+
+    <article class="mod" id="snapshotstore">
+      <header><div><h4>SnapshotStore</h4><span class="layer-tag">Layer 2 · price_snapshots</span></div>
+        <div class="badges"><span class="badge dep">true-external</span><span class="badge con unanimous">unanimous</span><span class="badge eff">M</span></div></header>
+      <p class="resp">The single accessor for <code>price_snapshots</code> (read latest / last-N, write the weekly aggregate) <em>and</em> the single owner of week-over-week delta math, with one coercion — replacing 7 independent readers and collapsing the 1-line-different weekly-snapshot writer fork into one.</p>
+      <details><summary>Interface · absorbs · why deep · tests</summary>
+        <div class="field"><b>Interface</b><code>latestSnapshot(db)</code>; <code>recentSnapshots(db, n)</code>; <code>weekOverWeek(latest, prev)</code> (pure, clock-free); <code>writeWeeklySnapshot(db, stats)</code> (one writer). One <code>Snapshot</code> type + one coercion; <code>getSiteStats</code>' fallback no longer triggers a full pubs scan inside SEO metadata. The two cron route <em>files</em> stay as thin handlers (auth + call writeWeeklySnapshot) — only the body logic moves, because Vercel invokes cron by URL.</div>
+        <div class="field"><b>Absorbs</b><ul>
+          <li>the snapshot read in <code>getSiteStats</code> (~471–509); weekly-report/route.ts (read + delta)</li>
+          <li>the byte-identical-except-one-line fork: weekly-snapshot/route.ts + cron/weekly-snapshot/route.ts (differ only <code>Array.from(map)</code> vs <code>.entries()</code>)</li>
+          <li>the snapshot read in admin/stats; the inline fetch+parseFloat in PintIndex.tsx:232 + PintIndexBadge (now receive props)</li>
+        </ul></div>
+        <div class="field"><b>Why deep</b>The week-over-week delta + one coercion behind a small interface; 7 readers + a forked writer collapse.</div>
+        <div class="field"><b>Tests</b><code>weekOverWeek</code> is pure → in-process unit. Reads/writes → fake client. Assert the collapsed writer is identical to both old forks on a fixture.</div>
+      </details>
+    </article>
+
+    <article class="mod" id="priceintake">
+      <header><div><h4>PriceIntake</h4><span class="layer-tag">Layer 2 · submission funnel + browser client</span></div>
+        <div class="badges"><span class="badge dep">true-external</span><span class="badge con resolved">resolved</span><span class="badge eff">L</span></div></header>
+      <p class="resp">Owns the public/crowdsourced ingestion funnel: validates a submitted price (via <code>PriceRules</code> — the one band table), hashes+rate-limits the submitter (via <code>ApiGuards</code>), persists <code>price_reports</code> / <code>pub_submissions</code> for moderation, and exposes the browser-side submit/scan calls SubmitPubForm uses. Expanded by red-team to own the real menu-scan client funnel, not a one-liner.</p>
+      <details><summary>Interface · absorbs · why deep · tests</summary>
+        <div class="field"><b>Interface</b><code>reportPrice/submitPub/reportIssue</code>; <code>validatePrice</code> delegates to PriceRules; <code>report_type</code> a named enum shared with admin promotion. <strong>Menu-scan funnel</strong> (SubmitPubForm has substantial stateful orchestration): <code>prepareMenuImage(file)</code> (HEIC/HEIF detect + dynamic heic2any import + JPEG convert + 10MB guard, :260–305); <code>scanMenuImages(files, onProgress)</code> (per-image upload + partial-failure, :313–349); <code>submitExtractedItems(items, onProgress)</code> (:351+). The editable review model stays in the shell as plain state; the I/O + conversion + validation move here. SubmitPubForm's own <code>validatePrice</code> (:158) is deleted.</div>
+        <div class="field"><b>Absorbs</b><ul>
+          <li>price-report/route.ts (POST + band; leaderboard/reports GET moves to admin/insights); pub-submission/route.ts; the band + OCR JSON-repair in menu-scan/route.ts:117</li>
+          <li>the 4 inline fetch+validate blocks + HEIC convert + multi-image progress + bulk-submit loop in SubmitPubForm.tsx:143–360</li>
+        </ul></div>
+        <div class="field"><b>Why deep</b>The band+hash+rate-limit+persist funnel reappears across price-report + pub-submission + menu-scan (3×), and the client funnel (HEIC/progress/partial-failure) is real logic that would otherwise be orphaned in the "dumb shell".</div>
+        <div class="field"><b>Tests</b><code>validatePrice</code>/<code>prepareMenuImage</code> decisions are pure → in-process unit. Persist + scan I/O → fake client + monkeypatched fetch in one edge test.</div>
+      </details>
+    </article>
+
+    <article class="mod" id="watchliststore">
+      <header><div><h4>WatchlistStore</h4><span class="layer-tag">Layer 2 · client state + push edge</span></div>
+        <div class="badges"><span class="badge dep">in-process</span><span class="badge con resolved">resolved</span><span class="badge eff">S</span></div></header>
+      <p class="resp">(Red-team addition — entirely missing from the first map.) The browser-side watchlist domain: watchlist state, localStorage persistence, the 300ms-debounced push-subscription sync, and the client push-subscribe edge. Today <code>useWatchlist.ts</code> (138 lines) owns all of this including a raw <code>fetch('/api/push/subscribe')</code>.</p>
+      <details><summary>Interface · absorbs · why deep · tests</summary>
+        <div class="field"><b>Interface</b><code>useWatchlist() → { items, toggle, isWatched }</code>; persistence to a named storage key. The debounced push-sync delegates to <code>Notifications.subscribePush(sub, slugs)</code> instead of a raw fetch. Corrects the first plan's false note — <code>pushNotifications.ts</code> is genuinely <span class="dead">dead</span> (0 importers) because this hook already does the job; its helpers are duplicated, not missing.</div>
+        <div class="field"><b>Absorbs</b><ul>
+          <li>useWatchlist.ts (kept, made the owner; raw fetch → <code>Notifications.subscribePush</code>)</li>
+          <li>pushNotifications.ts (<span class="dead">dead</span> — delete); the scattered storage-key literals (→ named constants)</li>
+        </ul></div>
+        <div class="field"><b>Why deep</b>2 live importers (Providers + WatchlistButton) and it's the client edge of the push domain — leaving it un-owned is exactly the "monolith left as monolith" gap.</div>
+        <div class="field"><b>Tests</b>In-process unit on the debounce/persistence reducer with a fake localStorage; the subscribe edge delegates to Notifications (tested there).</div>
+      </details>
+    </article>
+
+    <!-- LAYER 3 -->
+    <div class="grouphead">Layer 3 · External-I/O edges</div>
+
+    <article class="mod" id="apiguards">
+      <header><div><h4>ApiGuards</h4><span class="layer-tag">Layer 3 · request auth · closes 2 holes</span></div>
+        <div class="badges"><span class="badge dep">in-process</span><span class="badge con majority">majority</span><span class="badge eff">M</span></div></header>
+      <p class="resp">The single place for request authentication across the ~12 routes that hand-roll six schemes, plus the one genuinely deep ElevenLabs HMAC verifier, plus the shared IP hash + DB-backed rate-limit. Closes two live holes: the shared-secret bypass that defeats the HMAC, and the weaker non-timing-safe admin compare.</p>
+      <details><summary>Interface · absorbs · why deep · tests</summary>
+        <div class="field"><b>Interface</b><code>requireSecret(req, envVar, opts?)</code> — one timing-safe compare for x-agent-secret / Bearer CRON_SECRET / Bearer PUSH_API_SECRET / header-or-<code>?key=</code> / Bearer ADMIN_PASSWORD; <code>verifyElevenLabsHmac(rawBody, header, secret)</code> (t=,v0= format, constant-time); <code>hashIp(ip)</code> + <code>rateLimit(db, ipHash, {limit, windowMs})</code>. <strong>Config-coupled sequencing (NOT a pure refactor):</strong> the <code>verifySignature(…) || shared === secret</code> bypass at post-call:66 exists because HMAC "might not be configured yet". Do not remove blind — first confirm the live ElevenLabs post-call webhook sends a valid HMAC; if yes remove the bypass, if no keep <code>x-agent-secret</code> (constant-time) until the dashboard is switched, sequencing dashboard + code together.</div>
+        <div class="field"><b>Absorbs</b><ul>
+          <li>the x-agent-secret compare in record-price; <code>verifySignature</code> + the bypass in post-call:66; the header-or-<code>?key=</code> gate in pintsweep/kickoff</li>
+          <li>the Bearer CRON_SECRET checks in cron/* and PUSH_API_SECRET in push/send; <code>safeCompare</code> in admin/stats + the weaker duplicate in admin/review</li>
+          <li>the triplicated <code>hashString</code> + <code>'arvo-salt-2025'</code> + <code>getClientIP</code> + DB rate-limit across price-report/menu-scan/pub-submission/admin-stats</li>
+        </ul></div>
+        <div class="field"><b>Why deep</b>The HMAC verifier is genuinely non-trivial and the 6 schemes + hash + rate-limit reappear across ~12 routes. The HMAC/hash logic is pure and testable on this side of the boundary — no injected port needed.</div>
+        <div class="field"><b>Tests</b>In-process: constant-time compare, the t=/v0= HMAC parse (known-good fixture signature), the rate-limit window predicate (pure) with the DB write behind the fake client.</div>
+      </details>
+    </article>
+
+    <article class="mod" id="notifications">
+      <header><div><h4>Notifications</h4><span class="layer-tag">Layer 3 · web-push</span></div>
+        <div class="badges"><span class="badge dep">true-external</span><span class="badge con majority">majority</span><span class="badge eff">M</span></div></header>
+      <p class="resp">Web-push end to end as <em>in-process</em> calls, not internal HTTP hops: subscription storage, the VAPID fan-out with expired-endpoint (404/410) pruning, the price-drop diff against the cache, the weekly-digest trigger, and the client subscribe edge for WatchlistStore. One typed <code>PushPayload</code> replaces three inline copies; crons call <code>sendPush()</code> directly instead of fetch-to-self.</p>
+      <details><summary>Interface · absorbs · why deep · tests</summary>
+        <div class="field"><b>Interface</b><code>sendPush(db, payload, {targetSlugs}) → {sent, pruned}</code>; <code>subscribePush(sub, slugs)</code>; <code>diffPriceDrops(current, cache)</code>; <code>classifyPushError(status) → 'prune'|'keep'</code>. Cron callers invoke <code>sendPush()</code> in-process (delete the <code>fetch(`${siteUrl}/api/push/send`)</code> hops in cron/price-check:99 + both weekly-snapshot forks); deep-link URLs fixed to valid routes (<code>/weekly</code>→/weekly-report, <code>/pub/${slug}</code>→canonical via PubUrls). <strong>No injected transport port:</strong> the pure parts are extracted + unit-tested; the thin module calls <code>webpush.sendNotification()</code> directly (monkeypatch in one edge test) — consistent with "SupabaseGateway is the only port".</div>
+        <div class="field"><b>Absorbs</b><ul>
+          <li>push/send/route.ts (thin handler) + push/subscribe/route.ts; the price-drop diff + fetch-to-self in cron/price-check:99</li>
+          <li>the fetch-to-self + <code>url:'/weekly'</code> in weekly-snapshot:95,104 + cron/weekly-snapshot; the raw subscribe fetch in useWatchlist:113–136</li>
+        </ul></div>
+        <div class="field"><b>Why deep</b>The fan-out + prune + diff is real logic, and the internal HTTP hops + 3 payload copies + 2 stale deep-links collapse. The pure cores test with zero infra; only <code>sendNotification</code> crosses the network.</div>
+        <div class="field"><b>Tests</b><code>diffPriceDrops</code> + <code>classifyPushError</code> + the payload builder are pure → in-process. The send fan-out → monkeypatched webpush in one edge test.</div>
+      </details>
+    </article>
+
+    <article class="mod" id="voicesweep">
+      <header><div><h4>VoiceSweep</h4><span class="layer-tag">Layer 3 · Andrew voice agent</span></div>
+        <div class="badges"><span class="badge dep">true-external</span><span class="badge con majority">majority</span><span class="badge eff">M</span></div></header>
+      <p class="resp">The ElevenLabs voice-agent domain: the unit→pint conversion + clamp (delegating to PriceRules), the PintSweep batch-call kickoff (AU E.164 normalisation + AWST afternoon scheduler + eligibility + open-now filter), and the post-call transcript log. Auth via ApiGuards; the mid-call price write delegates to PriceWrite.</p>
+      <details><summary>Interface · absorbs · why deep · tests</summary>
+        <div class="field"><b>Interface</b><code>toPintPrice(spoken, unit)</code> (delegates to PriceRules — schooner 570/425, pot 570/285 + 5–20 clamp); <code>nextPerthAfternoonUnix(now, hour=14)</code> (consumes PerthClock); <code>toE164(raw)</code>; <code>eligible(pub)</code>; <code>kickoffSweep({repo}, opts)</code>; <code>logPostCall(db, payload)</code> after <code>ApiGuards.verifyElevenLabsHmac</code>. Mid-call writes → <code>PriceWrite.recordVerifiedPrice('phone_agent')</code>. <strong>No injected ElevenLabs/Places port:</strong> the worth-testing logic (toE164, scheduler, eligibility) is pure; the ElevenLabs/Places calls are thin pass-throughs — call fetch directly, monkeypatch in one edge test.</div>
+        <div class="field"><b>Absorbs</b><ul>
+          <li>record-price/[slug]/route.ts (UNIT_TO_PINT + clamp → PriceRules; write → PriceWrite; auth → ApiGuards)</li>
+          <li>post-call/route.ts (HMAC → ApiGuards; phone_call_log insert stays); pintsweep/kickoff/route.ts (toE164 + AWST scheduler + eligibility extracted pure)</li>
+        </ul></div>
+        <div class="field"><b>Why deep</b>The AWST scheduler + E.164 + eligibility + unit-conversion is real domain logic currently trapped in route handlers. The pure cores test infra-free; no standing I/O port.</div>
+        <div class="field"><b>Tests</b><code>toE164</code> / <code>nextPerthAfternoonUnix</code> / <code>eligible</code> → in-process (clock injected). Kickoff/post-call I/O → monkeypatched fetch + fake client in one edge test.</div>
+      </details>
+    </article>
+
+    <article class="mod" id="externalfeeds">
+      <header><div><h4>ExternalFeeds</h4><span class="layer-tag">Layer 3 · weather + race meets</span></div>
+        <div class="badges"><span class="badge dep">true-external</span><span class="badge con majority">majority</span><span class="badge eff">M</span></div></header>
+      <p class="resp">The two external-data-with-fallback feeds, each split into a pure normalise+fallback core and a thin fetch: Perth weather (BOM primary → Open-Meteo fallback, text→WMO-code) and WA race meets (TAB primary → hardcoded day-of-week fallback). Collapses the 3 divergent client-side weather fetches to one source.</p>
+      <details><summary>Interface · absorbs · why deep · tests</summary>
+        <div class="field"><b>Interface</b><em>Pure:</em> <code>bomToWmo(obs)</code> + the text→WMO table; <code>fallbackMeetings(weekday)</code>. <em>Thin:</em> <code>getWeather(now?)</code> (one cache contract, calls fetch directly); <code>getRaceMeets(now)</code>. No fetch-port injection. <strong>WeatherNow shape decision</strong> (the 3 callers want different data): BeerWeather wants temp+code+wind+humidity (BOM); RainyDay wants precipitation (open-meteo); SunsetSippers wants sunrise/sunset. Resolution: keep SunsetSippers on <code>sunPosition.ts</code> (the correct owner of sun times — do <em>not</em> put sun times in a weather DTO); the union <code>WeatherNow</code> carries temp/code/wind/humidity + a precipitation field so RainyDay + BeerWeather share one source. Define the union at design time; don't let "collapse the 3 fetches" silently mutate the returned type.</div>
+        <div class="field"><b>Absorbs</b><ul>
+          <li>weather/route.ts (BOM→WMO + dual fallback + module cache); race-meets/route.ts (TAB normalise + fallback)</li>
+          <li>the 3 divergent weather fetches in BeerWeather, RainyDay, SunsetSippers</li>
+        </ul></div>
+        <div class="field"><b>Why deep</b>The BOM→WMO table + dual-fallback is real normalisation duplicated/divergent across 3 client fetches. The fetch itself is a thin pass-through (no port).</div>
+        <div class="field"><b>Tests</b><code>bomToWmo</code> + <code>fallbackMeetings</code> → in-process (the real surface). <code>getWeather</code>/<code>getRaceMeets</code> → monkeypatched fetch in one edge test each.</div>
+      </details>
+    </article>
+
+    <!-- UI -->
+    <div class="grouphead">Presentation · UI dedup</div>
+
+    <article class="mod" id="mapkit">
+      <header><div><h4>MapKit</h4><span class="layer-tag">UI · maps</span></div>
+        <div class="badges"><span class="badge dep">in-process</span><span class="badge con majority">majority</span><span class="badge eff">M</span></div></header>
+      <p class="resp">The single owner of map-rendering knowledge: time-of-day theming (mode/tiles/filter from sun altitude), the CARTO tile-URL source + static-tile coordinate math, the price→marker-colour scale, and the shared Leaflet base wrapper. Collapses the MapTheme block duplicated byte-identically across 3 map files and reconciles the 3 divergent price→colour scales to one.</p>
+      <details><summary>Interface · absorbs · why deep · tests</summary>
+        <div class="field"><b>Interface</b><code>getMapMode(now)</code>; <code>tileUrl(mode)</code>/<code>staticTileUrl(lat,lng,zoom)</code>; <code>priceMarkerColor(price)</code> (design-token colour, not raw hex); <code>&lt;BaseMap&gt;</code> wrapper applying the one theme overlay. <code>getMapMode</code> altitude thresholds (6/0/−6°) documented; one cartocdn provider constant; the price→colour scale is the single reconciled scale (today 3 with different thresholds = a correctness smell) returning CLAUDE.md tokens. This is also the home of the one centralization-worthy verdict→colour map (the price scale) — <code>DesignTokens</code> is <em>not</em> created as a separate module.</div>
+        <div class="field"><b>Absorbs</b><ul>
+          <li>mapTheme.ts (kept, deepened) + mapTile.ts (folded in); the inline MapTheme duplicated in Map.tsx, MiniMap, PubDetailMap</li>
+          <li><code>getPriceIcon</code> + <code>getPriceMarkerColor</code> + the dead scale in priceColors.ts (reconciled to one)</li>
+          <li>Map.tsx (<span class="dead">dead</span> — harvest MapTheme then delete) + priceColors.ts (<span class="dead">dead</span> — delete)</li>
+        </ul></div>
+        <div class="field"><b>Why deep</b>MapTheme is byte-identical across 3 files and tile knowledge is split across 2 libs with no shared provider constant; the 3 divergent colour scales are a correctness smell. The pure parts are unit-testable; only the Leaflet shell is browser-bound (one adapter, no port).</div>
+        <div class="field"><b>Tests</b><code>getMapMode</code>, <code>staticTileUrl</code>, <code>priceMarkerColor</code> → in-process. The Leaflet wrapper is browser-only (verified by screenshot).</div>
+      </details>
+    </article>
+
+    <article class="mod" id="chartmath">
+      <header><div><h4>ChartMath</h4><span class="layer-tag">UI · charts (NOT a component library)</span></div>
+        <div class="badges"><span class="badge dep">in-process</span><span class="badge con resolved">resolved</span><span class="badge eff">S</span></div></header>
+      <p class="resp">Right-sized by red-team — <em>not</em> a "ChartPrimitives component library". A tiny pure chart-math helper plus an in-place design-token fix. The three charts do not share a primitive: PintIndex's sparkline is irreducibly interactive (~135 lines: refs, hit-testing, tooltip); PintIndexBadge's Spark is a fixed-px static SVG; PriceHistory uses a responsive viewBox. Forcing one <code>&lt;Sparkline&gt;</code> either drops the interactivity (the actual value) or balloons the props until it's as complex as the 4 call sites.</p>
+      <details><summary>Interface · absorbs · why deep · tests</summary>
+        <div class="field"><b>Interface</b><code>normalizePoints(values, {width,height,pad})</code>; <code>barHeights(values, max)</code> — the ~6-line + ~2-line shared kernels (the only genuinely shared part). Each chart keeps its own SVG/JSX. <strong>Separate win (in place):</strong> replace the hardcoded <code>#171717/#DC2626/#E8820C/#D97706</code> in PintIndex + PintIndexBadge with Tailwind tokens (CLAUDE.md no-raw-hex).</div>
+        <div class="field"><b>Absorbs</b><ul>
+          <li>the min/max/normalise math inside Sparkline + DistributionBars in PintIndex.tsx; the Spark normalise in PintIndexBadge; the viewBox normalise in PriceHistory; the histogram width math in VenueIntel:152</li>
+          <li>the hardcoded chart hex (fixed in place → tokens)</li>
+        </ul></div>
+        <div class="field"><b>Why deep</b>The chart-math kernel passes the deletion test only at the ~6-line normalise level — that IS shared across all 4. The "one Sparkline/Bars component" framing fails the deletion test (the value is the per-chart interactivity, not a shared shell), so it's explicitly dropped.</div>
+        <div class="field"><b>Tests</b><code>normalizePoints</code>/<code>barHeights</code> → in-process. The token swap verified by screenshot.</div>
+      </details>
+    </article>
+
+    <article class="mod" id="sitechrome">
+      <header><div><h4>SiteChrome</h4><span class="layer-tag">UI · nav + brand</span></div>
+        <div class="badges"><span class="badge dep">in-process</span><span class="badge con resolved">resolved</span><span class="badge eff">S</span></div></header>
+      <p class="resp">Shrunk by red-team. One <code>&lt;Brand/&gt;</code> + <code>&lt;SubmitCta/&gt;</code> behind the shared header/footer (real byte-identical duplication), plus lifting the crowd domain types out of the I/O module, plus named storage-key constants. The "one NAV_LINKS" idea is dropped: the three nav lists are deliberately <em>different</em> navigations (SubPageNav 3-link breadcrumb; MobileNav 5-link drawer w/ icons; Footer 5-link with different membership incl. /suburbs) — collapsing them is a forced union each consumer re-filters, which changes behaviour. Divergent links are an information-architecture choice, not copy-paste.</p>
+      <details><summary>Interface · absorbs · why deep · tests</summary>
+        <div class="field"><b>Interface</b><code>&lt;Brand/&gt;</code> (logo+wordmark — duplicated across SubPageNav:41/MobileNav:58/Footer:26 + inlined in HomeClient/PubDetailClient/admin); <code>&lt;SubmitCta/&gt;</code>; <code>CrowdReport/CrowdLevel/CROWD_LEVELS</code> move to <code>src/types</code> (out of supabase.ts:15–60); storage keys (<code>'arvo-admin'</code>, <code>'arvo-potd'</code>, <code>'install-prompt-dismissed'</code>) centralised. At most a flat <code>ROUTES</code> constant each nav <em>selects</em> a subset from and decorates locally — the nav lists stay per-surface.</div>
+        <div class="field"><b>Absorbs</b><ul>
+          <li>the byte-identical brand block in SubPageNav/MobileNav/Footer + HomeClient/PubDetailClient/admin</li>
+          <li>CrowdReport/CrowdLevel/CROWD_LEVELS inside supabase.ts:15–60; the scattered storage-key literals; dead-prop trims on FilterSection, SocialProof, PubCardList</li>
+        </ul></div>
+        <div class="field"><b>Why deep</b><code>&lt;Brand/&gt;</code>+<code>&lt;SubmitCta/&gt;</code> pass the deletion test (byte-identical across 5+ sites). The nav-union half fails it (relocates complexity into per-consumer adapters; changes which links render) → dropped. Crowd-type lift is a locality win.</div>
+        <div class="field"><b>Tests</b><code>&lt;Brand/&gt;</code> renders one wordmark; the type-move is compile-checked by tsc. Nav rendering verified by screenshot per surface.</div>
+      </details>
+    </article>
+
+    <article class="mod" id="pubfinderui">
+      <header><div><h4>PubFinderUI</h4><span class="layer-tag">UI · shared pub-list surface</span></div>
+        <div class="badges"><span class="badge dep">in-process</span><span class="badge con majority">majority</span><span class="badge eff">M</span></div></header>
+      <p class="resp">The shared pub-list presentation: one ranked-pub-row (filter-by-flag → distance-or-price sort → slice → "Show all N") and one collapsible-card shell, consumed by the 5 guide widgets and the analytics cards; plus <code>FeaturePageShell</code> kept as the genuine render-prop data+geo loader (8 confirmed callers), made injectable via PubRepository.</p>
+      <details><summary>Interface · absorbs · why deep · tests</summary>
+        <div class="field"><b>Interface</b><code>&lt;RankedPubList pubs filterFlag sortBy={'distance'|'price'} userLoc initialCount renderBadge?/&gt;</code>; <code>&lt;CollapsibleCard title summary&gt;</code>; <code>FeaturePageShell</code> (render-prop) with pub/crowd data injected from PubRepository and weather from ExternalFeeds. The 5 guide widgets become ~10-line configs; their buried logic (sun-time, weather-code, sort) moves to sunPosition/ExternalFeeds/PubStats. Geolocation stays a direct hook in the shells (one adapter, no port — prior rejection honoured).</div>
+        <div class="field"><b>Absorbs</b><ul>
+          <li>the ~5× ranked-row idiom in BeerWeather/RainyDay/DadBar/PuntNPints/SunsetSippers; the collapsible shell in VenueIntel/SuburbLeague/TonightsMoves/PintIndex</li>
+          <li>FeaturePageShell.tsx (kept, made injectable); PubCard.tsx (<span class="dead">dead</span> — delete)</li>
+        </ul></div>
+        <div class="field"><b>Why deep</b>The filter→sort→slice→show-all row reappears across 5 guide widgets and the collapsible across 4 cards. FeaturePageShell earns its keep (8 callers).</div>
+        <div class="field"><b>Tests</b>The sort/filter logic lives in PubStats (unit-tested); RankedPubList/CollapsibleCard rendering verified by screenshot at 1280×800 and 375×812.</div>
+      </details>
+    </article>
+
+    <!-- GIANTS -->
+    <div class="grouphead">Giant teardown · cores extracted last</div>
+
+    <article class="mod" id="crawlplanner">
+      <header><div><h4>CrawlPlanner</h4><span class="layer-tag">Giant · pint-crawl core</span></div>
+        <div class="badges"><span class="badge dep">in-process</span><span class="badge con resolved">resolved</span><span class="badge eff">M</span></div></header>
+      <p class="resp">(Red-team promotion — was prose-only.) The deep, regression-prone, currently-untestable core trapped behind <code>'use client'</code> in PintCrawlClient (1,016 lines): budget-constrained greedy pub selection, ±1.5 price-band grouping, Fisher-Yates shuffle, and nearest-neighbour segmenting. The biggest untestable cluster in the repo alongside GolfScoring.</p>
+      <details><summary>Interface · absorbs · why deep · tests</summary>
+        <div class="field"><b>Interface</b><code>planRoute(pubs, {budget, stops, area, flags, userLoc?, shuffle?, rng?}) → {route, message}</code>; owns filter→select-within-budget→price-band-group→nearest-neighbour→segment (calls GeoRouting for the metric, rng injected for shuffle). The URL-state sync is separate pure <code>crawlParamsToState</code>/<code>stateToParams</code> (in the shell or PubUrls), not buried in <code>generateRoute</code>.</div>
+        <div class="field"><b>Absorbs</b><ul>
+          <li><code>generateRoute</code> in PintCrawlClient:201–326 (selection + price-band + Fisher-Yates); getDistance/walkingMinutes (→ GeoRouting); the URL encode/decode (:120–151,309)</li>
+        </ul></div>
+        <div class="field"><b>Why deep</b>A budget+price-band+shuffle+nearest-neighbour planner behind one call — the single largest deep core the first plan left un-owned (named only in prose).</div>
+        <div class="field"><b>Tests</b>In-process with injected RNG → deterministic route assertions (budget respected, stop count, ordering). Zero infra.</div>
+      </details>
+    </article>
+
+    <article class="mod" id="golfscoring">
+      <header><div><h4>GolfScoring</h4><span class="layer-tag">Giant · pub-golf core</span></div>
+        <div class="badges"><span class="badge dep">in-process</span><span class="badge con resolved">resolved</span><span class="badge eff">M</span></div></header>
+      <p class="resp">(Red-team promotion — was prose-only.) The deep scoring core trapped in PubGolfClient (951 lines): price→par bands, per-hole score-defaulting on advance, totals/winner/spend, and the emoji-row share encoder.</p>
+      <details><summary>Interface · absorbs · why deep · tests</summary>
+        <div class="field"><b>Interface</b><code>par(price)</code> (bands at :49–53); <code>defaultScores(coursePubs, players)</code>; <code>totals/winner/spend</code>; <code>scoreShareRow(coursePubs, scores, winner)</code> (the emoji-row encoder :294–323). Pure, rng-injected for the lucky-dip course pick. The <code>getScoreColor/getScoreBg</code> verdict→class maps (1 caller) stay co-located with the shell.</div>
+        <div class="field"><b>Absorbs</b><ul>
+          <li><code>getPar</code> :49; per-hole score-defaulting (nextHole :222–238); totalPar/playerTotals/winner/totalSpend (:259–285); the emoji-row encoder (:294–323); getDistance/sortByNearestNeighbor (→ GeoRouting)</li>
+        </ul></div>
+        <div class="field"><b>Why deep</b>Par-bands + scoring + share-encoder is real, regression-prone domain logic behind one set of calls. The first plan left it un-owned (prose-only).</div>
+        <div class="field"><b>Tests</b>In-process: par bands, totals/winner determinism, <code>scoreShareRow</code> output for a fixture course. rng injected for lucky-dip.</div>
+      </details>
+    </article>
+
+    <article class="mod" id="admindashboarddata">
+      <header><div><h4>AdminDashboardData</h4><span class="layer-tag">Giant · admin core + cross-process contract</span></div>
+        <div class="badges"><span class="badge dep">in-process</span><span class="badge con resolved">resolved</span><span class="badge eff">M</span></div></header>
+      <p class="resp">(Red-team addition.) The typed cross-process contract behind admin/page (850 lines) and /api/admin/stats, plus the extracted admin stats/auth so the page becomes tab views over typed data. Today <code>DashboardData</code> exists client-side (admin/page.tsx:15–87) with an <em>untyped</em> server twin building the same shape inline (stats/route.ts:223–309) — a contract split across two files with no owner and <code>any</code> on snapshot/details/agentActivity.</p>
+      <details><summary>Interface · absorbs · why deep · tests</summary>
+        <div class="field"><b>Interface</b><code>type DashboardData</code> owned in one place (a small admin types module) and imported by both the route's return and the client — one contract, one owner. Stats computation delegates to PubStats; auth to ApiGuards; the <code>any</code> on snapshot/details/agentActivity is killed. The now-typed admin page splits into OverviewTab/ActivityTab/etc. purely for locality (last, low-risk).</div>
+        <div class="field"><b>Absorbs</b><ul>
+          <li>the DashboardData interface in admin/page.tsx:15–87 (promoted to shared); the inline same-shape build in admin/stats/route.ts:223–309 (returns the shared type)</li>
+          <li>the ad-hoc stats reduces in admin/stats (→ PubStats); the admin auth (→ ApiGuards)</li>
+        </ul></div>
+        <div class="field"><b>Why deep</b>A cross-process contract duplicated across client+server with <code>any</code>. Delete the shared type and the shape drifts between route and page again.</div>
+        <div class="field"><b>Tests</b>The contract is compile-enforced by tsc on both sides; <code>buildDashboardData</code>'s stats → PubStats unit tests; the route shape → fake-client characterization.</div>
+      </details>
+    </article>
+
+  </div>
+</section>
+
+<!-- ===================== SEAMS ===================== -->
+<section id="seams">
+  <div class="wrap">
+    <h2><span class="num">03</span>Ports &amp; seams — exactly three</h2>
+    <p class="lead">A port is justified only where two <em>real</em> adapters exist AND there's non-trivial logic across the seam. That's true in exactly three places. Everywhere else (ElevenLabs, web-push, weather, geolocation) the rule is: extract the pure core, call <code>fetch</code>/<code>webpush</code>/<code>navigator</code> directly, and monkeypatch in a single edge test. This honours all four prior architectural rejections.</p>
+
+    <div class="seam">
+      <h4>SupabaseGateway — the one database port</h4>
+      <div class="adapters">
+        <div class="adapter"><span class="ad-l">Production</span><code>createClient(url, key)</code> against the live Supabase project (PostgREST)</div>
+        <div class="adapter"><span class="ad-l">Test</span>a typed fake <code>SupabaseClient</code> implementing only the builder methods the accessors use, returning canned <code>{data,error}</code></div>
+      </div>
+      <p style="margin:.3rem 0 0;font-size:.9rem">The single seam where two real adapters exist <em>and</em> there's non-trivial logic to test across it (every Layer-2 accessor). 16 inline <code>createClient</code> copies + a leaked anon JWT in 14 files collapse into it. The second adapter must be concrete before Layer 2 is built — PGLite is explicitly rejected (raw Postgres ≠ PostgREST wire protocol).</p>
+    </div>
+
+    <div class="seam">
+      <h4>PerthClock — the time seam</h4>
+      <div class="adapters">
+        <div class="adapter"><span class="ad-l">Production</span><code>perthNow()</code> with <code>now = new Date()</code> at the edge</div>
+        <div class="adapter"><span class="ad-l">Test</span><code>perthNow(fixedDate)</code> — a frozen Date injected by every downstream unit test</div>
+      </div>
+      <p style="margin:.3rem 0 0;font-size:.9rem">The keystone that converts the entire time-dependent surface (happy-hour, freshness, pint-of-the-day, sun overlay, Andrew scheduler) from untestable to deterministic. The variation across the seam is exercised by every Layer-1 test.</p>
+    </div>
+
+    <div class="seam">
+      <h4>GeoRouting RNG — the shuffle seam</h4>
+      <div class="adapters">
+        <div class="adapter"><span class="ad-l">Production</span><code>Math.random</code> for the Fisher-Yates crawl shuffle + lucky-dip course pick</div>
+        <div class="adapter"><span class="ad-l">Test</span>a seeded/deterministic RNG injected into <code>planRoute</code> and the lucky-dip picker</div>
+      </div>
+      <p style="margin:.3rem 0 0;font-size:.9rem">Without it, <code>CrawlPlanner.planRoute(shuffle:true)</code> and GolfScoring's lucky-dip are untestable. Narrow and justified — the only place randomness varies.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== ROADMAP ===================== -->
+<section id="roadmap">
+  <div class="wrap">
+    <h2><span class="num">04</span>Migration roadmap</h2>
+    <p class="lead">Ordered so the live, SEO-critical, auto-deploying site stays shippable at every step. It opens with the cheapest, highest-leverage move — a deploy gate — because today nothing stops a tsc-green-but-wrong change from shipping straight to production.</p>
+
+    <div class="phase gate">
+      <div class="pn">−1</div>
+      <div class="chips"><span class="chip r-low">low risk</span><span class="chip e">S</span></div>
+      <h4>Deploy gate + test runner</h4>
+      <div class="pmods"><span class="pill">CI/CD infra — no app modules</span></div>
+      <p class="rat"><code>main</code> auto-deploys to production with <strong>no gate</strong> (ci.yml runs tsc/lint/build but isn't a deploy gate; there's no <code>test</code> script running node:test). The plan's central safety claim — "shippable at every step" — is unenforced today. Add <code>"test": "node --test"</code>; add a required CI job running <code>npm test</code> AND <code>npm run test:redirects</code>; gate the production deploy on CI (or mandate the existing branch-and-merge-on-green flow for all refactor work).</p>
+      <p class="unb"><b>Unblocks →</b> every later phase: a red build now actually blocks a bad deploy, making "behaviour-preserving at each step" real instead of aspirational.</p>
+    </div>
+
+    <div class="phase">
+      <div class="pn">0</div>
+      <div class="chips"><span class="chip r-low">low risk</span><span class="chip e">M</span></div>
+      <h4>Substrate seams + dead-code sweep</h4>
+      <div class="pmods"><span class="pill k">PerthClock</span><span class="pill k">SupabaseGateway</span><span class="pill">delete 5 dead files</span></div>
+      <p class="rat">Establish the two keystones that unblock all downstream testability, and delete the 5 confirmed-0-importer files (<code>Map.tsx</code>, <code>PubCard.tsx</code>, <code>priceColors.ts</code>, <code>pushNotifications.ts</code>, <code>formatPrice.ts</code>→relocate) so they don't get migrated. PerthClock ships with the dual-TZ regression test. SupabaseGateway ships <em>with</em> <code>PubRepository.getPubBySlug</code> + its fake-client test in the same PR to prove the second adapter exists. Verify <code>SUPABASE_SERVICE_ROLE_KEY</code> in every write runtime before <code>serviceClient()</code> throws-on-missing.</p>
+      <p class="unb"><b>Unblocks →</b> deterministic time for every kernel; one injectable DB seam for every accessor; a clean tree without dead files.</p>
+    </div>
+
+    <div class="phase">
+      <div class="pn">1</div>
+      <div class="chips"><span class="chip r-high">high risk</span><span class="chip e">M</span></div>
+      <h4>SEO-critical URL kernel</h4>
+      <div class="pmods"><span class="pill">PubUrls</span></div>
+      <p class="rat"><code>toSuburbSlug</code> is the slug identity on both sides of the live URL contract and has zero regression coverage today. <strong>Pin before moving:</strong> land a snapshot test on an apostrophe corpus and assert sitemap/canonical/generateStaticParams import the one function. Then copy (don't retype) the regex out of supabase.ts, delete the 18 inline copies + the divergent SuburbLeague variant, and reconcile <code>vercel.json</code>'s /suburb/:slug redirect. Run <code>test:redirects</code> before + after. Isolated as its own phase because a one-char drift mass-de-indexes the site.</p>
+      <p class="unb"><b>Unblocks →</b> a single URL grammar for PubMapper, sitemap, JSON-LD, push deep-links; removes the latent broken-canonical bug.</p>
+    </div>
+
+    <div class="phase">
+      <div class="pn">2</div>
+      <div class="chips"><span class="chip r-medium">med risk</span><span class="chip e">L</span></div>
+      <h4>Pure domain kernels — the first real test suite</h4>
+      <div class="pmods"><span class="pill">HappyHourEngine</span><span class="pill">PubMapper</span><span class="pill">PubStats</span><span class="pill">GeoRouting</span><span class="pill">PriceRules</span><span class="pill">Formatters</span></div>
+      <p class="rat">The infra-free heart of the refactor, where the near-zero test suite gains a wide unit surface. HappyHourEngine merges the two opposite-contract <code>getHappyHourStatus</code> functions and absorbs <code>generateHappyHourText</code> as <code>scheduleLabel()</code> with a byte-identical regression. PubMapper collapses the 5 mapping blocks (characterization test). PubStats fixes the null-price NaN bug. GeoRouting keeps <code>getDistanceKm</code> as a re-export (no 45-site churn). All consume PerthClock.</p>
+      <p class="unb"><b>Unblocks →</b> every accessor and UI component above; the first substantial green test surface; proof the de-dup is behaviour-preserving.</p>
+    </div>
+
+    <div class="phase">
+      <div class="pn">3</div>
+      <div class="chips"><span class="chip r-medium">med risk</span><span class="chip e">L</span></div>
+      <h4>Data accessors over the one gateway</h4>
+      <div class="pmods"><span class="pill">PubRepository</span><span class="pill">PriceWrite</span><span class="pill">SnapshotStore</span><span class="pill">PriceIntake</span><span class="pill">WatchlistStore</span></div>
+      <p class="rat">Collapse read/write duplication onto the gateway + kernels, each mockable via the fake client (not a god-repository). PriceWrite ends the 2-way audit drift. SnapshotStore collapses the 7 readers + the 1-line-different cron fork (route files stay thin handlers — Vercel invokes by URL). PriceIntake unifies the 3 bands + absorbs the real menu-scan funnel. WatchlistStore (the previously-missing 138-line hook) delegates push-sync to Notifications. PubRepository's N+1 fix is split Step-A (prove identical suburb <code>&lt;title&gt;</code>/JSON-LD) then Step-B (fetch-once).</p>
+      <p class="unb"><b>Unblocks →</b> single owners for every table-shaped op; the suburb-page perf win; closes the audit-trail drift.</p>
+    </div>
+
+    <div class="phase">
+      <div class="pn">4</div>
+      <div class="chips"><span class="chip r-medium">med risk</span><span class="chip e">L</span></div>
+      <h4>External-I/O domains — extract cores, no injected ports</h4>
+      <div class="pmods"><span class="pill">ApiGuards</span><span class="pill">Notifications</span><span class="pill">VoiceSweep</span><span class="pill">ExternalFeeds</span></div>
+      <p class="rat">Centralise the 6 auth schemes + the deep HMAC verifier; make web-push in-process (delete the cron fetch-to-self hops + fix the stale deep-links); own Andrew's pure cores (E.164, AWST scheduler, eligibility); split weather/race into pure normalise+fallback. Don't inject elevenlabs/places/transport ports — call fetch/webpush directly, monkeypatch in single edge tests. <strong>Config-coupled:</strong> remove the HMAC bypass only after confirming the live webhook sends a valid HMAC; otherwise keep <code>x-agent-secret</code> until the dashboard is switched.</p>
+      <p class="unb"><b>Unblocks →</b> closes both live security holes (HMAC bypass, service→anon degrade); removes internal HTTP hops; makes external-feed mapping testable.</p>
+    </div>
+
+    <div class="phase">
+      <div class="pn">5</div>
+      <div class="chips"><span class="chip r-low">low risk</span><span class="chip e">L</span></div>
+      <h4>UI presentation dedup</h4>
+      <div class="pmods"><span class="pill">MapKit</span><span class="pill">ChartMath</span><span class="pill">SiteChrome</span><span class="pill">PubFinderUI</span></div>
+      <p class="rat">Collapse the byte-identical MapTheme across 3 map files + reconcile the 3 colour scales to one token-based scale. Extract only the ~6-line chart-math kernel (not a component library) and fix the hardcoded hex in place. SiteChrome ships <code>&lt;Brand/&gt;</code>+<code>&lt;SubmitCta/&gt;</code> + the crowd-type lift, but not the nav-union. PubFinderUI lands RankedPubList + CollapsibleCard + the injectable FeaturePageShell, turning the 5 guide widgets into thin configs. Every UI change verified by screenshot at 1280×800 + 375×812.</p>
+      <p class="unb"><b>Unblocks →</b> thin prop-driven UI; eliminates raw hex; the 5 guide widgets become ~10-line configs ready for the giant teardown.</p>
+    </div>
+
+    <div class="phase">
+      <div class="pn">6</div>
+      <div class="chips"><span class="chip r-medium">med risk</span><span class="chip e">L</span></div>
+      <h4>Giant teardown — cores first, shells last</h4>
+      <div class="pmods"><span class="pill">CrawlPlanner</span><span class="pill">GolfScoring</span><span class="pill">AdminDashboardData</span><span class="pill">shell splits ×3</span><span class="pill">admin tab views</span></div>
+      <p class="rat">With kernels + accessors in place, the four giants dissolve onto them <strong>core-extraction first, shell-split second</strong>. Promote CrawlPlanner (planRoute + URL-state encode/decode) and GolfScoring (par/scoring/share-encoder) to owned, unit-tested modules. AdminDashboardData makes the cross-process contract one typed owner (kills the <code>any</code>). SubmitPubForm's validation/HEIC/scan funnel routes to PriceIntake/PriceRules and its private <code>interface Pub</code> is deleted. Only then split the now-logic-free shells by phase/tab — purely for locality, no speculative component libraries. <em>(Scope here depends on Decision #1.)</em></p>
+      <p class="unb"><b>Unblocks →</b> the 1200/1016/951/850-line files shrink to thin orchestrators over tested cores; the refactor's headline goal — decompose the giants — is actually delivered.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== PRINCIPLES ===================== -->
+<section id="principles">
+  <div class="wrap">
+    <h2><span class="num">05</span>The principles that hold it together</h2>
+    <p class="lead">These are the rules every PR in the migration is checked against — the reason the module count is what it is, and the guardrails that keep a live site safe.</p>
+    <ol class="principles">
+      <li><b>The deletion test governs the count, not a target number.</b> Every module must collapse a confirmed N-caller duplication or be a testability keystone. Three first-draft modules failed this and were cut/shrunk: DesignTokens (its verdict→class maps each have ≤1 live caller), ChartPrimitives (→ a ~6-line helper + in-place token fix), and SiteChrome's nav-union (deliberately different IA, not copy-paste).</li>
+      <li><b>Exactly one true-external port: SupabaseGateway.</b> A port is justified only where two real adapters exist AND there's non-trivial logic across the seam. Don't inject elevenlabs/places/web-push/weather/geolocation ports — extract the pure core, call fetch/webpush/navigator directly, monkeypatch in a single edge test. Honours all four prior rejections.</li>
+      <li><b>Inject the clock everywhere; derive Perth time from absolute UTC.</b> Nothing reads <code>new Date()</code> internally — every time-dependent module takes <code>now = perthNow().date</code>, computed from <code>getUTC*+8h</code> with wraparound, never <code>new Date(+8h)</code> then local getters (which double-shifts in a non-UTC browser). Tested under two host timezones.</li>
+      <li><b>Behaviour-preserving on a live SEO site: pin before you move.</b> The site auto-deploys from main. Before relocating any identity function or collapsing any duplicated output, land a characterization/snapshot test that pins current output (slug strings, scheduleLabel, mapper output, suburb-page <code>&lt;title&gt;</code>/JSON-LD). Any diff is a release blocker.</li>
+      <li><b>Structured columns are the source of truth; free text is derived.</b> The happy-hour engine consumes structured days/start/end; the <code>.happyHour</code> string is produced by <code>scheduleLabel()</code>, not parsed as primary input. <code>parseScheduleText</code> is a fallback only when the structured columns are null.</li>
+      <li><b>Separate pure from impure so the pure part is unit-testable.</b> Verdict/rule kernels (PriceRules, PubStats, GeoRouting, the HMAC parse, validation bands, weather/race mapping, route-planning, golf-scoring, week-over-week delta) are pure and infra-free; the thin I/O edge calls fetch/DB directly. This is what lets a ~0-test repo gain a wide unit surface — the whole point of the exercise.</li>
+      <li><b>Surgical, config-aware changes.</b> Two changes are config-coupled, not pure refactors, and must verify live config first: removing the ElevenLabs HMAC bypass (confirm the dashboard sends HMAC) and the <code>serviceClient()</code> throw-on-missing (confirm the key in every write runtime). Account for <code>vercel.json</code> — it holds a third redirect layer + two live crons; keep cron route files thin since Vercel invokes them by URL.</li>
+      <li><b>Core-extraction first, shell-split last.</b> For the four giants, extract the deep pure core (leverage win, unblocks tests) before splitting the dumb shell by phase/tab (locality win only). Don't invent reusable component libraries beyond those that earn their keep. Geolocation stays a direct hook.</li>
+    </ol>
+  </div>
+</section>
+
+<!-- ===================== PROVENANCE ===================== -->
+<footer id="how">
+  <div class="wrap">
+    <p class="eyebrow" style="color:var(--amber)">How this was built</p>
+    <p class="prov">
+      Produced by a <b>17-agent multi-agent workflow</b> over the live codebase, built on a prior architecture review whose confirmed wins and explicit rejections seeded every agent.<br>
+      <span class="flow">7 surveyors → 4 independent architects → 1 reconciler → 4 red-teamers → 1 finalizer</span><br><br>
+      The four architects each designed a full decomposition under a different governing principle — domain-driven, ports-and-adapters, minimal-churn, and testability-first — and the reconciler kept only what they agreed on, resolving the contested boundaries with engineering rationale. The red-team raised <b>22 blockers across depth, over-abstraction, missing-coupling, and migration-safety</b>; all 22 were resolved into the plan above (it shrank DesignTokens and ChartPrimitives, promoted CrawlPlanner/GolfScoring/WatchlistStore/AdminDashboardData from prose to owned modules, and fixed the timezone double-shift, the HMAC-bypass sequencing, and the suburb N+1). Zero were genuine business blockers — the two on the first screen are product/ops calls only you can make.<br><br>
+      <b>Consensus levels:</b> <b style="color:var(--amber)">unanimous</b> = all four architects proposed it independently · <b style="color:var(--amber)">majority</b> = two or three · <b>resolved</b> = contested, settled by the red-team. Every file:line reference was verified against source during the run.
+    </p>
+  </div>
+</footer>
+
+</body>
+</html>
