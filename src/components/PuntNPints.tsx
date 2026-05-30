@@ -4,7 +4,6 @@ import Link from 'next/link'
 import { useState, useMemo, useEffect } from 'react'
 import { Pub } from '@/types/pub'
 import { getDistanceKm, formatDistance } from '@/lib/location'
-import { getHappyHourStatus } from '@/lib/happyHour'
 import { Trophy, Zap, Dog, ExternalLink } from 'lucide-react'
 
 function toSuburbSlug(suburb: string): string {
@@ -192,7 +191,6 @@ export default function PuntNPints({ pubs, userLocation }: PuntNPintsProps) {
           </div>
 
           {displayTabPubs.map((pub, i) => {
-            const hhStatus = getHappyHourStatus(pub.happyHour)
             const distance = userLocation
               ? formatDistance(getDistanceKm(userLocation.lat, userLocation.lng, pub.lat, pub.lng))
               : null
@@ -215,7 +213,7 @@ export default function PuntNPints({ pubs, userLocation }: PuntNPintsProps) {
                     <span className="font-mono text-[0.5rem] font-black px-1.5 py-0.5 rounded-pill border-2 border-ink bg-ink text-white flex-shrink-0">
                       TAB
                     </span>
-                    {hhStatus.isActive && (
+                    {pub.isHappyHourNow && (
                       <span className="font-mono text-[0.58rem] font-bold uppercase tracking-[0.05em] px-1.5 py-0.5 rounded-pill border-2 bg-red-pale text-red border-red flex-shrink-0">
                         HH
                       </span>
@@ -228,7 +226,7 @@ export default function PuntNPints({ pubs, userLocation }: PuntNPintsProps) {
                       {pub.beerType && ` · ${pub.beerType}`}
                     </span>
                   </div>
-                  {hhStatus.isActive && pub.happyHour && (
+                  {pub.isHappyHourNow && pub.happyHour && (
                     <span className="font-mono text-[0.7rem] text-red font-semibold mt-0.5 ml-6 flex items-center gap-1.5">
                       <span className="w-1.5 h-1.5 rounded-full bg-red flex-shrink-0" />
                       {pub.happyHour}
@@ -269,7 +267,6 @@ export default function PuntNPints({ pubs, userLocation }: PuntNPintsProps) {
             </div>
 
             {displayNearby.map(({ pub, nearestTab, distance: tabDist }, i) => {
-              const hhStatus = getHappyHourStatus(pub.happyHour)
               const userDist = userLocation
                 ? formatDistance(getDistanceKm(userLocation.lat, userLocation.lng, pub.lat, pub.lng))
                 : null
@@ -291,7 +288,7 @@ export default function PuntNPints({ pubs, userLocation }: PuntNPintsProps) {
                       <p className="font-body text-base font-bold text-ink group-hover:text-amber transition-colors truncate">
                         {pub.name}
                       </p>
-                      {hhStatus.isActive && (
+                      {pub.isHappyHourNow && (
                         <span className="font-mono text-[0.58rem] font-bold uppercase tracking-[0.05em] px-1.5 py-0.5 rounded-pill border-2 bg-red-pale text-red border-red flex-shrink-0">
                           HH
                         </span>

@@ -5,7 +5,6 @@ import { useState, useEffect, useMemo } from 'react'
 import dynamic from 'next/dynamic'
 import { Pub } from '@/types/pub'
 import { getDistanceKm, formatDistance } from '@/lib/location'
-import { getHappyHourStatus } from '@/lib/happyHour'
 import { Sun, Sunset, Moon, Beer } from 'lucide-react'
 
 function toSuburbSlug(suburb: string): string {
@@ -320,7 +319,6 @@ export default function SunsetSippers({ pubs, userLocation }: SunsetSippersProps
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {displayPubs.map((pub) => {
-            const hhStatus = getHappyHourStatus(pub.happyHour)
             const distance = userLocation
               ? formatDistance(getDistanceKm(userLocation.lat, userLocation.lng, pub.lat, pub.lng))
               : null
@@ -366,13 +364,13 @@ export default function SunsetSippers({ pubs, userLocation }: SunsetSippersProps
                         {pub.beerType && ` · ${pub.beerType}`}
                       </p>
                     </div>
-                    {hhStatus.isActive && (
+                    {pub.isHappyHourNow && (
                       <span className="font-mono text-[0.58rem] font-bold uppercase tracking-[0.05em] px-1.5 py-0.5 rounded-pill border-2 bg-red-pale text-red border-red flex-shrink-0">
                         HH
                       </span>
                     )}
                   </div>
-                  {hhStatus.isActive && pub.happyHour && (
+                  {pub.isHappyHourNow && pub.happyHour && (
                     <span className="font-mono text-[0.65rem] text-red font-semibold mt-1 flex items-center gap-1.5">
                       <span className="w-1.5 h-1.5 rounded-full bg-red flex-shrink-0" />
                       {pub.happyHour}
