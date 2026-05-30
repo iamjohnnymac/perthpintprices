@@ -4,7 +4,7 @@ import { useState, useEffect, useMemo } from 'react'
 import Link from 'next/link'
 import { Pub } from '@/types/pub'
 import { getPubs, getCrowdLevels, CrowdReport } from '@/lib/supabase'
-import { getHappyHourStatus } from '@/lib/happyHour'
+import { getHappyHourStatus, type HappyHourStatus } from '@/lib/happyHourLive'
 import { getDistanceKm, formatDistance } from '@/lib/location'
 import SubPageNav from '@/components/SubPageNav'
 import Footer from '@/components/Footer'
@@ -12,9 +12,14 @@ import { Beer, Clock, Tag, Star } from 'lucide-react'
 import LucideIcon from '@/components/LucideIcon'
 import { pubUrl } from '@/lib/urls'
 
-/* ─── Helpers ─── */
-function getPerthTime(): Date {
-  return new Date(new Date().toLocaleString('en-US', { timeZone: 'Australia/Perth' }))
+function getPubHappyHourStatus(pub: Pub, now: Date): HappyHourStatus {
+  return getHappyHourStatus({
+    price: pub.regularPrice,
+    happyHourPrice: pub.happyHourPrice,
+    happyHourDays: pub.happyHourDays,
+    happyHourStart: pub.happyHourStart,
+    happyHourEnd: pub.happyHourEnd,
+  }, now)
 }
 
 /* ════════════════════════════════════════════════════════════
@@ -25,7 +30,7 @@ export default function DiscoverClient() {
   const [crowdReports, setCrowdReports] = useState<Record<string, CrowdReport>>({})
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null)
   const [isLoading, setIsLoading] = useState(true)
-  const [perthTime, setPerthTime] = useState(getPerthTime)
+  const [clockInstant, setClockInstant] = useState(() => new Date())
   const [pintOfTheDay, setPintOfTheDay] = useState<{
     pub: { name: string; slug: string; suburb: string; price: number; effectivePrice: number; beerType: string; isHappyHourNow: boolean }
     reason: string
@@ -60,7 +65,7 @@ export default function DiscoverClient() {
 
   // Perth time clock
   useEffect(() => {
-    const interval = setInterval(() => setPerthTime(getPerthTime()), 60000)
+    const interval = setInterval(() => setClockInstant(new Date()), 60000)
     return () => clearInterval(interval)
   }, [])
 
@@ -76,17 +81,17 @@ export default function DiscoverClient() {
   const upcomingHappyHours = useMemo(() => {
     return pubs
       .filter(p => {
-        const status = getHappyHourStatus(p.happyHour)
-        return (status.isActive || status.isToday) && p.price !== null
+        const status = getPubHappyHourStatus(p, clockInstant)
+        return (status.isActive || status.isToday) && status.effectivePrice !== null
       })
-      .map(p => ({ pub: p, status: getHappyHourStatus(p.happyHour) }))
+      .map(p => ({ pub: p, status: getPubHappyHourStatus(p, clockInstant) }))
       .sort((a, b) => {
         if (a.status.isActive && !b.status.isActive) return -1
         if (!a.status.isActive && b.status.isActive) return 1
-        return (a.pub.price ?? 99) - (b.pub.price ?? 99)
+        return (a.status.effectivePrice ?? 99) - (b.status.effectivePrice ?? 99)
       })
       .slice(0, 5)
-  }, [pubs, perthTime])
+  }, [pubs, clockInstant])
 
   // Pub Picks counts
   const pubPickCounts = useMemo(() => ({
@@ -196,9 +201,9 @@ export default function DiscoverClient() {
                     </div>
                     <div className="flex items-center gap-2 flex-shrink-0">
                       <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold ${status.isActive ? 'bg-amber-pale text-amber border border-amber/30' : 'bg-off-white text-gray-mid border border-gray-light'}`}>
-                        {status.countdown || status.statusText}
+                        {status.countdown || status.happyHourLabel}
                       </span>
-                      <span className="font-mono text-lg font-extrabold text-ink tabular-nums">{pub.price !== null ? `$${pub.price.toFixed(2)}` : 'TBC'}</span>
+                      <span className="font-mono text-lg font-extrabold text-ink tabular-nums">{status.effectivePrice !== null ? `$${status.effectivePrice.toFixed(2)}` : 'TBC'}</span>
                     </div>
                   </Link>
                 ))}

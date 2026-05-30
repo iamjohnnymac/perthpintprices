@@ -32,10 +32,10 @@ BeerWeather, BreadcrumbJsonLd, CrowdReporter, DadBar, ErrorBoundary, FAQ, Featur
 - `SubPageNav` for breadcrumb navigation on sub-pages
 - `BreadcrumbJsonLd` for schema.org breadcrumb structured data (uses `url` property, not `item`)
 
-## Lib files (13 in `src/lib/`)
-freshness, happyHour, happyHourLive, location, mapTheme, mapTile, perthClock, priceLabel, sunPosition, supabase, supabaseGateway, urls, utils
+## Lib files (12 in `src/lib/`)
+freshness, happyHourLive, location, mapTheme, mapTile, perthClock, priceLabel, sunPosition, supabase, supabaseGateway, urls, utils
 
-(`supabaseGateway` = `anonClient()` / `serviceClient()` seam; `urls` = canonical suburb-slug + pub/suburb URL builders. `happyHour` + `happyHourLive` both still exist — the HappyHourEngine consolidation is still pending.)
+(`supabaseGateway` = `anonClient()` / `serviceClient()` seam; `urls` = canonical suburb-slug + pub/suburb URL builders; `happyHourLive` = the unified structured happy-hour engine.)
 
 ## API routes
 - **User-facing**: `/api/pubs`, `/api/price-report`, `/api/pub-submission`, `/api/menu-scan`, `/api/pint-of-the-day`

@@ -60,38 +60,6 @@ export async function reportCrowdLevel(pubId: string, level: CrowdLevel): Promis
   return true
 }
 
-/**
- * Generate a human-readable happy hour text from structured data
- * Returns format compatible with existing happyHour.ts parser: "Daily 4-7pm" or "Mon-Fri 5-7pm"
- */
-function generateHappyHourText(days: string | null, start: string | null, end: string | null): string | null {
-  if (!days || !start || !end) return null
-  
-  const startH = parseInt(start.split(':')[0])
-  const endH = parseInt(end.split(':')[0])
-  
-  const fmtHour = (h: number): string => {
-    if (h === 0) return '12'
-    if (h > 12) return String(h - 12)
-    return String(h)
-  }
-  
-  const period = endH >= 12 ? 'pm' : 'am'
-  
-  // Map day strings to parser-compatible format
-  const d = days.toLowerCase().trim()
-  let dayLabel = days
-  if (d === '7 days' || d === 'daily' || d === 'everyday') {
-    dayLabel = 'Daily'
-  } else if (d.match(/^(mon|tue|wed|thu|fri|sat|sun)/i) && d.includes('-')) {
-    // Already in "Mon-Fri" format, capitalize first letters
-    const parts = d.split('-')
-    dayLabel = parts.map(p => p.charAt(0).toUpperCase() + p.slice(1, 3)).join('-')
-  }
-  
-  return `${dayLabel} ${fmtHour(startH)}-${fmtHour(endH)}${period}`
-}
-
 // Fetch pubs from Supabase with dynamic happy hour pricing
 // Maps a raw `pubs` table row to the app's Pub shape, computing live happy-hour
 // status + effective price. Single source of truth for row -> Pub (was previously
@@ -108,8 +76,7 @@ function toPub(row: any): Pub {
     happyHourEnd: row.happy_hour_end || null,
   })
 
-  const happyHourText = row.happy_hour ||
-    generateHappyHourText(row.happy_hour_days, row.happy_hour_start, row.happy_hour_end)
+  const happyHourText = row.happy_hour || hhStatus.happyHourLabel
 
   return {
     id: row.id,
@@ -206,8 +173,7 @@ export async function getPubsLite(): Promise<PubLite[]> {
       happyHourEnd: row.happy_hour_end || null,
     })
 
-    const happyHourText = row.happy_hour ||
-      generateHappyHourText(row.happy_hour_days, row.happy_hour_start, row.happy_hour_end)
+    const happyHourText = row.happy_hour || hhStatus.happyHourLabel
 
     return {
       id: row.id,

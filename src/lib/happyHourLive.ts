@@ -11,6 +11,8 @@
  * - "Tue-Thu" / "Mon-Thu" etc.
  */
 
+import { perthNow } from './perthClock'
+
 /** Format raw postgres array days into readable string */
 export function formatHappyHourDays(days: string | null): string {
   if (!days) return ''
@@ -38,13 +40,6 @@ const DAY_MAP: Record<string, number> = {
   thu: 4, thursday: 4,
   fri: 5, friday: 5,
   sat: 6, saturday: 6,
-}
-
-function getPerthNow(): Date {
-  // Get current time in Perth (UTC+8)
-  const now = new Date()
-  const utc = now.getTime() + now.getTimezoneOffset() * 60000
-  return new Date(utc + 8 * 3600000)
 }
 
 function parseDayRange(days: string): number[] {
@@ -105,11 +100,14 @@ function parseTime(timeStr: string): { hours: number; minutes: number } | null {
 
 export interface HappyHourStatus {
   isActive: boolean
+  isToday: boolean
   effectivePrice: number | null
   regularPrice: number | null
   happyHourPrice: number | null
   happyHourLabel: string | null // e.g. "Happy Hour 5-6pm"
   minutesRemaining: number | null
+  startsInMinutes: number | null
+  countdown: string | null
 }
 
 export function getHappyHourStatus(pub: {
@@ -118,7 +116,7 @@ export function getHappyHourStatus(pub: {
   happyHourDays?: string | null
   happyHourStart?: string | null
   happyHourEnd?: string | null
-}): HappyHourStatus {
+}, now: Date = new Date()): HappyHourStatus {
   const regularPrice = pub.price
   const hhPrice = pub.happyHourPrice ?? null
   const hhDays = pub.happyHourDays ?? null
@@ -129,17 +127,20 @@ export function getHappyHourStatus(pub: {
   if (!hhDays || !hhStart || !hhEnd) {
     return {
       isActive: false,
+      isToday: false,
       effectivePrice: regularPrice,
       regularPrice,
       happyHourPrice: hhPrice,
       happyHourLabel: null,
       minutesRemaining: null,
+      startsInMinutes: null,
+      countdown: null,
     }
   }
   
-  const now = getPerthNow()
-  const currentDay = now.getDay()
-  const currentMinutes = now.getHours() * 60 + now.getMinutes()
+  const perth = perthNow(now)
+  const currentDay = perth.dayOfWeek
+  const currentMinutes = perth.minutesOfDay
   
   const activeDays = parseDayRange(hhDays)
   const startTime = parseTime(hhStart)
@@ -148,11 +149,14 @@ export function getHappyHourStatus(pub: {
   if (!startTime || !endTime) {
     return {
       isActive: false,
+      isToday: false,
       effectivePrice: regularPrice,
       regularPrice,
       happyHourPrice: hhPrice,
       happyHourLabel: null,
       minutesRemaining: null,
+      startsInMinutes: null,
+      countdown: null,
     }
   }
   
@@ -162,6 +166,8 @@ export function getHappyHourStatus(pub: {
   const isDayActive = activeDays.includes(currentDay)
   const isTimeActive = currentMinutes >= startMinutes && currentMinutes < endMinutes
   const isActive = isDayActive && isTimeActive
+  const startsInMinutes = isDayActive && currentMinutes < startMinutes ? startMinutes - currentMinutes : null
+  const isToday = isActive || startsInMinutes !== null
   
   // Format label
   const formatHour = (h: number, m: number) => {
@@ -192,13 +198,30 @@ export function getHappyHourStatus(pub: {
   const label = `${formatDays(hhDays)} ${formatHour(startTime.hours, startTime.minutes)}-${formatHour(endTime.hours, endTime.minutes)}`
   
   const minutesRemaining = isActive ? endMinutes - currentMinutes : null
+  const countdown = minutesRemaining != null
+    ? formatDuration(minutesRemaining, 'left')
+    : startsInMinutes != null
+      ? formatDuration(startsInMinutes, 'until')
+      : null
   
   return {
     isActive,
+    isToday,
     effectivePrice: isActive && hhPrice ? hhPrice : regularPrice,
     regularPrice,
     happyHourPrice: hhPrice,
     happyHourLabel: label,
     minutesRemaining,
+    startsInMinutes,
+    countdown,
   }
+}
+
+function formatDuration(minutes: number, mode: 'left' | 'until'): string {
+  const hours = Math.floor(minutes / 60)
+  const mins = minutes % 60
+  if (mode === 'until') {
+    return hours > 0 ? `in ${hours}h ${mins}m` : `in ${mins}m`
+  }
+  return hours > 0 ? `${hours}h ${mins}m left` : `${mins}m left`
 }

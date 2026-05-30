@@ -4,7 +4,7 @@ import Link from 'next/link'
 
 import { useState, useMemo, useEffect } from 'react'
 import { Pub } from '@/types/pub'
-import { getHappyHourStatus } from '@/lib/happyHour'
+import { getHappyHourStatus, type HappyHourStatus } from '@/lib/happyHourLive'
 import { getDistanceKm, formatDistance } from '@/lib/location'
 import { Clock, Star, TrendingDown, PartyPopper, Flame, Moon } from 'lucide-react'
 import { pubUrl } from '@/lib/urls'
@@ -14,26 +14,32 @@ interface TonightsMovesProps {
   userLocation?: { lat: number; lng: number } | null
 }
 
-function getPerthTime(): Date {
-  return new Date(new Date().toLocaleString('en-US', { timeZone: 'Australia/Perth' }))
+function getPubHappyHourStatus(pub: Pub, now: Date): HappyHourStatus {
+  return getHappyHourStatus({
+    price: pub.regularPrice,
+    happyHourPrice: pub.happyHourPrice,
+    happyHourDays: pub.happyHourDays,
+    happyHourStart: pub.happyHourStart,
+    happyHourEnd: pub.happyHourEnd,
+  }, now)
 }
 
 function formatPerthTime(date: Date): string {
-  const hours = date.getHours()
-  const minutes = date.getMinutes()
-  const ampm = hours >= 12 ? 'PM' : 'AM'
-  const h = hours % 12 || 12
-  const m = minutes.toString().padStart(2, '0')
-  return `${h}:${m} ${ampm}`
+  return new Intl.DateTimeFormat('en-AU', {
+    timeZone: 'Australia/Perth',
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true,
+  }).format(date).toUpperCase()
 }
 
 export default function TonightsMoves({ pubs, userLocation }: TonightsMovesProps) {
   const [isExpanded, setIsExpanded] = useState(true)
-  const [perthTime, setPerthTime] = useState(getPerthTime)
+  const [clockInstant, setClockInstant] = useState(() => new Date())
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setPerthTime(getPerthTime())
+      setClockInstant(new Date())
     }, 60000)
     return () => clearInterval(interval)
   }, [])
@@ -50,31 +56,31 @@ export default function TonightsMoves({ pubs, userLocation }: TonightsMovesProps
   const activeDeals = useMemo(() => {
     return pubs
       .filter(p => {
-        const status = getHappyHourStatus(p.happyHour)
+        const status = getPubHappyHourStatus(p, clockInstant)
         return status.isActive
       })
-      .filter(p => p.price !== null).sort((a, b) => {
+      .filter(p => getPubHappyHourStatus(p, clockInstant).effectivePrice !== null).sort((a, b) => {
         if (userLocation) {
           return getDistanceKm(userLocation.lat, userLocation.lng, a.lat, a.lng) - getDistanceKm(userLocation.lat, userLocation.lng, b.lat, b.lng)
         }
-        return a.price! - b.price!
+        return (getPubHappyHourStatus(a, clockInstant).effectivePrice ?? 99) - (getPubHappyHourStatus(b, clockInstant).effectivePrice ?? 99)
       })
-  }, [pubs, perthTime, userLocation])
+  }, [pubs, clockInstant, userLocation])
 
   const upcomingDeals = useMemo(() => {
     return pubs
       .filter(p => {
-        const status = getHappyHourStatus(p.happyHour)
+        const status = getPubHappyHourStatus(p, clockInstant)
         return !status.isActive && status.isToday
       })
-      .filter(p => p.price !== null).sort((a, b) => {
+      .filter(p => getPubHappyHourStatus(p, clockInstant).effectivePrice !== null).sort((a, b) => {
         if (userLocation) {
           return getDistanceKm(userLocation.lat, userLocation.lng, a.lat, a.lng) - getDistanceKm(userLocation.lat, userLocation.lng, b.lat, b.lng)
         }
-        return a.price! - b.price!
+        return (getPubHappyHourStatus(a, clockInstant).effectivePrice ?? 99) - (getPubHappyHourStatus(b, clockInstant).effectivePrice ?? 99)
       })
       .slice(0, 10)
-  }, [pubs, perthTime, userLocation])
+  }, [pubs, clockInstant, userLocation])
 
   const hotSuburb = useMemo(() => {
     const suburbMap: Record<string, { activeCount: number; totalPrice: number; count: number }> = {}
@@ -82,10 +88,10 @@ export default function TonightsMoves({ pubs, userLocation }: TonightsMovesProps
       if (!suburbMap[pub.suburb]) {
         suburbMap[pub.suburb] = { activeCount: 0, totalPrice: 0, count: 0 }
       }
-        if (pub.price === null) return
-      suburbMap[pub.suburb].totalPrice += pub.price!
+      const status = getPubHappyHourStatus(pub, clockInstant)
+        if (status.effectivePrice === null) return
+      suburbMap[pub.suburb].totalPrice += status.effectivePrice
       suburbMap[pub.suburb].count += 1
-      const status = getHappyHourStatus(pub.happyHour)
       if (status.isActive) {
         suburbMap[pub.suburb].activeCount += 1
       }
@@ -99,19 +105,19 @@ export default function TonightsMoves({ pubs, userLocation }: TonightsMovesProps
     if (suburbs.length === 0) return null
     const [name, data] = suburbs[0]
     return { name, activeCount: data.activeCount, avgPrice: data.totalPrice / data.count }
-  }, [pubs, perthTime])
+  }, [pubs, clockInstant])
 
   const marketTip = useMemo(() => {
     const activeHHPubs = pubs
-      .filter(p => getHappyHourStatus(p.happyHour).isActive)
-      .filter(p => p.price !== null).sort((a, b) => {
+      .filter(p => getPubHappyHourStatus(p, clockInstant).isActive)
+      .filter(p => getPubHappyHourStatus(p, clockInstant).effectivePrice !== null).sort((a, b) => {
         if (userLocation) {
           return getDistanceKm(userLocation.lat, userLocation.lng, a.lat, a.lng) - getDistanceKm(userLocation.lat, userLocation.lng, b.lat, b.lng)
         }
-        return a.price! - b.price!
+        return (getPubHappyHourStatus(a, clockInstant).effectivePrice ?? 99) - (getPubHappyHourStatus(b, clockInstant).effectivePrice ?? 99)
       })
     return activeHHPubs.length > 0 ? activeHHPubs[0] : bestBuys[0] || null
-  }, [pubs, bestBuys, perthTime, userLocation])
+  }, [pubs, bestBuys, clockInstant, userLocation])
 
   const summaryText = useMemo(() => {
     const bestBuy = bestBuys[0]
@@ -135,7 +141,7 @@ export default function TonightsMoves({ pubs, userLocation }: TonightsMovesProps
             <div>
               <div className="flex items-center gap-2">
                 <h3 className="font-mono text-[0.85rem] font-extrabold text-ink">{`Tonight's Best Bets`}</h3>
-                <span className="font-mono text-[0.6rem] text-gray-mid">{formatPerthTime(perthTime)} AWST</span>
+                <span className="font-mono text-[0.6rem] text-gray-mid">{formatPerthTime(clockInstant)} AWST</span>
               </div>
               <p className="font-body text-[0.75rem] text-gray-mid">{summaryText}</p>
             </div>
@@ -160,10 +166,17 @@ export default function TonightsMoves({ pubs, userLocation }: TonightsMovesProps
                     <p className="font-body text-[0.7rem] text-gray-mid">{marketTip.suburb}{userLocation && ` · ${formatDistance(getDistanceKm(userLocation.lat, userLocation.lng, marketTip.lat, marketTip.lng))}`} · {marketTip.beerType}</p>
                   </div>
                   <div className="text-right">
-                    <span className="font-mono text-lg font-extrabold text-ink">{marketTip.price !== null ? `$${marketTip.price.toFixed(2)}` : 'TBC'}</span>
-                    {getHappyHourStatus(marketTip.happyHour).isActive && (
+                    {(() => {
+                      const status = getPubHappyHourStatus(marketTip, clockInstant)
+                      return (
+                        <>
+                          <span className="font-mono text-lg font-extrabold text-ink">{status.effectivePrice !== null ? `$${status.effectivePrice.toFixed(2)}` : 'TBC'}</span>
+                          {status.isActive && (
                       <p className="font-mono text-[0.55rem] font-bold text-red">HH ACTIVE</p>
-                    )}
+                          )}
+                        </>
+                      )
+                    })()}
                   </div>
                 </div>
               </div>
@@ -198,7 +211,7 @@ export default function TonightsMoves({ pubs, userLocation }: TonightsMovesProps
                 </h4>
                 <div className="space-y-0">
                   {activeDeals.slice(0, 10).map((pub, i) => {
-                    const status = getHappyHourStatus(pub.happyHour)
+                    const status = getPubHappyHourStatus(pub, clockInstant)
                     return (
                       <Link key={pub.id} href={pubUrl(pub)} className={`flex items-center justify-between px-3 py-2.5 no-underline group ${i > 0 ? 'border-t border-gray-light' : ''}`}>
                         <div className="min-w-0">
@@ -209,7 +222,7 @@ export default function TonightsMoves({ pubs, userLocation }: TonightsMovesProps
                           <span className="font-mono text-[0.58rem] font-bold uppercase tracking-[0.05em] px-1.5 py-0.5 rounded-pill border-2 bg-red-pale text-red border-red">
                             {status.countdown}
                           </span>
-                          <span className="font-mono text-[1rem] font-extrabold text-ink">{pub.price !== null ? `$${pub.price.toFixed(2)}` : 'TBC'}</span>
+                          <span className="font-mono text-[1rem] font-extrabold text-ink">{status.effectivePrice !== null ? `$${status.effectivePrice.toFixed(2)}` : 'TBC'}</span>
                         </div>
                       </Link>
                     )
@@ -226,7 +239,7 @@ export default function TonightsMoves({ pubs, userLocation }: TonightsMovesProps
                 </h4>
                 <div className="space-y-0">
                   {upcomingDeals.map((pub, i) => {
-                    const status = getHappyHourStatus(pub.happyHour)
+                    const status = getPubHappyHourStatus(pub, clockInstant)
                     return (
                       <Link key={pub.id} href={pubUrl(pub)} className={`flex items-center justify-between px-3 py-2.5 no-underline group ${i > 0 ? 'border-t border-gray-light' : ''}`}>
                         <div className="min-w-0">
@@ -237,7 +250,7 @@ export default function TonightsMoves({ pubs, userLocation }: TonightsMovesProps
                           <span className="font-mono text-[0.58rem] font-bold uppercase tracking-[0.05em] px-1.5 py-0.5 rounded-pill border-2 border-amber/30 bg-amber-pale text-amber">
                             {status.countdown}
                           </span>
-                          <span className="font-mono text-[1rem] font-extrabold text-gray-mid">{pub.price !== null ? `$${pub.price.toFixed(2)}` : 'TBC'}</span>
+                          <span className="font-mono text-[1rem] font-extrabold text-gray-mid">{status.effectivePrice !== null ? `$${status.effectivePrice.toFixed(2)}` : 'TBC'}</span>
                         </div>
                       </Link>
                     )
