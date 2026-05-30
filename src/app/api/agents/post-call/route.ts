@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@supabase/supabase-js'
+import { serviceClient } from '@/lib/supabaseGateway'
 import crypto from 'node:crypto'
 
 // ElevenLabs post-call webhook. Fired once per call with a full transcript,
@@ -83,10 +83,7 @@ export async function POST(req: NextRequest) {
   const d = body.data
   const pubSlug = d.conversation_initiation_client_data?.dynamic_variables?.pub_slug || null
 
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://ifxkoblvgttelzboenpi.supabase.co',
-    process.env.SUPABASE_SERVICE_ROLE_KEY || ''
-  )
+  const supabase = serviceClient()
 
   let pubId: number | null = null
   if (pubSlug) {
