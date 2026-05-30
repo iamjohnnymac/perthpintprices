@@ -48,5 +48,6 @@ scripts/discover-venues-results.json
 # Research agent data
 perth_pubs_pricing/
 
-# Supabase local config
-supabase/
+# Supabase local config (but track migrations)
+supabase/*
+!supabase/migrations/

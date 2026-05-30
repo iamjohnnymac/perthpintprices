@@ -10,6 +10,10 @@ Stack, database, routes, components, and lib files are documented in `CLAUDE.md`
 
 ## What's done recently
 
+### DB security lockdown + architecture keystones (2026-05-30)
+- **Refactor Phase 0 + SupabaseGateway** (PRs #45–#48): added `src/lib/perthClock.ts` (the time keystone) and `src/lib/supabaseGateway.ts` (`anonClient()` / `serviceClient()`), centralising 16 inline `createClient(...)` blocks and cutting the duplicated anon-JWT literal from ~14 files to 1. Fixed a real security bug — `admin/review` silently degraded service-role→anon (#47). Deleted 4 dead files. A CI **deploy gate** (#43) now runs `node:test` via `tsx` and blocks merges.
+- **RLS audit + lockdown:** a probe-driven scare ("anyone can write prices") was a **false alarm** — `pubs` / `price_history` / `price_snapshots` were always service-role-only. The audit did find 3 over-permissive tables: after migrating their writer routes to the service-role key (#48), dropped the public WRITE + read-leak policies on `pub_price_cache`, `push_subscriptions`, and `agent_activity`. Also fixed the **stale Pint Index** (the weekly-snapshot crons had been failing silently on anon writes). The DB change is recorded in [`supabase/migrations/20260530120000_rls_lockdown.sql`](../supabase/migrations/20260530120000_rls_lockdown.sql).
+
 ### Removed non-core features (2026-05-30)
 - Product call: killed everything that isn't the core pint-price experience. Deleted **pub-golf**, **pint-crawl**, **leaderboard**, and **weekly-report** (the "Pint Report" stats page) — all had **0 organic clicks/impressions over 90 days** and are rebuildable from git history.
 - Removed the 4 page routes + the orphaned `/api/weekly-report`, and cleaned every reference: sitemap entries, the `/discover` "Activities" carousel, and nav/footer links (MobileNav incl. now-unused icon imports, Footer, SubPageNav, HomeClient, homepage SSR crawl-links). Fixed the weekly push deep-link (was broken at `/weekly`) → `/insights/pint-index`. **18 files, −2,635 lines.** tsc + `next build` green; `/discover` visually verified (no empty section, footer nav trimmed).
