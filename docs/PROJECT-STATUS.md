@@ -1,6 +1,6 @@
 # Perth Pint Prices Project Status
 
-Last updated: 2026-05-30
+Last updated: 2026-05-31
 
 ## What this is
 
@@ -9,6 +9,15 @@ Perth Pint Prices (perthpintprices.com) tracks pint prices across **857 Perth pu
 Stack, database, routes, components, and lib files are documented in `CLAUDE.md` (auto-loaded every session). This file covers history, recent work, and the backlog.
 
 ## What's done recently
+
+### Documentation accuracy sweep (2026-05-31, PR #55)
+- Audited every doc, the repo, and the open issues against what's actually live, then corrected or deprecated the drift. **Docs + issue metadata only — no code changes.**
+- **CLAUDE.md / README:** lib count 11→13 (added `supabaseGateway`, `urls`); legacy `/pub`+`/suburb` stubs corrected 308→**301**; `/guides`+`/insights` noted as 308-redirects to `/discover`; homepage nav fixed (no "Pint Report" — it's Discover + Happy Hours + a "Submit a Price" CTA); dropped stale "pub crawl / 23 pages / leaderboard / pub golf / weekly report" references.
+- **SEO-MASTER.md:** added a dated reconciliation banner; removed deleted features from the sitemap/ISR/keyword tables; repointed `/pub/[slug]`+`/suburb/[slug]` to the live `/[suburb]/[pub]`+`/[suburb]` routes; FID→**INP**; GBP marked deprioritised.
+- **architecture-refactor-plan.html:** banner marking it **superseded** (CrawlPlanner/GolfScoring/Phase-6 moot post-deletion; CEO decisions resolved).
+- **seo-action-plan.md:** #1 (www→apex) downgraded — proven live that `www` already 308-redirects and 308 ≡ 301, so it's not the "biggest win"; #2 (legacy 301) marked **done**; #4 GA4 event list pruned of the deleted `pint_crawl_start`/`pub_golf_start`.
+- **Issues:** #25 corrected + downgraded; #28/#29/#31/#35 refreshed (deleted-feature refs removed, #31 unblocked).
+- Live verification today: 857 pubs (API), sitemap 1022 URLs and clean, all 4 deleted-feature routes 404, `/suburb/*`→301, `llms.txt` still 404 (#35 open), pub pages still missing FAQPage/MenuItem schema (#27/#29 open).
 
 ### Refactor Phase 2 (Pub mapper): one row→Pub mapper (2026-05-30)
 - **PR #52** (`39ef38d`). `getPubs` / `getPubBySlug` / `getNearbyPubs` / `getSimilarPricePubs` each carried a **byte-identical ~52-line block** that computed live happy-hour status + effective price and built the 30-field `Pub` object. Collapsed into a single `toPub(row)` in `src/lib/supabase.ts`; each accessor now delegates. **Net −133 lines**, behaviour unchanged.
@@ -123,7 +132,7 @@ Operating loop: each increment ships behind an independent code review + full ve
 
 ### SEO push — Q2 2026 (milestone #1, 11 open issues #25, #27–#36)
 See [`docs/seo-action-plan.md`](./seo-action-plan.md) for the prioritised punch list. Top of the list:
-- #25 Force www → apex 301 in Vercel (1h, p0) — board shows "In progress"; it's a manual Vercel setting the user owns
+- #25 www → apex (was p0) — **effectively resolved** (verified 2026-05-31): `www` already 308-redirects to apex and Google treats 308 as equivalent to a 301 (`vercel.json` is even set to 301). Downgraded; the only residual lever is a GSC reindex nudge, and it's not a ranking risk either way.
 - #27 Reclaim zero-click page-1 queries with answer-first blocks + FAQPage schema (4h, p1)
 - #28 Configure GA4 Key Events (30m, p1)
 - #29 Add answer-first block + MenuItem schema to all 300 pub pages (1-2d, p1)
@@ -155,12 +164,7 @@ See [`docs/seo-action-plan.md`](./seo-action-plan.md) for the prioritised punch 
 - #18 actions/setup-node 4 → 6
 
 ### Stale PRs to clean up (#1-#12)
-8 old PRs from Feb-Mar 2026 that have either been superseded by direct pushes or abandoned:
-- #12 Remove em dashes — done in `f3e93b5`
-- #9 Arvo restructure — superseded
-- #8 PintDex rebrand — superseded
-- #6 CLAUDE.md PR — superseded by direct commits
-- #5, #4, #3, #2, #1 — old, likely superseded
+Done — all of those old Feb–Mar 2026 PRs are now closed; **0 open PRs ≤ #12** remain (verified 2026-05-31). Only the 7 Dependabot PRs below are open.
 
 ### Features (ideas, not committed)
 - Price alerts / watchlist notifications

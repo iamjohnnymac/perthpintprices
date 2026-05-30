@@ -1,8 +1,16 @@
 # SEO Master Reference — Perth Pint Prices (perthpintprices.com)
 
-Last updated: 2026-03-08
+Last updated: 2026-03-08 · Reconciled 2026-05-31
 
 This is the SEO playbook for Perth Pint Prices. Reference this document before making any SEO-related changes. All best practices sourced from Backlinko (backlinko.com) unless noted otherwise.
+
+> **Note — 2026-05-31 reconciliation.** This March-2026 playbook has been corrected inline, but read these deltas first:
+> - **Deleted features:** pub-golf, pint-crawl, leaderboard, and the weekly "Pint Report" page were removed (2026-05). Ignore any lingering reference to them.
+> - **Route structure:** pub/suburb detail pages are now `/[suburb]/[pub]` and `/[suburb]`. The old `/pub/[slug]` and `/suburb/[slug]` are 301 redirect stubs; `/guides` and `/insights` now 308-redirect to `/discover`.
+> - **Core Web Vitals:** FID was retired — the live metric is **INP < 200ms**.
+> - **Google Business Profile:** deprioritised — a service-area aggregator can't rank in the local 3-pack (`seo-research-2026.md §1`).
+> - **www → apex:** already redirects (308, which Google treats as equivalent to a 301); it is not the "critical" win the older action plan implied.
+> - Current late-2026 landscape (AEO/GEO, MenuItem schema, Information Gain): see **`seo-research-2026.md`**. Live status: **`PROJECT-STATUS.md`**.
 
 ---
 
@@ -15,10 +23,10 @@ Dynamic XML sitemap with tiered priorities:
 | Priority | Routes |
 |----------|--------|
 | 1.0 | Homepage |
-| 0.9 | discover, insights, guides, happy-hour, pub-golf, pint-crawl |
+| 0.9 | discover, happy-hour |
 | 0.8 | pint-of-the-day, pint-index, tonights-best-bets, beer-weather, sunset-sippers, suburb pages |
 | 0.7 | suburb-rankings, venue-breakdown, punt-and-pints, dad-bar, cozy-corners |
-| 0.6 | leaderboard, individual pub pages |
+| 0.6 | individual pub pages |
 
 All entries use current timestamp for `lastModified`. Dynamic routes (pubs, suburbs) generated from Supabase at build time.
 
@@ -53,8 +61,8 @@ Every page has: title, description, canonical URL, Open Graph tags. All set via 
 | Page | Schema types |
 |------|-------------|
 | Homepage | WebSite |
-| Pub detail (`/pub/[slug]`) | BreadcrumbList + BarOrPub (address, geo, priceRange) |
-| Suburb detail (`/suburb/[slug]`) | BreadcrumbList + ItemList (all pubs ranked by price) |
+| Pub detail (`/[suburb]/[pub]`) | BreadcrumbList + BarOrPub (address, geo, priceRange) |
+| Suburb detail (`/[suburb]`) | BreadcrumbList + ItemList (all pubs ranked by price) |
 | All content pages | BreadcrumbList (via `BreadcrumbJsonLd` component) |
 
 ### ISR (Incremental Static Regeneration)
@@ -62,7 +70,6 @@ Every page has: title, description, canonical URL, Open Graph tags. All set via 
 | Revalidation | Pages |
 |-------------|-------|
 | 300s (5 min) | Homepage, pub pages, suburb pages, suburbs list |
-| 3600s (1 hr) | Weekly report, pub golf, pint crawl |
 
 ### Static pre-generation
 
@@ -91,8 +98,8 @@ Set on every page via `alternates: { canonical: '...' }`. Format: `https://perth
 | Issue | Impact | Fix |
 |-------|--------|-----|
 | Some page titles >60 chars | Get truncated in Google search results | Trim titles: "Perth Suburb Pint Price Rankings: Cheapest Suburbs for Beer \| Perth Pint Prices" is 67 chars |
-| No Google Business Profile | Missing from local search entirely | Create GBP as "service area business" — free, high impact |
-| /guides and /insights redirect to /discover | If these are 302s (not 301s), link equity doesn't pass | Verify they're 301 redirects |
+| No Google Business Profile | Missing from local search entirely | Deprioritised — a service-area aggregator can't rank in the local 3-pack (`seo-research-2026.md §1`) |
+| /guides and /insights redirect to /discover | — | Done: both use Next `permanentRedirect` (308; Google treats as equivalent to 301) |
 | No internal search logging | Don't know what users search for on the site | Log filter/search queries to understand demand |
 
 ### Low priority
@@ -112,16 +119,15 @@ Set on every page via `alternates: { canonical: '...' }`. Format: `https://perth
 |---------|--------------|----------------|----------|--------|
 | cheapest pints in perth | Transactional | Dedicated landing page or enhanced homepage | High | Not started |
 | perth happy hour deals | Transactional | `/happy-hour` — needs more text content | High | Page exists, needs content |
-| best pubs in northbridge | Local + informational | `/suburb/northbridge` — needs editorial content | High | Page exists, needs content |
-| best pubs in fremantle | Local + informational | `/suburb/fremantle` — needs editorial content | High | Page exists, needs content |
+| best pubs in northbridge | Local + informational | `/northbridge` — needs editorial content | High | Page exists, needs content |
+| best pubs in fremantle | Local + informational | `/fremantle` — needs editorial content | High | Page exists, needs content |
 | perth beer prices | Informational | `/insights/pint-index` — needs intro text | Medium | Page exists, needs content |
-| pub crawl perth | Transactional | `/pint-crawl` — needs intro text about popular routes | Medium | Page exists, needs content |
 | cheap drinks perth | Transactional | Broader version of cheapest pints page | Medium | Not started |
 | perth pub guide | Informational | `/discover` — needs intro paragraph | Medium | Page exists, needs content |
-| best pubs in scarborough | Local | `/suburb/scarborough` — needs editorial | Medium | Page exists, needs content |
-| best pubs in cottesloe | Local | `/suburb/cottesloe` — needs editorial | Medium | Page exists, needs content |
-| best pubs in subiaco | Local | `/suburb/subiaco` — needs editorial | Medium | Page exists, needs content |
-| best pubs in leederville | Local | `/suburb/leederville` — needs editorial | Medium | Page exists, needs content |
+| best pubs in scarborough | Local | `/scarborough` — needs editorial | Medium | Page exists, needs content |
+| best pubs in cottesloe | Local | `/cottesloe` — needs editorial | Medium | Page exists, needs content |
+| best pubs in subiaco | Local | `/subiaco` — needs editorial | Medium | Page exists, needs content |
+| best pubs in leederville | Local | `/leederville` — needs editorial | Medium | Page exists, needs content |
 | perth beer garden | Informational | `/guides/beer-weather` or new page | Low | Partial |
 
 ### Keyword research process (Backlinko)
@@ -276,7 +282,7 @@ Source: backlinko.com/link-building
 - [ ] **FAQPage schema** on homepage FAQ section
 - [ ] **Google Business Profile** setup
 - [ ] **Google Search Console** — submit sitemap, monitor indexation
-- [ ] **Core Web Vitals audit** — measure LCP, FID, CLS
+- [ ] **Core Web Vitals audit** — measure LCP, INP, CLS
 - [ ] **301 redirect verification** for /guides → /discover and /insights → /discover
 - [ ] **Title tag audit** — trim any over 60 characters
 - [ ] **Internal search logging** — capture user filter/search queries
@@ -288,7 +294,7 @@ Source: backlinko.com/link-building
 
 - **Crawlability**: Make sure Google can find and crawl all important pages. Sitemap + internal links are your two tools. Block what shouldn't be indexed (admin, API).
 - **Indexation**: Monitor Search Console for "Excluded" pages. Fix "Discovered — currently not indexed" issues by adding internal links and content.
-- **Site speed**: Core Web Vitals matter. LCP < 2.5s, FID < 100ms, CLS < 0.1. Use next/image, compress assets, minimise third-party scripts.
+- **Site speed**: Core Web Vitals matter. LCP < 2.5s, INP < 200ms, CLS < 0.1. Use next/image, compress assets, minimise third-party scripts.
 - **Mobile-first**: Google indexes mobile version first. Test all pages on mobile. Touch targets > 48px.
 - **Structured data**: Use schema.org markup for rich snippets. Test with Google Rich Results Test.
 - **Canonical tags**: One canonical per page. Prevents duplicate content issues.
@@ -354,7 +360,7 @@ Source: backlinko.com/technical-seo-guide
 - Crawlability: XML sitemap, clean robots.txt, internal linking
 - Structured data: schema.org markup for rich results
 - HTTPS: security signal, required for modern SEO
-- Core Web Vitals: LCP, FID, CLS — measure and optimise
+- Core Web Vitals: LCP, INP, CLS — measure and optimise
 
 ### Content marketing (backlinko.com/content-marketing-strategy)
 
@@ -391,8 +397,9 @@ Source: backlinko.com/technical-seo-guide
 | `src/app/robots.ts` | Robots.txt configuration |
 | `src/app/layout.tsx` | Global metadata, OG image, analytics |
 | `src/app/page.tsx` | Homepage metadata + WebSite JSON-LD |
-| `src/app/pub/[slug]/page.tsx` | Pub detail metadata + BarOrPub JSON-LD |
-| `src/app/suburb/[slug]/page.tsx` | Suburb metadata + ItemList JSON-LD |
+| `src/app/[suburb]/[pub]/page.tsx` | Pub detail metadata + BarOrPub JSON-LD |
+| `src/app/[suburb]/page.tsx` | Suburb metadata + ItemList JSON-LD |
+| `src/app/pub/[slug]/route.ts`, `src/app/suburb/[slug]/route.ts` | Legacy 301 redirect stubs |
 | `src/components/BreadcrumbJsonLd.tsx` | Reusable breadcrumb schema component |
 | `src/components/FAQ.tsx` | Homepage FAQ (needs FAQPage schema) |
 | `public/og-image.png` | Static OG image (1200x630) |
