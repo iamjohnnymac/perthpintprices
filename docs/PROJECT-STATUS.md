@@ -111,10 +111,19 @@ Stack, database, routes, components, and lib files are documented in `CLAUDE.md`
 
 ## What's still to do
 
-### SEO push — Q2 2026 (milestone #1, 12 open issues #25-#36)
+### Architecture refactor (in progress — full plan in [`docs/architecture-refactor-plan.html`](./architecture-refactor-plan.html))
+From the 2026-05-30 architecture review. **Done:** Phase -1 (deploy-gate CI), Phase 0 (PerthClock + SupabaseGateway keystones), DB security lockdown, Phase 1 (PubUrls — one slug source of truth + 150-suburb SEO snapshot test, fixed the O'Connor 404), Phase 2 (`toPub` row→Pub mapper, −133 lines). **Remaining, roughly by size:**
+- **HappyHourEngine** (biggest / highest-value) — collapse `happyHour.ts` + `happyHourLive.ts` into one "effective-price-now" module and delete the lossy string parser. Also fixes **two deferred happy-hour badge bugs**: `TonightsMoves` + `DiscoverClient` re-parse the lossy `pub.happyHour` string instead of the structured `pub.isHappyHourNow`, so their badge/countdown is wrong for weekend / half-hour / am-pm windows (their `isActive` is entangled with `isToday`/countdown, which needs this engine first).
+- **Formatters** — relocate `formatPrice.ts` / `priceLabel.ts` into one seam.
+- **`PerthNow.date` footgun** (Phase-0 review nit) — its UTC fields hold Perth wall-clock, so `.getHours()`/`.getDate()` on it double-shifts. Rename or drop.
+- **`price_snapshots` accessor** (5 fetch/coerce sites) and **`useUserLocation()` hook** (6 `getCurrentPosition` copies).
+- Tiny: `getPubsLite`'s prelude still duplicates `toPub`'s happy-hour computation.
+
+Operating loop: each increment ships behind an independent code review + full verification (`tsc`, `node:test`, `next build` with `SUPABASE_SERVICE_ROLE_KEY` unset); merge to `main` = production deploy. Continue autonomously; only surface 100%-real blockers.
+
+### SEO push — Q2 2026 (milestone #1, 11 open issues #25, #27–#36)
 See [`docs/seo-action-plan.md`](./seo-action-plan.md) for the prioritised punch list. Top of the list:
-- #25 Force www → apex 301 in Vercel (1h, p0)
-- #26 Convert legacy `/pub/` and `/suburb/` 308s to 301s (2h, p0)
+- #25 Force www → apex 301 in Vercel (1h, p0) — board shows "In progress"; it's a manual Vercel setting the user owns
 - #27 Reclaim zero-click page-1 queries with answer-first blocks + FAQPage schema (4h, p1)
 - #28 Configure GA4 Key Events (30m, p1)
 - #29 Add answer-first block + MenuItem schema to all 300 pub pages (1-2d, p1)
@@ -141,7 +150,7 @@ See [`docs/seo-action-plan.md`](./seo-action-plan.md) for the prioritised punch 
 - #22 lucide-react 0.572.0 → 1.11.0 — major bump
 - #23 twilio 5.13.1 → 6.0.0 — major bump
 - #24 @vercel/analytics 1.6.1 → 2.0.1 — major bump
-- #20 minor-and-patch group (5 updates) — should be safe
+- #38 minor-and-patch group (6 updates) — should be safe (was #20, recreated by Dependabot)
 - #19 actions/checkout 4 → 6
 - #18 actions/setup-node 4 → 6
 
