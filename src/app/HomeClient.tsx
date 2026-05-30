@@ -324,7 +324,6 @@ function HomeContent({ initialPubs }: { initialPubs: Pub[] }) {
           {[
             { href: '/discover', label: 'Discover' },
             { href: '/happy-hour', label: 'Happy Hours' },
-            { href: '/weekly-report', label: 'Pint Report' },
           ].map((link) => (
             <Link
               key={link.href}

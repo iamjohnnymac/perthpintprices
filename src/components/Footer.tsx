@@ -3,9 +3,7 @@ import Link from 'next/link'
 const NAV_LINKS = [
   { href: '/discover', label: 'Discover' },
   { href: '/happy-hour', label: 'Happy Hours' },
-  { href: '/leaderboard', label: 'Leaderboard' },
   { href: '/suburbs', label: 'Suburbs' },
-  { href: '/weekly-report', label: 'Pint Report' },
 ]
 
 const GLASS_SIZES = [

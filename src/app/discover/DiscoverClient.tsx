@@ -253,39 +253,6 @@ export default function DiscoverClient() {
           </div>
         </section>
 
-        {/* ════════════════════════════════════════════
-            4. ACTIVITIES CAROUSEL
-            ════════════════════════════════════════════ */}
-        <section className="mb-10 sm:mb-14">
-          <h2 className="font-mono font-extrabold text-xl tracking-[-0.02em] text-ink">Activities</h2>
-          <p className="text-sm text-gray-mid mt-1 mb-6">Plan your next session</p>
-
-          <div className="relative">
-            <div
-              className="flex gap-4 overflow-x-auto pl-1 pb-4 pr-10 snap-x snap-mandatory"
-              style={{ scrollbarWidth: 'none', msOverflowStyle: 'none', WebkitOverflowScrolling: 'touch' }}
-            >
-              <style>{`.snap-x::-webkit-scrollbar { display: none; }`}</style>
-
-              {[
-                { emoji: 'map', title: 'Pint Crawl', desc: 'Build a custom pub crawl route across Perth suburbs.', bg: 'bg-white', href: '/pint-crawl' },
-                { emoji: 'flag', title: 'Pub Golf', desc: 'Create a pub golf course with pars, rules, and mates.', bg: 'bg-white', href: '/pub-golf' },
-              ].map((card) => (
-                <Link
-                  key={card.title}
-                  href={card.href}
-                  className={`${card.bg} w-[240px] sm:w-[280px] min-h-[200px] rounded-card border-3 border-ink shadow-hard-sm p-6 flex-shrink-0 snap-start hover:translate-x-[1.5px] hover:translate-y-[1.5px] hover:shadow-hard-hover transition-all group no-underline`}
-                >
-                  <LucideIcon name={card.emoji} className="w-8 h-8" />
-                  <h3 className="font-mono text-base font-extrabold text-ink mt-3 group-hover:text-amber transition-colors">{card.title}</h3>
-                  <p className="text-sm text-gray-mid mt-1 leading-relaxed">{card.desc}</p>
-                </Link>
-              ))}
-            </div>
-            {/* Right fade hint */}
-            <div className="absolute right-0 top-0 bottom-4 w-12 pointer-events-none bg-gradient-to-l from-[#FDF8F0] to-transparent" />
-          </div>
-        </section>
 
         {/* ════════════════════════════════════════════
             5. CONTRIBUTE CTA BANNER

@@ -101,8 +101,8 @@ export async function GET(request: NextRequest) {
           body: JSON.stringify({
             title: 'This Week in Perth Pints',
             body: `Avg pint: $${avg.toFixed(2)} across ${pubs.length} venues. Cheapest suburb: ${cheapestSuburb}`,
-            url: '/weekly',
-            tag: 'weekly-report',
+            url: '/insights/pint-index',
+            tag: 'weekly-pints',
             renotify: true,
           }),
         })
