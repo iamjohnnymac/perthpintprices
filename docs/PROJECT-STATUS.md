@@ -10,7 +10,7 @@ Stack, database, routes, components, and lib files are documented in `CLAUDE.md`
 
 ## What's done recently
 
-### Documentation accuracy sweep (2026-05-31)
+### Documentation accuracy sweep (2026-05-31, PR #55)
 - Audited every doc, the repo, and the open issues against what's actually live, then corrected or deprecated the drift. **Docs + issue metadata only — no code changes.**
 - **CLAUDE.md / README:** lib count 11→13 (added `supabaseGateway`, `urls`); legacy `/pub`+`/suburb` stubs corrected 308→**301**; `/guides`+`/insights` noted as 308-redirects to `/discover`; homepage nav fixed (no "Pint Report" — it's Discover + Happy Hours + a "Submit a Price" CTA); dropped stale "pub crawl / 23 pages / leaderboard / pub golf / weekly report" references.
 - **SEO-MASTER.md:** added a dated reconciliation banner; removed deleted features from the sitemap/ISR/keyword tables; repointed `/pub/[slug]`+`/suburb/[slug]` to the live `/[suburb]/[pub]`+`/[suburb]` routes; FID→**INP**; GBP marked deprioritised.
