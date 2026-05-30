@@ -16,6 +16,21 @@ Stack, database, routes, components, and lib files are documented in `CLAUDE.md`
 - Twilio left untouched (separate AI phone-call price-collection system). The refactor plan's CrawlPlanner/GolfScoring modules + Phase-6 game-teardown are now moot.
 - Commit: `0f93002`
 
+### Whole-app refactor plan + deploy gate (Phase -1) (2026-05-30)
+- A 17-agent workflow (survey → 4 independent architects → reconcile → red-team → finalize) produced a full module architecture for the app, rendered as **`docs/architecture-refactor-plan.html`**. Headline: the app has ~8 problems copy-pasted 50+ times; the fix is **24 deep modules** across a 4-layer onion (substrate seams → pure kernels → data accessors → external-I/O → UI) + a giant teardown, in an **8-phase migration** (Phase -1..6). Builds on the earlier 7-candidate review (folded in).
+- **Shipped Phase -1 (the deploy gate):** `main` auto-deploys to production but CI ran only tsc/lint/build — tests were not gated, and the two `node:test` unit tests couldn't even run (node couldn't resolve their extensionless TS imports). Added `tsx` + a `test` script and wired **Test + redirect-test steps into the existing `Typecheck, lint, build` CI job** (job name kept verbatim to preserve the branch-protection required check). Bumped CI Node 20 → 22.
+- Surfaced (not yet fixed) **two live security holes** for later phases: an ElevenLabs HMAC shared-secret bypass (`post-call:66`) and a service-role→anon silent degrade (`admin/review:6`).
+- **Two CEO decisions still open:** keep/kill the game features `pint-crawl` + `pub-golf` (both have **0 organic clicks/impressions over 90 days** per GSC; in-app usage is unmeasurable — no working GA4/first-party analytics), and whether Twilio (in `package.json` but unused in code) is still in the stack.
+- Commits: `76f11aa` (plan doc), `5a716ca` (Phase -1 deploy gate)
+
+### Live-bug fixes from architecture review (2026-05-30)
+- A multi-agent architecture-review workflow surfaced three "live bugs"; two were real (fixed here), one was a false alarm.
+- **Happy-hour badge** (`5247efb`): the pub list/card components re-parsed the lossy `pub.happyHour` string through `happyHour.ts`'s regex, which can't match Weekends, single days, or am-pm spans (and the generated string drops `:30` minutes), so the "HH" badge silently showed off during weekend/half-hour/midday happy hours. `PubCardList`, `SunsetSippers`, and `PuntNPints` now read the structured `pub.isHappyHourNow` (computed by `happyHourLive` from raw fields). `TonightsMoves` + `DiscoverClient` deferred — their `isToday`/countdown use needs the `happyHourLive` extension (arch-review rank 1).
+- **Pint Index badge** (`f609b48`): `PintIndexBadge` fetched `price_snapshots` ascending + `limit(30)` = the 30 oldest snapshots, so the homepage badge price and "% this week" came from the start of history. Now fetches the newest 30 (descending) and reverses to chronological order.
+- **Not a bug:** record-price not writing `happy_hour_price` — Andrew's tool never sends a happy-hour price, so nothing is dropped. Latent gap (arch-review rank 5), not a live bug; left untouched.
+- Next body of work is the 7-candidate architecture deepening backlog from the same review (rank 1 = consolidate the happy-hour engine into one deep `happyHourLive` module and delete `happyHour.ts`).
+- Commits: `5247efb`, `f609b48`
+
 ### SEO redirect consolidation (2026-05-03)
 - Fixed the legacy redirect half of the highest-priority canonical redirect work:
   - Legacy `/suburb/[slug]` redirects now return `301` to the current `/[suburb]` URL in production.

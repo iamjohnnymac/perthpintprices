@@ -42,13 +42,15 @@ export default function PintIndexBadge({ className = 'hidden sm:flex' }: { class
       const { data } = await supabase
         .from('price_snapshots')
         .select('avg_price, snapshot_date')
-        .order('snapshot_date', { ascending: true })
+        .order('snapshot_date', { ascending: false })
         .limit(30)
       if (data) {
+        // Fetch newest-first so we get the latest 30, then reverse to
+        // chronological order for the sparkline + current/previous reads.
         setSnapshots(data.map((d: any) => ({
           avg_price: parseFloat(d.avg_price),
           snapshot_date: d.snapshot_date,
-        })))
+        })).reverse())
       }
     }
     fetchData()
