@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@supabase/supabase-js'
+import { serviceClient } from '@/lib/supabaseGateway'
 
 // ElevenLabs "server tool" callback. The pub_slug arrives via URL path (filled
 // in by ElevenLabs from the conversation's {{pub_slug}} dynamic variable, NOT
@@ -62,10 +62,7 @@ export async function POST(req: NextRequest, { params }: { params: { slug: strin
     }
   }
 
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://ifxkoblvgttelzboenpi.supabase.co',
-    process.env.SUPABASE_SERVICE_ROLE_KEY || ''
-  )
+  const supabase = serviceClient()
 
   const { data: pub, error: fetchErr } = await supabase
     .from('pubs')

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@supabase/supabase-js'
+import { serviceClient } from '@/lib/supabaseGateway'
 
 // Kicks off a batch outbound sweep via ElevenLabs Batch Calling. Pulls pubs
 // with a phone number and no verified price, builds per-recipient dynamic
@@ -40,10 +40,7 @@ export async function POST(req: NextRequest) {
     )
   }
 
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://ifxkoblvgttelzboenpi.supabase.co',
-    process.env.SUPABASE_SERVICE_ROLE_KEY || ''
-  )
+  const supabase = serviceClient()
 
   // Eligible pubs: have a phone, haven't been called in the last 24h, and
   // either missing a price or the price isn't human-verified (phone-agent

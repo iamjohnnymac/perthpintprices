@@ -1,11 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@supabase/supabase-js'
+import { serviceClient } from '@/lib/supabaseGateway'
 import { timingSafeEqual } from 'crypto'
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://ifxkoblvgttelzboenpi.supabase.co'
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlmeGtvYmx2Z3R0ZWx6Ym9lbnBpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzExODUwNjgsImV4cCI6MjA4Njc2MTA2OH0.qLy6B-VeVnMh0QSOxHK3uQEJ6iZr6xNHmfKov_7B-fY'
-
-const supabase = createClient(supabaseUrl, supabaseKey)
 
 export const dynamic = 'force-dynamic'
 
@@ -29,6 +24,10 @@ export async function POST(request: NextRequest) {
   if (!process.env.ADMIN_PASSWORD || !safeCompare(password, process.env.ADMIN_PASSWORD)) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
+
+  // Privileged client (bypasses RLS). Throws if the service-role key is missing
+  // rather than silently downgrading to the anon key.
+  const supabase = serviceClient()
 
   const body = await request.json()
   const { type, id, action, target_slug } = body
