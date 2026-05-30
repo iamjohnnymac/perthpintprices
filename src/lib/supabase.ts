@@ -93,6 +93,59 @@ function generateHappyHourText(days: string | null, start: string | null, end: s
 }
 
 // Fetch pubs from Supabase with dynamic happy hour pricing
+// Maps a raw `pubs` table row to the app's Pub shape, computing live happy-hour
+// status + effective price. Single source of truth for row -> Pub (was previously
+// copy-pasted into getPubs / getPubBySlug / getNearbyPubs / getSimilarPricePubs).
+function toPub(row: any): Pub {
+  const regularPrice = row.price != null ? Number(row.price) : null
+  const hhPrice = row.happy_hour_price != null ? Number(row.happy_hour_price) : null
+
+  const hhStatus = getHappyHourStatus({
+    price: regularPrice,
+    happyHourPrice: hhPrice,
+    happyHourDays: row.happy_hour_days || null,
+    happyHourStart: row.happy_hour_start || null,
+    happyHourEnd: row.happy_hour_end || null,
+  })
+
+  const happyHourText = row.happy_hour ||
+    generateHappyHourText(row.happy_hour_days, row.happy_hour_start, row.happy_hour_end)
+
+  return {
+    id: row.id,
+    slug: row.slug || '',
+    name: row.name,
+    suburb: row.suburb,
+    // price = effective price (switches to the HH price when active)
+    price: hhStatus.effectivePrice,
+    regularPrice,
+    imageUrl: row.image_url ?? null,
+    vibeTag: row.vibe_tag || null,
+    effectivePrice: (hhStatus.isActive && hhPrice) ? hhPrice : regularPrice,
+    address: row.address || '',
+    website: row.website || null,
+    lat: row.lat || 0,
+    lng: row.lng || 0,
+    beerType: titleCase(row.beer_type || ''),
+    happyHour: happyHourText,
+    description: row.description || null,
+    lastUpdated: row.last_updated || undefined,
+    sunsetSpot: row.sunset_spot || false,
+    priceVerified: row.price_verified !== false,
+    hasTab: row.has_tab === true,
+    kidFriendly: row.kid_friendly === true,
+    cozyPub: row.cozy_pub === true,
+    happyHourPrice: hhPrice,
+    happyHourDays: row.happy_hour_days || null,
+    happyHourStart: row.happy_hour_start || null,
+    happyHourEnd: row.happy_hour_end || null,
+    lastVerified: row.last_verified || null,
+    isHappyHourNow: hhStatus.isActive,
+    happyHourLabel: hhStatus.happyHourLabel,
+    happyHourMinutesRemaining: hhStatus.minutesRemaining,
+  }
+}
+
 export async function getPubs(): Promise<Pub[]> {
   const { data, error } = await supabase
     .from('pubs')
@@ -104,59 +157,7 @@ export async function getPubs(): Promise<Pub[]> {
     return []
   }
   
-  return (data || []).map(row => {
-    const regularPrice = row.price != null ? Number(row.price) : null
-    const hhPrice = row.happy_hour_price != null ? Number(row.happy_hour_price) : null
-    
-    // Compute live happy hour status
-    const hhStatus = getHappyHourStatus({
-      price: regularPrice,
-      happyHourPrice: hhPrice,
-      happyHourDays: row.happy_hour_days || null,
-      happyHourStart: row.happy_hour_start || null,
-      happyHourEnd: row.happy_hour_end || null,
-    })
-    
-    // Generate happyHour text from structured data if not already set
-    const happyHourText = row.happy_hour || 
-      generateHappyHourText(row.happy_hour_days, row.happy_hour_start, row.happy_hour_end)
-    
-    return {
-      slug: row.slug || '',
-      id: row.id,
-      name: row.name,
-      suburb: row.suburb,
-      // KEY: price = effective price (switches to HH price when active)
-      price: hhStatus.effectivePrice,
-      regularPrice: regularPrice,
-      imageUrl: row.image_url ?? null,
-      vibeTag: row.vibe_tag || null,
-      effectivePrice: (hhStatus.isActive && hhPrice) ? hhPrice : regularPrice,
-      address: row.address || '',
-      website: row.website || null,
-      lat: row.lat || 0,
-      lng: row.lng || 0,
-      beerType: titleCase(row.beer_type || ''),
-      happyHour: happyHourText,
-      description: row.description || null,
-      lastUpdated: row.last_updated || undefined,
-      sunsetSpot: row.sunset_spot || false,
-      priceVerified: row.price_verified !== false,
-      hasTab: row.has_tab === true,
-      kidFriendly: row.kid_friendly === true,
-      cozyPub: row.cozy_pub === true,
-      // Happy hour detail fields
-      happyHourPrice: hhPrice,
-      happyHourDays: row.happy_hour_days || null,
-      happyHourStart: row.happy_hour_start || null,
-      happyHourEnd: row.happy_hour_end || null,
-      lastVerified: row.last_verified || null,
-      // Computed live status
-      isHappyHourNow: hhStatus.isActive,
-      happyHourLabel: hhStatus.happyHourLabel,
-      happyHourMinutesRemaining: hhStatus.minutesRemaining,
-    }
-  })
+  return (data || []).map(toPub)
 }
 
 // Lightweight pub fetch for homepage — only fields needed for rendering + SSR links
@@ -244,53 +245,7 @@ export async function getPubBySlug(slug: string): Promise<Pub | null> {
     return null
   }
   
-  const row = data
-  const regularPrice = row.price != null ? Number(row.price) : null
-  const hhPrice = row.happy_hour_price != null ? Number(row.happy_hour_price) : null
-  
-  const hhStatus = getHappyHourStatus({
-    price: regularPrice,
-    happyHourPrice: hhPrice,
-    happyHourDays: row.happy_hour_days || null,
-    happyHourStart: row.happy_hour_start || null,
-    happyHourEnd: row.happy_hour_end || null,
-  })
-  
-  const happyHourText = row.happy_hour || 
-    generateHappyHourText(row.happy_hour_days, row.happy_hour_start, row.happy_hour_end)
-  
-  return {
-    id: row.id,
-    slug: row.slug || '',
-    name: row.name,
-    suburb: row.suburb,
-    price: hhStatus.effectivePrice,
-    regularPrice: regularPrice,
-      imageUrl: row.image_url ?? null,
-    vibeTag: row.vibe_tag || null,
-    effectivePrice: (hhStatus.isActive && hhPrice) ? hhPrice : regularPrice,
-    address: row.address || '',
-    website: row.website || null,
-    lat: row.lat || 0,
-    lng: row.lng || 0,
-    beerType: titleCase(row.beer_type || ''),
-    happyHour: happyHourText,
-    description: row.description || null,
-    lastUpdated: row.last_updated || undefined,
-    sunsetSpot: row.sunset_spot || false,
-    priceVerified: row.price_verified !== false,
-    hasTab: row.has_tab === true,
-    kidFriendly: row.kid_friendly === true,
-    cozyPub: row.cozy_pub === true,
-    happyHourPrice: hhPrice,
-    happyHourDays: row.happy_hour_days || null,
-    happyHourStart: row.happy_hour_start || null,
-    happyHourEnd: row.happy_hour_end || null,
-    lastVerified: row.last_verified || null,
-    isHappyHourNow: hhStatus.isActive,
-    happyHourLabel: hhStatus.happyHourLabel,
-    happyHourMinutesRemaining: hhStatus.minutesRemaining,
-  }
+  return toPub(data)
 }
 
 // Fetch all pub slugs (for generateStaticParams)
@@ -327,51 +282,7 @@ export async function getNearbyPubs(suburb: string, excludeId: number, limit: nu
   
   if (error || !data) return []
   
-  return data.map(row => {
-    const regularPrice = row.price != null ? Number(row.price) : null
-    const hhPrice = row.happy_hour_price != null ? Number(row.happy_hour_price) : null
-    const hhStatus = getHappyHourStatus({
-      price: regularPrice,
-      happyHourPrice: hhPrice,
-      happyHourDays: row.happy_hour_days || null,
-      happyHourStart: row.happy_hour_start || null,
-      happyHourEnd: row.happy_hour_end || null,
-    })
-    const happyHourText = row.happy_hour || generateHappyHourText(row.happy_hour_days, row.happy_hour_start, row.happy_hour_end)
-    
-    return {
-      id: row.id,
-      slug: row.slug || '',
-      name: row.name,
-      suburb: row.suburb,
-      price: hhStatus.effectivePrice,
-      regularPrice: regularPrice,
-      imageUrl: row.image_url ?? null,
-      vibeTag: row.vibe_tag || null,
-      effectivePrice: (hhStatus.isActive && hhPrice) ? hhPrice : regularPrice,
-      address: row.address || '',
-      website: row.website || null,
-      lat: row.lat || 0,
-      lng: row.lng || 0,
-      beerType: titleCase(row.beer_type || ''),
-      happyHour: happyHourText,
-      description: row.description || null,
-      lastUpdated: row.last_updated || undefined,
-      sunsetSpot: row.sunset_spot || false,
-      priceVerified: row.price_verified !== false,
-      hasTab: row.has_tab === true,
-      kidFriendly: row.kid_friendly === true,
-      cozyPub: row.cozy_pub === true,
-      happyHourPrice: hhPrice,
-      happyHourDays: row.happy_hour_days || null,
-      happyHourStart: row.happy_hour_start || null,
-      happyHourEnd: row.happy_hour_end || null,
-      lastVerified: row.last_verified || null,
-      isHappyHourNow: hhStatus.isActive,
-      happyHourLabel: hhStatus.happyHourLabel,
-      happyHourMinutesRemaining: hhStatus.minutesRemaining,
-    }
-  })
+  return data.map(toPub)
 }
 
 // Fetch pubs in a similar price range from different suburbs (for cross-linking)
@@ -389,51 +300,7 @@ export async function getSimilarPricePubs(price: number, excludeSuburb: string, 
 
   if (error || !data) return []
 
-  return data.map(row => {
-    const regularPrice = row.price != null ? Number(row.price) : null
-    const hhPrice = row.happy_hour_price != null ? Number(row.happy_hour_price) : null
-    const hhStatus = getHappyHourStatus({
-      price: regularPrice,
-      happyHourPrice: hhPrice,
-      happyHourDays: row.happy_hour_days || null,
-      happyHourStart: row.happy_hour_start || null,
-      happyHourEnd: row.happy_hour_end || null,
-    })
-    const happyHourText = row.happy_hour || generateHappyHourText(row.happy_hour_days, row.happy_hour_start, row.happy_hour_end)
-
-    return {
-      id: row.id,
-      slug: row.slug || '',
-      name: row.name,
-      suburb: row.suburb,
-      price: hhStatus.effectivePrice,
-      regularPrice: regularPrice,
-      imageUrl: row.image_url ?? null,
-      vibeTag: row.vibe_tag || null,
-      effectivePrice: (hhStatus.isActive && hhPrice) ? hhPrice : regularPrice,
-      address: row.address || '',
-      website: row.website || null,
-      lat: row.lat || 0,
-      lng: row.lng || 0,
-      beerType: titleCase(row.beer_type || ''),
-      happyHour: happyHourText,
-      description: row.description || null,
-      lastUpdated: row.last_updated || undefined,
-      sunsetSpot: row.sunset_spot || false,
-      priceVerified: row.price_verified !== false,
-      hasTab: row.has_tab === true,
-      kidFriendly: row.kid_friendly === true,
-      cozyPub: row.cozy_pub === true,
-      happyHourPrice: hhPrice,
-      happyHourDays: row.happy_hour_days || null,
-      happyHourStart: row.happy_hour_start || null,
-      happyHourEnd: row.happy_hour_end || null,
-      lastVerified: row.last_verified || null,
-      isHappyHourNow: hhStatus.isActive,
-      happyHourLabel: hhStatus.happyHourLabel,
-      happyHourMinutesRemaining: hhStatus.minutesRemaining,
-    }
-  })
+  return data.map(toPub)
 }
 
 // Fetch price history for a pub (for trend charts)
