@@ -1,7 +1,5 @@
-import { anonClient } from '@/lib/supabaseGateway'
+import { serviceClient } from '@/lib/supabaseGateway'
 import { NextRequest, NextResponse } from 'next/server'
-
-const supabase = anonClient()
 
 /**
  * GET /api/cron/weekly-snapshot
@@ -13,6 +11,8 @@ export async function GET(request: NextRequest) {
   if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
+
+  const supabase = serviceClient()
 
   try {
     // Get verified pubs with prices

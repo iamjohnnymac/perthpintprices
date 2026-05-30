@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import webpush from 'web-push'
-import { anonClient } from '@/lib/supabaseGateway'
-
-const supabase = anonClient()
+import { serviceClient } from '@/lib/supabaseGateway'
 
 /**
  * POST /api/push/send
@@ -25,6 +23,8 @@ export async function POST(request: NextRequest) {
     if (!process.env.PUSH_API_SECRET || authHeader !== `Bearer ${process.env.PUSH_API_SECRET}`) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
+
+    const supabase = serviceClient()
 
     const { title, body, url, tag, targetSlugs, renotify } = await request.json()
 

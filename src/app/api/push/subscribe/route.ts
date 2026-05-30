@@ -1,7 +1,5 @@
-import { anonClient } from '@/lib/supabaseGateway'
+import { serviceClient } from '@/lib/supabaseGateway'
 import { NextRequest, NextResponse } from 'next/server'
-
-const supabase = anonClient()
 
 /**
  * POST /api/push/subscribe
@@ -9,6 +7,7 @@ const supabase = anonClient()
  */
 export async function POST(request: NextRequest) {
   try {
+    const supabase = serviceClient()
     const { subscription, watchedSlugs, userAgent } = await request.json()
 
     if (!subscription?.endpoint || !subscription?.keys?.p256dh || !subscription?.keys?.auth) {
@@ -47,6 +46,7 @@ export async function POST(request: NextRequest) {
  */
 export async function DELETE(request: NextRequest) {
   try {
+    const supabase = serviceClient()
     const { endpoint } = await request.json()
 
     if (!endpoint) {
