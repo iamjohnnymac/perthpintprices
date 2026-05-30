@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { anonClient } from '@/lib/supabaseGateway'
+import { serviceClient } from '@/lib/supabaseGateway'
+import type { SupabaseClient } from '@supabase/supabase-js'
 import { timingSafeEqual } from 'crypto'
-
-const supabase = anonClient()
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
@@ -113,7 +112,7 @@ function safeCompare(a: string, b: string): boolean {
 // ============================================================
 // LOG FAILED AUTH ATTEMPT TO DATABASE
 // ============================================================
-async function logFailedAttempt(ip: string): Promise<void> {
+async function logFailedAttempt(supabase: SupabaseClient, ip: string): Promise<void> {
   try {
     await supabase.from('agent_activity').insert({
       action: `Failed admin login attempt from ${ip}`,
@@ -127,6 +126,7 @@ async function logFailedAttempt(ip: string): Promise<void> {
 }
 
 export async function GET(request: NextRequest) {
+  const supabase = serviceClient()
   const ip = getClientIP(request)
 
   // Check rate limit FIRST
@@ -151,7 +151,7 @@ export async function GET(request: NextRequest) {
     recordFailedAttempt(ip)
 
     // Log failed attempt to database (await to ensure it completes before lambda terminates)
-    await logFailedAttempt(ip)
+    await logFailedAttempt(supabase, ip)
 
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
