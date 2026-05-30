@@ -24,16 +24,16 @@ Perth Pint Prices (perthpintprices.com) tracks pint prices across 300+ Perth pub
 - **Insights (5):** `/insights` index, `/insights/pint-index`, `/insights/pint-of-the-day`, `/insights/suburb-rankings`, `/insights/tonights-best-bets`, `/insights/venue-breakdown`
 - **Admin:** `/admin`
 
-## Components (34 in `src/components/`)
-BeerWeather, BreadcrumbJsonLd, CrowdReporter, DadBar, ErrorBoundary, FAQ, FeaturePageShell, FilterSection, Footer, HeroSection, HowItWorks, InstallPrompt, LucideIcon, Map, MiniMap, MobileNav, PintIndex, PintIndexBadge, PintOfTheDay, PriceHistory, PubCard, PubCardList, PubDetailMap, PuntNPints, RainyDay, ScrollReveal, SocialProof, SubPageNav, SubmitPubForm, SuburbLeague, SunsetSippers, TonightsMoves, VenueIntel, WatchlistButton
+## Components (32 in `src/components/`)
+BeerWeather, BreadcrumbJsonLd, CrowdReporter, DadBar, ErrorBoundary, FAQ, FeaturePageShell, FilterSection, Footer, HeroSection, HowItWorks, InstallPrompt, LucideIcon, MiniMap, MobileNav, PintIndex, PintIndexBadge, PintOfTheDay, PriceHistory, PubCardList, PubDetailMap, PuntNPints, RainyDay, ScrollReveal, SocialProof, SubPageNav, SubmitPubForm, SuburbLeague, SunsetSippers, TonightsMoves, VenueIntel, WatchlistButton
 
 **Key patterns:**
 - `FeaturePageShell` wraps guide/insight pages (loads pubs, crowd data, geolocation). Pass `title` prop for sr-only H1.
 - `SubPageNav` for breadcrumb navigation on sub-pages
 - `BreadcrumbJsonLd` for schema.org breadcrumb structured data (uses `url` property, not `item`)
 
-## Lib files (12 in `src/lib/`)
-freshness, happyHour, happyHourLive, location, mapTheme, mapTile, priceColors, priceLabel, pushNotifications, sunPosition, supabase, utils
+## Lib files (11 in `src/lib/`)
+freshness, happyHour, happyHourLive, location, mapTheme, mapTile, perthClock, priceLabel, sunPosition, supabase, utils
 
 ## API routes
 - **User-facing**: `/api/pubs`, `/api/price-report`, `/api/pub-submission`, `/api/menu-scan`, `/api/pint-of-the-day`
