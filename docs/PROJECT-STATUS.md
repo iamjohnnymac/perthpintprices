@@ -10,6 +10,12 @@ Stack, database, routes, components, and lib files are documented in `CLAUDE.md`
 
 ## What's done recently
 
+### Backlog organised into milestones + dependency triage (2026-05-31)
+- **Milestones:** closed the catch-all "SEO Push — Q2 2026" and split the board into **6 themed milestones** — `SEO: Indexing & Technical` (#2), `SEO: Content & Schema (AEO)` (#3), `SEO: Measurement & Growth` (#4), `Architecture Refactor` (#5), `Data Coverage` (#6), `Andrew (voice agent)` (#7). Every open issue is bucketed; the 10 new issues (#56–#64, #66) were added to project board #6.
+- **Ticketed the untracked work:** refactor as #56–#60 (HappyHourEngine, Formatters, PerthNow.date, price_snapshots accessor, useUserLocation); data as #61–#62; Andrew as #63 (revive DNC/cooldown/post-call hardening) + #64 (voice-quality decision). #25 (www→apex) closed as a no-op.
+- **Dependency triage (0 open PRs):** merged #18 (setup-node 4→6), #19 (checkout 4→6), #38 (minor/patch group), and #65 (consolidated lucide 1.11 + twilio 6 + @vercel/analytics 2.0.1 — one clean lockfile; tsc + 167 tests + build green). Next 14→16 (#21) deferred — peer-reviewed as a coordinated Next 16 + React 19 + ESLint 9 upgrade, closed + dependabot-ignored, tracked as **#66**. Prod smoke-tested green on deploy `755d156` (routes 200, lucide icons render).
+- **Branch hygiene:** pruned all merged branches + 6 dead ones; kept `claude/audit-e2e-improvements-WQb6N` (it is #63's source). Remote branches now: `main` + that one.
+
 ### Documentation accuracy sweep (2026-05-31, PR #55)
 - Audited every doc, the repo, and the open issues against what's actually live, then corrected or deprecated the drift. **Docs + issue metadata only — no code changes.**
 - **CLAUDE.md / README:** lib count 11→13 (added `supabaseGateway`, `urls`); legacy `/pub`+`/suburb` stubs corrected 308→**301**; `/guides`+`/insights` noted as 308-redirects to `/discover`; homepage nav fixed (no "Pint Report" — it's Discover + Happy Hours + a "Submit a Price" CTA); dropped stale "pub crawl / 23 pages / leaderboard / pub golf / weekly report" references.
@@ -128,16 +134,18 @@ From the 2026-05-30 architecture review. **Done:** Phase -1 (deploy-gate CI), Ph
 - **`price_snapshots` accessor** (5 fetch/coerce sites) and **`useUserLocation()` hook** (6 `getCurrentPosition` copies).
 - Tiny: `getPubsLite`'s prelude still duplicates `toPub`'s happy-hour computation.
 
+**Now ticketed** under milestone `Architecture Refactor` (#5): #56 HappyHourEngine (p1), #57 Formatters, #58 PerthNow.date footgun, #59 price_snapshots accessor, #60 useUserLocation. Plus **#66** — the coordinated Next 16 + React 19 + ESLint 9 upgrade (deferred from Dependabot #21).
+
 Operating loop: each increment ships behind an independent code review + full verification (`tsc`, `node:test`, `next build` with `SUPABASE_SERVICE_ROLE_KEY` unset); merge to `main` = production deploy. Continue autonomously; only surface 100%-real blockers.
 
-### SEO push — Q2 2026 (milestone #1, 11 open issues #25, #27–#36)
+### SEO push — Q2 2026 (3 milestones: `SEO: Indexing & Technical` #2 · `SEO: Content & Schema (AEO)` #3 · `SEO: Measurement & Growth` #4)
 See [`docs/seo-action-plan.md`](./seo-action-plan.md) for the prioritised punch list. Top of the list:
-- #25 www → apex (was p0) — **effectively resolved** (verified 2026-05-31): `www` already 308-redirects to apex and Google treats 308 as equivalent to a 301 (`vercel.json` is even set to 301). Downgraded; the only residual lever is a GSC reindex nudge, and it's not a ranking risk either way.
+- #25 www → apex — **closed** (no-op: `www` already 308-redirects and Google treats 308 ≡ 301; `vercel.json` is set to 301). The only residual lever was a GSC reindex nudge; not a ranking risk.
 - #27 Reclaim zero-click page-1 queries with answer-first blocks + FAQPage schema (4h, p1)
 - #28 Configure GA4 Key Events (30m, p1)
-- #29 Add answer-first block + MenuItem schema to all 300 pub pages (1-2d, p1)
+- #29 Add answer-first block + MenuItem schema to all 857 pub pages (1-2d, p1)
 - #30 Get 373 "Discovered not indexed" crawled (1d, p1)
-- #31 Resolve 39 "Duplicate, Google chose different canonical" (blocked on #25/#26)
+- #31 Resolve 39 "Duplicate, Google chose different canonical" (unblocked — legacy 301 shipped + #25 closed; re-pull the current count from GSC)
 - #32 Build missing high-intent landing pages (3-5d, p1)
 - #33 Press-pitch the Pint Index to WA media (1w, p2)
 - #34 Migrate to next/image + INP audit (4-6h, p1)
@@ -148,23 +156,20 @@ See [`docs/seo-action-plan.md`](./seo-action-plan.md) for the prioritised punch 
 - **663 of 857 pubs missing regular prices** (was 222 in March; new pubs are being added faster than prices are being collected)
 - Andrew (the voice agent) is the strategy — see `agents/andrew.json` and the `/api/pintsweep/kickoff` batch trigger
 - Consider price refresh strategy for stale prices (some pubs haven't been updated in months)
+- **Ticketed** under milestone `Data Coverage` (#6): #61 backfill the 663 missing prices (p1), #62 stale-price refresh strategy.
 
-### Andrew voice agent (next steps after voice tuning lands tomorrow)
-- Place test calls with phone OFF silent to evaluate cadence/volume after the v3 conversational + stability 0.70 change
+### Andrew voice agent (milestone `Andrew (voice agent)` #7)
+- **#63** revive do-not-call + cooldown + post-call-fallback hardening — unmerged work on branch `claude/audit-e2e-improvements-WQb6N` (none of it is in main; compliance-relevant for a robocaller).
+- **#64** voice-quality decision. Place test calls with phone OFF silent to evaluate cadence/volume after the v3 conversational + stability 0.70 change
 - If sound quality is good: kick off Professional Voice Clone (PVC) per `docs/andrew-voice-research.md` §3 — book a 30 min recording session via Voicebooking / Voices.com or record a willing AU male mate. Cleanest signal for production phone bots.
 - If still inconsistent: pilot Cartesia Sonic-3 + Line per research §6
 
-### Open Dependabot PRs (need triage)
-- #21 next 14.2.35 → 16.2.4 — major bump, breaking changes likely
-- #22 lucide-react 0.572.0 → 1.11.0 — major bump
-- #23 twilio 5.13.1 → 6.0.0 — major bump
-- #24 @vercel/analytics 1.6.1 → 2.0.1 — major bump
-- #38 minor-and-patch group (6 updates) — should be safe (was #20, recreated by Dependabot)
-- #19 actions/checkout 4 → 6
-- #18 actions/setup-node 4 → 6
+### Dependabot — triaged 2026-05-31 (0 open PRs)
+- **Merged:** #18 setup-node 4→6, #19 checkout 4→6, #38 minor/patch group, **#65** (lucide 1.11 + twilio 6 + @vercel/analytics 2.0.1, consolidated — one clean lockfile; tsc + 167 tests + build green).
+- **Deferred:** next 14→16 (#21) — closed + `@dependabot ignore`'d; tracked as **#66** (coordinated Next 16 + React 19 + ESLint 9 upgrade) under milestone `Architecture Refactor`.
 
 ### Stale PRs to clean up (#1-#12)
-Done — all of those old Feb–Mar 2026 PRs are now closed; **0 open PRs ≤ #12** remain (verified 2026-05-31). Only the 7 Dependabot PRs below are open.
+Done — all of those old Feb–Mar 2026 PRs are closed (**0 open PRs ≤ #12**), and as of 2026-05-31 the Dependabot backlog is cleared too (see above) — **0 open PRs total**.
 
 ### Features (ideas, not committed)
 - Price alerts / watchlist notifications
@@ -179,7 +184,7 @@ Done — all of those old Feb–Mar 2026 PRs are now closed; **0 open PRs ≤ #1
 
 **[Perth Pint Prices — Roadmap](https://github.com/users/iamjohnnymac/projects/6)** (v2 Project, Team Planning template).
 
-- Linked to `iamjohnnymac/perthpintprices`, holds all 12 milestone-1 issues
+- Linked to `iamjohnnymac/perthpintprices`; holds the roadmap issues across the 6 milestones (**22 items**). The 10 issues created 2026-05-31 (#56–#64, #66) were added to the board.
 - Built-in views: **Backlog** (table grouped by Status), **Board** (Kanban: Todo / In progress / Done), **Current iteration**, **Roadmap**, **My items**
 - Fields: `Status`, `Priority` (P0/P1/P2), `Size` (XS-XL — used as effort proxy: XS=Quick win, S=Half day, M=Full day, L=Multi-day, XL=Ongoing), `Estimate` (number), `Iteration` (sprint), `Start date`, `Target date`, plus custom **`Area`** (SEO / Andrew / Content / Performance / Schema / Indexing / Chore)
 - Each item already tagged with Priority + Size + Area; Status defaults to Todo
