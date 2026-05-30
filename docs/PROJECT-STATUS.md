@@ -1,6 +1,6 @@
 # Perth Pint Prices Project Status
 
-Last updated: 2026-05-03
+Last updated: 2026-05-30
 
 ## What this is
 
@@ -9,6 +9,13 @@ Perth Pint Prices (perthpintprices.com) tracks pint prices across **857 Perth pu
 Stack, database, routes, components, and lib files are documented in `CLAUDE.md` (auto-loaded every session). This file covers history, recent work, and the backlog.
 
 ## What's done recently
+
+### Whole-app refactor plan + deploy gate (Phase -1) (2026-05-30)
+- A 17-agent workflow (survey → 4 independent architects → reconcile → red-team → finalize) produced a full module architecture for the app, rendered as **`docs/architecture-refactor-plan.html`**. Headline: the app has ~8 problems copy-pasted 50+ times; the fix is **24 deep modules** across a 4-layer onion (substrate seams → pure kernels → data accessors → external-I/O → UI) + a giant teardown, in an **8-phase migration** (Phase -1..6). Builds on the earlier 7-candidate review (folded in).
+- **Shipped Phase -1 (the deploy gate):** `main` auto-deploys to production but CI ran only tsc/lint/build — tests were not gated, and the two `node:test` unit tests couldn't even run (node couldn't resolve their extensionless TS imports). Added `tsx` + a `test` script and wired **Test + redirect-test steps into the existing `Typecheck, lint, build` CI job** (job name kept verbatim to preserve the branch-protection required check). Bumped CI Node 20 → 22.
+- Surfaced (not yet fixed) **two live security holes** for later phases: an ElevenLabs HMAC shared-secret bypass (`post-call:66`) and a service-role→anon silent degrade (`admin/review:6`).
+- **Two CEO decisions still open:** keep/kill the game features `pint-crawl` + `pub-golf` (both have **0 organic clicks/impressions over 90 days** per GSC; in-app usage is unmeasurable — no working GA4/first-party analytics), and whether Twilio (in `package.json` but unused in code) is still in the stack.
+- Commits: `76f11aa` (plan doc), `5a716ca` (Phase -1 deploy gate)
 
 ### SEO redirect consolidation (2026-05-03)
 - Fixed the legacy redirect half of the highest-priority canonical redirect work:
