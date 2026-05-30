@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import { describe, it } from 'node:test'
 
-import { pubUrl, suburbUrl, absolutePubUrl, toSuburbSlug } from './urls'
+import { pubUrl, suburbUrl, absolutePubUrl, absoluteSuburbUrl, toSuburbSlug } from './urls'
 
 // SEO TRIPWIRE — frozen snapshot of every live suburb's URL slug, captured
 // 2026-05-30 from the production `pubs` table (150 distinct suburbs). Pub and
@@ -199,5 +199,8 @@ describe('url builders', () => {
       absolutePubUrl({ suburb: 'Fremantle', slug: 'the-norfolk-hotel' }),
       'https://perthpintprices.com/fremantle/the-norfolk-hotel',
     )
+  })
+  it('absoluteSuburbUrl prefixes the production origin (input is already a slug)', () => {
+    assert.equal(absoluteSuburbUrl('oconnor'), 'https://perthpintprices.com/oconnor')
   })
 })

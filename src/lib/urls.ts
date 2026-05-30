@@ -1,4 +1,5 @@
-const BASE_URL = 'https://perthpintprices.com'
+/** Canonical production origin — the single source of truth for absolute URLs. */
+export const BASE_URL = 'https://perthpintprices.com'
 
 /**
  * Canonical suburb -> URL slug for every pub and suburb page on the site.
