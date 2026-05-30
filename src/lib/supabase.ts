@@ -1,6 +1,7 @@
 import { createClient } from '@supabase/supabase-js'
 import { Pub } from '@/types/pub'
 import { getHappyHourStatus } from '@/lib/happyHourLive'
+import { toSuburbSlug } from './urls'
 
 function titleCase(str: string): string {
   if (!str) return str
@@ -523,13 +524,10 @@ export interface SuburbInfo {
   happyHourCount: number
 }
 
-export function toSuburbSlug(suburb: string): string {
-  return suburb
-    .toLowerCase()
-    .replace(/['']/g, '')
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-|-$/g, '')
-}
+// toSuburbSlug is the canonical URL-slug kernel; it now lives in ./urls (the
+// pure URL seam). Re-exported here so existing `@/lib/supabase` importers and
+// the internal getAllSuburbs() usage below keep working unchanged.
+export { toSuburbSlug }
 
 export async function getAllSuburbs(): Promise<SuburbInfo[]> {
   const pubs = await getPubs()

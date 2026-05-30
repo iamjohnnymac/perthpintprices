@@ -1,8 +1,5 @@
 import Link from 'next/link'
-
-function toSuburbSlug(suburb: string): string {
-  return suburb.toLowerCase().replace(/['']/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
-}
+import { pubUrl } from '@/lib/urls'
 
 interface HeroSectionProps {
   pubs: { price: number | null; suburb: string; slug: string }[]
@@ -58,7 +55,7 @@ export default function HeroSection({ pubs }: HeroSectionProps) {
           <span className="font-mono text-[0.6rem] font-bold uppercase tracking-[0.08em] text-gray-mid block mt-0.5">Suburbs</span>
         </Link>
         {cheapestPub ? (
-          <Link href={`/${toSuburbSlug(cheapestPub.suburb)}/${cheapestPub.slug}`} className="border-3 border-ink rounded-card px-5 py-3.5 text-center min-w-[100px] bg-amber shadow-hard-sm animate-fade-up stagger-7 hover:translate-y-[-2px] transition-transform">
+          <Link href={pubUrl(cheapestPub)} className="border-3 border-ink rounded-card px-5 py-3.5 text-center min-w-[100px] bg-amber shadow-hard-sm animate-fade-up stagger-7 hover:translate-y-[-2px] transition-transform">
             <span className="font-mono text-[1.6rem] font-extrabold tracking-[-0.02em] block leading-[1.1] text-white">${cheapest}</span>
             <span className="font-mono text-[0.6rem] font-bold uppercase tracking-[0.08em] text-white/80 block mt-0.5">Cheapest</span>
           </Link>

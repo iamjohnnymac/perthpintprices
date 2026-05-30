@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
-import { getPubBySlug, toSuburbSlug } from '@/lib/supabase'
+import { getPubBySlug } from '@/lib/supabase'
+import { pubUrl } from '@/lib/urls'
 
 interface RouteContext {
   params: { slug: string }
@@ -15,6 +16,6 @@ export async function GET(request: Request, { params }: RouteContext) {
     return new Response('Not found', { status: 404 })
   }
 
-  const destination = new URL(`/${toSuburbSlug(pub.suburb)}/${pub.slug}`, request.url)
+  const destination = new URL(pubUrl(pub), request.url)
   return NextResponse.redirect(destination, 301)
 }

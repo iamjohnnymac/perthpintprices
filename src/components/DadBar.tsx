@@ -6,10 +6,7 @@ import { useState, useMemo } from 'react'
 import { Pub } from '@/types/pub'
 import { getDistanceKm, formatDistance } from '@/lib/location'
 import { Users, MapPin } from 'lucide-react'
-
-function toSuburbSlug(suburb: string): string {
-  return suburb.toLowerCase().replace(/['']/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
-}
+import { pubUrl } from '@/lib/urls'
 
 const DAD_JOKES = [
   "I told my kids I'd buy them a drink at the pub. They got lemonade. I got a pint. Everyone won.",
@@ -120,7 +117,7 @@ export default function DadBar({ pubs, userLocation }: { pubs: Pub[], userLocati
             {/* Pub list */}
             <div className="space-y-0">
               {displayPubs.map((pub, i) => (
-                <Link key={pub.id} href={`/${toSuburbSlug(pub.suburb)}/${pub.slug}`} className={`flex items-center gap-2 px-3 py-2.5 no-underline group ${i > 0 ? 'border-t border-gray-light' : ''} ${i === 0 ? 'bg-amber/5' : ''}`}>
+                <Link key={pub.id} href={pubUrl(pub)} className={`flex items-center gap-2 px-3 py-2.5 no-underline group ${i > 0 ? 'border-t border-gray-light' : ''} ${i === 0 ? 'bg-amber/5' : ''}`}>
                   <span className={`font-mono text-[0.65rem] font-bold w-4 ${i === 0 ? 'text-amber' : 'text-gray-mid'}`}>{i === 0 ? '\u2605' : `${i + 1}`}</span>
                   <div className="flex-1 min-w-0">
                     <span className="font-body text-sm font-bold text-ink group-hover:text-amber transition-colors truncate block">{pub.name}</span>

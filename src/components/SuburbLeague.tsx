@@ -4,6 +4,7 @@ import { useState, useMemo } from 'react'
 import Link from 'next/link'
 import { Pub } from '@/types/pub'
 import { BarChart3 } from 'lucide-react'
+import { suburbUrl } from '@/lib/urls'
 
 interface SuburbStats {
   suburb: string
@@ -18,10 +19,6 @@ interface SuburbStats {
 type RowItem =
   | { type: 'divider'; label: string; colorClass: string }
   | { type: 'suburb'; pos: number; stats: SuburbStats; rowBg: string }
-
-function toSlug(name: string): string {
-  return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
-}
 
 export default function SuburbLeague({ pubs }: { pubs: Pub[] }) {
   const [isExpanded, setIsExpanded] = useState(true)
@@ -196,7 +193,7 @@ export default function SuburbLeague({ pubs }: { pubs: Pub[] }) {
                     <tr key={s.suburb} className={rowBg}>
                       <td className="px-2 py-2 text-center font-mono font-bold text-gray-mid text-[0.7rem]">{pos}</td>
                       <td className="px-2 py-2 text-left">
-                        <Link href={`/${toSlug(s.suburb)}`} className="font-body text-sm font-bold text-ink hover:text-amber transition-colors no-underline">{s.suburb}</Link>
+                        <Link href={suburbUrl(s.suburb)} className="font-body text-sm font-bold text-ink hover:text-amber transition-colors no-underline">{s.suburb}</Link>
                         <span className="font-mono text-[0.6rem] text-gray-mid ml-1">({s.pubCount})</span>
                       </td>
                       <td className="px-2 py-2 text-center font-mono font-bold text-ink text-sm">${s.avgPrice.toFixed(2)}</td>

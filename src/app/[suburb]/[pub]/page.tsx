@@ -1,7 +1,7 @@
 import { Metadata } from 'next'
 import { notFound, permanentRedirect } from 'next/navigation'
-import { getPubBySlug, getAllPubSlugPairs, getNearbyPubs, getSiteStats, toSuburbSlug } from '@/lib/supabase'
-import { absolutePubUrl, absoluteSuburbUrl } from '@/lib/urls'
+import { getPubBySlug, getAllPubSlugPairs, getNearbyPubs, getSiteStats } from '@/lib/supabase'
+import { absolutePubUrl, absoluteSuburbUrl, toSuburbSlug } from '@/lib/urls'
 import PubDetailClient from './PubDetailClient'
 
 interface PageProps {
