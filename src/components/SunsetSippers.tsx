@@ -6,10 +6,7 @@ import dynamic from 'next/dynamic'
 import { Pub } from '@/types/pub'
 import { getDistanceKm, formatDistance } from '@/lib/location'
 import { Sun, Sunset, Moon, Beer } from 'lucide-react'
-
-function toSuburbSlug(suburb: string): string {
-  return suburb.toLowerCase().replace(/['']/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
-}
+import { pubUrl } from '@/lib/urls'
 
 const MiniMap = dynamic(() => import('./MiniMap'), {
   ssr: false,
@@ -326,7 +323,7 @@ export default function SunsetSippers({ pubs, userLocation }: SunsetSippersProps
             return (
               <Link
                 key={pub.id}
-                href={`/${toSuburbSlug(pub.suburb)}/${pub.slug}`}
+                href={pubUrl(pub)}
                 className="border-3 border-ink rounded-card shadow-hard-sm bg-white overflow-hidden no-underline group"
                 onClick={(e) => e.stopPropagation()}
               >

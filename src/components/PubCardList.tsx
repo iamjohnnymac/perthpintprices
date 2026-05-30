@@ -5,10 +5,7 @@ import { CrowdReport } from '@/lib/supabase'
 import { getDistanceKm, formatDistance } from '@/lib/location'
 import Link from 'next/link'
 import { Beer, Star } from 'lucide-react'
-
-function toSuburbSlug(suburb: string): string {
-  return suburb.toLowerCase().replace(/['']/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
-}
+import { pubUrl } from '@/lib/urls'
 
 interface PubCardListProps {
   pubs: Pub[]
@@ -61,7 +58,7 @@ export default function PubCardList({
         return (
           <Link
             key={pub.id}
-            href={`/${toSuburbSlug(pub.suburb)}/${pub.slug}`}
+            href={pubUrl(pub)}
             className={`flex items-baseline justify-between py-3.5 px-2.5 -mx-2.5 border-b border-gray-light rounded-lg cursor-pointer no-underline text-ink hover:bg-off-white transition-colors ${
               isFirst ? 'border-l-[4px] border-l-amber bg-amber-pale/30 ml-0 pl-3' : ''
             }`}

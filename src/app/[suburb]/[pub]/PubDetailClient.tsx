@@ -10,19 +10,12 @@ import SubmitPubForm from '@/components/SubmitPubForm'
 import { PenLine } from 'lucide-react'
 import { formatHappyHourDays } from '@/lib/happyHourLive'
 import Footer from '@/components/Footer'
+import { pubUrl, suburbUrl } from '@/lib/urls'
 
 const PubDetailMap = dynamic(() => import('@/components/PubDetailMap'), {
   ssr: false,
   loading: () => <div className="h-[350px] bg-off-white animate-pulse rounded-card border-3 border-ink" />,
 })
-
-function toSuburbSlug(suburb: string): string {
-  return suburb
-    .toLowerCase()
-    .replace(/['']/g, '')
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-|-$/g, '')
-}
 
 function timeAgo(dateStr: string): string {
   const date = new Date(dateStr)
@@ -114,7 +107,7 @@ export default function PubDetailClient({ pub, nearbyPubs, avgPrice }: PubDetail
         <nav className="flex items-center gap-2 font-mono text-[0.7rem] text-gray-mid">
           <Link href="/" className="hover:text-amber transition-colors no-underline">Home</Link>
           <span>/</span>
-          <Link href={`/${toSuburbSlug(pub.suburb)}`} className="hover:text-amber transition-colors no-underline">{pub.suburb}</Link>
+          <Link href={suburbUrl(pub.suburb)} className="hover:text-amber transition-colors no-underline">{pub.suburb}</Link>
           <span>/</span>
           <span className="text-ink font-bold">{pub.name}</span>
         </nav>
@@ -264,7 +257,7 @@ export default function PubDetailClient({ pub, nearbyPubs, avgPrice }: PubDetail
                 More in {pub.suburb}
               </h2>
               <Link
-                href={`/${toSuburbSlug(pub.suburb)}`}
+                href={suburbUrl(pub.suburb)}
                 className="font-mono text-[0.7rem] font-bold text-amber hover:underline no-underline"
               >
                 View all →
@@ -273,7 +266,7 @@ export default function PubDetailClient({ pub, nearbyPubs, avgPrice }: PubDetail
             {nearbyPubs.map((nearby, i) => (
               <Link
                 key={nearby.id}
-                href={`/${toSuburbSlug(pub.suburb)}/${nearby.slug}`}
+                href={pubUrl({ suburb: pub.suburb, slug: nearby.slug })}
                 className={`flex items-center justify-between px-4 py-3 no-underline group hover:bg-off-white transition-colors ${
                   i < nearbyPubs.length - 1 ? 'border-b border-gray-light' : ''
                 }`}

@@ -1,7 +1,7 @@
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { getAllSuburbs, getSuburbBySlug, getSuburbPubs, getNearbySuburbs, getSiteStats, toSuburbSlug } from '@/lib/supabase'
-import { pubUrl, suburbUrl, absoluteSuburbUrl } from '@/lib/urls'
+import { getAllSuburbs, getSuburbBySlug, getSuburbPubs, getNearbySuburbs, getSiteStats } from '@/lib/supabase'
+import { absoluteSuburbUrl } from '@/lib/urls'
 import SuburbClient from './SuburbClient'
 
 interface PageProps {

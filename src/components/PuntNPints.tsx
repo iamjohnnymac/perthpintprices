@@ -5,10 +5,7 @@ import { useState, useMemo, useEffect } from 'react'
 import { Pub } from '@/types/pub'
 import { getDistanceKm, formatDistance } from '@/lib/location'
 import { Trophy, Zap, Dog, ExternalLink } from 'lucide-react'
-
-function toSuburbSlug(suburb: string): string {
-  return suburb.toLowerCase().replace(/['']/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
-}
+import { pubUrl } from '@/lib/urls'
 
 interface TabLocation {
   id: number
@@ -197,7 +194,7 @@ export default function PuntNPints({ pubs, userLocation }: PuntNPintsProps) {
             return (
               <Link
                 key={pub.id}
-                href={`/${toSuburbSlug(pub.suburb)}/${pub.slug}`}
+                href={pubUrl(pub)}
                 className={`flex items-center justify-between px-4 py-3.5 no-underline group ${
                   i > 0 ? 'border-t border-gray-light' : ''
                 } ${i === 0 ? 'bg-amber/5' : ''}`}
@@ -277,7 +274,7 @@ export default function PuntNPints({ pubs, userLocation }: PuntNPintsProps) {
               return (
                 <Link
                   key={pub.id}
-                  href={`/${toSuburbSlug(pub.suburb)}/${pub.slug}`}
+                  href={pubUrl(pub)}
                   className={`flex items-center justify-between px-4 py-3.5 no-underline group ${
                     i > 0 ? 'border-t border-gray-light' : ''
                   }`}

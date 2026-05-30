@@ -1,12 +1,11 @@
 import { MetadataRoute } from 'next'
-import { getAllPubSlugPairs, getAllSuburbs, toSuburbSlug } from '@/lib/supabase'
+import { getAllPubSlugPairs, getAllSuburbs } from '@/lib/supabase'
+import { BASE_URL, absolutePubUrl, absoluteSuburbUrl } from '@/lib/urls'
 
 // Regenerate hourly so new pubs added to Supabase appear in the sitemap
 // within 60 min. Without this, Next defaults to build-time generation and
 // the sitemap would only refresh on redeploy.
 export const revalidate = 3600
-
-const BASE_URL = 'https://perthpintprices.com'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const [slugPairs, suburbs] = await Promise.all([
@@ -34,14 +33,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ]
 
   const suburbRoutes: MetadataRoute.Sitemap = suburbs.map(s => ({
-    url: `${BASE_URL}/${s.slug}`,
+    url: absoluteSuburbUrl(s.slug),
     lastModified: now,
     changeFrequency: 'weekly' as const,
     priority: 0.8,
   }))
 
   const pubRoutes: MetadataRoute.Sitemap = slugPairs.map(pair => ({
-    url: `${BASE_URL}/${toSuburbSlug(pair.suburb)}/${pair.slug}`,
+    url: absolutePubUrl(pair),
     lastModified: now,
     changeFrequency: 'weekly' as const,
     priority: 0.6,

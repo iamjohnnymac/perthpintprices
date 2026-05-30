@@ -6,10 +6,7 @@ import { useState, useMemo } from 'react'
 import { Pub } from '@/types/pub'
 import { getDistanceKm, formatDistance } from '@/lib/location'
 import { BarChart3, TrendingDown, TrendingUp } from 'lucide-react'
-
-function toSuburbSlug(suburb: string): string {
-  return suburb.toLowerCase().replace(/['']/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
-}
+import { pubUrl } from '@/lib/urls'
 
 interface VenueIntelProps {
   pubs: Pub[]
@@ -180,7 +177,7 @@ export default function VenueIntel({ pubs, userLocation }: VenueIntelProps) {
                 </h4>
                 <div className="space-y-0">
                   {undervalued.map(({ pub, diff }, i) => (
-                    <Link key={pub.id} href={`/${toSuburbSlug(pub.suburb)}/${pub.slug}`} className={`flex items-center justify-between px-3 py-2.5 no-underline group ${i > 0 ? 'border-t border-gray-light' : ''}`}>
+                    <Link key={pub.id} href={pubUrl(pub)} className={`flex items-center justify-between px-3 py-2.5 no-underline group ${i > 0 ? 'border-t border-gray-light' : ''}`}>
                       <div className="min-w-0">
                         <span className="font-body text-[0.8rem] font-bold text-ink group-hover:text-amber transition-colors truncate block">{pub.name}</span>
                         <p className="font-body text-[0.7rem] text-gray-mid">{pub.suburb}{userLocation && ` · ${formatDistance(getDistanceKm(userLocation.lat, userLocation.lng, pub.lat, pub.lng))}`}</p>
@@ -200,7 +197,7 @@ export default function VenueIntel({ pubs, userLocation }: VenueIntelProps) {
                 </h4>
                 <div className="space-y-0">
                   {overvalued.map(({ pub, diff }, i) => (
-                    <Link key={pub.id} href={`/${toSuburbSlug(pub.suburb)}/${pub.slug}`} className={`flex items-center justify-between px-3 py-2.5 no-underline group ${i > 0 ? 'border-t border-gray-light' : ''}`}>
+                    <Link key={pub.id} href={pubUrl(pub)} className={`flex items-center justify-between px-3 py-2.5 no-underline group ${i > 0 ? 'border-t border-gray-light' : ''}`}>
                       <div className="min-w-0">
                         <span className="font-body text-[0.8rem] font-bold text-ink group-hover:text-amber transition-colors truncate block">{pub.name}</span>
                         <p className="font-body text-[0.7rem] text-gray-mid">{pub.suburb}{userLocation && ` · ${formatDistance(getDistanceKm(userLocation.lat, userLocation.lng, pub.lat, pub.lng))}`}</p>
