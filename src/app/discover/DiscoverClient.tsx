@@ -215,7 +215,7 @@ export default function DiscoverClient() {
               <p className="text-sm text-gray-mid mb-4">Starting soon near you</p>
               <div className="space-y-1">
                 {upcomingHappyHours.length === 0 && (
-                  <p className="text-sm text-gray-mid py-4 text-center">No happy hours active or upcoming right now. Check back later!</p>
+                  <p className="text-sm text-gray-mid py-4 text-center">No happy hours active or upcoming right now. Check back later.</p>
                 )}
                 {upcomingHappyHours.map(({ pub, status }) => (
                   <Link key={pub.id} href={pubUrl(pub)} className="flex items-center justify-between p-2.5 rounded-card border-l-2 border-l-transparent hover:border-l-amber hover:bg-off-white transition-all group no-underline">
@@ -257,8 +257,8 @@ export default function DiscoverClient() {
               {[
                 { emoji: 'sunset', title: 'Sunset Sippers', desc: 'West-facing patios and rooftop bars for golden hour pints.', bg: 'bg-amber-pale', count: pubPickCounts.sunset, href: '/guides/sunset-sippers' },
                 { emoji: 'users', title: 'The Dad Bar', desc: 'No fairy lights, no craft beer menu. Just honest pints and the footy on.', bg: 'bg-white', count: pubPickCounts.dad, href: '/guides/dad-bar' },
-                { emoji: 'sun', title: 'Beer Weather', desc: 'Live BOM data matched to beer garden picks. Is it a beer garden arvo?', bg: 'bg-green-pale', count: pubPickCounts.beer, href: '/guides/beer-weather' },
-                { emoji: 'umbrella', title: 'Cozy Corners', desc: 'Fireplaces, booths, and warmth for when it\'s bucketing down.', bg: 'bg-white', count: pubPickCounts.cozy, href: '/guides/cozy-corners' },
+                { emoji: 'sun', title: 'Beer Weather', desc: 'Live BOM data matched to beer garden picks — so you know before you walk.', bg: 'bg-green-pale', count: pubPickCounts.beer, href: '/guides/beer-weather' },
+                { emoji: 'umbrella', title: 'Cosy Corners', desc: 'Fireplaces, booths, and warmth for when it\'s bucketing down.', bg: 'bg-white', count: pubPickCounts.cozy, href: '/guides/cozy-corners' },
                 { emoji: 'trophy', title: 'Punt & Pints', desc: 'TAB screens, cold pints, and a flutter on the trots.', bg: 'bg-white', count: pubPickCounts.punt, href: '/guides/punt-and-pints' },
                 { emoji: 'clock', title: 'Happy Hours', desc: 'Live deals happening right now across Perth.', bg: 'bg-amber-pale', count: pubPickCounts.happy, href: '/happy-hour' },
               ].map((card) => (
@@ -290,7 +290,7 @@ export default function DiscoverClient() {
               href="/?submit=1"
               className="inline-flex font-mono text-[0.85rem] font-bold uppercase tracking-[0.05em] text-ink bg-amber-light border-3 border-ink rounded-pill px-9 py-4 shadow-hard-sm hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-hard-hover transition-all no-underline"
             >
-              Submit a Price
+              Report a price
             </Link>
             <p className="text-white/40 text-sm mt-4">{pubs.length} venues tracked · Updated weekly</p>
           </div>

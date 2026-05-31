@@ -22,7 +22,7 @@ export default function FAQ() {
     },
     {
       q: 'Can I submit a price?',
-      a: 'Absolutely. Hit "Submit a Price" in the top nav or use the Report button on any pub page.',
+      a: 'Absolutely. Hit "Report a price" in the top nav or use the Report button on any pub page.',
     },
     {
       q: 'Why is a pub showing "Price TBC"?',

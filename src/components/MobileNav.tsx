@@ -97,7 +97,7 @@ export default function MobileNav({ onSubmitClick }: MobileNavProps) {
                   className="w-full font-mono text-[0.82rem] font-bold uppercase tracking-[0.05em] text-white bg-amber border-3 border-ink rounded-pill py-3.5 shadow-hard-sm hover:translate-x-[1.5px] hover:translate-y-[1.5px] hover:shadow-hard-hover transition-all cursor-pointer text-center"
                 >
                   <Beer className="w-4 h-4 inline mr-1.5 -mt-0.5" />
-                  Submit a Price
+                  Report a price
                 </button>
               ) : (
                 <Link
@@ -106,7 +106,7 @@ export default function MobileNav({ onSubmitClick }: MobileNavProps) {
                   className="block w-full font-mono text-[0.82rem] font-bold uppercase tracking-[0.05em] text-white bg-amber border-3 border-ink rounded-pill py-3.5 shadow-hard-sm hover:translate-x-[1.5px] hover:translate-y-[1.5px] hover:shadow-hard-hover transition-all no-underline text-center"
                 >
                   <Beer className="w-4 h-4 inline mr-1.5 -mt-0.5" />
-                  Submit a Price
+                  Report a price
                 </Link>
               )}
             </div>

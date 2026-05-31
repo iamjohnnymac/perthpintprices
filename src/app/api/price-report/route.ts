@@ -86,8 +86,8 @@ export async function POST(req: NextRequest) {
     await revalidateReportedPub(pub_slug)
 
     const message = isOutdatedReport
-      ? 'Thanks for flagging! We\'ll check this price.'
-      : 'Price reported! Thanks for contributing.'
+      ? 'Thanks for flagging — we\'ll check this price.'
+      : 'Price reported. Thanks for contributing.'
 
     return NextResponse.json({ success: true, message })
   } catch {

@@ -49,7 +49,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Failed to submit' }, { status: 500 });
     }
 
-    return NextResponse.json({ success: true, message: 'Pub submitted! We\'ll review it shortly.' });
+    return NextResponse.json({ success: true, message: 'Pub submitted. We\'ll review it shortly.' });
   } catch {
     return NextResponse.json({ error: 'Invalid request' }, { status: 400 });
   }
