@@ -152,6 +152,32 @@
   "platform_settings": {
     "call_limits": {
       "agent_concurrency_limit": 8
+    },
+    "data_collection": {
+      "price": {
+        "type": "number",
+        "description": "Cheapest pint price in AUD as a number (e.g. 9, 8.5). Null if not captured. Convert schooner/pot quotes to pint-equivalent only when unit is explicitly stated; otherwise record the raw number and set `unit` accordingly."
+      },
+      "beer_type": {
+        "type": "string",
+        "description": "Brand/tap name of the cheapest pint (e.g. 'Swan Draught', 'Great Northern', 'Coopers Pale'). Empty string if the bartender didn't say."
+      },
+      "unit": {
+        "type": "string",
+        "description": "Serving unit the price refers to. One of: 'pint', 'schooner', 'pot'. Default 'pint' if not specified."
+      },
+      "happy_hour": {
+        "type": "string",
+        "description": "Verbatim happy-hour description if mentioned (e.g. 'Mon-Fri 4-6pm', 'daily 5-7'). Empty string if not mentioned or no happy hour."
+      },
+      "confidence": {
+        "type": "string",
+        "description": "How confident you are in the captured price/brand: 'high' (bartender stated clearly), 'medium' (inferred from ambiguous quote), 'low' (guessed from fragments). Use 'do_not_call' ONLY if the bartender explicitly asked us never to call again."
+      },
+      "raw_quote": {
+        "type": "string",
+        "description": "Short verbatim snippet of what the bartender actually said about the price."
+      }
     }
   }
 }
