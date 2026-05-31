@@ -3,7 +3,7 @@ interface ArticleJsonLdInput {
   headline: string
   description: string
   dateModified: string
-  dateReviewed: string
+  lastReviewed: string
 }
 
 export function buildArticleJsonLd({
@@ -11,7 +11,7 @@ export function buildArticleJsonLd({
   headline,
   description,
   dateModified,
-  dateReviewed,
+  lastReviewed,
 }: ArticleJsonLdInput) {
   return {
     '@context': 'https://schema.org',
@@ -22,6 +22,7 @@ export function buildArticleJsonLd({
     mainEntityOfPage: {
       '@type': 'WebPage',
       '@id': url,
+      lastReviewed,
     },
     author: {
       '@type': 'Organization',
@@ -38,6 +39,5 @@ export function buildArticleJsonLd({
       },
     },
     dateModified,
-    dateReviewed,
   }
 }

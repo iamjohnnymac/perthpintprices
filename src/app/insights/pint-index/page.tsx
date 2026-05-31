@@ -8,6 +8,8 @@ const canonical = 'https://perthpintprices.com/insights/pint-index'
 const description = "The median pint in Perth, tracked across the pubs we cover and updated as prices come in — the spread by suburb, the quarter's moves, and who's still under $10."
 const fallbackModified = '2026-05-31T00:00:00.000Z'
 
+export const revalidate = 3600
+
 export const metadata: Metadata = {
   title: 'Perth Pint Index™: Live Beer Price Tracker',
   description,
@@ -43,7 +45,7 @@ export default async function Page() {
     headline: 'Perth Pint Index: Live Beer Price Tracker',
     description,
     dateModified: latestPubModified,
-    dateReviewed: latestPubModified,
+    lastReviewed: latestPubModified,
   })
 
   return (

@@ -8,7 +8,7 @@ test('buildArticleJsonLd emits Article schema with freshness fields', () => {
     headline: 'Perth Pint Index',
     description: 'Track Perth pint prices.',
     dateModified: '2026-05-31T00:00:00.000Z',
-    dateReviewed: '2026-05-31T00:00:00.000Z',
+    lastReviewed: '2026-05-31T00:00:00.000Z',
   })
 
   assert.equal(jsonLd['@context'], 'https://schema.org')
@@ -17,8 +17,9 @@ test('buildArticleJsonLd emits Article schema with freshness fields', () => {
   assert.deepEqual(jsonLd.mainEntityOfPage, {
     '@type': 'WebPage',
     '@id': 'https://perthpintprices.com/insights/pint-index',
+    lastReviewed: '2026-05-31T00:00:00.000Z',
   })
   assert.equal(jsonLd.author.name, 'Perth Pint Prices')
   assert.equal(jsonLd.dateModified, '2026-05-31T00:00:00.000Z')
-  assert.equal(jsonLd.dateReviewed, '2026-05-31T00:00:00.000Z')
+  assert.equal('dateReviewed' in jsonLd, false)
 })
