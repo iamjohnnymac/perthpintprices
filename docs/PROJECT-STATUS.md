@@ -11,9 +11,9 @@ Stack, database, routes, components, and lib files are documented in `CLAUDE.md`
 ## What's done recently
 
 ### Andrew guardrails draft PR opened (2026-05-31)
-- **Issue #63 / draft PR #68 / code commit `7f21226`:** revived the unmerged Andrew call-safety work on a fresh `codex/andrew-dnc-cooldown` branch. Adds `phone_call_log`-based do-not-call exclusion, a real 72h call cooldown in `/api/pintsweep/kickoff`, post-call fallback persistence from ElevenLabs data collection, and `scripts/mark-dnc.mjs` for manual DNC markers.
-- **Status:** not merged or deployed yet. Draft PR is awaiting independent review before #63 can be closed or the Data Coverage backfill can safely begin.
-- **Verification on branch:** `npx tsc --noEmit`, `npm test` (**173/173 tests**), `npm run lint` (passes with the existing `SubmitPubForm`/`SunsetSippers` warnings), and `npm run build`.
+- **Issue #63 / draft PR #68 / commits `7f21226` + `e41ecba`:** revived the unmerged Andrew call-safety work on a fresh `codex/andrew-dnc-cooldown` branch. Adds `phone_call_log`-based do-not-call exclusion, 72h-minimum call cooldown in `/api/pintsweep/kickoff`, queued-call reservations before ElevenLabs batch submit, `call_initiation_failure` logging, post-call fallback persistence from ElevenLabs data collection, and `scripts/mark-dnc.mjs` for manual DNC markers.
+- **Status:** not merged or deployed yet. First peer review blocked merge on repeated-call gaps; `e41ecba` addresses those gaps and is awaiting re-review before #63 can be closed or the Data Coverage backfill can safely begin.
+- **Verification on branch:** `npx tsc --noEmit`, `npm test` (**177/177 tests**), `npm run lint` (passes with the existing `SubmitPubForm`/`SunsetSippers` warnings), and `npm run build`.
 
 ### HappyHourEngine refactor shipped (2026-05-31)
 - **Issue #56 / commit `2279802`:** collapsed the dual happy-hour engines into the structured `happyHourLive` path and deleted the lossy `src/lib/happyHour.ts` parser. `happyHourLive` now owns active/starting-soon status, effective price, minutes remaining, starts-in-minutes, countdown text, and structured labels from raw `happy_hour_days/start/end` fields.
