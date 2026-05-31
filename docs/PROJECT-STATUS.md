@@ -11,8 +11,8 @@ Stack, database, routes, components, and lib files are documented in `CLAUDE.md`
 ## What's done recently
 
 ### Andrew guardrails draft PR opened (2026-05-31)
-- **Issue #63 / draft PR #68 / commits `7f21226` + `e41ecba`:** revived the unmerged Andrew call-safety work on a fresh `codex/andrew-dnc-cooldown` branch. Adds `phone_call_log`-based do-not-call exclusion, 72h-minimum call cooldown in `/api/pintsweep/kickoff`, queued-call reservations before ElevenLabs batch submit, `call_initiation_failure` logging, post-call fallback persistence from ElevenLabs data collection, and `scripts/mark-dnc.mjs` for manual DNC markers.
-- **Status:** not merged or deployed yet. First peer review blocked merge on repeated-call gaps; `e41ecba` addresses those gaps and is awaiting re-review before #63 can be closed or the Data Coverage backfill can safely begin.
+- **Issue #63 / draft PR #68 / commits `7f21226` + `e41ecba` + `f150f6a`:** revived the unmerged Andrew call-safety work on a fresh `codex/andrew-dnc-cooldown` branch. Adds `phone_call_log`-based do-not-call exclusion, 72h-minimum call cooldown in `/api/pintsweep/kickoff`, queued-call reservations before ElevenLabs batch submit, unique reservation IDs, `call_initiation_failure` logging, post-call fallback persistence from ElevenLabs data collection, and `scripts/mark-dnc.mjs` for manual DNC markers.
+- **Status:** not merged or deployed yet. First peer review blocked merge on repeated-call gaps; `e41ecba` addresses those gaps and `f150f6a` fixes the second-review reservation ID collision risk. Awaiting final re-review before #63 can be closed or the Data Coverage backfill can safely begin.
 - **Verification on branch:** `npx tsc --noEmit`, `npm test` (**177/177 tests**), `npm run lint` (passes with the existing `SubmitPubForm`/`SunsetSippers` warnings), and `npm run build`.
 
 ### HappyHourEngine refactor shipped (2026-05-31)
