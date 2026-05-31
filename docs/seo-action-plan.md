@@ -195,6 +195,8 @@ Each one needs: 200-word original editorial intro, answer-first block, FAQPage s
 
 Pre-work: Pint Index page needs YoY chart, "share this stat" callouts, methodology paragraph. ~2 hours of design + copy.
 
+Community companion: `docs/community-discovery-loop.md` covers the transparent Reddit/community loop for issue #115. It keeps Pint Index sharing separate from PR outreach: answer relevant community questions with useful numbers, disclose PPP ownership, and avoid link-only or synthetic mention-building.
+
 **Expected impact**: One placement in WAtoday or Perth Now would 3-5× current click volume directly, plus referring-domain authority → unblocks indexation for the 373 "Discovered not indexed" pages.
 
 ---
@@ -238,6 +240,7 @@ Pre-work: Pint Index page needs YoY chart, "share this stat" callouts, methodolo
 - Call out every AI/search-assistant and community/social source with **>0 sessions**, including top landing pages and key events where available
 - Track DuckDuckGo separately from Google/Bing where GA4 exposes it
 - Tag community posts and PR outreach with the UTM convention in `docs/seo-snapshots/TEMPLATE.md`
+- For Reddit/community work, follow `docs/community-discovery-loop.md`; the required source matching includes both `reddit.com` and `old.reddit.com`
 - Later, add a `npm run seo-snapshot` script that pulls GSC top-100 queries and pages each Monday into `docs/seo-snapshots/2026-MM-DD.md` for trend tracking
 - Quarterly: re-pull this exact data and check movement against the above 11 actions
 

@@ -10,6 +10,12 @@ Stack, database, routes, components, and lib files are documented in `CLAUDE.md`
 
 ## What's done recently
 
+### Community + Reddit discovery loop documented (2026-06-01)
+- **Issue #115 / branch `codex/community-reddit-loop`:** added `docs/community-discovery-loop.md` with the first 10 Reddit/community targets, self-promo norms, and a transparent Pint Index community-post draft.
+- **Content + tracking:** added Reddit-sourced #27/#32 backlog questions and a referral plan that tracks `reddit.com`, `old.reddit.com`, `reddit`, and `old-reddit` alongside the existing SEO snapshot template.
+- **Guardrails:** explicitly bans inauthentic mention seeding, aged-account boosting, sockpuppets, vote manipulation, unsolicited DMs, link-only replies, and undisclosed promotion.
+- **Verification:** docs-only change; verified with `git diff --check`.
+
 ### AI/community SEO snapshot tracking documented (2026-06-01)
 - **Issue #116 / branch `codex/ai-community-seo-snapshot`:** added `docs/seo-snapshots/TEMPLATE.md` as the #36 weekly SEO snapshot template, with required AI-referral and community-referral callouts for any source sending **>0 sessions**.
 - **GA4 + UTM process:** documented the GA4 exploration definitions for AI/search-assistant, community/social, DuckDuckGo, landing-page, and future key-event reporting. Added a lowercase UTM convention for community posts and PR outreach.
