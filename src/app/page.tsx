@@ -49,7 +49,7 @@ function HomeJsonLd() {
       name: 'Perth Pint Prices',
       alternateName: 'Arvo',
       url: 'https://perthpintprices.com',
-      description: "Perth's pint prices, sorted. Real prices from real people.",
+      description: "What a pint costs across Perth's pubs — checked, dated, and sorted cheapest first.",
     },
     {
       '@context': 'https://schema.org',
@@ -84,7 +84,7 @@ function HomeJsonLd() {
           name: 'Can I submit a price?',
           acceptedAnswer: {
             '@type': 'Answer',
-            text: 'Absolutely. Hit "Submit a Price" in the top nav or use the Report button on any pub page.',
+            text: 'Absolutely. Hit "Report a price" in the top nav or use the Report button on any pub page.',
           },
         },
         {
@@ -92,7 +92,7 @@ function HomeJsonLd() {
           name: 'Why is a pub showing "Price TBC"?',
           acceptedAnswer: {
             '@type': 'Answer',
-            text: 'We only display prices we\'ve confirmed. "Price TBC" means we know the pub exists but haven\'t verified its current pint price yet. You can help by submitting it!',
+            text: 'We only display prices we\'ve confirmed. "Price TBC" means we know the pub exists but haven\'t verified its current pint price yet. You can help by submitting it.',
           },
         },
         {

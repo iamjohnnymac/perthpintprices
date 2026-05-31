@@ -313,7 +313,7 @@ export default function SuburbClient({ suburb, pubs, nearbySuburbs, perthAvgPric
             href="/?submit=1"
             className="inline-flex font-mono text-[0.85rem] font-bold uppercase tracking-[0.05em] text-ink bg-amber-light border-3 border-ink rounded-pill px-9 py-4 shadow-hard-sm hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-hard-hover transition-all no-underline"
           >
-            Submit a Price
+            Report a price
           </Link>
         </div>
       </section>

@@ -529,7 +529,7 @@ export default function SubmitPubForm({ isOpen, onClose, userLocation, initialPu
     : 'Report an Issue';
 
   const modeSubtitle = mode === 'existing'
-    ? 'Know a cheap pint? Let us know!'
+    ? 'Know a cheap pint? Tell us.'
     : mode === 'new'
     ? 'Add a pub we\'re missing'
     : mode === 'scan-menu'
@@ -537,12 +537,12 @@ export default function SubmitPubForm({ isOpen, onClose, userLocation, initialPu
     : 'Closed, renovating, or something else?';
 
   const submittedMessage = mode === 'existing'
-    ? 'Price submitted! We\'ll review it shortly.'
+    ? 'Price submitted. We\'ll review it shortly.'
     : mode === 'report-outdated'
-    ? 'Thanks for the heads up! We\'ll look into it.'
+    ? 'Thanks for the heads up — we\'ll look into it.'
     : mode === 'scan-menu'
-    ? 'Prices submitted! We\'ll review them shortly.'
-    : 'Pub submitted! We\'ll review and add it soon.';
+    ? 'Prices submitted. We\'ll review them shortly.'
+    : 'Pub submitted. We\'ll review and add it soon.';
 
   // Pub search widget (shared by 'existing' and 'report-outdated')
   const pubSearchWidget = (
@@ -708,7 +708,7 @@ export default function SubmitPubForm({ isOpen, onClose, userLocation, initialPu
               </svg>
             </div>
             <h3 className="font-mono font-extrabold text-xl text-ink mb-2">
-              Thanks legend! <Beer className="w-4 h-4 inline" />
+              Thanks — that&apos;s logged. <Beer className="w-4 h-4 inline" />
             </h3>
             <p className="text-gray-mid text-sm">
               {submittedMessage}

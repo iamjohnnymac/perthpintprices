@@ -60,8 +60,8 @@ export default function CrowdReporter({ pubId, pubName, onClose, onReport }: Cro
           {isSuccess ? (
             <div className="text-center py-8">
               <CircleCheck className="w-16 h-16 text-amber mb-4" />
-              <p className="text-white font-semibold text-lg">Thanks!</p>
-              <p className="text-gray-400 text-sm">Your report helps others find the vibe!</p>
+              <p className="text-white font-semibold text-lg">Thanks.</p>
+              <p className="text-gray-400 text-sm">Your report helps others know how busy it is.</p>
             </div>
           ) : (
             <>

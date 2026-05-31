@@ -21,7 +21,7 @@ const features = [
   },
   {
     icon: CheckCircle,
-    heading: 'Always verified',
+    heading: 'Dated, not guessed',
     desc: 'Every price shows when it was last checked. Stale data gets flagged so you know what\'s fresh.',
   },
 ]

@@ -39,7 +39,7 @@ export default function SocialProof({ avgPrice, venueCount, onSubmitClick }: Soc
           onClick={onSubmitClick}
           className="inline-flex items-center gap-2 font-mono text-[0.85rem] font-bold uppercase tracking-[0.05em] text-ink bg-amber-light border-3 border-ink rounded-pill px-9 py-4 shadow-hard hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-hard-hover active:translate-x-[4px] active:translate-y-[4px] active:shadow-none transition-all cursor-pointer"
         >
-          Submit a Price →
+          Report a price →
         </button>
       </div>
     </section>

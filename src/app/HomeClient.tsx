@@ -341,7 +341,7 @@ function HomeContent({ initialPubs }: { initialPubs: Pub[] }) {
             className="hidden sm:inline-flex font-mono text-[0.72rem] font-bold uppercase tracking-[0.05em] text-ink bg-white border-3 border-ink rounded-pill px-5 py-2.5 shadow-hard-sm hover:translate-x-[1.5px] hover:translate-y-[1.5px] hover:shadow-hard-hover transition-all cursor-pointer"
             data-submit-trigger
           >
-            Submit a Price
+            Report a price
           </button>
           <MobileNav />
         </div>
