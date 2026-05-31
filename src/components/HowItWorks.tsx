@@ -38,7 +38,7 @@ export default function HowItWorks({ venueCount = 0, suburbCount = 0 }: HowItWor
           If we can&apos;t confirm it, we say so.
         </p>
         <p className="font-body text-[0.9rem] text-gray-mid font-medium text-center mb-10">
-          Community-sourced, regularly verified, always transparent.
+          Reported by punters and Andrew, dated, and sorted cheapest first.
         </p>
 
         {/* Feature cards */}

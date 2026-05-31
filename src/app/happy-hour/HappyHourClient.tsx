@@ -86,6 +86,11 @@ export default function HappyHourClient({ initialPubs }: HappyHourClientProps) {
 
   const hasLocation = locationState === 'granted' && userLocation !== null
 
+  const minHhPrice = pubs.reduce((min, p) => {
+    const pr = p.happyHourPrice ?? p.price ?? p.regularPrice
+    return pr != null && pr < min ? pr : min
+  }, Infinity)
+
   return (
     <div className="min-h-screen bg-[#FDF8F0]">
       <SubPageNav title="Happy Hours" />
@@ -94,7 +99,7 @@ export default function HappyHourClient({ initialPubs }: HappyHourClientProps) {
         {/* Page heading */}
         <div className="mb-6">
           <h1 className="font-mono font-extrabold text-[clamp(1.8rem,5vw,2.4rem)] tracking-[-0.03em] text-ink leading-[1.1]">
-            Happy Hours
+            Perth happy hours, on now
           </h1>
 
           {!loading && pubs.length > 0 && (
@@ -105,6 +110,14 @@ export default function HappyHourClient({ initialPubs }: HappyHourClientProps) {
               </span>
             </div>
           )}
+
+          <p className="font-body text-[0.9rem] leading-relaxed text-gray-mid mt-3">
+            {pubs.length > 0 ? (
+              <><span className="text-ink font-bold">{pubs.length}</span> Perth {pubs.length === 1 ? 'pub has' : 'pubs have'} a happy hour running right now{minHhPrice !== Infinity && <>, pints from <span className="font-mono font-bold text-ink">${minHhPrice.toFixed(2)}</span></>}. We list them live — what&apos;s on, what the pint drops to, and when we last confirmed it — so you&apos;re not turning up to a board that changed last month.</>
+            ) : (
+              <>No happy hours we&apos;ve confirmed running right now. They move around — check back later, or browse <Link href="/discover" className="text-amber font-bold hover:underline">all the pubs</Link>.</>
+            )}
+          </p>
 
           {lastRefresh && !loading && (
             <p className="text-gray-mid text-[0.7rem] mt-2">

@@ -4,7 +4,7 @@ import PuntAndPintsPage from './PuntAndPintsPage'
 
 export const metadata: Metadata = {
   title: 'Punt & Pints: Perth Pubs with TAB Facilities',
-  description: "Find Perth pubs with TAB facilities. Watch the races, place a bet, and enjoy a cold pint. Verified prices across Perth.",
+  description: "A TAB, the races on, and a pint that won't clean you out. The Perth pubs that do both, with verified prices.",
   alternates: { canonical: 'https://perthpintprices.com/guides/punt-and-pints' },
   openGraph: {
     title: 'Punt & Pints: Perth Pubs with TAB | Perth Pint Prices',

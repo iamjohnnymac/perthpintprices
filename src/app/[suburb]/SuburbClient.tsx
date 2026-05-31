@@ -6,6 +6,7 @@ import { CheckCircle2, HelpCircle } from 'lucide-react'
 import { Pub } from '@/types/pub'
 import { SuburbInfo } from '@/lib/supabase'
 import { getFreshness, formatVerifiedDate, FreshnessLevel } from '@/lib/freshness'
+import { suburbObservation } from '@/lib/suburbObservation'
 import SubPageNav from '@/components/SubPageNav'
 import Footer from '@/components/Footer'
 
@@ -32,6 +33,21 @@ export default function SuburbClient({ suburb, pubs, nearbySuburbs, perthAvgPric
   const diffText = avgNum > 0
     ? `${Math.abs(Math.round(priceDiff))}% ${isCheaper ? 'cheaper' : 'more expensive'} than Perth average`
     : null
+
+  // ─── Answer-first lead (content-pack §6) ───
+  const cheapestNum = Number(suburb.cheapestPrice)
+  const cheapestPubObj = pubs.find(p => p.slug === suburb.cheapestPubSlug) ?? null
+  const hasLead = suburb.cheapestPrice !== 'TBC' && cheapestNum > 0 && avgNum > 0 && !!suburb.cheapestPub
+  const leadDelta = hasLead ? avgNum - cheapestNum : 0
+  const checkedDate = cheapestPubObj?.lastVerified
+    ? new Date(cheapestPubObj.lastVerified).toLocaleDateString('en-AU', { day: 'numeric', month: 'short' })
+    : null
+  const observation = suburbObservation({
+    happyHourNowCount: pubs.filter(p => p.isHappyHourNow).length,
+    verifiedPrices: pubs.filter(p => p.priceVerified && p.price !== null).map(p => p.price as number),
+    pubCount: suburb.pubCount,
+  })
+  const neighbours = nearbySuburbs.slice(0, 2)
 
   return (
     <main className="min-h-screen bg-[#FDF8F0]">
@@ -78,13 +94,35 @@ export default function SuburbClient({ suburb, pubs, nearbySuburbs, perthAvgPric
           ))}
         </div>
 
-        {/* Auto-generated content paragraph — unique per suburb, good for SEO */}
-        <p className="text-gray-mid text-[0.82rem] leading-relaxed mt-5">
-          {suburb.name} has {suburb.pubCount} {suburb.pubCount === 1 ? 'venue' : 'venues'} tracked on Perth Pint Prices
-          {suburb.cheapestPrice !== 'TBC' && suburb.cheapestPub && (<>, with pints starting from ${suburb.cheapestPrice} at {suburb.cheapestPub}</>)}
-          {suburb.happyHourCount > 0 && (<>. {suburb.happyHourCount} {suburb.happyHourCount === 1 ? 'venue offers' : 'venues offer'} happy hour deals</>)}
-          {diffText && (<>. {suburb.name} is {diffText}</>)}
-          . All prices are community-verified and updated regularly.
+        {/* Answer-first lead (content-pack §6) — data-fed, truthful absence */}
+        <p className="font-body text-[0.9rem] leading-relaxed text-ink mt-5">
+          {hasLead ? (
+            <>
+              The cheapest pint in {suburb.name} is <span className="font-mono font-bold">${suburb.cheapestPrice}</span>
+              {suburb.cheapestPubSlug
+                ? <> at <Link href={`/${suburbSlug}/${suburb.cheapestPubSlug}`} className="text-amber font-bold hover:underline">{suburb.cheapestPub}</Link></>
+                : <> at {suburb.cheapestPub}</>}
+              {checkedDate && <> (checked {checkedDate})</>}
+              {leadDelta >= 0.5
+                ? <> — <span className="font-mono font-bold">${leadDelta.toFixed(2)}</span> under the suburb average of ${suburb.avgPrice} across {suburb.pubCount} {suburb.pubCount === 1 ? 'pub' : 'pubs'}.</>
+                : <> — about the ${suburb.avgPrice} average across {suburb.pubCount} {suburb.pubCount === 1 ? 'pub' : 'pubs'}.</>}
+              {observation && <> {observation}</>}
+              {neighbours.length > 0 && (
+                <> Or see what&apos;s cheaper nearby in {neighbours.map((ns, i) => (
+                  <span key={ns.slug}>{i > 0 ? ' or ' : ''}<Link href={`/${ns.slug}`} className="text-amber font-bold hover:underline">{ns.name}</Link></span>
+                ))}.</>
+              )}
+            </>
+          ) : (
+            <>
+              {suburb.name} has {suburb.pubCount} {suburb.pubCount === 1 ? 'venue' : 'venues'} tracked, but no verified price here yet.
+              {neighbours.length > 0 && (
+                <> Try nearby {neighbours.map((ns, i) => (
+                  <span key={ns.slug}>{i > 0 ? ' or ' : ''}<Link href={`/${ns.slug}`} className="text-amber font-bold hover:underline">{ns.name}</Link></span>
+                ))}, or report a price if you know one.</>
+              )}
+            </>
+          )}
         </p>
       </section>
 
