@@ -1,7 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { revalidatePath, revalidateTag } from 'next/cache'
 import { anonClient } from '@/lib/supabaseGateway'
+import { toSuburbSlug } from '@/lib/urls'
 
 const supabase = anonClient()
+
+async function revalidateReportedPub(pubSlug: string) {
+  revalidateTag(`pub:${pubSlug}`)
+
+  const { data: pub } = await supabase
+    .from('pubs')
+    .select('slug, suburb')
+    .eq('slug', pubSlug)
+    .single()
+
+  if (pub?.slug && pub.suburb) {
+    revalidatePath(`/${toSuburbSlug(pub.suburb)}/${pub.slug}`)
+  }
+}
 
 export async function POST(req: NextRequest) {
   try {
@@ -66,6 +82,8 @@ export async function POST(req: NextRequest) {
       console.error('Error inserting price report:', error)
       return NextResponse.json({ error: 'Failed to submit report' }, { status: 500 })
     }
+
+    await revalidateReportedPub(pub_slug)
 
     const message = isOutdatedReport
       ? 'Thanks for flagging! We\'ll check this price.'
