@@ -10,10 +10,10 @@ Stack, database, routes, components, and lib files are documented in `CLAUDE.md`
 
 ## What's done recently
 
-### Andrew guardrails draft PR opened (2026-05-31)
-- **Issue #63 / draft PR #68 / commits `7f21226` + `e41ecba` + `f150f6a`:** revived the unmerged Andrew call-safety work on a fresh `codex/andrew-dnc-cooldown` branch. Adds `phone_call_log`-based do-not-call exclusion, 72h-minimum call cooldown in `/api/pintsweep/kickoff`, queued-call reservations before ElevenLabs batch submit, unique reservation IDs, `call_initiation_failure` logging, post-call fallback persistence from ElevenLabs data collection, and `scripts/mark-dnc.mjs` for manual DNC markers.
-- **Status:** not merged or deployed yet. First peer review blocked merge on repeated-call gaps; `e41ecba` addresses those gaps and `f150f6a` fixes the second-review reservation ID collision risk. Awaiting final re-review before #63 can be closed or the Data Coverage backfill can safely begin.
-- **Verification on branch:** `npx tsc --noEmit`, `npm test` (**177/177 tests**), `npm run lint` (passes with the existing `SubmitPubForm`/`SunsetSippers` warnings), and `npm run build`.
+### Andrew guardrails shipped (2026-05-31, PR #68)
+- **Issue #63 / merge commit `97b3d63`:** revived the unmerged Andrew call-safety work on a fresh `codex/andrew-dnc-cooldown` branch. Adds `phone_call_log`-based do-not-call exclusion, 72h-minimum call cooldown in `/api/pintsweep/kickoff`, queued-call reservations before ElevenLabs batch submit, unique reservation IDs, `call_initiation_failure` logging, post-call fallback persistence from ElevenLabs data collection, and `scripts/mark-dnc.mjs` for manual DNC markers.
+- **Review + closeout:** first peer review blocked merge on repeated-call gaps; `e41ecba` addressed those gaps and `f150f6a` fixed the second-review reservation ID collision risk. Final peer review returned no findings and "Ready to merge? Yes." #63 is closed and the roadmap card is Done.
+- **Verification before merge:** `npx tsc --noEmit`, `npm test` (**177/177 tests**), `npm run lint` (passes with the existing `SubmitPubForm`/`SunsetSippers` warnings), and `npm run build`.
 
 ### HappyHourEngine refactor shipped (2026-05-31)
 - **Issue #56 / commit `2279802`:** collapsed the dual happy-hour engines into the structured `happyHourLive` path and deleted the lossy `src/lib/happyHour.ts` parser. `happyHourLive` now owns active/starting-soon status, effective price, minutes remaining, starts-in-minutes, countdown text, and structured labels from raw `happy_hour_days/start/end` fields.
