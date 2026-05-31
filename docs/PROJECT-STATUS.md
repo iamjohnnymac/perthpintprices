@@ -1,6 +1,6 @@
 # Perth Pint Prices Project Status
 
-Last updated: 2026-05-31
+Last updated: 2026-06-01
 
 ## What this is
 
@@ -9,6 +9,11 @@ Perth Pint Prices (perthpintprices.com) tracks pint prices across **857 Perth pu
 Stack, database, routes, components, and lib files are documented in `CLAUDE.md` (auto-loaded every session). This file covers history, recent work, and the backlog.
 
 ## What's done recently
+
+### AI/community SEO snapshot tracking documented (2026-06-01)
+- **Issue #116 / branch `codex/ai-community-seo-snapshot`:** added `docs/seo-snapshots/TEMPLATE.md` as the #36 weekly SEO snapshot template, with required AI-referral and community-referral callouts for any source sending **>0 sessions**.
+- **GA4 + UTM process:** documented the GA4 exploration definitions for AI/search-assistant, community/social, DuckDuckGo, landing-page, and future key-event reporting. Added a lowercase UTM convention for community posts and PR outreach.
+- **Verification:** docs-only change; verified with `git diff --check`.
 
 ### Pint Index methodology + CSV citation asset shipped (2026-06-01)
 - **Issue #117 / branch `codex/pint-index-methodology`:** Pint Index now includes a visible methodology block covering what counts as a pint, which prices are included, how prices are checked, why TBC venues stay out of averages, and how weekly snapshots power the index.

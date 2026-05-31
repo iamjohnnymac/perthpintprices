@@ -233,7 +233,12 @@ Pre-work: Pint Index page needs YoY chart, "share this stat" callouts, methodolo
 **Action**:
 - GSC → Settings → Email preferences → enable all alerts
 - Calendar block: 15 min every Monday for the GSC weekly Performance + Pages reports
-- Add a `npm run seo-snapshot` script that pulls GSC top-100 queries and pages each Monday into `docs/seo-snapshots/2026-MM-DD.md` for trend tracking
+- Use `docs/seo-snapshots/TEMPLATE.md` for each weekly snapshot in `docs/seo-snapshots/2026-MM-DD.md`
+- Include GA4 traffic acquisition using `Session source`, `Session medium`, `Session source / medium`, `Session default channel grouping`, landing pages, and key event metrics once #28 is configured
+- Call out every AI/search-assistant and community/social source with **>0 sessions**, including top landing pages and key events where available
+- Track DuckDuckGo separately from Google/Bing where GA4 exposes it
+- Tag community posts and PR outreach with the UTM convention in `docs/seo-snapshots/TEMPLATE.md`
+- Later, add a `npm run seo-snapshot` script that pulls GSC top-100 queries and pages each Monday into `docs/seo-snapshots/2026-MM-DD.md` for trend tracking
 - Quarterly: re-pull this exact data and check movement against the above 11 actions
 
 **Expected impact**: Compounds via faster spotting of regressions and opportunities.
