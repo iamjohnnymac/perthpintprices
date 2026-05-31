@@ -37,7 +37,7 @@ export default function HeroSection({ pubs }: HeroSectionProps) {
           <span className="text-amber italic">sorted.</span>
         </h1>
         <p className="font-body text-[1rem] text-gray-mid font-medium animate-fade-up stagger-3">
-          Real prices across 300+ Perth pubs.
+          What a pint actually costs, across {venueCount} Perth pubs.
         </p>
         <p className="font-mono text-[0.65rem] font-bold uppercase tracking-[0.12em] text-gray-mid/60 mt-2 animate-fade-up stagger-4">
           Community-powered · Est. 2026
