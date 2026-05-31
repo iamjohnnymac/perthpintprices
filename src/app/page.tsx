@@ -5,8 +5,8 @@ import { pubUrl, suburbUrl } from '@/lib/urls'
 
 export async function generateMetadata(): Promise<Metadata> {
   const stats = await getSiteStats()
-  const title = "Perth Pint Prices | Perth's pint prices, sorted."
-  const description = `Perth's pint prices, sorted. Real prices from real people across ${stats.venueCount}+ venues and ${stats.suburbCount} suburbs.`
+  const title = "Perth Pint Prices | Perth's pints, sorted."
+  const description = `What a pint costs across ${stats.venueCount} Perth pubs — checked, dated, and sorted cheapest first.`
 
   return {
     title: {
@@ -18,7 +18,7 @@ export async function generateMetadata(): Promise<Metadata> {
     },
     openGraph: {
       title,
-      description: `Perth's pint prices, sorted. ${stats.venueCount}+ venues. Avg: $${stats.avgPrice}. Cheapest: $${stats.cheapestPrice}.`,
+      description: `${stats.venueCount} Perth pubs, sorted cheapest first. Average $${stats.avgPrice}, cheapest $${stats.cheapestPrice} — each price dated.`,
       url: 'https://perthpintprices.com/',
       siteName: 'Perth Pint Prices',
       locale: 'en_AU',
@@ -28,14 +28,14 @@ export async function generateMetadata(): Promise<Metadata> {
           url: 'https://perthpintprices.com/og-image.png',
           width: 1200,
           height: 630,
-          alt: "Perth Pint Prices | Perth's pint prices, sorted",
+          alt: "Perth Pint Prices | Perth's pints, sorted",
         },
       ],
     },
     twitter: {
       card: 'summary_large_image',
       title,
-      description: `Perth's pint prices, sorted. ${stats.venueCount}+ venues. Find cheap pints near you.`,
+      description: `What a pint costs across ${stats.venueCount} Perth pubs — checked and sorted cheapest first.`,
     },
   }
 }
