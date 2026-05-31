@@ -4,7 +4,7 @@ import TonightsBestBetsPage from './TonightsBestBetsPage'
 
 export const metadata: Metadata = {
   title: "Tonight's Best Pints in Perth",
-  description: "Find the cheapest pints in Perth right now. Live happy hour deals, tonight's best bets, and where to get the most value on your next round.",
+  description: "The cheapest pints and live happy hours in Perth right now, updating as the night moves — what's on, what it costs, and where.",
   alternates: { canonical: 'https://perthpintprices.com/insights/tonights-best-bets' },
   openGraph: {
     title: "Tonight's Best Pints in Perth | Perth Pint Prices",
@@ -28,7 +28,7 @@ export default function Page() {
       ]} />
       <div className="sr-only" aria-hidden="true">
         <h1>Tonight&#39;s Best Pints in Perth</h1>
-        <p>Find the cheapest pints available in Perth right now. Live happy hour deals, tonight&#39;s best value picks, and real-time pricing across 300+ Perth venues.</p>
+        <p>The cheapest pints and live happy hours in Perth right now. What&#39;s on, what the pint costs, and where — updated as the night moves.</p>
         <a href="/">Home</a>
         <a href="/discover">Discover</a>
         <a href="/happy-hour">Happy Hours</a>

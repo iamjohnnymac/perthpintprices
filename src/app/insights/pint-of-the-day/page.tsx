@@ -4,7 +4,7 @@ import PintOfTheDayPage from './PintOfTheDayPage'
 
 export const metadata: Metadata = {
   title: "Perth Pint of the Day: Today's Best Value Beer",
-  description: "Today's best value pint in Perth, algorithmically picked from 300+ venues. Updated daily with verified prices from real pub-goers.",
+  description: "One pub, one price, picked daily for value — today's pint, how it compares to the suburb average, and the date we last checked it.",
   alternates: { canonical: 'https://perthpintprices.com/insights/pint-of-the-day' },
   openGraph: {
     title: "Perth Pint of the Day | Perth Pint Prices",
@@ -28,7 +28,7 @@ export default function Page() {
       ]} />
       <div className="sr-only" aria-hidden="true">
         <h1>Perth Pint of the Day - Today&#39;s Best Value Beer</h1>
-        <p>Today&#39;s best value pint in Perth, algorithmically selected from 300+ venues. Updated daily with community-verified prices from real pub-goers across Perth suburbs.</p>
+        <p>One pub, one price, picked daily for value. Today&#39;s pint, how it compares to the suburb average, and the date we last checked — updated every day from verified prices.</p>
         <a href="/">Home</a>
         <a href="/discover">Discover</a>
         <a href="/happy-hour">Happy Hours</a>
