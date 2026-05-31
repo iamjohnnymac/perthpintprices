@@ -4,7 +4,7 @@ import SuburbRankingsPage from './SuburbRankingsPage'
 
 export const metadata: Metadata = {
   title: 'Perth Suburb Pint Rankings: Cheapest Areas',
-  description: "Compare pint prices across every Perth suburb. Find the cheapest suburbs for a beer, from Fremantle to Joondalup. Ranked by average pint price.",
+  description: "Perth suburbs ranked cheapest to dearest by average verified pint, each price dated. Which areas run cheap, and which don't.",
   alternates: { canonical: 'https://perthpintprices.com/insights/suburb-rankings' },
   openGraph: {
     title: 'Perth Suburb Pint Price Rankings | Perth Pint Prices',
@@ -28,7 +28,7 @@ export default function Page() {
       ]} />
       <div className="sr-only" aria-hidden="true">
         <h1>Perth Suburb Pint Rankings - Cheapest Areas for a Beer</h1>
-        <p>Compare pint prices across every Perth suburb. See which areas offer the cheapest pints on average, from Fremantle to Joondalup, ranked by community-verified prices.</p>
+        <p>Every Perth suburb ranked cheapest to dearest by its average verified pint, each price dated. See which areas run cheap and which sit at the top.</p>
         <a href="/">Home</a>
         <a href="/discover">Discover</a>
         <a href="/happy-hour">Happy Hours</a>
