@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   alternates: { canonical: 'https://perthpintprices.com/guides/cozy-corners' },
   openGraph: {
     title: 'Cosy Corners Perth: Best Rainy Day Pubs | Perth Pint Prices',
-    description: "Perth's cosiest pubs for rainy days. Warm, sheltered, and perfect for a pint.",
+    description: "Perth's cosiest pubs for a rainy day — low light, a fireplace, and a slow pint when it's wet out.",
     url: 'https://perthpintprices.com/guides/cozy-corners',
     type: 'website',
     siteName: 'Perth Pint Prices',
@@ -28,7 +28,7 @@ export default function Page() {
       ]} />
       <div className="sr-only" aria-hidden="true">
         <h1>Cosy Corners Perth - Best Rainy Day Pubs</h1>
-        <p>Perth&apos;s cosiest pubs for when the weather turns. Discover sheltered venues with fireplaces, covered beer gardens, and warm indoor spaces perfect for a pint on a rainy day.</p>
+        <p>Perth&apos;s cosiest pubs for when the weather turns — sheltered venues with fireplaces, covered beer gardens, and warm corners for a slow pint when it&apos;s wet out.</p>
         <a href="/">Home</a>
         <a href="/discover">Discover</a>
         <a href="/happy-hour">Happy Hours</a>
