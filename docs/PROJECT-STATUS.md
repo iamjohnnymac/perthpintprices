@@ -10,6 +10,11 @@ Stack, database, routes, components, and lib files are documented in `CLAUDE.md`
 
 ## What's done recently
 
+### Pub-page SEO Phase 1 schema shipped (2026-05-31)
+- **Issue #29 / commit `e6d861d`:** replaced disconnected pub-page JSON-LD with one connected `@graph`: `WebPage#webpage` points to `BarOrPub#pub` through `mainEntity`, links `BreadcrumbList#breadcrumb`, and exposes `dateModified` from `last_verified` where present.
+- **Schema correctness:** removed invalid `"$X.XX per pint"` `priceRange` strings and now emits schema-valid `$` / `$$` / `$$$` bands from regular price vs suburb average, with site average only as fallback. Kept the owner decision intact: no `Menu`, `MenuItem`, `Offer`, telephone, or guessed venue hours.
+- **Review + verification:** peer review first blocked merge on site-average banding; fixed with `getSuburbAveragePrice`, tightened partial-coordinate and invalid-time guards, and re-reviewed cleanly ("Ready to merge? Yes"). Verified `npm test` (**195/195 tests**), `npx tsc --noEmit`, `npm run lint` (existing warnings only), `npm run build`, and live-row schema checks for Tier-A and Tier-C pubs.
+
 ### Site voice workstream kicked off (2026-05-31)
 - **Voice standard + copy specs landed (PR #84, `ab4704a`):** adopted `docs/brand-voice-brief.md` — the dry/deadpan perthisok register (no exclamation marks, AU spelling, freshness as the trust signal, the 7-question Voice Test as the per-surface gate) — and `docs/content-pack-v1.md`, whole-site surface copy written as data-fed string builders. Captured as PRD #83 under new milestone **#8 "Site Voice & Content"**.
 - **PRD #83 sliced into 8 tracer-bullet issues (#86–#93):** `seededVariant` (#86), corny-drift cleanup (#87), hub standfirsts (#88), `/[suburb]` lead + `suburbObservation` (#89), homepage + global chrome (#90), 5 guide standfirsts (#91), 5 insight standfirsts (#92), pub-page voice strings `voiceCopy` (#93, blocked by #86). Copy slices gated AFK + screenshots-on-PR against the Voice Test; all tracked on board #6.
