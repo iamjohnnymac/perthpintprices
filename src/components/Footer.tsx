@@ -24,6 +24,10 @@ export default function Footer() {
           <span className="font-mono text-[0.95rem] sm:text-[1.05rem] font-extrabold tracking-[-0.04em] leading-none">Perth Pint Prices</span>
         </div>
 
+        <p className="font-body text-[0.8rem] text-white/55 leading-relaxed max-w-[420px] mb-8">
+          Real pint prices across Perth&apos;s pubs — checked, dated, and sorted cheapest first. Community-powered, est. 2026.
+        </p>
+
         {/* Nav links — single clean row that wraps */}
         <div className="flex flex-wrap gap-x-6 gap-y-2 mb-8">
           {NAV_LINKS.map((link) => (

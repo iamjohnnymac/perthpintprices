@@ -19,8 +19,8 @@ export const viewport: Viewport = {
 
 export async function generateMetadata(): Promise<Metadata> {
   const stats = await getSiteStats()
-  const desc = `Perth's pint prices, sorted. Real prices from real people across ${stats.venueCount}+ venues and ${stats.suburbCount} suburbs.`
-  const ogDesc = `Perth's pint prices, sorted. ${stats.venueCount}+ venues. Avg: $${stats.avgPrice}. Cheapest: $${stats.cheapestPrice}.`
+  const desc = `What a pint costs across ${stats.venueCount} Perth pubs — checked, dated, and sorted cheapest first.`
+  const ogDesc = `${stats.venueCount} Perth pubs, sorted cheapest first. Average $${stats.avgPrice}, cheapest $${stats.cheapestPrice} — each price dated.`
 
   return {
     metadataBase: new URL('https://perthpintprices.com'),
@@ -30,7 +30,7 @@ export async function generateMetadata(): Promise<Metadata> {
       apple: '/apple-touch-icon.png',
     },
     title: {
-      default: "Perth Pint Prices | Perth's pint prices, sorted.",
+      default: "Perth Pint Prices | Perth's pints, sorted.",
       template: '%s | Perth Pint Prices',
     },
     description: desc,
@@ -41,10 +41,10 @@ export async function generateMetadata(): Promise<Metadata> {
           url: '/og-image.png',
           width: 1200,
           height: 630,
-          alt: "Perth Pint Prices | Perth's pint prices, sorted",
+          alt: "Perth Pint Prices | Perth's pints, sorted",
         },
       ],
-      title: "Perth Pint Prices | Perth's pint prices, sorted.",
+      title: "Perth Pint Prices | Perth's pints, sorted.",
       description: ogDesc,
       url: 'https://perthpintprices.com',
       siteName: 'Perth Pint Prices',
@@ -53,8 +53,8 @@ export async function generateMetadata(): Promise<Metadata> {
     },
     twitter: {
       card: 'summary_large_image',
-      title: "Perth Pint Prices | Perth's pint prices, sorted.",
-      description: `Perth's pint prices, sorted. ${stats.venueCount}+ venues. Find cheap pints near you.`,
+      title: "Perth Pint Prices | Perth's pints, sorted.",
+      description: `What a pint costs across ${stats.venueCount} Perth pubs — checked and sorted cheapest first.`,
     },
   }
 }

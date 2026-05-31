@@ -26,7 +26,7 @@ export default function FAQ() {
     },
     {
       q: 'Why is a pub showing "Price TBC"?',
-      a: 'We only display prices we\'ve confirmed. "Price TBC" means we know the pub exists but haven\'t verified its current pint price yet. You can help by submitting it!',
+      a: 'We only display prices we\'ve confirmed. "Price TBC" means we know the pub exists but haven\'t verified its current pint price yet. You can help by submitting it.',
     },
     {
       q: 'Is Perth Pint Prices free?',
