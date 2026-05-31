@@ -10,6 +10,11 @@ Stack, database, routes, components, and lib files are documented in `CLAUDE.md`
 
 ## What's done recently
 
+### HappyHourEngine refactor shipped (2026-05-31)
+- **Issue #56 / commit `2279802`:** collapsed the dual happy-hour engines into the structured `happyHourLive` path and deleted the lossy `src/lib/happyHour.ts` parser. `happyHourLive` now owns active/starting-soon status, effective price, minutes remaining, starts-in-minutes, countdown text, and structured labels from raw `happy_hour_days/start/end` fields.
+- **Fixed the two deferred HH consumers:** `DiscoverClient` and `TonightsMoves` no longer re-parse `pub.happyHour`; both read structured schedule fields through the unified engine, so weekend-only, single-day, half-hour, and am-to-pm windows behave correctly.
+- **Regression coverage + review:** added injected-clock tests for weekend half-hour active windows, am-to-pm starting-soon windows, and the independent-review catch that already-ended same-day deals must not show as "Starting Soon". Verified `tsc`, **170/170 tests**, `next build`, and desktop/mobile screenshots for `/discover` + `/insights/tonights-best-bets` (local-only Vercel Analytics 404 expected off Vercel).
+
 ### Backlog organised into milestones + dependency triage (2026-05-31)
 - **Milestones:** closed the catch-all "SEO Push — Q2 2026" and split the board into **6 themed milestones** — `SEO: Indexing & Technical` (#2), `SEO: Content & Schema (AEO)` (#3), `SEO: Measurement & Growth` (#4), `Architecture Refactor` (#5), `Data Coverage` (#6), `Andrew (voice agent)` (#7). Every open issue is bucketed; the 10 new issues (#56–#64, #66) were added to project board #6.
 - **Ticketed the untracked work:** refactor as #56–#60 (HappyHourEngine, Formatters, PerthNow.date, price_snapshots accessor, useUserLocation); data as #61–#62; Andrew as #63 (revive DNC/cooldown/post-call hardening) + #64 (voice-quality decision). #25 (www→apex) closed as a no-op.
