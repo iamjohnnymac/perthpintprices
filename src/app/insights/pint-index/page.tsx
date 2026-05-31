@@ -1,15 +1,23 @@
 import type { Metadata } from 'next'
 import BreadcrumbJsonLd from '@/components/BreadcrumbJsonLd'
+import { buildArticleJsonLd } from '@/lib/articleJsonLd'
+import { getAllPubLastModifiedPairs } from '@/lib/supabase'
 import PintIndexPage from './PintIndexPage'
+
+const canonical = 'https://perthpintprices.com/insights/pint-index'
+const description = "The median pint in Perth, tracked across the pubs we cover and updated as prices come in — the spread by suburb, the quarter's moves, and who's still under $10."
+const fallbackModified = '2026-05-31T00:00:00.000Z'
+
+export const revalidate = 3600
 
 export const metadata: Metadata = {
   title: 'Perth Pint Index™: Live Beer Price Tracker',
-  description: "The median pint in Perth, tracked across the pubs we cover and updated as prices come in — the spread by suburb, the quarter's moves, and who's still under $10.",
-  alternates: { canonical: 'https://perthpintprices.com/insights/pint-index' },
+  description,
+  alternates: { canonical },
   openGraph: {
     title: 'Perth Pint Index™: Live Beer Price Tracker | Perth Pint Prices',
     description: "Track Perth's average pint price over time across 300+ venues.",
-    url: 'https://perthpintprices.com/insights/pint-index',
+    url: canonical,
     type: 'website',
     siteName: 'Perth Pint Prices',
     locale: 'en_AU',
@@ -18,13 +26,38 @@ export const metadata: Metadata = {
   twitter: { card: 'summary_large_image' },
 }
 
-export default function Page() {
+function latestModifiedDate(values: Array<{ lastModified: string | null }>): string {
+  return values
+    .map(value => {
+      if (!value.lastModified) return null
+      const date = new Date(value.lastModified)
+      return Number.isNaN(date.getTime()) ? null : date.toISOString()
+    })
+    .filter((value): value is string => Boolean(value))
+    .sort()
+    .at(-1) || fallbackModified
+}
+
+export default async function Page() {
+  const latestPubModified = latestModifiedDate(await getAllPubLastModifiedPairs())
+  const articleJsonLd = buildArticleJsonLd({
+    url: canonical,
+    headline: 'Perth Pint Index: Live Beer Price Tracker',
+    description,
+    dateModified: latestPubModified,
+    lastReviewed: latestPubModified,
+  })
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd).replace(/</g, '\\u003c') }}
+      />
       <BreadcrumbJsonLd items={[
         { name: 'Home', url: 'https://perthpintprices.com' },
         { name: 'Discover', url: 'https://perthpintprices.com/discover' },
-        { name: 'Perth Pint Index™', url: 'https://perthpintprices.com/insights/pint-index' },
+        { name: 'Perth Pint Index™', url: canonical },
       ]} />
       <div className="sr-only" aria-hidden="true">
         <h1>Perth Pint Index - Live Beer Price Tracker</h1>

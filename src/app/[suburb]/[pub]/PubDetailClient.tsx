@@ -17,16 +17,12 @@ const PubDetailMap = dynamic(() => import('@/components/PubDetailMap'), {
   loading: () => <div className="h-[350px] bg-off-white animate-pulse rounded-card border-3 border-ink" />,
 })
 
-function timeAgo(dateStr: string): string {
-  const date = new Date(dateStr)
-  const now = new Date()
-  const diffMs = now.getTime() - date.getTime()
-  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24))
-  if (diffDays < 1) return 'today'
-  if (diffDays < 7) return `${diffDays}d ago`
-  if (diffDays < 30) return `${Math.floor(diffDays / 7)}w ago`
-  if (diffDays < 365) return `${Math.floor(diffDays / 30)}mo ago`
-  return `${Math.floor(diffDays / 365)}y ago`
+function formatLastVerifiedDate(dateStr: string): string {
+  return new Date(dateStr).toLocaleDateString('en-AU', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+  })
 }
 
 function formatHappyHourTime(start: string | null, end: string | null): string {
@@ -169,7 +165,12 @@ export default function PubDetailClient({ pub, nearbyPubs, avgPrice }: PubDetail
                   </span>
                 )}
                 {pub.lastVerified && (
-                  <span className="text-[0.7rem] text-gray-mid">Updated {timeAgo(pub.lastVerified)}</span>
+                  <time
+                    dateTime={new Date(pub.lastVerified).toISOString()}
+                    className="text-[0.7rem] text-gray-mid"
+                  >
+                    Last verified {formatLastVerifiedDate(pub.lastVerified)}
+                  </time>
                 )}
               </div>
 

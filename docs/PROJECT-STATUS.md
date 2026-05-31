@@ -10,6 +10,11 @@ Stack, database, routes, components, and lib files are documented in `CLAUDE.md`
 
 ## What's done recently
 
+### AI citation signals shipped (2026-05-31)
+- **Issue #35 / branch `codex/llms-article-schema`:** added `/llms.txt` as a markdown citation map for the live high-signal pages (Pint Index, live insight pages, happy hours, discover, and key suburb pages). The deleted weekly-report route stays deleted; Pint Index is the Article/schema asset per `docs/seo-action-plan.md`.
+- **Structured citation + crawler access:** added Article JSON-LD to `/insights/pint-index` with `author`, `publisher`, `dateModified`, and `mainEntityOfPage.lastReviewed` from real pub freshness data; added explicit GPTBot / PerplexityBot / Google-Extended allow rules while keeping `/admin` and `/api` blocked.
+- **Visible freshness:** pub pages now surface `Last verified <date>` in a semantic `<time>` element where `last_verified` exists. Verified `npm test` (**199/199 tests**), `npx tsc --noEmit`, `npm run lint` (existing warnings only), `npm run build`, local `/llms.txt` / robots / Article schema smoke checks, and desktop/mobile screenshots for the pub-page freshness row.
+
 ### Pub-page SEO Phase 1 schema shipped (2026-05-31)
 - **Issue #29 / commit `e6d861d`:** replaced disconnected pub-page JSON-LD with one connected `@graph`: `WebPage#webpage` points to `BarOrPub#pub` through `mainEntity`, links `BreadcrumbList#breadcrumb`, and exposes `dateModified` from `last_verified` where present.
 - **Schema correctness:** removed invalid `"$X.XX per pint"` `priceRange` strings and now emits schema-valid `$` / `$$` / `$$$` bands from regular price vs suburb average, with site average only as fallback. Kept the owner decision intact: no `Menu`, `MenuItem`, `Offer`, telephone, or guessed venue hours.
