@@ -73,6 +73,65 @@ describe('post-call fallback', () => {
       source: 'ElevenLabs conv_123 (post-call fallback)',
     })
   })
+
+  it('logs call initiation failures so failed attempts count toward cooldown', async () => {
+    process.env.AGENT_WEBHOOK_SECRET = 'test-secret'
+
+    let callLogInsert: Record<string, unknown> | null = null
+    const supabase = {
+      from(table: string) {
+        if (table === 'pubs') return pubPhoneQuery([{ id: 42, phone: '0400 000 003' }])
+        if (table === 'phone_call_log') {
+          return insertQuery((row) => {
+            callLogInsert = row
+          })
+        }
+        throw new Error(`Unexpected table ${table}`)
+      },
+    }
+
+    const response = await handlePostCall(jsonRequest(callInitiationFailureBody()), { supabase })
+    const body = await response.json()
+
+    assert.equal(response.status, 200)
+    assert.equal(body.ok, true)
+    assert.equal(body.logged, 'call_initiation_failure')
+    assert.ok(callLogInsert)
+    assert.equal((callLogInsert as Record<string, unknown>).pub_id, 42)
+    assert.equal((callLogInsert as Record<string, unknown>).call_sid, 'conv_failed_123')
+    assert.equal((callLogInsert as Record<string, unknown>).parsed_confidence, 'call_initiation_failure')
+  })
+
+  it('returns a server error when call logging fails', async () => {
+    process.env.AGENT_WEBHOOK_SECRET = 'test-secret'
+
+    const supabase = {
+      from(table: string) {
+        if (table === 'pubs') {
+          return pubsQuery({
+            pub: { id: 42, price: null, price_verified: false },
+            onUpdate: () => {},
+          })
+        }
+        if (table === 'phone_call_log') {
+          return {
+            insert() {
+              return Promise.resolve({ error: { message: 'insert failed' } })
+            },
+          }
+        }
+        if (table === 'price_history') return insertQuery(() => {})
+        throw new Error(`Unexpected table ${table}`)
+      },
+    }
+
+    const response = await handlePostCall(jsonRequest(postCallBody()), { supabase })
+    const body = await response.json()
+
+    assert.equal(response.status, 500)
+    assert.equal(body.ok, false)
+    assert.match(body.error, /insert failed/)
+  })
 })
 
 function postCallBody() {
@@ -108,6 +167,26 @@ function postCallBody() {
   }
 }
 
+function callInitiationFailureBody() {
+  return {
+    type: 'call_initiation_failure',
+    event_timestamp: 1770000000,
+    data: {
+      agent_id: 'agent_123',
+      conversation_id: 'conv_failed_123',
+      failure_reason: 'busy',
+      metadata: {
+        type: 'twilio',
+        body: {
+          To: '+61400000003',
+          CallSid: 'CA123',
+          CallStatus: 'busy',
+        },
+      },
+    },
+  }
+}
+
 function pubsQuery(options: {
   pub: { id: number; price: number | null; price_verified: boolean }
   onUpdate: (updates: Record<string, unknown>) => void
@@ -137,6 +216,17 @@ function insertQuery(onInsert: (row: Record<string, unknown>) => void) {
     insert(row: Record<string, unknown>) {
       onInsert(row)
       return Promise.resolve({ error: null })
+    },
+  }
+}
+
+function pubPhoneQuery(rows: Array<{ id: number; phone: string | null }>) {
+  return {
+    select() {
+      return this
+    },
+    not() {
+      return Promise.resolve({ data: rows, error: null })
     },
   }
 }

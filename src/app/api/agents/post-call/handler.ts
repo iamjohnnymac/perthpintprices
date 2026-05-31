@@ -16,7 +16,8 @@ interface PostCallBody {
   data: {
     agent_id: string
     conversation_id: string
-    status: string
+    status?: string
+    failure_reason?: string
     call_duration_secs?: number
     transcript?: Array<{ role: string; message: string }>
     metadata?: Record<string, unknown>
@@ -39,6 +40,11 @@ interface PostCallBody {
 
 interface DataCollectionField {
   value?: unknown
+}
+
+interface PubPhoneRow {
+  id: number
+  phone: string | null
 }
 
 const UNIT_TO_PINT: Record<string, number> = {
@@ -117,14 +123,19 @@ export async function handlePostCall(req: NextRequest, deps: PostCallDeps) {
     return NextResponse.json({ ok: false, error: 'bad json' }, { status: 400 })
   }
 
+  const supabase = deps.supabase ?? deps.getSupabase?.()
+  if (!supabase) return NextResponse.json({ ok: false, error: 'server misconfigured' }, { status: 500 })
+
+  if (body.type === 'call_initiation_failure') {
+    return handleCallInitiationFailure(body, supabase)
+  }
+
   if (body.type !== 'post_call_transcription') {
     return NextResponse.json({ ok: true, ignored: body.type })
   }
 
   const d = body.data
   const pubSlug = d.conversation_initiation_client_data?.dynamic_variables?.pub_slug || null
-  const supabase = deps.supabase ?? deps.getSupabase?.()
-  if (!supabase) return NextResponse.json({ ok: false, error: 'server misconfigured' }, { status: 500 })
 
   let pubId: number | null = null
   let existingPrice: number | null = null
@@ -147,7 +158,7 @@ export async function handlePostCall(req: NextRequest, deps: PostCallDeps) {
   const parsedHappyHour = parseString(extractValue(collection.happy_hour))
   const parsedConfidence = parseString(extractValue(collection.confidence)) || d.analysis?.call_successful || null
 
-  await supabase.from('phone_call_log').insert({
+  const { error: logErr } = await supabase.from('phone_call_log').insert({
     pub_id: pubId,
     call_sid: d.conversation_id,
     transcript: transcriptText,
@@ -157,6 +168,10 @@ export async function handlePostCall(req: NextRequest, deps: PostCallDeps) {
     parsed_confidence: parsedConfidence,
     parsed_notes: d.analysis?.transcript_summary || null,
   })
+  if (logErr) {
+    console.error('[agent post-call] log insert failed:', logErr.message)
+    return NextResponse.json({ ok: false, error: `call log insert failed: ${logErr.message}` }, { status: 500 })
+  }
 
   let fallbackWrote = false
   if (pubId && !priceVerified) {
@@ -203,4 +218,64 @@ export async function handlePostCall(req: NextRequest, deps: PostCallDeps) {
   )
 
   return NextResponse.json({ ok: true, fallback_wrote: fallbackWrote })
+}
+
+async function handleCallInitiationFailure(
+  body: PostCallBody,
+  supabase: { from(table: string): any },
+) {
+  const d = body.data
+  const targetNumber = failureTargetNumber(d.metadata)
+  const pubId = targetNumber ? await findPubIdByPhone(supabase, targetNumber) : null
+  const { error: logErr } = await supabase.from('phone_call_log').insert({
+    pub_id: pubId,
+    call_sid: d.conversation_id,
+    transcript: null,
+    recording_url: null,
+    parsed_price: null,
+    parsed_beer_type: null,
+    parsed_confidence: 'call_initiation_failure',
+    parsed_notes: JSON.stringify({
+      failure_reason: d.failure_reason || null,
+      target_number: targetNumber,
+      metadata: d.metadata || null,
+    }),
+  })
+
+  if (logErr) {
+    console.error('[agent post-call] initiation failure log insert failed:', logErr.message)
+    return NextResponse.json({ ok: false, error: `call log insert failed: ${logErr.message}` }, { status: 500 })
+  }
+
+  console.log(
+    `[agent post-call] initiation_failure conv=${d.conversation_id} pub=${pubId ?? 'n/a'} reason=${d.failure_reason ?? 'unknown'}`,
+  )
+
+  return NextResponse.json({ ok: true, logged: 'call_initiation_failure' })
+}
+
+function failureTargetNumber(metadata: Record<string, unknown> | undefined): string | null {
+  const providerBody = metadata && typeof metadata.body === 'object' ? (metadata.body as Record<string, unknown>) : null
+  if (!providerBody) return null
+  return parseString(providerBody.To) || parseString(providerBody.Called) || parseString(providerBody.to_number)
+}
+
+async function findPubIdByPhone(supabase: { from(table: string): any }, targetNumber: string): Promise<number | null> {
+  const target = toE164(targetNumber)
+  if (!target) return null
+  const { data, error } = await supabase.from('pubs').select('id, phone').not('phone', 'is', null)
+  if (error) {
+    console.error('[agent post-call] failed pub phone lookup:', error.message)
+    return null
+  }
+  const match = ((data || []) as PubPhoneRow[]).find((pub) => pub.phone && toE164(pub.phone) === target)
+  return match?.id ?? null
+}
+
+function toE164(raw: string): string | null {
+  let n = String(raw).replace(/[^\d+]/g, '')
+  if (n.startsWith('+')) return n
+  if (n.startsWith('61')) return '+' + n
+  if (n.startsWith('0')) return '+61' + n.slice(1)
+  return null
 }
