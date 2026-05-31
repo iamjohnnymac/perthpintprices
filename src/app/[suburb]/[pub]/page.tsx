@@ -1,9 +1,10 @@
 import { Metadata } from 'next'
 import { unstable_cache } from 'next/cache'
 import { notFound, permanentRedirect } from 'next/navigation'
-import { getPubBySlug, getAllPubSlugPairs, getNearbyPubs, getSiteStats } from '@/lib/supabase'
+import { getPubBySlug, getAllPubSlugPairs, getNearbyPubs, getSiteStats, getSuburbAveragePrice } from '@/lib/supabase'
 import { getPubIndexability } from '@/lib/pubIndexability'
-import { absolutePubUrl, absoluteSuburbUrl, toSuburbSlug } from '@/lib/urls'
+import { buildPubJsonLd } from '@/lib/pubJsonLd'
+import { absolutePubUrl, toSuburbSlug } from '@/lib/urls'
 import PubDetailClient from './PubDetailClient'
 
 interface PageProps {
@@ -95,6 +96,7 @@ export async function generateStaticParams() {
   return pairs.map(pair => ({ suburb: toSuburbSlug(pair.suburb), pub: pair.slug }))
 }
 
+export const dynamicParams = true
 export const revalidate = 3600
 
 export default async function PubPage({ params }: PageProps) {
@@ -107,49 +109,19 @@ export default async function PubPage({ params }: PageProps) {
     permanentRedirect(`/${suburbSlug}/${pub.slug}`)
   }
 
-  const [nearbyPubs, stats] = await Promise.all([
+  const [nearbyPubs, stats, suburbAvgPrice] = await Promise.all([
     getNearbyPubs(pub.suburb, pub.id, 8),
     getSiteStats(),
+    getSuburbAveragePrice(pub.suburb),
   ])
 
-  const jsonLd = [
-    {
-      '@context': 'https://schema.org',
-      '@type': 'BreadcrumbList',
-      itemListElement: [
-        { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://perthpintprices.com' },
-        { '@type': 'ListItem', position: 2, name: pub.suburb, item: `https://perthpintprices.com/${suburbSlug}` },
-        { '@type': 'ListItem', position: 3, name: pub.name, item: `https://perthpintprices.com/${suburbSlug}/${pub.slug}` },
-      ],
-    },
-    {
-      '@context': 'https://schema.org',
-      '@type': 'BarOrPub',
-      name: pub.name,
-      address: {
-        '@type': 'PostalAddress',
-        streetAddress: pub.address,
-        addressLocality: pub.suburb,
-        addressRegion: 'WA',
-        addressCountry: 'AU',
-      },
-      geo: {
-        '@type': 'GeoCoordinates',
-        latitude: pub.lat,
-        longitude: pub.lng,
-      },
-      ...(pub.website ? { url: pub.website } : {}),
-      ...(pub.price ? {
-        priceRange: `$${pub.price.toFixed(2)} per pint`,
-      } : {}),
-    },
-  ]
+  const jsonLd = buildPubJsonLd(pub, suburbAvgPrice ?? Number(stats.avgPrice))
 
   return (
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, '\\u003c') }}
       />
 
       {/* Server-rendered links for crawlers — ensures this pub page has strong internal linking */}

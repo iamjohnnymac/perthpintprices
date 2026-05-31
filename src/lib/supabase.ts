@@ -478,6 +478,22 @@ export async function getAllSuburbs(): Promise<SuburbInfo[]> {
   return suburbs
 }
 
+export async function getSuburbAveragePrice(suburbName: string): Promise<number | null> {
+  const { data, error } = await supabase
+    .from('pubs')
+    .select('price')
+    .eq('suburb', suburbName)
+    .not('price', 'is', null)
+    .gt('price', 0)
+
+  if (error || !data || data.length === 0) return null
+
+  const prices = data.map(row => Number(row.price)).filter(price => Number.isFinite(price) && price > 0)
+  if (prices.length === 0) return null
+
+  return prices.reduce((sum, price) => sum + price, 0) / prices.length
+}
+
 export async function getSuburbBySlug(slug: string): Promise<SuburbInfo | null> {
   const suburbs = await getAllSuburbs()
   return suburbs.find(s => s.slug === slug) || null
