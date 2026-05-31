@@ -10,6 +10,12 @@ Stack, database, routes, components, and lib files are documented in `CLAUDE.md`
 
 ## What's done recently
 
+### Pub-page SEO Phase 0 shipped (2026-05-31, PR #82)
+- **Issues #69/#70/#71 / merge commit `da2ec80`:** shipped the indexability/freshness foundation from `docs/pub-page-content-plan.md` (merged in PR #81). Pub pages now use a tested Tier A/B/C `dataScore` helper: Tier-C price-less husks stay live for users/internal links but emit `noindex,follow`; Tier A/B pages remain indexable.
+- **Sitemap honesty:** `sitemap.xml` now includes only Tier A/B pub URLs, uses real `last_verified` / `updated_at` / `last_updated` freshness dates instead of build-time `Date.now()`, and derives suburb/static `lastModified` from all child pub freshness rather than only the indexable subset. Live-data check: 857 routable pubs, 232 indexable pub rows, 397 sitemap URLs.
+- **ISR + write-path freshness:** pub pages now revalidate hourly (`3600`) and pub reads are cached with `pub:${slug}` tags; Andrew `record-price` and public `price-report` writes trigger `revalidateTag` + `revalidatePath`.
+- **Review + verification:** independent sub-agent review initially caught the suburb freshness bug, the fix was reviewed cleanly ("Happy to merge: yes"). Verified `npm test` (**181/181 tests**), `npx tsc --noEmit`, `npm run lint` (existing warnings only), `npm run build`, and runtime spot checks for Tier-C robots + sitemap exclusion.
+
 ### Andrew guardrails shipped (2026-05-31, PR #68)
 - **Issue #63 / merge commit `97b3d63`:** revived the unmerged Andrew call-safety work on a fresh `codex/andrew-dnc-cooldown` branch. Adds `phone_call_log`-based do-not-call exclusion, 72h-minimum call cooldown in `/api/pintsweep/kickoff`, queued-call reservations before ElevenLabs batch submit, unique reservation IDs, `call_initiation_failure` logging, post-call fallback persistence from ElevenLabs data collection, and `scripts/mark-dnc.mjs` for manual DNC markers.
 - **Review + closeout:** first peer review blocked merge on repeated-call gaps; `e41ecba` addressed those gaps and `f150f6a` fixed the second-review reservation ID collision risk. Final peer review returned no findings and "Ready to merge? Yes." #63 is closed and the roadmap card is Done.
