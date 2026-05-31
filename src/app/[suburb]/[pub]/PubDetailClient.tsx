@@ -11,6 +11,7 @@ import { PenLine } from 'lucide-react'
 import { formatHappyHourDays } from '@/lib/happyHourLive'
 import Footer from '@/components/Footer'
 import { pubUrl, suburbUrl } from '@/lib/urls'
+import { verificationStub } from '@/lib/voiceCopy'
 
 const PubDetailMap = dynamic(() => import('@/components/PubDetailMap'), {
   ssr: false,
@@ -40,9 +41,21 @@ interface PubDetailClientProps {
   pub: Pub
   nearbyPubs: Pub[]
   avgPrice: number
+  isTierCPage: boolean
+  latestAndrewCallAt: string | null
+  nearestVerifiedPub: Pub | null
+  nearbyVerifiedPriceCount: number
 }
 
-export default function PubDetailClient({ pub, nearbyPubs, avgPrice }: PubDetailClientProps) {
+export default function PubDetailClient({
+  pub,
+  nearbyPubs,
+  avgPrice,
+  isTierCPage,
+  latestAndrewCallAt,
+  nearestVerifiedPub,
+  nearbyVerifiedPriceCount,
+}: PubDetailClientProps) {
   const [distance, setDistance] = useState<string | null>(null)
   const [showSubmitForm, setShowSubmitForm] = useState(false)
 
@@ -74,6 +87,16 @@ export default function PubDetailClient({ pub, nearbyPubs, avgPrice }: PubDetail
   }
 
   const priceDiff = pub.effectivePrice && avgPrice ? pub.effectivePrice - avgPrice : 0
+  const hasStatusRow = pub.isHappyHourNow || (pub.priceVerified && pub.price !== null) || !!pub.lastVerified
+  const priceMissingCopy = isTierCPage
+    ? verificationStub({
+      lastAndrewCall: latestAndrewCallAt ? formatLastVerifiedDate(latestAndrewCallAt) : null,
+      nearbyCount: nearbyVerifiedPriceCount,
+      nearestPub: nearestVerifiedPub?.name ?? null,
+      nearestPrice: nearestVerifiedPub?.price ?? null,
+    })
+    : null
+  const reportCtaLabel = isTierCPage ? 'Report the price' : 'Know the price? Report it here'
 
   return (
     <div className="min-h-screen bg-[#FDF8F0]">
@@ -153,26 +176,42 @@ export default function PubDetailClient({ pub, nearbyPubs, avgPrice }: PubDetail
                 </div>
               </div>
               {/* Status row */}
-              <div className="flex flex-wrap gap-2 mt-4 pt-4 border-t border-gray-light">
-                {pub.isHappyHourNow && (
-                  <span className="inline-flex items-center gap-1.5 font-mono text-[0.6rem] font-bold uppercase tracking-wider text-red bg-red-pale px-2.5 py-1 rounded-full border border-red">
-                    HH{pub.happyHourMinutesRemaining ? ` · ${pub.happyHourMinutesRemaining < 1 ? 'ending soon' : pub.happyHourMinutesRemaining < 60 ? `${pub.happyHourMinutesRemaining}m left` : `${Math.floor(pub.happyHourMinutesRemaining / 60)}h ${pub.happyHourMinutesRemaining % 60 > 0 ? `${pub.happyHourMinutesRemaining % 60}m ` : ''}left`}` : ''}
-                  </span>
-                )}
-                {pub.priceVerified && pub.price !== null && (
-                  <span className="inline-flex items-center gap-1 font-mono text-[0.6rem] font-bold uppercase tracking-wider text-green bg-green-pale px-2.5 py-1 rounded-full border border-green">
-                    Verified
-                  </span>
-                )}
-                {pub.lastVerified && (
-                  <time
-                    dateTime={new Date(pub.lastVerified).toISOString()}
-                    className="text-[0.7rem] text-gray-mid"
-                  >
-                    Last verified {formatLastVerifiedDate(pub.lastVerified)}
-                  </time>
-                )}
-              </div>
+              {hasStatusRow && (
+                <div className="flex flex-wrap gap-2 mt-4 pt-4 border-t border-gray-light">
+                  {pub.isHappyHourNow && (
+                    <span className="inline-flex items-center gap-1.5 font-mono text-[0.6rem] font-bold uppercase tracking-wider text-red bg-red-pale px-2.5 py-1 rounded-full border border-red">
+                      HH{pub.happyHourMinutesRemaining ? ` · ${pub.happyHourMinutesRemaining < 1 ? 'ending soon' : pub.happyHourMinutesRemaining < 60 ? `${pub.happyHourMinutesRemaining}m left` : `${Math.floor(pub.happyHourMinutesRemaining / 60)}h ${pub.happyHourMinutesRemaining % 60 > 0 ? `${pub.happyHourMinutesRemaining % 60}m ` : ''}left`}` : ''}
+                    </span>
+                  )}
+                  {pub.priceVerified && pub.price !== null && (
+                    <span className="inline-flex items-center gap-1 font-mono text-[0.6rem] font-bold uppercase tracking-wider text-green bg-green-pale px-2.5 py-1 rounded-full border border-green">
+                      Verified
+                    </span>
+                  )}
+                  {pub.lastVerified && (
+                    <time
+                      dateTime={new Date(pub.lastVerified).toISOString()}
+                      className="text-[0.7rem] text-gray-mid"
+                    >
+                      Last verified {formatLastVerifiedDate(pub.lastVerified)}
+                    </time>
+                  )}
+                </div>
+              )}
+              {priceMissingCopy && (
+                <div className="mt-4 pt-4 border-t border-gray-light">
+                  {nearestVerifiedPub ? (
+                    <Link
+                      href={pubUrl({ suburb: nearestVerifiedPub.suburb, slug: nearestVerifiedPub.slug })}
+                      className="block text-[0.86rem] leading-relaxed text-ink hover:text-amber transition-colors no-underline"
+                    >
+                      {priceMissingCopy}
+                    </Link>
+                  ) : (
+                    <p className="text-[0.86rem] leading-relaxed text-ink">{priceMissingCopy}</p>
+                  )}
+                </div>
+              )}
 
               {/* Happy Hour — merged into price card */}
               {(pub.happyHour || pub.happyHourPrice) && (
@@ -203,10 +242,14 @@ export default function PubDetailClient({ pub, nearbyPubs, avgPrice }: PubDetail
             {/* Report a price — prominent CTA */}
             <button
               onClick={() => setShowSubmitForm(true)}
-              className="w-full flex items-center justify-center gap-2 font-mono text-[0.78rem] font-bold uppercase tracking-[0.05em] text-amber bg-amber-pale border-3 border-ink rounded-pill py-3 shadow-hard-sm hover:translate-x-[1.5px] hover:translate-y-[1.5px] hover:shadow-hard-hover transition-all"
+              className={`w-full flex items-center justify-center gap-2 font-mono font-bold uppercase tracking-[0.05em] border-3 border-ink rounded-pill shadow-hard-sm hover:translate-x-[1.5px] hover:translate-y-[1.5px] hover:shadow-hard-hover transition-all ${
+                isTierCPage
+                  ? 'text-white bg-amber py-4 text-[0.85rem]'
+                  : 'text-amber bg-amber-pale py-3 text-[0.78rem]'
+              }`}
             >
               <PenLine className="w-4 h-4" />
-              Know the price? Report it here
+              {reportCtaLabel}
             </button>
 
             {/* About */}
@@ -298,6 +341,7 @@ export default function PubDetailClient({ pub, nearbyPubs, avgPrice }: PubDetail
         isOpen={showSubmitForm}
         onClose={() => setShowSubmitForm(false)}
         initialPub={{ slug: pub.slug, name: pub.name, suburb: pub.suburb }}
+        submissionSource={isTierCPage ? 'tier-c-report-hero' : undefined}
       />
     </div>
   )

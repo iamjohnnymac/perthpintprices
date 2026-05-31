@@ -1,10 +1,11 @@
 import { Metadata } from 'next'
 import { unstable_cache } from 'next/cache'
 import { notFound, permanentRedirect } from 'next/navigation'
-import { getPubBySlug, getAllPubSlugPairs, getNearbyPubs, getSiteStats, getSuburbAveragePrice } from '@/lib/supabase'
+import { getPubBySlug, getAllPubSlugPairs, getLatestAndrewCallAtByPubId, getNearestPubFromList, getNearbyPubs, getSiteStats, getSuburbAveragePrice, getVerifiedPricePubs } from '@/lib/supabase'
 import { getPubIndexability } from '@/lib/pubIndexability'
 import { buildPubJsonLd } from '@/lib/pubJsonLd'
 import { absolutePubUrl, toSuburbSlug } from '@/lib/urls'
+import type { Pub } from '@/types/pub'
 import PubDetailClient from './PubDetailClient'
 
 interface PageProps {
@@ -22,13 +23,26 @@ function getCachedPubBySlug(slug: string) {
   )()
 }
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const pub = await getCachedPubBySlug(params.pub)
-  if (!pub) return { title: 'Pub Not Found' }
+const getCachedVerifiedPricePubs = unstable_cache(
+  () => getVerifiedPricePubs(),
+  ['verified-price-pubs'],
+  {
+    tags: ['verified-price-pubs'],
+    revalidate: 3600,
+  },
+)
 
-  const priceText = pub.price !== null ? `$${pub.price.toFixed(2)} pints` : 'Price TBC'
-  const title = `${pub.name}, ${pub.suburb}: ${priceText}`
-  const indexability = getPubIndexability({
+const getCachedLatestAndrewCallAtByPubId = unstable_cache(
+  () => getLatestAndrewCallAtByPubId(),
+  ['latest-andrew-call-at-by-pub-id'],
+  {
+    tags: ['latest-andrew-call-at-by-pub-id'],
+    revalidate: 3600,
+  },
+)
+
+function getPubPageIndexability(pub: Pub) {
+  return getPubIndexability({
     price: pub.regularPrice,
     priceVerified: pub.priceVerified,
     lastVerified: pub.lastVerified,
@@ -45,6 +59,15 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     sunsetSpot: pub.sunsetSpot,
     website: pub.website,
   })
+}
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const pub = await getCachedPubBySlug(params.pub)
+  if (!pub) return { title: 'Pub Not Found' }
+
+  const priceText = pub.price !== null ? `$${pub.price.toFixed(2)} pints` : 'Price TBC'
+  const title = `${pub.name}, ${pub.suburb}: ${priceText}`
+  const indexability = getPubPageIndexability(pub)
 
   // Build description with progressive enrichment (target 70-160 chars)
   const descParts: string[] = []
@@ -109,8 +132,25 @@ export default async function PubPage({ params }: PageProps) {
     permanentRedirect(`/${suburbSlug}/${pub.slug}`)
   }
 
-  const [nearbyPubs, stats, suburbAvgPrice] = await Promise.all([
+  const indexability = getPubPageIndexability(pub)
+  const isTierCPage = indexability.tier === 'C'
+  const tierCDetails: Promise<[number, string | null, Pub | null]> = isTierCPage
+    ? Promise.all([getCachedVerifiedPricePubs(), getCachedLatestAndrewCallAtByPubId()]).then(([verifiedPricePubs, latestAndrewCallAtByPubId]) => {
+      const sameSuburbVerifiedPubs = verifiedPricePubs.filter(nearbyPub =>
+        nearbyPub.suburb === pub.suburb && nearbyPub.id !== pub.id
+      )
+
+      return [
+        sameSuburbVerifiedPubs.length,
+        latestAndrewCallAtByPubId[pub.id] ?? null,
+        getNearestPubFromList(sameSuburbVerifiedPubs, pub.lat, pub.lng),
+      ]
+    })
+    : Promise.resolve([0, null, null])
+
+  const [nearbyPubs, [nearbyVerifiedPriceCount, latestAndrewCallAt, nearestVerifiedPub], stats, suburbAvgPrice] = await Promise.all([
     getNearbyPubs(pub.suburb, pub.id, 8),
+    tierCDetails,
     getSiteStats(),
     getSuburbAveragePrice(pub.suburb),
   ])
@@ -134,7 +174,15 @@ export default async function PubPage({ params }: PageProps) {
         ))}
       </div>
 
-      <PubDetailClient pub={pub} nearbyPubs={nearbyPubs} avgPrice={Number(stats.avgPrice)} />
+      <PubDetailClient
+        pub={pub}
+        nearbyPubs={nearbyPubs}
+        avgPrice={Number(stats.avgPrice)}
+        isTierCPage={isTierCPage}
+        latestAndrewCallAt={latestAndrewCallAt}
+        nearestVerifiedPub={nearestVerifiedPub}
+        nearbyVerifiedPriceCount={nearbyVerifiedPriceCount}
+      />
     </>
   )
 }

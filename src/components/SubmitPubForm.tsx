@@ -18,6 +18,7 @@ interface SubmitPubFormProps {
   onClose: () => void;
   userLocation?: { lat: number; lng: number } | null;
   initialPub?: { slug: string; name: string; suburb: string } | null;
+  submissionSource?: string;
 }
 
 type Mode = 'existing' | 'new' | 'report-outdated' | 'scan-menu';
@@ -28,7 +29,7 @@ interface ExtractedItem {
   price_type: 'regular' | 'happy_hour';
 }
 
-export default function SubmitPubForm({ isOpen, onClose, userLocation, initialPub }: SubmitPubFormProps) {
+export default function SubmitPubForm({ isOpen, onClose, userLocation, initialPub, submissionSource }: SubmitPubFormProps) {
   const [mode, setMode] = useState<Mode>('existing');
   const [pubs, setPubs] = useState<Pub[]>([]);
   const [pubsLoading, setPubsLoading] = useState(false);
@@ -429,6 +430,7 @@ export default function SubmitPubForm({ isOpen, onClose, userLocation, initialPu
             reported_price: parseFloat(price),
             beer_type: beerType || undefined,
             price_type: priceType,
+            notes: submissionSource ? `[source:${submissionSource}]` : undefined,
           }),
         });
 

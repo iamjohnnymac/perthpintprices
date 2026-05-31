@@ -1,6 +1,7 @@
 import { createClient } from '@supabase/supabase-js'
 import { Pub } from '@/types/pub'
 import { getHappyHourStatus } from '@/lib/happyHourLive'
+import { haversineDistanceKm } from '@/lib/location'
 import { getPubIndexability, PubIndexabilityTier } from '@/lib/pubIndexability'
 import { toSuburbSlug } from './urls'
 
@@ -322,6 +323,54 @@ export async function getNearbyPubs(suburb: string, excludeId: number, limit: nu
   if (error || !data) return []
   
   return data.map(toPub)
+}
+
+export async function getVerifiedPricePubs(): Promise<Pub[]> {
+  const { data, error } = await supabase
+    .from('pubs')
+    .select('*')
+    .not('price', 'is', null)
+    .or('price_verified.is.null,price_verified.eq.true')
+    .order('price', { ascending: true, nullsFirst: false })
+
+  if (error || !data) return []
+
+  return data.map(toPub)
+}
+
+export function getNearestPubFromList(pubs: Pub[], lat: number, lng: number): Pub | null {
+  if (pubs.length === 0) return null
+
+  const byPrice = (a: Pub, b: Pub) => (a.price ?? Number.MAX_VALUE) - (b.price ?? Number.MAX_VALUE)
+  if (!Number.isFinite(lat) || !Number.isFinite(lng) || (lat === 0 && lng === 0)) {
+    return [...pubs].sort(byPrice)[0] ?? null
+  }
+
+  return pubs
+    .map(pub => ({
+      pub,
+      distance: haversineDistanceKm(lat, lng, pub.lat, pub.lng),
+    }))
+    .sort((a, b) => a.distance - b.distance || byPrice(a.pub, b.pub))[0]?.pub ?? null
+}
+
+export async function getLatestAndrewCallAtByPubId(): Promise<Record<number, string>> {
+  const { data, error } = await supabase
+    .from('phone_call_log')
+    .select('pub_id, created_at')
+    .not('pub_id', 'is', null)
+    .order('created_at', { ascending: false })
+
+  if (error || !data) return {}
+
+  const latestByPubId: Record<number, string> = {}
+  for (const row of data) {
+    const pubId = Number(row.pub_id)
+    if (!Number.isFinite(pubId) || !row.created_at || latestByPubId[pubId]) continue
+    latestByPubId[pubId] = row.created_at
+  }
+
+  return latestByPubId
 }
 
 // Fetch pubs in a similar price range from different suburbs (for cross-linking)
