@@ -181,13 +181,13 @@ export default function SunsetSippers({ pubs, userLocation }: SunsetSippersProps
   let statusMessage = ''
   let StatusIcon = Sun
   if (isSunset) {
-    statusMessage = 'Sunset is happening right now!'
+    statusMessage = "Sunset's happening now."
     StatusIcon = Sunset
   } else if (isGoldenHour) {
-    statusMessage = `Golden hour! Sunset in ${getTimeUntil(sunTimes.sunset, now)}`
+    statusMessage = `Golden hour — sunset in ${getTimeUntil(sunTimes.sunset, now)}`
     StatusIcon = Sunset
   } else if (isNighttime) {
-    statusMessage = 'After dark. Plan tomorrow\'s sunset sesh'
+    statusMessage = "After dark. Catch tomorrow's sunset instead."
     StatusIcon = Moon
   } else {
     statusMessage = `Sunset in ${getTimeUntil(sunTimes.sunset, now)}`
@@ -396,13 +396,13 @@ export default function SunsetSippers({ pubs, userLocation }: SunsetSippersProps
         <div className="bg-off-white rounded-card p-4 text-center">
           <p className="font-mono text-[0.75rem] text-gray-mid flex items-center justify-center gap-2">
             {isSunset && (
-              <><Sunset className="w-4 h-4 text-amber" /> Quick! Grab a pint and face west</>
+              <><Sunset className="w-4 h-4 text-amber" /> Last of the light — grab a pint and face west</>
             )}
             {isGoldenHour && !isSunset && (
               <><Sun className="w-4 h-4 text-amber" /> Golden hour lighting. Your pint has never looked better</>
             )}
             {!isGoldenHour && !isSunset && !isNighttime && (
-              <><Beer className="w-4 h-4 text-amber" /> Golden hour starts at {formatTime(sunTimes.goldenHourStart)}. Plan your sesh</>
+              <><Beer className="w-4 h-4 text-amber" /> Golden hour starts at {formatTime(sunTimes.goldenHourStart)}. Worth being set up by then</>
             )}
             {isNighttime && (
               <><Moon className="w-4 h-4 text-gray-mid" /> The sun will rise again tomorrow. Rest up</>

@@ -59,8 +59,8 @@ function getWeatherCondition(weather: WeatherData, avgPrice: number): WeatherCon
     return {
       icon: 'cloud-rain',
       label: 'Rainy day',
-      message: "Rainy day? Cozy up inside with a cold one",
-      tagline: `${weather.temperature.toFixed(0)}° and wet. Perfect happy hour weather`,
+      message: "Rain's about. Good day to be inside with a pint.",
+      tagline: `${weather.temperature.toFixed(0)}° and wet. Good happy hour weather`,
       filter: (pubs) => pubs.filter(p => p.happyHour).filter(p => p.price !== null).sort((a, b) => a.price! - b.price!),
     }
   }
@@ -68,9 +68,9 @@ function getWeatherCondition(weather: WeatherData, avgPrice: number): WeatherCon
   if (weather.temperature >= 30) {
     return {
       icon: 'flame',
-      label: 'Scorcher',
-      message: "Scorcher! Head to the beach pubs for a cold one",
-      tagline: `${weather.temperature.toFixed(0)}° scorcher. Just point me to the coldest pint`,
+      label: 'Hot day',
+      message: "Hot one today — head for the beach pubs.",
+      tagline: `${weather.temperature.toFixed(0)}° out. Point me to the coldest pint`,
       filter: (pubs) => pubs.filter(p => p.sunsetSpot).filter(p => p.price !== null).sort((a, b) => a.price! - b.price!),
     }
   }
@@ -78,9 +78,9 @@ function getWeatherCondition(weather: WeatherData, avgPrice: number): WeatherCon
   if (weather.temperature >= 22) {
     return {
       icon: 'sun',
-      label: 'Perfect weather',
-      message: "Mint conditions. Get outside and grab a pint!",
-      tagline: `${weather.temperature.toFixed(0)}° and sunny. Get outside and grab a cold one`,
+      label: 'Sunny',
+      message: "Good pub weather. Worth getting outside for.",
+      tagline: `${weather.temperature.toFixed(0)}° and sunny. Worth getting outside for`,
       filter: (pubs) => pubs.filter(p => p.sunsetSpot || p.description?.toLowerCase().includes('garden')).filter(p => p.price !== null).sort((a, b) => a.price! - b.price!),
     }
   }
@@ -89,8 +89,8 @@ function getWeatherCondition(weather: WeatherData, avgPrice: number): WeatherCon
     return {
       icon: 'cloud-sun',
       label: 'Great pub weather',
-      message: "Great pub weather. Grab a mate and a pint",
-      tagline: `${weather.temperature.toFixed(0)}° with a breeze. Grab a mate and a cold one`,
+      message: "Mild out. Good for a pint in the sun.",
+      tagline: `${weather.temperature.toFixed(0)}° with a breeze. Good day for a pint outside`,
       filter: (pubs) => [...pubs].filter(p => p.price !== null).sort((a, b) => a.price! - b.price!),
     }
   }
@@ -99,8 +99,8 @@ function getWeatherCondition(weather: WeatherData, avgPrice: number): WeatherCon
   return {
     icon: 'snowflake',
     label: 'Chilly',
-    message: "Chilly! Warm up with a pint at a cozy pub",
-    tagline: `${weather.temperature.toFixed(0)}° and chilly. Rug up and find a cozy corner`,
+    message: "Cold out. Warm up with a pint somewhere cosy.",
+    tagline: `${weather.temperature.toFixed(0)}° and cold. Find a cosy corner`,
     filter: (pubs) => [...pubs].filter(p => p.price !== null).sort((a, b) => a.price! - b.price!),
   }
 }
@@ -296,12 +296,12 @@ export default function BeerWeather({ pubs, userLocation }: BeerWeatherProps) {
             {/* Fun footer */}
             <div className="mt-3 bg-off-white rounded-card p-3 text-center">
               <p className="font-mono text-[0.75rem] text-gray-mid flex items-center justify-center gap-2">
-                {weather.temperature >= 35 && <><Sun className="w-4 h-4 text-amber" /> Stay hydrated. Water between pints!</>}
-                {weather.temperature >= 30 && weather.temperature < 35 && <><Umbrella className="w-4 h-4 text-amber" /> Perfect day for a cold schooner by the water</>}
-                {weather.temperature >= 22 && weather.temperature < 30 && <><Leaf className="w-4 h-4 text-amber" /> Perth summer sesh weather. Get amongst it</>}
+                {weather.temperature >= 35 && <><Sun className="w-4 h-4 text-amber" /> Stay hydrated — water between pints.</>}
+                {weather.temperature >= 30 && weather.temperature < 35 && <><Umbrella className="w-4 h-4 text-amber" /> Good day for a schooner by the water</>}
+                {weather.temperature >= 22 && weather.temperature < 30 && <><Leaf className="w-4 h-4 text-amber" /> Proper Perth summer weather</>}
                 {weather.temperature >= 15 && weather.temperature < 22 && <><Leaf className="w-4 h-4 text-amber" /> Classic pub weather</>}
                 {weather.temperature < 15 && <><Thermometer className="w-4 h-4 text-gray-mid" /> Bundle up and find a warm corner booth</>}
-                {isWindy && ' · Hold onto your hat out there!'}
+                {isWindy && ' · Bit breezy out there.'}
               </p>
             </div>
           </div>

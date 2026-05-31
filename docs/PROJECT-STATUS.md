@@ -10,6 +10,10 @@ Stack, database, routes, components, and lib files are documented in `CLAUDE.md`
 
 ## What's done recently
 
+### Corny-drift cleanup shipped (2026-05-31, #87)
+- Swept the weather/guide components (`BeerWeather`, `RainyDay`, `SunsetSippers`) for the corny/American drift the voice brief flags. Found ~4× the content-pack §10 table: replaced exclamation-mark boosterism and stacked slang (`Scorcher!`, `grab a mate`/`cold one`, `sesh`, `hunker down`, `get amongst it`, `Hold onto your hat!`, `Quick!`) with dry equivalents; fixed American `cozy`→`cosy` in visible prose (the `cozy-corners` URL slug + the `cozyPub` data field stay); dropped the brief-flagged `That's the Perth way` tag. `PuntNPints` was already clean.
+- Words-only — no layout/logic change. Verified `npx tsc --noEmit` clean + lint (pre-existing react-hooks warnings only). Gated through the brief's 7-question Voice Test. (Humanizer skill not installed this session; the brief's anti-AI-tell standard applied by hand.)
+
 ### Pub-page SEO Phase 0 shipped (2026-05-31, PR #82)
 - **Issues #69/#70/#71 / merge commit `da2ec80`:** shipped the indexability/freshness foundation from `docs/pub-page-content-plan.md` (merged in PR #81). Pub pages now use a tested Tier A/B/C `dataScore` helper: Tier-C price-less husks stay live for users/internal links but emit `noindex,follow`; Tier A/B pages remain indexable.
 - **Sitemap honesty:** `sitemap.xml` now includes only Tier A/B pub URLs, uses real `last_verified` / `updated_at` / `last_updated` freshness dates instead of build-time `Date.now()`, and derives suburb/static `lastModified` from all child pub freshness rather than only the indexable subset. Live-data check: 857 routable pubs, 232 indexable pub rows, 397 sitemap URLs.
