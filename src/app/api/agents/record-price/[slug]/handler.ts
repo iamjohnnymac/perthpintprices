@@ -29,6 +29,7 @@ interface RecordPriceDeps {
     from(table: string): any
   }
   now?: Date
+  afterWrite?: (pub: { slug: string; suburb: string }) => void
 }
 
 export async function handleRecordPrice(
@@ -80,7 +81,7 @@ export async function handleRecordPrice(
 
   const { data: pub, error: fetchErr } = await supabase
     .from('pubs')
-    .select('id, name, price, price_verified')
+    .select('id, slug, name, suburb, price, price_verified')
     .eq('slug', pubSlug)
     .single()
   if (fetchErr || !pub) {
@@ -119,6 +120,8 @@ export async function handleRecordPrice(
       source: body.conversation_id ? `ElevenLabs ${body.conversation_id}` : 'phone_agent',
     })
   }
+
+  deps.afterWrite?.({ slug: pub.slug || pubSlug, suburb: pub.suburb })
 
   console.log(`[agent tool] wrote price=${pintPrice} beer=${body.beer_type || 'n/a'} for ${pub.name}`)
 

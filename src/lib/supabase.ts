@@ -1,6 +1,7 @@
 import { createClient } from '@supabase/supabase-js'
 import { Pub } from '@/types/pub'
 import { getHappyHourStatus } from '@/lib/happyHourLive'
+import { getPubIndexability, PubIndexabilityTier } from '@/lib/pubIndexability'
 import { toSuburbSlug } from './urls'
 
 function titleCase(str: string): string {
@@ -225,7 +226,7 @@ export async function getAllPubSlugs(): Promise<string[]> {
   return data.map(row => row.slug).filter(Boolean)
 }
 
-// Fetch all pub slug + suburb pairs (for sitemap and generateStaticParams with suburb context)
+// Fetch all pub slug + suburb pairs (for routing only)
 export async function getAllPubSlugPairs(): Promise<{ slug: string; suburb: string }[]> {
   const { data, error } = await supabase
     .from('pubs')
@@ -234,6 +235,78 @@ export async function getAllPubSlugPairs(): Promise<{ slug: string; suburb: stri
 
   if (error || !data) return []
   return data.filter(row => row.slug && row.suburb).map(row => ({ slug: row.slug, suburb: row.suburb }))
+}
+
+export interface IndexablePubSlugPair {
+  slug: string
+  suburb: string
+  lastModified: string | null
+  dataScore: number
+  indexabilityTier: PubIndexabilityTier
+}
+
+export interface PubLastModifiedPair {
+  suburb: string
+  lastModified: string | null
+}
+
+export async function getAllPubLastModifiedPairs(): Promise<PubLastModifiedPair[]> {
+  const { data, error } = await supabase
+    .from('pubs')
+    .select('suburb, last_verified, last_updated, updated_at')
+
+  if (error || !data) return []
+
+  return data
+    .filter(row => row.suburb)
+    .map(row => ({
+      suburb: row.suburb,
+      lastModified: row.last_verified || row.updated_at || row.last_updated || null,
+    }))
+}
+
+export async function getIndexablePubSlugPairs(): Promise<IndexablePubSlugPair[]> {
+  const { data, error } = await supabase
+    .from('pubs')
+    .select('slug, suburb, price, price_verified, last_verified, last_updated, updated_at, happy_hour, happy_hour_price, happy_hour_days, happy_hour_start, happy_hour_end, beer_type, vibe_tag, has_tab, kid_friendly, cozy_pub, sunset_spot, website')
+    .order('slug')
+
+  if (error || !data) return []
+
+  return data
+    .filter(row => row.slug && row.suburb)
+    .map(row => {
+      const price = row.price != null ? Number(row.price) : null
+      const happyHourPrice = row.happy_hour_price != null ? Number(row.happy_hour_price) : null
+      const indexability = getPubIndexability({
+        price,
+        priceVerified: row.price_verified,
+        lastVerified: row.last_verified || null,
+        happyHour: row.happy_hour || null,
+        happyHourPrice,
+        happyHourDays: row.happy_hour_days || null,
+        happyHourStart: row.happy_hour_start || null,
+        happyHourEnd: row.happy_hour_end || null,
+        beerType: row.beer_type || null,
+        vibeTag: row.vibe_tag || null,
+        hasTab: row.has_tab,
+        kidFriendly: row.kid_friendly,
+        cozyPub: row.cozy_pub,
+        sunsetSpot: row.sunset_spot,
+        website: row.website || null,
+      })
+
+      return {
+        slug: row.slug,
+        suburb: row.suburb,
+        lastModified: row.last_verified || row.updated_at || row.last_updated || null,
+        dataScore: indexability.dataScore,
+        indexabilityTier: indexability.tier,
+        isIndexable: indexability.isIndexable,
+      }
+    })
+    .filter(row => row.isIndexable)
+    .map(({ isIndexable, ...row }) => row)
 }
 
 // Fetch nearby pubs (same suburb, excluding current)

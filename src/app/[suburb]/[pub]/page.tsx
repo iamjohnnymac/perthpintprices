@@ -1,6 +1,8 @@
 import { Metadata } from 'next'
+import { unstable_cache } from 'next/cache'
 import { notFound, permanentRedirect } from 'next/navigation'
 import { getPubBySlug, getAllPubSlugPairs, getNearbyPubs, getSiteStats } from '@/lib/supabase'
+import { getPubIndexability } from '@/lib/pubIndexability'
 import { absolutePubUrl, absoluteSuburbUrl, toSuburbSlug } from '@/lib/urls'
 import PubDetailClient from './PubDetailClient'
 
@@ -8,12 +10,40 @@ interface PageProps {
   params: { suburb: string; pub: string }
 }
 
+function getCachedPubBySlug(slug: string) {
+  return unstable_cache(
+    () => getPubBySlug(slug),
+    ['pub', slug],
+    {
+      tags: [`pub:${slug}`],
+      revalidate: 3600,
+    },
+  )()
+}
+
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const pub = await getPubBySlug(params.pub)
+  const pub = await getCachedPubBySlug(params.pub)
   if (!pub) return { title: 'Pub Not Found' }
 
   const priceText = pub.price !== null ? `$${pub.price.toFixed(2)} pints` : 'Price TBC'
   const title = `${pub.name}, ${pub.suburb}: ${priceText}`
+  const indexability = getPubIndexability({
+    price: pub.regularPrice,
+    priceVerified: pub.priceVerified,
+    lastVerified: pub.lastVerified,
+    happyHour: pub.happyHour,
+    happyHourPrice: pub.happyHourPrice,
+    happyHourDays: pub.happyHourDays,
+    happyHourStart: pub.happyHourStart,
+    happyHourEnd: pub.happyHourEnd,
+    beerType: pub.beerType,
+    vibeTag: pub.vibeTag,
+    hasTab: pub.hasTab,
+    kidFriendly: pub.kidFriendly,
+    cozyPub: pub.cozyPub,
+    sunsetSpot: pub.sunsetSpot,
+    website: pub.website,
+  })
 
   // Build description with progressive enrichment (target 70-160 chars)
   const descParts: string[] = []
@@ -40,6 +70,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     title,
     description,
     alternates: { canonical },
+    robots: indexability.isIndexable
+      ? { index: true, follow: true }
+      : { index: false, follow: true },
     openGraph: {
       title: `${pub.name}: ${priceText}`,
       description,
@@ -62,10 +95,10 @@ export async function generateStaticParams() {
   return pairs.map(pair => ({ suburb: toSuburbSlug(pair.suburb), pub: pair.slug }))
 }
 
-export const revalidate = 300
+export const revalidate = 3600
 
 export default async function PubPage({ params }: PageProps) {
-  const pub = await getPubBySlug(params.pub)
+  const pub = await getCachedPubBySlug(params.pub)
   if (!pub) notFound()
 
   // Verify the suburb slug matches — redirect to correct URL if not
