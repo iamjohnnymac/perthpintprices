@@ -28,6 +28,13 @@ export default function SuburbsClient({ suburbs }: SuburbsClientProps) {
 
   const letters = Object.keys(grouped).sort()
 
+  const venueCount = suburbs.reduce((sum, s) => sum + s.pubCount, 0)
+  const withAvg = [...suburbs]
+    .filter(s => parseFloat(s.avgPrice) > 0)
+    .sort((a, b) => parseFloat(a.avgPrice) - parseFloat(b.avgPrice))
+  const cheapestSuburb = withAvg[0] ?? null
+  const dearestSuburb = withAvg.length ? withAvg[withAvg.length - 1] : null
+
   return (
     <div className="min-h-screen bg-[#FDF8F0]">
       <SubPageNav title="Suburbs" subtitle={`${suburbs.length} suburbs`} />
@@ -36,10 +43,13 @@ export default function SuburbsClient({ suburbs }: SuburbsClientProps) {
         {/* Header */}
         <div className="mb-8">
           <h1 className="font-mono font-extrabold text-[clamp(1.8rem,5vw,2.4rem)] tracking-[-0.03em] text-ink leading-[1.1] mb-2">
-            All Suburbs
+            Pint prices by Perth suburb
           </h1>
-          <p className="text-[0.9rem] text-gray-mid">
-            {suburbs.length} suburbs across Perth. Find pint prices in your area.
+          <p className="font-body text-[0.9rem] leading-relaxed text-gray-mid">
+            Every Perth suburb we cover, with the cheapest pint, the average, and how many pubs — <span className="text-ink font-bold">{suburbs.length}</span> suburbs, <span className="text-ink font-bold">{venueCount}</span> pubs, each price showing when we last checked.
+            {cheapestSuburb && dearestSuburb && cheapestSuburb.slug !== dearestSuburb.slug && (
+              <> <Link href={`/${cheapestSuburb.slug}`} className="text-amber font-bold hover:underline">{cheapestSuburb.name}</Link> runs cheapest right now at a ${parseFloat(cheapestSuburb.avgPrice).toFixed(2)} average; <Link href={`/${dearestSuburb.slug}`} className="text-amber font-bold hover:underline">{dearestSuburb.name}</Link> the dearest at ${parseFloat(dearestSuburb.avgPrice).toFixed(2)}.</>
+            )}
           </p>
         </div>
 
