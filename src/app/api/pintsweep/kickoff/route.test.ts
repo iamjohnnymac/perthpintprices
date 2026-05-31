@@ -82,6 +82,7 @@ describe('pintsweep kickoff safety filters', () => {
     const response = await handleKickoff(jsonRequest({ skipOpenCheck: true, cooldownHours: 0 }), {
       supabase,
       now: new Date('2026-05-31T00:00:00.000Z'),
+      reservationId: 'pintsweep-test',
       fetchFn: async () =>
         new Response(JSON.stringify({ batch_id: 'batch_123' }), {
           status: 200,
@@ -96,13 +97,13 @@ describe('pintsweep kickoff safety filters', () => {
     assert.deepEqual(reservationRows, [
       {
         pub_id: 3,
-        call_sid: 'pintsweep-1780185600000-3',
+        call_sid: 'pintsweep-test-3',
         transcript: null,
         recording_url: null,
         parsed_price: null,
         parsed_beer_type: null,
         parsed_confidence: 'queued',
-        parsed_notes: 'pintsweep kickoff reservation pintsweep-1780185600000',
+        parsed_notes: 'pintsweep kickoff reservation pintsweep-test',
       },
     ])
   })
@@ -169,6 +170,7 @@ describe('pintsweep kickoff safety filters', () => {
     const response = await handleKickoff(jsonRequest({ skipOpenCheck: true }), {
       supabase,
       now: new Date('2026-05-31T00:00:00.000Z'),
+      reservationId: 'pintsweep-test',
       fetchFn: async () => {
         submitted = true
         return new Response('{}')

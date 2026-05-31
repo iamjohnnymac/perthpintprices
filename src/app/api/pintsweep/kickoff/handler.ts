@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { randomUUID } from 'node:crypto'
 
 // Kicks off a batch outbound sweep via ElevenLabs Batch Calling. Pulls pubs
 // with a phone number and no verified price, builds per-recipient dynamic
@@ -46,6 +47,7 @@ interface KickoffDeps {
   }
   now?: Date
   fetchFn?: typeof fetch
+  reservationId?: string
 }
 
 const PHONE_LOG_PAGE_SIZE = 1000
@@ -193,7 +195,7 @@ export async function handleKickoff(req: NextRequest, deps: KickoffDeps) {
     telephony_call_config: { ring_timeout: 25 },
   }
 
-  const reservationSid = `pintsweep-${now.getTime()}`
+  const reservationSid = deps.reservationId ?? `pintsweep-${now.getTime()}-${randomUUID()}`
   const reservationRows = callCandidates.map((c) => ({
     pub_id: c.pub.id,
     call_sid: `${reservationSid}-${c.pub.id}`,
