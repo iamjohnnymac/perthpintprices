@@ -10,6 +10,11 @@ Stack, database, routes, components, and lib files are documented in `CLAUDE.md`
 
 ## What's done recently
 
+### Andrew guardrails draft PR opened (2026-05-31)
+- **Issue #63 / draft PR #68 / code commit `7f21226`:** revived the unmerged Andrew call-safety work on a fresh `codex/andrew-dnc-cooldown` branch. Adds `phone_call_log`-based do-not-call exclusion, a real 72h call cooldown in `/api/pintsweep/kickoff`, post-call fallback persistence from ElevenLabs data collection, and `scripts/mark-dnc.mjs` for manual DNC markers.
+- **Status:** not merged or deployed yet. Draft PR is awaiting independent review before #63 can be closed or the Data Coverage backfill can safely begin.
+- **Verification on branch:** `npx tsc --noEmit`, `npm test` (**173/173 tests**), `npm run lint` (passes with the existing `SubmitPubForm`/`SunsetSippers` warnings), and `npm run build`.
+
 ### HappyHourEngine refactor shipped (2026-05-31)
 - **Issue #56 / commit `2279802`:** collapsed the dual happy-hour engines into the structured `happyHourLive` path and deleted the lossy `src/lib/happyHour.ts` parser. `happyHourLive` now owns active/starting-soon status, effective price, minutes remaining, starts-in-minutes, countdown text, and structured labels from raw `happy_hour_days/start/end` fields.
 - **Fixed the two deferred HH consumers:** `DiscoverClient` and `TonightsMoves` no longer re-parse `pub.happyHour`; both read structured schedule fields through the unified engine, so weekend-only, single-day, half-hour, and am-to-pm windows behave correctly.
@@ -164,7 +169,7 @@ See [`docs/seo-action-plan.md`](./seo-action-plan.md) for the prioritised punch 
 - **Ticketed** under milestone `Data Coverage` (#6): #61 backfill the 663 missing prices (p1), #62 stale-price refresh strategy.
 
 ### Andrew voice agent (milestone `Andrew (voice agent)` #7)
-- **#63** revive do-not-call + cooldown + post-call-fallback hardening — unmerged work on branch `claude/audit-e2e-improvements-WQb6N` (none of it is in main; compliance-relevant for a robocaller).
+- **#63** revive do-not-call + cooldown + post-call-fallback hardening — draft PR #68 is open from `codex/andrew-dnc-cooldown` (not merged/deployed yet). It supersedes the old unmerged `claude/audit-e2e-improvements-WQb6N` source branch; keep the old branch until #63 ships.
 - **#64** voice-quality decision. Place test calls with phone OFF silent to evaluate cadence/volume after the v3 conversational + stability 0.70 change
 - If sound quality is good: kick off Professional Voice Clone (PVC) per `docs/andrew-voice-research.md` §3 — book a 30 min recording session via Voicebooking / Voices.com or record a willing AU male mate. Cleanest signal for production phone bots.
 - If still inconsistent: pilot Cartesia Sonic-3 + Line per research §6
