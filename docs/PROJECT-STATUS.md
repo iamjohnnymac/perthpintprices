@@ -10,6 +10,11 @@ Stack, database, routes, components, and lib files are documented in `CLAUDE.md`
 
 ## What's done recently
 
+### Tier-C report-price hero shipped (2026-05-31)
+- **Issue #74 / branch `codex/tier-c-report-hero`:** price-less Tier-C pub pages now render the truthful absence stub with last Andrew call timing, verified nearby-price count, and a link to the nearest checked pub instead of leaving the page as a uniform husk.
+- **Report-price conversion path:** Tier-C pages flip the pub-page CTA to a primary `Report the price` hero button and tag resulting submissions with `source:tier-c-report-hero` in `price_reports.notes` for M8 measurement.
+- **Verification:** checked `/fremantle/federal-hotel` locally as a real Tier-C sample: `noindex` still present, stub renders, nearest checked pub link renders, and desktop/mobile screenshots show the hero CTA and copy fit. Verified `npm test` (**199/199 tests**), `npx tsc --noEmit`, `npm run lint` (existing warnings only), and `npm run build`.
+
 ### AI citation signals shipped (2026-05-31)
 - **Issue #35 / branch `codex/llms-article-schema`:** added `/llms.txt` as a markdown citation map for the live high-signal pages (Pint Index, live insight pages, happy hours, discover, and key suburb pages). The deleted weekly-report route stays deleted; Pint Index is the Article/schema asset per `docs/seo-action-plan.md`.
 - **Structured citation + crawler access:** added Article JSON-LD to `/insights/pint-index` with `author`, `publisher`, `dateModified`, and `mainEntityOfPage.lastReviewed` from real pub freshness data; added explicit GPTBot / PerplexityBot / Google-Extended allow rules while keeping `/admin` and `/api` blocked.
