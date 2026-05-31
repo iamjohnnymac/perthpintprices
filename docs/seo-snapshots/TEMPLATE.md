@@ -103,9 +103,14 @@ Source matching:
 
 - `reddit.com`
 - `old.reddit.com`
+- `reddit`
+- `old-reddit`
 - `tiktok.com`
+- `tiktok`
 - `instagram.com`
+- `instagram`
 - `x.com`
+- `x`
 - Other visible community sources that sent sessions
 
 GA4 exploration definition:
@@ -114,7 +119,7 @@ GA4 exploration definition:
 - Date range: same as the weekly snapshot
 - Rows: `Session source / medium`, then `Landing page + query string`
 - Values: `Sessions`, `Engaged sessions`, `Engagement rate`, `Average engagement time per session`, and key event metrics once #28 is configured
-- Filter: `Session source` exactly matches or contains the community sources above
+- Filter: `Session source` exactly matches or contains the community sources above, including both referrer domains and the matching UTM `utm_source` values
 
 | Source / medium | Sessions | Engaged sessions | Engagement rate | Top landing pages | Key events | Notes |
 |---|---:|---:|---:|---|---:|---|
