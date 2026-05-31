@@ -10,6 +10,7 @@ test('llms.txt returns markdown with live canonical URLs only', async () => {
   assert.match(response.headers.get('Content-Type') || '', /text\/markdown/)
   assert.match(body, /^# Perth Pint Prices/)
   assert.match(body, /https:\/\/perthpintprices\.com\/insights\/pint-index/)
+  assert.match(body, /https:\/\/perthpintprices\.com\/insights\/pint-index\/data\.csv/)
   assert.match(body, /https:\/\/perthpintprices\.com\/sitemap\.xml/)
   assert.doesNotMatch(body, /weekly-report/)
 })

@@ -10,6 +10,11 @@ Stack, database, routes, components, and lib files are documented in `CLAUDE.md`
 
 ## What's done recently
 
+### Pint Index methodology + CSV citation asset shipped (2026-06-01)
+- **Issue #117 / branch `codex/pint-index-methodology`:** Pint Index now includes a visible methodology block covering what counts as a pint, which prices are included, how prices are checked, why TBC venues stay out of averages, and how weekly snapshots power the index.
+- **Citation export:** added `/insights/pint-index/data.csv` as a public CSV download for the Pint Index snapshot series, with `text/csv`, `Content-Disposition`, stable headers, and escaped row formatting. `/llms.txt` now links both the Pint Index methodology page and the CSV export.
+- **Verification:** checked the CSV route locally for `200`, `text/csv`, attachment headers, and live snapshot rows. Verified `npm test` (**200/200 tests**), `npx tsc --noEmit`, `npm run lint` (existing warnings only), `npm run build`, and desktop/mobile screenshots for `/insights/pint-index`.
+
 ### Tier-C report-price hero shipped (2026-05-31)
 - **Issue #74 / branch `codex/tier-c-report-hero`:** price-less Tier-C pub pages now render the truthful absence stub with last Andrew call timing, verified nearby-price count, and a link to the nearest checked pub instead of leaving the page as a uniform husk.
 - **Report-price conversion path:** Tier-C pages flip the pub-page CTA to a primary `Report the price` hero button and tag resulting submissions with `source:tier-c-report-hero` in `price_reports.notes` for M8 measurement.
