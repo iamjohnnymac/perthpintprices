@@ -11,7 +11,7 @@ Stack, database, routes, components, and lib files are documented in `CLAUDE.md`
 ## What's done recently
 
 ### Community + Reddit discovery loop documented (2026-06-01)
-- **Issue #115 / branch `codex/community-reddit-loop`:** added `docs/community-discovery-loop.md` with the first 10 Reddit/community targets, self-promo norms, and a transparent Pint Index community-post draft.
+- **Issue #115 / branch `codex/community-reddit-loop` / commit `3f4d135`:** added `docs/community-discovery-loop.md` with the first 10 Reddit/community targets, self-promo norms, and a transparent Pint Index community-post draft.
 - **Content + tracking:** added Reddit-sourced #27/#32 backlog questions and a referral plan that tracks `reddit.com`, `old.reddit.com`, `reddit`, and `old-reddit` alongside the existing SEO snapshot template.
 - **Guardrails:** explicitly bans inauthentic mention seeding, aged-account boosting, sockpuppets, vote manipulation, unsolicited DMs, link-only replies, and undisclosed promotion.
 - **Verification:** docs-only change; verified with `git diff --check`.
