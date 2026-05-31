@@ -4,7 +4,7 @@ import BeerWeatherPage from './BeerWeatherPage'
 
 export const metadata: Metadata = {
   title: 'Beer Weather Perth',
-  description: "What's the weather saying about your next pint? Live Perth weather matched to pub picks. Scorcher? Hit a beer garden. Rainy? Find a cozy corner.",
+  description: "What the forecast says about where to drink in Perth — beach pubs and beer gardens when it's hot, somewhere with a roof when it's not.",
   alternates: { canonical: 'https://perthpintprices.com/guides/beer-weather' },
   openGraph: {
     title: 'Beer Weather Perth | Perth Pint Prices',
@@ -28,7 +28,7 @@ export default function Page() {
       ]} />
       <div className="sr-only" aria-hidden="true">
         <h1>Beer Weather Perth - Today&apos;s Best Pub Picks</h1>
-        <p>Live Perth weather matched to pub recommendations. Find beer gardens for sunny days, cozy corners for rainy weather, and rooftop bars for warm evenings across Perth&apos;s best venues.</p>
+        <p>Today&apos;s Perth forecast matched to the right pub — beer gardens for hot days, sheltered corners for the rain, and rooftop spots for warm evenings.</p>
         <a href="/">Home</a>
         <a href="/discover">Discover</a>
         <a href="/happy-hour">Happy Hours</a>

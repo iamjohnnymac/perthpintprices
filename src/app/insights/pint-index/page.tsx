@@ -4,7 +4,7 @@ import PintIndexPage from './PintIndexPage'
 
 export const metadata: Metadata = {
   title: 'Perth Pint Index™: Live Beer Price Tracker',
-  description: "Track Perth's average pint price over time. The Perth Pint Index™ monitors beer pricing trends across 300+ venues with weekly snapshots.",
+  description: "The median pint in Perth, tracked across the pubs we cover and updated as prices come in — the spread by suburb, the quarter's moves, and who's still under $10.",
   alternates: { canonical: 'https://perthpintprices.com/insights/pint-index' },
   openGraph: {
     title: 'Perth Pint Index™: Live Beer Price Tracker | Perth Pint Prices',
@@ -28,7 +28,7 @@ export default function Page() {
       ]} />
       <div className="sr-only" aria-hidden="true">
         <h1>Perth Pint Index - Live Beer Price Tracker</h1>
-        <p>Track Perth&apos;s average pint price over time. The Perth Pint Index monitors beer pricing trends across 300+ venues with weekly snapshots and historical data.</p>
+        <p>The median pint in Perth, tracked across every pub we cover and updated as prices come in. The Index shows the spread by suburb, which way prices moved this quarter, and the pubs still holding under $10.</p>
         <a href="/">Home</a>
         <a href="/discover">Discover</a>
         <a href="/happy-hour">Happy Hours</a>

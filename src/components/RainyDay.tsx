@@ -35,16 +35,16 @@ function getRainIntensity(code: number): string {
 }
 
 const RAIN_QUIPS = [
-  "Perfect excuse for a cheeky pint by the window",
-  "Nothing beats rain on the roof and a cold one in hand",
-  "Chucking it down. Time to hunker down with a brew",
-  "Wet outside, warm inside. That's the Perth way",
+  "A good excuse for a cheeky pint by the window",
+  "Rain on the roof, a pint in hand. Hard to beat.",
+  "Chucking it down. Good time to hole up with a pint.",
+  "Wet outside, warm inside.",
 ]
 
 const DRY_QUIPS = [
-  "No rain, no worries. Still great spots to chill",
+  "No rain about. Still good spots for a quiet pint.",
   "Save these for the next downpour, or just go now",
-  "Cozy vibes rain or shine",
+  "Cosy, rain or shine.",
 ]
 
 export default function RainyDay({ pubs, userLocation }: RainyDayProps) {
@@ -136,7 +136,7 @@ export default function RainyDay({ pubs, userLocation }: RainyDayProps) {
             <div>
               <div className="flex items-center gap-2">
                 <h3 className="font-mono text-[0.85rem] font-extrabold text-ink">
-                  {isRaining ? 'Rainy Day Pubs' : 'Cozy Corners'}
+                  {isRaining ? 'Rainy Day Pubs' : 'Cosy Corners'}
                 </h3>
                 {isRaining && weather.rain > 0 && (
                   <span className="font-mono text-[0.55rem] font-bold uppercase tracking-[0.05em] px-1.5 py-0.5 rounded-pill border-2 border-gray-light bg-off-white text-gray-mid">
@@ -147,7 +147,7 @@ export default function RainyDay({ pubs, userLocation }: RainyDayProps) {
               <p className="font-body text-[0.75rem] text-gray-mid">
                 {isRaining
                   ? "It's chucking it down. Here's where to hide"
-                  : "No rain today, but these are still top spots to hunker down"}
+                  : "No rain today, but these are still good spots to settle in"}
               </p>
             </div>
           </div>
@@ -186,17 +186,17 @@ export default function RainyDay({ pubs, userLocation }: RainyDayProps) {
             {/* Tagline */}
             <p className="font-body text-[0.75rem] text-gray-mid italic mb-3 text-center">
               {isRaining
-                ? "Chucking it down out there. Duck into one of these cozy spots"
-                : "No umbrella needed, but these cozy corners are always a good shout"}
+                ? "Chucking it down out there. Duck into one of these cosy spots"
+                : "No umbrella needed, but these cosy corners are always a good shout"}
             </p>
 
             {/* Recommended Pubs */}
             <div className="flex items-center justify-between mb-3">
               <h4 className="font-mono text-[0.7rem] font-bold uppercase tracking-[0.05em] text-ink">
-                {isRaining ? 'Duck In Here' : 'Cozy Picks'}
+                {isRaining ? 'Duck In Here' : 'Cosy Picks'}
               </h4>
               <span className="font-mono text-[0.65rem] text-gray-mid">
-                {cozyPubs.length} cozy {cozyPubs.length === 1 ? 'spot' : 'spots'}
+                {cozyPubs.length} cosy {cozyPubs.length === 1 ? 'spot' : 'spots'}
               </span>
             </div>
 

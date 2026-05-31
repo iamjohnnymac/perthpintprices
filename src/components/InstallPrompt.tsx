@@ -83,7 +83,7 @@ export default function InstallPrompt() {
               {platform === 'ios' ? 'Add Perth Pint Prices to Home Screen' : 'Install Perth Pint Prices'}
             </p>
             <p className="text-xs text-gray-mid leading-tight mt-0.5">
-              {platform === 'ios' ? 'Tap Share → Add to Home Screen' : 'Quick access to Perth pint prices'}
+              {platform === 'ios' ? 'Tap Share → Add to Home Screen' : 'The cheapest pint, one tap away.'}
             </p>
           </div>
 

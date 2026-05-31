@@ -4,7 +4,7 @@ import SunsetSippersPage from './SunsetSippersPage'
 
 export const metadata: Metadata = {
   title: 'Sunset Sippers Perth: Best Golden Hour Pubs',
-  description: "Find Perth's best sunset pubs. Watch the sun go down with a cold pint at venues with west-facing views and beer gardens.",
+  description: "West-facing, a view, and a pint timed to the sunset. Where to be when the sun drops over the Indian Ocean.",
   alternates: { canonical: 'https://perthpintprices.com/guides/sunset-sippers' },
   openGraph: {
     title: 'Sunset Sippers Perth: Best Golden Hour Pubs | Perth Pint Prices',

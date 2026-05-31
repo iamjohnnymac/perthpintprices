@@ -103,11 +103,17 @@ export default function DiscoverClient() {
     happy: pubs.filter(p => p.happyHour !== null && p.happyHour !== '').length,
   }), [pubs, verifiedPubs])
 
+  const cityStats = useMemo(() => {
+    const prices = verifiedPubs.map(p => p.price!).sort((a, b) => a - b)
+    const median = prices.length ? prices[Math.floor((prices.length - 1) / 2)] : null
+    return { venueCount: pubs.length, median, cheapest: bestBuys[0] ?? null }
+  }, [pubs, verifiedPubs, bestBuys])
+
   // ─── Loading State ───
   if (isLoading) {
     return (
       <main className="min-h-screen bg-[#FDF8F0]">
-        <h1 className="sr-only">Discover Perth&apos;s Best Pints</h1>
+        <h1 className="sr-only">Where to find a cheap pint in Perth</h1>
         <SubPageNav breadcrumbs={[{ label: 'Discover' }]} />
         <div className="flex items-center justify-center py-20">
           <div className="w-12 h-12 border-4 border-gray border-t-amber rounded-full animate-spin" />
@@ -118,16 +124,34 @@ export default function DiscoverClient() {
 
   return (
     <main className="min-h-screen bg-[#FDF8F0]">
-      <h1 className="sr-only">Discover Perth&apos;s Best Pints</h1>
+      <h1 className="sr-only">Where to find a cheap pint in Perth</h1>
       <SubPageNav breadcrumbs={[{ label: 'Discover' }]} />
 
       <div className="max-w-container mx-auto px-6">
 
         {/* ════════════════════════════════════════════
+            0. ANSWER-FIRST STANDFIRST
+            ════════════════════════════════════════════ */}
+        <section className="pt-8 sm:pt-10 mb-10 sm:mb-14">
+          <p className="font-body text-[0.95rem] leading-relaxed text-ink">
+            We track the price of a pint across {cityStats.venueCount} Perth pubs and check them often enough to be worth trusting.
+            {cityStats.cheapest && cityStats.median !== null && (
+              <> Right now the cheapest verified pint is <span className="font-mono font-bold">${cityStats.cheapest.price!.toFixed(2)}</span> at {cityStats.cheapest.name}, in {cityStats.cheapest.suburb}. The median across the city sits at <span className="font-mono font-bold">${cityStats.median.toFixed(2)}</span>.</>
+            )}
+          </p>
+          <p className="font-body text-[0.9rem] leading-relaxed text-gray-mid mt-3">
+            The practical layer the glossy bar guides skip — not the fit-out or the cocktail list, just what a pint costs, when it&apos;s cheaper, and where&apos;s cheaper nearby. Prices come from punters reporting in and from Andrew, our recorded line that rings pubs and asks. Each one carries the date we last checked.
+          </p>
+          <p className="font-body text-[0.9rem] leading-relaxed text-gray-mid mt-3">
+            Start with <Link href="#best-buys" className="text-amber font-bold hover:underline">tonight&apos;s cheapest pints</Link>, filter by <Link href="/suburbs" className="text-amber font-bold hover:underline">suburb</Link>, or see which pubs have a <Link href="/happy-hour" className="text-amber font-bold hover:underline">happy hour on now</Link>.
+          </p>
+        </section>
+
+        {/* ════════════════════════════════════════════
             1. HERO: Pint of the Day
             ════════════════════════════════════════════ */}
         {pintOfTheDay && (
-          <section className="pt-8 sm:pt-10 mb-10 sm:mb-14">
+          <section className="mb-10 sm:mb-14">
             <div className="border-3 border-ink rounded-card shadow-hard-sm bg-white py-10 px-6 text-center">
               <p className="font-mono text-[0.68rem] font-bold uppercase tracking-[0.1em] text-gray-mid mb-2">
                 <Star className="w-3.5 h-3.5 inline -mt-0.5 mr-1" />Pint of the Day
