@@ -10,6 +10,11 @@ Stack, database, routes, components, and lib files are documented in `CLAUDE.md`
 
 ## What's done recently
 
+### Site voice workstream kicked off (2026-05-31)
+- **Voice standard + copy specs landed (PR #84, `ab4704a`):** adopted `docs/brand-voice-brief.md` — the dry/deadpan perthisok register (no exclamation marks, AU spelling, freshness as the trust signal, the 7-question Voice Test as the per-surface gate) — and `docs/content-pack-v1.md`, whole-site surface copy written as data-fed string builders. Captured as PRD #83 under new milestone **#8 "Site Voice & Content"**.
+- **PRD #83 sliced into 8 tracer-bullet issues (#86–#93):** `seededVariant` (#86), corny-drift cleanup (#87), hub standfirsts (#88), `/[suburb]` lead + `suburbObservation` (#89), homepage + global chrome (#90), 5 guide standfirsts (#91), 5 insight standfirsts (#92), pub-page voice strings `voiceCopy` (#93, blocked by #86). Copy slices gated AFK + screenshots-on-PR against the Voice Test; all tracked on board #6.
+- **#86 `seededVariant` shipped:** deterministic anti-sameness phrasing picker (rendezvous/HRW hashing over a cyrb53 string hash) so the ~850 templated pages don't converge — same id always renders the same wording, picks spread across the pool, and appending a variant only ever moves a bounded share onto the new entry (minimal-disruption growth, asserted). Pure `src/lib` module + co-located tests; no UI, so the screenshot gate doesn't apply. Verified `npx tsc --noEmit` and **189/189 tests** (`tsx --test`).
+
 ### Pub-page SEO Phase 0 shipped (2026-05-31, PR #82)
 - **Issues #69/#70/#71 / merge commit `da2ec80`:** shipped the indexability/freshness foundation from `docs/pub-page-content-plan.md` (merged in PR #81). Pub pages now use a tested Tier A/B/C `dataScore` helper: Tier-C price-less husks stay live for users/internal links but emit `noindex,follow`; Tier A/B pages remain indexable.
 - **Sitemap honesty:** `sitemap.xml` now includes only Tier A/B pub URLs, uses real `last_verified` / `updated_at` / `last_updated` freshness dates instead of build-time `Date.now()`, and derives suburb/static `lastModified` from all child pub freshness rather than only the indexable subset. Live-data check: 857 routable pubs, 232 indexable pub rows, 397 sitemap URLs.
