@@ -10,6 +10,11 @@ Stack, database, routes, components, and lib files are documented in `CLAUDE.md`
 
 ## What's done recently
 
+### Official menu crawler MVP ready (2026-06-01)
+- **Branch `codex/official-menu-crawler-mvp`:** added a manual, dry-run-first official menu crawler for curated source URLs. It fetches reviewed venue/menu pages, extracts conservative pint-price candidates, and can insert pending `price_reports` with `submission_source = "official_menu"` only when run with `--write`.
+- **Guardrails:** extraction skips happy-hour/special/deal lines in v1, keeps reviewer evidence text, stores raw extraction metadata, and never updates canonical `pubs.price`. The committed seed file is an example only; real crawl lists stay explicit and reviewed.
+- **Verification:** verified `npm test` (**229/229 tests**), `npx tsc --noEmit`, `npm run lint` (existing warnings only), `npm run build`, `git diff --check`, and a dry-run against `scripts/official-menu-seeds.example.json` with zero writes.
+
 ### Price intake plumbing implemented (2026-06-01)
 - **Branch `codex/price-intake-plumbing-spec` / commit `e2de1c5`:** added structured `price_reports` provenance/evidence columns (`submission_source`, `source_url`, `evidence_text`, `observed_at`, `raw_extraction`, `extractor_version`) with a constrained source vocabulary and legacy backfill for menu scans, Tier-C report heroes, and stale flags.
 - **Intake + moderation safety:** public reports now store structured sources, menu-scan submissions no longer rely on note parsing, and admin approval maps provenance/confidence through one helper. Outdated flags are reviewed without touching live prices, happy-hour reports no longer write regular `price_history.price`, aggregator leads are blocked from direct approval, and admin stats count all pending reports.
