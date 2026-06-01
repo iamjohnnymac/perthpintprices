@@ -1,3 +1,5 @@
+import { getPriceRecency } from '@/lib/freshness'
+
 export type PubIndexabilityTier = 'A' | 'B' | 'C'
 
 export interface PubIndexabilityInput {
@@ -16,6 +18,7 @@ export interface PubIndexabilityInput {
   cozyPub?: boolean | null
   sunsetSpot?: boolean | null
   website?: string | null
+  now?: Date
 }
 
 export interface PubIndexability {
@@ -34,7 +37,9 @@ function hasText(value: string | null | undefined): boolean {
 
 export function getPubIndexability(pub: PubIndexabilityInput): PubIndexability {
   const hasPrice = hasPositiveNumber(pub.price)
-  const hasVerifiedPrice = hasPrice && pub.priceVerified !== false && hasText(pub.lastVerified)
+  const priceRecency = getPriceRecency(pub.lastVerified, pub.now)
+  const hasCurrentRecency = priceRecency.tier === 'fresh' || priceRecency.tier === 'aging'
+  const hasVerifiedPrice = hasPrice && pub.priceVerified !== false && hasCurrentRecency
   const hasHappyHour = hasText(pub.happyHour)
     || hasPositiveNumber(pub.happyHourPrice)
     || (hasText(pub.happyHourDays) && hasText(pub.happyHourStart) && hasText(pub.happyHourEnd))
@@ -50,9 +55,13 @@ export function getPubIndexability(pub: PubIndexabilityInput): PubIndexability {
     pub.sunsetSpot,
   ].filter(Boolean).length
 
+  const recencyScore = hasPrice && pub.priceVerified !== false
+    ? { fresh: 2, aging: 1, stale: 0, unknown: 0 }[priceRecency.tier]
+    : 0
+
   const dataScore = [
     hasPrice ? 2 : 0,
-    hasVerifiedPrice ? 1 : 0,
+    recencyScore,
     hasHappyHour ? 2 : 0,
     Math.min(attributeCount, 2),
   ].reduce((sum, score) => sum + score, 0)
