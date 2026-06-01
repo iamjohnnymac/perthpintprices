@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import crypto from 'node:crypto'
+import { normalizePriceConfidence } from '@/lib/priceProvenance'
 
 // ElevenLabs post-call webhook. Fired once per call with a full transcript,
 // metadata, and cost. We log every call to phone_call_log for audit. If the
@@ -157,6 +158,7 @@ export async function handlePostCall(req: NextRequest, deps: PostCallDeps) {
   const parsedUnit = parseString(extractValue(collection.unit))
   const parsedHappyHour = parseString(extractValue(collection.happy_hour))
   const parsedConfidence = parseString(extractValue(collection.confidence)) || d.analysis?.call_successful || null
+  const priceConfidence = normalizePriceConfidence(parsedConfidence)
 
   const { error: logErr } = await supabase.from('phone_call_log').insert({
     pub_id: pubId,
@@ -185,10 +187,14 @@ export async function handlePostCall(req: NextRequest, deps: PostCallDeps) {
       if (pintPrice != null && (pintPrice < 5 || pintPrice > 20)) pintPrice = null
 
       const updates: Record<string, unknown> = {}
+      const verifiedAt = (deps.now ?? new Date()).toISOString()
       if (pintPrice != null && pintPrice !== existingPrice) {
         updates.price = pintPrice
         updates.price_verified = true
-        updates.last_verified = (deps.now ?? new Date()).toISOString()
+        updates.last_verified = verifiedAt
+        updates.price_verified_at = verifiedAt
+        updates.price_source = 'andrew'
+        updates.price_confidence = priceConfidence
       }
       if (hasBrand) updates.beer_type = parsedBeerType
       if (hasHH) updates.happy_hour = parsedHappyHour
@@ -206,6 +212,8 @@ export async function handlePostCall(req: NextRequest, deps: PostCallDeps) {
               beer_type: parsedBeerType,
               change_type: 'phone_agent',
               source: `ElevenLabs ${d.conversation_id} (post-call fallback)`,
+              verified_at: verifiedAt,
+              confidence: priceConfidence,
             })
           }
         }

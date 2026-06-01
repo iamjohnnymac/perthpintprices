@@ -4,6 +4,7 @@ import { getHappyHourStatus } from '@/lib/happyHourLive'
 import { haversineDistanceKm } from '@/lib/location'
 import { hasUsableCoordinates, NEARBY_RADIUS_KM, rankNearbyPubs } from '@/lib/nearbyPubs'
 import { getPubIndexability, PubIndexabilityTier } from '@/lib/pubIndexability'
+import { normalizePriceConfidence } from '@/lib/priceProvenance'
 import { toSuburbSlug } from './urls'
 
 function titleCase(str: string): string {
@@ -99,6 +100,10 @@ function toPub(row: any): Pub {
     beerType: titleCase(row.beer_type || ''),
     happyHour: happyHourText,
     description: row.description || null,
+    source: row.source || undefined,
+    priceSource: row.price_source || null,
+    priceVerifiedAt: row.price_verified_at || null,
+    priceConfidence: normalizePriceConfidence(row.price_confidence),
     lastUpdated: row.last_updated || undefined,
     sunsetSpot: row.sunset_spot || false,
     priceVerified: row.price_verified !== false,

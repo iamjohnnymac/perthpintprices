@@ -56,6 +56,7 @@ freshness, happyHour, happyHourLive, location, mapTheme, mapTile, priceColors, p
 ## Rules
 - **Always check Context7 first** — before writing any code, use the Context7 MCP tool (`mcp__plugin_context7_context7__resolve-library-id` then `mcp__plugin_context7_context7__query-docs`) to look up current documentation for any library or framework being used (Next.js, Tailwind, Lucide, Supabase, etc.)
 - **Always visually verify changes** — after any UI change, take Playwright screenshots at desktop (1280x800) and mobile (375x812) to confirm layout, spacing, and content look correct
+- **Always keep Playwright before/after evidence** — for UI work, capture desktop and mobile screenshots before changes and after changes, save them as artifacts, and reference them in the final handoff/PR
 - **Always follow the Design System below** — every UI change must use the correct tokens, components, and patterns defined in this file
 - **Always run humanizer** — run the humanizer skill on any new user-facing text to remove AI writing patterns
 - **Never use emojis** — use Lucide React icons or inline SVGs instead

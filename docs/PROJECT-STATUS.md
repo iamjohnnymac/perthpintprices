@@ -10,6 +10,11 @@ Stack, database, routes, components, and lib files are documented in `CLAUDE.md`
 
 ## What's done recently
 
+### Price provenance persisted (2026-06-01)
+- **Issue #76 / branch `codex/price-provenance-76` / commit `2c96ffc`:** added structured current-price provenance fields (`price_source`, `price_verified_at`, `price_confidence`) on `pubs`, with matching `verified_at` and `confidence` audit fields on `price_history`.
+- **Write paths + display:** Andrew mid-call writes, Andrew post-call fallback writes, admin-approved price reports, and approved pub submissions now persist source, verified time, and confidence. Pub pages can render compact copy such as `Checked by Andrew on 31 May 2026`, with low-confidence rows labelled.
+- **Verification:** verified `npm test` (**214/214 tests**), `npx tsc --noEmit`, `npm run lint` (existing warnings only), `npm run build`, `npm run test:e2e` (**4/4 Playwright tests**), `git diff --check`, and saved desktop/mobile before/after Playwright evidence plus mockups under `artifacts/playwright/provenance-*`.
+
 ### Price recency chip humanised (2026-06-01)
 - **Branch `codex/humanize-recency-chip` / commit `b41ceaf`:** changed pub-page recency copy from warning-style labels plus a visible date to one plain chip such as `Checked 103d ago`. The exact date remains available as hover text, but the card now speaks in the dry, normal-person voice.
 - **Verification:** verified focused recency/indexability tests (**210/210 tests**), `npx tsc --noEmit`, `npm run lint` (existing warnings only), `npm run build`, and desktop/mobile Playwright proof for `/northbridge/the-court-hotel`.

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { serviceClient } from '@/lib/supabaseGateway'
 import { timingSafeEqual } from 'crypto'
+import { priceReportConfidence, priceReportSource } from '@/lib/priceProvenance'
 
 export const dynamic = 'force-dynamic'
 
@@ -51,6 +52,8 @@ export async function POST(request: NextRequest) {
 
         const now = new Date().toISOString()
         const slug = target_slug || report.pub_slug
+        const priceSource = priceReportSource(report.notes)
+        const priceConfidence = priceReportConfidence(report.notes)
 
         // Build update payload — route to correct price column based on report type
         const isHappyHour = report.report_type === 'happy_hour_report'
@@ -63,6 +66,9 @@ export async function POST(request: NextRequest) {
           updatePayload.price = report.reported_price
           updatePayload.price_verified = true
           updatePayload.last_verified = now
+          updatePayload.price_verified_at = now
+          updatePayload.price_source = priceSource
+          updatePayload.price_confidence = priceConfidence
         }
         if (report.beer_type) {
           updatePayload.beer_type = report.beer_type
@@ -95,8 +101,10 @@ export async function POST(request: NextRequest) {
             pub_id: pub.id,
             price: report.reported_price,
             change_type: 'update',
-            source: 'crowdsourced',
+            source: priceSource,
             changed_at: now,
+            verified_at: now,
+            confidence: priceConfidence,
           })
         }
 
@@ -154,6 +162,9 @@ export async function POST(request: NextRequest) {
             beer_type: sub.beer_type || null,
             price_verified: sub.price ? true : false,
             last_verified: sub.price ? now : null,
+            price_verified_at: sub.price ? now : null,
+            price_source: sub.price ? 'crowdsourced' : null,
+            price_confidence: sub.price ? 'medium' : null,
             last_updated: now,
           })
 
