@@ -212,11 +212,6 @@ export default function PubDetailClient({
                   )}
                 </div>
               )}
-              {pub.price !== null && priceRecency.tier === 'stale' && (
-                <p className="mt-3 text-[0.76rem] leading-relaxed text-ink bg-amber-pale border border-amber rounded-card px-3 py-2">
-                  Price may be out of date. Last checked {priceRecency.daysAgo} days ago.
-                </p>
-              )}
               {priceMissingCopy && (
                 <div className="mt-4 pt-4 border-t border-gray-light">
                   {nearestVerifiedPub ? (
