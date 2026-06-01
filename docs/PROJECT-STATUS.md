@@ -10,6 +10,10 @@ Stack, database, routes, components, and lib files are documented in `CLAUDE.md`
 
 ## What's done recently
 
+### Stale-price warning trimmed (2026-06-01)
+- **Branch `codex/remove-stale-warning-blob` / commit `d39e819`:** removed the duplicated stale-price warning paragraph from pub price cards. The compact `May be out of date` pill and last-verified date remain, keeping the freshness signal without the bulky text block.
+- **Verification:** verified focused recency/indexability tests, `npx tsc --noEmit`, `npm run lint` (existing warnings only), `npm run build`, and desktop/mobile Playwright proof for `/northbridge/the-court-hotel`.
+
 ### Playwright PR proof gate ready (2026-06-01)
 - **Branch `codex/playwright-pr-proof` / commit `5da3158`:** installed Playwright Test and added desktop/mobile PR proof smoke coverage for the homepage and a pub detail page, with screenshots attached to the HTML report.
 - **CI artifacts:** the main CI workflow now installs Chromium, runs `npm run test:e2e` after the production build, and uploads a `playwright-proof` artifact containing the report and test output. Videos are retained for failures, and `npm run test:e2e:video` records intentional proof videos when motion or multi-step UI needs it.
