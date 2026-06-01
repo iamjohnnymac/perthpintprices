@@ -13,6 +13,7 @@ import Footer from '@/components/Footer'
 import { pubUrl, suburbUrl } from '@/lib/urls'
 import { verificationStub } from '@/lib/voiceCopy'
 import { formatDistance } from '@/lib/location'
+import type { PriceRecencyInfo, PriceRecencyTier } from '@/lib/freshness'
 
 const PubDetailMap = dynamic(() => import('@/components/PubDetailMap'), {
   ssr: false,
@@ -40,6 +41,7 @@ function formatHappyHourTime(start: string | null, end: string | null): string {
 
 interface PubDetailClientProps {
   pub: Pub
+  priceRecency: PriceRecencyInfo
   nearbyPubs: Pub[]
   avgPrice: number
   isTierCPage: boolean
@@ -50,6 +52,7 @@ interface PubDetailClientProps {
 
 export default function PubDetailClient({
   pub,
+  priceRecency,
   nearbyPubs,
   avgPrice,
   isTierCPage,
@@ -92,7 +95,13 @@ export default function PubDetailClient({
   const hasCheaperNearby = currentPrice !== null && nearbyPubs.some(nearby =>
     nearby.price !== null && nearby.price < currentPrice
   )
-  const hasStatusRow = pub.isHappyHourNow || (pub.priceVerified && pub.price !== null) || !!pub.lastVerified
+  const hasStatusRow = pub.isHappyHourNow || pub.price !== null || !!pub.lastVerified
+  const recencyBadgeClass: Record<PriceRecencyTier, string> = {
+    fresh: 'text-green bg-green-pale border-green',
+    aging: 'text-amber bg-amber-pale border-amber',
+    stale: 'text-amber bg-amber-pale border-amber',
+    unknown: 'text-gray-mid bg-off-white border-gray-light',
+  }
   const priceMissingCopy = isTierCPage
     ? verificationStub({
       lastAndrewCall: latestAndrewCallAt ? formatLastVerifiedDate(latestAndrewCallAt) : null,
@@ -188,9 +197,9 @@ export default function PubDetailClient({
                       HH{pub.happyHourMinutesRemaining ? ` · ${pub.happyHourMinutesRemaining < 1 ? 'ending soon' : pub.happyHourMinutesRemaining < 60 ? `${pub.happyHourMinutesRemaining}m left` : `${Math.floor(pub.happyHourMinutesRemaining / 60)}h ${pub.happyHourMinutesRemaining % 60 > 0 ? `${pub.happyHourMinutesRemaining % 60}m ` : ''}left`}` : ''}
                     </span>
                   )}
-                  {pub.priceVerified && pub.price !== null && (
-                    <span className="inline-flex items-center gap-1 font-mono text-[0.6rem] font-bold uppercase tracking-wider text-green bg-green-pale px-2.5 py-1 rounded-full border border-green">
-                      Verified
+                  {pub.price !== null && (
+                    <span className={`inline-flex items-center gap-1 font-mono text-[0.6rem] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full border ${recencyBadgeClass[priceRecency.tier]}`}>
+                      {priceRecency.label}
                     </span>
                   )}
                   {pub.lastVerified && (
@@ -202,6 +211,11 @@ export default function PubDetailClient({
                     </time>
                   )}
                 </div>
+              )}
+              {pub.price !== null && priceRecency.tier === 'stale' && (
+                <p className="mt-3 text-[0.76rem] leading-relaxed text-ink bg-amber-pale border border-amber rounded-card px-3 py-2">
+                  Price may be out of date. Last checked {priceRecency.daysAgo} days ago.
+                </p>
               )}
               {priceMissingCopy && (
                 <div className="mt-4 pt-4 border-t border-gray-light">

@@ -1,8 +1,9 @@
 import { Metadata } from 'next'
 import { unstable_cache } from 'next/cache'
 import { notFound, permanentRedirect } from 'next/navigation'
-import { getPubBySlug, getAllPubSlugPairs, getLatestAndrewCallAtByPubId, getNearestPubFromList, getNearbyPubs, getSiteStats, getSuburbAveragePrice, getVerifiedPricePubs } from '@/lib/supabase'
+import { getPubBySlug, getIndexablePubSlugPairs, getLatestAndrewCallAtByPubId, getNearestPubFromList, getNearbyPubs, getSiteStats, getSuburbAveragePrice, getVerifiedPricePubs } from '@/lib/supabase'
 import { getPubIndexability } from '@/lib/pubIndexability'
+import { getPriceRecency } from '@/lib/freshness'
 import { buildPubJsonLd } from '@/lib/pubJsonLd'
 import { absolutePubUrl, pubUrl, toSuburbSlug } from '@/lib/urls'
 import type { Pub } from '@/types/pub'
@@ -115,8 +116,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 export async function generateStaticParams() {
-  const pairs = await getAllPubSlugPairs()
-  return pairs.map(pair => ({ suburb: toSuburbSlug(pair.suburb), pub: pair.slug }))
+  const pairs = await getIndexablePubSlugPairs()
+  return pairs
+    .filter(pair => pair.indexabilityTier === 'A')
+    .map(pair => ({ suburb: toSuburbSlug(pair.suburb), pub: pair.slug }))
 }
 
 export const dynamicParams = true
@@ -133,6 +136,7 @@ export default async function PubPage({ params }: PageProps) {
   }
 
   const indexability = getPubPageIndexability(pub)
+  const priceRecency = getPriceRecency(pub.lastVerified)
   const isTierCPage = indexability.tier === 'C'
   const tierCDetails: Promise<[number, string | null, Pub | null]> = isTierCPage
     ? Promise.all([getCachedVerifiedPricePubs(), getCachedLatestAndrewCallAtByPubId()]).then(([verifiedPricePubs, latestAndrewCallAtByPubId]) => {
@@ -176,6 +180,7 @@ export default async function PubPage({ params }: PageProps) {
 
       <PubDetailClient
         pub={pub}
+        priceRecency={priceRecency}
         nearbyPubs={nearbyPubs}
         avgPrice={Number(stats.avgPrice)}
         isTierCPage={isTierCPage}
