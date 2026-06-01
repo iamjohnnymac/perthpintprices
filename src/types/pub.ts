@@ -32,4 +32,5 @@ export interface Pub {
   vibeTag: string | null
   cozyPub: boolean
   effectivePrice: number | null
+  distanceKm?: number | null
 }

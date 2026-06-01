@@ -2,6 +2,7 @@ import { createClient } from '@supabase/supabase-js'
 import { Pub } from '@/types/pub'
 import { getHappyHourStatus } from '@/lib/happyHourLive'
 import { haversineDistanceKm } from '@/lib/location'
+import { hasUsableCoordinates, NEARBY_RADIUS_KM, rankNearbyPubs } from '@/lib/nearbyPubs'
 import { getPubIndexability, PubIndexabilityTier } from '@/lib/pubIndexability'
 import { toSuburbSlug } from './urls'
 
@@ -310,19 +311,56 @@ export async function getIndexablePubSlugPairs(): Promise<IndexablePubSlugPair[]
     .map(({ isIndexable, ...row }) => row)
 }
 
-// Fetch nearby pubs (same suburb, excluding current)
-export async function getNearbyPubs(suburb: string, excludeId: number, limit: number = 4): Promise<Pub[]> {
+async function getSameSuburbPricedPubs(suburb: string, excludeId: number, limit: number): Promise<Pub[]> {
   const { data, error } = await supabase
     .from('pubs')
     .select('*')
     .eq('suburb', suburb)
     .neq('id', excludeId)
+    .not('price', 'is', null)
+    .or('price_verified.is.null,price_verified.eq.true')
     .order('price', { ascending: true, nullsFirst: false })
     .limit(limit)
-  
+
   if (error || !data) return []
-  
+
   return data.map(toPub)
+}
+
+async function getRadiusCandidatePubs(pub: Pub, radiusKm: number, limit: number): Promise<Pub[]> {
+  if (!hasUsableCoordinates(pub)) return []
+
+  const latDelta = radiusKm / 111
+  const lngScaleKm = 111 * Math.cos(pub.lat * Math.PI / 180)
+  if (!Number.isFinite(lngScaleKm) || lngScaleKm === 0) return []
+  const lngDelta = radiusKm / lngScaleKm
+
+  const { data, error } = await supabase
+    .from('pubs')
+    .select('*')
+    .neq('id', pub.id)
+    .not('price', 'is', null)
+    .or('price_verified.is.null,price_verified.eq.true')
+    .gte('lat', pub.lat - latDelta)
+    .lte('lat', pub.lat + latDelta)
+    .gte('lng', pub.lng - lngDelta)
+    .lte('lng', pub.lng + lngDelta)
+    .order('price', { ascending: true, nullsFirst: false })
+    .limit(Math.max(limit * 4, 12))
+
+  if (error || !data) return []
+
+  return data.map(toPub)
+}
+
+// Fetch geo-aware nearby pubs, falling back to same-suburb links when sparse.
+export async function getNearbyPubs(pub: Pub, limit: number = 4): Promise<Pub[]> {
+  const radiusCandidates = await getRadiusCandidatePubs(pub, NEARBY_RADIUS_KM, limit)
+  const sameSuburbCandidates = radiusCandidates.length < limit
+    ? await getSameSuburbPricedPubs(pub.suburb, pub.id, limit)
+    : []
+
+  return rankNearbyPubs(pub, [...radiusCandidates, ...sameSuburbCandidates], limit)
 }
 
 export async function getVerifiedPricePubs(): Promise<Pub[]> {

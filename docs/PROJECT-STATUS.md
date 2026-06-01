@@ -10,6 +10,11 @@ Stack, database, routes, components, and lib files are documented in `CLAUDE.md`
 
 ## What's done recently
 
+### Geo-aware Cheaper Nearby module ready (2026-06-01)
+- **Issue #73 / branch `codex/cheaper-nearby-73` / commit `cae6329`:** replaced same-suburb-only pub recommendations with a geo-aware nearby helper. Pub pages now rank verified priced pubs inside a 2km radius, fall back to same-suburb links when sparse, and keep TBC pages useful with nearby verified prices.
+- **Cross-suburb internal links:** the module now renders correct cross-suburb pub URLs, distance text, suburb labels, and price-delta copy such as `$4.30 cheaper`, with crawler-visible links using the same canonical URL helper.
+- **Verification:** added pure ranking tests for cross-suburb cheaper pubs, sparse-radius fallback, and TBC/unknown-price pages. Verified `npm test` (**203/203 tests**), `npx tsc --noEmit`, `npm run lint` (existing warnings only), `npm run build`, and desktop/mobile screenshots for priced and TBC pub pages.
+
 ### Community + Reddit discovery loop documented (2026-06-01)
 - **Issue #115 / branch `codex/community-reddit-loop` / commit `3f4d135`:** added `docs/community-discovery-loop.md` with the first 10 Reddit/community targets, self-promo norms, and a transparent Pint Index community-post draft.
 - **Content + tracking:** added Reddit-sourced #27/#32 backlog questions and a referral plan that tracks `reddit.com`, `old.reddit.com`, `reddit`, and `old-reddit` alongside the existing SEO snapshot template.

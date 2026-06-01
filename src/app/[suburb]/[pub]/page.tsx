@@ -4,7 +4,7 @@ import { notFound, permanentRedirect } from 'next/navigation'
 import { getPubBySlug, getAllPubSlugPairs, getLatestAndrewCallAtByPubId, getNearestPubFromList, getNearbyPubs, getSiteStats, getSuburbAveragePrice, getVerifiedPricePubs } from '@/lib/supabase'
 import { getPubIndexability } from '@/lib/pubIndexability'
 import { buildPubJsonLd } from '@/lib/pubJsonLd'
-import { absolutePubUrl, toSuburbSlug } from '@/lib/urls'
+import { absolutePubUrl, pubUrl, toSuburbSlug } from '@/lib/urls'
 import type { Pub } from '@/types/pub'
 import PubDetailClient from './PubDetailClient'
 
@@ -149,7 +149,7 @@ export default async function PubPage({ params }: PageProps) {
     : Promise.resolve([0, null, null])
 
   const [nearbyPubs, [nearbyVerifiedPriceCount, latestAndrewCallAt, nearestVerifiedPub], stats, suburbAvgPrice] = await Promise.all([
-    getNearbyPubs(pub.suburb, pub.id, 8),
+    getNearbyPubs(pub, 4),
     tierCDetails,
     getSiteStats(),
     getSuburbAveragePrice(pub.suburb),
@@ -170,7 +170,7 @@ export default async function PubPage({ params }: PageProps) {
         <a href={`/${suburbSlug}`}>{pub.suburb}</a>
         <a href="/suburbs">All Suburbs</a>
         {nearbyPubs.map(np => (
-          <a key={np.slug} href={`/${suburbSlug}/${np.slug}`}>{np.name} - {np.suburb}</a>
+          <a key={np.slug} href={pubUrl({ suburb: np.suburb, slug: np.slug })}>{np.name} - {np.suburb}</a>
         ))}
       </div>
 

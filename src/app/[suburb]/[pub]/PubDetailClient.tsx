@@ -12,6 +12,7 @@ import { formatHappyHourDays } from '@/lib/happyHourLive'
 import Footer from '@/components/Footer'
 import { pubUrl, suburbUrl } from '@/lib/urls'
 import { verificationStub } from '@/lib/voiceCopy'
+import { formatDistance } from '@/lib/location'
 
 const PubDetailMap = dynamic(() => import('@/components/PubDetailMap'), {
   ssr: false,
@@ -87,6 +88,10 @@ export default function PubDetailClient({
   }
 
   const priceDiff = pub.effectivePrice && avgPrice ? pub.effectivePrice - avgPrice : 0
+  const currentPrice = pub.effectivePrice ?? pub.price
+  const hasCheaperNearby = currentPrice !== null && nearbyPubs.some(nearby =>
+    nearby.price !== null && nearby.price < currentPrice
+  )
   const hasStatusRow = pub.isHappyHourNow || (pub.priceVerified && pub.price !== null) || !!pub.lastVerified
   const priceMissingCopy = isTierCPage
     ? verificationStub({
@@ -298,40 +303,56 @@ export default function PubDetailClient({
           <div className="mt-8 border-3 border-ink rounded-card shadow-hard-sm overflow-hidden">
             <div className="px-4 py-3 border-b border-gray-light flex items-center justify-between">
               <h2 className="font-mono font-extrabold text-[0.85rem] text-ink uppercase tracking-[0.05em]">
-                More in {pub.suburb}
+                {hasCheaperNearby ? 'Cheaper nearby' : 'Nearby verified prices'}
               </h2>
               <Link
                 href={suburbUrl(pub.suburb)}
-                className="font-mono text-[0.7rem] font-bold text-amber hover:underline no-underline"
+                className="font-mono text-[0.7rem] font-bold text-amber hover:underline no-underline whitespace-nowrap"
               >
-                View all →
+                View suburb →
               </Link>
             </div>
-            {nearbyPubs.map((nearby, i) => (
-              <Link
-                key={nearby.id}
-                href={pubUrl({ suburb: pub.suburb, slug: nearby.slug })}
-                className={`flex items-center justify-between px-4 py-3 no-underline group hover:bg-off-white transition-colors ${
-                  i < nearbyPubs.length - 1 ? 'border-b border-gray-light' : ''
-                }`}
-              >
-                <div className="min-w-0 flex-1">
-                  <p className="font-mono text-[0.82rem] font-extrabold text-ink group-hover:text-amber transition-colors truncate">{nearby.name}</p>
-                  <div className="flex items-center gap-2 mt-0.5">
-                    <span className="text-[0.65rem] text-gray-mid">{nearby.beerType || 'House Pint'}</span>
-                    {nearby.isHappyHourNow && (
-                      <span className="inline-flex items-center gap-1 text-[0.6rem] font-bold text-red">
-                        <span className="w-1.5 h-1.5 rounded-full bg-red animate-pulse" />
-                        Happy Hour
-                      </span>
-                    )}
+            {nearbyPubs.map((nearby, i) => {
+              const distanceText = nearby.distanceKm !== null && nearby.distanceKm !== undefined
+                ? `${formatDistance(nearby.distanceKm)} away`
+                : null
+              const priceText = nearby.price !== null ? `$${nearby.price.toFixed(2)}` : 'TBC'
+              const priceDelta = currentPrice !== null && nearby.price !== null
+                ? currentPrice - nearby.price
+                : null
+
+              return (
+                <Link
+                  key={nearby.id}
+                  href={pubUrl({ suburb: nearby.suburb, slug: nearby.slug })}
+                  aria-label={`${nearby.name} in ${nearby.suburb}: ${priceText} pints${distanceText ? `, ${distanceText}` : ''}`}
+                  className={`flex items-center justify-between px-4 py-3 no-underline group hover:bg-off-white transition-colors ${
+                    i < nearbyPubs.length - 1 ? 'border-b border-gray-light' : ''
+                  }`}
+                >
+                  <div className="min-w-0 flex-1">
+                    <p className="font-mono text-[0.82rem] font-extrabold text-ink group-hover:text-amber transition-colors truncate">{nearby.name}</p>
+                    <div className="flex flex-wrap items-center gap-x-2 gap-y-1 mt-0.5">
+                      <span className="text-[0.65rem] text-gray-mid">{nearby.suburb}</span>
+                      {distanceText && <span className="text-[0.65rem] text-gray-mid">{distanceText}</span>}
+                      {nearby.beerType && <span className="text-[0.65rem] text-gray-mid">{nearby.beerType}</span>}
+                      {priceDelta !== null && priceDelta > 0 && (
+                        <span className="text-[0.65rem] font-bold text-green">${priceDelta.toFixed(2)} cheaper</span>
+                      )}
+                      {nearby.isHappyHourNow && (
+                        <span className="inline-flex items-center gap-1 text-[0.6rem] font-bold text-red">
+                          <span className="w-1.5 h-1.5 rounded-full bg-red animate-pulse" />
+                          Happy Hour
+                        </span>
+                      )}
+                    </div>
                   </div>
-                </div>
-                <span className="font-mono text-[1rem] font-extrabold text-ink ml-3 flex-shrink-0">
-                  {nearby.price !== null ? `$${nearby.price.toFixed(2)}` : 'TBC'}
-                </span>
-              </Link>
-            ))}
+                  <span className="font-mono text-[1rem] font-extrabold text-ink ml-3 flex-shrink-0">
+                    {priceText}
+                  </span>
+                </Link>
+              )
+            })}
           </div>
         )}
       </div>
