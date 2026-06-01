@@ -18,29 +18,36 @@ export interface PriceRecencyInfo {
 
 const MS_PER_DAY = 1000 * 60 * 60 * 24
 
+function checkedLabel(daysAgo: number): string {
+  if (daysAgo === 0) return 'Checked today'
+  if (daysAgo === 1) return 'Checked yesterday'
+  return `Checked ${daysAgo}d ago`
+}
+
 export function getPriceRecency(lastVerified: string | null | undefined, now = new Date()): PriceRecencyInfo {
   if (!lastVerified) {
-    return { tier: 'unknown', daysAgo: null, label: 'Needs verification' }
+    return { tier: 'unknown', daysAgo: null, label: 'Not checked yet' }
   }
 
   const verified = new Date(lastVerified)
   const verifiedTime = verified.getTime()
 
   if (!Number.isFinite(verifiedTime)) {
-    return { tier: 'unknown', daysAgo: null, label: 'Needs verification' }
+    return { tier: 'unknown', daysAgo: null, label: 'Not checked yet' }
   }
 
   const daysAgo = Math.max(0, Math.floor((now.getTime() - verifiedTime) / MS_PER_DAY))
+  const label = checkedLabel(daysAgo)
 
   if (daysAgo < 30) {
-    return { tier: 'fresh', daysAgo, label: 'Verified' }
+    return { tier: 'fresh', daysAgo, label }
   }
 
   if (daysAgo <= 90) {
-    return { tier: 'aging', daysAgo, label: 'Recheck soon' }
+    return { tier: 'aging', daysAgo, label }
   }
 
-  return { tier: 'stale', daysAgo, label: 'May be out of date' }
+  return { tier: 'stale', daysAgo, label }
 }
 
 export function getFreshness(lastVerified: string | null): FreshnessInfo {

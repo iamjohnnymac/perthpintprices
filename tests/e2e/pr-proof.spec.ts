@@ -24,7 +24,7 @@ test('pub page renders price, freshness, map, and nearby prices', async ({ page 
 
   await expect(page.getByRole('heading', { name: 'The Court Hotel' })).toBeVisible()
   await expect(page.getByText('Pint Price', { exact: true })).toBeVisible()
-  await expect(page.getByText(/Last verified/i)).toBeVisible()
+  await expect(page.getByText(/Checked \d+d ago/i)).toBeVisible()
   await expect(page.getByText(/Nearby verified prices/i)).toBeVisible()
   await expect(page.locator('.leaflet-container')).toBeVisible()
 
