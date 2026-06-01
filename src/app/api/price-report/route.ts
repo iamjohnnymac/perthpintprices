@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { revalidatePath, revalidateTag } from 'next/cache'
 import { anonClient } from '@/lib/supabaseGateway'
 import { toSuburbSlug } from '@/lib/urls'
+import { preparePriceReport } from './intake'
 
 const supabase = anonClient()
 
@@ -22,41 +23,22 @@ async function revalidateReportedPub(pubSlug: string) {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json()
-    const { pub_slug, reported_price, beer_type, reporter_name, outdated, notes, price_type } = body
-
-    const isOutdatedReport = outdated === true
-
-    if (!pub_slug) {
-      return NextResponse.json({ error: 'pub_slug is required' }, { status: 400 })
-    }
-
-    // For price reports, price is required. For outdated flags, it's optional.
-    if (!isOutdatedReport && !reported_price) {
-      return NextResponse.json({ error: 'reported_price is required' }, { status: 400 })
-    }
-
-    let price = 0
-    if (reported_price) {
-      price = parseFloat(reported_price)
-      if (isNaN(price) || price < 3 || price > 30) {
-        return NextResponse.json({ error: 'Price must be between $3 and $30' }, { status: 400 })
-      }
-    }
 
     // Simple IP-based rate limiting
     const forwarded = req.headers.get('x-forwarded-for')
     const ip = forwarded?.split(',')[0]?.trim() || 'unknown'
     const ipHash = await hashString(ip)
+    const prepared = preparePriceReport(body, ipHash)
+    if (!prepared.ok) {
+      return NextResponse.json({ error: prepared.error }, { status: prepared.status })
+    }
 
-    // Check if same IP reported same pub in last hour
-    // Allow more reports for menu scans (bulk submission)
-    const isMenuScan = notes && typeof notes === 'string' && notes.includes('menu scan')
-    const rateLimit = isMenuScan ? 15 : 1
+    const rateLimit = prepared.value.isMenuScan ? 15 : 1
 
     const { data: recentReport } = await supabase
       .from('price_reports')
       .select('id')
-      .eq('pub_slug', pub_slug)
+      .eq('pub_slug', prepared.value.pubSlug)
       .eq('ip_hash', ipHash)
       .gte('created_at', new Date(Date.now() - 3600000).toISOString())
 
@@ -64,28 +46,18 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'You already reported for this pub recently. Try again in an hour.' }, { status: 429 })
     }
 
-    const insertData: Record<string, unknown> = {
-      pub_slug,
-      reported_price: isOutdatedReport ? 0 : price,
-      beer_type: beer_type || null,
-      reporter_name: reporter_name || 'Anonymous',
-      ip_hash: ipHash,
-      report_type: isOutdatedReport ? 'outdated_flag' : (price_type === 'happy_hour' ? 'happy_hour_report' : 'price_report'),
-      notes: notes || null,
-    }
-
     const { error } = await supabase
       .from('price_reports')
-      .insert(insertData)
+      .insert(prepared.value.insertData)
 
     if (error) {
       console.error('Error inserting price report:', error)
       return NextResponse.json({ error: 'Failed to submit report' }, { status: 500 })
     }
 
-    await revalidateReportedPub(pub_slug)
+    await revalidateReportedPub(prepared.value.pubSlug)
 
-    const message = isOutdatedReport
+    const message = body.outdated === true
       ? 'Thanks for flagging — we\'ll check this price.'
       : 'Price reported. Thanks for contributing.'
 

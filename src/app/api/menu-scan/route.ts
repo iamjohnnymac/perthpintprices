@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { anonClient } from '@/lib/supabaseGateway'
 import OpenAI from 'openai'
+import { countMenuScanReports } from './rateLimit'
 
 export const maxDuration = 30
 
@@ -56,12 +57,11 @@ export async function POST(req: NextRequest) {
 
     const { data: recentScans } = await supabase
       .from('price_reports')
-      .select('id')
+      .select('id, submission_source, notes')
       .eq('ip_hash', ipHash)
-      .eq('report_type', 'menu_scan')
       .gte('created_at', new Date(Date.now() - 86400000).toISOString())
 
-    if (recentScans && recentScans.length >= 3) {
+    if (countMenuScanReports(recentScans) >= 3) {
       return NextResponse.json({ error: 'Scan limit reached. Try again tomorrow.' }, { status: 429 })
     }
 

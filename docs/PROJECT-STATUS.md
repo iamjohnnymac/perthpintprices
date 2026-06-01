@@ -10,6 +10,11 @@ Stack, database, routes, components, and lib files are documented in `CLAUDE.md`
 
 ## What's done recently
 
+### Price intake plumbing implemented (2026-06-01)
+- **Branch `codex/price-intake-plumbing-spec` / commit `e2de1c5`:** added structured `price_reports` provenance/evidence columns (`submission_source`, `source_url`, `evidence_text`, `observed_at`, `raw_extraction`, `extractor_version`) with a constrained source vocabulary and legacy backfill for menu scans, Tier-C report heroes, and stale flags.
+- **Intake + moderation safety:** public reports now store structured sources, menu-scan submissions no longer rely on note parsing, and admin approval maps provenance/confidence through one helper. Outdated flags are reviewed without touching live prices, happy-hour reports no longer write regular `price_history.price`, aggregator leads are blocked from direct approval, and admin stats count all pending reports.
+- **Verification:** verified `npm test` (**225/225 tests**), `npx tsc --noEmit`, `npm run lint` (existing warnings only), `npm run build`, and `git diff --check`. No Playwright screenshots were needed because the UI change was payload-only.
+
 ### Price provenance persisted (2026-06-01)
 - **Issue #76 / branch `codex/price-provenance-76` / commit `2c96ffc`:** added structured current-price provenance fields (`price_source`, `price_verified_at`, `price_confidence`) on `pubs`, with matching `verified_at` and `confidence` audit fields on `price_history`.
 - **Write paths + display:** Andrew mid-call writes, Andrew post-call fallback writes, admin-approved price reports, and approved pub submissions now persist source, verified time, and confidence. Pub pages can render compact copy such as `Checked by Andrew on 31 May 2026`, with low-confidence rows labelled.

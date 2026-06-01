@@ -163,6 +163,7 @@ export async function GET(request: NextRequest) {
       snapshotResult,
       priceHistoryResult,
       priceReportsResult,
+      pendingPriceReportsResult,
       pushSubsResult,
       activityResult,
       recentPubsResult,
@@ -181,6 +182,8 @@ export async function GET(request: NextRequest) {
       supabase.from('price_history').select('*', { count: 'exact' }).order('changed_at', { ascending: false }).limit(10),
       // Price reports (crowdsourced)
       supabase.from('price_reports').select('*', { count: 'exact' }).order('created_at', { ascending: false }).limit(10),
+      // All pending price reports, not just the latest display slice
+      supabase.from('price_reports').select('id', { count: 'exact', head: true }).eq('status', 'pending'),
       // Push subscriptions
       supabase.from('push_subscriptions').select('*', { count: 'exact' }),
       // Agent activity (now readable by anon with RLS policy)
@@ -241,7 +244,7 @@ export async function GET(request: NextRequest) {
       },
       priceReports: {
         total: priceReportsResult.count || 0,
-        pending: (priceReportsResult.data || []).filter((r: any) => r.status === 'pending').length,
+        pending: pendingPriceReportsResult.count || 0,
         recent: (priceReportsResult.data || []).map((r: any) => ({
           id: r.id,
           pubSlug: r.pub_slug,

@@ -366,6 +366,7 @@ export default function SubmitPubForm({ isOpen, onClose, userLocation, initialPu
             reported_price: item.price,
             beer_type: item.beer_type,
             price_type: item.price_type,
+            submission_source: 'menu_scan',
             notes: 'Submitted via menu scan',
           }),
         });
@@ -430,6 +431,7 @@ export default function SubmitPubForm({ isOpen, onClose, userLocation, initialPu
             reported_price: parseFloat(price),
             beer_type: beerType || undefined,
             price_type: priceType,
+            submission_source: submissionSource ? normalizeSubmissionSourceForPayload(submissionSource) : undefined,
             notes: submissionSource ? `[source:${submissionSource}]` : undefined,
           }),
         });
@@ -453,6 +455,7 @@ export default function SubmitPubForm({ isOpen, onClose, userLocation, initialPu
           body: JSON.stringify({
             pub_slug: selectedPub.slug,
             outdated: true,
+            submission_source: 'stale_flag',
             notes: outdatedNote.trim()
               ? `[${issueReason}] ${outdatedNote.trim()}`
               : `[${issueReason}]`,
@@ -498,7 +501,6 @@ export default function SubmitPubForm({ isOpen, onClose, userLocation, initialPu
           return;
         }
       }
-
       setSubmitted(true);
     } catch {
       setError('Network error. Please try again.');
@@ -1199,4 +1201,8 @@ export default function SubmitPubForm({ isOpen, onClose, userLocation, initialPu
       </div>
     </div>
   );
+}
+
+function normalizeSubmissionSourceForPayload(source: string): string {
+  return source.replace(/-/g, '_');
 }
