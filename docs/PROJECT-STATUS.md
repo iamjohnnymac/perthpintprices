@@ -10,6 +10,10 @@ Stack, database, routes, components, and lib files are documented in `CLAUDE.md`
 
 ## What's done recently
 
+### Price recency chip humanised (2026-06-01)
+- **Branch `codex/humanize-recency-chip` / commit `b41ceaf`:** changed pub-page recency copy from warning-style labels plus a visible date to one plain chip such as `Checked 103d ago`. The exact date remains available as hover text, but the card now speaks in the dry, normal-person voice.
+- **Verification:** verified focused recency/indexability tests (**210/210 tests**), `npx tsc --noEmit`, `npm run lint` (existing warnings only), `npm run build`, and desktop/mobile Playwright proof for `/northbridge/the-court-hotel`.
+
 ### Stale-price warning trimmed (2026-06-01)
 - **Branch `codex/remove-stale-warning-blob` / commit `d39e819`:** removed the duplicated stale-price warning paragraph from pub price cards. The compact `May be out of date` pill and last-verified date remain, keeping the freshness signal without the bulky text block.
 - **Verification:** verified focused recency/indexability tests, `npx tsc --noEmit`, `npm run lint` (existing warnings only), `npm run build`, and desktop/mobile Playwright proof for `/northbridge/the-court-hotel`.
