@@ -198,17 +198,12 @@ export default function PubDetailClient({
                     </span>
                   )}
                   {pub.price !== null && (
-                    <span className={`inline-flex items-center gap-1 font-mono text-[0.6rem] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full border ${recencyBadgeClass[priceRecency.tier]}`}>
+                    <span
+                      className={`inline-flex items-center gap-1 font-mono text-[0.65rem] font-bold px-2.5 py-1 rounded-full border ${recencyBadgeClass[priceRecency.tier]}`}
+                      title={pub.lastVerified ? `Last verified ${formatLastVerifiedDate(pub.lastVerified)}` : undefined}
+                    >
                       {priceRecency.label}
                     </span>
-                  )}
-                  {pub.lastVerified && (
-                    <time
-                      dateTime={new Date(pub.lastVerified).toISOString()}
-                      className="text-[0.7rem] text-gray-mid"
-                    >
-                      Last verified {formatLastVerifiedDate(pub.lastVerified)}
-                    </time>
                   )}
                 </div>
               )}

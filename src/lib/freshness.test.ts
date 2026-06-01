@@ -10,7 +10,7 @@ describe('getPriceRecency', () => {
 
     assert.equal(result.tier, 'fresh')
     assert.equal(result.daysAgo, 29)
-    assert.equal(result.label, 'Verified')
+    assert.equal(result.label, 'Checked 29d ago')
   })
 
   it('marks prices from 30 to 90 days old as aging', () => {
@@ -23,11 +23,17 @@ describe('getPriceRecency', () => {
 
     assert.equal(result.tier, 'stale')
     assert.equal(result.daysAgo, 91)
-    assert.equal(result.label, 'May be out of date')
+    assert.equal(result.label, 'Checked 91d ago')
   })
 
   it('marks missing or invalid verification dates as unknown', () => {
     assert.equal(getPriceRecency(null, NOW).tier, 'unknown')
+    assert.equal(getPriceRecency(null, NOW).label, 'Not checked yet')
     assert.equal(getPriceRecency('not-a-date', NOW).tier, 'unknown')
+  })
+
+  it('uses everyday labels for same-day and yesterday checks', () => {
+    assert.equal(getPriceRecency('2026-06-01T00:00:00.000Z', NOW).label, 'Checked today')
+    assert.equal(getPriceRecency('2026-05-31T12:00:00.000Z', NOW).label, 'Checked yesterday')
   })
 })
