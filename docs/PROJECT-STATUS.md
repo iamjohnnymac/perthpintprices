@@ -11,12 +11,12 @@ Stack, database, routes, components, and lib files are documented in `CLAUDE.md`
 ## What's done recently
 
 ### Official menu source discovery ready (2026-06-01)
-- **Branch `codex/official-menu-source-discovery`:** added a read-only discovery CLI that scans missing-price pubs with websites, ranks likely menu/drinks/PDF links, and writes `scripts/official-menu-source-candidates.json` for review. The generated artifact is gitignored.
+- **PR #130 / merge commit `92f2c8d`:** added a read-only discovery CLI that scans missing-price pubs with websites, ranks likely menu/drinks/PDF links, and writes `scripts/official-menu-source-candidates.json` for review. The generated artifact is gitignored.
 - **Source scoring:** added pure link extraction/scoring helpers with tests for relative URL canonicalisation, menu/drinks/PDF ranking, low-intent filtering, and deduping.
 - **Verification:** verified `npm test` (**232/232 tests**), `npx tsc --noEmit`, `npm run lint` (existing warnings only), `npm run build`, `npm run discover:official-menu-sources -- --limit 5` (5 fetched, 2 candidates), and `git diff --check`.
 
 ### Official menu crawler MVP ready (2026-06-01)
-- **Branch `codex/official-menu-crawler-mvp`:** added a manual, dry-run-first official menu crawler for curated source URLs. It fetches reviewed venue/menu pages, extracts conservative pint-price candidates, and can insert pending `price_reports` with `submission_source = "official_menu"` only when run with `--write`.
+- **PR #129 / merge commit `3ded19a`:** added a manual, dry-run-first official menu crawler for curated source URLs. It fetches reviewed venue/menu pages, extracts conservative pint-price candidates, and can insert pending `price_reports` with `submission_source = "official_menu"` only when run with `--write`.
 - **Guardrails:** extraction skips happy-hour/special/deal lines in v1, keeps reviewer evidence text, stores raw extraction metadata, and never updates canonical `pubs.price`. The committed seed file is an example only; real crawl lists stay explicit and reviewed.
 - **Verification:** verified `npm test` (**229/229 tests**), `npx tsc --noEmit`, `npm run lint` (existing warnings only), `npm run build`, `git diff --check`, and a dry-run against `scripts/official-menu-seeds.example.json` with zero writes.
 
