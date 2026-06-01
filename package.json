@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "next lint --max-warnings 50",
     "test": "tsx --test \"src/**/*.test.ts\"",
+    "crawl:official-menus": "tsx scripts/crawl-official-menus.mjs",
     "test:redirects": "node scripts/redirect-seo.test.mjs",
     "test:e2e": "playwright test",
     "test:e2e:headed": "playwright test --headed",
