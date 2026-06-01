@@ -10,6 +10,11 @@ Stack, database, routes, components, and lib files are documented in `CLAUDE.md`
 
 ## What's done recently
 
+### Price-recency tiers ready (2026-06-01)
+- **Issue #77 / branch `codex/price-recency-tiers-77` / commit `5134a24`:** added one `getPriceRecency` helper for `fresh` (<30 days), `aging` (30-90 days), `stale` (91+ days), and `unknown` price states derived from `last_verified`.
+- **Render + prerender:** pub pages now receive the recency tier from the server and stale prices show a visible `May be out of date` badge plus the checked-days count. The same tier feeds `dataScore` and Tier A/B/C selection, so stale verified prices fall to Tier B and only Tier A pub pages are pre-rendered.
+- **Verification:** added recency-boundary tests and indexability scoring tests. Verified `npm test` (**209/209 tests**), `npx tsc --noEmit`, `npm run lint` (existing warnings only), `npm run build`, and desktop/mobile screenshots for stale-price pub page `/northbridge/the-court-hotel`.
+
 ### Geo-aware Cheaper Nearby module ready (2026-06-01)
 - **Issue #73 / branch `codex/cheaper-nearby-73` / commit `cae6329`:** replaced same-suburb-only pub recommendations with a geo-aware nearby helper. Pub pages now rank verified priced pubs inside a 2km radius, fall back to same-suburb links when sparse, and keep TBC pages useful with nearby verified prices.
 - **Cross-suburb internal links:** the module now renders correct cross-suburb pub URLs, distance text, suburb labels, and price-delta copy such as `$4.30 cheaper`, with crawler-visible links using the same canonical URL helper.
