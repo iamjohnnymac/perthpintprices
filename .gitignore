@@ -28,6 +28,8 @@ npm-debug.log*
 
 # Playwright MCP cache
 .playwright-mcp/
+playwright-report/
+test-results/
 
 # Development screenshots
 *.png

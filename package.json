@@ -8,7 +8,10 @@
     "start": "next start",
     "lint": "next lint --max-warnings 50",
     "test": "tsx --test \"src/**/*.test.ts\"",
-    "test:redirects": "node scripts/redirect-seo.test.mjs"
+    "test:redirects": "node scripts/redirect-seo.test.mjs",
+    "test:e2e": "playwright test",
+    "test:e2e:headed": "playwright test --headed",
+    "test:e2e:video": "PLAYWRIGHT_VIDEO=on playwright test"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.106.2",
@@ -32,6 +35,7 @@
     "web-push": "^3.6.7"
   },
   "devDependencies": {
+    "@playwright/test": "^1.60.0",
     "@types/leaflet": "^1.9.8",
     "@types/leaflet.markercluster": "^1.5.4",
     "@types/node": "^20.12.7",

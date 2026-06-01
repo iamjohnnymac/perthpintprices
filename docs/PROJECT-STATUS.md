@@ -10,6 +10,11 @@ Stack, database, routes, components, and lib files are documented in `CLAUDE.md`
 
 ## What's done recently
 
+### Playwright PR proof gate ready (2026-06-01)
+- **Branch `codex/playwright-pr-proof` / commit `5da3158`:** installed Playwright Test and added desktop/mobile PR proof smoke coverage for the homepage and a pub detail page, with screenshots attached to the HTML report.
+- **CI artifacts:** the main CI workflow now installs Chromium, runs `npm run test:e2e` after the production build, and uploads a `playwright-proof` artifact containing the report and test output. Videos are retained for failures, and `npm run test:e2e:video` records intentional proof videos when motion or multi-step UI needs it.
+- **Verification:** verified `npm test` (**209/209 tests**), `npx tsc --noEmit`, `npm run lint` (existing warnings only), `npm run build`, `npm run test:e2e` (**4/4 Playwright tests**), a video-mode pub-page proof run, and the PR #124 GitHub artifact upload.
+
 ### Price-recency tiers ready (2026-06-01)
 - **Issue #77 / branch `codex/price-recency-tiers-77` / commit `a5183ea`:** added one `getPriceRecency` helper for `fresh` (<30 days), `aging` (30-90 days), `stale` (91+ days), and `unknown` price states derived from `last_verified`.
 - **Render + prerender:** pub pages now receive the recency tier from the server and stale prices show a visible `May be out of date` badge plus the checked-days count. The same tier feeds `dataScore` and Tier A/B/C selection, so stale verified prices fall to Tier B and only Tier A pub pages are pre-rendered.
