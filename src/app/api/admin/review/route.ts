@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { serviceClient } from '@/lib/supabaseGateway'
 import { timingSafeEqual } from 'crypto'
-import { priceReportConfidence, priceReportSource } from '@/lib/priceProvenance'
+import { reviewPriceReport } from './priceReportReview'
 
 export const dynamic = 'force-dynamic'
 
@@ -39,91 +39,8 @@ export async function POST(request: NextRequest) {
 
   try {
     if (type === 'price_report') {
-      if (action === 'approve') {
-        const { data: report, error: reportErr } = await supabase
-          .from('price_reports')
-          .select('*')
-          .eq('id', id)
-          .single()
-
-        if (reportErr || !report) {
-          return NextResponse.json({ error: 'Report not found' }, { status: 404 })
-        }
-
-        const now = new Date().toISOString()
-        const slug = target_slug || report.pub_slug
-        const priceSource = priceReportSource(report.notes)
-        const priceConfidence = priceReportConfidence(report.notes)
-
-        // Build update payload — route to correct price column based on report type
-        const isHappyHour = report.report_type === 'happy_hour_report'
-        const updatePayload: Record<string, unknown> = {
-          last_updated: now,
-        }
-        if (isHappyHour) {
-          updatePayload.happy_hour_price = report.reported_price
-        } else {
-          updatePayload.price = report.reported_price
-          updatePayload.price_verified = true
-          updatePayload.last_verified = now
-          updatePayload.price_verified_at = now
-          updatePayload.price_source = priceSource
-          updatePayload.price_confidence = priceConfidence
-        }
-        if (report.beer_type) {
-          updatePayload.beer_type = report.beer_type
-        }
-
-        // Update pub price
-        const { data: updatedPubs, error: pubErr } = await supabase
-          .from('pubs')
-          .update(updatePayload)
-          .eq('slug', slug)
-          .select('slug')
-
-        if (pubErr) {
-          return NextResponse.json({ error: 'Failed to update pub: ' + pubErr.message }, { status: 500 })
-        }
-
-        if (!updatedPubs || updatedPubs.length === 0) {
-          return NextResponse.json({ error: `No pub found with slug "${slug}"` }, { status: 404 })
-        }
-
-        // Get pub_id for price_history
-        const { data: pub } = await supabase
-          .from('pubs')
-          .select('id')
-          .eq('slug', slug)
-          .single()
-
-        if (pub) {
-          await supabase.from('price_history').insert({
-            pub_id: pub.id,
-            price: report.reported_price,
-            change_type: 'update',
-            source: priceSource,
-            changed_at: now,
-            verified_at: now,
-            confidence: priceConfidence,
-          })
-        }
-
-        // Mark report as verified
-        await supabase
-          .from('price_reports')
-          .update({ status: 'verified', verified_at: now, verified_by: 'admin' })
-          .eq('id', id)
-
-        return NextResponse.json({ success: true, action: 'approved', pubSlug: slug })
-
-      } else if (action === 'reject') {
-        await supabase
-          .from('price_reports')
-          .update({ status: 'rejected', verified_at: new Date().toISOString(), verified_by: 'admin' })
-          .eq('id', id)
-
-        return NextResponse.json({ success: true, action: 'rejected' })
-      }
+      const result = await reviewPriceReport(supabase, { id, action, target_slug })
+      return NextResponse.json(result.body, { status: result.status })
 
     } else if (type === 'pub_submission') {
       if (action === 'approve') {
