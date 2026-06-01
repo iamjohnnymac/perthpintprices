@@ -11,7 +11,7 @@ Stack, database, routes, components, and lib files are documented in `CLAUDE.md`
 ## What's done recently
 
 ### Price-recency tiers ready (2026-06-01)
-- **Issue #77 / branch `codex/price-recency-tiers-77` / commit `5134a24`:** added one `getPriceRecency` helper for `fresh` (<30 days), `aging` (30-90 days), `stale` (91+ days), and `unknown` price states derived from `last_verified`.
+- **Issue #77 / branch `codex/price-recency-tiers-77` / commit `a5183ea`:** added one `getPriceRecency` helper for `fresh` (<30 days), `aging` (30-90 days), `stale` (91+ days), and `unknown` price states derived from `last_verified`.
 - **Render + prerender:** pub pages now receive the recency tier from the server and stale prices show a visible `May be out of date` badge plus the checked-days count. The same tier feeds `dataScore` and Tier A/B/C selection, so stale verified prices fall to Tier B and only Tier A pub pages are pre-rendered.
 - **Verification:** added recency-boundary tests and indexability scoring tests. Verified `npm test` (**209/209 tests**), `npx tsc --noEmit`, `npm run lint` (existing warnings only), `npm run build`, and desktop/mobile screenshots for stale-price pub page `/northbridge/the-court-hotel`.
 
