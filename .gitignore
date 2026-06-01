@@ -46,6 +46,7 @@ scripts/location-audit-results.json
 scripts/backfill-place-ids-results.json
 scripts/backfill-review.json
 scripts/discover-venues-results.json
+scripts/official-menu-source-candidates.json
 
 # Research agent data
 perth_pubs_pricing/
