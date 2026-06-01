@@ -62,6 +62,9 @@ describe('post-call fallback', () => {
       price: 9,
       price_verified: true,
       last_verified: '2026-05-31T00:00:00.000Z',
+      price_verified_at: '2026-05-31T00:00:00.000Z',
+      price_source: 'andrew',
+      price_confidence: 'high',
       beer_type: 'Swan Draught',
       happy_hour: 'Mon-Fri 4-6pm',
     })
@@ -71,6 +74,8 @@ describe('post-call fallback', () => {
       beer_type: 'Swan Draught',
       change_type: 'phone_agent',
       source: 'ElevenLabs conv_123 (post-call fallback)',
+      verified_at: '2026-05-31T00:00:00.000Z',
+      confidence: 'high',
     })
   })
 

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { normalizePriceConfidence } from '@/lib/priceProvenance'
 
 // ElevenLabs "server tool" callback. The pub_slug arrives via URL path (filled
 // in by ElevenLabs from the conversation's {{pub_slug}} dynamic variable, NOT
@@ -91,10 +92,15 @@ export async function handleRecordPrice(
 
   // Phone agent data is the source of truth — write whatever fields we got.
   const updates: Record<string, unknown> = {}
+  const verifiedAt = (deps.now ?? new Date()).toISOString()
+  const confidence = normalizePriceConfidence(body.confidence)
   if (pintPrice != null) {
     updates.price = pintPrice
     updates.price_verified = true
-    updates.last_verified = (deps.now ?? new Date()).toISOString()
+    updates.last_verified = verifiedAt
+    updates.price_verified_at = verifiedAt
+    updates.price_source = 'andrew'
+    updates.price_confidence = confidence
   }
   if (hasBrand) updates.beer_type = body.beer_type
   if (hasHH) updates.happy_hour = body.happy_hour!.trim()
@@ -118,6 +124,8 @@ export async function handleRecordPrice(
       beer_type: body.beer_type || null,
       change_type: 'phone_agent',
       source: body.conversation_id ? `ElevenLabs ${body.conversation_id}` : 'phone_agent',
+      verified_at: verifiedAt,
+      confidence,
     })
   }
 

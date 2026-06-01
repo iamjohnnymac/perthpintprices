@@ -13,6 +13,7 @@ import Footer from '@/components/Footer'
 import { pubUrl, suburbUrl } from '@/lib/urls'
 import { verificationStub } from '@/lib/voiceCopy'
 import { formatDistance } from '@/lib/location'
+import { describePriceSource } from '@/lib/priceProvenance'
 import type { PriceRecencyInfo, PriceRecencyTier } from '@/lib/freshness'
 
 const PubDetailMap = dynamic(() => import('@/components/PubDetailMap'), {
@@ -96,6 +97,16 @@ export default function PubDetailClient({
     nearby.price !== null && nearby.price < currentPrice
   )
   const hasStatusRow = pub.isHappyHourNow || pub.price !== null || !!pub.lastVerified
+  const priceSourcePhrase = describePriceSource(pub.priceSource)
+  const priceVerifiedAt = pub.priceVerifiedAt || pub.lastVerified
+  const priceProvenance = pub.price !== null && priceSourcePhrase && priceVerifiedAt
+    ? {
+      sourcePhrase: priceSourcePhrase,
+      verifiedAt: priceVerifiedAt,
+      verifiedDate: formatLastVerifiedDate(priceVerifiedAt),
+    }
+    : null
+  const confidenceLabel = pub.priceConfidence === 'low' ? 'Low confidence' : null
   const recencyBadgeClass: Record<PriceRecencyTier, string> = {
     fresh: 'text-green bg-green-pale border-green',
     aging: 'text-amber bg-amber-pale border-amber',
@@ -206,6 +217,12 @@ export default function PubDetailClient({
                     </span>
                   )}
                 </div>
+              )}
+              {priceProvenance && (
+                <p className="mt-3 font-mono text-[0.65rem] leading-relaxed text-gray-mid">
+                  Checked {priceProvenance.sourcePhrase} on <time dateTime={priceProvenance.verifiedAt}>{priceProvenance.verifiedDate}</time>
+                  {confidenceLabel && ` · ${confidenceLabel}`}
+                </p>
               )}
               {priceMissingCopy && (
                 <div className="mt-4 pt-4 border-t border-gray-light">
