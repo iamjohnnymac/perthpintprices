@@ -38,9 +38,11 @@ for (const result of artifact.results) {
       price: candidate.price,
       beer_type: beerType,
       evidence_text: candidate.evidenceText,
-      source_url: result.url,
-      source_kind: result.source_kind || '',
-      extraction_modes: (result.extraction_modes || []).join('|'),
+      source_url: candidate.source_url || result.url,
+      source_kind: candidate.source_kind || result.source_kind || '',
+      extraction_modes: candidate.extraction_modes
+        ? candidate.extraction_modes.join('|')
+        : (result.extraction_modes || []).join('|'),
       confidence,
       decision: suggestion.decision,
       notes: suggestion.notes,

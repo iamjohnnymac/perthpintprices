@@ -108,7 +108,12 @@ for (const source of selectedSources) {
     result.extraction_modes = extraction.extractionModes
     if (extraction.renderError) result.render_error = extraction.renderError
 
-    let candidates = extraction.candidates
+    let candidates = withCandidateSource(
+      extraction.candidates,
+      source.url,
+      extraction.sourceText.kind,
+      extraction.extractionModes,
+    )
 
     if (followLinks && extraction.sourceText.kind === 'html') {
       const linkedSources = discoverLinkedSources(extraction, source.url, linkedSourceLimit)
@@ -131,8 +136,14 @@ for (const source of selectedSources) {
           linkedResult.source_kind = linkedExtraction.sourceText.kind
           linkedResult.extraction_modes = linkedExtraction.extractionModes
           if (linkedExtraction.renderError) linkedResult.render_error = linkedExtraction.renderError
-          linkedResult.candidates = linkedExtraction.candidates
-          candidates = mergeCandidates(candidates, linkedExtraction.candidates, maxCandidates)
+          const linkedCandidates = withCandidateSource(
+            linkedExtraction.candidates,
+            linkedSource.url,
+            linkedExtraction.sourceText.kind,
+            linkedExtraction.extractionModes,
+          )
+          linkedResult.candidates = linkedCandidates
+          candidates = mergeCandidates(candidates, linkedCandidates, maxCandidates)
         } catch (linkedErr) {
           linkedFailed++
           linkedResult.error = linkedErr instanceof Error ? linkedErr.message : String(linkedErr)
@@ -469,6 +480,15 @@ function mergeCandidates(existing, next, limit) {
   }
 
   return Array.from(byKey.values()).slice(0, limit)
+}
+
+function withCandidateSource(candidates, sourceUrl, sourceKind, extractionModes) {
+  return candidates.map((candidate) => ({
+    ...candidate,
+    source_url: sourceUrl,
+    source_kind: sourceKind,
+    extraction_modes: extractionModes,
+  }))
 }
 
 function canonicalSourceKey(url) {
