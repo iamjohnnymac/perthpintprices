@@ -81,12 +81,26 @@ describe('official menu extraction', () => {
     assert.deepEqual(
       extractOfficialMenuCandidates(`
         Lightning Minds Non Alcoholic Pale Ale - 9
+        The Cidery Apple Cider $15 (Non-Alc)
+        Apple Thief Non - Alc. Cider 12
         Pale Ale - Lightning Minds 12
         Heaps Normal Another Lager 11
         Hiatus Pacific Ale 11
         Swan Draught pint $10
       `),
       [{ beerType: 'Swan', price: 10, evidenceText: 'Swan Draught pint $10' }],
+    )
+  })
+
+  it('skips food rows that mention apple cider vinegar', () => {
+    assert.deepEqual(
+      extractOfficialMenuCandidates(`
+        crumbled Danish feta, apple cider vinaigrette 28
+        BUTTERNUT PUMPKIN & QUINOA SALAD V apple cider vinaigrette 28
+        Made with macaroni & Mash hazy beer and cheese, deep fried in a crispy panko coating. $19
+        Swan Draught Lager 13
+      `),
+      [{ beerType: 'Swan Lager', price: 13, evidenceText: 'Swan Draught Lager 13' }],
     )
   })
 

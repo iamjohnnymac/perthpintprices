@@ -51,7 +51,7 @@ scripts/official-menu-crawl-results*.json
 scripts/official-menu-import-plan*.json
 scripts/official-menu-review*.csv
 scripts/official-menu-review*.json
-scripts/official-menu-seeds.json
+scripts/official-menu-seeds*.json
 scripts/official-menu-seeds.generated*.json
 scripts/official-menu-seeds.large*.json
 scripts/official-menu-source-candidates*.json

@@ -10,7 +10,7 @@ const BARE_PRICE_DRINK_RE = /\b(pints?|draught|draft|tap\s*beers?|lager|ale|cide
 const BARE_PRICE_RE = /(?:^|\s)(\d{1,2}(?:\.\d{1,2})?)\s*$/
 const BARE_NUMBER_RE = /\b\d{1,2}(?:\.\d{1,2})?\b/g
 const SKIP_RE =
-  /\b(happy\s*hour|specials?|deal|promo|members?|jug|bottle|btl|can|cocktails?|mocktails?|wine|chardonnay|spirit|vodka|gin|rum|tequila|whisk(?:e)?y|bourbon|makers?\s+mark|mule|margarita|martini|spritz(?:es)?|negroni|liqueur|food|lunch\s*specials?|roast|juice|ginger\s*(?:ale|beer)|soft\s*drink|lemonade|soda|tonic|non[-\s]?alcoholic|alcohol[-\s]?free|zero[-\s]?alcohol|heaps\s+normal|lightning\s+minds|hiatus|battered|burger|fish|chips)\b/i
+  /\b(happy\s*hour|specials?|deal|promo|members?|jug|bottle|btl|can|cocktails?|mocktails?|wine|chardonnay|spirit|vodka|gin|rum|tequila|whisk(?:e)?y|bourbon|makers?\s+mark|mule|margarita|martini|spritz(?:es)?|negroni|liqueur|food|breakfast|kids?|lunch\s*specials?|roast|salad|vinaigrette|feta|quinoa|pumpkin|macaroni|panko|deep[-\s]?fried|juice|ginger\s*(?:ale|beer)|soft\s*drink|lemonade|soda|tonic|non\s*[-–—]?\s*(?:alcoholic|alc\.?)|alcohol[-\s]?free|zero[-\s]?alcohol|heaps\s+normal|lightning\s+minds|hiatus|battered|burger|fish|chips)\b/i
 
 export function extractOfficialMenuCandidates(input: string, limit = 10): OfficialMenuCandidate[] {
   const seen = new Set<string>()
