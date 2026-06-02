@@ -15,9 +15,10 @@ Stack, database, routes, components, and lib files are documented in `CLAUDE.md`
 - **Crawler improvements:** added rendered HTML fallback, PDF text/table extraction, image OCR, scanned-PDF OCR fallback, JSON-LD `MenuItem` extraction, adjacent price-line handling, source/provider discovery, and stricter filtering for ecommerce/product pages, generic image assets, unsupported AVIF OCR, cocktails/wine/spirits, food combos, non-alcoholic beers, stale CMS templates, and other false positives found during live dry runs.
 - **Review workflow:** added `scripts/build-official-menu-seeds.mjs`, `scripts/build-official-menu-review.mjs`, and `scripts/import-official-menu-review.mjs`. Review exports include source URL, evidence text, extraction mode, confidence, decision, and notes; suggested decisions separate explicit pint/draught/tap evidence from rows needing manual review.
 - **Admin review:** the admin stats payload now returns pending price reports as the review queue instead of only the latest 10 reports, and the Reports tab surfaces official-menu source/evidence fields so the 26 imported rows can be actioned through the normal approval path.
+- **Follow-up provenance fix:** linked-source crawl candidates now carry the actual linked menu/PDF/image URL and extraction mode into review exports instead of falling back to the parent page URL.
 - **Latest batch:** a 140-source dry run fetched 129 sources, found 26 review candidates, and inserted 0 rows during crawl. After owner approval, the importer inserted 26 **pending** `price_reports` with `submission_source = "official_menu"`. Admin review is complete: 5 clear official-menu rows were approved into canonical pub prices, and 21 ambiguous/duplicate rows were rejected.
 - **Verification:** verified `node --check` for the new workflow scripts, a dry-run import plan, `npm test`, `npx tsc --noEmit`, `npm run lint` (existing warnings only), `npm run build` (existing warnings only), and desktop/mobile admin screenshots.
-- **Commit:** `d8e976d`
+- **Commits:** `d8e976d`, `99b8200`
 
 ### Official menu source discovery ready (2026-06-01)
 - **PR #130 / merge commit `92f2c8d`:** added a read-only discovery CLI that scans missing-price pubs with websites, ranks likely menu/drinks/PDF links, and writes `scripts/official-menu-source-candidates.json` for review. The generated artifact is gitignored.
