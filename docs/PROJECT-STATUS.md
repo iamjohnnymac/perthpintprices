@@ -1,6 +1,6 @@
 # Perth Pint Prices Project Status
 
-Last updated: 2026-06-01
+Last updated: 2026-06-02
 
 ## What this is
 
@@ -9,6 +9,16 @@ Perth Pint Prices (perthpintprices.com) tracks pint prices across **857 Perth pu
 Stack, database, routes, components, and lib files are documented in `CLAUDE.md` (auto-loaded every session). This file covers history, recent work, and the backlog.
 
 ## What's done recently
+
+### Official menu crawler scaled to review + pending reports (2026-06-02)
+- **Local uncommitted work:** expanded the official-menu workflow from MVP into a dry-run-first discovery, seed, crawl, review, suggested-decision, and guarded import pipeline. The approval pack lives at `docs/official-menu-crawler-approval.html`; generated crawl/review/import artifacts are gitignored.
+- **Crawler improvements:** added rendered HTML fallback, PDF text/table extraction, image OCR, scanned-PDF OCR fallback, JSON-LD `MenuItem` extraction, adjacent price-line handling, source/provider discovery, and stricter filtering for ecommerce/product pages, generic image assets, unsupported AVIF OCR, cocktails/wine/spirits, food combos, non-alcoholic beers, stale CMS templates, and other false positives found during live dry runs.
+- **Review workflow:** added `scripts/build-official-menu-seeds.mjs`, `scripts/build-official-menu-review.mjs`, and `scripts/import-official-menu-review.mjs`. Review exports include source URL, evidence text, extraction mode, confidence, decision, and notes; suggested decisions separate explicit pint/draught/tap evidence from rows needing manual review.
+- **Admin review:** the admin stats payload now returns pending price reports as the review queue instead of only the latest 10 reports, and the Reports tab surfaces official-menu source/evidence fields so the 26 imported rows can be actioned through the normal approval path.
+- **Follow-up provenance fix:** linked-source crawl candidates now carry the actual linked menu/PDF/image URL and extraction mode into review exports instead of falling back to the parent page URL.
+- **Latest batch:** a 140-source dry run fetched 129 sources, found 26 review candidates, and inserted 0 rows during crawl. After owner approval, the importer inserted 26 **pending** `price_reports` with `submission_source = "official_menu"`. Admin review is complete: 5 clear official-menu rows were approved into canonical pub prices, and 21 ambiguous/duplicate rows were rejected.
+- **Verification:** verified `node --check` for the new workflow scripts, a dry-run import plan, `npm test`, `npx tsc --noEmit`, `npm run lint` (existing warnings only), `npm run build` (existing warnings only), and desktop/mobile admin screenshots.
+- **Commits:** `d8e976d`, `99b8200`
 
 ### Official menu source discovery ready (2026-06-01)
 - **PR #130 / merge commit `92f2c8d`:** added a read-only discovery CLI that scans missing-price pubs with websites, ranks likely menu/drinks/PDF links, and writes `scripts/official-menu-source-candidates.json` for review. The generated artifact is gitignored.
