@@ -164,6 +164,7 @@ export async function GET(request: NextRequest) {
       priceHistoryResult,
       priceReportsResult,
       pendingPriceReportsResult,
+      pendingPriceReportsListResult,
       pushSubsResult,
       activityResult,
       recentPubsResult,
@@ -184,6 +185,8 @@ export async function GET(request: NextRequest) {
       supabase.from('price_reports').select('*', { count: 'exact' }).order('created_at', { ascending: false }).limit(10),
       // All pending price reports, not just the latest display slice
       supabase.from('price_reports').select('id', { count: 'exact', head: true }).eq('status', 'pending'),
+      // Pending report review queue, so large imports can be fully actioned
+      supabase.from('price_reports').select('*').eq('status', 'pending').order('created_at', { ascending: false }).limit(100),
       // Push subscriptions
       supabase.from('push_subscriptions').select('*', { count: 'exact' }),
       // Agent activity (now readable by anon with RLS policy)
@@ -219,6 +222,9 @@ export async function GET(request: NextRequest) {
 
     // Pubs without prices
     const unpriced = pubs.filter(p => !p.price || p.price === 0)
+    const displayPriceReports = pendingPriceReportsListResult.data?.length
+      ? pendingPriceReportsListResult.data
+      : priceReportsResult.data || []
 
     return NextResponse.json({
       overview: {
@@ -245,13 +251,17 @@ export async function GET(request: NextRequest) {
       priceReports: {
         total: priceReportsResult.count || 0,
         pending: pendingPriceReportsResult.count || 0,
-        recent: (priceReportsResult.data || []).map((r: any) => ({
+        recent: displayPriceReports.map((r: any) => ({
           id: r.id,
           pubSlug: r.pub_slug,
           reportedPrice: r.reported_price,
           beerType: r.beer_type,
           reporter: r.reporter_name || 'Anonymous',
           reportType: r.report_type || 'price_report',
+          submissionSource: r.submission_source || null,
+          sourceUrl: r.source_url || null,
+          evidenceText: r.evidence_text || null,
+          observedAt: r.observed_at || null,
           status: r.status,
           createdAt: r.created_at,
         })),

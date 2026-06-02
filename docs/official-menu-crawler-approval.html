@@ -1,0 +1,544 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Official Menu Crawler Approval Pack</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #171717;
+      --muted: #666;
+      --line: #d9d9d4;
+      --paper: #fdf8f0;
+      --panel: #fffdfa;
+      --accent: #d4740a;
+      --ok: #147a3d;
+      --warn: #a15c00;
+      --bad: #9b1c1c;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.55;
+    }
+
+    main {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 48px 24px 72px;
+    }
+
+    header {
+      border-bottom: 3px solid var(--ink);
+      padding-bottom: 24px;
+      margin-bottom: 28px;
+    }
+
+    h1, h2, h3 {
+      line-height: 1.1;
+      margin: 0;
+    }
+
+    h1 {
+      font-size: clamp(2rem, 5vw, 4rem);
+      max-width: 860px;
+      letter-spacing: 0;
+    }
+
+    h2 {
+      font-size: 1.45rem;
+      margin: 36px 0 14px;
+      border-bottom: 2px solid var(--line);
+      padding-bottom: 8px;
+    }
+
+    h3 {
+      font-size: 1rem;
+      margin: 24px 0 8px;
+    }
+
+    p { margin: 10px 0; }
+
+    code {
+      background: #fff3e0;
+      border: 1px solid #ecd1ad;
+      border-radius: 4px;
+      padding: 1px 5px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 0.92em;
+    }
+
+    pre {
+      overflow-x: auto;
+      background: var(--ink);
+      color: #fff;
+      border-radius: 8px;
+      padding: 14px 16px;
+      font-size: 0.9rem;
+    }
+
+    pre code {
+      background: transparent;
+      border: 0;
+      color: inherit;
+      padding: 0;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--panel);
+      border: 2px solid var(--ink);
+      margin: 12px 0 20px;
+    }
+
+    th, td {
+      border: 1px solid var(--line);
+      padding: 10px 12px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: #fff3e0;
+      font-weight: 800;
+    }
+
+    ul {
+      margin: 10px 0 20px;
+      padding-left: 22px;
+    }
+
+    li { margin: 6px 0; }
+
+    .lede {
+      font-size: 1.12rem;
+      max-width: 820px;
+      color: #333;
+      margin-top: 16px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin: 20px 0 28px;
+    }
+
+    .metric {
+      background: var(--panel);
+      border: 2px solid var(--ink);
+      border-radius: 8px;
+      padding: 14px;
+      min-height: 112px;
+    }
+
+    .metric strong {
+      display: block;
+      font-size: 1.9rem;
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+
+    .metric span {
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .callout {
+      border: 2px solid var(--ink);
+      border-radius: 8px;
+      background: var(--panel);
+      padding: 16px;
+      margin: 18px 0;
+    }
+
+    .callout.ok { border-color: var(--ok); }
+    .callout.warn { border-color: var(--warn); }
+
+    .pill {
+      display: inline-block;
+      border: 1px solid currentColor;
+      border-radius: 999px;
+      padding: 2px 8px;
+      font-size: 0.8rem;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .pill.ok { color: var(--ok); }
+    .pill.warn { color: var(--warn); }
+    .pill.bad { color: var(--bad); }
+
+    .small { color: var(--muted); font-size: 0.92rem; }
+
+    @media (max-width: 760px) {
+      main { padding: 28px 16px 48px; }
+      .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      table { font-size: 0.9rem; }
+      th, td { padding: 8px; }
+    }
+  </style>
+</head>
+<body>
+<main>
+  <header>
+    <p class="small">Perth Pint Prices / Production Approval Pack</p>
+    <h1>Official Menu Crawler And Review Workflow</h1>
+    <p class="lede">
+      This document summarizes the production-ready local workflow for discovering official venue menu sources,
+      extracting candidate pint prices, reviewing them, and preparing pending <code>price_reports</code> rows.
+      The validated path is dry-run by default and does not write to Supabase unless an explicit <code>--write</code>
+      command is approved.
+    </p>
+  </header>
+
+  <section>
+    <h2>Approval Summary</h2>
+    <div class="grid">
+      <div class="metric">
+        <strong>140</strong>
+        <span>large-batch official menu source URLs seeded for crawl</span>
+      </div>
+      <div class="metric">
+        <strong>129</strong>
+        <span>sources fetched successfully in the latest dry run</span>
+      </div>
+      <div class="metric">
+        <strong>26</strong>
+        <span>candidate price rows exported for review</span>
+      </div>
+      <div class="metric">
+        <strong>5</strong>
+        <span>canonical pub prices approved from official-menu evidence</span>
+      </div>
+    </div>
+
+    <div class="callout ok">
+      <strong>Current recommendation:</strong>
+      approve the code/workflow changes for merge and keep production data writes disabled by default. The first
+      official-menu admin batch has been reviewed: 5 clear rows were approved and 21 ambiguous or duplicate rows were rejected.
+    </div>
+  </section>
+
+  <section>
+    <h2>What You Are Approving</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Area</th>
+          <th>Production-ready change</th>
+          <th>Default safety state</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Source discovery</td>
+          <td>Discovers official menu sources from homepages, resource tags, JSON-LD, PDF/image assets, and menu providers.</td>
+          <td><span class="pill ok">local artifact only</span></td>
+        </tr>
+        <tr>
+          <td>Crawl/extraction</td>
+          <td>Fetches public menu URLs and extracts conservative pint candidates from HTML, rendered HTML, PDFs, tables, and OCR.</td>
+          <td><span class="pill ok">dry-run by default</span></td>
+        </tr>
+        <tr>
+          <td>Noise filters</td>
+          <td>Blocks happy-hour specials, product/shop pages, generic venue images, food combos, cocktails, wine, non-alcoholic beer, unsupported AVIF OCR, and messy false positives found in the live batch.</td>
+          <td><span class="pill ok">tested</span></td>
+        </tr>
+        <tr>
+          <td>Review queue</td>
+          <td>Exports crawl candidates to CSV/JSON with confidence, decision, notes, evidence text, and source URL fields.</td>
+          <td><span class="pill ok">manual review first</span></td>
+        </tr>
+        <tr>
+          <td>Suggested decisions</td>
+          <td>Optional triage mode marks explicit pint/draught/tap evidence as <code>approve_suggested</code> and ambiguous beer-menu rows as <code>needs_manual_review</code>.</td>
+          <td><span class="pill warn">suggestions only</span></td>
+        </tr>
+        <tr>
+          <td>Importer</td>
+          <td>Builds an import plan for approved review rows and can insert pending <code>price_reports</code> only with <code>--write</code> and a service role key.</td>
+          <td><span class="pill ok">dry-run by default</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>Latest Dry-run Results</h2>
+    <table>
+      <tbody>
+        <tr>
+          <th>Source crawl</th>
+          <td>140 sources, 129 fetched, 11 failed, 26 candidates, 0 inserts</td>
+        </tr>
+        <tr>
+          <th>Extraction modes used</th>
+          <td>PDF text, PDF OCR, PDF table extraction, raw HTML, rendered HTML, image OCR</td>
+        </tr>
+        <tr>
+          <th>Review triage</th>
+          <td>26 total review rows, 9 <code>approve_suggested</code>, 17 <code>needs_manual_review</code></td>
+        </tr>
+        <tr>
+          <th>Import plan</th>
+          <td>26 reviewed rows were imported as pending reports after explicit approval; admin review approved 5 canonical prices and rejected 21 rows</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>Approved-by-suggestion import plan</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Venue</th>
+          <th>Price</th>
+          <th>Beer type</th>
+          <th>Evidence</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Otherside Brew Lounge</td>
+          <td>$13</td>
+          <td>GUINNESS</td>
+          <td>GUINNESS Draught $13</td>
+        </tr>
+        <tr>
+          <td>Noble Falls Tavern</td>
+          <td>$13</td>
+          <td>Unknown pint</td>
+          <td>$13 Pint</td>
+        </tr>
+        <tr>
+          <td>Noble Falls Tavern</td>
+          <td>$14</td>
+          <td>Unknown pint</td>
+          <td>$14 Pint</td>
+        </tr>
+        <tr>
+          <td>Noble Falls Tavern</td>
+          <td>$12</td>
+          <td>Unknown pint</td>
+          <td>$12 Pint</td>
+        </tr>
+        <tr>
+          <td>Noble Falls Tavern</td>
+          <td>$15</td>
+          <td>Unknown pint</td>
+          <td>$15 Pint</td>
+        </tr>
+        <tr>
+          <td>Frisk. Small Bar</td>
+          <td>$10</td>
+          <td>Unknown tap beer</td>
+          <td>tap beer 10</td>
+        </tr>
+        <tr>
+          <td>Argyle Social</td>
+          <td>$14</td>
+          <td>GUINNESS</td>
+          <td>GUINNESS DRAUGHT 14</td>
+        </tr>
+        <tr>
+          <td>Argyle Social</td>
+          <td>$10</td>
+          <td>CARLTON</td>
+          <td>CARLTON DRAUGHT 10</td>
+        </tr>
+        <tr>
+          <td>18 Knots Rooftop Bar</td>
+          <td>$10</td>
+          <td>Unknown draught beer</td>
+          <td>DRAUGHT BEER 10</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>Workflow Commands</h2>
+    <h3>1. Discover candidate official menu sources</h3>
+    <pre><code>npm run discover:official-menu-sources -- --limit 200 --output scripts/official-menu-source-candidates-large.json</code></pre>
+
+    <h3>2. Build a reviewed seed file</h3>
+    <pre><code>npm run build:official-menu-seeds -- --input scripts/official-menu-source-candidates-large.json --output scripts/official-menu-seeds.large.json --min-score 8 --per-pub 2</code></pre>
+
+    <h3>3. Crawl sources in dry-run mode</h3>
+    <pre><code>npm run crawl:official-menus -- --file scripts/official-menu-seeds.large.json --output scripts/official-menu-crawl-results-large.json</code></pre>
+
+    <h3>4. Export review queue</h3>
+    <pre><code>npm run build:official-menu-review</code></pre>
+
+    <h3>5. Export suggested decisions</h3>
+    <pre><code>npm run build:official-menu-review -- --suggest-decisions --csv-output scripts/official-menu-review.suggested.csv --json-output scripts/official-menu-review.suggested.json</code></pre>
+
+    <h3>6. Build dry-run import plan</h3>
+    <pre><code>npm run import:official-menu-review</code></pre>
+
+    <h3>7. Optional write command after explicit approval</h3>
+    <pre><code>npm run import:official-menu-review -- --write</code></pre>
+    <p class="small">The write path uses <code>SUPABASE_SERVICE_ROLE_KEY</code> by default, checks existing <code>official_menu</code> reports before inserting, and only uses the anon public-insert path when <code>--allow-anon-write</code> is explicitly supplied.</p>
+  </section>
+
+  <section>
+    <h2>Files Added Or Changed</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>File</th>
+          <th>Purpose</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>src/lib/officialMenuExtract.ts</code></td>
+          <td>Candidate extraction, JSON-LD menu items, adjacent price-line handling, and false-positive filters.</td>
+        </tr>
+        <tr>
+          <td><code>src/lib/officialMenuSources.ts</code></td>
+          <td>Official source discovery, scoring, provider/resource extraction, URL dedupe, static/generic/image/product filtering.</td>
+        </tr>
+        <tr>
+          <td><code>scripts/crawl-official-menus.mjs</code></td>
+          <td>Dry-run crawler with PDF extraction, rendered HTML fallback, image/PDF OCR, local artifacts, and guarded write mode.</td>
+        </tr>
+        <tr>
+          <td><code>scripts/discover-official-menu-sources.mjs</code></td>
+          <td>Large-batch source discovery with rendered homepage fallback and local discovery artifact output.</td>
+        </tr>
+        <tr>
+          <td><code>scripts/build-official-menu-seeds.mjs</code></td>
+          <td>Builds high-intent crawler seed files from discovery artifacts.</td>
+        </tr>
+        <tr>
+          <td><code>scripts/build-official-menu-review.mjs</code></td>
+          <td>Exports review CSV/JSON and optional suggested decisions.</td>
+        </tr>
+        <tr>
+          <td><code>scripts/import-official-menu-review.mjs</code></td>
+          <td>Builds dry-run import plans and supports guarded pending-report insertion only with <code>--write</code>.</td>
+        </tr>
+        <tr>
+          <td><code>src/app/api/admin/stats/route.ts</code></td>
+          <td>Returns pending price reports as the admin review queue instead of only the latest 10 reports.</td>
+        </tr>
+        <tr>
+          <td><code>src/app/admin/page.tsx</code></td>
+          <td>Shows official-menu source and evidence fields in the Reports tab for approval review.</td>
+        </tr>
+        <tr>
+          <td><code>src/lib/officialMenuExtract.test.ts</code></td>
+          <td>Regression tests for price extraction, JSON-LD, adjacent prices, mixed beverages, food combos, non-alcoholic beer, and false positives.</td>
+        </tr>
+        <tr>
+          <td><code>src/lib/officialMenuSources.test.ts</code></td>
+          <td>Regression tests for source discovery, dedupe, templates, providers, static assets, AVIF/generic images, bookings, and ecommerce URLs.</td>
+        </tr>
+        <tr>
+          <td><code>package.json</code> and <code>package-lock.json</code></td>
+          <td>Add script commands plus <code>pdf-parse</code> and <code>tesseract.js</code> dev dependencies.</td>
+        </tr>
+        <tr>
+          <td><code>.gitignore</code></td>
+          <td>Ignores generated crawl, review, import, seed, discovery, and OCR cache artifacts.</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>Production Guardrails</h2>
+    <ul>
+      <li>All crawler, review, and importer scripts default to local/dry-run behavior.</li>
+      <li>No crawler/importer script updates canonical <code>pubs.price</code>; importer creates pending <code>price_reports</code> only after <code>--write</code>, and canonical price updates still go through the admin review path.</li>
+      <li>Official-menu provenance is preserved with <code>submission_source</code>, <code>source_url</code>, <code>evidence_text</code>, <code>observed_at</code>, <code>raw_extraction</code>, and <code>extractor_version</code>.</li>
+      <li>The importer prefers <code>SUPABASE_SERVICE_ROLE_KEY</code> for writes, requires an explicit <code>--allow-anon-write</code> flag for the public insert policy, and checks existing official-menu reports to avoid duplicates.</li>
+      <li>Generated artifacts are ignored by git so crawl output and OCR artifacts do not become source-controlled noise.</li>
+      <li>Internet usage is limited to fetching public venue/menu URLs; parsing, OCR, review, and import planning run locally.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Open-source Research Applied</h2>
+    <p>
+      Research did not find a complete open-source solution for reliable "restaurant URL to normalized pint price"
+      extraction. The implemented workflow follows the recommended layered approach instead:
+    </p>
+    <ul>
+      <li>Use browser rendering for dynamic pages rather than relying only on raw HTML.</li>
+      <li>Use deterministic PDF text/table extraction before OCR.</li>
+      <li>Use OCR as a fallback for image and scanned PDF sources.</li>
+      <li>Keep LLM/service-based tools as later fallbacks, not the default production path.</li>
+      <li>Keep human review between extraction and any database write.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Known Limits</h2>
+    <ul>
+      <li>Many venues publish beer prices without explicitly saying "pint"; these remain <code>needs_manual_review</code>.</li>
+      <li>Some venue URLs 403, 404, timeout, or fail fetch; those are captured in artifacts but not retried automatically yet.</li>
+      <li>OCR can produce messy text; suspicious OCR rows are kept out of auto-approval suggestions.</li>
+      <li>The workflow currently imports pending reports, not direct canonical pub price updates.</li>
+      <li>Crawlee, Docling, OCRmyPDF, PaddleOCR, Firecrawl, and LLM-based extractors are not integrated yet.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Verification</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Check</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>node --check scripts/build-official-menu-review.mjs</code></td>
+          <td><span class="pill ok">passed</span></td>
+        </tr>
+        <tr>
+          <td><code>node --check scripts/import-official-menu-review.mjs</code></td>
+          <td><span class="pill ok">passed</span></td>
+        </tr>
+        <tr>
+          <td><code>npm test</code></td>
+          <td><span class="pill ok">246/246 passed</span></td>
+        </tr>
+        <tr>
+          <td><code>npx tsc --noEmit</code></td>
+          <td><span class="pill ok">passed</span></td>
+        </tr>
+        <tr>
+          <td>Large crawl dry run</td>
+          <td><span class="pill ok">140 sources, 26 candidates, 0 inserts</span></td>
+        </tr>
+        <tr>
+          <td>Review/import dry run</td>
+          <td><span class="pill ok">26 pending reports reviewed: 5 approved, 21 rejected</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>Approval Gates</h2>
+    <div class="callout warn">
+      <p><strong>Gate 1: merge approval.</strong> Approve the code and local workflow changes.</p>
+      <p><strong>Gate 2: admin report approval.</strong> Complete — 5 <code>official_menu</code> reports approved and 21 rejected through the normal review path.</p>
+      <p><strong>Gate 3: scale approval.</strong> Approve running discovery/crawl over the full missing-price venue set after reviewing this first batch.</p>
+    </div>
+  </section>
+</main>
+</body>
+</html>

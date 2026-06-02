@@ -27,6 +27,7 @@ npm-debug.log*
 .vscode/
 
 # Playwright MCP cache
+.cache/
 .playwright-mcp/
 playwright-report/
 test-results/
@@ -46,7 +47,15 @@ scripts/location-audit-results.json
 scripts/backfill-place-ids-results.json
 scripts/backfill-review.json
 scripts/discover-venues-results.json
-scripts/official-menu-source-candidates.json
+scripts/official-menu-crawl-results*.json
+scripts/official-menu-import-plan*.json
+scripts/official-menu-review*.csv
+scripts/official-menu-review*.json
+scripts/official-menu-seeds.json
+scripts/official-menu-seeds.generated*.json
+scripts/official-menu-seeds.large*.json
+scripts/official-menu-source-candidates*.json
+scripts/official-menu-seeds-discovered*.json
 
 # Research agent data
 perth_pubs_pricing/

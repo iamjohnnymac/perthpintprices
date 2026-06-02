@@ -41,6 +41,10 @@ interface DashboardData {
       beerType: string
       reporter: string
       reportType: string
+      submissionSource: string | null
+      sourceUrl: string | null
+      evidenceText: string | null
+      observedAt: string | null
       status: string
       createdAt: string
     }>
@@ -104,6 +108,15 @@ function timeAgo(date: string): string {
   if (hours < 24) return `${hours}h ago`
   const days = Math.floor(hours / 24)
   return `${days}d ago`
+}
+
+function sourceLabel(url: string): string {
+  try {
+    const parsed = new URL(url)
+    return parsed.hostname.replace(/^www\./, '')
+  } catch {
+    return 'Source'
+  }
 }
 
 /* ================================================================
@@ -433,7 +446,7 @@ function ReportsTab({ data, password, onRefresh }: { data: DashboardData; passwo
               const rejectKey = `price_report-${r.id}-reject`
               return (
                 <div key={r.id} className={`px-4 py-4 ${i > 0 ? 'border-t-2 border-ink/10' : ''}`}>
-                  <div className="flex items-start justify-between gap-3">
+                  <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
                     <div className="flex-1 min-w-0">
                       <p className="font-mono text-[0.85rem] font-bold text-ink">{r.pubSlug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}</p>
                       {isPending && !pubSlugs.has(r.pubSlug) && !pubOverrides[String(r.id)] && (
@@ -494,18 +507,40 @@ function ReportsTab({ data, password, onRefresh }: { data: DashboardData; passwo
                         )}
                         {r.beerType && <span className="font-mono text-[0.65rem] text-gray-mid">{r.beerType}</span>}
                         <span className="font-mono text-[0.65rem] text-gray-mid">by {r.reporter}</span>
+                        {r.submissionSource && (
+                          <span className="font-mono text-[0.6rem] font-bold uppercase tracking-[0.05em] text-amber">
+                            {r.submissionSource.replace(/_/g, ' ')}
+                          </span>
+                        )}
                       </div>
+                      {(r.evidenceText || r.sourceUrl) && (
+                        <div className="mt-2 border-l-3 border-amber pl-3 space-y-1">
+                          {r.evidenceText && (
+                            <p className="font-mono text-[0.65rem] text-ink break-words">{r.evidenceText}</p>
+                          )}
+                          {r.sourceUrl && (
+                            <a
+                              href={r.sourceUrl}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="block font-mono text-[0.58rem] text-gray-mid hover:text-amber break-words transition-colors"
+                            >
+                              {sourceLabel(r.sourceUrl)}
+                            </a>
+                          )}
+                        </div>
+                      )}
                       <div className="flex items-center gap-2 mt-2">
                         <StatusBadge status={r.status} />
                         <span className="font-mono text-[0.6rem] text-gray-mid">{timeAgo(r.createdAt)}</span>
                       </div>
                     </div>
                     {isPending && (
-                      <div className="flex items-center gap-2 shrink-0">
+                      <div className="grid grid-cols-2 gap-2 w-full sm:flex sm:items-center sm:w-auto shrink-0">
                         <button
                           onClick={() => handleReview('price_report', r.id, 'approve')}
                           disabled={actionLoading !== null}
-                          className="flex items-center gap-1.5 px-4 py-2 bg-green text-white font-mono text-[0.65rem] font-bold uppercase tracking-[0.05em] border-3 border-ink rounded-card shadow-hard-sm hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-hard-hover disabled:opacity-50 transition-all"
+                          className="flex items-center justify-center gap-1.5 px-3 sm:px-4 py-2 bg-green text-white font-mono text-[0.65rem] font-bold uppercase tracking-[0.05em] border-3 border-ink rounded-card shadow-hard-sm hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-hard-hover disabled:opacity-50 transition-all"
                         >
                           {actionLoading === approveKey ? <Loader2 size={12} className="animate-spin" /> : <Check size={12} />}
                           Approve
@@ -513,7 +548,7 @@ function ReportsTab({ data, password, onRefresh }: { data: DashboardData; passwo
                         <button
                           onClick={() => handleReview('price_report', r.id, 'reject')}
                           disabled={actionLoading !== null}
-                          className="flex items-center gap-1.5 px-4 py-2 bg-red text-white font-mono text-[0.65rem] font-bold uppercase tracking-[0.05em] border-3 border-ink rounded-card shadow-hard-sm hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-hard-hover disabled:opacity-50 transition-all"
+                          className="flex items-center justify-center gap-1.5 px-3 sm:px-4 py-2 bg-red text-white font-mono text-[0.65rem] font-bold uppercase tracking-[0.05em] border-3 border-ink rounded-card shadow-hard-sm hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-hard-hover disabled:opacity-50 transition-all"
                         >
                           {actionLoading === rejectKey ? <Loader2 size={12} className="animate-spin" /> : <X size={12} />}
                           Reject
@@ -548,7 +583,7 @@ function ReportsTab({ data, password, onRefresh }: { data: DashboardData; passwo
               const rejectKey = `pub_submission-${s.id}-reject`
               return (
                 <div key={s.id} className={`px-4 py-4 ${i > 0 ? 'border-t-2 border-ink/10' : ''}`}>
-                  <div className="flex items-start justify-between gap-3">
+                  <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
                     <div className="flex-1 min-w-0">
                       <p className="font-mono text-[0.85rem] font-bold text-ink">{s.pubName}</p>
                       <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1.5">
@@ -568,11 +603,11 @@ function ReportsTab({ data, password, onRefresh }: { data: DashboardData; passwo
                       </div>
                     </div>
                     {isPending && (
-                      <div className="flex items-center gap-2 shrink-0">
+                      <div className="grid grid-cols-2 gap-2 w-full sm:flex sm:items-center sm:w-auto shrink-0">
                         <button
                           onClick={() => handleReview('pub_submission', s.id, 'approve')}
                           disabled={actionLoading !== null}
-                          className="flex items-center gap-1.5 px-4 py-2 bg-green text-white font-mono text-[0.65rem] font-bold uppercase tracking-[0.05em] border-3 border-ink rounded-card shadow-hard-sm hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-hard-hover disabled:opacity-50 transition-all"
+                          className="flex items-center justify-center gap-1.5 px-3 sm:px-4 py-2 bg-green text-white font-mono text-[0.65rem] font-bold uppercase tracking-[0.05em] border-3 border-ink rounded-card shadow-hard-sm hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-hard-hover disabled:opacity-50 transition-all"
                         >
                           {actionLoading === approveKey ? <Loader2 size={12} className="animate-spin" /> : <Check size={12} />}
                           Approve
@@ -580,7 +615,7 @@ function ReportsTab({ data, password, onRefresh }: { data: DashboardData; passwo
                         <button
                           onClick={() => handleReview('pub_submission', s.id, 'reject')}
                           disabled={actionLoading !== null}
-                          className="flex items-center gap-1.5 px-4 py-2 bg-red text-white font-mono text-[0.65rem] font-bold uppercase tracking-[0.05em] border-3 border-ink rounded-card shadow-hard-sm hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-hard-hover disabled:opacity-50 transition-all"
+                          className="flex items-center justify-center gap-1.5 px-3 sm:px-4 py-2 bg-red text-white font-mono text-[0.65rem] font-bold uppercase tracking-[0.05em] border-3 border-ink rounded-card shadow-hard-sm hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-hard-hover disabled:opacity-50 transition-all"
                         >
                           {actionLoading === rejectKey ? <Loader2 size={12} className="animate-spin" /> : <X size={12} />}
                           Reject
