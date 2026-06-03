@@ -10,6 +10,12 @@ Stack, database, routes, components, and lib files are documented in `CLAUDE.md`
 
 ## What's done recently
 
+### Page-depth audit + articles system shipped locally (2026-06-03)
+- **Branch `codex/articles-system` / commits `a6ef748`, `7443705`:** added the page-depth editorial audit (`docs/page-depth-editorial-plan.md`) and the first pub editorial article system. New routes are `/articles` plus three SSG article pages: `/articles/pints-under-10-perth`, `/articles/perth-happy-hours-by-day`, and `/articles/proper-pint-schooner-middy-perth`.
+- **Editorial plumbing:** articles are driven from `src/lib/articles.ts`, wired into footer/mobile/sub-page nav, `sitemap.xml`, and `/llms.txt`. Article detail pages emit canonical metadata and BlogPosting JSON-LD, and can render live pub-data modules for verified sub-$10 pints, happy hours by day, and glass-size explainers.
+- **UI polish:** removed the repeated OG-logo image treatment, rebuilt the article hub as a text-led editorial surface, cleaned the featured/latest card hierarchy, and switched detail pages to compact editorial briefs plus useful live-data panels.
+- **Verification:** verified `npx tsc --noEmit`, `npm run lint` (existing warnings only), `npm test` (**249/249 tests**), `npm run build`, and desktop/mobile visual evidence for the article hub and detail pages under `/tmp/perth-pint-prices-articles-system/`.
+
 ### Official menu extractor hardening + second dry run (2026-06-03)
 - **Branch `codex/official-menu-extractor-hardening` / commit `f69c55e`:** tightened official-menu source and row filters after the larger dry run surfaced false positives. The extractor now skips `Non-Alc` shorthand, apple-cider-vinaigrette food rows, and beer-in-food-description rows such as macaroni/panko/deep-fried items; source discovery and seed building now block breakfast/kids menu URLs even when filenames use underscores.
 - **Second dry run:** rebuilt seeds from the large discovery artifact with the hardened filters, producing 202 crawl sources. Ran a no-write crawl with linked-source follow-up and OCR disabled for native-tooling stability: 195 fetched, 131 linked fetched, 11 linked failed, 39 candidates, 7 failed sources, 0 inserted.
