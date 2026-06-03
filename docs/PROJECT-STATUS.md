@@ -10,6 +10,12 @@ Stack, database, routes, components, and lib files are documented in `CLAUDE.md`
 
 ## What's done recently
 
+### High-intent landing pages ready for preview (2026-06-03)
+- **Issue #32 first slice / branch `codex/high-intent-landing-pages-32` / commit `68754c5`:** added `/cheapest-pints` as a verified regular-price landing page and `/happy-hour/[day]` static pages for all seven weekdays, with canonical metadata, OG/Twitter tags, Breadcrumb + ItemList JSON-LD, answer-first copy, ranked rows, Q&A blocks, and useful internal links.
+- **Happy-hour day linking:** added a planning-board rail to `/happy-hour`, linked Cheap Pints from the footer, added the new pages to `sitemap.xml`, and exposed `/cheapest-pints` in `/llms.txt`.
+- **Data guardrails:** added a shared happy-hour day parser with tests for weekday ranges, wrapped ranges, en-dash ranges, daily labels, weekday/weekend labels, and Postgres array-ish strings. Day pages sort by `happyHourPrice`, show `TBC` when a deal has no confirmed price, and avoid mixing regular pint prices into happy-hour claims.
+- **Verification:** verified `npm test` (**254/254 tests**), `npx tsc --noEmit`, `git diff --check`, `npm run lint` (existing warnings only), `npm run build`, `npm run test:e2e` (**4/4 Playwright tests**), reviewer sub-agent LGTM, and desktop/mobile in-app browser screenshots under `/tmp/perth-pint-prices-high-intent-32/`.
+
 ### Editorial/page-depth measurement ready (2026-06-03)
 - **Issue #140 / branch `codex/measure-editorial-impact-140` / commit `c587238`:** added one Vercel+GA4 event helper and tracked link wrapper, then wired article hub/rail/detail clicks, article-to-pub clicks, report-price CTAs, pub-page nearby/internal clicks, and website/directions clicks so the page-depth/editorial push can be measured instead of guessed.
 - **Snapshot process:** expanded `docs/seo-snapshots/TEMPLATE.md` with editorial URL baselines, article engagement metrics, pub-page engagement events, and thin-content watch notes for the first weekly baseline.

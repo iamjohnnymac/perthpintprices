@@ -10,6 +10,7 @@ import { getDistanceKm, formatDistance } from '@/lib/location'
 import { pubUrl } from '@/lib/urls'
 import { getHappyHourStatus, formatHappyHourDays, type HappyHourStatus } from '@/lib/happyHourLive'
 import { getPriceRecency } from '@/lib/freshness'
+import { HAPPY_HOUR_DAYS } from '@/lib/happyHourDays'
 
 type SortMode = 'price' | 'nearest'
 
@@ -293,6 +294,29 @@ export default function HappyHourClient({ initialPubs, renderedAtIso }: HappyHou
             </div>
           </section>
         )}
+
+        <section className="mb-6 rounded-card border-3 border-ink bg-white p-5 shadow-hard-sm">
+          <div className="mb-4 flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <p className="font-mono text-[0.65rem] font-bold uppercase tracking-[0.05em] text-gray-mid">Planning board</p>
+              <h2 className="font-mono text-[1.15rem] font-extrabold leading-tight text-ink">Happy hours by day</h2>
+            </div>
+            <Link href="/articles/perth-happy-hours-by-day" className="font-mono text-[0.72rem] font-bold uppercase text-amber no-underline hover:underline">
+              Read the guide →
+            </Link>
+          </div>
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-7">
+            {HAPPY_HOUR_DAYS.map(day => (
+              <Link
+                key={day.slug}
+                href={`/happy-hour/${day.slug}`}
+                className="rounded-card border border-gray-light bg-off-white px-3 py-3 text-center font-mono text-[0.72rem] font-bold uppercase text-ink no-underline hover:border-amber hover:text-amber"
+              >
+                {day.label.slice(0, 3)}
+              </Link>
+            ))}
+          </div>
+        </section>
 
         {/* Sort Controls */}
         {!loading && pubs.length > 0 && (
