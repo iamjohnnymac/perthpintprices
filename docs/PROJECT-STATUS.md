@@ -10,6 +10,12 @@ Stack, database, routes, components, and lib files are documented in `CLAUDE.md`
 
 ## What's done recently
 
+### Student-pints landing page ready for preview (2026-06-03)
+- **Issue #32 third slice / branch `codex/student-pints-landing-page-32` / commit `8ec3168`:** added `/student-pints-perth`, a verified under-$10 regular-pint page for UWA, Curtin, and Murdoch.
+- **Campus ranking:** added shared student-pint ranking helpers and tests. Campus sections use verified regular prices only, direct-distance radii, and campus-specific notes; Murdoch deliberately uses a wider 8km radius because the current checked data has no useful sub-$10 cluster inside 4-6km.
+- **SEO wiring:** added canonical metadata, OG/Twitter image, Breadcrumb + ItemList JSON-LD, useful internal links, and sitemap/footer/`/llms.txt` entries.
+- **Verification:** verified `npm test` (**260/260 tests**), `npx tsc --noEmit`, `git diff --check`, `npm run lint` (existing warnings only), `npm run build`, `npm run test:e2e` (**4/4 Playwright tests**), reviewer sub-agent LGTM, and desktop/mobile screenshots under `/tmp/perth-pint-prices-student-pints-32/`.
+
 ### Transport-hub landing pages ready for preview (2026-06-03)
 - **Issue #32 second slice / branch `codex/transport-hub-landing-pages-32` / commit `f6c8adf`:** added four direct-proximity pub landing pages: `/pubs-near-perth-station`, `/pubs-near-optus-stadium`, `/pubs-near-rac-arena`, and `/pubs-near-elizabeth-quay`.
 - **Reusable hub system:** added shared transport-hub config, direct-distance ranking, ItemList JSON-LD, canonical metadata with OG/Twitter images, answer-first copy, stats, ranked nearby rows, and cross-links between transport guides. Sitemap, footer, and `/llms.txt` now expose the hub pages.
