@@ -16,6 +16,7 @@ const lines = [
   `- [Suburb Rankings](${BASE_URL}/insights/suburb-rankings): suburb-by-suburb pint-price comparisons.`,
   `- [Happy Hours](${BASE_URL}/happy-hour): current happy-hour finder for Perth pubs.`,
   `- [Cheapest Pints](${BASE_URL}/cheapest-pints): live ranked list of the cheapest verified regular pint prices in Perth.`,
+  `- [Student Pints Perth](${BASE_URL}/student-pints-perth): verified sub-$10 regular pint rows near UWA, Curtin, and Murdoch.`,
   ...TRANSPORT_HUBS.map(hub => `- [Pubs near ${hub.name}](${BASE_URL}/${hub.slug}): distance-ranked pub guide with checked pint prices where available.`),
   `- [Discover](${BASE_URL}/discover): searchable pub and pint-price directory.`,
   `- [Articles](${BASE_URL}/articles): pub and drinking explainers with PPP data attached.`,

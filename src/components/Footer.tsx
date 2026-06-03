@@ -4,6 +4,7 @@ const NAV_LINKS = [
   { href: '/discover', label: 'Discover' },
   { href: '/happy-hour', label: 'Happy Hours' },
   { href: '/cheapest-pints', label: 'Cheap Pints' },
+  { href: '/student-pints-perth', label: 'Student Pints' },
   { href: '/pubs-near-perth-station', label: 'Near Station' },
   { href: '/articles', label: 'Articles' },
   { href: '/suburbs', label: 'Suburbs' },
