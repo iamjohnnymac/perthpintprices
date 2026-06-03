@@ -24,6 +24,7 @@ import {
 } from '@/lib/voiceCopy'
 import { formatDistance } from '@/lib/location'
 import { describePriceSource } from '@/lib/priceProvenance'
+import { trackSiteEvent } from '@/lib/analytics'
 import type { PriceRecencyInfo, PriceRecencyTier } from '@/lib/freshness'
 
 const PubDetailMap = dynamic(() => import('@/components/PubDetailMap'), {
@@ -250,6 +251,17 @@ export default function PubDetailClient({
     },
   ].filter((item): item is PubFaq => Boolean(item.answer))
   const showFaq = faqItems.length >= 3
+  const trackingTier = isTierCPage ? 'tier_c' : 'priced'
+
+  function openReportForm(source: string) {
+    trackSiteEvent('report_price_click', {
+      source,
+      pub_slug: pub.slug,
+      suburb: pub.suburb,
+      page_tier: trackingTier,
+    })
+    setShowSubmitForm(true)
+  }
 
   return (
     <div className="min-h-screen bg-[#FDF8F0]">
@@ -373,6 +385,14 @@ export default function PubDetailClient({
                   {nearestVerifiedPub ? (
                     <Link
                       href={pubUrl({ suburb: nearestVerifiedPub.suburb, slug: nearestVerifiedPub.slug })}
+                      onClick={() => trackSiteEvent('pub_nearby_click', {
+                        source: 'pub_missing_price_stub',
+                        pub_slug: pub.slug,
+                        suburb: pub.suburb,
+                        target_slug: nearestVerifiedPub.slug,
+                        target_suburb: nearestVerifiedPub.suburb,
+                        page_tier: trackingTier,
+                      })}
                       className="block text-[0.86rem] leading-relaxed text-ink hover:text-amber transition-colors no-underline"
                     >
                       {priceMissingCopy}
@@ -411,7 +431,7 @@ export default function PubDetailClient({
 
             {/* Report a price — prominent CTA */}
             <button
-              onClick={() => setShowSubmitForm(true)}
+              onClick={() => openReportForm('pub_page_cta')}
               className={`w-full flex items-center justify-center gap-2 font-mono font-bold uppercase tracking-[0.05em] border-3 border-ink rounded-pill shadow-hard-sm hover:translate-x-[1.5px] hover:translate-y-[1.5px] hover:shadow-hard-hover transition-all ${
                 isTierCPage
                   ? 'text-white bg-amber py-4 text-[0.85rem]'
@@ -440,6 +460,12 @@ export default function PubDetailClient({
                   href={pub.website}
                   target="_blank"
                   rel="noopener noreferrer"
+                  onClick={() => trackSiteEvent('pub_external_click', {
+                    action: 'website',
+                    pub_slug: pub.slug,
+                    suburb: pub.suburb,
+                    page_tier: trackingTier,
+                  })}
                   className="flex-1 font-mono text-[0.72rem] font-bold uppercase tracking-[0.05em] text-white bg-amber border-3 border-ink rounded-pill py-2.5 shadow-hard-sm hover:translate-x-[1.5px] hover:translate-y-[1.5px] hover:shadow-hard-hover transition-all text-center no-underline"
                 >
                   Visit Website
@@ -449,6 +475,12 @@ export default function PubDetailClient({
                 href={directionsUrl}
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={() => trackSiteEvent('pub_external_click', {
+                  action: 'directions',
+                  pub_slug: pub.slug,
+                  suburb: pub.suburb,
+                  page_tier: trackingTier,
+                })}
                 className="flex-1 font-mono text-[0.72rem] font-bold uppercase tracking-[0.05em] text-white bg-ink border-3 border-ink rounded-pill py-2.5 shadow-hard-sm hover:translate-x-[1.5px] hover:translate-y-[1.5px] hover:shadow-hard-hover transition-all text-center no-underline"
               >
                 Get Directions
@@ -475,6 +507,12 @@ export default function PubDetailClient({
               </div>
               <Link
                 href={suburbUrl(pub.suburb)}
+                onClick={() => trackSiteEvent('pub_internal_click', {
+                  source: 'pub_nearby_header',
+                  pub_slug: pub.slug,
+                  suburb: pub.suburb,
+                  target_path: suburbUrl(pub.suburb),
+                })}
                 className="font-mono text-[0.7rem] font-bold text-amber hover:underline no-underline whitespace-nowrap"
               >
                 View suburb →
@@ -494,6 +532,17 @@ export default function PubDetailClient({
                   key={nearby.id}
                   href={pubUrl({ suburb: nearby.suburb, slug: nearby.slug })}
                   aria-label={`${nearby.name} in ${nearby.suburb}: ${priceText} pints${distanceText ? `, ${distanceText}` : ''}`}
+                  onClick={() => trackSiteEvent('pub_nearby_click', {
+                    source: 'pub_nearby_list',
+                    pub_slug: pub.slug,
+                    suburb: pub.suburb,
+                    target_slug: nearby.slug,
+                    target_suburb: nearby.suburb,
+                    target_price: nearby.price,
+                    cheaper: priceDelta !== null && priceDelta > 0,
+                    page_tier: trackingTier,
+                    position: i + 1,
+                  })}
                   className={`flex items-center justify-between px-4 py-3 no-underline group hover:bg-off-white transition-colors ${
                     i < nearbyPubs.length - 1 ? 'border-b border-gray-light' : ''
                   }`}

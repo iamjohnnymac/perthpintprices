@@ -1,6 +1,6 @@
-import Link from 'next/link'
 import { ArrowUpRight, BookOpen } from 'lucide-react'
 import ArticleImageSlot from '@/components/ArticleImageSlot'
+import TrackedLink from '@/components/TrackedLink'
 import { articleUrl, articles, formatArticleDate } from '@/lib/articles'
 
 interface ArticleRailProps {
@@ -9,6 +9,7 @@ interface ArticleRailProps {
   intro?: string
   limit?: number
   variant?: 'light' | 'dark'
+  source?: string
 }
 
 export default function ArticleRail({
@@ -17,6 +18,7 @@ export default function ArticleRail({
   intro = 'Useful drinking notes with the prices left in.',
   limit = 3,
   variant = 'light',
+  source = 'article_rail',
 }: ArticleRailProps) {
   const shownArticles = articles.slice(0, limit)
   const isDark = variant === 'dark'
@@ -40,10 +42,17 @@ export default function ArticleRail({
         </div>
 
         <div className="grid gap-4 sm:grid-cols-3">
-          {shownArticles.map(article => (
-            <Link
+          {shownArticles.map((article, index) => (
+            <TrackedLink
               key={article.slug}
               href={articleUrl(article.slug)}
+              eventName="article_click"
+              eventProperties={{
+                source,
+                slug: article.slug,
+                category: article.category,
+                position: index + 1,
+              }}
               className={`group flex min-h-[380px] flex-col overflow-hidden rounded-card border-3 no-underline shadow-hard-sm transition-all hover:translate-x-[1.5px] hover:translate-y-[1.5px] hover:shadow-hard-hover ${
                 isDark
                   ? 'border-white/20 bg-white text-ink'
@@ -67,18 +76,20 @@ export default function ArticleRail({
                   Read it <ArrowUpRight className="h-3.5 w-3.5" />
                 </span>
               </div>
-            </Link>
+            </TrackedLink>
           ))}
         </div>
 
-        <Link
+        <TrackedLink
           href="/articles"
+          eventName="article_hub_click"
+          eventProperties={{ source }}
           className={`mt-5 inline-flex items-center gap-1 font-mono text-[0.72rem] font-bold uppercase no-underline hover:underline ${
             isDark ? 'text-amber-light' : 'text-amber'
           }`}
         >
           All articles <ArrowUpRight className="h-3.5 w-3.5" />
-        </Link>
+        </TrackedLink>
       </div>
     </section>
   )

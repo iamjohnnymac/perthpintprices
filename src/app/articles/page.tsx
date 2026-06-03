@@ -1,10 +1,10 @@
 import type { Metadata } from 'next'
-import Link from 'next/link'
 import { ArrowUpRight, BookOpen, CalendarDays } from 'lucide-react'
 import ArticleImageSlot from '@/components/ArticleImageSlot'
 import BreadcrumbJsonLd from '@/components/BreadcrumbJsonLd'
 import Footer from '@/components/Footer'
 import SubPageNav from '@/components/SubPageNav'
+import TrackedLink from '@/components/TrackedLink'
 import { articleUrl, articles, formatArticleDate } from '@/lib/articles'
 
 const canonical = 'https://perthpintprices.com/articles'
@@ -50,7 +50,17 @@ export default function ArticlesPage() {
         </div>
 
         {featured && (
-          <Link href={articleUrl(featured.slug)} className="group block no-underline mb-10">
+          <TrackedLink
+            href={articleUrl(featured.slug)}
+            eventName="article_click"
+            eventProperties={{
+              source: 'articles_hub_featured',
+              slug: featured.slug,
+              category: featured.category,
+              position: 1,
+            }}
+            className="group block no-underline mb-10"
+          >
             <article className="overflow-hidden rounded-card border-3 border-ink bg-white shadow-hard-sm transition-all group-hover:translate-x-[1.5px] group-hover:translate-y-[1.5px] group-hover:shadow-hard-hover">
               <div className="grid sm:grid-cols-[1fr_260px]">
                 <div className="bg-ink p-6 text-white sm:p-8">
@@ -90,7 +100,7 @@ export default function ArticlesPage() {
                 </div>
               </div>
             </article>
-          </Link>
+          </TrackedLink>
         )}
 
         <section>
@@ -99,10 +109,17 @@ export default function ArticlesPage() {
             <BookOpen className="h-5 w-5 text-gray-mid" />
           </div>
           <div className="grid gap-5 sm:grid-cols-2">
-            {rest.map(article => (
-              <Link
+            {rest.map((article, index) => (
+              <TrackedLink
                 key={article.slug}
                 href={articleUrl(article.slug)}
+                eventName="article_click"
+                eventProperties={{
+                  source: 'articles_hub_latest',
+                  slug: article.slug,
+                  category: article.category,
+                  position: index + 2,
+                }}
                 className="group flex min-h-[390px] flex-col overflow-hidden rounded-card border-3 border-ink bg-white shadow-hard-sm transition-all hover:translate-x-[1.5px] hover:translate-y-[1.5px] hover:shadow-hard-hover no-underline"
               >
                 <ArticleImageSlot article={article} size="card" className="aspect-[16/9] border-b-3 border-ink" />
@@ -122,7 +139,7 @@ export default function ArticlesPage() {
                     Read it <ArrowUpRight className="h-3.5 w-3.5" />
                   </span>
                 </div>
-              </Link>
+              </TrackedLink>
             ))}
           </div>
         </section>

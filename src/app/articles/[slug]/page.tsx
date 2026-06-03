@@ -1,11 +1,11 @@
 import type { Metadata } from 'next'
 import Image from 'next/image'
-import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { ArrowUpRight, Beer, CalendarDays, Clock, GlassWater } from 'lucide-react'
 import BreadcrumbJsonLd from '@/components/BreadcrumbJsonLd'
 import Footer from '@/components/Footer'
 import SubPageNav from '@/components/SubPageNav'
+import TrackedLink from '@/components/TrackedLink'
 import { buildArticleJsonLd } from '@/lib/articleJsonLd'
 import { absoluteArticleUrl, articleUrl, articles, formatArticleDate, getArticle, type ArticleInlineImage } from '@/lib/articles'
 import { formatHappyHourDays } from '@/lib/happyHourLive'
@@ -58,6 +58,42 @@ function formatPrice(price: number | null | undefined): string {
   return price == null ? 'TBC' : `$${price.toFixed(2)}`
 }
 
+function relatedLinkTracking(link: { href: string; label: string }) {
+  if (link.href === '/?submit=1') {
+    return {
+      eventName: 'report_price_click',
+      eventProperties: {
+        target_path: link.href,
+        target_label: link.label,
+      },
+    }
+  }
+
+  const pathParts = link.href.split('?')[0].split('/').filter(Boolean)
+  const isPubDetailPath = pathParts.length === 2 && !['articles', 'guides', 'insights'].includes(pathParts[0])
+
+  if (isPubDetailPath) {
+    return {
+      eventName: 'article_pub_click',
+      eventProperties: {
+        source: 'article_related_links',
+        target_path: link.href,
+        target_label: link.label,
+        suburb_slug: pathParts[0],
+        pub_slug: pathParts[1],
+      },
+    }
+  }
+
+  return {
+    eventName: 'article_internal_click',
+    eventProperties: {
+      target_path: link.href,
+      target_label: link.label,
+    },
+  }
+}
+
 function ArticleFigure({ image }: { image: ArticleInlineImage }) {
   return (
     <figure className="my-5 overflow-hidden rounded-card border-3 border-ink bg-white shadow-hard-sm">
@@ -102,7 +138,7 @@ function parseHappyHourDayIndexes(days: string | null): number[] {
     .filter((value): value is number => value !== undefined)
 }
 
-function Under10Module({ pubs }: { pubs: Pub[] }) {
+function Under10Module({ pubs, articleSlug }: { pubs: Pub[]; articleSlug: string }) {
   const under10 = pubs
     .filter(pub => pub.priceVerified && pub.regularPrice !== null && pub.regularPrice < 10)
     .sort((a, b) => (a.regularPrice ?? 99) - (b.regularPrice ?? 99))
@@ -129,8 +165,21 @@ function Under10Module({ pubs }: { pubs: Pub[] }) {
         <Beer className="h-5 w-5 text-amber" />
       </div>
       <div className="divide-y divide-gray-light">
-        {under10.map(pub => (
-          <Link key={pub.id} href={pubUrl(pub)} className="group flex items-center justify-between gap-4 py-3 no-underline">
+        {under10.map((pub, index) => (
+          <TrackedLink
+            key={pub.id}
+            href={pubUrl(pub)}
+            eventName="article_pub_click"
+            eventProperties={{
+              source: 'article_under10_module',
+              article_slug: articleSlug,
+              pub_slug: pub.slug,
+              suburb: pub.suburb,
+              position: index + 1,
+              price: pub.regularPrice,
+            }}
+            className="group flex items-center justify-between gap-4 py-3 no-underline"
+          >
             <div className="min-w-0">
               <p className="truncate font-mono text-[0.86rem] font-extrabold text-ink group-hover:text-amber">{pub.name}</p>
               <p className="text-[0.68rem] text-gray-mid">
@@ -138,14 +187,14 @@ function Under10Module({ pubs }: { pubs: Pub[] }) {
               </p>
             </div>
             <span className="font-mono text-lg font-extrabold text-ink">{formatPrice(pub.regularPrice)}</span>
-          </Link>
+          </TrackedLink>
         ))}
       </div>
     </section>
   )
 }
 
-function HappyHoursByDayModule({ pubs }: { pubs: Pub[] }) {
+function HappyHoursByDayModule({ pubs, articleSlug }: { pubs: Pub[]; articleSlug: string }) {
   const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
   const rows = days.map((day, index) => {
     const dayPubs = pubs
@@ -169,9 +218,21 @@ function HappyHoursByDayModule({ pubs }: { pubs: Pub[] }) {
             <p className="font-mono text-[0.8rem] font-extrabold text-ink">{row.day}</p>
             {row.cheapest ? (
               <>
-                <Link href={pubUrl(row.cheapest)} className="mt-2 block font-mono text-[0.82rem] font-bold text-amber hover:underline">
+                <TrackedLink
+                  href={pubUrl(row.cheapest)}
+                  eventName="article_pub_click"
+                  eventProperties={{
+                    source: 'article_happy_hour_day_module',
+                    article_slug: articleSlug,
+                    pub_slug: row.cheapest.slug,
+                    suburb: row.cheapest.suburb,
+                    day: row.day,
+                    price: row.cheapest.happyHourPrice,
+                  }}
+                  className="mt-2 block font-mono text-[0.82rem] font-bold text-amber hover:underline"
+                >
                   {row.cheapest.name}
-                </Link>
+                </TrackedLink>
                 <p className="mt-1 text-[0.68rem] text-gray-mid">
                   {formatPrice(row.cheapest.happyHourPrice)} - {formatHappyHourDays(row.cheapest.happyHourDays)}
                 </p>
@@ -213,9 +274,9 @@ function GlassSizesModule() {
   )
 }
 
-function ArticleLiveModule({ module, pubs }: { module: string; pubs: Pub[] }) {
-  if (module === 'under10') return <Under10Module pubs={pubs} />
-  if (module === 'happyHoursByDay') return <HappyHoursByDayModule pubs={pubs} />
+function ArticleLiveModule({ module, pubs, articleSlug }: { module: string; pubs: Pub[]; articleSlug: string }) {
+  if (module === 'under10') return <Under10Module pubs={pubs} articleSlug={articleSlug} />
+  if (module === 'happyHoursByDay') return <HappyHoursByDayModule pubs={pubs} articleSlug={articleSlug} />
   return <GlassSizesModule />
 }
 
@@ -315,28 +376,46 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
             )
           })}
 
-          <ArticleLiveModule module={article.liveModule} pubs={pubs} />
+          <ArticleLiveModule module={article.liveModule} pubs={pubs} articleSlug={article.slug} />
 
           <section className="rounded-card border-3 border-ink bg-ink p-5 shadow-hard-sm">
             <h2 className="font-mono text-lg font-extrabold text-white">Keep going</h2>
             <div className="mt-4 grid gap-3 sm:grid-cols-3">
-              {article.relatedLinks.map(link => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className="flex min-h-[88px] flex-col justify-between rounded-card border border-white/15 bg-white/5 p-4 no-underline transition-colors hover:bg-white/10"
-                >
-                  <span className="font-mono text-[0.8rem] font-bold leading-tight text-white">{link.label}</span>
-                  <ArrowUpRight className="mt-3 h-4 w-4 text-amber-light" />
-                </Link>
-              ))}
+              {article.relatedLinks.map((link, index) => {
+                const tracking = relatedLinkTracking(link)
+                return (
+                  <TrackedLink
+                    key={link.href}
+                    href={link.href}
+                    eventName={tracking.eventName}
+                    eventProperties={{
+                      source: 'article_related_links',
+                      article_slug: article.slug,
+                      position: index + 1,
+                      ...tracking.eventProperties,
+                    }}
+                    className="flex min-h-[88px] flex-col justify-between rounded-card border border-white/15 bg-white/5 p-4 no-underline transition-colors hover:bg-white/10"
+                  >
+                    <span className="font-mono text-[0.8rem] font-bold leading-tight text-white">{link.label}</span>
+                    <ArrowUpRight className="mt-3 h-4 w-4 text-amber-light" />
+                  </TrackedLink>
+                )
+              })}
             </div>
           </section>
 
           <div className="pt-2">
-            <Link href={articleUrl(article.slug) === '/articles/pints-under-10-perth' ? '/?submit=1' : '/articles'} className="font-mono text-[0.75rem] font-bold uppercase text-amber hover:underline">
+            <TrackedLink
+              href={articleUrl(article.slug) === '/articles/pints-under-10-perth' ? '/?submit=1' : '/articles'}
+              eventName={articleUrl(article.slug) === '/articles/pints-under-10-perth' ? 'report_price_click' : 'article_hub_click'}
+              eventProperties={{
+                source: 'article_detail_bottom_cta',
+                article_slug: article.slug,
+              }}
+              className="font-mono text-[0.75rem] font-bold uppercase text-amber hover:underline"
+            >
               {articleUrl(article.slug) === '/articles/pints-under-10-perth' ? 'Know a cheaper pint? Report it' : 'Back to articles'}
-            </Link>
+            </TrackedLink>
           </div>
         </div>
       </article>
