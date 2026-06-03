@@ -27,6 +27,15 @@ export interface Article {
   relatedLinks: Array<{ href: string; label: string }>
 }
 
+export function formatArticleDate(value: string): string {
+  return new Date(value).toLocaleDateString('en-AU', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+    timeZone: 'Australia/Perth',
+  })
+}
+
 export const articles: Article[] = [
   {
     slug: 'pints-under-10-perth',

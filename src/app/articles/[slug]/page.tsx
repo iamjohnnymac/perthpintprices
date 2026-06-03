@@ -6,7 +6,7 @@ import BreadcrumbJsonLd from '@/components/BreadcrumbJsonLd'
 import Footer from '@/components/Footer'
 import SubPageNav from '@/components/SubPageNav'
 import { buildArticleJsonLd } from '@/lib/articleJsonLd'
-import { absoluteArticleUrl, articleUrl, articles, getArticle } from '@/lib/articles'
+import { absoluteArticleUrl, articleUrl, articles, formatArticleDate, getArticle } from '@/lib/articles'
 import { formatHappyHourDays } from '@/lib/happyHourLive'
 import { getPubs } from '@/lib/supabase'
 import { pubUrl } from '@/lib/urls'
@@ -50,7 +50,7 @@ export function generateMetadata({ params }: ArticlePageProps): Metadata {
 }
 
 function formatDate(value: string): string {
-  return new Date(value).toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' })
+  return new Date(value).toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'Australia/Perth' })
 }
 
 function formatPrice(price: number | null | undefined): string {
@@ -238,7 +238,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
             </span>
             <span className="inline-flex items-center gap-1 rounded-pill border border-gray-light bg-white px-3 py-1 font-mono text-[0.62rem] font-bold uppercase text-gray-mid">
               <CalendarDays className="h-3 w-3" />
-              {formatDate(article.publishedAt)}
+              {formatArticleDate(article.publishedAt)}
             </span>
             <span className="rounded-pill border border-gray-light bg-white px-3 py-1 font-mono text-[0.62rem] font-bold uppercase text-gray-mid">
               {article.readingMinutes} min

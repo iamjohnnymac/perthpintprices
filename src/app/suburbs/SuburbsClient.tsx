@@ -54,8 +54,9 @@ export default function SuburbsClient({ suburbs }: SuburbsClientProps) {
     .filter(({ suburb }) => suburb.pubCount >= 2)
     .slice(0, 4)
   const coverageLeaders = [...suburbs]
-    .filter(suburb => suburb.verifiedCount > 0)
-    .sort((a, b) => b.verifiedCount - a.verifiedCount || b.pubCount - a.pubCount || a.name.localeCompare(b.name))
+    .map(suburb => ({ suburb, checkedCount: parsePrice(suburb.avgPrice) !== null ? suburb.verifiedCount : 0 }))
+    .filter(item => item.checkedCount > 0)
+    .sort((a, b) => b.checkedCount - a.checkedCount || b.suburb.pubCount - a.suburb.pubCount || a.suburb.name.localeCompare(b.suburb.name))
     .slice(0, 4)
   const happyHourLeaders = [...suburbs]
     .filter(suburb => suburb.pubCount >= 2 && suburb.happyHourCount > 0)
@@ -78,11 +79,11 @@ export default function SuburbsClient({ suburbs }: SuburbsClientProps) {
       title: 'Strongest checked coverage',
       caption: 'Suburbs with the most verified pub prices.',
       Icon: ShieldCheck,
-      items: coverageLeaders.map(suburb => ({
+      items: coverageLeaders.map(({ suburb, checkedCount }) => ({
         href: `/${suburb.slug}`,
         name: suburb.name,
-        meta: `${suburb.verifiedCount} of ${plural(suburb.pubCount, 'pub')} checked`,
-        value: `${suburb.verifiedCount}/${suburb.pubCount}`,
+        meta: `${checkedCount} of ${plural(suburb.pubCount, 'pub')} checked`,
+        value: `${checkedCount}/${suburb.pubCount}`,
       })),
     },
     {

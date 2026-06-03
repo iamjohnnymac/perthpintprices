@@ -111,7 +111,7 @@ export default function SuburbClient({ suburb, pubs, nearbySuburbs, perthAvgPric
                 : <> — about the {formatPrice(avgNum)} checked average across {story.verifiedCount} {story.verifiedCount === 1 ? 'pub' : 'pubs'}.</>}
               {observation && <> {observation}</>}
               {neighbours.length > 0 && (
-                <> Or see what&apos;s cheaper nearby in {neighbours.map((ns, i) => (
+                <> Or compare checked suburbs nearby in {neighbours.map((ns, i) => (
                   <span key={ns.slug}>{i > 0 ? ' or ' : ''}<Link href={`/${ns.slug}`} className="text-amber font-bold hover:underline">{ns.name}</Link></span>
                 ))}.</>
               )}

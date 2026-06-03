@@ -87,9 +87,9 @@ function question(seed: string, kind: 'cheapest' | 'average' | 'happyHour' | 'ne
       `Can I find a happy-hour pint in ${suburbName}?`,
     ],
     nearby: [
-      `Where is cheaper near ${suburbName}?`,
-      `Are nearby suburbs better value than ${suburbName}?`,
       `What should I check near ${suburbName}?`,
+      `Which nearby suburbs have checked pint data?`,
+      `Where else nearby has pint prices?`,
     ],
     missing: [
       `Why are prices missing in ${suburbName}?`,
@@ -128,11 +128,7 @@ export function getSuburbStory(input: SuburbStoryInput): SuburbStory {
       verifiedCount: ns.verifiedCount,
     }))
     .filter(ns => ns.verifiedCount > 0 && (ns.avgPrice !== null || ns.cheapestPrice !== null))
-  const cheaperNearbySuburbs = nearbyWithPrices
-    .filter(ns => (
-      (suburbAvgPrice !== null && ns.avgPrice !== null && ns.avgPrice < suburbAvgPrice) ||
-      (minPrice !== null && ns.cheapestPrice !== null && ns.cheapestPrice < minPrice)
-    ))
+  const nearbyPriceSuburbs = nearbyWithPrices
     .sort((a, b) => (a.avgPrice ?? a.cheapestPrice ?? Number.MAX_VALUE) - (b.avgPrice ?? b.cheapestPrice ?? Number.MAX_VALUE))
     .slice(0, 2)
 
@@ -217,33 +213,14 @@ export function getSuburbStory(input: SuburbStoryInput): SuburbStory {
     })
   }
 
-  if (cheaperNearbySuburbs.length > 0) {
-    const names = joinNames(cheaperNearbySuburbs)
-    const first = cheaperNearbySuburbs[0]
+  if (nearbyPriceSuburbs.length > 0) {
+    const names = joinNames(nearbyPriceSuburbs)
+    const first = nearbyPriceSuburbs[0]
     cards.push({
       id: 'nearby',
       label: 'Nearby check',
       title: names,
-      body: `${names} ${cheaperNearbySuburbs.length === 1 ? 'has' : 'have'} a lower checked price signal nearby.`,
-      href: `/${first.slug}`,
-      linkLabel: `See ${first.name}`,
-    })
-  } else if (nearbyWithPrices.length > 0 && verifiedCount > 0) {
-    cards.push({
-      id: 'nearby',
-      label: 'Nearby check',
-      title: 'No cheaper neighbour',
-      body: `The nearest checked suburbs we have do not beat ${suburb.name} on the current price data.`,
-    })
-  } else if (nearbyWithPrices.length > 0) {
-    const checkedNearby = nearbyWithPrices.slice(0, 2)
-    const names = joinNames(checkedNearby)
-    const first = checkedNearby[0]
-    cards.push({
-      id: 'nearby',
-      label: 'Nearby check',
-      title: names,
-      body: `${names} ${checkedNearby.length === 1 ? 'has' : 'have'} checked prices nearby while ${suburb.name} is still TBC.`,
+      body: `${names} ${nearbyPriceSuburbs.length === 1 ? 'has' : 'have'} checked price data nearby. Compare the pub rows before you move suburbs.`,
       href: `/${first.slug}`,
       linkLabel: `See ${first.name}`,
     })
@@ -281,23 +258,11 @@ export function getSuburbStory(input: SuburbStoryInput): SuburbStory {
       : `No happy-hour windows are logged for ${suburb.name} yet.`,
   })
 
-  if (cheaperNearbySuburbs.length > 0) {
-    const names = joinNames(cheaperNearbySuburbs)
+  if (nearbyPriceSuburbs.length > 0) {
+    const names = joinNames(nearbyPriceSuburbs)
     faqs.push({
       question: question(suburb.slug, 'nearby', suburb.name),
-      answer: `${names} ${cheaperNearbySuburbs.length === 1 ? 'is' : 'are'} worth checking nearby on current verified prices.`,
-    })
-  } else if (nearbyWithPrices.length > 0 && verifiedCount > 0) {
-    faqs.push({
-      question: question(suburb.slug, 'nearby', suburb.name),
-      answer: `Among the closest suburbs with checked prices, none currently show a cheaper signal than ${suburb.name}.`,
-    })
-  } else if (nearbyWithPrices.length > 0) {
-    const checkedNearby = nearbyWithPrices.slice(0, 2)
-    const names = joinNames(checkedNearby)
-    faqs.push({
-      question: question(suburb.slug, 'nearby', suburb.name),
-      answer: `${names} ${checkedNearby.length === 1 ? 'has' : 'have'} checked pint prices nearby while ${suburb.name} is still TBC.`,
+      answer: `${names} ${nearbyPriceSuburbs.length === 1 ? 'has' : 'have'} checked pint data nearby, so compare the specific pub rows before you pick a suburb.`,
     })
   }
 
@@ -312,7 +277,7 @@ export function getSuburbStory(input: SuburbStoryInput): SuburbStory {
     cheapestPub,
     happyHourCount,
     activeHappyHourCount,
-    cheaperNearbySuburbs,
+    cheaperNearbySuburbs: nearbyPriceSuburbs,
     cards,
     faqs,
   }

@@ -5,7 +5,7 @@ import ArticleImageSlot from '@/components/ArticleImageSlot'
 import BreadcrumbJsonLd from '@/components/BreadcrumbJsonLd'
 import Footer from '@/components/Footer'
 import SubPageNav from '@/components/SubPageNav'
-import { articleUrl, articles } from '@/lib/articles'
+import { articleUrl, articles, formatArticleDate } from '@/lib/articles'
 
 const canonical = 'https://perthpintprices.com/articles'
 const description = 'Pub and drinking stories from Perth Pint Prices: cheap pints, happy hours, glass sizes, suburb notes, and the data behind a night out.'
@@ -24,10 +24,6 @@ export const metadata: Metadata = {
     images: [{ url: 'https://perthpintprices.com/og-image.png', width: 1200, height: 630, alt: 'Perth Pint Prices articles' }],
   },
   twitter: { card: 'summary_large_image' },
-}
-
-function formatDate(value: string): string {
-  return new Date(value).toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' })
 }
 
 export default function ArticlesPage() {
@@ -64,7 +60,7 @@ export default function ArticlesPage() {
                     </span>
                     <span className="inline-flex items-center gap-1 rounded-pill border border-white/20 bg-white/10 px-3 py-1 font-mono text-[0.62rem] font-bold uppercase text-white/80">
                       <CalendarDays className="h-3 w-3" />
-                      {formatDate(featured.publishedAt)}
+                      {formatArticleDate(featured.publishedAt)}
                     </span>
                   </div>
                   <p className="mb-3 font-mono text-[0.68rem] font-bold uppercase text-white/60">{featured.category}</p>
@@ -113,7 +109,7 @@ export default function ArticlesPage() {
                 <div className="flex flex-1 flex-col p-5">
                   <div className="flex items-start justify-end gap-4">
                     <span className="font-mono text-[0.65rem] font-bold uppercase text-gray-mid">
-                      {formatDate(article.publishedAt)} - {article.readingMinutes} min
+                      {formatArticleDate(article.publishedAt)} - {article.readingMinutes} min
                     </span>
                   </div>
                   <h3 className="mt-5 font-display text-[2rem] leading-[1.05] text-ink group-hover:text-amber sm:text-[2.25rem]">

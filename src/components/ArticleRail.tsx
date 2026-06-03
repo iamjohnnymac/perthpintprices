@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { ArrowUpRight, BookOpen } from 'lucide-react'
 import ArticleImageSlot from '@/components/ArticleImageSlot'
-import { articleUrl, articles } from '@/lib/articles'
+import { articleUrl, articles, formatArticleDate } from '@/lib/articles'
 
 interface ArticleRailProps {
   eyebrow?: string
@@ -9,10 +9,6 @@ interface ArticleRailProps {
   intro?: string
   limit?: number
   variant?: 'light' | 'dark'
-}
-
-function formatDate(value: string): string {
-  return new Date(value).toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' })
 }
 
 export default function ArticleRail({
@@ -58,7 +54,7 @@ export default function ArticleRail({
               <div className="flex flex-1 flex-col p-5">
                 <div className="flex flex-wrap items-center gap-2">
                   <span className="font-mono text-[0.62rem] font-bold uppercase text-gray-mid">
-                    {formatDate(article.publishedAt)}
+                    {formatArticleDate(article.publishedAt)}
                   </span>
                 </div>
                 <h3 className="mt-4 font-display text-[1.55rem] leading-[1.05] text-ink group-hover:text-amber">
