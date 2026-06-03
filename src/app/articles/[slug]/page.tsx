@@ -1,0 +1,314 @@
+import type { Metadata } from 'next'
+import Link from 'next/link'
+import { notFound } from 'next/navigation'
+import { ArrowUpRight, Beer, CalendarDays, Clock, GlassWater } from 'lucide-react'
+import BreadcrumbJsonLd from '@/components/BreadcrumbJsonLd'
+import Footer from '@/components/Footer'
+import SubPageNav from '@/components/SubPageNav'
+import { buildArticleJsonLd } from '@/lib/articleJsonLd'
+import { absoluteArticleUrl, articleUrl, articles, getArticle } from '@/lib/articles'
+import { formatHappyHourDays } from '@/lib/happyHourLive'
+import { getPubs } from '@/lib/supabase'
+import { pubUrl } from '@/lib/urls'
+import type { Pub } from '@/types/pub'
+
+interface ArticlePageProps {
+  params: { slug: string }
+}
+
+export function generateStaticParams() {
+  return articles.map(article => ({ slug: article.slug }))
+}
+
+export function generateMetadata({ params }: ArticlePageProps): Metadata {
+  const article = getArticle(params.slug)
+  if (!article) return {}
+  const canonical = absoluteArticleUrl(article.slug)
+
+  return {
+    title: article.title,
+    description: article.description,
+    alternates: { canonical },
+    openGraph: {
+      title: `${article.title} | Perth Pint Prices`,
+      description: article.description,
+      url: canonical,
+      siteName: 'Perth Pint Prices',
+      locale: 'en_AU',
+      type: 'article',
+      publishedTime: article.publishedAt,
+      modifiedTime: article.updatedAt,
+      authors: [article.author],
+      images: [{ url: `https://perthpintprices.com${article.image}`, width: 1200, height: 630, alt: article.imageAlt }],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: article.title,
+      description: article.description,
+    },
+  }
+}
+
+function formatDate(value: string): string {
+  return new Date(value).toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' })
+}
+
+function formatPrice(price: number | null | undefined): string {
+  return price == null ? 'TBC' : `$${price.toFixed(2)}`
+}
+
+function parseHappyHourDayIndexes(days: string | null): number[] {
+  if (!days) return []
+  const dayMap: Record<string, number> = {
+    sun: 0,
+    sunday: 0,
+    mon: 1,
+    monday: 1,
+    tue: 2,
+    tuesday: 2,
+    wed: 3,
+    wednesday: 3,
+    thu: 4,
+    thursday: 4,
+    fri: 5,
+    friday: 5,
+    sat: 6,
+    saturday: 6,
+  }
+  const clean = days.replace(/[{}]/g, '').toLowerCase().trim()
+  if (['7 days', 'daily', 'everyday', 'every day'].includes(clean)) return [0, 1, 2, 3, 4, 5, 6]
+  const parts = clean.split(',').map(part => part.trim()).filter(Boolean)
+  return parts
+    .map(part => dayMap[part] ?? dayMap[part.slice(0, 3)])
+    .filter((value): value is number => value !== undefined)
+}
+
+function Under10Module({ pubs }: { pubs: Pub[] }) {
+  const under10 = pubs
+    .filter(pub => pub.priceVerified && pub.regularPrice !== null && pub.regularPrice < 10)
+    .sort((a, b) => (a.regularPrice ?? 99) - (b.regularPrice ?? 99))
+    .slice(0, 8)
+
+  if (under10.length === 0) {
+    return (
+      <div className="rounded-card border-3 border-ink bg-amber-pale p-5 shadow-hard-sm">
+        <h2 className="font-mono text-lg font-extrabold text-ink">No verified sub-$10 pints right now</h2>
+        <p className="mt-2 font-body text-[0.86rem] leading-relaxed text-gray-mid">
+          Either Perth has become briefly sensible with its data, or the cheap rows need checking again.
+        </p>
+      </div>
+    )
+  }
+
+  return (
+    <section className="rounded-card border-3 border-ink bg-white p-5 shadow-hard-sm">
+      <div className="mb-4 flex items-center justify-between gap-4">
+        <div>
+          <p className="font-mono text-[0.65rem] font-bold uppercase text-gray-mid">Live rows</p>
+          <h2 className="font-mono text-xl font-extrabold text-ink">Verified under $10</h2>
+        </div>
+        <Beer className="h-5 w-5 text-amber" />
+      </div>
+      <div className="divide-y divide-gray-light">
+        {under10.map(pub => (
+          <Link key={pub.id} href={pubUrl(pub)} className="group flex items-center justify-between gap-4 py-3 no-underline">
+            <div className="min-w-0">
+              <p className="truncate font-mono text-[0.86rem] font-extrabold text-ink group-hover:text-amber">{pub.name}</p>
+              <p className="text-[0.68rem] text-gray-mid">
+                {pub.suburb}{pub.lastVerified ? ` - checked ${formatDate(pub.lastVerified)}` : ''}
+              </p>
+            </div>
+            <span className="font-mono text-lg font-extrabold text-ink">{formatPrice(pub.regularPrice)}</span>
+          </Link>
+        ))}
+      </div>
+    </section>
+  )
+}
+
+function HappyHoursByDayModule({ pubs }: { pubs: Pub[] }) {
+  const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+  const rows = days.map((day, index) => {
+    const dayPubs = pubs
+      .filter(pub => parseHappyHourDayIndexes(pub.happyHourDays).includes(index) && pub.happyHourPrice !== null)
+      .sort((a, b) => (a.happyHourPrice ?? 99) - (b.happyHourPrice ?? 99))
+    return { day, pubs: dayPubs, cheapest: dayPubs[0] ?? null }
+  })
+
+  return (
+    <section className="rounded-card border-3 border-ink bg-white p-5 shadow-hard-sm">
+      <div className="mb-4 flex items-center justify-between gap-4">
+        <div>
+          <p className="font-mono text-[0.65rem] font-bold uppercase text-gray-mid">Planning board</p>
+          <h2 className="font-mono text-xl font-extrabold text-ink">Happy hours by day</h2>
+        </div>
+        <Clock className="h-5 w-5 text-amber" />
+      </div>
+      <div className="grid gap-3 sm:grid-cols-2">
+        {rows.map(row => (
+          <div key={row.day} className="rounded-card border border-gray-light bg-off-white p-4">
+            <p className="font-mono text-[0.8rem] font-extrabold text-ink">{row.day}</p>
+            {row.cheapest ? (
+              <>
+                <Link href={pubUrl(row.cheapest)} className="mt-2 block font-mono text-[0.82rem] font-bold text-amber hover:underline">
+                  {row.cheapest.name}
+                </Link>
+                <p className="mt-1 text-[0.68rem] text-gray-mid">
+                  {formatPrice(row.cheapest.happyHourPrice)} - {formatHappyHourDays(row.cheapest.happyHourDays)}
+                </p>
+              </>
+            ) : (
+              <p className="mt-2 text-[0.76rem] text-gray-mid">No clean day-specific row yet.</p>
+            )}
+          </div>
+        ))}
+      </div>
+    </section>
+  )
+}
+
+function GlassSizesModule() {
+  return (
+    <section className="rounded-card border-3 border-ink bg-white p-5 shadow-hard-sm">
+      <div className="mb-4 flex items-center justify-between gap-4">
+        <div>
+          <p className="font-mono text-[0.65rem] font-bold uppercase text-gray-mid">Reference</p>
+          <h2 className="font-mono text-xl font-extrabold text-ink">Glass sizes we care about</h2>
+        </div>
+        <GlassWater className="h-5 w-5 text-amber" />
+      </div>
+      <div className="grid gap-3 sm:grid-cols-3">
+        {[
+          { name: 'Middy', size: '285ml', note: 'Small, useful, rarely the comparison point.' },
+          { name: 'Schooner', size: '425ml', note: 'Common enough to cause price confusion.' },
+          { name: 'Pint', size: '570ml', note: 'The PPP benchmark where we can verify it.' },
+        ].map(size => (
+          <div key={size.name} className="rounded-card border-2 border-ink bg-amber-pale p-4">
+            <p className="font-mono text-[0.72rem] font-bold uppercase text-gray-mid">{size.name}</p>
+            <p className="mt-1 font-mono text-2xl font-extrabold text-ink">{size.size}</p>
+            <p className="mt-2 text-[0.74rem] leading-relaxed text-gray-mid">{size.note}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+  )
+}
+
+function ArticleLiveModule({ module, pubs }: { module: string; pubs: Pub[] }) {
+  if (module === 'under10') return <Under10Module pubs={pubs} />
+  if (module === 'happyHoursByDay') return <HappyHoursByDayModule pubs={pubs} />
+  return <GlassSizesModule />
+}
+
+export default async function ArticlePage({ params }: ArticlePageProps) {
+  const article = getArticle(params.slug)
+  if (!article) notFound()
+
+  const pubs = await getPubs()
+  const canonical = absoluteArticleUrl(article.slug)
+  const articleJsonLd = buildArticleJsonLd({
+    url: canonical,
+    headline: article.title,
+    description: article.description,
+    datePublished: article.publishedAt,
+    dateModified: article.updatedAt,
+    lastReviewed: article.updatedAt,
+    imageUrl: `https://perthpintprices.com${article.image}`,
+    type: 'BlogPosting',
+  })
+
+  return (
+    <main className="min-h-screen bg-[#FDF8F0]">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd).replace(/</g, '\\u003c') }}
+      />
+      <BreadcrumbJsonLd items={[
+        { name: 'Home', url: 'https://perthpintprices.com' },
+        { name: 'Articles', url: 'https://perthpintprices.com/articles' },
+        { name: article.title, url: canonical },
+      ]} />
+      <SubPageNav breadcrumbs={[{ label: 'Articles', href: '/articles' }, { label: article.category }]} />
+
+      <article className="max-w-container mx-auto px-6 pt-8 pb-12">
+        <header className="mb-8">
+          <div className="mb-4 flex flex-wrap items-center gap-2">
+            <span className="rounded-pill border-2 border-ink bg-amber-pale px-3 py-1 font-mono text-[0.62rem] font-bold uppercase text-ink">
+              {article.category}
+            </span>
+            <span className="inline-flex items-center gap-1 rounded-pill border border-gray-light bg-white px-3 py-1 font-mono text-[0.62rem] font-bold uppercase text-gray-mid">
+              <CalendarDays className="h-3 w-3" />
+              {formatDate(article.publishedAt)}
+            </span>
+            <span className="rounded-pill border border-gray-light bg-white px-3 py-1 font-mono text-[0.62rem] font-bold uppercase text-gray-mid">
+              {article.readingMinutes} min
+            </span>
+          </div>
+          <h1 className="font-display text-[3rem] leading-[1] text-ink sm:text-[5rem]">
+            {article.title}
+          </h1>
+          <p className="mt-5 max-w-[660px] font-body text-[1rem] leading-relaxed text-gray-mid">
+            {article.deck}
+          </p>
+        </header>
+
+        <div className="mb-8 overflow-hidden rounded-card border-3 border-ink bg-white shadow-hard-sm">
+          <div className="grid sm:grid-cols-[1fr_210px]">
+            <div className="bg-ink p-5 text-white sm:p-6">
+              <p className="font-mono text-[0.68rem] font-bold uppercase text-white/60">Article brief</p>
+              <p className="mt-3 max-w-[470px] font-body text-[0.92rem] leading-relaxed text-white/75">
+                Read the note, then use the live rows below to turn it into a useful pub decision.
+              </p>
+            </div>
+            <div className="border-t-3 border-ink bg-amber p-5 sm:border-l-3 sm:border-t-0">
+              <p className="font-mono text-[0.62rem] font-bold uppercase text-ink/70">{article.heroLabel}</p>
+              <p className="mt-2 font-mono text-[2rem] font-extrabold leading-none text-ink">{article.heroStat}</p>
+              <p className="mt-2 font-body text-[0.78rem] font-bold text-ink/70">{article.heroSubstat}</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="space-y-7">
+          {article.sections.map(section => (
+            <section key={section.heading}>
+              <h2 className="font-mono text-xl font-extrabold text-ink">{section.heading}</h2>
+              <div className="mt-3 space-y-3">
+                {section.body.map(paragraph => (
+                  <p key={paragraph} className="font-body text-[0.92rem] leading-relaxed text-gray-mid">
+                    {paragraph}
+                  </p>
+                ))}
+              </div>
+            </section>
+          ))}
+
+          <ArticleLiveModule module={article.liveModule} pubs={pubs} />
+
+          <section className="rounded-card border-3 border-ink bg-ink p-5 shadow-hard-sm">
+            <h2 className="font-mono text-lg font-extrabold text-white">Keep going</h2>
+            <div className="mt-4 grid gap-3 sm:grid-cols-3">
+              {article.relatedLinks.map(link => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className="flex min-h-[88px] flex-col justify-between rounded-card border border-white/15 bg-white/5 p-4 no-underline transition-colors hover:bg-white/10"
+                >
+                  <span className="font-mono text-[0.8rem] font-bold leading-tight text-white">{link.label}</span>
+                  <ArrowUpRight className="mt-3 h-4 w-4 text-amber-light" />
+                </Link>
+              ))}
+            </div>
+          </section>
+
+          <div className="pt-2">
+            <Link href={articleUrl(article.slug) === '/articles/pints-under-10-perth' ? '/?submit=1' : '/articles'} className="font-mono text-[0.75rem] font-bold uppercase text-amber hover:underline">
+              {articleUrl(article.slug) === '/articles/pints-under-10-perth' ? 'Know a cheaper pint? Report it' : 'Back to articles'}
+            </Link>
+          </div>
+        </div>
+      </article>
+
+      <Footer />
+    </main>
+  )
+}

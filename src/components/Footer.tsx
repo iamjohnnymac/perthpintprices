@@ -3,6 +3,7 @@ import Link from 'next/link'
 const NAV_LINKS = [
   { href: '/discover', label: 'Discover' },
   { href: '/happy-hour', label: 'Happy Hours' },
+  { href: '/articles', label: 'Articles' },
   { href: '/suburbs', label: 'Suburbs' },
 ]
 

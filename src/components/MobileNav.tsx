@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { Menu, X, Compass, Clock, Beer } from 'lucide-react'
+import { Menu, X, Compass, Clock, Beer, Newspaper } from 'lucide-react'
 
 interface MobileNavProps {
   onSubmitClick?: () => void
@@ -11,6 +11,7 @@ interface MobileNavProps {
 const NAV_LINKS = [
   { href: '/discover', label: 'Discover', icon: Compass, desc: 'Guides, stats and pub picks' },
   { href: '/happy-hour', label: 'Happy Hours', icon: Clock, desc: 'Live deals right now' },
+  { href: '/articles', label: 'Articles', icon: Newspaper, desc: 'Pub notes with prices attached' },
 ]
 
 export default function MobileNav({ onSubmitClick }: MobileNavProps) {

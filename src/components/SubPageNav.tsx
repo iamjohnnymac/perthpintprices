@@ -22,6 +22,7 @@ export default function SubPageNav({ breadcrumbs, title, subtitle, showSubmit = 
   const navLinks = [
     { href: '/discover', label: 'Discover' },
     { href: '/happy-hour', label: 'Happy Hours' },
+    { href: '/articles', label: 'Articles' },
   ].filter((link) => link.href !== pathname)
 
   const pageLabel = breadcrumbs

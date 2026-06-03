@@ -4,6 +4,9 @@ interface ArticleJsonLdInput {
   description: string
   dateModified: string
   lastReviewed: string
+  datePublished?: string
+  imageUrl?: string
+  type?: 'Article' | 'BlogPosting'
 }
 
 export function buildArticleJsonLd({
@@ -12,13 +15,17 @@ export function buildArticleJsonLd({
   description,
   dateModified,
   lastReviewed,
+  datePublished,
+  imageUrl,
+  type = 'Article',
 }: ArticleJsonLdInput) {
   return {
     '@context': 'https://schema.org',
-    '@type': 'Article',
+    '@type': type,
     '@id': `${url}#article`,
     headline,
     description,
+    ...(datePublished ? { datePublished } : {}),
     mainEntityOfPage: {
       '@type': 'WebPage',
       '@id': url,
@@ -38,6 +45,7 @@ export function buildArticleJsonLd({
         url: 'https://perthpintprices.com/og-image.png',
       },
     },
+    image: imageUrl || 'https://perthpintprices.com/og-image.png',
     dateModified,
   }
 }
