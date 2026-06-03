@@ -1,7 +1,9 @@
 import type { Metadata } from 'next'
 import BreadcrumbJsonLd from '@/components/BreadcrumbJsonLd'
 import { buildArticleJsonLd } from '@/lib/articleJsonLd'
-import { getAllPubLastModifiedPairs } from '@/lib/supabase'
+import { formatAudPrice, getPintPriceStats } from '@/lib/pintPriceStats'
+import { getAllPubLastModifiedPairs, getPubs } from '@/lib/supabase'
+import { pubUrl } from '@/lib/urls'
 import PintIndexPage from './PintIndexPage'
 
 const canonical = 'https://perthpintprices.com/insights/pint-index'
@@ -39,7 +41,12 @@ function latestModifiedDate(values: Array<{ lastModified: string | null }>): str
 }
 
 export default async function Page() {
-  const latestPubModified = latestModifiedDate(await getAllPubLastModifiedPairs())
+  const [pubDates, pubs] = await Promise.all([
+    getAllPubLastModifiedPairs(),
+    getPubs(),
+  ])
+  const latestPubModified = latestModifiedDate(pubDates)
+  const stats = getPintPriceStats(pubs)
   const articleJsonLd = buildArticleJsonLd({
     url: canonical,
     headline: 'Perth Pint Index: Live Beer Price Tracker',
@@ -66,7 +73,18 @@ export default async function Page() {
         <a href="/discover">Discover</a>
         <a href="/happy-hour">Happy Hours</a>
       </div>
-      <PintIndexPage />
+      <PintIndexPage stats={{
+        averagePrice: formatAudPrice(stats.averagePrice),
+        medianPrice: formatAudPrice(stats.medianPrice),
+        verifiedCount: stats.verifiedCount,
+        trackedCount: stats.trackedCount,
+        suburbCount: stats.suburbCount,
+        underTenCount: stats.underTenCount,
+        cheapestName: stats.cheapestPub?.name ?? null,
+        cheapestSuburb: stats.cheapestPub?.suburb ?? null,
+        cheapestPrice: formatAudPrice(stats.cheapestPub?.regularPrice),
+        cheapestUrl: stats.cheapestPub ? pubUrl(stats.cheapestPub) : null,
+      }} />
     </>
   )
 }
