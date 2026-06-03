@@ -28,6 +28,7 @@ export default async function HappyHourPage() {
   // Fetch pubs server-side so content appears in initial HTML
   const allPubs = await getPubs()
   const happyHourPubs = allPubs.filter(p => p.happyHour) // All pubs WITH happy hour info
+  const renderedAtIso = new Date().toISOString()
 
   return (
     <>
@@ -46,7 +47,7 @@ export default async function HappyHourPage() {
         ))}
       </div>
 
-      <HappyHourClient initialPubs={happyHourPubs} />
+      <HappyHourClient initialPubs={happyHourPubs} renderedAtIso={renderedAtIso} />
     </>
   )
 }

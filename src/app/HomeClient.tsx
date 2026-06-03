@@ -20,6 +20,7 @@ import CrowdReporter from '@/components/CrowdReporter'
 import MobileNav from '@/components/MobileNav'
 import PintIndexBadge from '@/components/PintIndexBadge'
 import ScrollReveal from '@/components/ScrollReveal'
+import ArticleRail from '@/components/ArticleRail'
 
 const INITIAL_PUB_COUNT = 10
 const HH_ROTATE_INTERVAL = 4000
@@ -354,6 +355,11 @@ function HomeContent({ initialPubs }: { initialPubs: Pub[] }) {
 
       {/* ═══ LIVE HAPPY HOUR BANNER ═══ */}
       <LiveHappyHourBanner pubs={pubs} />
+
+      <ArticleRail
+        title="Pub notes with numbers attached"
+        intro="Start with the new under-$10 list, then sanity-check happy hours and glass sizes before someone declares a $9 schooner a bargain."
+      />
 
       {/* ═══ FILTER BAR - below header, above content ═══ */}
       <FilterSection

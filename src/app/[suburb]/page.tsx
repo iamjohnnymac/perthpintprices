@@ -1,6 +1,7 @@
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { getAllSuburbs, getSuburbBySlug, getSuburbPubs, getNearbySuburbs, getSiteStats } from '@/lib/supabase'
+import { getSuburbStory } from '@/lib/suburbStory'
 import { absoluteSuburbUrl } from '@/lib/urls'
 import SuburbClient from './SuburbClient'
 
@@ -25,15 +26,30 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const suburb = await getSuburbBySlug(params.suburb)
   if (!suburb) return { title: 'Suburb Not Found' }
 
-  const priceText = suburb.cheapestPrice !== 'TBC'
-    ? `${suburb.pubCount} Pubs from $${suburb.cheapestPrice}`
+  const [pubs, nearbySuburbs, siteStats] = await Promise.all([
+    getSuburbPubs(suburb.name),
+    getNearbySuburbs(suburb.name, 5),
+    getSiteStats(),
+  ])
+  const suburbStory = getSuburbStory({
+    suburb,
+    pubs,
+    nearbySuburbs,
+    perthAvgPrice: Number(siteStats.avgPrice),
+    suburbSlug: params.suburb,
+  })
+
+  const priceText = suburbStory.minPrice !== null
+    ? `${suburb.pubCount} Pubs from $${suburbStory.minPrice.toFixed(2)}`
     : `${suburb.pubCount} Pubs`
   const title = `Cheapest Pints in ${suburb.name}: ${priceText}`
 
   const descParts = [`Compare pint prices across ${suburb.pubCount} pubs in ${suburb.name}, Perth.`]
-  if (suburb.cheapestPrice !== 'TBC') {
-    descParts.push(`Cheapest pint: $${suburb.cheapestPrice} at ${suburb.cheapestPub}.`)
-    descParts.push(`Average: $${suburb.avgPrice}.`)
+  if (suburbStory.minPrice !== null && suburbStory.cheapestPub) {
+    descParts.push(`Cheapest checked pint: $${suburbStory.minPrice.toFixed(2)} at ${suburbStory.cheapestPub.name}.`)
+  }
+  if (suburbStory.suburbAvgPrice !== null) {
+    descParts.push(`Checked average: $${suburbStory.suburbAvgPrice.toFixed(2)}.`)
   }
   descParts.push('Find the best deals near you.')
   const description = descParts.join(' ')
@@ -72,6 +88,14 @@ export default async function SuburbPage({ params }: PageProps) {
     getNearbySuburbs(suburb.name, 5),
     getSiteStats(),
   ])
+  const perthAvgPrice = Number(siteStats.avgPrice)
+  const suburbStory = getSuburbStory({
+    suburb,
+    pubs,
+    nearbySuburbs,
+    perthAvgPrice,
+    suburbSlug: params.suburb,
+  })
 
   const jsonLd = [
     {
@@ -95,6 +119,18 @@ export default async function SuburbPage({ params }: PageProps) {
         url: `https://perthpintprices.com/${params.suburb}/${pub.slug}`,
       })),
     },
+    ...(suburbStory.faqs.length > 0 ? [{
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      mainEntity: suburbStory.faqs.map(faq => ({
+        '@type': 'Question',
+        name: faq.question,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: faq.answer,
+        },
+      })),
+    }] : []),
   ]
 
   return (
@@ -111,7 +147,7 @@ export default async function SuburbPage({ params }: PageProps) {
         <h2>All Pubs in {suburb.name}</h2>
         {pubs.map(pub => (
           <a key={pub.slug} href={`/${params.suburb}/${pub.slug}`}>
-            {pub.name} - {pub.suburb}{pub.price ? ` - $${pub.price.toFixed(2)}` : ''}
+            {pub.name} - {pub.suburb}{pub.regularPrice ? ` - $${pub.regularPrice.toFixed(2)}` : ''}
           </a>
         ))}
         <h2>Nearby Suburbs</h2>
@@ -126,7 +162,7 @@ export default async function SuburbPage({ params }: PageProps) {
         suburb={suburb}
         pubs={pubs}
         nearbySuburbs={nearbySuburbs}
-        perthAvgPrice={Number(siteStats.avgPrice)}
+        perthAvgPrice={perthAvgPrice}
         suburbSlug={params.suburb}
       />
     </>

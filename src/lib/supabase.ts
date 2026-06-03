@@ -539,16 +539,16 @@ export async function getAllSuburbs(): Promise<SuburbInfo[]> {
 
   const suburbs: SuburbInfo[] = []
   for (const [suburb, subPubs] of Object.entries(grouped)) {
-    const priced = subPubs.filter(p => p.price !== null && p.price > 0)
-    const verified = subPubs.filter(p => p.priceVerified)
+    const priced = subPubs.filter(p => p.regularPrice !== null && p.regularPrice > 0 && p.priceVerified)
+    const verified = priced
     const cheapest = priced.length > 0 
-      ? priced.reduce((min, p) => p.price! < min.price! ? p : min, priced[0])
+      ? priced.reduce((min, p) => p.regularPrice! < min.regularPrice! ? p : min, priced[0])
       : null
     const mostExpensive = priced.length > 0
-      ? priced.reduce((max, p) => p.price! > max.price! ? p : max, priced[0])
+      ? priced.reduce((max, p) => p.regularPrice! > max.regularPrice! ? p : max, priced[0])
       : null
     const avg = priced.length > 0
-      ? (priced.reduce((s, p) => s + p.price!, 0) / priced.length).toFixed(2)
+      ? (priced.reduce((s, p) => s + p.regularPrice!, 0) / priced.length).toFixed(2)
       : '0'
     const hhCount = subPubs.filter(p => p.happyHour && p.happyHour.trim() !== '').length
 
@@ -558,10 +558,10 @@ export async function getAllSuburbs(): Promise<SuburbInfo[]> {
       pubCount: subPubs.length,
       verifiedCount: verified.length,
       avgPrice: avg,
-      cheapestPrice: cheapest ? cheapest.price!.toFixed(2) : 'TBC',
+      cheapestPrice: cheapest ? cheapest.regularPrice!.toFixed(2) : 'TBC',
       cheapestPub: cheapest?.name || '',
       cheapestPubSlug: cheapest?.slug || '',
-      mostExpensivePrice: mostExpensive ? mostExpensive.price!.toFixed(2) : 'TBC',
+      mostExpensivePrice: mostExpensive ? mostExpensive.regularPrice!.toFixed(2) : 'TBC',
       happyHourCount: hhCount,
     })
   }

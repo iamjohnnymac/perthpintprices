@@ -11,6 +11,7 @@ import Footer from '@/components/Footer'
 import { Beer, Clock, Tag, Star } from 'lucide-react'
 import LucideIcon from '@/components/LucideIcon'
 import { pubUrl } from '@/lib/urls'
+import ArticleRail from '@/components/ArticleRail'
 
 function getPubHappyHourStatus(pub: Pub, now: Date): HappyHourStatus {
   return getHappyHourStatus({
@@ -146,6 +147,14 @@ export default function DiscoverClient() {
             Start with <Link href="#best-buys" className="text-amber font-bold hover:underline">tonight&apos;s cheapest pints</Link>, filter by <Link href="/suburbs" className="text-amber font-bold hover:underline">suburb</Link>, or see which pubs have a <Link href="/happy-hour" className="text-amber font-bold hover:underline">happy hour on now</Link>.
           </p>
         </section>
+
+        <div className="-mx-6 mb-10 sm:mb-14">
+          <ArticleRail
+            eyebrow="New"
+            title="Pub notes worth reading first"
+            intro="The price-led explainers behind the lists: under-$10 pints, happy hours that actually drop, and why glass size does the maths."
+          />
+        </div>
 
         {/* ════════════════════════════════════════════
             1. HERO: Pint of the Day

@@ -1,10 +1,11 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { ArrowUpRight, BookOpen, CalendarDays } from 'lucide-react'
+import ArticleImageSlot from '@/components/ArticleImageSlot'
 import BreadcrumbJsonLd from '@/components/BreadcrumbJsonLd'
 import Footer from '@/components/Footer'
 import SubPageNav from '@/components/SubPageNav'
-import { articleUrl, articles } from '@/lib/articles'
+import { articleUrl, articles, formatArticleDate } from '@/lib/articles'
 
 const canonical = 'https://perthpintprices.com/articles'
 const description = 'Pub and drinking stories from Perth Pint Prices: cheap pints, happy hours, glass sizes, suburb notes, and the data behind a night out.'
@@ -23,10 +24,6 @@ export const metadata: Metadata = {
     images: [{ url: 'https://perthpintprices.com/og-image.png', width: 1200, height: 630, alt: 'Perth Pint Prices articles' }],
   },
   twitter: { card: 'summary_large_image' },
-}
-
-function formatDate(value: string): string {
-  return new Date(value).toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' })
 }
 
 export default function ArticlesPage() {
@@ -55,7 +52,7 @@ export default function ArticlesPage() {
         {featured && (
           <Link href={articleUrl(featured.slug)} className="group block no-underline mb-10">
             <article className="overflow-hidden rounded-card border-3 border-ink bg-white shadow-hard-sm transition-all group-hover:translate-x-[1.5px] group-hover:translate-y-[1.5px] group-hover:shadow-hard-hover">
-              <div className="grid sm:grid-cols-[1fr_220px]">
+              <div className="grid sm:grid-cols-[1fr_260px]">
                 <div className="bg-ink p-6 text-white sm:p-8">
                   <div className="mb-12 flex flex-wrap items-center gap-2 sm:mb-16">
                     <span className="inline-flex items-center rounded-pill border border-white/25 bg-amber px-3 py-1 font-mono text-[0.62rem] font-bold uppercase text-ink">
@@ -63,7 +60,7 @@ export default function ArticlesPage() {
                     </span>
                     <span className="inline-flex items-center gap-1 rounded-pill border border-white/20 bg-white/10 px-3 py-1 font-mono text-[0.62rem] font-bold uppercase text-white/80">
                       <CalendarDays className="h-3 w-3" />
-                      {formatDate(featured.publishedAt)}
+                      {formatArticleDate(featured.publishedAt)}
                     </span>
                   </div>
                   <p className="mb-3 font-mono text-[0.68rem] font-bold uppercase text-white/60">{featured.category}</p>
@@ -74,15 +71,22 @@ export default function ArticlesPage() {
                     {featured.deck}
                   </p>
                 </div>
-                <div className="flex flex-col justify-between border-t-3 border-ink bg-amber p-6 sm:border-l-3 sm:border-t-0">
-                  <div>
-                    <p className="font-mono text-[0.68rem] font-bold uppercase text-ink/70">{featured.heroLabel}</p>
-                    <p className="mt-3 font-mono text-[2.45rem] font-extrabold leading-none text-ink">{featured.heroStat}</p>
-                    <p className="mt-2 font-body text-[0.82rem] font-bold leading-snug text-ink/70">{featured.heroSubstat}</p>
+                <div className="flex flex-col border-t-3 border-ink bg-amber sm:border-l-3 sm:border-t-0">
+                  <ArticleImageSlot
+                    article={featured}
+                    size="feature"
+                    className="aspect-[16/10] border-b-3 border-ink sm:aspect-auto sm:min-h-[210px]"
+                  />
+                  <div className="flex flex-1 flex-col justify-between p-6">
+                    <div>
+                      <p className="font-mono text-[0.68rem] font-bold uppercase text-ink/70">{featured.heroLabel}</p>
+                      <p className="mt-3 font-mono text-[2.45rem] font-extrabold leading-none text-ink">{featured.heroStat}</p>
+                      <p className="mt-2 font-body text-[0.82rem] font-bold leading-snug text-ink/70">{featured.heroSubstat}</p>
+                    </div>
+                    <span className="mt-8 inline-flex items-center gap-1 font-mono text-[0.72rem] font-bold uppercase text-ink">
+                      Read guide <ArrowUpRight className="h-3.5 w-3.5" />
+                    </span>
                   </div>
-                  <span className="mt-8 inline-flex items-center gap-1 font-mono text-[0.72rem] font-bold uppercase text-ink">
-                    Read guide <ArrowUpRight className="h-3.5 w-3.5" />
-                  </span>
                 </div>
               </div>
             </article>
@@ -99,25 +103,25 @@ export default function ArticlesPage() {
               <Link
                 key={article.slug}
                 href={articleUrl(article.slug)}
-                className="group flex min-h-[300px] flex-col rounded-card border-3 border-ink bg-white p-5 shadow-hard-sm transition-all hover:translate-x-[1.5px] hover:translate-y-[1.5px] hover:shadow-hard-hover no-underline"
+                className="group flex min-h-[390px] flex-col overflow-hidden rounded-card border-3 border-ink bg-white shadow-hard-sm transition-all hover:translate-x-[1.5px] hover:translate-y-[1.5px] hover:shadow-hard-hover no-underline"
               >
-                <div className="flex items-start justify-between gap-4">
-                  <span className="rounded-pill border-2 border-ink bg-amber-pale px-3 py-1 font-mono text-[0.6rem] font-bold uppercase text-ink">
-                    {article.category}
-                  </span>
-                  <span className="font-mono text-[0.65rem] font-bold uppercase text-gray-mid">
-                    {formatDate(article.publishedAt)} - {article.readingMinutes} min
+                <ArticleImageSlot article={article} size="card" className="aspect-[16/9] border-b-3 border-ink" />
+                <div className="flex flex-1 flex-col p-5">
+                  <div className="flex items-start justify-end gap-4">
+                    <span className="font-mono text-[0.65rem] font-bold uppercase text-gray-mid">
+                      {formatArticleDate(article.publishedAt)} - {article.readingMinutes} min
+                    </span>
+                  </div>
+                  <h3 className="mt-5 font-display text-[2rem] leading-[1.05] text-ink group-hover:text-amber sm:text-[2.25rem]">
+                    {article.title}
+                  </h3>
+                  <p className="mt-4 flex-1 font-body text-[0.92rem] leading-relaxed text-gray-mid">
+                    {article.deck}
+                  </p>
+                  <span className="mt-6 inline-flex items-center gap-1 font-mono text-[0.72rem] font-bold uppercase text-amber">
+                    Read it <ArrowUpRight className="h-3.5 w-3.5" />
                   </span>
                 </div>
-                <h3 className="mt-8 font-display text-[2rem] leading-[1.05] text-ink group-hover:text-amber sm:text-[2.25rem]">
-                  {article.title}
-                </h3>
-                <p className="mt-4 flex-1 font-body text-[0.92rem] leading-relaxed text-gray-mid">
-                  {article.deck}
-                </p>
-                <span className="mt-6 inline-flex items-center gap-1 font-mono text-[0.72rem] font-bold uppercase text-amber">
-                  Read it <ArrowUpRight className="h-3.5 w-3.5" />
-                </span>
               </Link>
             ))}
           </div>

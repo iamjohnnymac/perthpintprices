@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { ArrowUpRight, Beer, CalendarDays, Clock, GlassWater } from 'lucide-react'
@@ -6,7 +7,7 @@ import BreadcrumbJsonLd from '@/components/BreadcrumbJsonLd'
 import Footer from '@/components/Footer'
 import SubPageNav from '@/components/SubPageNav'
 import { buildArticleJsonLd } from '@/lib/articleJsonLd'
-import { absoluteArticleUrl, articleUrl, articles, getArticle } from '@/lib/articles'
+import { absoluteArticleUrl, articleUrl, articles, formatArticleDate, getArticle, type ArticleInlineImage } from '@/lib/articles'
 import { formatHappyHourDays } from '@/lib/happyHourLive'
 import { getPubs } from '@/lib/supabase'
 import { pubUrl } from '@/lib/urls'
@@ -50,11 +51,29 @@ export function generateMetadata({ params }: ArticlePageProps): Metadata {
 }
 
 function formatDate(value: string): string {
-  return new Date(value).toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' })
+  return new Date(value).toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'Australia/Perth' })
 }
 
 function formatPrice(price: number | null | undefined): string {
   return price == null ? 'TBC' : `$${price.toFixed(2)}`
+}
+
+function ArticleFigure({ image }: { image: ArticleInlineImage }) {
+  return (
+    <figure className="my-5 overflow-hidden rounded-card border-3 border-ink bg-white shadow-hard-sm">
+      <Image
+        src={image.src}
+        alt={image.alt}
+        width={1672}
+        height={941}
+        sizes="(min-width: 800px) 800px, 100vw"
+        className="h-auto w-full"
+      />
+      <figcaption className="border-t-3 border-ink bg-off-white px-4 py-3 font-body text-[0.76rem] leading-relaxed text-gray-mid">
+        {image.caption}
+      </figcaption>
+    </figure>
+  )
 }
 
 function parseHappyHourDayIndexes(days: string | null): number[] {
@@ -216,6 +235,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
     imageUrl: `https://perthpintprices.com${article.image}`,
     type: 'BlogPosting',
   })
+  const sectionImages = new Map(article.supportingImages.map(image => [image.sectionHeading, image]))
 
   return (
     <main className="min-h-screen bg-[#FDF8F0]">
@@ -238,7 +258,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
             </span>
             <span className="inline-flex items-center gap-1 rounded-pill border border-gray-light bg-white px-3 py-1 font-mono text-[0.62rem] font-bold uppercase text-gray-mid">
               <CalendarDays className="h-3 w-3" />
-              {formatDate(article.publishedAt)}
+              {formatArticleDate(article.publishedAt)}
             </span>
             <span className="rounded-pill border border-gray-light bg-white px-3 py-1 font-mono text-[0.62rem] font-bold uppercase text-gray-mid">
               {article.readingMinutes} min
@@ -268,19 +288,32 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
           </div>
         </div>
 
+        <ArticleFigure
+          image={{
+            src: article.image,
+            alt: article.imageAlt,
+            caption: article.heroSubstat,
+            sectionHeading: article.title,
+          }}
+        />
+
         <div className="space-y-7">
-          {article.sections.map(section => (
-            <section key={section.heading}>
-              <h2 className="font-mono text-xl font-extrabold text-ink">{section.heading}</h2>
-              <div className="mt-3 space-y-3">
-                {section.body.map(paragraph => (
-                  <p key={paragraph} className="font-body text-[0.92rem] leading-relaxed text-gray-mid">
-                    {paragraph}
-                  </p>
-                ))}
-              </div>
-            </section>
-          ))}
+          {article.sections.map(section => {
+            const inlineImage = sectionImages.get(section.heading)
+            return (
+              <section key={section.heading}>
+                <h2 className="font-mono text-xl font-extrabold text-ink">{section.heading}</h2>
+                <div className="mt-3 space-y-3">
+                  {section.body.map(paragraph => (
+                    <p key={paragraph} className="font-body text-[0.92rem] leading-relaxed text-gray-mid">
+                      {paragraph}
+                    </p>
+                  ))}
+                </div>
+                {inlineImage && <ArticleFigure image={inlineImage} />}
+              </section>
+            )
+          })}
 
           <ArticleLiveModule module={article.liveModule} pubs={pubs} />
 
