@@ -19,7 +19,8 @@ const includeImages = !args.includes('--no-images')
 const IMAGE_SOURCE_RE = /\b(tap[-\s]?list|wine-list|bar-menu|drink[-\s]?menu|drinks[-\s]?menu|menu|menus)\b/i
 const IMAGE_ASSET_RE = /\.(png|jpe?g|webp|avif)(?:[?#].*)?$/i
 const UNSUPPORTED_IMAGE_RE = /\.avif(?:[?#].*)?$/i
-const LOW_INTENT_URL_RE = /\b(shop|products?|product-category|cart|checkout|giftcards?|gift[-\s]?cards?)\b/i
+const LOW_INTENT_URL_RE =
+  /(?:^|[\W_])(shop|products?|product-category|cart|checkout|giftcards?|gift[-\s]?cards?|breakfast|kids?)(?:$|[\W_])/i
 
 const artifact = JSON.parse(readFileSync(input, 'utf8'))
 if (!Array.isArray(artifact.results)) {

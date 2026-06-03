@@ -109,6 +109,19 @@ describe('official menu source discovery', () => {
     ])
   })
 
+  it('skips breakfast and kids menu pages', () => {
+    const candidates = discoverOfficialMenuSources(`
+      <a href="/breakfast-menu">Breakfast menu</a>
+      <a href="/kids-menu">Kids menu</a>
+      <a href="/Breakfast_Menu.pdf">Breakfast PDF</a>
+      <a href="/drinks-menu">Drinks menu</a>
+    `, 'https://example.com/')
+
+    assert.deepEqual(candidates.map((candidate) => candidate.url), [
+      'https://example.com/drinks-menu',
+    ])
+  })
+
   it('discovers menu URLs from JSON-LD', () => {
     const candidates = discoverOfficialMenuSources(`
       <script type="application/ld+json">

@@ -18,8 +18,8 @@ const MENU_RE = /\b(menu|menus|eat[-\s]?drink|food[-\s]?drink)\b/i
 const MENU_PROVIDER_RE =
   /\b(mr\s*yum|mryum|me\s*&\s*u|meandu|hungry\s*hungry|hungryhungry|bopple|oolio|qrd|qr[-\s]?menu)\b/i
 const LOW_INTENT_RE =
-  /\b(contact|booking|bookings|function|events?|privacy|terms|feed|wp-json|xmlrpc|login|cart|checkout|shop|products?|product-category|giftcards?|gift[-\s]?cards?)\b/i
-const BLOCKED_SOURCE_RE = /\b(shop|products?|product-category|cart|checkout|giftcards?|gift[-\s]?cards?)\b/i
+  /(?:^|[\W_])(contact|booking|bookings|function|events?|privacy|terms|feed|wp-json|xmlrpc|login|cart|checkout|shop|products?|product-category|giftcards?|gift[-\s]?cards?|breakfast|kids?)(?:$|[\W_])/i
+const BLOCKED_SOURCE_RE = /(?:^|[\W_])(shop|products?|product-category|cart|checkout|giftcards?|gift[-\s]?cards?|breakfast|kids?)(?:$|[\W_])/i
 const ASSET_RE = /\.(pdf|png|jpe?g|webp|avif)(?:[?#].*)?$/i
 const IMAGE_SOURCE_RE = /\b(tap[-\s]?list|wine-list|bar-menu|drink[-\s]?menu|drinks[-\s]?menu|menu|menus)\b/i
 const STATIC_ASSET_RE = /\.(css|m?js|map|woff2?|ttf|otf)(?:[?#].*)?$/i
