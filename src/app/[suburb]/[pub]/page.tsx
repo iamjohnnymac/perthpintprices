@@ -6,6 +6,7 @@ import { getPubIndexability } from '@/lib/pubIndexability'
 import { getPriceRecency } from '@/lib/freshness'
 import { buildPubJsonLd } from '@/lib/pubJsonLd'
 import { absolutePubUrl, pubUrl, toSuburbSlug } from '@/lib/urls'
+import { pubMetaDescription } from '@/lib/voiceCopy'
 import type { Pub } from '@/types/pub'
 import PubDetailClient from './PubDetailClient'
 
@@ -62,32 +63,40 @@ function getPubPageIndexability(pub: Pub) {
   })
 }
 
+function formatMetaDate(value: string | null): string | null {
+  if (!value) return null
+  return new Date(value).toLocaleDateString('en-AU', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+    timeZone: 'Australia/Perth',
+  })
+}
+
+function formatMetaHappyHourLabel(value: string | null): string | null {
+  if (!value) return null
+  return value.replace(/,\s*/g, ', ')
+}
+
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const pub = await getCachedPubBySlug(params.pub)
   if (!pub) return { title: 'Pub Not Found' }
 
-  const priceText = pub.price !== null ? `$${pub.price.toFixed(2)} pints` : 'Price TBC'
-  const title = `${pub.name}, ${pub.suburb}: ${priceText}`
   const indexability = getPubPageIndexability(pub)
-
-  // Build description with progressive enrichment (target 70-160 chars)
-  const descParts: string[] = []
-  descParts.push(`Compare pint prices at ${pub.name} in ${pub.suburb}, Perth WA.`)
-  if (pub.price !== null) descParts.push(`Standard pint from $${pub.price.toFixed(2)}.`)
-  if (pub.happyHour) descParts.push(`Happy hour: ${pub.happyHour}.`)
-  if (pub.vibeTag) descParts.push(`${pub.vibeTag} venue.`)
-  if (pub.beerType) descParts.push(`Serving ${pub.beerType}.`)
-  descParts.push('Community-verified prices updated daily on Perth Pint Prices.')
-  let description = descParts.join(' ')
-  if (description.length < 120) {
-    description += ' Find cheaper pints nearby.'
-  }
-  if (description.length > 160) {
-    // Truncate at last sentence boundary before 155 chars
-    const truncated = description.slice(0, 155)
-    const lastDot = truncated.lastIndexOf('.')
-    description = lastDot > 80 ? truncated.slice(0, lastDot + 1) : truncated + '...'
-  }
+  const suburbAvgPrice = await getSuburbAveragePrice(pub.suburb)
+  const price = pub.regularPrice ?? pub.price
+  const priceText = price !== null ? `$${price.toFixed(2)} pints` : 'Price TBC'
+  const title = `${pub.name}, ${pub.suburb}: ${priceText}`
+  const description = pubMetaDescription({
+    pub: pub.name,
+    suburb: pub.suburb,
+    price,
+    suburbAvg: suburbAvgPrice,
+    checkedDate: formatMetaDate(pub.priceVerifiedAt || pub.lastVerified),
+    hhClause: formatMetaHappyHourLabel(pub.happyHourLabel)
+      ? `Happy hour: ${formatMetaHappyHourLabel(pub.happyHourLabel)}.`
+      : null,
+  })
 
   const canonical = absolutePubUrl(pub)
 

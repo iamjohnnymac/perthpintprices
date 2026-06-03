@@ -10,6 +10,10 @@ Stack, database, routes, components, and lib files are documented in `CLAUDE.md`
 
 ## What's done recently
 
+### Pub-page depth work in progress (2026-06-03)
+- **Issue #138 / branch `codex/pub-page-depth-138` / commits `6c737d6`, `c690a0f`:** added fact-earned pub-page quick reads, cleaner price-card contrast, best-time/nearby summary copy, gated seeded mini FAQs for pubs with enough real answers, and de-duplicated metadata via the pub voice builders. Reviewer follow-up normalized happy-hour metadata labels, removed duplicate Tier-C stub copy, and updated PR proof for the new nearby heading states. Visual proof covers priced, Tier-C, and FAQ-rich pub states under `/tmp/perth-pint-prices-pub-depth-138/`.
+- **Verification:** verified `npx tsc --noEmit`, `git diff --check`, `npm run lint` (existing warnings only), `npm test` (**249/249 tests**), `npm run test:e2e` (**4/4 Playwright tests**), `npm run build`, and desktop/mobile browser screenshots.
+
 ### Article rails + page-depth hubs ready for preview (2026-06-03)
 - **Branch `codex/hub-article-rails` / commits `ae5b705`, `063f5e8`, `fff9bc5`, `84b9402`:** added the article rail system to Home/Discover, fact-checked the three new pub articles, wired the generated article image set under `public/articles/`, and added reusable image slots for the article hub/rails.
 - **Inline article imagery (`85c2d96`):** article detail pages now render the primary article image plus four section-matched supporting figures per article, with captions, alt text, and explicit Next Image dimensions.
