@@ -10,6 +10,13 @@ Stack, database, routes, components, and lib files are documented in `CLAUDE.md`
 
 ## What's done recently
 
+### Answer-first pint-cost page ready for preview (2026-06-03)
+- **Issue #27 / branch `codex/answer-first-pint-prices-27`:** added `/how-much-is-a-pint-in-perth` for the zero-click "how much is a pint in Perth" cluster. The page answers in the first screen with the live checked average, median, range, cheapest verified pint, glass-size notes, visible Q&A, and internal links into Cheapest Pints, Happy Hours, Pint Index, and the proper-pint explainer.
+- **Pint Index answer block:** added a "Perth beer prices" answer-first card to `/insights/pint-index`, backed by the same verified regular-price stats. The mobile Pint Index methodology wrapper was tightened to remove an 8px horizontal overflow found during screenshot QA.
+- **Shared stats helper:** added `src/lib/pintPriceStats.ts` with tests so average, median, range, under-$10 count, and verified-row filtering stay consistent across answer pages.
+- **SEO wiring:** added canonical metadata, OG/Twitter image, Breadcrumb + ItemList JSON-LD, and sitemap/footer/`/llms.txt` entries.
+- **Verification:** verified `npm test` (**263/263 tests**), `npx tsc --noEmit`, `git diff --check`, `npm run lint` (existing warnings only), `npm run build`, `npm run test:e2e` (**4/4 Playwright tests**), reviewer sub-agent LGTM, and clean desktop/mobile screenshots for `/how-much-is-a-pint-in-perth` + `/insights/pint-index` under `/tmp/perth-pint-prices-answer-first-27/`. The repeated local build flake (`/_document` not found) only occurred while a dev/e2e server was touching `.next`; the solo build passed.
+
 ### Student-pints landing page ready for preview (2026-06-03)
 - **Issue #32 third slice / branch `codex/student-pints-landing-page-32` / commit `8ec3168`:** added `/student-pints-perth`, a verified under-$10 regular-pint page for UWA, Curtin, and Murdoch.
 - **Campus ranking:** added shared student-pint ranking helpers and tests. Campus sections use verified regular prices only, direct-distance radii, and campus-specific notes; Murdoch deliberately uses a wider 8km radius because the current checked data has no useful sub-$10 cluster inside 4-6km.
