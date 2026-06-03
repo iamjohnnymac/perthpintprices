@@ -7,6 +7,7 @@ import { Pub } from '@/types/pub'
 import { SuburbInfo } from '@/lib/supabase'
 import { getFreshness, formatVerifiedDate, FreshnessLevel } from '@/lib/freshness'
 import { suburbObservation } from '@/lib/suburbObservation'
+import { getSuburbStory } from '@/lib/suburbStory'
 import SubPageNav from '@/components/SubPageNav'
 import Footer from '@/components/Footer'
 
@@ -23,28 +24,33 @@ const freshnessIcons: Record<FreshnessLevel, React.ReactNode> = {
   unknown: <HelpCircle className="w-3 h-3" />,
 }
 
+function formatPrice(value: number): string {
+  return Number.isInteger(value) ? `$${value.toFixed(0)}` : `$${value.toFixed(2)}`
+}
+
 export default function SuburbClient({ suburb, pubs, nearbySuburbs, perthAvgPrice, suburbSlug }: SuburbClientProps) {
   const [showAll, setShowAll] = useState(false)
   const displayPubs = showAll ? pubs : pubs.slice(0, 10)
+  const story = getSuburbStory({ suburb, pubs, nearbySuburbs, perthAvgPrice, suburbSlug })
 
-  const avgNum = Number(suburb.avgPrice)
-  const priceDiff = avgNum > 0 ? ((avgNum - perthAvgPrice) / perthAvgPrice * 100) : 0
+  const avgNum = story.suburbAvgPrice ?? 0
+  const priceDiff = avgNum > 0 && perthAvgPrice > 0 ? ((avgNum - perthAvgPrice) / perthAvgPrice * 100) : 0
   const isCheaper = priceDiff < 0
   const diffText = avgNum > 0
     ? `${Math.abs(Math.round(priceDiff))}% ${isCheaper ? 'cheaper' : 'more expensive'} than Perth average`
     : null
 
   // ─── Answer-first lead (content-pack §6) ───
-  const cheapestNum = Number(suburb.cheapestPrice)
-  const cheapestPubObj = pubs.find(p => p.slug === suburb.cheapestPubSlug) ?? null
-  const hasLead = suburb.cheapestPrice !== 'TBC' && cheapestNum > 0 && avgNum > 0 && !!suburb.cheapestPub
+  const cheapestNum = story.minPrice ?? 0
+  const cheapestPubObj = story.cheapestPub
+  const hasLead = cheapestNum > 0 && avgNum > 0 && !!cheapestPubObj
   const leadDelta = hasLead ? avgNum - cheapestNum : 0
   const checkedDate = cheapestPubObj?.lastVerified
     ? new Date(cheapestPubObj.lastVerified).toLocaleDateString('en-AU', { day: 'numeric', month: 'short' })
     : null
   const observation = suburbObservation({
     happyHourNowCount: pubs.filter(p => p.isHappyHourNow).length,
-    verifiedPrices: pubs.filter(p => p.priceVerified && p.price !== null).map(p => p.price as number),
+    verifiedPrices: story.verifiedPubs.map(p => p.regularPrice as number),
     pubCount: suburb.pubCount,
   })
   const neighbours = nearbySuburbs.slice(0, 2)
@@ -70,9 +76,9 @@ export default function SuburbClient({ suburb, pubs, nearbySuburbs, perthAvgPric
 
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           {[
-            { label: 'Cheapest', value: suburb.cheapestPrice !== 'TBC' ? `$${suburb.cheapestPrice}` : 'TBC', accent: true, link: suburb.cheapestPubSlug ? `/${suburbSlug}/${suburb.cheapestPubSlug}` : null, linkLabel: suburb.cheapestPub },
-            { label: 'Average', value: avgNum > 0 ? `$${suburb.avgPrice}` : 'TBC', accent: false, extra: diffText },
-            { label: 'Most Expensive', value: suburb.mostExpensivePrice !== 'TBC' ? `$${suburb.mostExpensivePrice}` : 'TBC', accent: false },
+            { label: 'Cheapest', value: story.minPrice !== null ? formatPrice(story.minPrice) : 'TBC', accent: true, link: story.cheapestPub ? `/${suburbSlug}/${story.cheapestPub.slug}` : null, linkLabel: story.cheapestPub?.name },
+            { label: 'Average', value: avgNum > 0 ? formatPrice(avgNum) : 'TBC', accent: false, extra: diffText },
+            { label: 'Most Expensive', value: story.maxPrice !== null ? formatPrice(story.maxPrice) : 'TBC', accent: false },
             { label: 'Happy Hours', value: String(suburb.happyHourCount), accent: false, extra: `of ${suburb.pubCount} venues` },
           ].map((stat) => (
             <div key={stat.label} className={`border-3 border-ink rounded-card px-4 py-4 shadow-hard-sm ${stat.accent ? 'bg-amber' : 'bg-white'}`}>
@@ -98,14 +104,11 @@ export default function SuburbClient({ suburb, pubs, nearbySuburbs, perthAvgPric
         <p className="font-body text-[0.9rem] leading-relaxed text-ink mt-5">
           {hasLead ? (
             <>
-              The cheapest pint in {suburb.name} is <span className="font-mono font-bold">${suburb.cheapestPrice}</span>
-              {suburb.cheapestPubSlug
-                ? <> at <Link href={`/${suburbSlug}/${suburb.cheapestPubSlug}`} className="text-amber font-bold hover:underline">{suburb.cheapestPub}</Link></>
-                : <> at {suburb.cheapestPub}</>}
-              {checkedDate && <> (checked {checkedDate})</>}
+              The cheapest pint in {suburb.name} is <span className="font-mono font-bold">{formatPrice(cheapestNum)}</span>
+              <> at <Link href={`/${suburbSlug}/${cheapestPubObj.slug}`} className="text-amber font-bold hover:underline">{cheapestPubObj.name}</Link>{checkedDate ? <>, checked {checkedDate}</> : null}</>
               {leadDelta >= 0.5
-                ? <> — <span className="font-mono font-bold">${leadDelta.toFixed(2)}</span> under the suburb average of ${suburb.avgPrice} across {suburb.pubCount} {suburb.pubCount === 1 ? 'pub' : 'pubs'}.</>
-                : <> — about the ${suburb.avgPrice} average across {suburb.pubCount} {suburb.pubCount === 1 ? 'pub' : 'pubs'}.</>}
+                ? <> — <span className="font-mono font-bold">{formatPrice(leadDelta)}</span> under the checked suburb average of {formatPrice(avgNum)} across {story.verifiedCount} {story.verifiedCount === 1 ? 'pub' : 'pubs'}.</>
+                : <> — about the {formatPrice(avgNum)} checked average across {story.verifiedCount} {story.verifiedCount === 1 ? 'pub' : 'pubs'}.</>}
               {observation && <> {observation}</>}
               {neighbours.length > 0 && (
                 <> Or see what&apos;s cheaper nearby in {neighbours.map((ns, i) => (
@@ -115,7 +118,7 @@ export default function SuburbClient({ suburb, pubs, nearbySuburbs, perthAvgPric
             </>
           ) : (
             <>
-              {suburb.name} has {suburb.pubCount} {suburb.pubCount === 1 ? 'venue' : 'venues'} tracked, but no verified price here yet.
+              {suburb.name} has {suburb.pubCount} {suburb.pubCount === 1 ? 'venue' : 'venues'} tracked, but no verified pint price here yet.
               {neighbours.length > 0 && (
                 <> Try nearby {neighbours.map((ns, i) => (
                   <span key={ns.slug}>{i > 0 ? ' or ' : ''}<Link href={`/${ns.slug}`} className="text-amber font-bold hover:underline">{ns.name}</Link></span>
@@ -124,6 +127,24 @@ export default function SuburbClient({ suburb, pubs, nearbySuburbs, perthAvgPric
             </>
           )}
         </p>
+      </section>
+
+      {/* Local guide modules — rendered only from checked suburb data */}
+      <section className="max-w-container mx-auto px-6 pb-6">
+        <div className="grid gap-3 sm:grid-cols-2">
+          {story.cards.map(card => (
+            <article key={card.id} className="min-w-0 border-3 border-ink rounded-card bg-white p-4 shadow-hard-sm">
+              <p className="font-mono text-[0.6rem] font-bold uppercase tracking-[0.08em] text-gray-mid mb-1">{card.label}</p>
+              <h2 className="font-mono text-[1.05rem] font-extrabold leading-tight text-ink mb-2">{card.title}</h2>
+              <p className="text-[0.78rem] leading-relaxed text-gray-mid">{card.body}</p>
+              {card.href && card.linkLabel && (
+                <Link href={card.href} className="mt-3 inline-flex font-mono text-[0.7rem] font-bold uppercase tracking-[0.05em] text-amber hover:text-ink transition-colors no-underline">
+                  {card.linkLabel}
+                </Link>
+              )}
+            </article>
+          ))}
+        </div>
       </section>
 
       {/* Happy Hours Today — highlighted section for pubs with active deals */}
@@ -300,6 +321,25 @@ export default function SuburbClient({ suburb, pubs, nearbySuburbs, perthAvgPric
                 </span>
               </Link>
             ))}
+          </div>
+        </section>
+      )}
+
+      {/* Mini FAQ */}
+      {story.faqs.length > 0 && (
+        <section className="max-w-container mx-auto px-6 pb-6">
+          <div className="border-3 border-ink rounded-card bg-off-white shadow-hard-sm overflow-hidden">
+            <div className="px-4 py-3 border-b border-gray-light">
+              <h2 className="font-mono font-extrabold text-[0.85rem] text-ink uppercase tracking-[0.05em]">{suburb.name} pint FAQ</h2>
+            </div>
+            <dl className="divide-y divide-gray-light">
+              {story.faqs.map(item => (
+                <div key={item.question} className="px-4 py-4">
+                  <dt className="font-mono text-[0.82rem] font-extrabold leading-snug text-ink">{item.question}</dt>
+                  <dd className="mt-1 text-[0.78rem] leading-relaxed text-gray-mid">{item.answer}</dd>
+                </div>
+              ))}
+            </dl>
           </div>
         </section>
       )}

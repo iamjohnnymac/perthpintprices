@@ -1,6 +1,7 @@
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { getAllSuburbs, getSuburbBySlug, getSuburbPubs, getNearbySuburbs, getSiteStats } from '@/lib/supabase'
+import { getSuburbStory } from '@/lib/suburbStory'
 import { absoluteSuburbUrl } from '@/lib/urls'
 import SuburbClient from './SuburbClient'
 
@@ -72,6 +73,14 @@ export default async function SuburbPage({ params }: PageProps) {
     getNearbySuburbs(suburb.name, 5),
     getSiteStats(),
   ])
+  const perthAvgPrice = Number(siteStats.avgPrice)
+  const suburbStory = getSuburbStory({
+    suburb,
+    pubs,
+    nearbySuburbs,
+    perthAvgPrice,
+    suburbSlug: params.suburb,
+  })
 
   const jsonLd = [
     {
@@ -95,6 +104,18 @@ export default async function SuburbPage({ params }: PageProps) {
         url: `https://perthpintprices.com/${params.suburb}/${pub.slug}`,
       })),
     },
+    ...(suburbStory.faqs.length > 0 ? [{
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      mainEntity: suburbStory.faqs.map(faq => ({
+        '@type': 'Question',
+        name: faq.question,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: faq.answer,
+        },
+      })),
+    }] : []),
   ]
 
   return (
@@ -126,7 +147,7 @@ export default async function SuburbPage({ params }: PageProps) {
         suburb={suburb}
         pubs={pubs}
         nearbySuburbs={nearbySuburbs}
-        perthAvgPrice={Number(siteStats.avgPrice)}
+        perthAvgPrice={perthAvgPrice}
         suburbSlug={params.suburb}
       />
     </>

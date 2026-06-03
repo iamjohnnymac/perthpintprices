@@ -34,6 +34,7 @@ test-results/
 
 # Development screenshots
 *.png
+!public/articles/*.png
 
 # Utility scripts with credentials
 scripts/merge-research.js

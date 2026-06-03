@@ -41,8 +41,8 @@ export const articles: Article[] = [
     heroLabel: 'Cheap pints',
     heroStat: 'Under $10',
     heroSubstat: 'Verified prices only',
-    image: '/og-image.png',
-    imageAlt: 'Perth Pint Prices pint-price board',
+    image: '/articles/pints-under-10-perth-01-fremantle-6-pint.png',
+    imageAlt: '$6 pint outside a Fremantle club on High Street',
     liveModule: 'under10',
     sections: [
       {
@@ -111,8 +111,8 @@ export const articles: Article[] = [
     heroLabel: 'Happy hour',
     heroStat: '7 days',
     heroSubstat: 'Start with what is confirmed',
-    image: '/og-image.png',
-    imageAlt: 'Perth Pint Prices happy-hour board',
+    image: '/articles/perth-happy-hours-by-day-01-5pm-window.png',
+    imageAlt: 'A Perth bar pouring pints during a 5pm happy-hour window',
     liveModule: 'happyHoursByDay',
     sections: [
       {
@@ -185,8 +185,8 @@ export const articles: Article[] = [
     heroLabel: 'Glass sizes',
     heroStat: '570ml',
     heroSubstat: 'The pint benchmark',
-    image: '/og-image.png',
-    imageAlt: 'Perth Pint Prices glass-size explainer',
+    image: '/articles/proper-pint-schooner-middy-perth-01-glass-size-comparison.png',
+    imageAlt: 'Middy, schooner and pint glasses marked 285ml, 425ml and 570ml',
     liveModule: 'glassSizes',
     sections: [
       {
