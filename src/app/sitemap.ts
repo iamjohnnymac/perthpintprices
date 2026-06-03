@@ -2,6 +2,7 @@ import { MetadataRoute } from 'next'
 import { getAllPubLastModifiedPairs, getIndexablePubSlugPairs, getAllSuburbs } from '@/lib/supabase'
 import { articles, absoluteArticleUrl } from '@/lib/articles'
 import { HAPPY_HOUR_DAYS } from '@/lib/happyHourDays'
+import { TRANSPORT_HUBS } from '@/lib/transportHubs'
 import { BASE_URL, absolutePubUrl, absoluteSuburbUrl, toSuburbSlug } from '@/lib/urls'
 
 // Regenerate hourly so new pubs added to Supabase appear in the sitemap
@@ -64,6 +65,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   }))
 
+  const transportHubRoutes: MetadataRoute.Sitemap = TRANSPORT_HUBS.map(hub => ({
+    url: `${BASE_URL}/${hub.slug}`,
+    lastModified: latestPubModified,
+    changeFrequency: 'weekly' as const,
+    priority: 0.7,
+  }))
+
   const articleRoutes: MetadataRoute.Sitemap = articles.map(article => ({
     url: absoluteArticleUrl(article.slug),
     lastModified: article.updatedAt,
@@ -85,5 +93,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: pair.indexabilityTier === 'A' ? 0.6 : 0.5,
   }))
 
-  return [...staticRoutes, ...happyHourDayRoutes, ...articleRoutes, ...suburbRoutes, ...pubRoutes]
+  return [...staticRoutes, ...happyHourDayRoutes, ...transportHubRoutes, ...articleRoutes, ...suburbRoutes, ...pubRoutes]
 }

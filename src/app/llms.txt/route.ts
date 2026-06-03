@@ -1,5 +1,6 @@
 import { BASE_URL } from '@/lib/urls'
 import { articles, articleUrl } from '@/lib/articles'
+import { TRANSPORT_HUBS } from '@/lib/transportHubs'
 
 const lines = [
   '# Perth Pint Prices',
@@ -15,6 +16,7 @@ const lines = [
   `- [Suburb Rankings](${BASE_URL}/insights/suburb-rankings): suburb-by-suburb pint-price comparisons.`,
   `- [Happy Hours](${BASE_URL}/happy-hour): current happy-hour finder for Perth pubs.`,
   `- [Cheapest Pints](${BASE_URL}/cheapest-pints): live ranked list of the cheapest verified regular pint prices in Perth.`,
+  ...TRANSPORT_HUBS.map(hub => `- [Pubs near ${hub.name}](${BASE_URL}/${hub.slug}): distance-ranked pub guide with checked pint prices where available.`),
   `- [Discover](${BASE_URL}/discover): searchable pub and pint-price directory.`,
   `- [Articles](${BASE_URL}/articles): pub and drinking explainers with PPP data attached.`,
   ...articles.map(article => `- [${article.title}](${BASE_URL}${articleUrl(article.slug)}): ${article.description}`),
