@@ -10,8 +10,8 @@ Stack, database, routes, components, and lib files are documented in `CLAUDE.md`
 
 ## What's done recently
 
-### Answer-first pint-cost page ready for preview (2026-06-03)
-- **Issue #27 / branch `codex/answer-first-pint-prices-27`:** added `/how-much-is-a-pint-in-perth` for the zero-click "how much is a pint in Perth" cluster. The page answers in the first screen with the live checked average, median, range, cheapest verified pint, glass-size notes, visible Q&A, and internal links into Cheapest Pints, Happy Hours, Pint Index, and the proper-pint explainer.
+### Answer-first pint-cost page shipped (2026-06-03)
+- **Issue #27 / PR #147 / merge commit `c561fd2`:** added `/how-much-is-a-pint-in-perth` for the zero-click "how much is a pint in Perth" cluster. The page answers in the first screen with the live checked average, median, range, cheapest verified pint, glass-size notes, visible Q&A, and internal links into Cheapest Pints, Happy Hours, Pint Index, and the proper-pint explainer.
 - **Pint Index answer block:** added a "Perth beer prices" answer-first card to `/insights/pint-index`, backed by the same verified regular-price stats. The mobile Pint Index methodology wrapper was tightened to remove an 8px horizontal overflow found during screenshot QA.
 - **Shared stats helper:** added `src/lib/pintPriceStats.ts` with tests so average, median, range, under-$10 count, and verified-row filtering stay consistent across answer pages.
 - **SEO wiring:** added canonical metadata, OG/Twitter image, Breadcrumb + ItemList JSON-LD, and sitemap/footer/`/llms.txt` entries.
