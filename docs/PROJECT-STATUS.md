@@ -1,6 +1,6 @@
 # Perth Pint Prices Project Status
 
-Last updated: 2026-06-02
+Last updated: 2026-06-03
 
 ## What this is
 
@@ -9,6 +9,12 @@ Perth Pint Prices (perthpintprices.com) tracks pint prices across **857 Perth pu
 Stack, database, routes, components, and lib files are documented in `CLAUDE.md` (auto-loaded every session). This file covers history, recent work, and the backlog.
 
 ## What's done recently
+
+### Official menu extractor hardening + second dry run (2026-06-03)
+- **Branch `codex/official-menu-extractor-hardening` / commit `f69c55e`:** tightened official-menu source and row filters after the larger dry run surfaced false positives. The extractor now skips `Non-Alc` shorthand, apple-cider-vinaigrette food rows, and beer-in-food-description rows such as macaroni/panko/deep-fried items; source discovery and seed building now block breakfast/kids menu URLs even when filenames use underscores.
+- **Second dry run:** rebuilt seeds from the large discovery artifact with the hardened filters, producing 202 crawl sources. Ran a no-write crawl with linked-source follow-up and OCR disabled for native-tooling stability: 195 fetched, 131 linked fetched, 11 linked failed, 39 candidates, 7 failed sources, 0 inserted.
+- **Review pack:** generated `scripts/official-menu-review-next.json` and `.csv` locally with suggested decisions: 9 `approve_suggested`, 30 `needs_manual_review`. No production import was run; rows still need manual review before any pending reports are inserted.
+- **Verification:** verified focused official-menu tests, `npm test` (**248/248 tests**), `npx tsc --noEmit`, `npm run lint` (existing warnings only), `npm run build` (existing warnings only), `git diff --check`, and seed/crawl/review smoke checks.
 
 ### Official menu crawler scaled to review + pending reports (2026-06-02)
 - **Local uncommitted work:** expanded the official-menu workflow from MVP into a dry-run-first discovery, seed, crawl, review, suggested-decision, and guarded import pipeline. The approval pack lives at `docs/official-menu-crawler-approval.html`; generated crawl/review/import artifacts are gitignored.
