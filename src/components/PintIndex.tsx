@@ -321,7 +321,7 @@ export default function PintIndex() {
             {/* Mobile sparkline */}
             <div className="sm:hidden mt-4" onClick={e => e.stopPropagation()}>
               <div className="text-[10px] text-gray-mid mb-1">Price trend {'\u00B7'} tap to explore</div>
-              <Sparkline data={sparkData} snapshots={snapshots} width={320} height={50} />
+              <Sparkline data={sparkData} snapshots={snapshots} width={280} height={50} />
             </div>
 
             <p className="text-[10px] text-gray-mid mt-3 text-center flex items-center justify-center gap-1">

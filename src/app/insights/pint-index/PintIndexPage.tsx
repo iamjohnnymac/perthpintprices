@@ -1,11 +1,26 @@
 'use client'
 
+import Link from 'next/link'
+import { ArrowUpRight, CircleDollarSign } from 'lucide-react'
 import SubPageNav from '@/components/SubPageNav'
 import PintIndex from '@/components/PintIndex'
 import Footer from '@/components/Footer'
 import { ErrorBoundary } from '@/components/ErrorBoundary'
 
-export default function PintIndexPage() {
+interface PintIndexAnswerStats {
+  averagePrice: string
+  medianPrice: string
+  verifiedCount: number
+  trackedCount: number
+  suburbCount: number
+  underTenCount: number
+  cheapestName: string | null
+  cheapestSuburb: string | null
+  cheapestPrice: string
+  cheapestUrl: string | null
+}
+
+export default function PintIndexPage({ stats }: { stats: PintIndexAnswerStats }) {
   return (
     <main className="min-h-screen overflow-x-hidden bg-[#FDF8F0]">
       <SubPageNav breadcrumbs={[
@@ -14,14 +29,33 @@ export default function PintIndexPage() {
       ]} />
       <h1 className="sr-only">Perth Pint Index</h1>
       <div className="mx-auto w-[calc(100vw-3rem)] max-w-container py-8 sm:py-12">
+        <section className="mb-5 rounded-card border-3 border-ink bg-ink p-5 text-white shadow-hard-sm">
+          <div className="flex items-start gap-3">
+            <CircleDollarSign className="mt-1 h-5 w-5 shrink-0 text-amber-light" />
+            <div>
+              <p className="font-mono text-[0.65rem] font-bold uppercase tracking-[0.08em] text-white/55">
+                Answer first
+              </p>
+              <h2 className="mt-2 font-mono text-xl font-extrabold text-white">
+                What are Perth beer prices right now?
+              </h2>
+              <p className="mt-3 font-body text-[0.9rem] leading-relaxed text-white/70">
+                Perth&apos;s checked pint average is {stats.averagePrice}, with a {stats.medianPrice} median across {stats.verifiedCount} verified regular pint rows. {stats.cheapestName && stats.cheapestUrl ? <>The cheapest checked pint is <Link href={stats.cheapestUrl} className="font-bold text-amber-light hover:underline">{stats.cheapestPrice} at {stats.cheapestName}</Link> in {stats.cheapestSuburb}.</> : 'The cheapest checked pint is still TBC.'} We track {stats.trackedCount} pubs across {stats.suburbCount} suburbs; {stats.underTenCount} verified rows currently sit under $10.
+              </p>
+              <Link
+                href="/how-much-is-a-pint-in-perth"
+                className="mt-4 inline-flex items-center gap-2 font-mono text-[0.72rem] font-bold uppercase tracking-[0.05em] text-amber-light no-underline hover:text-white"
+              >
+                Read the plain-English price answer <ArrowUpRight className="h-3.5 w-3.5" />
+              </Link>
+            </div>
+          </div>
+        </section>
         <div className="overflow-x-auto">
           <ErrorBoundary><PintIndex /></ErrorBoundary>
         </div>
       </div>
-      <div
-        className="relative left-1/2 -translate-x-1/2 px-6 pb-8 sm:pb-12"
-        style={{ width: '100vw', boxSizing: 'border-box' }}
-      >
+      <div className="mx-auto w-[calc(100vw-3rem)] max-w-container pb-8 sm:pb-12">
         <section
           className="mx-auto w-full max-w-container border-3 border-ink rounded-card bg-white p-5 sm:p-6 shadow-hard-sm"
           style={{ boxSizing: 'border-box' }}
