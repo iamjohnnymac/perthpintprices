@@ -7,6 +7,13 @@ export interface ArticleSection {
   body: string[]
 }
 
+export interface ArticleInlineImage {
+  src: string
+  alt: string
+  caption: string
+  sectionHeading: string
+}
+
 export interface Article {
   slug: string
   title: string
@@ -22,6 +29,7 @@ export interface Article {
   heroSubstat: string
   image: string
   imageAlt: string
+  supportingImages: ArticleInlineImage[]
   liveModule: ArticleLiveModule
   sections: ArticleSection[]
   relatedLinks: Array<{ href: string; label: string }>
@@ -52,6 +60,32 @@ export const articles: Article[] = [
     heroSubstat: 'Verified prices only',
     image: '/articles/pints-under-10-perth-01-fremantle-6-pint.png',
     imageAlt: '$6 pint outside a Fremantle club on High Street',
+    supportingImages: [
+      {
+        src: '/articles/pints-under-10-perth-02-northbridge-7-strip.png',
+        alt: 'Northbridge pubs with verified $7 pint prices marked along the street',
+        caption: 'Northbridge is where the low-price cluster gets useful: several checked $7 and $8 rows close enough to walk.',
+        sectionHeading: 'The $7 strip in Northbridge',
+      },
+      {
+        src: '/articles/pints-under-10-perth-03-why-cheap-pints-stay-cheap.png',
+        alt: 'A plain diagram showing why clubs and suburban hotels can hold cheaper pint prices',
+        caption: 'The cheap rows usually come from clubs, lower-rent suburban rooms, or high-volume strips. Not magic, just less stacked above the beer.',
+        sectionHeading: 'Why the cheap ones stay cheap',
+      },
+      {
+        src: '/articles/pints-under-10-perth-04-fremantle-west-end.png',
+        alt: 'A Fremantle West End pub street with pint price markers',
+        caption: 'Fremantle has the single lowest checked pint, but the suburb spread still matters.',
+        sectionHeading: "What the $7 doesn't tell you",
+      },
+      {
+        src: '/articles/pints-under-10-perth-05-guildford-midland-suburban-floor.png',
+        alt: 'Guildford and Midland suburban hotel pint prices shown as a lower-price floor',
+        caption: 'Outside the inner strips, the floor tends to show up in suburban hotels with less theatre and less rent.',
+        sectionHeading: 'Where to start tonight',
+      },
+    ],
     liveModule: 'under10',
     sections: [
       {
@@ -122,6 +156,32 @@ export const articles: Article[] = [
     heroSubstat: 'Start with what is confirmed',
     image: '/articles/perth-happy-hours-by-day-01-5pm-window.png',
     imageAlt: 'A Perth bar pouring pints during a 5pm happy-hour window',
+    supportingImages: [
+      {
+        src: '/articles/perth-happy-hours-by-day-02-week-planner.png',
+        alt: 'A weekly Perth happy-hour planner board with weekday windows marked',
+        caption: 'The start of the week is thin. By midweek, the familiar late-afternoon windows start doing the work.',
+        sectionHeading: 'Monday and Tuesday: slim',
+      },
+      {
+        src: '/articles/perth-happy-hours-by-day-03-real-discount.png',
+        alt: 'A bar chalkboard comparing a regular pint price with a discounted happy-hour price',
+        caption: 'A happy-hour window only matters when the price actually drops. The delta is the point.',
+        sectionHeading: 'The real drops need receipts',
+      },
+      {
+        src: '/articles/perth-happy-hours-by-day-04-elizabeth-quay-after-work.png',
+        alt: 'After-work drinkers around Elizabeth Quay during a weekday happy-hour window',
+        caption: 'Wednesday to Friday is the reliable stretch: offices empty, boards switch on, and the useful deals are easiest to plan around.',
+        sectionHeading: 'Wednesday to Friday: the reliable stretch',
+      },
+      {
+        src: '/articles/perth-happy-hours-by-day-05-scarborough-weekend-window.png',
+        alt: 'Scarborough weekend pub window with happy-hour pint prices',
+        caption: 'Weekend happy hours follow the crowd: beaches, destination pubs, and rooms that can keep the window moving.',
+        sectionHeading: 'Saturday and Sunday: follow the seven-day pubs',
+      },
+    ],
     liveModule: 'happyHoursByDay',
     sections: [
       {
@@ -196,6 +256,32 @@ export const articles: Article[] = [
     heroSubstat: 'The pint benchmark',
     image: '/articles/proper-pint-schooner-middy-perth-01-glass-size-comparison.png',
     imageAlt: 'Middy, schooner and pint glasses marked 285ml, 425ml and 570ml',
+    supportingImages: [
+      {
+        src: '/articles/proper-pint-schooner-middy-perth-02-schooner-vs-pint-value.png',
+        alt: 'A schooner and pint comparison showing how the same menu price changes value by glass size',
+        caption: 'Same dollar figure, different glass. That is where a neat-looking beer price starts lying by omission.',
+        sectionHeading: "Why a $9 beer isn't always a $9 beer",
+      },
+      {
+        src: '/articles/proper-pint-schooner-middy-perth-03-report-useful-price.png',
+        alt: 'A useful pint-price report showing glass size, beer, price, date and menu evidence',
+        caption: 'The useful report names the glass, beer, price and date. The photo does the arguing for everyone.',
+        sectionHeading: 'What makes a price worth reporting',
+      },
+      {
+        src: '/articles/proper-pint-schooner-middy-perth-04-perth-river-570ml-benchmark.png',
+        alt: 'A Perth riverside pint marked as the 570ml benchmark',
+        caption: 'The 570ml pint is the benchmark because it is the hardest common pour to hide behind.',
+        sectionHeading: 'Why we price everything as a pint',
+      },
+      {
+        src: '/articles/proper-pint-schooner-middy-perth-05-fremantle-same-pint-price-spread.png',
+        alt: 'Fremantle pint prices shown as a spread for the same 570ml glass',
+        caption: 'Once the glass is held constant, the suburb spread becomes easier to see and harder to hand-wave.',
+        sectionHeading: 'What that looks like in Perth right now',
+      },
+    ],
     liveModule: 'glassSizes',
     sections: [
       {
