@@ -12,6 +12,7 @@ Stack, database, routes, components, and lib files are documented in `CLAUDE.md`
 
 ### Article rails + page-depth hubs ready for preview (2026-06-03)
 - **Branch `codex/hub-article-rails` / commits `ae5b705`, `063f5e8`, `fff9bc5`, `84b9402`:** added the article rail system to Home/Discover, fact-checked the three new pub articles, wired the generated article image set under `public/articles/`, and added reusable image slots for the article hub/rails.
+- **Inline article imagery (`85c2d96`):** article detail pages now render the primary article image plus four section-matched supporting figures per article, with captions, alt text, and explicit Next Image dimensions.
 - **Page-depth modules:** beefed out `/happy-hour` with a live happy-hour board, `/suburbs` with data-led suburb rails, and dynamic suburb pages with verified-price story cards, local FAQs, and FAQPage JSON-LD.
 - **Data-source corrections:** suburb summaries now use verified regular pint prices for `verifiedCount`, cheapest, most expensive, and averages, so metadata, crawler text, nearby chips, and visible suburb copy do not mix live happy-hour prices into regular-price claims. Article dates are formatted in `Australia/Perth` to avoid SSR/client date drift.
 - **Verification:** verified `npx tsc --noEmit`, `npm run lint` (existing warnings only), `npm test` (**249/249 tests**), `npm run build`, reviewer sub-agent LGTM, and desktop/mobile browser evidence under `/tmp/perth-pint-prices-depth-final-aggregate/`.
