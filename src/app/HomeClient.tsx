@@ -21,6 +21,7 @@ import MobileNav from '@/components/MobileNav'
 import PintIndexBadge from '@/components/PintIndexBadge'
 import ScrollReveal from '@/components/ScrollReveal'
 import ArticleRail from '@/components/ArticleRail'
+import { trackSiteEvent } from '@/lib/analytics'
 
 const INITIAL_PUB_COUNT = 10
 const HH_ROTATE_INTERVAL = 4000
@@ -122,9 +123,15 @@ function HomeContent({ initialPubs }: { initialPubs: Pub[] }) {
   const headerRef = useRef<HTMLElement>(null)
   const contentRef = useRef<HTMLDivElement>(null)
 
+  const openSubmitForm = useCallback((source: string) => {
+    trackSiteEvent('report_price_click', { source })
+    setShowSubmitForm(true)
+  }, [])
+
   // Auto-open submit form when ?submit=1 is in URL (e.g. from suburb page links)
   useEffect(() => {
     if (searchParams.get('submit') === '1') {
+      trackSiteEvent('report_price_open', { source: 'submit_query_param' })
       setShowSubmitForm(true)
       // Clean the param from URL
       const params = new URLSearchParams(searchParams.toString())
@@ -338,7 +345,7 @@ function HomeContent({ initialPubs }: { initialPubs: Pub[] }) {
         <div className="flex items-center gap-2">
           <PintIndexBadge />
           <button
-            onClick={() => setShowSubmitForm(true)}
+            onClick={() => openSubmitForm('home_header')}
             className="hidden sm:inline-flex font-mono text-[0.72rem] font-bold uppercase tracking-[0.05em] text-ink bg-white border-3 border-ink rounded-pill px-5 py-2.5 shadow-hard-sm hover:translate-x-[1.5px] hover:translate-y-[1.5px] hover:shadow-hard-hover transition-all cursor-pointer"
             data-submit-trigger
           >
@@ -359,6 +366,7 @@ function HomeContent({ initialPubs }: { initialPubs: Pub[] }) {
       <ArticleRail
         title="Pub notes with numbers attached"
         intro="Start with the new under-$10 list, then sanity-check happy hours and glass sizes before someone declares a $9 schooner a bargain."
+        source="home_article_rail"
       />
 
       {/* ═══ FILTER BAR - below header, above content ═══ */}
@@ -408,7 +416,7 @@ function HomeContent({ initialPubs }: { initialPubs: Pub[] }) {
       </div>
 
       <ScrollReveal><HowItWorks venueCount={pubs.length} suburbCount={suburbs.length} /></ScrollReveal>
-      <ScrollReveal><SocialProof venueCount={pubs.length} suburbCount={suburbs.length} avgPrice={stats.avgPrice} cheapestPrice={stats.minPrice} priciestPrice={stats.maxPriceValue} onSubmitClick={() => setShowSubmitForm(true)} /></ScrollReveal>
+      <ScrollReveal><SocialProof venueCount={pubs.length} suburbCount={suburbs.length} avgPrice={stats.avgPrice} cheapestPrice={stats.minPrice} priciestPrice={stats.maxPriceValue} onSubmitClick={() => openSubmitForm('home_social_proof')} /></ScrollReveal>
       <ScrollReveal><FAQ /></ScrollReveal>
       <Footer />
 

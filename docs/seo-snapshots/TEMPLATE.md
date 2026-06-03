@@ -71,6 +71,56 @@ Use `Session source` or `Session source / medium` to split Google, Bing, and Duc
 | bing / organic |  |  |  |  |  |
 | duckduckgo / organic |  |  |  |  |  |
 
+## Editorial & Page-Depth Measurement
+
+Use this section for the article system and beefed-out pub/suburb pages. The first baseline should be captured within one week of publishing a new article batch, then compared weekly.
+
+### Editorial URL Baseline
+
+| URL | GSC clicks | GSC impressions | CTR | Average position | Indexed status | Note |
+|---|---:|---:|---:|---:|---|---|
+| `/articles` |  |  |  |  |  |  |
+| `/articles/pints-under-10-perth` |  |  |  |  |  |  |
+| `/articles/perth-happy-hours-by-day` |  |  |  |  |  |  |
+| `/articles/proper-pint-schooner-middy-perth` |  |  |  |  |  |  |
+
+### Editorial Engagement
+
+Use GA4 pages + screens for page engagement, then the events below for internal movement and report-price intent.
+
+| Surface | Sessions | Engaged sessions | Avg engagement time | `article_click` | `article_internal_click` | `article_pub_click` | `report_price_click` | Note |
+|---|---:|---:|---:|---:|---:|---:|---:|---|
+| `/articles` |  |  |  |  |  |  |  |  |
+| Article detail pages |  |  |  |  |  |  |  |  |
+| Pub pages |  |  |  |  |  |  |  |  |
+| Suburb pages |  |  |  |  |  |  |  |  |
+
+### Pub-Page Engagement
+
+| Surface | `report_price_click` | `pub_nearby_click` | `pub_external_click` | `pub_internal_click` | Note |
+|---|---:|---:|---:|---:|---|
+| Priced pub pages |  |  |  |  |  |
+| Tier-C pub pages |  |  |  |  |  |
+| Pub pages from article clicks |  |  |  |  |  |
+
+Tracked event names:
+
+- `article_click`: card/link clicks into article detail pages from hubs and rails.
+- `article_hub_click`: clicks back to `/articles`.
+- `article_internal_click`: article related-link clicks to non-pub site pages.
+- `article_pub_click`: article live-module clicks into pub pages.
+- `report_price_click`: report-price CTA clicks from article, home, and pub surfaces.
+- `report_price_open`: form auto-opens from `?submit=1`, useful for direct/shared article CTAs.
+- `pub_nearby_click`: pub-page nearby-price clicks, including Tier-C nearest checked pub links.
+- `pub_external_click`: pub-page website and directions clicks.
+- `pub_internal_click`: pub-page clicks to non-pub site pages such as suburb pages.
+
+### Thin-Content Watch
+
+- Article URLs with impressions but weak engagement:
+- Pub/suburb pages gaining impressions after page-depth work:
+- Pages to rewrite, noindex, or consolidate:
+
 ## AI-Referral Callouts
 
 Report every AI/search-assistant source with more than 0 sessions. If none are present, write `None observed this period`.

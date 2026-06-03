@@ -153,6 +153,7 @@ export default function DiscoverClient() {
             eyebrow="New"
             title="Pub notes worth reading first"
             intro="The price-led explainers behind the lists: under-$10 pints, happy hours that actually drop, and why glass size does the maths."
+            source="discover_article_rail"
           />
         </div>
 
