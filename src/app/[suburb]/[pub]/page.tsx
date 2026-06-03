@@ -73,6 +73,11 @@ function formatMetaDate(value: string | null): string | null {
   })
 }
 
+function formatMetaHappyHourLabel(value: string | null): string | null {
+  if (!value) return null
+  return value.replace(/,\s*/g, ', ')
+}
+
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const pub = await getCachedPubBySlug(params.pub)
   if (!pub) return { title: 'Pub Not Found' }
@@ -88,7 +93,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     price,
     suburbAvg: suburbAvgPrice,
     checkedDate: formatMetaDate(pub.priceVerifiedAt || pub.lastVerified),
-    hhClause: pub.happyHourLabel ? `Happy hour: ${pub.happyHourLabel}.` : null,
+    hhClause: formatMetaHappyHourLabel(pub.happyHourLabel)
+      ? `Happy hour: ${formatMetaHappyHourLabel(pub.happyHourLabel)}.`
+      : null,
   })
 
   const canonical = absolutePubUrl(pub)

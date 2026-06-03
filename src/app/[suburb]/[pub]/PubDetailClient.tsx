@@ -205,7 +205,10 @@ export default function PubDetailClient({
   const nearbySummary = nearbyPubs.length > 0 && currentPrice !== null
     ? cheaperNearby(pub.name, cheaperNearbyList, '2km')
     : null
-  const quickReadCopy = answerCopy ?? priceMissingCopy
+  const tierCQuickRead = isTierCPage && nearestVerifiedPub?.price !== null && nearestVerifiedPub?.price !== undefined
+    ? `Nearest checked pub: ${nearestVerifiedPub.name} in ${nearestVerifiedPub.suburb}, listed at $${nearestVerifiedPub.price.toFixed(2)}.`
+    : null
+  const quickReadCopy = answerCopy ?? tierCQuickRead
   const nearestCheaper = currentPrice === null
     ? null
     : nearbyPubs.find(nearby => nearby.price !== null && nearby.price < currentPrice)
