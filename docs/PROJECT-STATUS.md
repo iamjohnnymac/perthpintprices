@@ -10,6 +10,12 @@ Stack, database, routes, components, and lib files are documented in `CLAUDE.md`
 
 ## What's done recently
 
+### Transport-hub landing pages ready for preview (2026-06-03)
+- **Issue #32 second slice / branch `codex/transport-hub-landing-pages-32` / commit `f6c8adf`:** added four direct-proximity pub landing pages: `/pubs-near-perth-station`, `/pubs-near-optus-stadium`, `/pubs-near-rac-arena`, and `/pubs-near-elizabeth-quay`.
+- **Reusable hub system:** added shared transport-hub config, direct-distance ranking, ItemList JSON-LD, canonical metadata with OG/Twitter images, answer-first copy, stats, ranked nearby rows, and cross-links between transport guides. Sitemap, footer, and `/llms.txt` now expose the hub pages.
+- **Data guardrails:** unverified regular prices render as `TBC` and do not affect equal-distance price tie-breaks. Page copy uses direct-proximity/direct-distance wording rather than claiming real walking-route distances.
+- **Verification:** verified `npm test` (**257/257 tests**), `npx tsc --noEmit`, `git diff --check`, `npm run lint` (existing warnings only), `npm run build`, `npm run test:e2e` (**4/4 Playwright tests**), reviewer sub-agent LGTM, and desktop/mobile screenshots for Perth Station + Optus Stadium under `/tmp/perth-pint-prices-transport-hubs-32/`.
+
 ### High-intent landing pages ready for preview (2026-06-03)
 - **Issue #32 first slice / branch `codex/high-intent-landing-pages-32` / commit `68754c5`:** added `/cheapest-pints` as a verified regular-price landing page and `/happy-hour/[day]` static pages for all seven weekdays, with canonical metadata, OG/Twitter tags, Breadcrumb + ItemList JSON-LD, answer-first copy, ranked rows, Q&A blocks, and useful internal links.
 - **Happy-hour day linking:** added a planning-board rail to `/happy-hour`, linked Cheap Pints from the footer, added the new pages to `sitemap.xml`, and exposed `/cheapest-pints` in `/llms.txt`.
