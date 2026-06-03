@@ -11,7 +11,17 @@ import { PenLine } from 'lucide-react'
 import { formatHappyHourDays } from '@/lib/happyHourLive'
 import Footer from '@/components/Footer'
 import { pubUrl, suburbUrl } from '@/lib/urls'
-import { verificationStub } from '@/lib/voiceCopy'
+import {
+  answerBlock,
+  bestTime,
+  cheaperNearby,
+  faqHappyHourAnswer,
+  faqNearbyAnswer,
+  faqPriceAnswer,
+  faqQuestion,
+  pubSubtitle,
+  verificationStub,
+} from '@/lib/voiceCopy'
 import { formatDistance } from '@/lib/location'
 import { describePriceSource } from '@/lib/priceProvenance'
 import type { PriceRecencyInfo, PriceRecencyTier } from '@/lib/freshness'
@@ -38,6 +48,27 @@ function formatHappyHourTime(start: string | null, end: string | null): string {
     return `${h12}${period}`
   }
   return `${fmt(start)} - ${fmt(end)}`
+}
+
+function formatReadableHappyHourDays(days: string | null): string | null {
+  if (!days) return null
+  return formatHappyHourDays(days).replace(/,\s*/g, ', ')
+}
+
+function formatHappyHourVoiceTime(value: string | null): string | null {
+  if (!value) return null
+  const [hourValue, minuteValue = '0'] = value.split(':')
+  const hour = Number(hourValue)
+  const minute = Number(minuteValue)
+  if (!Number.isFinite(hour) || !Number.isFinite(minute)) return null
+  const period = hour >= 12 ? 'pm' : 'am'
+  const hour12 = hour > 12 ? hour - 12 : hour === 0 ? 12 : hour
+  return minute > 0 ? `${hour12}:${String(minute).padStart(2, '0')}${period}` : `${hour12}${period}`
+}
+
+type PubFaq = {
+  question: string
+  answer: string
 }
 
 interface PubDetailClientProps {
@@ -93,6 +124,7 @@ export default function PubDetailClient({
 
   const priceDiff = pub.effectivePrice && avgPrice ? pub.effectivePrice - avgPrice : 0
   const currentPrice = pub.effectivePrice ?? pub.price
+  const standardPrice = pub.regularPrice ?? pub.price
   const hasCheaperNearby = currentPrice !== null && nearbyPubs.some(nearby =>
     nearby.price !== null && nearby.price < currentPrice
   )
@@ -122,6 +154,99 @@ export default function PubDetailClient({
     })
     : null
   const reportCtaLabel = isTierCPage ? 'Report the price' : 'Know the price? Report it here'
+  const checkedDate = priceVerifiedAt ? formatLastVerifiedDate(priceVerifiedAt) : null
+  const subtitle = pub.vibeTag && pub.vibeTag.toLowerCase() !== 'pub'
+    ? pubSubtitle(pub.suburb, pub.vibeTag)
+    : null
+  const answerCopy = answerBlock({
+    pub: pub.name,
+    suburb: pub.suburb,
+    price: standardPrice,
+    suburbAvg: avgPrice,
+    checkedDate,
+  })
+  const happyHourDaysText = formatReadableHappyHourDays(pub.happyHourDays)
+  const happyHourStartText = formatHappyHourVoiceTime(pub.happyHourStart)
+  const happyHourEndText = formatHappyHourVoiceTime(pub.happyHourEnd)
+  const bestTimeCopy = happyHourDaysText && happyHourStartText && happyHourEndText
+    ? pub.happyHourPrice
+      ? pub.isHappyHourNow
+        ? bestTime({
+          price: standardPrice,
+          hhActiveNow: true,
+          hhLaterToday: false,
+          hhStart: happyHourStartText,
+          hhEnd: happyHourEndText,
+          hhPrice: pub.happyHourPrice,
+          saving: standardPrice !== null ? standardPrice - pub.happyHourPrice : null,
+        })
+        : `Cheapest confirmed window: ${happyHourDaysText} ${happyHourStartText}-${happyHourEndText}, pints down to $${pub.happyHourPrice.toFixed(2)}.`
+      : `Confirmed happy-hour window: ${happyHourDaysText} ${happyHourStartText}-${happyHourEndText}. We still need the discount price.`
+    : bestTime({
+        price: standardPrice,
+        hhActiveNow: false,
+        hhLaterToday: false,
+        hhStart: null,
+        hhEnd: null,
+        hhPrice: pub.happyHourPrice,
+        saving: null,
+      })
+  const cheaperNearbyList = currentPrice === null
+    ? []
+    : nearbyPubs
+      .filter(nearby => nearby.price !== null && nearby.price < currentPrice)
+      .map(nearby => ({
+        name: nearby.name,
+        price: nearby.price as number,
+        distance: nearby.distanceKm !== null && nearby.distanceKm !== undefined
+          ? formatDistance(nearby.distanceKm)
+          : nearby.suburb,
+      }))
+  const nearbySummary = nearbyPubs.length > 0 && currentPrice !== null
+    ? cheaperNearby(pub.name, cheaperNearbyList, '2km')
+    : null
+  const quickReadCopy = answerCopy ?? priceMissingCopy
+  const nearestCheaper = currentPrice === null
+    ? null
+    : nearbyPubs.find(nearby => nearby.price !== null && nearby.price < currentPrice)
+  const faqItems: PubFaq[] = [
+    {
+      question: faqQuestion('price', String(pub.id), pub.name),
+      answer: faqPriceAnswer({
+        pub: pub.name,
+        suburb: pub.suburb,
+        price: standardPrice,
+        suburbAvg: avgPrice,
+        checkedDate,
+      }),
+    },
+    {
+      question: faqQuestion('happyHour', String(pub.id), pub.name),
+      answer: faqHappyHourAnswer({
+        pub: pub.name,
+        days: happyHourDaysText,
+        start: happyHourStartText,
+        end: happyHourEndText,
+        hhPrice: pub.happyHourPrice,
+      }),
+    },
+    {
+      question: faqQuestion('nearby', String(pub.id), pub.name),
+      answer: faqNearbyAnswer(
+        nearestCheaper && currentPrice !== null && nearestCheaper.price !== null
+          ? {
+            cheaperPub: nearestCheaper.name,
+            distance: nearestCheaper.distanceKm !== null && nearestCheaper.distanceKm !== undefined
+              ? formatDistance(nearestCheaper.distanceKm)
+              : nearestCheaper.suburb,
+            price: nearestCheaper.price,
+            delta: currentPrice - nearestCheaper.price,
+          }
+          : null,
+      ),
+    },
+  ].filter((item): item is PubFaq => Boolean(item.answer))
+  const showFaq = faqItems.length >= 3
 
   return (
     <div className="min-h-screen bg-[#FDF8F0]">
@@ -167,14 +292,30 @@ export default function PubDetailClient({
               <span className="font-mono text-[0.6rem] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full border border-gray-light text-gray-mid">{pub.vibeTag}</span>
             )}
           </div>
+          {subtitle && (
+            <p className="mt-3 max-w-[36rem] font-body text-[0.95rem] leading-relaxed text-gray-mid">{subtitle}</p>
+          )}
         </div>
 
         {/* Two-column layout */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
           {/* Left column */}
           <div className="space-y-8">
+            {(quickReadCopy || bestTimeCopy || nearbySummary) && (
+              <section className="border-3 border-ink rounded-card bg-ink p-5 text-white shadow-hard-sm">
+                <p className="font-mono text-[0.68rem] font-bold uppercase tracking-[0.1em] text-white/55 mb-2">Quick read</p>
+                {quickReadCopy && (
+                  <p className="font-mono text-[1.05rem] font-extrabold leading-snug tracking-[-0.02em]">{quickReadCopy}</p>
+                )}
+                <div className="mt-4 space-y-3 border-t border-white/15 pt-4">
+                  {bestTimeCopy && <p className="font-body text-[0.84rem] leading-relaxed text-white/75">{bestTimeCopy}</p>}
+                  {nearbySummary && <p className="font-body text-[0.84rem] leading-relaxed text-white/75">{nearbySummary}</p>}
+                </div>
+              </section>
+            )}
+
             {/* Price block */}
-            <div className="border-3 border-ink rounded-card p-5 shadow-hard-sm">
+            <div className="border-3 border-ink rounded-card bg-white p-5 shadow-hard-sm">
               <div className="flex items-end justify-between">
                 <div>
                   <p className="font-mono text-[0.68rem] font-bold uppercase tracking-[0.1em] text-gray-mid mb-1">Pint Price</p>
@@ -250,11 +391,11 @@ export default function PubDetailClient({
                   )}
                   {pub.happyHourDays && pub.happyHourStart && pub.happyHourEnd ? (
                     <p className="text-[0.8rem] text-gray-mid mt-1">
-                      {formatHappyHourDays(pub.happyHourDays)} · {formatHappyHourTime(pub.happyHourStart, pub.happyHourEnd)}
+                      {formatReadableHappyHourDays(pub.happyHourDays)} · {formatHappyHourTime(pub.happyHourStart, pub.happyHourEnd)}
                     </p>
                   ) : (
                     <>
-                      {pub.happyHourDays && <p className="text-[0.8rem] text-gray-mid mt-1">{formatHappyHourDays(pub.happyHourDays)}</p>}
+                      {pub.happyHourDays && <p className="text-[0.8rem] text-gray-mid mt-1">{formatReadableHappyHourDays(pub.happyHourDays)}</p>}
                       {pub.happyHourStart && pub.happyHourEnd && (
                         <p className="text-[0.8rem] text-gray-mid">{formatHappyHourTime(pub.happyHourStart, pub.happyHourEnd)}</p>
                       )}
@@ -321,11 +462,14 @@ export default function PubDetailClient({
 
         {/* Nearby Pubs */}
         {nearbyPubs.length > 0 && (
-          <div className="mt-8 border-3 border-ink rounded-card shadow-hard-sm overflow-hidden">
+          <section className="mt-8 border-3 border-ink rounded-card bg-white shadow-hard-sm overflow-hidden">
             <div className="px-4 py-3 border-b border-gray-light flex items-center justify-between">
-              <h2 className="font-mono font-extrabold text-[0.85rem] text-ink uppercase tracking-[0.05em]">
-                {hasCheaperNearby ? 'Cheaper nearby' : 'Nearby verified prices'}
-              </h2>
+              <div>
+                <h2 className="font-mono font-extrabold text-[0.85rem] text-ink uppercase tracking-[0.05em]">
+                  {hasCheaperNearby ? 'Cheaper nearby' : 'Nearby verified prices'}
+                </h2>
+                {nearbySummary && <p className="mt-1 text-[0.72rem] leading-snug text-gray-mid">{nearbySummary}</p>}
+              </div>
               <Link
                 href={suburbUrl(pub.suburb)}
                 className="font-mono text-[0.7rem] font-bold text-amber hover:underline no-underline whitespace-nowrap"
@@ -374,7 +518,26 @@ export default function PubDetailClient({
                 </Link>
               )
             })}
-          </div>
+          </section>
+        )}
+
+        {showFaq && (
+          <section className="border-3 border-ink rounded-card bg-white p-5 shadow-hard-sm">
+            <div className="mb-4 flex items-center justify-between gap-3">
+              <h2 className="font-mono font-extrabold text-[0.85rem] text-ink uppercase tracking-[0.05em]">
+                {pub.name} pint FAQ
+              </h2>
+              <span className="font-mono text-[0.65rem] font-bold text-amber">{faqItems.length} answers</span>
+            </div>
+            <div className="grid gap-3 md:grid-cols-3">
+              {faqItems.map(item => (
+                <div key={item.question} className="rounded-card border border-gray-light bg-off-white p-4">
+                  <h3 className="font-mono text-[0.78rem] font-extrabold leading-snug text-ink">{item.question}</h3>
+                  <p className="mt-2 font-body text-[0.78rem] leading-relaxed text-gray-mid">{item.answer}</p>
+                </div>
+              ))}
+            </div>
+          </section>
         )}
       </div>
 
