@@ -10,6 +10,11 @@ Stack, database, routes, components, and lib files are documented in `CLAUDE.md`
 
 ## What's done recently
 
+### Editorial/page-depth measurement ready (2026-06-03)
+- **Issue #140 / branch `codex/measure-editorial-impact-140` / commit `c587238`:** added one Vercel+GA4 event helper and tracked link wrapper, then wired article hub/rail/detail clicks, article-to-pub clicks, report-price CTAs, pub-page nearby/internal clicks, and website/directions clicks so the page-depth/editorial push can be measured instead of guessed.
+- **Snapshot process:** expanded `docs/seo-snapshots/TEMPLATE.md` with editorial URL baselines, article engagement metrics, pub-page engagement events, and thin-content watch notes for the first weekly baseline.
+- **Verification:** verified `npx tsc --noEmit`, `git diff --check`, `npm run lint` (existing warnings only), `npm test` (**249/249 tests**), `npm run test:e2e` (**4/4 Playwright tests**), `npm run build`, reviewer sub-agent LGTM, and desktop/mobile screenshots for `/articles`, `/articles/pints-under-10-perth`, and `/perth/18-knots-rooftop-bar` under `/tmp/perth-pint-prices-measure-140/`.
+
 ### Pub-page depth work in progress (2026-06-03)
 - **Issue #138 / branch `codex/pub-page-depth-138` / commits `6c737d6`, `c690a0f`:** added fact-earned pub-page quick reads, cleaner price-card contrast, best-time/nearby summary copy, gated seeded mini FAQs for pubs with enough real answers, and de-duplicated metadata via the pub voice builders. Reviewer follow-up normalized happy-hour metadata labels, removed duplicate Tier-C stub copy, and updated PR proof for the new nearby heading states. Visual proof covers priced, Tier-C, and FAQ-rich pub states under `/tmp/perth-pint-prices-pub-depth-138/`.
 - **Verification:** verified `npx tsc --noEmit`, `git diff --check`, `npm run lint` (existing warnings only), `npm test` (**249/249 tests**), `npm run test:e2e` (**4/4 Playwright tests**), `npm run build`, and desktop/mobile browser screenshots.
