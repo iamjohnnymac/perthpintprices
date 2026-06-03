@@ -14,6 +14,7 @@ const lines = [
   `- [Tonight's Best Bets](${BASE_URL}/insights/tonights-best-bets): live happy-hour and value picks for tonight.`,
   `- [Suburb Rankings](${BASE_URL}/insights/suburb-rankings): suburb-by-suburb pint-price comparisons.`,
   `- [Happy Hours](${BASE_URL}/happy-hour): current happy-hour finder for Perth pubs.`,
+  `- [Cheapest Pints](${BASE_URL}/cheapest-pints): live ranked list of the cheapest verified regular pint prices in Perth.`,
   `- [Discover](${BASE_URL}/discover): searchable pub and pint-price directory.`,
   `- [Articles](${BASE_URL}/articles): pub and drinking explainers with PPP data attached.`,
   ...articles.map(article => `- [${article.title}](${BASE_URL}${articleUrl(article.slug)}): ${article.description}`),
