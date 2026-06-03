@@ -10,6 +10,12 @@ Stack, database, routes, components, and lib files are documented in `CLAUDE.md`
 
 ## What's done recently
 
+### Article rails + page-depth hubs ready for preview (2026-06-03)
+- **Branch `codex/hub-article-rails` / commits `ae5b705`, `063f5e8`, `fff9bc5`, `84b9402`:** added the article rail system to Home/Discover, fact-checked the three new pub articles, wired the generated article image set under `public/articles/`, and added reusable image slots for the article hub/rails.
+- **Page-depth modules:** beefed out `/happy-hour` with a live happy-hour board, `/suburbs` with data-led suburb rails, and dynamic suburb pages with verified-price story cards, local FAQs, and FAQPage JSON-LD.
+- **Data-source corrections:** suburb summaries now use verified regular pint prices for `verifiedCount`, cheapest, most expensive, and averages, so metadata, crawler text, nearby chips, and visible suburb copy do not mix live happy-hour prices into regular-price claims. Article dates are formatted in `Australia/Perth` to avoid SSR/client date drift.
+- **Verification:** verified `npx tsc --noEmit`, `npm run lint` (existing warnings only), `npm test` (**249/249 tests**), `npm run build`, reviewer sub-agent LGTM, and desktop/mobile browser evidence under `/tmp/perth-pint-prices-depth-final-aggregate/`.
+
 ### Page-depth audit + articles system shipped locally (2026-06-03)
 - **Branch `codex/articles-system` / commits `a6ef748`, `7443705`:** added the page-depth editorial audit (`docs/page-depth-editorial-plan.md`) and the first pub editorial article system. New routes are `/articles` plus three SSG article pages: `/articles/pints-under-10-perth`, `/articles/perth-happy-hours-by-day`, and `/articles/proper-pint-schooner-middy-perth`.
 - **Editorial plumbing:** articles are driven from `src/lib/articles.ts`, wired into footer/mobile/sub-page nav, `sitemap.xml`, and `/llms.txt`. Article detail pages emit canonical metadata and BlogPosting JSON-LD, and can render live pub-data modules for verified sub-$10 pints, happy hours by day, and glass-size explainers.
