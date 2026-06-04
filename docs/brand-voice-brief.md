@@ -94,7 +94,7 @@ The Perth feel should come from **specifics and a dry turn of phrase**, not a pi
 - One understated local turn per paragraph, maximum — *no muss, no fuss*, *safe as houses*, *Freo* — never a string of them.
 - **No exclamation-mark boosterism.** "Scorcher! Grab a cold one!" is the corniest tell there is. A scanner doesn't need shouting at.
 - Let the price be the dry punchline: *"A pint under $10. Yes, still."* beats *"Unreal cheap pints, legends!"*
-- Use *schooner / pint / pot* precisely; *Freo* in body, *Fremantle* in titles and schema.
+- Use *schooner / pint / middy* precisely (a Perth middy, not an east-coast pot); *Freo* in body, *Fremantle* in titles and schema.
 
 ### 6. Lead decisions, not gestures (hardest on H1s and CTAs)
 
@@ -128,7 +128,7 @@ Exceptions: proper nouns and pub names as written; quoted source material; code 
 
 ### Local lexicon
 
-*Freo* is welcome in body copy; use *Fremantle* in titles, H1s, and schema. *Schooner / pint / pot* are precise — use the right one. *Sundowner, knock-off, bottle-o, servo, arvo* are fair game in cheeky surfaces, not in schema or meta descriptions.
+*Freo* is welcome in body copy; use *Fremantle* in titles, H1s, and schema. *Schooner / pint / middy* are precise — use the right one (Perth's small glass is a middy, not a pot). *Sundowner, knock-off, bottle-o, servo, arvo* are fair game in cheeky surfaces, not in schema or meta descriptions.
 
 ### Prices, numbers, units
 
