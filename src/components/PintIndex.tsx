@@ -241,7 +241,7 @@ export default function PintIndex() {
 
   const sparkData = snapshots.map(s => s.avg_price);
   const trendIcon = monthChange > 0 ? '\u25b2' : monthChange < 0 ? '\u25bc' : '\u2014';
-  const trendColor = monthChange > 0 ? 'text-coral' : monthChange < 0 ? 'text-amber' : 'text-yellow-500';
+  const trendColor = monthChange > 0 ? 'text-red' : monthChange < 0 ? 'text-amber' : 'text-yellow-500';
 
   return (
     <Card 
@@ -255,7 +255,7 @@ export default function PintIndex() {
           <div className="flex items-center gap-3">
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="text-lg font-semibold font-heading text-ink flex items-center">Perth Pint Index{'\u2122'}</h3>
+                <h3 className="type-card text-lg flex items-center">Perth Pint Index{'\u2122'}</h3>
                 <span className="text-[10px] px-1.5 py-0 border border-gray rounded-pill text-gray-mid">
                   LIVE
                 </span>
@@ -289,10 +289,10 @@ export default function PintIndex() {
                 <div className="text-sm font-bold text-ink mt-1">{current.cheapest_suburb}</div>
                 <div className="text-xs text-amber font-mono">avg ${current.cheapest_suburb_avg.toFixed(2)}/pint</div>
               </div>
-              <div className="bg-coral/10 rounded-xl p-3">
-                <div className="text-[10px] text-coral font-semibold">▲ Priciest Suburb</div>
+              <div className="bg-red/10 rounded-xl p-3">
+                <div className="text-[10px] text-red font-semibold">▲ Priciest Suburb</div>
                 <div className="text-sm font-bold text-ink mt-1">{current.most_expensive_suburb}</div>
-                <div className="text-xs text-coral font-mono">avg ${current.most_expensive_suburb_avg.toFixed(2)}/pint</div>
+                <div className="text-xs text-red font-mono">avg ${current.most_expensive_suburb_avg.toFixed(2)}/pint</div>
               </div>
             </div>
 
@@ -300,7 +300,7 @@ export default function PintIndex() {
             <div className="flex items-center justify-between mt-4 px-1">
               <div>
                 <div className="text-[10px] text-gray-mid font-medium">Overall Change</div>
-                <div className={`text-lg font-bold font-mono ${yearChange > 0 ? 'text-coral' : 'text-amber'}`}>
+                <div className={`text-lg font-bold font-mono ${yearChange > 0 ? 'text-red' : 'text-amber'}`}>
                   {yearChange >= 0 ? '+' : ''}{yearPct.toFixed(1)}%
                 </div>
               </div>

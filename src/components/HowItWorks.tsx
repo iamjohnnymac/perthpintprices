@@ -51,7 +51,7 @@ export default function HowItWorks({ venueCount = 0, suburbCount = 0 }: HowItWor
                 className="border-3 border-ink rounded-card bg-off-white shadow-hard-sm p-5"
               >
                 <Icon className="w-8 h-8 text-amber mb-3" strokeWidth={2} />
-                <h3 className="font-mono text-[0.8rem] font-bold tracking-[0.02em] text-ink mb-2">
+                <h3 className="type-card mb-2">
                   {feature.heading}
                 </h3>
                 <p className="font-body text-[0.85rem] text-gray-mid font-medium leading-relaxed">

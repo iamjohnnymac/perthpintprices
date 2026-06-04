@@ -77,8 +77,8 @@ export default async function TransportHubPage({ hub }: TransportHubPageProps) {
       <section className="max-w-container mx-auto px-6 pt-8 pb-12">
         <div className="grid gap-6 sm:grid-cols-[1fr_260px] sm:items-end">
           <div>
-            <p className="mb-3 font-mono text-[0.68rem] font-bold uppercase text-gray-mid">Transport pub guide</p>
-            <h1 className="font-display text-[3rem] leading-[1] text-ink sm:text-[4.7rem]">
+            <p className="mb-3 type-eyebrow">Transport pub guide</p>
+            <h1 className="type-hero-editorial">
               Pubs near {hub.name}
             </h1>
             <p className="mt-5 max-w-[620px] font-body text-[0.96rem] leading-relaxed text-gray-mid">
@@ -97,7 +97,7 @@ export default async function TransportHubPage({ hub }: TransportHubPageProps) {
                 {hub.shortName}
               </div>
               <div>
-                <p className="font-mono text-[0.65rem] font-bold uppercase text-gray-mid">Search radius</p>
+                <p className="type-eyebrow">Search radius</p>
                 <p className="mt-1 font-mono text-4xl font-extrabold text-ink">{hub.radiusKm.toFixed(1)}km</p>
               </div>
             </div>
@@ -105,8 +105,8 @@ export default async function TransportHubPage({ hub }: TransportHubPageProps) {
         </div>
 
         <section className="my-8 rounded-card border-3 border-ink bg-ink p-5 text-white shadow-hard-sm">
-          <p className="font-mono text-[0.65rem] font-bold uppercase text-white/55">Answer first</p>
-          <h2 className="mt-2 font-mono text-xl font-extrabold">What is the best pub near {hub.name}?</h2>
+          <p className="type-eyebrow text-white/55">Answer first</p>
+          <h2 className="mt-2 type-section text-white">What is the best pub near {hub.name}?</h2>
           <p className="mt-3 font-body text-[0.9rem] leading-relaxed text-white/70">
             {closest ? <>The closest pub in the current dataset is <Link href={pubUrl(closest)} className="font-bold text-amber-light hover:underline">{closest.name}</Link> in {closest.suburb}, about {formatDistance(closest.distanceKm)} direct from {hub.shortName}. {cheapest ? <>The cheapest verified regular pint nearby is {formatPrice(cheapest.regularPrice)} at {cheapest.name}.</> : <>We do not have a verified regular pint price for this hub yet.</>} {hub.answerNote}</> : <>We do not have enough nearby pub data for this hub yet.</>}
           </p>
@@ -114,17 +114,17 @@ export default async function TransportHubPage({ hub }: TransportHubPageProps) {
 
         <section className="mb-8 grid gap-3 sm:grid-cols-3">
           <div className="rounded-card border-3 border-ink bg-white p-5 shadow-hard-sm">
-            <p className="font-mono text-[0.65rem] font-bold uppercase text-gray-mid">Nearby pubs</p>
+            <p className="type-eyebrow">Nearby pubs</p>
             <p className="mt-2 font-mono text-3xl font-extrabold text-ink">{nearbyPubs.length}</p>
             <p className="mt-2 text-[0.76rem] leading-relaxed text-gray-mid">Within {hub.radiusKm.toFixed(1)}km direct of {hub.shortName}.</p>
           </div>
           <div className="rounded-card border-3 border-ink bg-white p-5 shadow-hard-sm">
-            <p className="font-mono text-[0.65rem] font-bold uppercase text-gray-mid">Closest</p>
+            <p className="type-eyebrow">Closest</p>
             <p className="mt-2 font-mono text-3xl font-extrabold text-ink">{closest ? formatDistance(closest.distanceKm) : 'TBC'}</p>
             <p className="mt-2 text-[0.76rem] leading-relaxed text-gray-mid">{closest ? `${closest.name}, ${closest.suburb}` : 'Needs nearby rows.'}</p>
           </div>
           <div className="rounded-card border-3 border-ink bg-white p-5 shadow-hard-sm">
-            <p className="font-mono text-[0.65rem] font-bold uppercase text-gray-mid">Cheapest checked</p>
+            <p className="type-eyebrow">Cheapest checked</p>
             <p className="mt-2 font-mono text-3xl font-extrabold text-ink">{formatPrice(cheapest?.regularPrice)}</p>
             <p className="mt-2 text-[0.76rem] leading-relaxed text-gray-mid">{cheapest ? `${cheapest.name}, ${cheapest.suburb}` : 'No verified price yet.'}</p>
           </div>
@@ -133,8 +133,8 @@ export default async function TransportHubPage({ hub }: TransportHubPageProps) {
         <section className="rounded-card border-3 border-ink bg-white shadow-hard-sm">
           <div className="flex items-center justify-between gap-4 border-b-3 border-ink bg-off-white px-5 py-4">
             <div>
-              <p className="font-mono text-[0.65rem] font-bold uppercase text-gray-mid">Sorted by direct distance</p>
-              <h2 className="font-mono text-xl font-extrabold text-ink">Nearby rows</h2>
+              <p className="type-eyebrow">Sorted by direct distance</p>
+              <h2 className="type-section">Nearby rows</h2>
             </div>
             <MapPin className="h-5 w-5 text-amber" />
           </div>

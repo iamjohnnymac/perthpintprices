@@ -41,13 +41,14 @@
     background-color: #FDF8F0;
     -webkit-overflow-scrolling: touch;
   }
-  h1 {
+  /* Bare headings default to mono (the dominant brand heading face) as a safety
+     net only. Real styling comes from the .type-* roles below; deliberate serif
+     is opt-in via `font-display` / `.type-hero-editorial`. The old `h2,h3 -> DM
+     Serif + bold` rule was the source of accidental-serif + faux-bold headings
+     (DM Serif Display ships weight 400 only). */
+  h1, h2, h3, h4 {
     font-family: var(--font-jetbrains-mono), 'Courier New', monospace;
     @apply font-extrabold;
-  }
-  h2, h3 {
-    font-family: var(--font-dm-serif), Georgia, serif;
-    @apply font-bold;
   }
 }
 
@@ -57,6 +58,59 @@
   }
   .section-gap-sm {
     @apply py-4 sm:py-6;
+  }
+
+  /* ─── Typography system — one definition per semantic role ───────────────
+     Pins family + size + weight + tracking so components stop re-improvising
+     with arbitrary values. DM Serif Display is 400-only: never bold it. */
+
+  /* Hero on data/app pages (pub, suburb, discover) — the price-board voice */
+  .type-hero {
+    @apply font-mono font-extrabold text-ink;
+    font-size: clamp(1.9rem, 5.5vw, 2.6rem);
+    letter-spacing: -0.03em;
+    line-height: 1.05;
+  }
+  /* Hero on editorial/landing pages — DM Serif at its native 400, one size */
+  .type-hero-editorial {
+    @apply font-display font-normal text-ink;
+    font-size: clamp(2.6rem, 6vw, 4.5rem);
+    letter-spacing: -0.01em;
+    line-height: 1.04;
+  }
+  /* Section heading — "Pub Picks", "Best Sunset Spots" */
+  .type-section {
+    @apply font-mono font-extrabold text-ink text-xl;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+  }
+  /* Card title */
+  .type-card {
+    @apply font-mono font-extrabold text-ink;
+    font-size: 0.85rem;
+    letter-spacing: -0.01em;
+    line-height: 1.25;
+  }
+  /* Uppercase panel/card-section header — "CHEAPER NEARBY", "ALL VENUES",
+     "{SUBURB} PINT FAQ". Bigger + heavier than an eyebrow label. */
+  .type-card-header {
+    @apply font-mono font-extrabold uppercase text-ink;
+    font-size: 0.85rem;
+    letter-spacing: 0.05em;
+    line-height: 1.2;
+  }
+  /* Eyebrow / uppercase label */
+  .type-eyebrow {
+    @apply font-mono font-bold uppercase text-gray-mid;
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    line-height: 1.2;
+  }
+  /* Big price number (size is contextual — set per use) */
+  .type-price {
+    @apply font-mono font-extrabold text-ink;
+    letter-spacing: -0.03em;
+    line-height: 1;
   }
 }
 

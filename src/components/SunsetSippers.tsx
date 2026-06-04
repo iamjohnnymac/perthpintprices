@@ -202,7 +202,7 @@ export default function SunsetSippers({ pubs, userLocation }: SunsetSippersProps
       <section>
         <div className="border-3 border-ink rounded-card shadow-hard-sm bg-white overflow-hidden">
           <div className="px-5 py-4 border-b-3 border-ink bg-ink">
-            <h2 className="font-mono text-[0.75rem] font-bold uppercase tracking-[0.08em] text-white">
+            <h2 className="type-card-header text-white">
               Today&apos;s Sunset
             </h2>
           </div>
@@ -269,10 +269,10 @@ export default function SunsetSippers({ pubs, userLocation }: SunsetSippersProps
                     </>
                   )}
                   {/* Labels */}
-                  <text x="8" y={arcCenterY + 16} fontSize="10" fill="#8A8A85" fontFamily="monospace" fontWeight="600">
+                  <text x="8" y={arcCenterY + 16} fontSize="10" fill="#8A8A85" fontFamily="var(--font-jetbrains-mono), monospace" fontWeight="600">
                     {formatTime(sunTimes.sunrise).replace(' ', '')}
                   </text>
-                  <text x={arcWidth - 78} y={arcCenterY + 16} fontSize="10" fill="#D4740A" fontFamily="monospace" fontWeight="600">
+                  <text x={arcWidth - 78} y={arcCenterY + 16} fontSize="10" fill="#D4740A" fontFamily="var(--font-jetbrains-mono), monospace" fontWeight="600">
                     {formatTime(sunTimes.sunset).replace(' ', '')}
                   </text>
                 </svg>
@@ -304,7 +304,7 @@ export default function SunsetSippers({ pubs, userLocation }: SunsetSippersProps
       <section>
         <div className="flex items-baseline justify-between mb-5">
           <div>
-            <h2 className="font-mono font-extrabold text-xl tracking-[-0.02em] text-ink">Best Sunset Spots</h2>
+            <h2 className="type-section">Best Sunset Spots</h2>
             <p className="text-sm text-gray-mid mt-1">{sunsetPubs.length} west-facing pubs for golden hour pints</p>
           </div>
           {cheapestSunset && (

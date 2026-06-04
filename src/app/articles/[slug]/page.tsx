@@ -160,8 +160,8 @@ function Under10Module({ pubs, articleSlug }: { pubs: Pub[]; articleSlug: string
     <section className="rounded-card border-3 border-ink bg-white p-5 shadow-hard-sm">
       <div className="mb-4 flex items-center justify-between gap-4">
         <div>
-          <p className="font-mono text-[0.65rem] font-bold uppercase text-gray-mid">Live rows</p>
-          <h2 className="font-mono text-xl font-extrabold text-ink">Verified under $10</h2>
+          <p className="type-eyebrow">Live rows</p>
+          <h2 className="type-section">Verified under $10</h2>
         </div>
         <Beer className="h-5 w-5 text-amber" />
       </div>
@@ -208,8 +208,8 @@ function HappyHoursByDayModule({ pubs, articleSlug }: { pubs: Pub[]; articleSlug
     <section className="rounded-card border-3 border-ink bg-white p-5 shadow-hard-sm">
       <div className="mb-4 flex items-center justify-between gap-4">
         <div>
-          <p className="font-mono text-[0.65rem] font-bold uppercase text-gray-mid">Planning board</p>
-          <h2 className="font-mono text-xl font-extrabold text-ink">Happy hours by day</h2>
+          <p className="type-eyebrow">Planning board</p>
+          <h2 className="type-section">Happy hours by day</h2>
         </div>
         <Clock className="h-5 w-5 text-amber" />
       </div>
@@ -253,8 +253,8 @@ function GlassSizesModule() {
     <section className="rounded-card border-3 border-ink bg-white p-5 shadow-hard-sm">
       <div className="mb-4 flex items-center justify-between gap-4">
         <div>
-          <p className="font-mono text-[0.65rem] font-bold uppercase text-gray-mid">Reference</p>
-          <h2 className="font-mono text-xl font-extrabold text-ink">Glass sizes we care about</h2>
+          <p className="type-eyebrow">Reference</p>
+          <h2 className="type-section">Glass sizes we care about</h2>
         </div>
         <GlassWater className="h-5 w-5 text-amber" />
       </div>
@@ -326,7 +326,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
               {article.readingMinutes} min
             </span>
           </div>
-          <h1 className="font-display text-[3rem] leading-[1] text-ink sm:text-[5rem]">
+          <h1 className="type-hero-editorial">
             {article.title}
           </h1>
           <p className="mt-5 max-w-[660px] font-body text-[1rem] leading-relaxed text-gray-mid">
@@ -337,13 +337,13 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
         <div className="mb-8 overflow-hidden rounded-card border-3 border-ink bg-white shadow-hard-sm">
           <div className="grid sm:grid-cols-[1fr_210px]">
             <div className="bg-ink p-5 text-white sm:p-6">
-              <p className="font-mono text-[0.68rem] font-bold uppercase text-white/60">Article brief</p>
+              <p className="type-eyebrow text-white/60">Article brief</p>
               <p className="mt-3 max-w-[470px] font-body text-[0.92rem] leading-relaxed text-white/75">
                 Read the note, then use the live rows below to turn it into a useful pub decision.
               </p>
             </div>
             <div className="border-t-3 border-ink bg-amber p-5 sm:border-l-3 sm:border-t-0">
-              <p className="font-mono text-[0.62rem] font-bold uppercase text-ink/70">{article.heroLabel}</p>
+              <p className="type-eyebrow text-ink/70">{article.heroLabel}</p>
               <p className="mt-2 font-mono text-[2rem] font-extrabold leading-none text-ink">{article.heroStat}</p>
               <p className="mt-2 font-body text-[0.78rem] font-bold text-ink/70">{article.heroSubstat}</p>
             </div>
@@ -365,7 +365,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
             const inlineImage = sectionImages.get(section.heading)
             return (
               <section key={section.heading}>
-                <h2 className="font-mono text-xl font-extrabold text-ink">{section.heading}</h2>
+                <h2 className="type-section">{section.heading}</h2>
                 <div className="mt-3 space-y-3">
                   {section.body.map(paragraph => (
                     <p key={paragraph} className="font-body text-[0.92rem] leading-relaxed text-gray-mid">

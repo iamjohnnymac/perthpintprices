@@ -20,8 +20,8 @@ export default function SocialProof({ avgPrice, venueCount, onSubmitClick }: Soc
         {/* Stat + context */}
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
           <div className="inline-flex items-baseline gap-2 border-3 border-ink rounded-pill px-7 py-3 bg-white shadow-hard-sm">
-            <span className="font-mono text-[0.65rem] font-bold uppercase tracking-[0.08em] text-gray-mid">Avg pint</span>
-            <span className="font-mono text-[1.4rem] font-extrabold tracking-[-0.02em] text-ink">${avgPrice}</span>
+            <span className="type-eyebrow">Avg pint</span>
+            <span className="type-price text-[1.4rem]">${avgPrice}</span>
           </div>
           <span className="font-mono text-[0.7rem] text-gray-mid tracking-[0.02em]">
             across {venueCount} Perth venues
@@ -29,7 +29,7 @@ export default function SocialProof({ avgPrice, venueCount, onSubmitClick }: Soc
         </div>
 
         {/* CTA */}
-        <h2 className="text-[clamp(1.5rem,4vw,2rem)] text-ink mb-2">
+        <h2 className="font-mono font-extrabold text-[clamp(1.5rem,4vw,2rem)] text-ink mb-2">
           Know a price we&apos;re missing?
         </h2>
         <p className="font-body text-[0.95rem] text-gray-mid font-medium mb-6">

@@ -47,12 +47,12 @@ function LiveHappyHourBanner({ pubs }: { pubs: Pub[] }) {
       <div className="bg-ink border-3 border-ink rounded-pill px-6 py-3 flex items-center gap-3 shadow-hard">
         <div className="flex items-center gap-1.5 flex-shrink-0">
           <span className="w-2 h-2 rounded-full bg-green shadow-[0_0_8px_rgba(45,122,61,0.5)] animate-pulse" />
-          <span className="font-mono font-bold text-[0.72rem] uppercase tracking-[0.05em] text-white">Live</span>
+          <span className="type-eyebrow text-white">Live</span>
         </div>
         <span className="text-white font-medium text-[0.85rem] flex-1 truncate transition-opacity duration-300" key={current.slug}>
           <strong className="text-amber-light font-bold">{current.name}</strong> has ${current.price?.toFixed(2)} pints right now
         </span>
-        <span className="font-mono font-extrabold text-[1.1rem] text-amber-light flex-shrink-0">
+        <span className="type-price text-[1.1rem] text-amber-light flex-shrink-0">
           ${current.price?.toFixed(2)}
         </span>
         {liveHHPubs.length > 1 && (
@@ -77,7 +77,7 @@ function LoadingSkeleton() {
             <div className="absolute -right-[14px] top-[12px] w-[12px] h-[28px] border-3 border-ink border-l-0 rounded-[0_8px_8px_0] bg-white" />
           </div>
         </div>
-        <span className="font-mono text-[0.75rem] font-bold uppercase tracking-[0.1em] text-gray-mid">Loading pubs...</span>
+        <span className="type-eyebrow">Loading pubs...</span>
       </div>
     </main>
   )

@@ -62,10 +62,10 @@ export default function PintIndexPage({ stats }: { stats: PintIndexAnswerStats }
         >
           <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
             <div>
-              <p className="font-mono text-[0.65rem] font-bold uppercase tracking-[0.08em] text-gray-mid mb-2">
+              <p className="type-eyebrow mb-2">
                 Methodology
               </p>
-              <h2 className="font-mono font-extrabold text-xl tracking-[-0.02em] text-ink">
+              <h2 className="type-section">
                 How the Index works
               </h2>
             </div>
@@ -78,7 +78,7 @@ export default function PintIndexPage({ stats }: { stats: PintIndexAnswerStats }
           </div>
           <div className="mt-5 grid gap-4 sm:grid-cols-2">
             <div className="border border-gray-light rounded-card bg-off-white p-4">
-              <h3 className="font-mono text-[0.75rem] font-bold uppercase tracking-[0.06em] text-ink mb-2">
+              <h3 className="type-eyebrow text-ink mb-2">
                 What we count
               </h3>
               <p className="font-body text-[0.85rem] leading-relaxed text-gray-mid">
@@ -86,7 +86,7 @@ export default function PintIndexPage({ stats }: { stats: PintIndexAnswerStats }
               </p>
             </div>
             <div className="border border-gray-light rounded-card bg-off-white p-4">
-              <h3 className="font-mono text-[0.75rem] font-bold uppercase tracking-[0.06em] text-ink mb-2">
+              <h3 className="type-eyebrow text-ink mb-2">
                 How prices are checked
               </h3>
               <p className="font-body text-[0.85rem] leading-relaxed text-gray-mid">

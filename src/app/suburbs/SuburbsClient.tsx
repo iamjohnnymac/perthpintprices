@@ -106,7 +106,7 @@ export default function SuburbsClient({ suburbs }: SuburbsClientProps) {
       <div className="max-w-container mx-auto px-6 pb-12">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="font-mono font-extrabold text-[clamp(1.8rem,5vw,2.4rem)] tracking-[-0.03em] text-ink leading-[1.1] mb-2">
+          <h1 className="type-hero mb-2">
             Pint prices by Perth suburb
           </h1>
           <p className="font-body text-[0.9rem] leading-relaxed text-gray-mid">
@@ -135,7 +135,7 @@ export default function SuburbsClient({ suburbs }: SuburbsClientProps) {
                     <Icon className="h-4 w-4" aria-hidden="true" />
                   </div>
                   <div className="min-w-0">
-                    <h3 className="font-mono text-[0.82rem] font-extrabold text-ink">{title}</h3>
+                    <h3 className="type-card">{title}</h3>
                     <p className="mt-1 font-body text-[0.72rem] leading-snug text-gray-mid">{caption}</p>
                   </div>
                 </div>

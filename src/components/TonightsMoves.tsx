@@ -140,7 +140,7 @@ export default function TonightsMoves({ pubs, userLocation }: TonightsMovesProps
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="font-mono text-[0.85rem] font-extrabold text-ink">{`Tonight's Best Bets`}</h3>
+                <h3 className="type-card">{`Tonight's Best Bets`}</h3>
                 <span className="font-mono text-[0.6rem] text-gray-mid">{formatPerthTime(clockInstant)} AWST</span>
               </div>
               <p className="font-body text-[0.75rem] text-gray-mid">{summaryText}</p>
@@ -157,7 +157,7 @@ export default function TonightsMoves({ pubs, userLocation }: TonightsMovesProps
             {/* Market Tip */}
             {marketTip && (
               <div className="p-3 rounded-card bg-amber-pale border-2 border-amber/30">
-                <h4 className="font-mono text-[0.65rem] font-bold uppercase tracking-[0.05em] text-amber mb-1 flex items-center gap-1">
+                <h4 className="type-eyebrow text-amber mb-1 flex items-center gap-1">
                   <Star className="w-3 h-3" /> Market Tip
                 </h4>
                 <div className="flex items-center justify-between">
@@ -184,7 +184,7 @@ export default function TonightsMoves({ pubs, userLocation }: TonightsMovesProps
 
             {/* Best Buys */}
             <div>
-              <h4 className="font-mono text-[0.7rem] font-bold uppercase tracking-[0.05em] text-ink mb-2 flex items-center gap-1">
+              <h4 className="type-eyebrow text-ink mb-2 flex items-center gap-1">
                 <TrendingDown className="w-3.5 h-3.5" /> Best Buys
               </h4>
               <div className="space-y-0">
@@ -206,7 +206,7 @@ export default function TonightsMoves({ pubs, userLocation }: TonightsMovesProps
             {/* Active Deals */}
             {activeDeals.length > 0 && (
               <div>
-                <h4 className="font-mono text-[0.7rem] font-bold uppercase tracking-[0.05em] text-ink mb-2 flex items-center gap-1">
+                <h4 className="type-eyebrow text-ink mb-2 flex items-center gap-1">
                   <PartyPopper className="w-3.5 h-3.5" /> Happy Hour Now ({activeDeals.length})
                 </h4>
                 <div className="space-y-0">
@@ -234,7 +234,7 @@ export default function TonightsMoves({ pubs, userLocation }: TonightsMovesProps
             {/* Upcoming Deals */}
             {upcomingDeals.length > 0 && (
               <div>
-                <h4 className="font-mono text-[0.7rem] font-bold uppercase tracking-[0.05em] text-ink mb-2 flex items-center gap-1">
+                <h4 className="type-eyebrow text-ink mb-2 flex items-center gap-1">
                   <Clock className="w-3.5 h-3.5" /> Starting Soon
                 </h4>
                 <div className="space-y-0">
@@ -262,7 +262,7 @@ export default function TonightsMoves({ pubs, userLocation }: TonightsMovesProps
             {/* Hot Suburb */}
             {hotSuburb && (
               <div className="bg-off-white rounded-card p-3 text-center">
-                <h4 className="font-mono text-[0.65rem] font-bold uppercase tracking-[0.05em] text-gray-mid mb-1 flex items-center justify-center gap-1">
+                <h4 className="type-eyebrow mb-1 flex items-center justify-center gap-1">
                   <Flame className="w-3 h-3" /> Hot Suburb
                 </h4>
                 <p className="font-mono text-sm font-extrabold text-ink">{hotSuburb.name}</p>

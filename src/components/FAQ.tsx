@@ -37,7 +37,7 @@ export default function FAQ() {
   return (
     <section className="py-14 px-6 bg-off-white bg-noise relative">
       <div ref={faqRef} className={`max-w-container mx-auto reveal ${faqInView ? 'in-view' : ''}`}>
-        <h2 className="font-mono text-[0.7rem] font-bold uppercase tracking-[0.08em] text-gray-mid mb-6">
+        <h2 className="type-eyebrow mb-6">
           FAQ
         </h2>
         <div>

@@ -198,7 +198,7 @@ export default function BeerWeather({ pubs, userLocation }: BeerWeatherProps) {
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="font-mono text-[0.85rem] font-extrabold text-ink">Beer Weather</h3>
+                <h3 className="type-card">Beer Weather</h3>
                 {isWindy && (
                   <span className="font-mono text-[0.55rem] font-bold uppercase tracking-[0.05em] px-1.5 py-0.5 rounded-pill border-2 border-gray-light bg-off-white text-gray-mid flex items-center gap-1">
                     <Wind className="w-3 h-3" /> Windy
@@ -255,7 +255,7 @@ export default function BeerWeather({ pubs, userLocation }: BeerWeatherProps) {
 
             {/* Recommended Pubs */}
             <div className="flex items-center justify-between mb-3">
-              <h4 className="font-mono text-[0.7rem] font-bold uppercase tracking-[0.05em] text-ink">
+              <h4 className="type-eyebrow text-ink">
                 Recommended Right Now
               </h4>
               <span className="font-mono text-[0.65rem] text-gray-mid">
