@@ -94,7 +94,7 @@ function relatedLinkTracking(link: { href: string; label: string }) {
   }
 }
 
-function ArticleFigure({ image }: { image: ArticleInlineImage }) {
+function ArticleFigure({ image, priority = false }: { image: ArticleInlineImage; priority?: boolean }) {
   return (
     <figure className="my-5 overflow-hidden rounded-card border-3 border-ink bg-white shadow-hard-sm">
       <Image
@@ -103,6 +103,7 @@ function ArticleFigure({ image }: { image: ArticleInlineImage }) {
         width={1672}
         height={941}
         sizes="(min-width: 800px) 800px, 100vw"
+        priority={priority}
         className="h-auto w-full"
       />
       <figcaption className="border-t-3 border-ink bg-off-white px-4 py-3 font-body text-[0.76rem] leading-relaxed text-gray-mid">
@@ -350,6 +351,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
         </div>
 
         <ArticleFigure
+          priority
           image={{
             src: article.image,
             alt: article.imageAlt,
