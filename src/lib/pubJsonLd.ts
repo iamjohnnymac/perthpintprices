@@ -98,6 +98,49 @@ function buildHappyHourOpeningHours(pub: Pub): JsonLdNode | null {
   }
 }
 
+// Regular trading hours from the Places (New) backfill → one spec per period.
+// day 0..6 = Sun..Sat (Places convention, matches ORDERED_DAY_KEYS).
+function buildRegularOpeningHours(pub: Pub): JsonLdNode[] {
+  const periods = pub.googleOpeningHours?.periods
+  if (!Array.isArray(periods)) return []
+
+  const specs: JsonLdNode[] = []
+  for (const period of periods) {
+    const open = period?.open
+    const close = period?.close
+    if (!open || !close) continue
+    const dayKey = ORDERED_DAY_KEYS[open.day]
+    const dayOfWeek = dayKey ? DAY_URLS[dayKey] : null
+    if (!dayOfWeek) continue
+    const opens = toSchemaTime(`${open.hour}:${String(open.minute).padStart(2, '0')}`)
+    const closes = toSchemaTime(`${close.hour}:${String(close.minute).padStart(2, '0')}`)
+    if (!opens || !closes) continue
+    specs.push({ '@type': 'OpeningHoursSpecification', dayOfWeek, opens, closes })
+  }
+  return specs
+}
+
+// LocationFeatureSpecification list from the sourced Places attributes. Only
+// emits features Google affirms as true — no invented or false-valued features.
+const AMENITY_LABELS: Array<[keyof Pub, string]> = [
+  ['servesBeer', 'Serves beer'],
+  ['servesFood', 'Serves food'],
+  ['outdoorSeating', 'Outdoor seating'],
+  ['goodForChildren', 'Family friendly'],
+  ['goodForGroups', 'Good for groups'],
+  ['goodForWatchingSports', 'Sports on TV'],
+  ['allowsDogs', 'Dog friendly'],
+  ['liveMusic', 'Live music'],
+  ['restroom', 'Restroom'],
+  ['reservable', 'Accepts reservations'],
+]
+
+function buildAmenityFeatures(pub: Pub): JsonLdNode[] {
+  return AMENITY_LABELS
+    .filter(([key]) => pub[key] === true)
+    .map(([, name]) => ({ '@type': 'LocationFeatureSpecification', name, value: true }))
+}
+
 function buildPriceRange(price: number | null, avgPrice: number): string | null {
   if (price === null || price <= 0) return null
   if (avgPrice > 0) {
@@ -118,7 +161,9 @@ export function buildPubJsonLd(pub: Pub, avgPrice: number): JsonLdNode {
   const breadcrumbId = `${canonical}#breadcrumb`
   const dateModified = toIsoDate(pub.lastVerified)
   const priceRange = buildPriceRange(pub.regularPrice ?? pub.price, avgPrice)
-  const openingHoursSpecification = buildHappyHourOpeningHours(pub)
+  const happyHourSpec = buildHappyHourOpeningHours(pub)
+  const openingHoursSpecification = [...buildRegularOpeningHours(pub), ...(happyHourSpec ? [happyHourSpec] : [])]
+  const amenityFeature = buildAmenityFeatures(pub)
 
   const barOrPub: JsonLdNode = {
     '@type': 'BarOrPub',
@@ -144,8 +189,11 @@ export function buildPubJsonLd(pub: Pub, avgPrice: number): JsonLdNode {
 
   if (pub.website) barOrPub.url = pub.website
   if (priceRange) barOrPub.priceRange = priceRange
-  if (openingHoursSpecification) {
+  if (openingHoursSpecification.length > 0) {
     barOrPub.openingHoursSpecification = openingHoursSpecification
+  }
+  if (amenityFeature.length > 0) {
+    barOrPub.amenityFeature = amenityFeature
   }
 
   return {

@@ -118,7 +118,29 @@ function toPub(row: any): Pub {
     isHappyHourNow: hhStatus.isActive,
     happyHourLabel: hhStatus.happyHourLabel,
     happyHourMinutesRemaining: hhStatus.minutesRemaining,
+    // Google Places attributes — coerce to true/false/null (never undefined).
+    servesBeer: toBoolOrNull(row.serves_beer),
+    servesFood: toBoolOrNull(row.serves_food),
+    outdoorSeating: toBoolOrNull(row.outdoor_seating),
+    goodForChildren: toBoolOrNull(row.good_for_children),
+    goodForGroups: toBoolOrNull(row.good_for_groups),
+    goodForWatchingSports: toBoolOrNull(row.good_for_watching_sports),
+    allowsDogs: toBoolOrNull(row.allows_dogs),
+    liveMusic: toBoolOrNull(row.live_music),
+    restroom: toBoolOrNull(row.restroom),
+    reservable: toBoolOrNull(row.reservable),
+    googleRating: row.google_rating != null ? Number(row.google_rating) : null,
+    googleRatingCount: row.google_rating_count != null ? Number(row.google_rating_count) : null,
+    googlePriceLevel: row.google_price_level || null,
+    businessStatus: row.business_status || null,
+    googleEditorialSummary: row.google_editorial_summary || null,
+    googleOpeningHours: row.google_opening_hours || null,
+    googleAttrsUpdatedAt: row.google_attrs_updated_at || null,
   }
+}
+
+function toBoolOrNull(value: unknown): boolean | null {
+  return value === true ? true : value === false ? false : null
 }
 
 export async function getPubs(): Promise<Pub[]> {

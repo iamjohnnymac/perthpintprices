@@ -6,6 +6,7 @@ import dynamic from 'next/dynamic'
 import { Pub } from '@/types/pub'
 import WatchlistButton from '@/components/WatchlistButton'
 import PriceHistory from '@/components/PriceHistory'
+import GoodToKnow from '@/components/GoodToKnow'
 import SubmitPubForm from '@/components/SubmitPubForm'
 import { PenLine } from 'lucide-react'
 import { formatHappyHourDays } from '@/lib/happyHourLive'
@@ -449,6 +450,9 @@ export default function PubDetailClient({
                 <p className="text-[0.85rem] text-gray-mid leading-relaxed">{pub.description}</p>
               </div>
             )}
+
+            {/* Good to know — sourced Places attributes */}
+            <GoodToKnow pub={pub} />
 
             {/* Price History */}
             <PriceHistory pubId={pub.id} currentPrice={pub.price} />
