@@ -69,6 +69,19 @@ describe('getPubIndexability', () => {
     assert.equal(stale.dataScore, 2)
   })
 
+  it('noindexes permanently-closed venues but keeps their data tier for rendering', () => {
+    const result = getPubIndexability({
+      price: 11.5,
+      priceVerified: true,
+      lastVerified: '2026-05-31T00:00:00.000Z',
+      now: NOW,
+      businessStatus: 'CLOSED_PERMANENTLY',
+    })
+
+    assert.equal(result.isIndexable, false) // out of index + sitemap
+    assert.equal(result.tier, 'A') // tier preserved so the page doesn't show a "no price" stub
+  })
+
   it('indexes happy-hour pubs without a regular price', () => {
     const result = getPubIndexability({
       price: null,

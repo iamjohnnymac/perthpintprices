@@ -297,7 +297,7 @@ export async function getAllPubLastModifiedPairs(): Promise<PubLastModifiedPair[
 export async function getIndexablePubSlugPairs(): Promise<IndexablePubSlugPair[]> {
   const { data, error } = await supabase
     .from('pubs')
-    .select('slug, suburb, price, price_verified, last_verified, last_updated, updated_at, happy_hour, happy_hour_price, happy_hour_days, happy_hour_start, happy_hour_end, beer_type, vibe_tag, has_tab, kid_friendly, cozy_pub, sunset_spot, website')
+    .select('slug, suburb, price, price_verified, last_verified, last_updated, updated_at, happy_hour, happy_hour_price, happy_hour_days, happy_hour_start, happy_hour_end, beer_type, vibe_tag, has_tab, kid_friendly, cozy_pub, sunset_spot, website, business_status')
     .order('slug')
 
   if (error || !data) return []
@@ -323,6 +323,7 @@ export async function getIndexablePubSlugPairs(): Promise<IndexablePubSlugPair[]
         cozyPub: row.cozy_pub,
         sunsetSpot: row.sunset_spot,
         website: row.website || null,
+        businessStatus: row.business_status || null,
       })
 
       return {
