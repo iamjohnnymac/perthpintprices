@@ -36,4 +36,34 @@ export interface Pub {
   cozyPub: boolean
   effectivePrice: number | null
   distanceKm?: number | null
+  // Google Places (New) attribute backfill — sourced, attributable, often sparse.
+  // Always set by toPub() (null when Google has no signal); optional so the many
+  // direct Pub fixtures/literals don't all need updating.
+  // null = unknown; false = Google says no; true = yes.
+  servesBeer?: boolean | null
+  servesFood?: boolean | null
+  outdoorSeating?: boolean | null
+  goodForChildren?: boolean | null
+  goodForGroups?: boolean | null
+  goodForWatchingSports?: boolean | null
+  allowsDogs?: boolean | null
+  liveMusic?: boolean | null
+  restroom?: boolean | null
+  reservable?: boolean | null
+  googleRating?: number | null
+  googleRatingCount?: number | null
+  googlePriceLevel?: string | null
+  businessStatus?: string | null
+  googleEditorialSummary?: string | null
+  googleOpeningHours?: GoogleOpeningHours | null
+  googleAttrsUpdatedAt?: string | null
+}
+
+// Subset of the Places (New) regularOpeningHours object we persist + render.
+export interface GoogleOpeningHours {
+  periods?: Array<{
+    open?: { day: number; hour: number; minute: number }
+    close?: { day: number; hour: number; minute: number }
+  }>
+  weekdayDescriptions?: string[]
 }

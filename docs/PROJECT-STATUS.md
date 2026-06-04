@@ -1,6 +1,6 @@
 # Perth Pint Prices Project Status
 
-Last updated: 2026-06-03
+Last updated: 2026-06-04
 
 ## What this is
 
@@ -9,6 +9,14 @@ Perth Pint Prices (perthpintprices.com) tracks pint prices across **857 Perth pu
 Stack, database, routes, components, and lib files are documented in `CLAUDE.md` (auto-loaded every session). This file covers history, recent work, and the backlog.
 
 ## What's done recently
+
+### Google Places attribute backfill + Good-to-know pub module (2026-06-04)
+- **Related to issue #78 / branch `feat/places-attribute-backfill`:** built the Google Places (New) attribute spine over the place_ids already stored on `pubs`. A single Place Details call per pub is already billed at the Enterprise+Atmosphere SKU because of the amenity booleans, so the sweep pulls everything useful in that one call at zero marginal cost — and ~857 pubs fit inside the 1,000-call/month free quota, so one sweep is $0.
+- **Migration `20260604000000_google_places_attributes.sql`:** added typed columns to `pubs` — amenity booleans (`serves_beer`, `serves_food`, `outdoor_seating`, `good_for_children`, `good_for_groups`, `good_for_watching_sports`, `allows_dogs`, `live_music`, `restroom`, `reservable`), plus `google_rating`, `google_rating_count`, `google_price_level`, `business_status`, `google_editorial_summary`, `google_opening_hours` (jsonb), and a `google_attrs_updated_at` provenance stamp. Stored **separate** from the hand-curated `kid_friendly`/`cozy_pub`/`has_tab`/`sunset_spot` columns so curation always wins; the sweep only fills a blank `website` as a freebie.
+- **Backfill script `scripts/backfill-place-attributes.mjs`:** mirrors `backfill-phones.mjs` — one FieldMask, `--dry-run` + `--limit` flags, 80ms throttle, prints a per-attribute coverage table, and guards the `business_status` CHECK constraint against unexpected enum values.
+- **Render — `GoodToKnow` component:** a compact, sourced "Good to know" chip row on the pub page (Beer garden · Dog-friendly · Shows the footy · Kids welcome · Kitchen · Live music · Good for a group · Takes bookings), plus the Google rating and editorial summary, attributed inline with the checked date. Truthful-absence: renders nothing when Google has no signal, so it is safe to deploy ahead of the sweep.
+- **Schema:** extended `buildPubJsonLd` with `amenityFeature` (only Google-affirmed true attributes) and a real `openingHoursSpecification` array built from Google's trading-hours periods. Google's star rating is shown visibly but deliberately kept **out of `aggregateRating`** to respect the locked no-self-serving-rating guardrail.
+- **Verification (in a cred-less checkout):** `npx tsc --noEmit` clean, `npm test` (**266/266 tests**, including 3 new `pubJsonLd` cases for amenity emission/omission + regular-hours mapping), and `npm run lint` clean on all changed files. **Pending a credentialed environment:** the migration apply, the Places sweep (`node scripts/backfill-place-attributes.mjs`), `npm run build`, and desktop/mobile Playwright screenshots of a populated pub page — none can run without the Google key + Supabase service role, which are not in the synced repo.
 
 ### Answer-first pint-cost page shipped (2026-06-03)
 - **Issue #27 / PR #147 / merge commit `c561fd2`:** added `/how-much-is-a-pint-in-perth` for the zero-click "how much is a pint in Perth" cluster. The page answers in the first screen with the live checked average, median, range, cheapest verified pint, glass-size notes, visible Q&A, and internal links into Cheapest Pints, Happy Hours, Pint Index, and the proper-pint explainer.

@@ -82,8 +82,10 @@ test('adds happy-hour openingHoursSpecification only for structured happy hour w
     happyHourEnd: '18:30:00',
   }), 10)
   const barOrPub = (jsonLd['@graph'] as Record<string, unknown>[])[1]
-  const openingHours = barOrPub.openingHoursSpecification as Record<string, unknown>
+  const specs = barOrPub.openingHoursSpecification as Record<string, unknown>[]
+  const openingHours = specs[0]
 
+  assert.equal(specs.length, 1)
   assert.equal(openingHours['@type'], 'OpeningHoursSpecification')
   assert.deepEqual(openingHours.dayOfWeek, [
     'https://schema.org/Monday',
@@ -94,6 +96,46 @@ test('adds happy-hour openingHoursSpecification only for structured happy hour w
   ])
   assert.equal(openingHours.opens, '17:00:00')
   assert.equal(openingHours.closes, '18:30:00')
+})
+
+test('builds regular openingHoursSpecification from Google periods (day 0 = Sunday)', () => {
+  const jsonLd = buildPubJsonLd(makePub({
+    googleOpeningHours: {
+      periods: [
+        { open: { day: 5, hour: 16, minute: 0 }, close: { day: 5, hour: 23, minute: 30 } },
+        { open: { day: 0, hour: 12, minute: 0 }, close: { day: 0, hour: 22, minute: 0 } },
+      ],
+    },
+  }), 10)
+  const barOrPub = (jsonLd['@graph'] as Record<string, unknown>[])[1]
+  const specs = barOrPub.openingHoursSpecification as Record<string, unknown>[]
+
+  assert.equal(specs.length, 2)
+  assert.equal(specs[0].dayOfWeek, 'https://schema.org/Friday')
+  assert.equal(specs[0].opens, '16:00:00')
+  assert.equal(specs[0].closes, '23:30:00')
+  assert.equal(specs[1].dayOfWeek, 'https://schema.org/Sunday')
+})
+
+test('emits amenityFeature only for Google-affirmed (true) attributes', () => {
+  const jsonLd = buildPubJsonLd(makePub({
+    outdoorSeating: true,
+    allowsDogs: true,
+    liveMusic: false,
+    goodForChildren: null,
+  }), 10)
+  const barOrPub = (jsonLd['@graph'] as Record<string, unknown>[])[1]
+  const features = barOrPub.amenityFeature as Array<{ '@type': string; name: string; value: boolean }>
+
+  const names = features.map(f => f.name)
+  assert.deepEqual(names, ['Outdoor seating', 'Dog friendly'])
+  assert.ok(features.every(f => f.value === true))
+  assert.ok(features.every(f => f['@type'] === 'LocationFeatureSpecification'))
+})
+
+test('omits amenityFeature entirely when no attribute is true', () => {
+  const barOrPub = (buildPubJsonLd(makePub(), 10)['@graph'] as Record<string, unknown>[])[1]
+  assert.equal(barOrPub.amenityFeature, undefined)
 })
 
 test('omits geo and hasMap when either coordinate is missing', () => {
