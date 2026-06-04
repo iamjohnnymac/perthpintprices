@@ -305,27 +305,33 @@ export default function SuburbClient({ suburb, pubs, nearbySuburbs, perthAvgPric
       {/* Nearby Suburbs */}
       {nearbySuburbs.length > 0 && (
         <section className="max-w-container mx-auto px-6 pb-6">
-          <div className="flex flex-wrap gap-2">
-            {nearbySuburbs.map(ns => (
-              <Link
-                key={ns.slug}
-                href={`/${ns.slug}`}
-                className="border-3 border-ink rounded-pill px-4 py-2 shadow-hard-sm hover:translate-x-[1.5px] hover:translate-y-[1.5px] hover:shadow-hard-hover transition-all no-underline group"
-              >
-                <span className="font-mono text-[0.75rem] font-bold text-ink group-hover:text-amber transition-colors">{ns.name}</span>
-                <span className="text-[0.65rem] text-gray-mid ml-2">
-                  {ns.pubCount} {ns.pubCount === 1 ? 'pub' : 'pubs'}
-                  {ns.cheapestPrice !== 'TBC' && ` · from $${ns.cheapestPrice}`}
-                  {avgNum > 0 && Number(ns.avgPrice) > 0 && (
-                    Number(ns.avgPrice) < avgNum
-                      ? <span className="text-green ml-1">cheaper</span>
-                      : Number(ns.avgPrice) > avgNum
-                        ? <span className="text-red/70 ml-1">pricier</span>
-                        : null
-                  )}
-                </span>
-              </Link>
-            ))}
+          <div className="border-3 border-ink rounded-card bg-white shadow-hard-sm overflow-hidden">
+            <div className="px-4 py-3 border-b border-gray-light flex items-center justify-between gap-3">
+              <h2 className="type-card-header">Nearby suburbs</h2>
+              <span className="font-mono text-[0.62rem] font-bold uppercase tracking-wider text-gray-mid">Compare prices</span>
+            </div>
+            <div className="p-4 flex flex-wrap gap-2">
+              {nearbySuburbs.map(ns => (
+                <Link
+                  key={ns.slug}
+                  href={`/${ns.slug}`}
+                  className="border-2 border-gray-light rounded-pill px-3.5 py-1.5 hover:border-ink hover:bg-off-white transition-all no-underline group"
+                >
+                  <span className="font-mono text-[0.72rem] font-bold text-ink group-hover:text-amber transition-colors">{ns.name}</span>
+                  <span className="text-[0.62rem] text-gray-mid ml-1.5">
+                    {ns.pubCount} {ns.pubCount === 1 ? 'pub' : 'pubs'}
+                    {ns.cheapestPrice !== 'TBC' && ` · from $${ns.cheapestPrice}`}
+                    {avgNum > 0 && Number(ns.avgPrice) > 0 && (
+                      Number(ns.avgPrice) < avgNum
+                        ? <span className="text-green ml-1">cheaper</span>
+                        : Number(ns.avgPrice) > avgNum
+                          ? <span className="text-red/70 ml-1">pricier</span>
+                          : null
+                    )}
+                  </span>
+                </Link>
+              ))}
+            </div>
           </div>
         </section>
       )}
