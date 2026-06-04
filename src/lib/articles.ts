@@ -93,7 +93,7 @@ export const articles: Article[] = [
         body: [
           "In the June 2026 snapshot, the database held 117 verified pints under $10, led by eight at $7 or less. Perth's checked-price average sits a little over $9, so a $7 pint runs about two dollars under what most of the city charges for the same 570ml.",
           "The live rows below show the cheapest current slice, pulled from the database with each pub's last-checked date attached. The prose here is the context around them: which pubs, in which suburbs, and why their prices hold. Most were last confirmed in February 2026, so treat the rows as the source of truth, not the paragraphs.",
-          "One honest caveat first: this is the cheapest we have confirmed, not the cheapest that exists. We track 857 pubs, more than 300 with a verified price so far, and plenty still at TBC. If a pub you rate isn't on the list, it usually means we haven't checked its price cleanly enough to publish — not that it has gone dear.",
+          "One honest caveat first: this is the cheapest we have confirmed, not the cheapest that exists. We track 857 pubs and plenty still sit at TBC. If a pub you rate isn't on the list, it usually means we haven't checked its price cleanly enough to publish — not that it has gone dear.",
         ],
       },
       {
@@ -101,7 +101,7 @@ export const articles: Article[] = [
         body: [
           "The cheapest verified pint in Perth is $6, for a house lager at the Fremantle Buffalo Club on High Street — last verified in our data on 2 March 2026, and well under Fremantle's all-priced suburb average of $9.11.",
           "It holds that price because it isn't really a pub. The Buffalo Club's roots are in the Antediluvian Order of Buffaloes, it moved into 54 High Street in 1938, and it was written into its own act of state parliament — the Fremantle Buffalo Club (Incorporated) Act 1964. It runs as a not-for-profit with open membership, so member pricing is the point of the place.",
-          "Our database currently lists the house lager at $6. External deal listings frame the same number as a 5pm-to-6pm weekday offer, which is exactly why the checked date matters. Cheap is useful; cheap with context is better.",
+          "Our database lists the house lager at $6. External deal listings frame the same number as a 5pm-to-6pm weekday offer, which is exactly why the checked date matters. Cheap is useful; cheap with context is better.",
         ],
       },
       {
