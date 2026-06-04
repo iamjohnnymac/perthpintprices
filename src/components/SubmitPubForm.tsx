@@ -191,7 +191,7 @@ export default function SubmitPubForm({ isOpen, onClose, userLocation, initialPu
     // Scan menu reset
     setScanStep('upload');
     setMenuImages([]);
-    setMenuPreviews([]);
+    clearMenuPreviews();
     setScanning(false);
     setExtractedItems([]);
     setScanError('');
@@ -308,7 +308,19 @@ export default function SubmitPubForm({ isOpen, onClose, userLocation, initialPu
 
   function removeMenuImage(index: number) {
     setMenuImages(prev => prev.filter((_, i) => i !== index));
-    setMenuPreviews(prev => prev.filter((_, i) => i !== index));
+    setMenuPreviews(prev => {
+      const removed = prev[index];
+      if (removed) URL.revokeObjectURL(removed);
+      return prev.filter((_, i) => i !== index);
+    });
+  }
+
+  // Revoke all preview object URLs before clearing, so we don't leak blob: handles.
+  function clearMenuPreviews() {
+    setMenuPreviews(prev => {
+      prev.forEach(url => URL.revokeObjectURL(url));
+      return [];
+    });
   }
 
   async function handleScanMenu() {
@@ -846,6 +858,7 @@ export default function SubmitPubForm({ isOpen, onClose, userLocation, initialPu
                         <div className="grid grid-cols-3 gap-2 mb-3">
                           {menuPreviews.map((preview, i) => (
                             <div key={i} className="relative">
+                              {/* eslint-disable-next-line @next/next/no-img-element -- local object-URL preview of the user's own upload; next/image can't optimize a client-side blob: URL */}
                               <img
                                 src={preview}
                                 alt={`Menu photo ${i + 1}`}
@@ -926,7 +939,7 @@ export default function SubmitPubForm({ isOpen, onClose, userLocation, initialPu
                         <p className="font-mono text-xs text-gray-mid">Try a clearer photo, or use Report Price to add manually.</p>
                         <button
                           type="button"
-                          onClick={() => { setScanStep('upload'); setMenuImages([]); setMenuPreviews([]); }}
+                          onClick={() => { setScanStep('upload'); setMenuImages([]); clearMenuPreviews(); }}
                           className="mt-3 px-4 py-2 font-mono text-xs font-bold text-ink border-2 border-ink rounded-pill hover:bg-off-white transition-all"
                         >
                           Try Again
