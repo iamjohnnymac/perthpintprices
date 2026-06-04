@@ -153,20 +153,20 @@ export default function SuburbClient({ suburb, pubs, nearbySuburbs, perthAvgPric
         if (activeHH.length === 0) return null
         return (
           <section className="max-w-container mx-auto px-6 pb-4">
-            <div className="border-3 border-red/30 rounded-card bg-red/5 overflow-hidden">
-              <div className="px-4 py-3 flex items-center gap-2">
+            <div className="border-3 border-ink rounded-card shadow-hard-sm bg-white overflow-hidden">
+              <div className="px-4 py-3 flex items-center gap-2 bg-red-pale border-b-3 border-ink">
                 <span className="w-2 h-2 rounded-full bg-red animate-pulse" />
                 <h2 className="type-card-header text-red">
                   Happy Hour Live Now
                 </h2>
-                <span className="text-[0.7rem] text-gray-mid ml-auto">{activeHH.length} {activeHH.length === 1 ? 'venue' : 'venues'}</span>
+                <span className="font-mono text-[0.62rem] font-bold uppercase tracking-wider text-red/70 ml-auto">{activeHH.length} {activeHH.length === 1 ? 'venue' : 'venues'}</span>
               </div>
-              <div className="divide-y divide-red/10">
+              <div className="divide-y divide-gray-light">
                 {activeHH.map(pub => (
                   <Link
                     key={pub.id}
                     href={`/${suburbSlug}/${pub.slug}`}
-                    className="flex items-center justify-between px-4 py-3 no-underline group hover:bg-red/5 transition-colors"
+                    className="flex items-center justify-between px-4 py-3 no-underline group hover:bg-off-white transition-colors"
                   >
                     <div className="min-w-0 flex-1">
                       <p className="font-mono text-[0.82rem] font-extrabold text-ink group-hover:text-red transition-colors truncate">{pub.name}</p>
