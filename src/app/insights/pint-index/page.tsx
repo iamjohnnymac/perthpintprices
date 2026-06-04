@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import BreadcrumbJsonLd from '@/components/BreadcrumbJsonLd'
 import { buildArticleJsonLd } from '@/lib/articleJsonLd'
 import { formatAudPrice, getPintPriceStats } from '@/lib/pintPriceStats'
+import { getPricedSuburbCount, getSuburbExtremes } from '@/lib/suburbStats'
 import { getAllPubLastModifiedPairs, getPubs } from '@/lib/supabase'
 import { pubUrl } from '@/lib/urls'
 import PintIndexPage from './PintIndexPage'
@@ -47,6 +48,24 @@ export default async function Page() {
   ])
   const latestPubModified = latestModifiedDate(pubDates)
   const stats = getPintPriceStats(pubs)
+  const { cheapest: cheapestSuburb, priciest: priciestSuburb } = getSuburbExtremes(pubs, 2)
+  const distribution: Record<string, number> = {}
+  for (const verifiedPub of stats.verifiedPubs) {
+    const floor = Math.floor(verifiedPub.regularPrice as number)
+    const bucket = `$${floor}-${floor + 1}`
+    distribution[bucket] = (distribution[bucket] || 0) + 1
+  }
+  const live = {
+    avgPrice: stats.averagePrice ?? 0,
+    medianPrice: stats.medianPrice ?? 0,
+    verifiedCount: stats.verifiedCount,
+    pricedSuburbCount: getPricedSuburbCount(pubs),
+    cheapestSuburb: cheapestSuburb?.suburb ?? '',
+    cheapestSuburbAvg: cheapestSuburb?.avgPrice ?? 0,
+    priciestSuburb: priciestSuburb?.suburb ?? '',
+    priciestSuburbAvg: priciestSuburb?.avgPrice ?? 0,
+    distribution,
+  }
   const articleJsonLd = buildArticleJsonLd({
     url: canonical,
     headline: 'Perth Pint Index: Live Beer Price Tracker',
@@ -73,7 +92,7 @@ export default async function Page() {
         <a href="/discover">Discover</a>
         <a href="/happy-hour">Happy Hours</a>
       </div>
-      <PintIndexPage stats={{
+      <PintIndexPage live={live} stats={{
         averagePrice: formatAudPrice(stats.averagePrice),
         medianPrice: formatAudPrice(stats.medianPrice),
         verifiedCount: stats.verifiedCount,

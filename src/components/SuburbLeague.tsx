@@ -5,66 +5,22 @@ import Link from 'next/link'
 import { Pub } from '@/types/pub'
 import { BarChart3 } from 'lucide-react'
 import { suburbUrl } from '@/lib/urls'
+import { getSuburbStats, type SuburbStat } from '@/lib/suburbStats'
 
-interface SuburbStats {
-  suburb: string
-  pubCount: number
-  avgPrice: number
-  minPrice: number
-  maxPrice: number
-  happyHourPct: number
-  spread: { cheap: number; mid: number; pricey: number }
-}
+// One per AFL club — the ladder runs 18 deep.
+const LEAGUE_SIZE = 18
 
 type RowItem =
   | { type: 'divider'; label: string; colorClass: string }
-  | { type: 'suburb'; pos: number; stats: SuburbStats; rowBg: string }
+  | { type: 'suburb'; pos: number; stats: SuburbStat; rowBg: string }
 
 export default function SuburbLeague({ pubs }: { pubs: Pub[] }) {
   const [isExpanded, setIsExpanded] = useState(true)
   const [sortBy, setSortBy] = useState<'avg' | 'low' | 'high' | 'hh'>('avg')
 
-  const suburbs = useMemo<SuburbStats[]>(() => {
-    const grouped: Record<string, Pub[]> = {}
-    for (const pub of pubs) {
-      if (!pub.suburb) continue
-      if (!grouped[pub.suburb]) grouped[pub.suburb] = []
-      grouped[pub.suburb].push(pub)
-    }
-
-    const stats: SuburbStats[] = []
-    for (const [suburb, subPubs] of Object.entries(grouped)) {
-      if (subPubs.length < 2) continue
-      const prices = subPubs.map(p => p.price).filter((p): p is number => p !== null && p > 0)
-      if (prices.length === 0) continue
-
-      const avg = prices.reduce((a, b) => a + b, 0) / prices.length
-      const hhCount = subPubs.filter(p => p.happyHour && p.happyHour.trim() !== '').length
-
-      // Price spread: what % of pubs are cheap/mid/pricey
-      const cheap = prices.filter(p => p <= 8).length
-      const mid = prices.filter(p => p > 8 && p <= 11).length
-      const pricey = prices.filter(p => p > 11).length
-      const total = prices.length
-
-      stats.push({
-        suburb,
-        pubCount: subPubs.length,
-        avgPrice: Math.round(avg * 100) / 100,
-        minPrice: Math.min(...prices),
-        maxPrice: Math.max(...prices),
-        happyHourPct: Math.round((hhCount / subPubs.length) * 100),
-        spread: {
-          cheap: Math.round((cheap / total) * 100),
-          mid: Math.round((mid / total) * 100),
-          pricey: Math.round((pricey / total) * 100),
-        },
-      })
-    }
-
-    stats.sort((a, b) => a.avgPrice - b.avgPrice)
-    return stats
-  }, [pubs])
+  // Canonical, shared suburb stats (verified regular-pint prices), capped to the
+  // 18-team ladder. Re-sorting reorders these same 18 by the chosen column.
+  const suburbs = useMemo(() => getSuburbStats(pubs, 2).slice(0, LEAGUE_SIZE), [pubs])
 
   const sortedSuburbs = useMemo(() => {
     const sorted = [...suburbs]
@@ -194,7 +150,7 @@ export default function SuburbLeague({ pubs }: { pubs: Pub[] }) {
                       <td className="px-2 py-2 text-center font-mono font-bold text-gray-mid text-[0.7rem]">{pos}</td>
                       <td className="px-2 py-2 text-left">
                         <Link href={suburbUrl(s.suburb)} className="font-body text-sm font-bold text-ink hover:text-amber transition-colors no-underline">{s.suburb}</Link>
-                        <span className="font-mono text-[0.6rem] text-gray-mid ml-1">({s.pubCount})</span>
+                        <span className="font-mono text-[0.6rem] text-gray-mid ml-1">({s.pricedCount})</span>
                       </td>
                       <td className="px-2 py-2 text-center font-mono font-bold text-ink text-sm">${s.avgPrice.toFixed(2)}</td>
                       <td className="px-2 py-2 text-center font-mono text-ink text-sm hidden sm:table-cell">${s.minPrice.toFixed(2)}</td>
@@ -245,7 +201,7 @@ export default function SuburbLeague({ pubs }: { pubs: Pub[] }) {
             </div>
           </div>
           <p className="font-mono text-[0.55rem] text-gray-mid text-center mt-1.5">
-            Suburbs with 2+ tracked pubs. Tap column headers to sort.
+            The cheapest 18 suburbs — one per AFL club. Need 2+ verified pints. Tap column headers to sort.
           </p>
         </div>
       )}

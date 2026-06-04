@@ -7,6 +7,8 @@ import { Pub } from '@/types/pub'
 import { getDistanceKm, formatDistance } from '@/lib/location'
 import { BarChart3, TrendingDown, TrendingUp } from 'lucide-react'
 import { pubUrl } from '@/lib/urls'
+import { getPintPriceStats, getVerifiedRegularPubs } from '@/lib/pintPriceStats'
+import { getSuburbStats } from '@/lib/suburbStats'
 
 interface VenueIntelProps {
   pubs: Pub[]
@@ -24,97 +26,60 @@ function getBracketColor(bracket: string): string {
 export default function VenueIntel({ pubs, userLocation }: VenueIntelProps) {
   const [isExpanded, setIsExpanded] = useState(true)
 
-  const priceRange = useMemo(() => {
-    if (pubs.length === 0) return { min: 0, max: 0 }
-    return {
-      min: Math.min(...pubs.filter(p => p.price !== null).map(p => p.price!)),
-      max: Math.max(...pubs.filter(p => p.price !== null).map(p => p.price!)),
-    }
-  }, [pubs])
+  // All figures use the canonical verified regular-pint set + shared suburb
+  // stats, so the cheapest/priciest suburb matches the Pint Index and Suburb
+  // Rankings instead of being computed off happy-hour-aware pub.price.
+  const verifiedPubs = useMemo(() => getVerifiedRegularPubs(pubs), [pubs])
+  const stats = useMemo(() => getPintPriceStats(pubs), [pubs])
+  const suburbStats = useMemo(() => getSuburbStats(pubs, 2), [pubs])
+
+  const priceRange = { min: stats.minPrice ?? 0, max: stats.maxPrice ?? 0 }
 
   const priceBrackets = useMemo(() => {
     const brackets: Record<string, number> = {}
     const minBracket = Math.floor(priceRange.min)
     const maxBracket = Math.floor(priceRange.max)
-    for (let i = minBracket; i <= maxBracket; i++) {
-      const key = `$${i}`
-      brackets[key] = 0
-    }
-    for (const pub of pubs) {
-      if (pub.price === null) continue; const key = `$${Math.floor(pub.price)}`
+    for (let i = minBracket; i <= maxBracket; i++) brackets[`$${i}`] = 0
+    for (const pub of verifiedPubs) {
+      const key = `$${Math.floor(pub.regularPrice as number)}`
       brackets[key] = (brackets[key] || 0) + 1
     }
-    return Object.entries(brackets).sort((a, b) => {
-      const numA = parseInt(a[0].replace('$', ''))
-      const numB = parseInt(b[0].replace('$', ''))
-      return numA - numB
-    })
-  }, [pubs, priceRange])
+    return Object.entries(brackets).sort((a, b) => parseInt(a[0].slice(1)) - parseInt(b[0].slice(1)))
+  }, [verifiedPubs, priceRange.min, priceRange.max])
 
-  const maxBracketCount = useMemo(() => {
-    return Math.max(...priceBrackets.map(([, count]) => count), 1)
-  }, [priceBrackets])
+  const maxBracketCount = useMemo(() => Math.max(...priceBrackets.map(([, count]) => count), 1), [priceBrackets])
 
-  const suburbStats = useMemo(() => {
-    const map: Record<string, { totalPrice: number; count: number }> = {}
-    for (const pub of pubs) {
-      if (!map[pub.suburb]) map[pub.suburb] = { totalPrice: 0, count: 0 }
-        if (pub.price === null) continue
-      map[pub.suburb].totalPrice += pub.price
-      map[pub.suburb].count += 1
-    }
-    return Object.entries(map).map(([name, data]) => ({
-      name,
-      avgPrice: data.totalPrice / data.count,
-      count: data.count,
-    }))
-  }, [pubs])
+  const suburbAvg = useMemo(() => {
+    const map: Record<string, number> = {}
+    for (const s of suburbStats) map[s.suburb] = s.avgPrice
+    return map
+  }, [suburbStats])
 
-  const overvalued = useMemo(() => {
-    const suburbAvg: Record<string, number> = {}
-    for (const s of suburbStats) suburbAvg[s.name] = s.avgPrice
-    return pubs
-      .filter(pub => pub.price !== null)
-      .map(pub => ({
-        pub,
-        diff: (pub.price ?? 0) - (suburbAvg[pub.suburb] || (pub.price ?? 0)),
-      }))
+  const undervalued = useMemo(() =>
+    verifiedPubs
+      .map(pub => ({ pub, diff: (suburbAvg[pub.suburb] ?? (pub.regularPrice as number)) - (pub.regularPrice as number) }))
       .filter(e => e.diff > 0)
       .sort((a, b) => b.diff - a.diff)
       .slice(0, 10)
-  }, [pubs, suburbStats])
+  , [verifiedPubs, suburbAvg])
 
-  const undervalued = useMemo(() => {
-    const suburbAvg: Record<string, number> = {}
-    for (const s of suburbStats) suburbAvg[s.name] = s.avgPrice
-    return pubs
-      .filter(pub => pub.price !== null)
-      .map(pub => ({
-        pub,
-        diff: (suburbAvg[pub.suburb] || (pub.price ?? 0)) - (pub.price ?? 0),
-      }))
+  const overvalued = useMemo(() =>
+    verifiedPubs
+      .map(pub => ({ pub, diff: (pub.regularPrice as number) - (suburbAvg[pub.suburb] ?? (pub.regularPrice as number)) }))
       .filter(e => e.diff > 0)
       .sort((a, b) => b.diff - a.diff)
       .slice(0, 10)
-  }, [pubs, suburbStats])
+  , [verifiedPubs, suburbAvg])
 
-  const cheapestSuburbs = useMemo(() => {
-    return [...suburbStats].filter(s => s.count >= 2).sort((a, b) => a.avgPrice - b.avgPrice).slice(0, 10)
-  }, [suburbStats])
+  const cheapestSuburbs = useMemo(() => suburbStats.slice(0, 10).map(s => ({ name: s.suburb, avgPrice: s.avgPrice, count: s.pricedCount })), [suburbStats])
+  const priciestSuburbs = useMemo(() => [...suburbStats].reverse().slice(0, 10).map(s => ({ name: s.suburb, avgPrice: s.avgPrice, count: s.pricedCount })), [suburbStats])
 
-  const priciestSuburbs = useMemo(() => {
-    return [...suburbStats].filter(s => s.count >= 2).sort((a, b) => b.avgPrice - a.avgPrice).slice(0, 10)
-  }, [suburbStats])
+  const median = stats.medianPrice ?? 0
+  const percentCheaper = verifiedPubs.length > 0
+    ? Math.round((verifiedPubs.filter(p => (p.regularPrice as number) < median).length / verifiedPubs.length) * 100)
+    : 0
 
-  const percentileData = useMemo(() => {
-    const sorted = [...pubs].filter(p => p.price !== null).sort((a, b) => a.price! - b.price!)
-    const median = sorted.length > 0 ? sorted[Math.floor(sorted.length / 2)].price! : 0
-    const cheaperCount = sorted.filter(p => p.price !== null && p.price < median).length
-    const percentile = pubs.length > 0 ? Math.round((cheaperCount / pubs.length) * 100) : 0
-    return { median, percentile }
-  }, [pubs])
-
-  const summaryText = `Market Range: $${priceRange.min.toFixed(2)} - $${priceRange.max.toFixed(2)} · ${pubs.length} venues tracked`
+  const summaryText = `Market Range: $${priceRange.min.toFixed(2)} - $${priceRange.max.toFixed(2)} · ${stats.verifiedCount} priced of ${pubs.length} tracked`
 
   return (
     <div
@@ -165,8 +130,8 @@ export default function VenueIntel({ pubs, userLocation }: VenueIntelProps) {
             {/* Median */}
             <div className="bg-amber-pale rounded-card p-4 text-center border-2 border-amber/30">
               <p className="type-eyebrow">Median Pint Price in Perth</p>
-              <p className="font-mono text-xl font-extrabold text-ink mt-1">${percentileData.median.toFixed(2)}</p>
-              <p className="font-mono text-[0.6rem] text-gray-mid mt-1">{percentileData.percentile}% of venues are cheaper than the median</p>
+              <p className="font-mono text-xl font-extrabold text-ink mt-1">${median.toFixed(2)}</p>
+              <p className="font-mono text-[0.6rem] text-gray-mid mt-1">{percentCheaper}% of priced venues are cheaper than the median</p>
             </div>
 
             {/* Under/Over valued */}
@@ -183,7 +148,7 @@ export default function VenueIntel({ pubs, userLocation }: VenueIntelProps) {
                         <p className="font-body text-[0.7rem] text-gray-mid">{pub.suburb}{userLocation && ` · ${formatDistance(getDistanceKm(userLocation.lat, userLocation.lng, pub.lat, pub.lng))}`}</p>
                       </div>
                       <div className="text-right flex-shrink-0">
-                        <p className="font-mono text-[0.8rem] font-extrabold text-ink">{pub.price !== null ? `$${pub.price.toFixed(2)}` : 'TBC'}</p>
+                        <p className="font-mono text-[0.8rem] font-extrabold text-ink">${pub.regularPrice!.toFixed(2)}</p>
                         <p className="font-mono text-[0.6rem] font-bold text-green">-${diff.toFixed(2)}</p>
                       </div>
                     </Link>
@@ -203,7 +168,7 @@ export default function VenueIntel({ pubs, userLocation }: VenueIntelProps) {
                         <p className="font-body text-[0.7rem] text-gray-mid">{pub.suburb}{userLocation && ` · ${formatDistance(getDistanceKm(userLocation.lat, userLocation.lng, pub.lat, pub.lng))}`}</p>
                       </div>
                       <div className="text-right flex-shrink-0">
-                        <p className="font-mono text-[0.8rem] font-extrabold text-red">{pub.price !== null ? `$${pub.price.toFixed(2)}` : 'TBC'}</p>
+                        <p className="font-mono text-[0.8rem] font-extrabold text-red">${pub.regularPrice!.toFixed(2)}</p>
                         <p className="font-mono text-[0.6rem] font-bold text-red">+${diff.toFixed(2)}</p>
                       </div>
                     </Link>

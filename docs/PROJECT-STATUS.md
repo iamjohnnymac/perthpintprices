@@ -1,6 +1,6 @@
 # Perth Pint Prices Project Status
 
-Last updated: 2026-06-04
+Last updated: 2026-06-05
 
 ## What this is
 
@@ -9,6 +9,13 @@ Perth Pint Prices (perthpintprices.com) tracks pint prices across **857 Perth pu
 Stack, database, routes, components, and lib files are documented in `CLAUDE.md` (auto-loaded every session). This file covers history, recent work, and the backlog.
 
 ## What's done recently
+
+### Pint-price stat consolidation + content cleanup (2026-06-05)
+- **PR #157:** one source of truth for every headline number, driven by a full site content review. New `src/lib/suburbStats.ts` (`getSuburbStats`/`getSuburbExtremes`/`getPricedSuburbCount`, on verified `regularPrice`) and a cached `/api/pint-index` route; HomeClient, VenueIntel, SuburbLeague, `getSiteStats`, the Pint Index widget + header chip all route through `getPintPriceStats` + `getSuburbStats`. Result: **avg $9.10 · median $9.00 · cheapest Hillarys · priciest Kalamunda** on every surface (was $9.04/$9.09/$9.10 and three different "cheapest suburb" answers). Snapshots now feed only the trend line + % change; the weekly-snapshot cron recomputes canonically and `/api/weekly-snapshot` is an alias.
+- **Content fixes:** Dad Bar **11 → ~67 venues** via a shared `isDadBar()` (curated `kidFriendly` + Google `goodForChildren` with a beer garden/sports, Perth CBD excluded; curated playground venues pinned on top; Discover hub card now matches). Suburb Rankings capped to **18** (one per AFL club) with verified-priced counts (kills the "Perth (84) $8/$8/$8" anomaly). Cosy Corners renders its list instead of a blank page (`RainyDay` weather is now an enhancement, not a gate). Venue Breakdown "% cheaper than median" computed over priced venues (was the wrong 8%, dividing by all 857). Happy-hours article board limited to genuine confirmed pint drops (excludes the small-pour/unconfirmed entries the prose disclaims); `formatHappyHourDays` now collapses full/short day names to "Mon–Fri". "Article brief" block removed; latent Rules-of-Hooks crash in the Pint Index sparkline fixed.
+- **Tailwind:** off-design-system utilities → design tokens site-wide (CrowdReporter, MobileNav, PintIndex, FilterSection, SubmitPubForm, crowd-level colours) — zero off-system utilities remain outside vendored shadcn.
+- **Held for a separate data pass:** ~127 address/suburb mismatches surfaced (e.g. **The Deen** tagged `North Perth` but addressed in Northbridge) — kept out of this PR because correcting a suburb changes the pub's public URL (needs a redirect), and most flagged rows are false positives (CBD naming, border streets).
+- **Verification:** `tsc` clean, **272 tests** (incl. new `suburbStats` cases), production `next build` clean, cross-page numbers confirmed live in-browser. (npm lifecycle scripts still break on the OneDrive path → ran build/tests/tsc directly via `node`.)
 
 ### Pub page Variant B "receipt" redesign (2026-06-04)
 - **PR #154 / merge commit `d666038`:** folded the chosen prototype direction into `/[suburb]/[pub]` — the pint price card is now a betting-slip "ticket" (dark `PINT PRICE` header bar, centred hero price, vs-avg / freshness / HH-now badges, dashed-divider happy-hour receipt row). Built on the new `.type-*` system; the page also adopts `type-hero`/`type-eyebrow`/`type-card-header`/`type-card`/`type-price`.

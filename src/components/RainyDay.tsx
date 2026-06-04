@@ -50,7 +50,6 @@ const DRY_QUIPS = [
 export default function RainyDay({ pubs, userLocation }: RainyDayProps) {
   const [weather, setWeather] = useState<RainWeather | null>(null)
   const [isExpanded, setIsExpanded] = useState(true)
-  const [error, setError] = useState(false)
 
   useEffect(() => {
     async function fetchWeather() {
@@ -66,7 +65,7 @@ export default function RainyDay({ pubs, userLocation }: RainyDayProps) {
           temperature: data.current.temperature_2m,
         })
       } catch {
-        setError(true)
+        // Weather is a progressive enhancement; if it fails we still show the list.
       }
     }
     fetchWeather()
@@ -102,24 +101,17 @@ export default function RainyDay({ pubs, userLocation }: RainyDayProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isRaining])
 
-  if (error || !weather) {
-    if (error) return null
+  // Weather is a progressive enhancement, not a gate — render the cosy list
+  // regardless, so the page never appears blank (e.g. if the weather fetch fails
+  // or hasn't resolved yet). Only show an empty state if there are truly no
+  // cosy pubs to list.
+  if (cozyPubs.length === 0) {
     return (
-      <div className="border-3 border-ink rounded-card shadow-hard-sm bg-white overflow-hidden">
-        <div className="p-5">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-card bg-off-white animate-pulse" />
-            <div className="flex-1">
-              <div className="h-4 w-32 bg-off-white rounded-card animate-pulse mb-1" />
-              <div className="h-3 w-48 bg-off-white rounded-card animate-pulse" />
-            </div>
-          </div>
-        </div>
+      <div className="border-3 border-ink rounded-card shadow-hard-sm bg-white p-6 text-center">
+        <p className="font-body text-sm text-gray-mid">No cosy corners tagged yet — check back soon.</p>
       </div>
     )
   }
-
-  if (cozyPubs.length === 0) return null
 
   return (
     <div
@@ -138,7 +130,7 @@ export default function RainyDay({ pubs, userLocation }: RainyDayProps) {
                 <h3 className="type-card">
                   {isRaining ? 'Rainy Day Pubs' : 'Cosy Corners'}
                 </h3>
-                {isRaining && weather.rain > 0 && (
+                {isRaining && weather && weather.rain > 0 && (
                   <span className="font-mono text-[0.55rem] font-bold uppercase tracking-[0.05em] px-1.5 py-0.5 rounded-pill border-2 border-gray-light bg-off-white text-gray-mid">
                     {weather.rain.toFixed(1)} mm/h
                   </span>
@@ -153,7 +145,7 @@ export default function RainyDay({ pubs, userLocation }: RainyDayProps) {
           </div>
 
           <div className="flex items-center gap-3">
-            {isRaining && (
+            {isRaining && weather && (
               <div className="text-right hidden sm:block">
                 <div className="font-mono text-sm font-bold text-ink leading-none">
                   {getRainIntensity(weather.weatherCode)}
@@ -172,7 +164,7 @@ export default function RainyDay({ pubs, userLocation }: RainyDayProps) {
         {isExpanded && (
           <div className="mt-3 pt-3 border-t border-gray-light">
             {/* Rain stats for mobile */}
-            {isRaining && (
+            {isRaining && weather && (
               <div className="flex sm:hidden justify-center gap-2 mb-3">
                 <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-pill font-mono text-[0.65rem] font-bold bg-off-white text-gray-mid border-2 border-gray-light">
                   <CloudRain className="w-3.5 h-3.5" /> {getRainIntensity(weather.weatherCode)}

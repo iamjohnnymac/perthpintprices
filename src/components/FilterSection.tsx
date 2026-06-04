@@ -124,7 +124,7 @@ export function FilterSection({
             <button
               onClick={handleNearestClick}
               className={`flex-1 font-mono text-[0.7rem] font-bold uppercase tracking-[0.04em] px-2 sm:px-3 py-3 transition-all flex items-center justify-center gap-1 ${
-                sortBy === 'nearest' ? 'bg-blue text-white' : 'text-gray-mid'
+                sortBy === 'nearest' ? 'bg-ink text-white' : 'text-gray-mid'
               }`}
             >
               <MapPin className="w-3 h-3" />

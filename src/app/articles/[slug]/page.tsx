@@ -198,8 +198,17 @@ function Under10Module({ pubs, articleSlug }: { pubs: Pub[]; articleSlug: string
 function HappyHoursByDayModule({ pubs, articleSlug }: { pubs: Pub[]; articleSlug: string }) {
   const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
   const rows = days.map((day, index) => {
+    // Only genuine, confirmed drops: a verified regular pint price AND a lower
+    // happy-hour price. Excludes small-pour specials with no confirmed pint
+    // price and "windows" where the price doesn't actually drop.
     const dayPubs = pubs
-      .filter(pub => parseHappyHourDayIndexes(pub.happyHourDays).includes(index) && pub.happyHourPrice !== null)
+      .filter(pub =>
+        parseHappyHourDayIndexes(pub.happyHourDays).includes(index) &&
+        pub.happyHourPrice !== null &&
+        pub.priceVerified &&
+        pub.regularPrice !== null &&
+        pub.happyHourPrice < pub.regularPrice,
+      )
       .sort((a, b) => (a.happyHourPrice ?? 99) - (b.happyHourPrice ?? 99))
     return { day, pubs: dayPubs, cheapest: dayPubs[0] ?? null }
   })
@@ -333,22 +342,6 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
             {article.deck}
           </p>
         </header>
-
-        <div className="mb-8 overflow-hidden rounded-card border-3 border-ink bg-white shadow-hard-sm">
-          <div className="grid sm:grid-cols-[1fr_210px]">
-            <div className="bg-ink p-5 text-white sm:p-6">
-              <p className="type-eyebrow text-white/60">Article brief</p>
-              <p className="mt-3 max-w-[470px] font-body text-[0.92rem] leading-relaxed text-white/75">
-                Read the note, then use the live rows below to turn it into a useful pub decision.
-              </p>
-            </div>
-            <div className="border-t-3 border-ink bg-amber p-5 sm:border-l-3 sm:border-t-0">
-              <p className="type-eyebrow text-ink/70">{article.heroLabel}</p>
-              <p className="mt-2 font-mono text-[2rem] font-extrabold leading-none text-ink">{article.heroStat}</p>
-              <p className="mt-2 font-body text-[0.78rem] font-bold text-ink/70">{article.heroSubstat}</p>
-            </div>
-          </div>
-        </div>
 
         <ArticleFigure
           priority

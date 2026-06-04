@@ -1,10 +1,17 @@
+import { getPubs } from '@/lib/supabase'
+import { getPintPriceStats } from '@/lib/pintPriceStats'
+import { getPricedSuburbCount, getSuburbExtremes } from '@/lib/suburbStats'
 import { serviceClient } from '@/lib/supabaseGateway'
 import { NextRequest, NextResponse } from 'next/server'
 
 /**
  * GET /api/cron/weekly-snapshot
  * Runs every Monday at 9am Perth time via Vercel Cron.
- * Takes a snapshot of current price stats and stores in price_snapshots.
+ * Stores a snapshot of current price stats in price_snapshots.
+ *
+ * Uses the SAME canonical helpers as the live pages (getPintPriceStats +
+ * getSuburbStats: verified regular-pint prices), so the snapshot series that
+ * feeds the Pint Index trend agrees with every live surface.
  */
 export async function GET(request: NextRequest) {
   const authHeader = request.headers.get('authorization')
@@ -12,71 +19,42 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  const supabase = serviceClient()
-
   try {
-    // Get verified pubs with prices
-    const { data: pubs, error } = await supabase
-      .from('pubs')
-      .select('price, suburb')
-      .eq('price_verified', true)
-      .not('price', 'is', null)
+    const pubs = await getPubs()
+    const stats = getPintPriceStats(pubs)
 
-    if (error || !pubs || pubs.length === 0) {
+    if (stats.verifiedCount === 0 || stats.averagePrice == null || stats.medianPrice == null) {
       return NextResponse.json({ error: 'No pub data' }, { status: 500 })
     }
 
-    const prices = pubs.map(p => Number(p.price)).sort((a, b) => a - b)
-    const suburbs = new Set(pubs.map(p => p.suburb))
+    const { cheapest, priciest } = getSuburbExtremes(pubs, 2)
 
-    // Compute stats
-    const avg = prices.reduce((s, p) => s + p, 0) / prices.length
-    const median = prices.length % 2 === 0
-      ? (prices[prices.length / 2 - 1] + prices[prices.length / 2]) / 2
-      : prices[Math.floor(prices.length / 2)]
-
-    // Suburb averages
-    const suburbPrices = new Map<string, number[]>()
-    for (const pub of pubs) {
-      const list = suburbPrices.get(pub.suburb) || []
-      list.push(Number(pub.price))
-      suburbPrices.set(pub.suburb, list)
-    }
-
-    let cheapestSuburb = ''
-    let cheapestAvg = Infinity
-    let expensiveSuburb = ''
-    let expensiveAvg = 0
-
-    for (const [suburb, subPrices] of Array.from(suburbPrices.entries())) {
-      if (subPrices.length < 2) continue // Need at least 2 pubs for meaningful suburb avg
-      const subAvg = subPrices.reduce((s, p) => s + p, 0) / subPrices.length
-      if (subAvg < cheapestAvg) { cheapestAvg = subAvg; cheapestSuburb = suburb }
-      if (subAvg > expensiveAvg) { expensiveAvg = subAvg; expensiveSuburb = suburb }
-    }
-
-    // Price distribution (for potential future charting)
+    // Price distribution in $1 buckets ("$8-9"), matching the Index widget.
     const distribution: Record<string, number> = {}
-    for (const p of prices) {
-      const bucket = `$${Math.floor(p)}-${Math.floor(p) + 1}`
+    for (const pub of stats.verifiedPubs) {
+      const floor = Math.floor(pub.regularPrice as number)
+      const bucket = `$${floor}-${floor + 1}`
       distribution[bucket] = (distribution[bucket] || 0) + 1
     }
 
-    // Insert snapshot (upsert on date to avoid duplicates if run twice)
+    const round = (n: number) => Math.round(n * 100) / 100
+    const avg = round(stats.averagePrice)
+
+    const supabase = serviceClient()
     const { error: insertError } = await supabase
       .from('price_snapshots')
       .upsert({
         snapshot_date: new Date().toISOString().split('T')[0],
-        avg_price: Math.round(avg * 100) / 100,
-        median_price: Math.round(median * 100) / 100,
-        min_price: prices[0],
-        max_price: prices[prices.length - 1],
-        total_pubs: pubs.length,
-        total_suburbs: suburbs.size,
-        cheapest_suburb: cheapestSuburb || null,
-        cheapest_suburb_avg: cheapestAvg < Infinity ? Math.round(cheapestAvg * 100) / 100 : null,
-        most_expensive_suburb: expensiveSuburb || null,
-        most_expensive_suburb_avg: expensiveAvg > 0 ? Math.round(expensiveAvg * 100) / 100 : null,
+        avg_price: avg,
+        median_price: round(stats.medianPrice),
+        min_price: stats.minPrice,
+        max_price: stats.maxPrice,
+        total_pubs: stats.verifiedCount,
+        total_suburbs: getPricedSuburbCount(pubs),
+        cheapest_suburb: cheapest?.suburb ?? null,
+        cheapest_suburb_avg: cheapest ? round(cheapest.avgPrice) : null,
+        most_expensive_suburb: priciest?.suburb ?? null,
+        most_expensive_suburb_avg: priciest ? round(priciest.avgPrice) : null,
         price_distribution: distribution,
       }, { onConflict: 'snapshot_date' })
 
@@ -97,7 +75,7 @@ export async function GET(request: NextRequest) {
           },
           body: JSON.stringify({
             title: 'This Week in Perth Pints',
-            body: `Avg pint: $${avg.toFixed(2)} across ${pubs.length} venues. Cheapest suburb: ${cheapestSuburb}`,
+            body: `Avg pint: $${avg.toFixed(2)} across ${stats.verifiedCount} venues. Cheapest suburb: ${cheapest?.suburb ?? 'TBC'}`,
             url: '/insights/pint-index',
             tag: 'weekly-pints',
             renotify: true,
@@ -112,12 +90,12 @@ export async function GET(request: NextRequest) {
       success: true,
       date: new Date().toISOString().split('T')[0],
       stats: {
-        avg: Math.round(avg * 100) / 100,
-        median: Math.round(median * 100) / 100,
-        min: prices[0],
-        max: prices[prices.length - 1],
-        totalPubs: pubs.length,
-        totalSuburbs: suburbs.size,
+        avg,
+        median: round(stats.medianPrice),
+        min: stats.minPrice,
+        max: stats.maxPrice,
+        totalPubs: stats.verifiedCount,
+        totalSuburbs: getPricedSuburbCount(pubs),
       },
     })
   } catch (err) {

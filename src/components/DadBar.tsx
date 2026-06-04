@@ -7,6 +7,7 @@ import { Pub } from '@/types/pub'
 import { getDistanceKm, formatDistance } from '@/lib/location'
 import { Users, MapPin } from 'lucide-react'
 import { pubUrl } from '@/lib/urls'
+import { isDadBar } from '@/lib/pubPicks'
 
 const DAD_JOKES = [
   "I told my kids I'd buy them a drink at the pub. They got lemonade. I got a pint. Everyone won.",
@@ -41,8 +42,12 @@ export default function DadBar({ pubs, userLocation }: { pubs: Pub[], userLocati
 
   const dadPubs = useMemo(() => {
     return pubs
-      .filter(p => p.kidFriendly && p.price !== null && p.price > 0)
+      .filter(isDadBar)
       .sort((a, b) => {
+        // Pin the hand-curated venues with playground notes to the top.
+        const aCurated = PLAYGROUND_NOTES[a.id] ? 1 : 0
+        const bCurated = PLAYGROUND_NOTES[b.id] ? 1 : 0
+        if (aCurated !== bCurated) return bCurated - aCurated
         if (userLocation) {
           return getDistanceKm(userLocation.lat, userLocation.lng, a.lat, a.lng) - getDistanceKm(userLocation.lat, userLocation.lng, b.lat, b.lng)
         }
@@ -158,7 +163,7 @@ export default function DadBar({ pubs, userLocation }: { pubs: Pub[], userLocati
 
             {/* Footer */}
             <p className="font-mono text-[0.55rem] text-gray-mid text-center mt-2">
-              Sources: Buggybuddys, Urban List Perth · All venues verified for playground facilities
+              Top picks have hand-checked play areas (Buggybuddys, Urban List Perth); the rest are Google-confirmed family-friendly with a beer garden or the footy on.
             </p>
           </div>
         )}
