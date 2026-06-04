@@ -62,7 +62,7 @@ export default function Footer() {
 
         {/* Beer sizes — compact inline reference */}
         <div className="flex items-center gap-4 mb-8">
-          <span className="font-mono text-[0.6rem] font-bold uppercase tracking-[0.12em] text-white/30">Glass sizes</span>
+          <span className="type-eyebrow text-white/30">Glass sizes</span>
           {GLASS_SIZES.map((size) => (
             <span key={size.name} className="font-mono text-[0.65rem] text-white/50">
               <span className="font-bold text-white/70">{size.name}</span> {size.ml}

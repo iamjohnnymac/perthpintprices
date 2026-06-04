@@ -28,10 +28,10 @@ export default function ArticleRail({
       <div className="max-w-container mx-auto px-6 py-10">
         <div className="mb-5 flex items-end justify-between gap-4">
           <div>
-            <p className={`mb-2 font-mono text-[0.68rem] font-bold uppercase ${isDark ? 'text-white/45' : 'text-gray-mid'}`}>
+            <p className={`type-eyebrow mb-2 ${isDark ? 'text-white/45' : 'text-gray-mid'}`}>
               {eyebrow}
             </p>
-            <h2 className={`font-mono text-xl font-extrabold ${isDark ? 'text-white' : 'text-ink'}`}>
+            <h2 className={`type-section ${isDark ? 'text-white' : 'text-ink'}`}>
               {title}
             </h2>
             <p className={`mt-2 max-w-[520px] font-body text-[0.88rem] leading-relaxed ${isDark ? 'text-white/60' : 'text-gray-mid'}`}>
@@ -62,7 +62,7 @@ export default function ArticleRail({
               <ArticleImageSlot article={article} size="rail" className="aspect-[16/10] border-b-3 border-ink" />
               <div className="flex flex-1 flex-col p-5">
                 <div className="flex flex-wrap items-center gap-2">
-                  <span className="font-mono text-[0.62rem] font-bold uppercase text-gray-mid">
+                  <span className="type-eyebrow">
                     {formatArticleDate(article.publishedAt)}
                   </span>
                 </div>
@@ -72,7 +72,7 @@ export default function ArticleRail({
                 <p className="mt-3 flex-1 font-body text-[0.82rem] leading-relaxed text-gray-mid">
                   {article.deck}
                 </p>
-                <span className="mt-5 inline-flex items-center gap-1 font-mono text-[0.7rem] font-bold uppercase text-amber">
+                <span className="mt-5 inline-flex items-center gap-1 type-eyebrow text-amber">
                   Read it <ArrowUpRight className="h-3.5 w-3.5" />
                 </span>
               </div>
@@ -84,7 +84,7 @@ export default function ArticleRail({
           href="/articles"
           eventName="article_hub_click"
           eventProperties={{ source }}
-          className={`mt-5 inline-flex items-center gap-1 font-mono text-[0.72rem] font-bold uppercase no-underline hover:underline ${
+          className={`mt-5 inline-flex items-center gap-1 type-eyebrow no-underline hover:underline ${
             isDark ? 'text-amber-light' : 'text-amber'
           }`}
         >

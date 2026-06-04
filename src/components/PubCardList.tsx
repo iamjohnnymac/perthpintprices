@@ -31,8 +31,8 @@ export default function PubCardList({
     <div className="max-w-container mx-auto px-6">
       {/* List header */}
       <div className="flex justify-between py-4 pb-2.5 border-b-3 border-ink">
-        <span className="font-mono text-[0.68rem] font-bold uppercase tracking-[0.1em] text-gray-mid">Pub</span>
-        <span className="font-mono text-[0.68rem] font-bold uppercase tracking-[0.1em] text-gray-mid">Pint</span>
+        <span className="type-eyebrow">Pub</span>
+        <span className="type-eyebrow">Pint</span>
       </div>
 
       {/* Empty state */}
@@ -95,7 +95,7 @@ export default function PubCardList({
 
             {/* Price */}
             <div className="text-right min-w-[70px]">
-              <span className="font-mono text-[1.1rem] font-extrabold text-ink">
+              <span className="type-price text-[1.1rem]">
                 {pub.price !== null ? `$${pub.price.toFixed(2)}` : 'TBC'}
               </span>
             </div>

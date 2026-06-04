@@ -135,7 +135,7 @@ export default function RainyDay({ pubs, userLocation }: RainyDayProps) {
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="font-mono text-[0.85rem] font-extrabold text-ink">
+                <h3 className="type-card">
                   {isRaining ? 'Rainy Day Pubs' : 'Cosy Corners'}
                 </h3>
                 {isRaining && weather.rain > 0 && (
@@ -192,7 +192,7 @@ export default function RainyDay({ pubs, userLocation }: RainyDayProps) {
 
             {/* Recommended Pubs */}
             <div className="flex items-center justify-between mb-3">
-              <h4 className="font-mono text-[0.7rem] font-bold uppercase tracking-[0.05em] text-ink">
+              <h4 className="type-eyebrow text-ink">
                 {isRaining ? 'Duck In Here' : 'Cosy Picks'}
               </h4>
               <span className="font-mono text-[0.65rem] text-gray-mid">

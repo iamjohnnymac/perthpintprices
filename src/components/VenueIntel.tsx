@@ -128,7 +128,7 @@ export default function VenueIntel({ pubs, userLocation }: VenueIntelProps) {
               <BarChart3 className="w-5 h-5 text-ink" />
             </div>
             <div>
-              <h3 className="font-mono text-[0.85rem] font-extrabold text-ink">Venue Breakdown</h3>
+              <h3 className="type-card">Venue Breakdown</h3>
               <p className="font-body text-[0.75rem] text-gray-mid">{summaryText}</p>
             </div>
           </div>
@@ -141,7 +141,7 @@ export default function VenueIntel({ pubs, userLocation }: VenueIntelProps) {
           <div className="mt-3 pt-3 border-t border-gray-light space-y-4" onClick={(e) => e.stopPropagation()}>
             {/* Price Distribution */}
             <div>
-              <h4 className="font-mono text-[0.7rem] font-bold uppercase tracking-[0.05em] text-ink mb-2 flex items-center gap-1">
+              <h4 className="type-eyebrow text-ink mb-2 flex items-center gap-1">
                 <BarChart3 className="w-3.5 h-3.5" /> Price Distribution
               </h4>
               <div className="p-3 rounded-card bg-off-white">
@@ -164,7 +164,7 @@ export default function VenueIntel({ pubs, userLocation }: VenueIntelProps) {
 
             {/* Median */}
             <div className="bg-amber-pale rounded-card p-4 text-center border-2 border-amber/30">
-              <p className="font-mono text-[0.65rem] text-gray-mid uppercase tracking-[0.05em]">Median Pint Price in Perth</p>
+              <p className="type-eyebrow">Median Pint Price in Perth</p>
               <p className="font-mono text-xl font-extrabold text-ink mt-1">${percentileData.median.toFixed(2)}</p>
               <p className="font-mono text-[0.6rem] text-gray-mid mt-1">{percentileData.percentile}% of venues are cheaper than the median</p>
             </div>
@@ -172,7 +172,7 @@ export default function VenueIntel({ pubs, userLocation }: VenueIntelProps) {
             {/* Under/Over valued */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <h4 className="font-mono text-[0.7rem] font-bold uppercase tracking-[0.05em] text-ink mb-2 flex items-center gap-1">
+                <h4 className="type-eyebrow text-ink mb-2 flex items-center gap-1">
                   <TrendingDown className="w-3.5 h-3.5" /> Undervalued
                 </h4>
                 <div className="space-y-0">
@@ -192,7 +192,7 @@ export default function VenueIntel({ pubs, userLocation }: VenueIntelProps) {
               </div>
 
               <div>
-                <h4 className="font-mono text-[0.7rem] font-bold uppercase tracking-[0.05em] text-red mb-2 flex items-center gap-1">
+                <h4 className="type-eyebrow text-red mb-2 flex items-center gap-1">
                   <TrendingUp className="w-3.5 h-3.5" /> Overvalued
                 </h4>
                 <div className="space-y-0">
@@ -215,7 +215,7 @@ export default function VenueIntel({ pubs, userLocation }: VenueIntelProps) {
             {/* Cheapest / Priciest suburbs */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <h4 className="font-mono text-[0.7rem] font-bold uppercase tracking-[0.05em] text-ink mb-2 flex items-center gap-1">
+                <h4 className="type-eyebrow text-ink mb-2 flex items-center gap-1">
                   <span className="w-2 h-2 rounded-full bg-green" /> Cheapest Suburbs
                 </h4>
                 <div className="space-y-0">
@@ -235,7 +235,7 @@ export default function VenueIntel({ pubs, userLocation }: VenueIntelProps) {
               </div>
 
               <div>
-                <h4 className="font-mono text-[0.7rem] font-bold uppercase tracking-[0.05em] text-red mb-2 flex items-center gap-1">
+                <h4 className="type-eyebrow text-red mb-2 flex items-center gap-1">
                   <span className="w-2 h-2 rounded-full bg-red" /> Priciest Suburbs
                 </h4>
                 <div className="space-y-0">

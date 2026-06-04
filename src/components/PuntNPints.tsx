@@ -119,7 +119,7 @@ export default function PuntNPints({ pubs, userLocation }: PuntNPintsProps) {
       <section>
         <div className="border-3 border-ink rounded-card shadow-hard-sm bg-white overflow-hidden">
           <div className="px-5 py-4 border-b-3 border-ink bg-ink">
-            <h2 className="font-mono text-[0.75rem] font-bold uppercase tracking-[0.08em] text-white">
+            <h2 className="type-card-header text-white">
               Today&apos;s WA Races
             </h2>
           </div>
@@ -177,12 +177,12 @@ export default function PuntNPints({ pubs, userLocation }: PuntNPintsProps) {
 
       {/* ═══ TAB Pubs Section ═══ */}
       <section>
-        <h2 className="font-mono font-extrabold text-xl tracking-[-0.02em] text-ink">Bet & Drink Under One Roof</h2>
+        <h2 className="type-section">Bet & Drink Under One Roof</h2>
         <p className="text-sm text-gray-mid mt-1 mb-5">Pubs with TAB on-site. Punt and pint, sorted by price</p>
 
         <div className="border-3 border-ink rounded-card shadow-hard-sm overflow-hidden">
           <div className="px-4 py-3 border-b border-gray-light bg-off-white">
-            <span className="font-mono text-[0.65rem] font-bold uppercase tracking-[0.08em] text-gray-mid">
+            <span className="type-eyebrow">
               {tabPubs.length} venues with TAB
             </span>
           </div>
@@ -253,12 +253,12 @@ export default function PuntNPints({ pubs, userLocation }: PuntNPintsProps) {
       {/* ═══ Nearby TAB Section ═══ */}
       {nearbyPairs.length > 0 && (
         <section>
-          <h2 className="font-mono font-extrabold text-xl tracking-[-0.02em] text-ink">Cheap Pints Near a TAB</h2>
+          <h2 className="type-section">Cheap Pints Near a TAB</h2>
           <p className="text-sm text-gray-mid mt-1 mb-5">No TAB on-site, but a TABtouch agency within walking distance</p>
 
           <div className="border-3 border-ink rounded-card shadow-hard-sm overflow-hidden">
             <div className="px-4 py-3 border-b border-gray-light bg-off-white">
-              <span className="font-mono text-[0.65rem] font-bold uppercase tracking-[0.08em] text-gray-mid">
+              <span className="type-eyebrow">
                 {nearbyPairs.length} pubs near a TAB
               </span>
             </div>

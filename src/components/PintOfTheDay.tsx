@@ -95,7 +95,7 @@ export default function PintOfTheDay() {
         <div className="flex items-center gap-2">
           <Beer className="w-5 h-5 text-amber" />
           <div>
-            <h3 className="text-xs font-bold text-amber">Pint of the Day</h3>
+            <h3 className="type-card text-amber">Pint of the Day</h3>
             <p className="text-[10px] text-gray-mid">{new Date(data.date + 'T00:00:00+08:00').toLocaleDateString('en-AU', { weekday: 'long', day: 'numeric', month: 'short' })}</p>
           </div>
         </div>
@@ -111,7 +111,7 @@ export default function PintOfTheDay() {
       <Link href={pubUrl(data.pub)} className="block px-4 sm:px-5 pb-4 sm:pb-5 group">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0 flex-1">
-            <h4 className="text-lg font-bold font-heading text-ink group-hover:text-amber transition-colors truncate">{data.pub.name}</h4>
+            <h4 className="type-card text-lg group-hover:text-amber transition-colors truncate">{data.pub.name}</h4>
             <p className="text-xs text-gray-mid mt-0.5">{data.pub.suburb} · {data.pub.address}</p>
             {data.pub.beerType && (
               <p className="text-xs text-gray-mid mt-0.5">{data.pub.beerType}</p>

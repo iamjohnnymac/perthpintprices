@@ -66,7 +66,7 @@ export default function SuburbClient({ suburb, pubs, nearbySuburbs, perthAvgPric
 
       {/* Hero Stats */}
       <section className="max-w-container mx-auto px-6 pt-6 pb-6">
-        <h1 className="font-mono font-extrabold text-[clamp(1.8rem,5vw,2.4rem)] tracking-[-0.03em] text-ink leading-[1.1] mb-2">
+        <h1 className="type-hero mb-2">
           Pints in {suburb.name}
         </h1>
         <p className="text-gray-mid text-[0.85rem] mb-6">
@@ -82,8 +82,8 @@ export default function SuburbClient({ suburb, pubs, nearbySuburbs, perthAvgPric
             { label: 'Happy Hours', value: String(suburb.happyHourCount), accent: false, extra: `of ${suburb.pubCount} venues` },
           ].map((stat) => (
             <div key={stat.label} className={`border-3 border-ink rounded-card px-4 py-4 shadow-hard-sm ${stat.accent ? 'bg-amber' : 'bg-white'}`}>
-              <p className={`font-mono text-[0.6rem] font-bold uppercase tracking-[0.08em] ${stat.accent ? 'text-white/75' : 'text-gray-mid'} mb-1`}>{stat.label}</p>
-              <p className={`font-mono text-[1.5rem] font-extrabold leading-none ${stat.accent ? 'text-white' : 'text-ink'}`}>
+              <p className={`type-eyebrow ${stat.accent ? 'text-white/75' : 'text-gray-mid'} mb-1`}>{stat.label}</p>
+              <p className={`type-price text-[1.5rem] ${stat.accent ? 'text-white' : 'text-ink'}`}>
                 {stat.value}
               </p>
               {stat.link && stat.linkLabel && (
@@ -134,7 +134,7 @@ export default function SuburbClient({ suburb, pubs, nearbySuburbs, perthAvgPric
         <div className="grid gap-3 sm:grid-cols-2">
           {story.cards.map(card => (
             <article key={card.id} className="min-w-0 border-3 border-ink rounded-card bg-white p-4 shadow-hard-sm">
-              <p className="font-mono text-[0.6rem] font-bold uppercase tracking-[0.08em] text-gray-mid mb-1">{card.label}</p>
+              <p className="type-eyebrow mb-1">{card.label}</p>
               <h2 className="font-mono text-[1.05rem] font-extrabold leading-tight text-ink mb-2">{card.title}</h2>
               <p className="text-[0.78rem] leading-relaxed text-gray-mid">{card.body}</p>
               {card.href && card.linkLabel && (
@@ -156,7 +156,7 @@ export default function SuburbClient({ suburb, pubs, nearbySuburbs, perthAvgPric
             <div className="border-3 border-red/30 rounded-card bg-red/5 overflow-hidden">
               <div className="px-4 py-3 flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-red animate-pulse" />
-                <h2 className="font-mono font-extrabold text-[0.85rem] text-red uppercase tracking-[0.05em]">
+                <h2 className="type-card-header text-red">
                   Happy Hour Live Now
                 </h2>
                 <span className="text-[0.7rem] text-gray-mid ml-auto">{activeHH.length} {activeHH.length === 1 ? 'venue' : 'venues'}</span>
@@ -192,7 +192,7 @@ export default function SuburbClient({ suburb, pubs, nearbySuburbs, perthAvgPric
       <section className="max-w-container mx-auto px-6 pb-6">
         <div className="border-3 border-ink rounded-card shadow-hard-sm overflow-hidden">
           <div className="px-4 py-3 border-b border-gray-light">
-            <h2 className="font-mono font-extrabold text-[0.85rem] text-ink uppercase tracking-[0.05em]">All Venues - Cheapest First</h2>
+            <h2 className="type-card-header">All Venues - Cheapest First</h2>
           </div>
 
           {/* Desktop table */}
@@ -330,7 +330,7 @@ export default function SuburbClient({ suburb, pubs, nearbySuburbs, perthAvgPric
         <section className="max-w-container mx-auto px-6 pb-6">
           <div className="border-3 border-ink rounded-card bg-off-white shadow-hard-sm overflow-hidden">
             <div className="px-4 py-3 border-b border-gray-light">
-              <h2 className="font-mono font-extrabold text-[0.85rem] text-ink uppercase tracking-[0.05em]">{suburb.name} pint FAQ</h2>
+              <h2 className="type-card-header">{suburb.name} pint FAQ</h2>
             </div>
             <dl className="divide-y divide-gray-light">
               {story.faqs.map(item => (
@@ -347,7 +347,7 @@ export default function SuburbClient({ suburb, pubs, nearbySuburbs, perthAvgPric
       {/* Footer CTA */}
       <section className="max-w-container mx-auto px-6 pb-8">
         <div className="bg-ink border-3 border-ink rounded-card p-6 text-center shadow-hard-sm">
-          <h2 className="font-mono font-extrabold text-xl text-white mb-2">Know a price in {suburb.name}?</h2>
+          <h2 className="type-section text-white mb-2">Know a price in {suburb.name}?</h2>
           <p className="text-white/60 text-sm mb-4">Help us keep {suburb.name} pint prices accurate.</p>
           <Link
             href="/?submit=1"

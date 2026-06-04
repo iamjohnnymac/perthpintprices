@@ -86,8 +86,8 @@ export default async function StudentPintsPerthPage() {
       <section className="max-w-container mx-auto px-6 pt-8 pb-12">
         <div className="grid gap-6 sm:grid-cols-[1fr_260px] sm:items-end">
           <div>
-            <p className="mb-3 font-mono text-[0.68rem] font-bold uppercase text-gray-mid">Campus budget guide</p>
-            <h1 className="font-display text-[3rem] leading-[1] text-ink sm:text-[4.7rem]">
+            <p className="mb-3 type-eyebrow">Campus budget guide</p>
+            <h1 className="type-hero-editorial">
               Student pints in Perth
             </h1>
             <p className="mt-5 max-w-[620px] font-body text-[0.96rem] leading-relaxed text-gray-mid">
@@ -99,15 +99,15 @@ export default async function StudentPintsPerthPage() {
               <GraduationCap className="h-4 w-4 text-amber" />
               Student list
             </div>
-            <p className="font-mono text-[0.65rem] font-bold uppercase text-ink/55">Cheapest checked</p>
+            <p className="type-eyebrow text-ink/55">Cheapest checked</p>
             <p className="mt-1 font-mono text-5xl font-extrabold text-ink">{formatPrice(cheapest?.regularPrice)}</p>
             <p className="mt-2 text-[0.8rem] leading-relaxed text-ink/70">{cheapest ? `${cheapest.name}, near ${cheapest.campusShortName}` : 'No checked row yet.'}</p>
           </div>
         </div>
 
         <section className="my-8 rounded-card border-3 border-ink bg-ink p-5 text-white shadow-hard-sm">
-          <p className="font-mono text-[0.65rem] font-bold uppercase text-white/55">Answer first</p>
-          <h2 className="mt-2 font-mono text-xl font-extrabold">Where are the cheapest student pints in Perth?</h2>
+          <p className="type-eyebrow text-white/55">Answer first</p>
+          <h2 className="mt-2 type-section text-white">Where are the cheapest student pints in Perth?</h2>
           <p className="mt-3 font-body text-[0.9rem] leading-relaxed text-white/70">
             {cheapest ? <>The cheapest verified student-adjacent pint in this cut is {formatPrice(cheapest.regularPrice)} at <Link href={pubUrl(cheapest)} className="font-bold text-amber-light hover:underline">{cheapest.name}</Link>, about {formatDistance(cheapest.distanceKm)} direct from {cheapest.campusShortName}. UWA and Curtin have closer clusters; Murdoch needs a wider net in the current checked data.</> : <>We do not have a verified sub-$10 student row yet. That would be depressing, so hopefully it is temporary.</>}
           </p>
@@ -115,17 +115,17 @@ export default async function StudentPintsPerthPage() {
 
         <section className="mb-8 grid gap-3 sm:grid-cols-3">
           <div className="rounded-card border-3 border-ink bg-white p-5 shadow-hard-sm">
-            <p className="font-mono text-[0.65rem] font-bold uppercase text-gray-mid">Campuses covered</p>
+            <p className="type-eyebrow">Campuses covered</p>
             <p className="mt-2 font-mono text-3xl font-extrabold text-ink">{campusCount}/3</p>
             <p className="mt-2 text-[0.76rem] leading-relaxed text-gray-mid">Campuses with at least one verified sub-$10 row.</p>
           </div>
           <div className="rounded-card border-3 border-ink bg-white p-5 shadow-hard-sm">
-            <p className="font-mono text-[0.65rem] font-bold uppercase text-gray-mid">Rows under $10</p>
+            <p className="type-eyebrow">Rows under $10</p>
             <p className="mt-2 font-mono text-3xl font-extrabold text-ink">{allRows.length}</p>
             <p className="mt-2 text-[0.76rem] leading-relaxed text-gray-mid">Verified regular pint rows, not happy-hour specials.</p>
           </div>
           <div className="rounded-card border-3 border-ink bg-white p-5 shadow-hard-sm">
-            <p className="font-mono text-[0.65rem] font-bold uppercase text-gray-mid">Widest net</p>
+            <p className="type-eyebrow">Widest net</p>
             <p className="mt-2 font-mono text-3xl font-extrabold text-ink">8km</p>
             <p className="mt-2 text-[0.76rem] leading-relaxed text-gray-mid">Murdoch needs more radius before checked rows appear.</p>
           </div>
@@ -147,15 +147,15 @@ export default async function StudentPintsPerthPage() {
                       {campus.shortName}
                     </div>
                     <div>
-                      <p className="font-mono text-[0.6rem] font-bold uppercase text-gray-mid">Radius</p>
+                      <p className="type-eyebrow">Radius</p>
                       <p className="mt-1 font-mono text-3xl font-extrabold text-ink">{campus.radiusKm}km</p>
                     </div>
                   </div>
                 </div>
                 <div>
                   <div className="border-b border-gray-light bg-off-white px-5 py-4">
-                    <p className="font-mono text-[0.65rem] font-bold uppercase text-gray-mid">{campus.name}</p>
-                    <h2 className="mt-1 font-mono text-xl font-extrabold text-ink">{campus.shortName} cheap pints</h2>
+                    <p className="type-eyebrow">{campus.name}</p>
+                    <h2 className="mt-1 type-section">{campus.shortName} cheap pints</h2>
                     <p className="mt-2 text-[0.78rem] leading-relaxed text-gray-mid">{campus.note}</p>
                   </div>
                   <div className="divide-y divide-gray-light">

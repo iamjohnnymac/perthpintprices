@@ -125,7 +125,7 @@ export default function SuburbLeague({ pubs }: { pubs: Pub[] }) {
             <BarChart3 className="w-5 h-5 text-ink" />
           </div>
           <div>
-            <h3 className="font-mono text-[0.85rem] font-extrabold text-ink">Suburb Rankings</h3>
+            <h3 className="type-card">Suburb Rankings</h3>
             <p className="font-body text-[0.75rem] text-gray-mid">
               {isExpanded
                 ? `${total} suburbs ${sortLabel}. Tap columns to re-sort`

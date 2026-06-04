@@ -163,7 +163,7 @@ export default function DiscoverClient() {
         {pintOfTheDay && (
           <section className="mb-10 sm:mb-14">
             <div className="border-3 border-ink rounded-card shadow-hard-sm bg-white py-10 px-6 text-center">
-              <p className="font-mono text-[0.68rem] font-bold uppercase tracking-[0.1em] text-gray-mid mb-2">
+              <p className="type-eyebrow mb-2">
                 <Star className="w-3.5 h-3.5 inline -mt-0.5 mr-1" />Pint of the Day
               </p>
               <div className="flex items-center justify-center gap-2 mb-3 flex-wrap">
@@ -173,7 +173,7 @@ export default function DiscoverClient() {
                 </Link>
                 <span className="text-gray-mid text-sm">{pintOfTheDay.pub.suburb}</span>
               </div>
-              <div className="font-mono text-[2.5rem] font-extrabold text-ink leading-none">
+              <div className="type-price text-[2.5rem]">
                 ${pintOfTheDay.pub.effectivePrice.toFixed(2)}
               </div>
               <p className="text-[0.75rem] text-gray-mid mt-1">{pintOfTheDay.reason}</p>
@@ -254,7 +254,7 @@ export default function DiscoverClient() {
             3. PUB PICKS CAROUSEL
             ════════════════════════════════════════════ */}
         <section className="mb-10 sm:mb-14">
-          <h2 className="font-mono font-extrabold text-xl tracking-[-0.02em] text-ink">Pub Picks</h2>
+          <h2 className="type-section">Pub Picks</h2>
           <p className="text-sm text-gray-mid mt-1 mb-6">Pub lists for every mood</p>
 
           <div className="relative">
@@ -294,7 +294,7 @@ export default function DiscoverClient() {
             ════════════════════════════════════════════ */}
         <section className="mb-10 sm:mb-14">
           <div className="bg-ink border-3 border-ink rounded-card p-6 text-center shadow-hard-sm">
-            <h2 className="font-mono font-extrabold text-xl text-white mb-2">Know a price we&apos;re missing?</h2>
+            <h2 className="type-section text-white mb-2">Know a price we&apos;re missing?</h2>
             <p className="text-white/60 text-sm mb-4">Help Perth drink cheaper.</p>
             <Link
               href="/?submit=1"

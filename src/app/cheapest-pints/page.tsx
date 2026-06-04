@@ -84,8 +84,8 @@ export default async function CheapestPintsPage() {
       <section className="max-w-container mx-auto px-6 pt-8 pb-12">
         <div className="grid gap-6 sm:grid-cols-[1fr_260px] sm:items-end">
           <div>
-            <p className="mb-3 font-mono text-[0.68rem] font-bold uppercase text-gray-mid">Live ranked list</p>
-            <h1 className="font-display text-[3rem] leading-[1] text-ink sm:text-[4.8rem]">
+            <p className="mb-3 type-eyebrow">Live ranked list</p>
+            <h1 className="type-hero-editorial">
               Cheapest pints in Perth
             </h1>
             <p className="mt-5 max-w-[620px] font-body text-[0.96rem] leading-relaxed text-gray-mid">
@@ -106,25 +106,25 @@ export default async function CheapestPintsPage() {
 
         <section className="my-8 grid gap-3 sm:grid-cols-3">
           <div className="rounded-card border-3 border-ink bg-white p-5 shadow-hard-sm">
-            <p className="font-mono text-[0.65rem] font-bold uppercase text-gray-mid">Cheapest checked</p>
+            <p className="type-eyebrow">Cheapest checked</p>
             <p className="mt-2 font-mono text-3xl font-extrabold text-ink">{formatPrice(cheapest?.regularPrice)}</p>
             <p className="mt-2 text-[0.76rem] leading-relaxed text-gray-mid">{cheapest ? `${cheapest.name}, ${cheapest.suburb}` : 'No verified rows yet.'}</p>
           </div>
           <div className="rounded-card border-3 border-ink bg-white p-5 shadow-hard-sm">
-            <p className="font-mono text-[0.65rem] font-bold uppercase text-gray-mid">Under $10</p>
+            <p className="type-eyebrow">Under $10</p>
             <p className="mt-2 font-mono text-3xl font-extrabold text-ink">{under10.length}</p>
             <p className="mt-2 text-[0.76rem] leading-relaxed text-gray-mid">Verified regular pint rows below the ten-dollar line.</p>
           </div>
           <div className="rounded-card border-3 border-ink bg-white p-5 shadow-hard-sm">
-            <p className="font-mono text-[0.65rem] font-bold uppercase text-gray-mid">City average</p>
+            <p className="type-eyebrow">City average</p>
             <p className="mt-2 font-mono text-3xl font-extrabold text-ink">{formatPrice(average)}</p>
             <p className="mt-2 text-[0.76rem] leading-relaxed text-gray-mid">{verified.length} verified pubs across the live dataset.</p>
           </div>
         </section>
 
         <section className="mb-8 rounded-card border-3 border-ink bg-ink p-5 text-white shadow-hard-sm">
-          <p className="font-mono text-[0.65rem] font-bold uppercase text-white/55">Answer first</p>
-          <h2 className="mt-2 font-mono text-xl font-extrabold">Where is the cheapest pint in Perth?</h2>
+          <p className="type-eyebrow text-white/55">Answer first</p>
+          <h2 className="mt-2 type-section text-white">Where is the cheapest pint in Perth?</h2>
           <p className="mt-3 font-body text-[0.9rem] leading-relaxed text-white/70">
             {cheapest ? <>The cheapest verified pint in Perth is {formatPrice(cheapest.regularPrice)} at <Link href={pubUrl(cheapest)} className="font-bold text-amber-light hover:underline">{cheapest.name}</Link> in {cheapest.suburb}, checked {formatDate(cheapest.lastVerified ?? cheapest.priceVerifiedAt)}. The top 24 checked rows currently cover {suburbCount} suburbs, which is why the useful answer is a ranked list rather than one suburb headline.</> : 'We do not have a verified regular pint row to publish yet.'}
           </p>
@@ -133,8 +133,8 @@ export default async function CheapestPintsPage() {
         <section className="rounded-card border-3 border-ink bg-white shadow-hard-sm">
           <div className="flex items-center justify-between gap-4 border-b-3 border-ink bg-off-white px-5 py-4">
             <div>
-              <p className="font-mono text-[0.65rem] font-bold uppercase text-gray-mid">Verified regular prices</p>
-              <h2 className="font-mono text-xl font-extrabold text-ink">Cheapest rows</h2>
+              <p className="type-eyebrow">Verified regular prices</p>
+              <h2 className="type-section">Cheapest rows</h2>
             </div>
             <ListChecks className="h-5 w-5 text-amber" />
           </div>
@@ -182,11 +182,11 @@ export default async function CheapestPintsPage() {
             </div>
             <div className="space-y-4">
               <div>
-                <h3 className="font-mono text-[0.82rem] font-extrabold text-ink">Do happy-hour prices count here?</h3>
+                <h3 className="type-card">Do happy-hour prices count here?</h3>
                 <p className="mt-1 text-[0.78rem] leading-relaxed text-gray-mid">No. This page ranks regular pint prices only. Happy hours get their own day pages because a one-hour pint is not the same promise as the normal price.</p>
               </div>
               <div>
-                <h3 className="font-mono text-[0.82rem] font-extrabold text-ink">Why is a pub missing?</h3>
+                <h3 className="type-card">Why is a pub missing?</h3>
                 <p className="mt-1 text-[0.78rem] leading-relaxed text-gray-mid">Usually because the regular pint price is still TBC or stale. We would rather show an honest gap than a tidy guess.</p>
               </div>
             </div>

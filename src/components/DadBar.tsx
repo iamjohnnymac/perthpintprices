@@ -74,7 +74,7 @@ export default function DadBar({ pubs, userLocation }: { pubs: Pub[], userLocati
               <Users className="w-5 h-5 text-ink" />
             </div>
             <div>
-              <h3 className="font-mono text-[0.85rem] font-extrabold text-ink">The Dad Bar</h3>
+              <h3 className="type-card">The Dad Bar</h3>
               <p className="font-body text-[0.75rem] text-gray-mid">Playgrounds for them. Pints for you.</p>
             </div>
           </div>

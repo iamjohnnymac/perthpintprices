@@ -120,8 +120,8 @@ export default async function HappyHourDayPage({ params }: DayPageProps) {
       <section className="max-w-container mx-auto px-6 pt-8 pb-12">
         <div className="grid gap-6 sm:grid-cols-[1fr_260px] sm:items-end">
           <div>
-            <p className="mb-3 font-mono text-[0.68rem] font-bold uppercase text-gray-mid">Day guide</p>
-            <h1 className="font-display text-[3rem] leading-[1] text-ink sm:text-[4.8rem]">
+            <p className="mb-3 type-eyebrow">Day guide</p>
+            <h1 className="type-hero-editorial">
               {day.label} happy hours in Perth
             </h1>
             <p className="mt-5 max-w-[620px] font-body text-[0.96rem] leading-relaxed text-gray-mid">
@@ -141,8 +141,8 @@ export default async function HappyHourDayPage({ params }: DayPageProps) {
         </div>
 
         <section className="my-8 rounded-card border-3 border-ink bg-ink p-5 text-white shadow-hard-sm">
-          <p className="font-mono text-[0.65rem] font-bold uppercase text-white/55">Answer first</p>
-          <h2 className="mt-2 font-mono text-xl font-extrabold">What is the best {day.label} happy hour in Perth?</h2>
+          <p className="type-eyebrow text-white/55">Answer first</p>
+          <h2 className="mt-2 type-section text-white">What is the best {day.label} happy hour in Perth?</h2>
           <p className="mt-3 font-body text-[0.9rem] leading-relaxed text-white/70">
             {cheapest ? <>The cheapest checked {day.label} happy-hour discount is {formatPrice(cheapest.happyHourPrice)} at <Link href={pubUrl(cheapest)} className="font-bold text-amber-light hover:underline">{cheapest.name}</Link> in {cheapest.suburb}. The listed window is {formatWindow(cheapest)}, and the row was last checked {formatDate(cheapest.lastVerified ?? cheapest.priceVerifiedAt)}. Treat that as the starting point, not a promise carved into the bar top.</> : <>Use the live happy-hour board for now; this day needs more confirmed discount prices before it deserves a winner.</>}
           </p>
@@ -150,17 +150,17 @@ export default async function HappyHourDayPage({ params }: DayPageProps) {
 
         <section className="mb-8 grid gap-3 sm:grid-cols-3">
           <div className="rounded-card border-3 border-ink bg-white p-5 shadow-hard-sm">
-            <p className="font-mono text-[0.65rem] font-bold uppercase text-gray-mid">Rows for {day.label}</p>
+            <p className="type-eyebrow">Rows for {day.label}</p>
             <p className="mt-2 font-mono text-3xl font-extrabold text-ink">{dayPubs.length}</p>
             <p className="mt-2 text-[0.76rem] leading-relaxed text-gray-mid">Pubs with {day.label} in the happy-hour schedule.</p>
           </div>
           <div className="rounded-card border-3 border-ink bg-white p-5 shadow-hard-sm">
-            <p className="font-mono text-[0.65rem] font-bold uppercase text-gray-mid">Priced discounts</p>
+            <p className="type-eyebrow">Priced discounts</p>
             <p className="mt-2 font-mono text-3xl font-extrabold text-ink">{confirmedDiscounts}</p>
             <p className="mt-2 text-[0.76rem] leading-relaxed text-gray-mid">Rows with a specific happy-hour price attached.</p>
           </div>
           <div className="rounded-card border-3 border-ink bg-white p-5 shadow-hard-sm">
-            <p className="font-mono text-[0.65rem] font-bold uppercase text-gray-mid">Cheapest listed</p>
+            <p className="type-eyebrow">Cheapest listed</p>
             <p className="mt-2 font-mono text-3xl font-extrabold text-ink">{formatPrice(cheapest?.happyHourPrice)}</p>
             <p className="mt-2 text-[0.76rem] leading-relaxed text-gray-mid">{cheapest ? `${cheapest.name}, ${cheapest.suburb}` : 'Needs a checked row.'}</p>
           </div>
@@ -169,8 +169,8 @@ export default async function HappyHourDayPage({ params }: DayPageProps) {
         <section className="rounded-card border-3 border-ink bg-white shadow-hard-sm">
           <div className="flex items-center justify-between gap-4 border-b-3 border-ink bg-off-white px-5 py-4">
             <div>
-              <p className="font-mono text-[0.65rem] font-bold uppercase text-gray-mid">Sorted by price</p>
-              <h2 className="font-mono text-xl font-extrabold text-ink">{day.label} rows</h2>
+              <p className="type-eyebrow">Sorted by price</p>
+              <h2 className="type-section">{day.label} rows</h2>
             </div>
             <Clock className="h-5 w-5 text-amber" />
           </div>
@@ -214,11 +214,11 @@ export default async function HappyHourDayPage({ params }: DayPageProps) {
             <h2 className="font-mono text-lg font-extrabold text-ink">Quick Q&A</h2>
             <div className="mt-4 space-y-4">
               <div>
-                <h3 className="font-mono text-[0.82rem] font-extrabold text-ink">Are these live right now?</h3>
+                <h3 className="type-card">Are these live right now?</h3>
                 <p className="mt-1 text-[0.78rem] leading-relaxed text-gray-mid">Not necessarily. This page is the {day.label} planning board. For the current minute, use the live happy-hour page.</p>
               </div>
               <div>
-                <h3 className="font-mono text-[0.82rem] font-extrabold text-ink">Why are some windows vague?</h3>
+                <h3 className="type-card">Why are some windows vague?</h3>
                 <p className="mt-1 text-[0.78rem] leading-relaxed text-gray-mid">Some pubs publish the day but not a neat start and end time. We show the clean window where we have it and leave the fuzzy ones fuzzy.</p>
               </div>
             </div>

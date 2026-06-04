@@ -73,8 +73,8 @@ export default async function HowMuchIsAPintInPerthPage() {
       <section className="max-w-container mx-auto px-6 pt-8 pb-12">
         <div className="grid gap-6 sm:grid-cols-[1fr_250px] sm:items-end">
           <div>
-            <p className="mb-3 font-mono text-[0.68rem] font-bold uppercase text-gray-mid">Answer first</p>
-            <h1 className="font-display text-[3rem] leading-[1] text-ink sm:text-[4.55rem]">
+            <p className="mb-3 type-eyebrow">Answer first</p>
+            <h1 className="type-hero-editorial">
               How much is a pint in Perth?
             </h1>
             <p className="mt-5 max-w-[640px] font-body text-[0.98rem] leading-relaxed text-gray-mid">
@@ -95,17 +95,17 @@ export default async function HowMuchIsAPintInPerthPage() {
 
         <section className="my-8 grid gap-3 sm:grid-cols-3">
           <div className="rounded-card border-3 border-ink bg-white p-5 shadow-hard-sm">
-            <p className="font-mono text-[0.65rem] font-bold uppercase text-gray-mid">Average pint</p>
+            <p className="type-eyebrow">Average pint</p>
             <p className="mt-2 font-mono text-3xl font-extrabold text-ink">{formatAudPrice(stats.averagePrice)}</p>
             <p className="mt-2 text-[0.76rem] leading-relaxed text-gray-mid">Verified regular pint prices only.</p>
           </div>
           <div className="rounded-card border-3 border-ink bg-white p-5 shadow-hard-sm">
-            <p className="font-mono text-[0.65rem] font-bold uppercase text-gray-mid">Median pint</p>
+            <p className="type-eyebrow">Median pint</p>
             <p className="mt-2 font-mono text-3xl font-extrabold text-ink">{formatAudPrice(stats.medianPrice)}</p>
             <p className="mt-2 text-[0.76rem] leading-relaxed text-gray-mid">The middle of the checked-price pack.</p>
           </div>
           <div className="rounded-card border-3 border-ink bg-white p-5 shadow-hard-sm">
-            <p className="font-mono text-[0.65rem] font-bold uppercase text-gray-mid">Checked range</p>
+            <p className="type-eyebrow">Checked range</p>
             <p className="mt-2 font-mono text-3xl font-extrabold text-ink">{formatAudPrice(stats.minPrice)}-{formatAudPrice(stats.maxPrice)}</p>
             <p className="mt-2 text-[0.76rem] leading-relaxed text-gray-mid">{stats.trackedCount} pubs tracked across {stats.suburbCount} suburbs.</p>
           </div>
@@ -115,8 +115,8 @@ export default async function HowMuchIsAPintInPerthPage() {
           <div className="flex items-start gap-3">
             <CircleDollarSign className="mt-1 h-5 w-5 shrink-0 text-amber-light" />
             <div>
-              <p className="font-mono text-[0.65rem] font-bold uppercase text-white/55">Short version</p>
-              <h2 className="mt-2 font-mono text-xl font-extrabold">What should you budget for one pint?</h2>
+              <p className="type-eyebrow text-white/55">Short version</p>
+              <h2 className="mt-2 type-section text-white">What should you budget for one pint?</h2>
               <p className="mt-3 font-body text-[0.9rem] leading-relaxed text-white/70">
                 Budget roughly {formatAudPrice(stats.averagePrice)} for a standard Perth pint if you are walking into a random checked pub. If you care where the cheap end still lives, start with the live <Link href="/cheapest-pints" className="font-bold text-amber-light hover:underline">cheapest-pints list</Link>; {stats.underTenCount} verified rows currently sit under $10.
               </p>
@@ -127,8 +127,8 @@ export default async function HowMuchIsAPintInPerthPage() {
         <section className="grid gap-5 sm:grid-cols-[1fr_0.85fr]">
           <div className="rounded-card border-3 border-ink bg-white shadow-hard-sm">
             <div className="border-b-3 border-ink bg-off-white px-5 py-4">
-              <p className="font-mono text-[0.65rem] font-bold uppercase text-gray-mid">Live rows</p>
-              <h2 className="mt-1 font-mono text-xl font-extrabold text-ink">Cheapest checked pints right now</h2>
+              <p className="type-eyebrow">Live rows</p>
+              <h2 className="mt-1 type-section">Cheapest checked pints right now</h2>
             </div>
             <div className="divide-y divide-gray-light">
               {cheapestRows.map((pub, index) => (
@@ -165,11 +165,11 @@ export default async function HowMuchIsAPintInPerthPage() {
               </div>
               <div className="space-y-4">
                 <div>
-                  <h3 className="font-mono text-[0.82rem] font-extrabold text-ink">Is a happy-hour pint included?</h3>
+                  <h3 className="type-card">Is a happy-hour pint included?</h3>
                   <p className="mt-1 text-[0.78rem] leading-relaxed text-gray-mid">No. The headline number uses regular pint prices only. Happy-hour deals move around by day and hour, so they live on the happy-hour pages.</p>
                 </div>
                 <div>
-                  <h3 className="font-mono text-[0.82rem] font-extrabold text-ink">Why do some pubs show TBC?</h3>
+                  <h3 className="type-card">Why do some pubs show TBC?</h3>
                   <p className="mt-1 text-[0.78rem] leading-relaxed text-gray-mid">Because we have not confirmed a current regular pint price cleanly enough. TBC rows stay out of the average and median.</p>
                 </div>
               </div>
@@ -178,7 +178,7 @@ export default async function HowMuchIsAPintInPerthPage() {
         </section>
 
         <section className="mt-8 rounded-card border-3 border-ink bg-white p-5 shadow-hard-sm">
-          <p className="font-mono text-[0.65rem] font-bold uppercase text-gray-mid">Keep going</p>
+          <p className="type-eyebrow">Keep going</p>
           <div className="mt-3 grid gap-2 sm:grid-cols-2">
             {[
               { href: '/insights/pint-index', label: 'Perth Pint Index' },

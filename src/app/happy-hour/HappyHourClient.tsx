@@ -186,7 +186,7 @@ export default function HappyHourClient({ initialPubs, renderedAtIso }: HappyHou
       <div className="max-w-container mx-auto px-6 py-8">
         {/* Page heading */}
         <div className="mb-6">
-          <h1 className="font-mono font-extrabold text-[clamp(1.8rem,5vw,2.4rem)] tracking-normal text-ink leading-[1.1]">
+          <h1 className="type-hero">
             Perth happy hours, on now
           </h1>
 
@@ -219,10 +219,10 @@ export default function HappyHourClient({ initialPubs, renderedAtIso }: HappyHou
             <div className="border-b border-gray-light bg-off-white px-5 py-4">
               <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
                 <div>
-                  <p className="font-mono text-[0.65rem] font-bold uppercase tracking-[0.05em] text-gray-mid">
+                  <p className="type-eyebrow">
                     {formatPerthTime(clockInstant)} AWST
                   </p>
-                  <h2 className="font-mono text-[1.15rem] font-extrabold leading-tight text-ink">
+                  <h2 className="type-section leading-tight">
                     Tonight&apos;s happy-hour board
                   </h2>
                 </div>
@@ -234,7 +234,7 @@ export default function HappyHourClient({ initialPubs, renderedAtIso }: HappyHou
 
             <div className="grid gap-0 sm:grid-cols-3">
               <div className="border-b border-gray-light p-5 sm:border-b-0 sm:border-r">
-                <p className="font-mono text-[0.68rem] font-bold uppercase tracking-[0.05em] text-gray-mid">
+                <p className="type-eyebrow">
                   Live
                 </p>
                 <p className="mt-2 font-mono text-3xl font-extrabold text-ink">
@@ -252,12 +252,12 @@ export default function HappyHourClient({ initialPubs, renderedAtIso }: HappyHou
               </div>
 
               <div className="border-b border-gray-light p-5 sm:border-b-0 sm:border-r">
-                <p className="font-mono text-[0.68rem] font-bold uppercase tracking-[0.05em] text-gray-mid">
+                <p className="type-eyebrow">
                   Next
                 </p>
                 {planner.nextDeal ? (
                   <>
-                    <p className="mt-2 font-mono text-[1.45rem] font-extrabold leading-tight text-ink">
+                    <p className="mt-2 type-price text-[1.45rem] leading-tight">
                       {planner.nextDeal.status.countdown ?? 'Later today'}
                     </p>
                     <p className="mt-2 text-[0.78rem] leading-relaxed text-gray-mid">
@@ -266,7 +266,7 @@ export default function HappyHourClient({ initialPubs, renderedAtIso }: HappyHou
                   </>
                 ) : planner.laterDeal ? (
                   <>
-                    <p className="mt-2 font-mono text-[1.45rem] font-extrabold leading-tight text-ink">
+                    <p className="mt-2 type-price text-[1.45rem] leading-tight">
                       Later in the week
                     </p>
                     <p className="mt-2 text-[0.78rem] leading-relaxed text-gray-mid">
@@ -281,10 +281,10 @@ export default function HappyHourClient({ initialPubs, renderedAtIso }: HappyHou
               </div>
 
               <div className="p-5">
-                <p className="font-mono text-[0.68rem] font-bold uppercase tracking-[0.05em] text-gray-mid">
+                <p className="type-eyebrow">
                   Freshness
                 </p>
-                <p className="mt-2 font-mono text-[1.45rem] font-extrabold leading-tight text-ink">
+                <p className="mt-2 type-price text-[1.45rem] leading-tight">
                   {planner.freshCount}/{happyHourPubs.length}
                 </p>
                 <p className="mt-2 text-[0.78rem] leading-relaxed text-gray-mid">
@@ -298,8 +298,8 @@ export default function HappyHourClient({ initialPubs, renderedAtIso }: HappyHou
         <section className="mb-6 rounded-card border-3 border-ink bg-white p-5 shadow-hard-sm">
           <div className="mb-4 flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
             <div>
-              <p className="font-mono text-[0.65rem] font-bold uppercase tracking-[0.05em] text-gray-mid">Planning board</p>
-              <h2 className="font-mono text-[1.15rem] font-extrabold leading-tight text-ink">Happy hours by day</h2>
+              <p className="type-eyebrow">Planning board</p>
+              <h2 className="type-section leading-tight">Happy hours by day</h2>
             </div>
             <Link href="/articles/perth-happy-hours-by-day" className="font-mono text-[0.72rem] font-bold uppercase text-amber no-underline hover:underline">
               Read the guide →

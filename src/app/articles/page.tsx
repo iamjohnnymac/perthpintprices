@@ -38,10 +38,10 @@ export default function ArticlesPage() {
 
       <section className="max-w-container mx-auto px-6 pt-8 pb-12">
         <div className="mb-10">
-          <p className="font-mono text-[0.68rem] font-bold uppercase text-gray-mid mb-3">
+          <p className="type-eyebrow mb-3">
             Pub notes
           </p>
-          <h1 className="max-w-[700px] font-display text-[3rem] leading-[1] text-ink sm:text-[4.8rem]">
+          <h1 className="max-w-[700px] type-hero-editorial">
             Perth drinking, with the prices left in.
           </h1>
           <p className="font-body text-[0.95rem] leading-relaxed text-gray-mid mt-5 max-w-[590px]">
@@ -73,7 +73,7 @@ export default function ArticlesPage() {
                       {formatArticleDate(featured.publishedAt)}
                     </span>
                   </div>
-                  <p className="mb-3 font-mono text-[0.68rem] font-bold uppercase text-white/60">{featured.category}</p>
+                  <p className="mb-3 type-eyebrow text-white/60">{featured.category}</p>
                   <h2 className="font-display text-[2.4rem] leading-[1] text-white sm:text-[3.6rem]">
                     {featured.title}
                   </h2>
@@ -89,7 +89,7 @@ export default function ArticlesPage() {
                   />
                   <div className="flex flex-1 flex-col justify-between p-6">
                     <div>
-                      <p className="font-mono text-[0.68rem] font-bold uppercase text-ink/70">{featured.heroLabel}</p>
+                      <p className="type-eyebrow text-ink/70">{featured.heroLabel}</p>
                       <p className="mt-3 font-mono text-[2.45rem] font-extrabold leading-none text-ink">{featured.heroStat}</p>
                       <p className="mt-2 font-body text-[0.82rem] font-bold leading-snug text-ink/70">{featured.heroSubstat}</p>
                     </div>
@@ -105,7 +105,7 @@ export default function ArticlesPage() {
 
         <section>
           <div className="mb-5 flex items-center justify-between gap-4 border-b-3 border-ink pb-3">
-            <h2 className="font-mono text-xl font-extrabold text-ink">Latest notes</h2>
+            <h2 className="type-section">Latest notes</h2>
             <BookOpen className="h-5 w-5 text-gray-mid" />
           </div>
           <div className="grid gap-5 sm:grid-cols-2">
@@ -125,7 +125,7 @@ export default function ArticlesPage() {
                 <ArticleImageSlot article={article} size="card" className="aspect-[16/9] border-b-3 border-ink" />
                 <div className="flex flex-1 flex-col p-5">
                   <div className="flex items-start justify-end gap-4">
-                    <span className="font-mono text-[0.65rem] font-bold uppercase text-gray-mid">
+                    <span className="type-eyebrow">
                       {formatArticleDate(article.publishedAt)} - {article.readingMinutes} min
                     </span>
                   </div>

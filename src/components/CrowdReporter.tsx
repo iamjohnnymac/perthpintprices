@@ -43,7 +43,7 @@ export default function CrowdReporter({ pubId, pubName, onClose, onReport }: Cro
         <div className="bg-gradient-to-r from-amber-600 to-amber-700 px-6 py-4">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-white font-bold text-lg">How busy is it?</h3>
+              <h3 className="font-mono text-white font-bold text-lg">How busy is it?</h3>
               <p className="text-white/80 text-sm truncate">{pubName}</p>
             </div>
             <button 

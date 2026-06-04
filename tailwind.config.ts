@@ -21,10 +21,10 @@ const config: Config = {
         display: ['var(--font-dm-serif)', 'Georgia', 'serif'],
         body: ['var(--font-plus-jakarta)', 'system-ui', 'sans-serif'],
         mono: ['var(--font-jetbrains-mono)', '"Courier New"', 'monospace'],
-        // Backward compat aliases
+        // Backward-compat aliases. (Removed `heading` — it pointed at the body
+        // sans despite its name; migrate to .type-card / explicit font-mono.)
         sans: ['var(--font-plus-jakarta)', 'system-ui', 'sans-serif'],
         serif: ['var(--font-dm-serif)', 'Georgia', 'serif'],
-        heading: ['var(--font-plus-jakarta)', 'system-ui', 'sans-serif'],
       },
       colors: {
         // Arvo Bold palette
