@@ -103,6 +103,18 @@ export default function SubmitPubForm({ isOpen, onClose, userLocation, initialPu
     return () => document.removeEventListener('keydown', handleKey);
   }, [isOpen, onClose]);
 
+  // When the modal closes by any path (including Escape/backdrop, which bypass
+  // resetForm), revoke and drop any outstanding menu-photo preview blob URLs so
+  // they don't leak. Returns the same array when already empty to avoid an
+  // extra render. setMenuPreviews is a stable setter, so deps stay [isOpen].
+  useEffect(() => {
+    if (isOpen) return;
+    setMenuPreviews(prev => {
+      prev.forEach(url => URL.revokeObjectURL(url));
+      return prev.length ? [] : prev;
+    });
+  }, [isOpen]);
+
   // Close dropdown on outside click
   useEffect(() => {
     if (!showDropdown) return;
