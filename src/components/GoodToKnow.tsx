@@ -1,11 +1,15 @@
-import { Baby, CalendarCheck, Dog, Music, Star, Trees, Tv, Users, Utensils } from 'lucide-react'
+import { Baby, Dog, Music, Star, Trees, Tv, Utensils } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import type { Pub } from '@/types/pub'
 
 // Compact, sourced fact row from the Google Places attribute backfill. Decision-
 // page ethos: scannable chips, not prose. Every chip is a fact Google affirms as
 // true — null/false signals render nothing (truthful absence). Attributed inline.
-
+//
+// Only the chips that actually DIFFERENTIATE a pub are shown. Near-universal
+// signals (goodForGroups ~79%, reservable ~68%) are deliberately omitted here to
+// avoid badge-clutter — they stay in the amenityFeature schema (machine-readable,
+// no clutter cost) but add nothing to a human's "should I go here" decision.
 type ChipDef = { key: keyof Pub; label: string; Icon: LucideIcon }
 
 const CHIPS: ChipDef[] = [
@@ -15,8 +19,6 @@ const CHIPS: ChipDef[] = [
   { key: 'goodForChildren', label: 'Kids welcome', Icon: Baby },
   { key: 'servesFood', label: 'Kitchen', Icon: Utensils },
   { key: 'liveMusic', label: 'Live music', Icon: Music },
-  { key: 'goodForGroups', label: 'Good for a group', Icon: Users },
-  { key: 'reservable', label: 'Takes bookings', Icon: CalendarCheck },
 ]
 
 function formatDate(value: string): string {
