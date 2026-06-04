@@ -18,6 +18,7 @@ export interface PubIndexabilityInput {
   cozyPub?: boolean | null
   sunsetSpot?: boolean | null
   website?: string | null
+  businessStatus?: string | null
   now?: Date
 }
 
@@ -36,6 +37,11 @@ function hasText(value: string | null | undefined): boolean {
 }
 
 export function getPubIndexability(pub: PubIndexabilityInput): PubIndexability {
+  // Permanently-closed venues (Places business_status) are forced out of indexing
+  // and the sitemap below — but keep their data-driven tier so on-page rendering
+  // (e.g. the Tier-C "no price yet" stub) stays correct for closed-but-priced pubs.
+  const closed = pub.businessStatus === 'CLOSED_PERMANENTLY'
+
   const hasPrice = hasPositiveNumber(pub.price)
   const priceRecency = getPriceRecency(pub.lastVerified, pub.now)
   const hasCurrentRecency = priceRecency.tier === 'fresh' || priceRecency.tier === 'aging'
@@ -66,13 +72,12 @@ export function getPubIndexability(pub: PubIndexabilityInput): PubIndexability {
     Math.min(attributeCount, 2),
   ].reduce((sum, score) => sum + score, 0)
 
-  if (hasVerifiedPrice || (hasHappyHour && attributeCount > 0)) {
-    return { dataScore, tier: 'A', isIndexable: true }
-  }
+  const base: PubIndexability =
+    hasVerifiedPrice || (hasHappyHour && attributeCount > 0)
+      ? { dataScore, tier: 'A', isIndexable: true }
+      : hasPrice || hasHappyHour
+        ? { dataScore, tier: 'B', isIndexable: true }
+        : { dataScore, tier: 'C', isIndexable: false }
 
-  if (hasPrice || hasHappyHour) {
-    return { dataScore, tier: 'B', isIndexable: true }
-  }
-
-  return { dataScore, tier: 'C', isIndexable: false }
+  return closed ? { ...base, isIndexable: false } : base
 }

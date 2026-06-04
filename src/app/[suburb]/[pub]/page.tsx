@@ -60,6 +60,7 @@ function getPubPageIndexability(pub: Pub) {
     cozyPub: pub.cozyPub,
     sunsetSpot: pub.sunsetSpot,
     website: pub.website,
+    businessStatus: pub.businessStatus,
   })
 }
 

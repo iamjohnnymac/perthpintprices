@@ -313,6 +313,19 @@ export default function PubDetailClient({
           )}
         </div>
 
+        {/* Permanently closed notice — Places business_status */}
+        {pub.businessStatus === 'CLOSED_PERMANENTLY' && (
+          <div className="border-3 border-ink rounded-card bg-red-pale p-4 shadow-hard-sm">
+            <p className="font-mono text-[0.72rem] font-extrabold uppercase tracking-[0.05em] text-red">Permanently closed</p>
+            <p className="mt-1 font-body text-[0.85rem] leading-relaxed text-ink">
+              Google lists {pub.name} as permanently closed.{' '}
+              <Link href={suburbUrl(pub.suburb)} className="font-bold text-red no-underline hover:underline">
+                See other {pub.suburb} pubs →
+              </Link>
+            </p>
+          </div>
+        )}
+
         {/* Two-column layout */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
           {/* Left column */}
