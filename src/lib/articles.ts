@@ -91,9 +91,9 @@ export const articles: Article[] = [
       {
         heading: 'The short version',
         body: [
-          "As of 3 June 2026, there are 117 verified pints under $10 in the database, led by eight at $7 or less. Perth's checked-price average sits a little over $9, so a $7 pint runs about two dollars under what most of the city charges for the same 570ml.",
+          "In the June 2026 snapshot, the database held 117 verified pints under $10, led by eight at $7 or less. Perth's checked-price average sits a little over $9, so a $7 pint runs about two dollars under what most of the city charges for the same 570ml.",
           "The live rows below show the cheapest current slice, pulled from the database with each pub's last-checked date attached. The prose here is the context around them: which pubs, in which suburbs, and why their prices hold. Most were last confirmed in February 2026, so treat the rows as the source of truth, not the paragraphs.",
-          "One honest caveat first: this is the cheapest we have confirmed, not the cheapest that exists. We track 857 pubs and plenty still sit at TBC. If a pub you rate isn't on the list, it usually means we haven't checked its price cleanly enough to publish — not that it has gone dear.",
+          "One honest caveat first: this is the cheapest we have confirmed, not the cheapest that exists. We track 857 pubs, more than 300 with a verified price so far, and plenty still at TBC. If a pub you rate isn't on the list, it usually means we haven't checked its price cleanly enough to publish — not that it has gone dear.",
         ],
       },
       {
@@ -215,7 +215,7 @@ export const articles: Article[] = [
       {
         heading: 'Wednesday to Friday: the reliable stretch',
         body: [
-          "By Wednesday the weekday deals are running and the Northbridge rooms are open, and Friday is the fullest the week gets. Print Hall now advertises a daily 5pm-to-6pm happy hour with $10 selected pints, and our data also lists CBD after-work windows at The Reveley, The Stables Bar and The Emerson Bar.",
+          "By Wednesday the weekday deals are running and the Northbridge rooms are open, and Friday is the fullest the week gets. Print Hall advertises a daily 5pm-to-6pm happy hour with $10 selected pints, and our data also lists CBD after-work windows at The Reveley, The Stables Bar and The Emerson Bar.",
           "If you want the lowest number in this stretch, Rosie O'Grady's pours a $7.50 Guinness on a Monday-to-Friday, 4pm-to-6pm window — cheaper than most of the CBD and a short walk from the William Street cluster.",
         ],
       },
@@ -230,7 +230,7 @@ export const articles: Article[] = [
         heading: 'Check the delta, and check the date',
         body: [
           "The value of a happy hour is the gap, not the label. Bobeche in the CBD is listed by Perth Pint Prices with a Monday-to-Saturday, 5pm-to-6pm happy hour where the pint is $13 — exactly its standing selected-tap price. A window with no drop in it is just a window.",
-          "And every figure here has a use-by. As of 3 June 2026, most happy-hour rows were last checked in February, and a happy-hour board moves faster than anything else on a pub — they are, as the note at the top of this page puts it, among Perth's most optimistic works of fiction. The board below is a planning layer; the live happy-hour page is what's actually pouring tonight.",
+          "And every figure here has a use-by: most happy-hour rows were last checked in February 2026, and a happy-hour board moves faster than anything else on a pub — they're among Perth's most optimistic works of fiction. The board below is a planning layer; the live happy-hour page is what's actually pouring tonight.",
         ],
       },
     ],
