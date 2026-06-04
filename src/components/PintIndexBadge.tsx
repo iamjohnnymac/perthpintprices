@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useEffect, useMemo } from 'react'
-import { supabase } from '@/lib/supabase'
 
 /* ─── Inline mini sparkline ─── */
 function Spark({ data, width = 160, height = 36 }: { data: number[]; width?: number; height?: number }) {
@@ -34,37 +33,26 @@ function Spark({ data, width = 160, height = 36 }: { data: number[]; width?: num
 }
 
 export default function PintIndexBadge({ className = 'hidden sm:flex' }: { className?: string }) {
-  const [snapshots, setSnapshots] = useState<{ avg_price: number; snapshot_date: string }[]>([])
+  const [data, setData] = useState<{ price: number; spark: number[] } | null>(null)
   const [hovered, setHovered] = useState(false)
 
   useEffect(() => {
-    async function fetchData() {
-      const { data } = await supabase
-        .from('price_snapshots')
-        .select('avg_price, snapshot_date')
-        .order('snapshot_date', { ascending: false })
-        .limit(30)
-      if (data) {
-        // Fetch newest-first so we get the latest 30, then reverse to
-        // chronological order for the sparkline + current/previous reads.
-        setSnapshots(data.map((d: any) => ({
-          avg_price: parseFloat(d.avg_price),
-          snapshot_date: d.snapshot_date,
-        })).reverse())
-      }
-    }
-    fetchData()
+    // Live canonical average + snapshot trend, so the chip matches every page.
+    fetch('/api/pint-index')
+      .then(r => r.json())
+      .then(d => { if (d && typeof d.price === 'number') setData(d) })
+      .catch(() => {})
   }, [])
 
   const index = useMemo(() => {
-    if (snapshots.length < 2) return null
-    const current = snapshots[snapshots.length - 1]
-    const previous = snapshots[snapshots.length - 2]
-    const change = current.avg_price - previous.avg_price
-    const pct = (change / previous.avg_price) * 100
-    const sparkData = snapshots.map(s => s.avg_price)
-    return { price: current.avg_price, change, pct, sparkData }
-  }, [snapshots])
+    if (!data || typeof data.price !== 'number') return null
+    const spark = Array.isArray(data.spark) ? data.spark : []
+    const sparkData = [...spark, data.price]
+    const previous = spark.length > 0 ? spark[spark.length - 1] : data.price
+    const change = data.price - previous
+    const pct = previous ? (change / previous) * 100 : 0
+    return { price: data.price, change, pct, sparkData }
+  }, [data])
 
   if (!index) return null
 

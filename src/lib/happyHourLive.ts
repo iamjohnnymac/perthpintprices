@@ -13,25 +13,6 @@
 
 import { perthNow } from './perthClock'
 
-/** Format raw postgres array days into readable string */
-export function formatHappyHourDays(days: string | null): string {
-  if (!days) return ''
-  if (days.startsWith('{') && days.endsWith('}')) {
-    const dayList = days.slice(1, -1).split(',').map(d => d.trim())
-    const allDays = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun']
-    if (dayList.length === 7) return '7 days'
-    if (dayList.length === 5 && ['Mon','Tue','Wed','Thu','Fri'].every(d => dayList.includes(d))) return 'Mon–Fri'
-    if (dayList.length === 2 && dayList.includes('Sat') && dayList.includes('Sun')) return 'Weekends'
-    const indices = dayList.map(d => allDays.indexOf(d)).filter(i => i >= 0).sort((a,b) => a-b)
-    if (indices.length > 2) {
-      const isConsecutive = indices.every((v, i) => i === 0 || v === indices[i-1] + 1)
-      if (isConsecutive) return `${allDays[indices[0]]}–${allDays[indices[indices.length-1]]}`
-    }
-    return dayList.join(', ')
-  }
-  return days
-}
-
 const DAY_MAP: Record<string, number> = {
   sun: 0, sunday: 0,
   mon: 1, monday: 1,
@@ -40,6 +21,29 @@ const DAY_MAP: Record<string, number> = {
   thu: 4, thursday: 4,
   fri: 5, friday: 5,
   sat: 6, saturday: 6,
+}
+
+/** Format raw day data into a readable string. */
+export function formatHappyHourDays(days: string | null): string {
+  if (!days) return ''
+  // Handles Postgres array braces, full names ("Tuesday") and short names
+  // ("Tue"), collapsing consecutive runs to "Tue–Fri" and tidying comma spacing.
+  const raw = days.startsWith('{') && days.endsWith('}') ? days.slice(1, -1) : days
+  const shortByIndex = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+  const tokens = raw.split(',').map(d => d.trim()).filter(Boolean)
+  const indices = tokens.map(t => DAY_MAP[t.toLowerCase()])
+  if (tokens.length === 0 || indices.some(i => i === undefined)) {
+    // Not a clean day list (e.g. "Mon-Fri", "Daily 4-6pm") — just tidy commas.
+    return tokens.join(', ')
+  }
+  const uniq = Array.from(new Set(indices as number[])).sort((a, b) => a - b)
+  if (uniq.length === 7) return '7 days'
+  if (uniq.length === 5 && [1, 2, 3, 4, 5].every(d => uniq.includes(d))) return 'Mon–Fri'
+  if (uniq.length === 2 && uniq.includes(0) && uniq.includes(6)) return 'Weekends'
+  if (uniq.length > 2 && uniq.every((v, i) => i === 0 || v === uniq[i - 1] + 1)) {
+    return `${shortByIndex[uniq[0]]}–${shortByIndex[uniq[uniq.length - 1]]}`
+  }
+  return uniq.map(i => shortByIndex[i]).join(', ')
 }
 
 function parseDayRange(days: string): number[] {

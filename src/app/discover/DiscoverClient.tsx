@@ -11,6 +11,7 @@ import Footer from '@/components/Footer'
 import { Beer, Clock, Tag, Star } from 'lucide-react'
 import LucideIcon from '@/components/LucideIcon'
 import { pubUrl } from '@/lib/urls'
+import { isDadBar } from '@/lib/pubPicks'
 import ArticleRail from '@/components/ArticleRail'
 
 function getPubHappyHourStatus(pub: Pub, now: Date): HappyHourStatus {
@@ -97,7 +98,7 @@ export default function DiscoverClient() {
   // Pub Picks counts
   const pubPickCounts = useMemo(() => ({
     sunset: pubs.filter(p => p.sunsetSpot === true).length,
-    dad: pubs.filter(p => p.vibeTag === 'Local favourite' || p.vibeTag === 'Neighbourhood local').length,
+    dad: pubs.filter(isDadBar).length,
     beer: verifiedPubs.length,
     cozy: pubs.filter(p => p.cozyPub === true).length,
     punt: pubs.filter(p => p.hasTab === true).length,
@@ -266,7 +267,7 @@ export default function DiscoverClient() {
 
               {[
                 { emoji: 'sunset', title: 'Sunset Sippers', desc: 'West-facing patios and rooftop bars for golden hour pints.', bg: 'bg-amber-pale', count: pubPickCounts.sunset, href: '/guides/sunset-sippers' },
-                { emoji: 'users', title: 'The Dad Bar', desc: 'No fairy lights, no craft beer menu. Just honest pints and the footy on.', bg: 'bg-white', count: pubPickCounts.dad, href: '/guides/dad-bar' },
+                { emoji: 'users', title: 'The Dad Bar', desc: 'Playgrounds for the kids, a cold pint and the footy for you.', bg: 'bg-white', count: pubPickCounts.dad, href: '/guides/dad-bar' },
                 { emoji: 'sun', title: 'Beer Weather', desc: 'Live BOM data matched to beer garden picks — so you know before you walk.', bg: 'bg-green-pale', count: pubPickCounts.beer, href: '/guides/beer-weather' },
                 { emoji: 'umbrella', title: 'Cosy Corners', desc: 'Fireplaces, booths, and warmth for when it\'s bucketing down.', bg: 'bg-white', count: pubPickCounts.cozy, href: '/guides/cozy-corners' },
                 { emoji: 'trophy', title: 'Punt & Pints', desc: 'TAB screens, cold pints, and a flutter on the trots.', bg: 'bg-white', count: pubPickCounts.punt, href: '/guides/punt-and-pints' },

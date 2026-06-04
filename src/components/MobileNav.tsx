@@ -46,7 +46,7 @@ export default function MobileNav({ onSubmitClick }: MobileNavProps) {
           />
 
           {/* Panel */}
-          <div className="absolute right-0 top-0 bottom-0 w-[85%] max-w-[340px] bg-[#FDF8F0] shadow-2xl flex flex-col animate-slideIn">
+          <div className="absolute right-0 top-0 bottom-0 w-[85%] max-w-[340px] bg-[#FDF8F0] border-l-3 border-ink shadow-hard flex flex-col animate-slideIn">
             {/* Header */}
             <div className="flex items-center justify-between px-6 py-5 border-b border-gray-light/60">
               <Link href="/" onClick={() => setOpen(false)} className="flex items-center gap-2 no-underline">
@@ -73,9 +73,9 @@ export default function MobileNav({ onSubmitClick }: MobileNavProps) {
                     key={link.href}
                     href={link.href}
                     onClick={() => setOpen(false)}
-                    className="flex items-center gap-3 px-3 py-3.5 rounded-xl hover:bg-white/60 transition-colors no-underline group"
+                    className="flex items-center gap-3 px-3 py-3.5 rounded-card hover:bg-white/60 transition-colors no-underline group"
                   >
-                    <div className="w-10 h-10 rounded-xl bg-white border-2 border-gray-light/60 flex items-center justify-center flex-shrink-0 group-hover:border-amber/50 transition-colors">
+                    <div className="w-10 h-10 rounded-card bg-white border-2 border-gray-light/60 flex items-center justify-center flex-shrink-0 group-hover:border-amber/50 transition-colors">
                       <Icon className="w-5 h-5 text-ink" />
                     </div>
                     <div>

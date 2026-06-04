@@ -5,6 +5,7 @@ import { haversineDistanceKm } from '@/lib/location'
 import { hasUsableCoordinates, NEARBY_RADIUS_KM, rankNearbyPubs } from '@/lib/nearbyPubs'
 import { getPubIndexability, PubIndexabilityTier } from '@/lib/pubIndexability'
 import { normalizePriceConfidence } from '@/lib/priceProvenance'
+import { getPintPriceStats } from '@/lib/pintPriceStats'
 import { toSuburbSlug } from './urls'
 
 function titleCase(str: string): string {
@@ -28,7 +29,7 @@ export interface CrowdReport {
 }
 
 export const CROWD_LEVELS = {
-  1: { label: 'Empty', emoji: 'moon', color: 'bg-blue' },
+  1: { label: 'Empty', emoji: 'moon', color: 'bg-green' },
   2: { label: 'Moderate', emoji: 'users', color: 'bg-amber' },
   3: { label: 'Busy', emoji: 'circle-dot', color: 'bg-amber-light' },
   4: { label: 'Packed', emoji: 'flame', color: 'bg-red' },
@@ -496,37 +497,17 @@ export async function getSiteStats(): Promise<{
   avgPrice: string
   cheapestPrice: string
 }> {
-  const { data, error } = await supabase
-    .from('price_snapshots')
-    .select('total_pubs, total_suburbs, avg_price, min_price')
-    .order('snapshot_date', { ascending: false })
-    .limit(1)
-    .single()
-
-  if (error || !data) {
-    // Fallback: compute from pubs table directly
-    const pubs = await getPubs()
-    const priced = pubs.filter(p => p.price !== null)
-    const suburbs = new Set(pubs.map(p => p.suburb))
-    const avg = priced.length > 0
-      ? (priced.reduce((s, p) => s + p.price!, 0) / priced.length).toFixed(2)
-      : '0'
-    const min = priced.length > 0
-      ? Math.min(...priced.map(p => p.price!)).toFixed(2)
-      : '0'
-    return {
-      venueCount: pubs.length,
-      suburbCount: suburbs.size,
-      avgPrice: avg,
-      cheapestPrice: min,
-    }
-  }
-
+  // Canonical live figures (verified regular-pint prices) so the homepage and
+  // OG metadata match the Pint Index and every other surface. venue/suburb
+  // counts are coverage (all tracked pubs / all suburbs); avg + cheapest are
+  // the verified price stats. The weekly snapshot is used only for trend lines.
+  const pubs = await getPubs()
+  const stats = getPintPriceStats(pubs)
   return {
-    venueCount: data.total_pubs,
-    suburbCount: data.total_suburbs,
-    avgPrice: Number(data.avg_price).toFixed(2),
-    cheapestPrice: Number(data.min_price).toFixed(2),
+    venueCount: stats.trackedCount,
+    suburbCount: stats.suburbCount,
+    avgPrice: stats.averagePrice != null ? stats.averagePrice.toFixed(2) : '0',
+    cheapestPrice: stats.minPrice != null ? stats.minPrice.toFixed(2) : '0',
   }
 }
 

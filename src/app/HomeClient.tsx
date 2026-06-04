@@ -19,6 +19,7 @@ import SubmitPubForm from '@/components/SubmitPubForm'
 import CrowdReporter from '@/components/CrowdReporter'
 import MobileNav from '@/components/MobileNav'
 import PintIndexBadge from '@/components/PintIndexBadge'
+import { getPintPriceStats } from '@/lib/pintPriceStats'
 import ScrollReveal from '@/components/ScrollReveal'
 import ArticleRail from '@/components/ArticleRail'
 import { trackSiteEvent } from '@/lib/analytics'
@@ -294,17 +295,16 @@ function HomeContent({ initialPubs }: { initialPubs: Pub[] }) {
   }, [pubs, searchTerm, selectedSuburb, maxPrice, sortBy, showHappyHourOnly, userLocation, vibeTagFilter, kidFriendlyOnly, hasTabOnly, nearbyRadius])
 
   const stats = useMemo(() => {
-    if (pubs.length === 0) return { total: 0, minPrice: 0, maxPriceValue: 0, avgPrice: '0', happyHourNow: 0, cheapestSuburb: '', cheapestSlug: '', priciestSuburb: '', priciestSlug: '' }
-    const priced = pubs.filter(p => p.price !== null && p.priceVerified)
-    const minP = priced.length > 0 ? Math.min(...priced.map(p => p.price!)) : 0
-    const maxP = priced.length > 0 ? Math.max(...priced.map(p => p.price!)) : 0
-    const cheapest = priced.find(p => p.price === minP)
-    const priciest = priced.find(p => p.price === maxP)
+    // Canonical figures: verified regular-pint prices, so the homepage average
+    // matches the Pint Index "Answer First" box and every other surface.
+    const base = getPintPriceStats(pubs)
+    const cheapest = base.cheapestPub
+    const priciest = base.verifiedPubs.at(-1) ?? null
     return {
-      total: priced.length,
-      minPrice: minP,
-      maxPriceValue: maxP,
-      avgPrice: priced.length > 0 ? (priced.reduce((sum, p) => sum + p.price!, 0) / priced.length).toFixed(2) : '0',
+      total: base.verifiedCount,
+      minPrice: base.minPrice ?? 0,
+      maxPriceValue: base.maxPrice ?? 0,
+      avgPrice: base.averagePrice != null ? base.averagePrice.toFixed(2) : '0',
       happyHourNow: pubs.filter(p => p.isHappyHourNow).length,
       cheapestSuburb: cheapest?.suburb || '',
       cheapestSlug: cheapest?.slug || '',

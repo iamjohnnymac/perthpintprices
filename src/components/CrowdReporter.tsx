@@ -34,13 +34,13 @@ export default function CrowdReporter({ pubId, pubName, onClose, onReport }: Cro
   }
 
   return (
-    <div 
-      className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[9999] p-4"
+    <div
+      className="fixed inset-0 bg-ink/70 backdrop-blur-sm flex items-center justify-center z-[9999] p-4"
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
-      <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-3xl max-w-sm w-full overflow-hidden shadow-2xl border border-white/10">
+      <div className="bg-ink rounded-card max-w-sm w-full overflow-hidden shadow-hard border-3 border-ink">
         {/* Header */}
-        <div className="bg-gradient-to-r from-amber-600 to-amber-700 px-6 py-4">
+        <div className="bg-amber border-b-3 border-ink px-6 py-4">
           <div className="flex items-center justify-between">
             <div>
               <h3 className="font-mono text-white font-bold text-lg">How busy is it?</h3>
@@ -61,11 +61,11 @@ export default function CrowdReporter({ pubId, pubName, onClose, onReport }: Cro
             <div className="text-center py-8">
               <CircleCheck className="w-16 h-16 text-amber mb-4" />
               <p className="text-white font-semibold text-lg">Thanks.</p>
-              <p className="text-gray-400 text-sm">Your report helps others know how busy it is.</p>
+              <p className="text-white/60 text-sm">Your report helps others know how busy it is.</p>
             </div>
           ) : (
             <>
-              <p className="text-gray-300 text-sm text-center mb-6">
+              <p className="text-white/70 text-sm text-center mb-6">
                 Tap to report the current crowd level
               </p>
 
@@ -81,9 +81,9 @@ export default function CrowdReporter({ pubId, pubName, onClose, onReport }: Cro
                       onClick={() => setSelectedLevel(levelNum)}
                       className={`
                         p-4 rounded-card border-2 transition-all duration-200
-                        ${isSelected 
-                          ? `${info.color} border-white text-white scale-105 shadow-lg` 
-                          : 'bg-gray-800 border-gray-700 text-gray-300 hover:border-gray-500 hover:bg-gray-700'
+                        ${isSelected
+                          ? `${info.color} border-white text-white scale-105 shadow-hard-sm`
+                          : 'bg-white/5 border-white/15 text-white/70 hover:border-white/30 hover:bg-white/10'
                         }
                       `}
                     >
@@ -99,10 +99,10 @@ export default function CrowdReporter({ pubId, pubName, onClose, onReport }: Cro
                 onClick={handleSubmit}
                 disabled={!selectedLevel || isSubmitting}
                 className={`
-                  w-full py-3 rounded-xl font-bold text-white transition-all
+                  w-full py-3 rounded-pill border-3 border-ink font-bold text-white transition-all
                   ${selectedLevel && !isSubmitting
-                    ? 'bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-700 hover:to-amber-800 shadow-lg'
-                    : 'bg-gray-700 cursor-not-allowed opacity-50'
+                    ? 'bg-amber hover:bg-amber-light shadow-hard-sm'
+                    : 'bg-white/10 cursor-not-allowed opacity-50'
                   }
                 `}
               >
@@ -116,7 +116,7 @@ export default function CrowdReporter({ pubId, pubName, onClose, onReport }: Cro
                 )}
               </button>
 
-              <p className="text-gray-500 text-xs text-center mt-4">
+              <p className="text-white/50 text-xs text-center mt-4">
                 Reports are anonymous and expire after 3 hours
               </p>
             </>

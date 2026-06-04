@@ -764,7 +764,7 @@ export default function SubmitPubForm({ isOpen, onClose, userLocation, initialPu
                   aria-pressed={mode === key}
                   className={`flex-1 px-2 py-2 rounded-[8px] font-mono text-[0.7rem] font-bold transition-all flex items-center justify-center gap-1 ${
                     mode === key
-                      ? 'bg-white text-ink border-2 border-ink shadow-sm'
+                      ? 'bg-white text-ink border-2 border-ink shadow-hard-sm'
                       : 'text-gray-mid hover:text-ink border-2 border-transparent'
                   }`}
                 >
@@ -796,7 +796,7 @@ export default function SubmitPubForm({ isOpen, onClose, userLocation, initialPu
                       aria-invalid={!!fieldErrors.price}
                     />
                     {fieldErrors.price && (
-                      <p className="text-xs text-red-500 mt-1">{fieldErrors.price}</p>
+                      <p className="text-xs text-red mt-1">{fieldErrors.price}</p>
                     )}
                   </div>
                   <div>
@@ -820,7 +820,7 @@ export default function SubmitPubForm({ isOpen, onClose, userLocation, initialPu
                       onClick={() => setPriceType('regular')}
                       className={`flex-1 px-3 py-1.5 rounded-pill font-mono text-[0.65rem] font-bold transition-all ${
                         priceType === 'regular'
-                          ? 'bg-white text-ink shadow-sm'
+                          ? 'bg-white text-ink shadow-hard-sm'
                           : 'text-gray-mid hover:text-ink'
                       }`}
                     >
@@ -831,7 +831,7 @@ export default function SubmitPubForm({ isOpen, onClose, userLocation, initialPu
                       onClick={() => setPriceType('happy_hour')}
                       className={`flex-1 px-3 py-1.5 rounded-pill font-mono text-[0.65rem] font-bold transition-all ${
                         priceType === 'happy_hour'
-                          ? 'bg-amber-pale text-amber shadow-sm'
+                          ? 'bg-amber-pale text-amber shadow-hard-sm'
                           : 'text-gray-mid hover:text-ink'
                       }`}
                     >
@@ -1051,7 +1051,7 @@ export default function SubmitPubForm({ isOpen, onClose, userLocation, initialPu
                         onClick={() => setIssueReason(key)}
                         className={`px-3 py-2 rounded-pill font-mono text-[0.65rem] font-bold transition-all border-2 ${
                           issueReason === key
-                            ? 'bg-ink text-white border-ink shadow-sm'
+                            ? 'bg-ink text-white border-ink shadow-hard-sm'
                             : 'bg-off-white text-gray-mid border-gray-light hover:text-ink hover:border-ink/30'
                         }`}
                       >
@@ -1123,7 +1123,7 @@ export default function SubmitPubForm({ isOpen, onClose, userLocation, initialPu
                       aria-invalid={!!fieldErrors.price}
                     />
                     {fieldErrors.price && (
-                      <p className="text-xs text-red-500 mt-1">{fieldErrors.price}</p>
+                      <p className="text-xs text-red mt-1">{fieldErrors.price}</p>
                     )}
                   </div>
                 </div>

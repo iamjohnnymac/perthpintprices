@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { ArrowUpRight, CircleDollarSign } from 'lucide-react'
 import SubPageNav from '@/components/SubPageNav'
-import PintIndex from '@/components/PintIndex'
+import PintIndex, { type PintIndexLive } from '@/components/PintIndex'
 import Footer from '@/components/Footer'
 import { ErrorBoundary } from '@/components/ErrorBoundary'
 
@@ -20,7 +20,7 @@ interface PintIndexAnswerStats {
   cheapestUrl: string | null
 }
 
-export default function PintIndexPage({ stats }: { stats: PintIndexAnswerStats }) {
+export default function PintIndexPage({ stats, live }: { stats: PintIndexAnswerStats; live: PintIndexLive }) {
   return (
     <main className="min-h-screen overflow-x-hidden bg-[#FDF8F0]">
       <SubPageNav breadcrumbs={[
@@ -52,7 +52,7 @@ export default function PintIndexPage({ stats }: { stats: PintIndexAnswerStats }
           </div>
         </section>
         <div className="overflow-x-auto">
-          <ErrorBoundary><PintIndex /></ErrorBoundary>
+          <ErrorBoundary><PintIndex live={live} /></ErrorBoundary>
         </div>
       </div>
       <div className="mx-auto w-[calc(100vw-3rem)] max-w-container pb-8 sm:pb-12">
