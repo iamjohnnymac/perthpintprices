@@ -165,18 +165,9 @@ export function getSuburbStory(input: SuburbStoryInput): SuburbStory {
     })
   }
 
-  if (suburbAvgPrice !== null && verifiedCount >= 2 && perthAvgPrice > 0) {
-    const delta = suburbAvgPrice - perthAvgPrice
-    const relation = priceWord(delta)
-    cards.push({
-      id: 'average',
-      label: 'Suburb average',
-      title: money(suburbAvgPrice),
-      body: relation === 'about level with'
-        ? `${suburb.name} is about level with Perth's checked average of ${money(perthAvgPrice)}.`
-        : `${suburb.name} sits ${money(Math.abs(delta))} ${relation} Perth's checked average of ${money(perthAvgPrice)}.`,
-    })
-  }
+  // (No 'average' card — the suburb average + Perth comparison is already shown
+  // in the hero stat strip and the answer-first lead, so a card here just
+  // duplicates it and pads the grid to an odd count.)
 
   if (happyHourCount > 0) {
     const activeLine = activeHappyHourCount > 0

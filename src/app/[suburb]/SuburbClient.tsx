@@ -132,8 +132,13 @@ export default function SuburbClient({ suburb, pubs, nearbySuburbs, perthAvgPric
       {/* Local guide modules — rendered only from checked suburb data */}
       <section className="max-w-container mx-auto px-6 pb-6">
         <div className="grid gap-3 sm:grid-cols-2">
-          {story.cards.map(card => (
-            <article key={card.id} className="min-w-0 border-3 border-ink rounded-card bg-white p-4 shadow-hard-sm">
+          {story.cards.map((card, i) => (
+            <article
+              key={card.id}
+              className={`min-w-0 border-3 border-ink rounded-card bg-white p-4 shadow-hard-sm${
+                i === story.cards.length - 1 && story.cards.length % 2 === 1 ? ' sm:col-span-2' : ''
+              }`}
+            >
               <p className="type-eyebrow mb-1">{card.label}</p>
               <h2 className="font-mono text-[1.05rem] font-extrabold leading-tight text-ink mb-2">{card.title}</h2>
               <p className="text-[0.78rem] leading-relaxed text-gray-mid">{card.body}</p>
