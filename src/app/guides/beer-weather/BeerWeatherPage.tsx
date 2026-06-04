@@ -6,7 +6,7 @@ import BeerWeather from '@/components/BeerWeather'
 export default function BeerWeatherPage() {
   return (
     <FeaturePageShell title="Beer Weather Perth" breadcrumbs={[
-      { label: 'Guides', href: '/guides' },
+      { label: 'Discover', href: '/discover' },
       { label: 'Beer Weather' },
     ]}>
       {({ pubs, userLocation }) => (

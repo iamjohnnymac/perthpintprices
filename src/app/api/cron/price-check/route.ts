@@ -1,5 +1,6 @@
 import { serviceClient } from '@/lib/supabaseGateway'
 import { NextRequest, NextResponse } from 'next/server'
+import { pubUrl } from '@/lib/urls'
 
 interface PriceChange {
   slug: string
@@ -103,7 +104,7 @@ export async function GET(request: NextRequest) {
             body: JSON.stringify({
               title: `Price Drop at ${drop.name}`,
               body: `$${drop.oldPrice.toFixed(2)} → $${drop.newPrice.toFixed(2)} (-$${drop.diff.toFixed(2)}) in ${drop.suburb}`,
-              url: `/pub/${drop.slug}`,
+              url: pubUrl(drop),
               tag: `price-drop-${drop.slug}`,
               targetSlugs: [drop.slug],
               renotify: true,

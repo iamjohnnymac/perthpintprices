@@ -6,7 +6,7 @@ import SuburbLeague from '@/components/SuburbLeague'
 export default function SuburbRankingsPage() {
   return (
     <FeaturePageShell title="Perth Suburb Pint Rankings" breadcrumbs={[
-      { label: 'Insights', href: '/insights' },
+      { label: 'Discover', href: '/discover' },
       { label: 'Suburb Rankings' },
     ]}>
       {({ pubs }) => (

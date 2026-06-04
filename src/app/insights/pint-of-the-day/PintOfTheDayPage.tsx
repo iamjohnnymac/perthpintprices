@@ -9,7 +9,7 @@ export default function PintOfTheDayPage() {
   return (
     <main className="min-h-screen bg-[#FDF8F0]">
       <SubPageNav breadcrumbs={[
-        { label: 'Insights', href: '/insights' },
+        { label: 'Discover', href: '/discover' },
         { label: 'Pint of the Day' },
       ]} />
       <h1 className="sr-only">Perth Pint of the Day</h1>
