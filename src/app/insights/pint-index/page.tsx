@@ -18,7 +18,7 @@ export const metadata: Metadata = {
   alternates: { canonical },
   openGraph: {
     title: 'Perth Pint Index™: Live Beer Price Tracker | Perth Pint Prices',
-    description: "Track Perth's average pint price over time across 300+ venues.",
+    description: "Track Perth's average pint price over time across the venues we cover.",
     url: canonical,
     type: 'website',
     siteName: 'Perth Pint Prices',

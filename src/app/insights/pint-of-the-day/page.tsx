@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   alternates: { canonical: 'https://perthpintprices.com/insights/pint-of-the-day' },
   openGraph: {
     title: "Perth Pint of the Day | Perth Pint Prices",
-    description: "Today's best value pint in Perth, picked from 300+ venues.",
+    description: "Today's best value pint in Perth, picked from the venues we track.",
     url: 'https://perthpintprices.com/insights/pint-of-the-day',
     type: 'website',
     siteName: 'Perth Pint Prices',
