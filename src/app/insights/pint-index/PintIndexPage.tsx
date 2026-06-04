@@ -24,7 +24,7 @@ export default function PintIndexPage({ stats }: { stats: PintIndexAnswerStats }
   return (
     <main className="min-h-screen overflow-x-hidden bg-[#FDF8F0]">
       <SubPageNav breadcrumbs={[
-        { label: 'Insights', href: '/insights' },
+        { label: 'Discover', href: '/discover' },
         { label: 'Perth Pint Index™' },
       ]} />
       <h1 className="sr-only">Perth Pint Index</h1>

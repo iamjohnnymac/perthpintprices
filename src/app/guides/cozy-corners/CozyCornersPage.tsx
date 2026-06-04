@@ -6,7 +6,7 @@ import RainyDay from '@/components/RainyDay'
 export default function CozyCornersPage() {
   return (
     <FeaturePageShell title="Cosy Corners Perth" breadcrumbs={[
-      { label: 'Guides', href: '/guides' },
+      { label: 'Discover', href: '/discover' },
       { label: 'Cosy Corners' },
     ]}>
       {({ pubs, userLocation }) => (
