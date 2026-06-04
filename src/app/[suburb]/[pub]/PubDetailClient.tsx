@@ -130,7 +130,6 @@ export default function PubDetailClient({
   const hasCheaperNearby = currentPrice !== null && nearbyPubs.some(nearby =>
     nearby.price !== null && nearby.price < currentPrice
   )
-  const hasStatusRow = pub.isHappyHourNow || pub.price !== null || !!pub.lastVerified
   const priceSourcePhrase = describePriceSource(pub.priceSource)
   const priceVerifiedAt = pub.priceVerifiedAt || pub.lastVerified
   const priceProvenance = pub.price !== null && priceSourcePhrase && priceVerifiedAt
@@ -299,7 +298,7 @@ export default function PubDetailClient({
 
         {/* Name + vibe */}
         <div>
-          <h1 className="font-mono font-extrabold text-[clamp(1.8rem,5vw,2.4rem)] tracking-[-0.03em] text-ink leading-[1.1]">
+          <h1 className="type-hero">
             {pub.name}
           </h1>
           <div className="flex items-center gap-2 mt-2 text-[0.8rem] text-gray-mid">
@@ -332,7 +331,7 @@ export default function PubDetailClient({
           <div className="space-y-8">
             {(quickReadCopy || bestTimeCopy || nearbySummary) && (
               <section className="border-3 border-ink rounded-card bg-ink p-5 text-white shadow-hard-sm">
-                <p className="font-mono text-[0.68rem] font-bold uppercase tracking-[0.1em] text-white/55 mb-2">Quick read</p>
+                <p className="type-eyebrow text-white/55 mb-2">Quick read</p>
                 {quickReadCopy && (
                   <p className="font-mono text-[1.05rem] font-extrabold leading-snug tracking-[-0.02em]">{quickReadCopy}</p>
                 )}
@@ -343,19 +342,23 @@ export default function PubDetailClient({
               </section>
             )}
 
-            {/* Price block */}
-            <div className="border-3 border-ink rounded-card bg-white p-5 shadow-hard-sm">
-              <div className="flex items-end justify-between">
-                <div>
-                  <p className="font-mono text-[0.68rem] font-bold uppercase tracking-[0.1em] text-gray-mid mb-1">Pint Price</p>
-                  {pub.isHappyHourNow && pub.regularPrice !== null && pub.regularPrice !== pub.price && (
-                    <div className="text-sm text-gray-mid line-through font-mono">${pub.regularPrice.toFixed(2)}</div>
-                  )}
-                  <div className="font-mono text-[2.5rem] font-extrabold text-ink leading-none">
-                    {pub.price !== null ? `$${pub.price.toFixed(2)}` : 'TBC'}
-                  </div>
+            {/* Price ticket — "betting slip" receipt treatment (Variant B) */}
+            <div className="border-3 border-ink rounded-card bg-white shadow-hard-sm overflow-hidden">
+              {/* Ticket header bar */}
+              <div className="bg-ink text-white px-5 py-2.5 flex items-center justify-between gap-3">
+                <span className="type-eyebrow text-white/70">Pint price</span>
+                {pub.beerType && <span className="font-mono text-[0.65rem] text-white/55 truncate">{pub.beerType}</span>}
+              </div>
+
+              {/* Big price, centred */}
+              <div className="px-5 pt-6 pb-5 text-center">
+                {pub.isHappyHourNow && pub.regularPrice !== null && pub.regularPrice !== pub.price && (
+                  <div className="text-sm text-gray-mid line-through font-mono">${pub.regularPrice.toFixed(2)}</div>
+                )}
+                <div className="type-price text-[clamp(3.2rem,12vw,4.6rem)] mt-0.5">
+                  {pub.price !== null ? `$${pub.price.toFixed(2)}` : 'TBC'}
                 </div>
-                <div className="text-right space-y-1.5">
+                <div className="flex flex-wrap items-center justify-center gap-2 mt-3">
                   {pub.effectivePrice && Math.abs(priceDiff) >= 0.05 && (
                     <span className={`inline-block font-mono text-[0.65rem] font-bold px-2.5 py-1 rounded-full border ${
                       priceDiff < 0
@@ -365,14 +368,6 @@ export default function PubDetailClient({
                       ${Math.abs(priceDiff).toFixed(2)} {priceDiff < 0 ? 'below' : 'above'} avg
                     </span>
                   )}
-                  {pub.beerType && (
-                    <p className="text-[0.7rem] text-gray-mid">{pub.beerType}</p>
-                  )}
-                </div>
-              </div>
-              {/* Status row */}
-              {hasStatusRow && (
-                <div className="flex flex-wrap gap-2 mt-4 pt-4 border-t border-gray-light">
                   {pub.isHappyHourNow && (
                     <span className="inline-flex items-center gap-1.5 font-mono text-[0.6rem] font-bold uppercase tracking-wider text-red bg-red-pale px-2.5 py-1 rounded-full border border-red">
                       HH{pub.happyHourMinutesRemaining ? ` · ${pub.happyHourMinutesRemaining < 1 ? 'ending soon' : pub.happyHourMinutesRemaining < 60 ? `${pub.happyHourMinutesRemaining}m left` : `${Math.floor(pub.happyHourMinutesRemaining / 60)}h ${pub.happyHourMinutesRemaining % 60 > 0 ? `${pub.happyHourMinutesRemaining % 60}m ` : ''}left`}` : ''}
@@ -387,15 +382,43 @@ export default function PubDetailClient({
                     </span>
                   )}
                 </div>
+                {priceProvenance && (
+                  <p className="mt-3 font-mono text-[0.62rem] leading-relaxed text-gray-mid">
+                    Checked {priceProvenance.sourcePhrase} on <time dateTime={priceProvenance.verifiedAt}>{priceProvenance.verifiedDate}</time>
+                    {confidenceLabel && ` · ${confidenceLabel}`}
+                  </p>
+                )}
+              </div>
+
+              {/* Receipt row — happy hour */}
+              {(pub.happyHour || pub.happyHourPrice) && (
+                <div className={`px-5 py-3.5 border-t-2 border-dashed ${pub.isHappyHourNow ? 'border-red' : 'border-gray-light'}`}>
+                  <div className="flex items-baseline gap-2">
+                    <span className="type-eyebrow whitespace-nowrap">Happy hour</span>
+                    <span className="flex-1 border-b border-dashed border-gray-light translate-y-[-3px]" />
+                    {pub.happyHourPrice && (
+                      <span className={`font-mono text-[0.92rem] font-extrabold ${pub.isHappyHourNow ? 'text-red' : 'text-ink'}`}>${pub.happyHourPrice.toFixed(2)}</span>
+                    )}
+                  </div>
+                  {pub.happyHourDays && pub.happyHourStart && pub.happyHourEnd ? (
+                    <p className="text-[0.78rem] text-gray-mid mt-1 text-right">
+                      {formatReadableHappyHourDays(pub.happyHourDays)} · {formatHappyHourTime(pub.happyHourStart, pub.happyHourEnd)}
+                    </p>
+                  ) : (
+                    <div className="text-[0.78rem] text-gray-mid mt-1 text-right">
+                      {pub.happyHourDays && <p>{formatReadableHappyHourDays(pub.happyHourDays)}</p>}
+                      {pub.happyHourStart && pub.happyHourEnd && (
+                        <p>{formatHappyHourTime(pub.happyHourStart, pub.happyHourEnd)}</p>
+                      )}
+                      {!pub.happyHourPrice && !pub.happyHourStart && pub.happyHour && <p>{pub.happyHour}</p>}
+                    </div>
+                  )}
+                </div>
               )}
-              {priceProvenance && (
-                <p className="mt-3 font-mono text-[0.65rem] leading-relaxed text-gray-mid">
-                  Checked {priceProvenance.sourcePhrase} on <time dateTime={priceProvenance.verifiedAt}>{priceProvenance.verifiedDate}</time>
-                  {confidenceLabel && ` · ${confidenceLabel}`}
-                </p>
-              )}
+
+              {/* Tier-C / missing-price verification stub */}
               {priceMissingCopy && (
-                <div className="mt-4 pt-4 border-t border-gray-light">
+                <div className="px-5 py-4 border-t-2 border-dashed border-gray-light">
                   {nearestVerifiedPub ? (
                     <Link
                       href={pubUrl({ suburb: nearestVerifiedPub.suburb, slug: nearestVerifiedPub.slug })}
@@ -413,31 +436,6 @@ export default function PubDetailClient({
                     </Link>
                   ) : (
                     <p className="text-[0.86rem] leading-relaxed text-ink">{priceMissingCopy}</p>
-                  )}
-                </div>
-              )}
-
-              {/* Happy Hour — merged into price card */}
-              {(pub.happyHour || pub.happyHourPrice) && (
-                <div className={`mt-4 pt-4 border-t ${pub.isHappyHourNow ? 'border-red' : 'border-gray-light'}`}>
-                  <p className="font-mono text-[0.68rem] font-bold uppercase tracking-[0.1em] text-gray-mid mb-2">Happy Hour</p>
-                  {pub.happyHourPrice && (
-                    <p className={`font-mono text-[1.3rem] font-extrabold ${pub.isHappyHourNow ? 'text-red' : 'text-ink'}`}>
-                      ${pub.happyHourPrice.toFixed(2)}
-                    </p>
-                  )}
-                  {pub.happyHourDays && pub.happyHourStart && pub.happyHourEnd ? (
-                    <p className="text-[0.8rem] text-gray-mid mt-1">
-                      {formatReadableHappyHourDays(pub.happyHourDays)} · {formatHappyHourTime(pub.happyHourStart, pub.happyHourEnd)}
-                    </p>
-                  ) : (
-                    <>
-                      {pub.happyHourDays && <p className="text-[0.8rem] text-gray-mid mt-1">{formatReadableHappyHourDays(pub.happyHourDays)}</p>}
-                      {pub.happyHourStart && pub.happyHourEnd && (
-                        <p className="text-[0.8rem] text-gray-mid">{formatHappyHourTime(pub.happyHourStart, pub.happyHourEnd)}</p>
-                      )}
-                      {!pub.happyHourPrice && !pub.happyHourStart && pub.happyHour && <p className="text-[0.8rem] text-gray-mid">{pub.happyHour}</p>}
-                    </>
                   )}
                 </div>
               )}
@@ -459,7 +457,7 @@ export default function PubDetailClient({
             {/* About */}
             {pub.description && (
               <div>
-                <p className="font-mono text-[0.68rem] font-bold uppercase tracking-[0.1em] text-gray-mid mb-2">About</p>
+                <p className="type-eyebrow mb-2">About</p>
                 <p className="text-[0.85rem] text-gray-mid leading-relaxed">{pub.description}</p>
               </div>
             )}
@@ -517,7 +515,7 @@ export default function PubDetailClient({
           <section className="mt-8 border-3 border-ink rounded-card bg-white shadow-hard-sm overflow-hidden">
             <div className="px-4 py-3 border-b border-gray-light flex items-center justify-between">
               <div>
-                <h2 className="font-mono font-extrabold text-[0.85rem] text-ink uppercase tracking-[0.05em]">
+                <h2 className="type-card-header">
                   {hasCheaperNearby ? 'Cheaper nearby' : 'Nearby verified prices'}
                 </h2>
                 {nearbySummary && <p className="mt-1 text-[0.72rem] leading-snug text-gray-mid">{nearbySummary}</p>}
@@ -593,7 +591,7 @@ export default function PubDetailClient({
         {showFaq && (
           <section className="border-3 border-ink rounded-card bg-white p-5 shadow-hard-sm">
             <div className="mb-4 flex items-center justify-between gap-3">
-              <h2 className="font-mono font-extrabold text-[0.85rem] text-ink uppercase tracking-[0.05em]">
+              <h2 className="type-card-header">
                 {pub.name} pint FAQ
               </h2>
               <span className="font-mono text-[0.65rem] font-bold text-amber">{faqItems.length} answers</span>
@@ -601,7 +599,7 @@ export default function PubDetailClient({
             <div className="grid gap-3 md:grid-cols-3">
               {faqItems.map(item => (
                 <div key={item.question} className="rounded-card border border-gray-light bg-off-white p-4">
-                  <h3 className="font-mono text-[0.78rem] font-extrabold leading-snug text-ink">{item.question}</h3>
+                  <h3 className="type-card leading-snug">{item.question}</h3>
                   <p className="mt-2 font-body text-[0.78rem] leading-relaxed text-gray-mid">{item.answer}</p>
                 </div>
               ))}
