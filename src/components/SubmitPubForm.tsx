@@ -103,17 +103,19 @@ export default function SubmitPubForm({ isOpen, onClose, userLocation, initialPu
     return () => document.removeEventListener('keydown', handleKey);
   }, [isOpen, onClose]);
 
-  // When the modal closes by any path (including Escape/backdrop, which bypass
-  // resetForm), revoke and drop any outstanding menu-photo preview blob URLs so
-  // they don't leak. Returns the same array when already empty to avoid an
-  // extra render. setMenuPreviews is a stable setter, so deps stay [isOpen].
+  // When the modal closes by a path that skips resetForm — Escape (which calls
+  // onClose directly) or a parent toggling isOpen — revoke the outstanding menu
+  // preview blob URLs and clear BOTH menu arrays together, so they never desync
+  // (a stale menuImages with no previews would leave the scan step armed but
+  // showing nothing) and no blob handle leaks. The close button and backdrop
+  // already run resetForm. Revoking in the effect body (not inside a state
+  // updater) keeps the updaters pure; length guards avoid extra renders.
   useEffect(() => {
     if (isOpen) return;
-    setMenuPreviews(prev => {
-      prev.forEach(url => URL.revokeObjectURL(url));
-      return prev.length ? [] : prev;
-    });
-  }, [isOpen]);
+    menuPreviews.forEach(url => URL.revokeObjectURL(url));
+    if (menuPreviews.length) setMenuPreviews([]);
+    if (menuImages.length) setMenuImages([]);
+  }, [isOpen, menuPreviews, menuImages]);
 
   // Close dropdown on outside click
   useEffect(() => {
@@ -319,20 +321,17 @@ export default function SubmitPubForm({ isOpen, onClose, userLocation, initialPu
   }
 
   function removeMenuImage(index: number) {
+    const removed = menuPreviews[index];
+    if (removed) URL.revokeObjectURL(removed);
     setMenuImages(prev => prev.filter((_, i) => i !== index));
-    setMenuPreviews(prev => {
-      const removed = prev[index];
-      if (removed) URL.revokeObjectURL(removed);
-      return prev.filter((_, i) => i !== index);
-    });
+    setMenuPreviews(prev => prev.filter((_, i) => i !== index));
   }
 
   // Revoke all preview object URLs before clearing, so we don't leak blob: handles.
+  // Revoke in the handler body (not inside the state updater) to keep updaters pure.
   function clearMenuPreviews() {
-    setMenuPreviews(prev => {
-      prev.forEach(url => URL.revokeObjectURL(url));
-      return [];
-    });
+    menuPreviews.forEach(url => URL.revokeObjectURL(url));
+    setMenuPreviews([]);
   }
 
   async function handleScanMenu() {
