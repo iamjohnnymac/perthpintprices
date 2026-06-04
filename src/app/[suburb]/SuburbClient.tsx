@@ -132,8 +132,13 @@ export default function SuburbClient({ suburb, pubs, nearbySuburbs, perthAvgPric
       {/* Local guide modules — rendered only from checked suburb data */}
       <section className="max-w-container mx-auto px-6 pb-6">
         <div className="grid gap-3 sm:grid-cols-2">
-          {story.cards.map(card => (
-            <article key={card.id} className="min-w-0 border-3 border-ink rounded-card bg-white p-4 shadow-hard-sm">
+          {story.cards.map((card, i) => (
+            <article
+              key={card.id}
+              className={`min-w-0 border-3 border-ink rounded-card bg-white p-4 shadow-hard-sm${
+                i === story.cards.length - 1 && story.cards.length % 2 === 1 ? ' sm:col-span-2' : ''
+              }`}
+            >
               <p className="type-eyebrow mb-1">{card.label}</p>
               <h2 className="font-mono text-[1.05rem] font-extrabold leading-tight text-ink mb-2">{card.title}</h2>
               <p className="text-[0.78rem] leading-relaxed text-gray-mid">{card.body}</p>
@@ -153,20 +158,20 @@ export default function SuburbClient({ suburb, pubs, nearbySuburbs, perthAvgPric
         if (activeHH.length === 0) return null
         return (
           <section className="max-w-container mx-auto px-6 pb-4">
-            <div className="border-3 border-red/30 rounded-card bg-red/5 overflow-hidden">
-              <div className="px-4 py-3 flex items-center gap-2">
+            <div className="border-3 border-ink rounded-card shadow-hard-sm bg-white overflow-hidden">
+              <div className="px-4 py-3 flex items-center gap-2 bg-red-pale border-b-3 border-ink">
                 <span className="w-2 h-2 rounded-full bg-red animate-pulse" />
                 <h2 className="type-card-header text-red">
                   Happy Hour Live Now
                 </h2>
-                <span className="text-[0.7rem] text-gray-mid ml-auto">{activeHH.length} {activeHH.length === 1 ? 'venue' : 'venues'}</span>
+                <span className="font-mono text-[0.62rem] font-bold uppercase tracking-wider text-red/70 ml-auto">{activeHH.length} {activeHH.length === 1 ? 'venue' : 'venues'}</span>
               </div>
-              <div className="divide-y divide-red/10">
+              <div className="divide-y divide-gray-light">
                 {activeHH.map(pub => (
                   <Link
                     key={pub.id}
                     href={`/${suburbSlug}/${pub.slug}`}
-                    className="flex items-center justify-between px-4 py-3 no-underline group hover:bg-red/5 transition-colors"
+                    className="flex items-center justify-between px-4 py-3 no-underline group hover:bg-off-white transition-colors"
                   >
                     <div className="min-w-0 flex-1">
                       <p className="font-mono text-[0.82rem] font-extrabold text-ink group-hover:text-red transition-colors truncate">{pub.name}</p>
@@ -300,27 +305,33 @@ export default function SuburbClient({ suburb, pubs, nearbySuburbs, perthAvgPric
       {/* Nearby Suburbs */}
       {nearbySuburbs.length > 0 && (
         <section className="max-w-container mx-auto px-6 pb-6">
-          <div className="flex flex-wrap gap-2">
-            {nearbySuburbs.map(ns => (
-              <Link
-                key={ns.slug}
-                href={`/${ns.slug}`}
-                className="border-3 border-ink rounded-pill px-4 py-2 shadow-hard-sm hover:translate-x-[1.5px] hover:translate-y-[1.5px] hover:shadow-hard-hover transition-all no-underline group"
-              >
-                <span className="font-mono text-[0.75rem] font-bold text-ink group-hover:text-amber transition-colors">{ns.name}</span>
-                <span className="text-[0.65rem] text-gray-mid ml-2">
-                  {ns.pubCount} {ns.pubCount === 1 ? 'pub' : 'pubs'}
-                  {ns.cheapestPrice !== 'TBC' && ` · from $${ns.cheapestPrice}`}
-                  {avgNum > 0 && Number(ns.avgPrice) > 0 && (
-                    Number(ns.avgPrice) < avgNum
-                      ? <span className="text-green ml-1">cheaper</span>
-                      : Number(ns.avgPrice) > avgNum
-                        ? <span className="text-red/70 ml-1">pricier</span>
-                        : null
-                  )}
-                </span>
-              </Link>
-            ))}
+          <div className="border-3 border-ink rounded-card bg-white shadow-hard-sm overflow-hidden">
+            <div className="px-4 py-3 border-b border-gray-light flex items-center justify-between gap-3">
+              <h2 className="type-card-header">Nearby suburbs</h2>
+              <span className="font-mono text-[0.62rem] font-bold uppercase tracking-wider text-gray-mid">Compare prices</span>
+            </div>
+            <div className="p-4 flex flex-wrap gap-2">
+              {nearbySuburbs.map(ns => (
+                <Link
+                  key={ns.slug}
+                  href={`/${ns.slug}`}
+                  className="border-2 border-gray-light rounded-pill px-3.5 py-1.5 hover:border-ink hover:bg-off-white transition-all no-underline group"
+                >
+                  <span className="font-mono text-[0.72rem] font-bold text-ink group-hover:text-amber transition-colors">{ns.name}</span>
+                  <span className="text-[0.62rem] text-gray-mid ml-1.5">
+                    {ns.pubCount} {ns.pubCount === 1 ? 'pub' : 'pubs'}
+                    {ns.cheapestPrice !== 'TBC' && ` · from $${ns.cheapestPrice}`}
+                    {avgNum > 0 && Number(ns.avgPrice) > 0 && (
+                      Number(ns.avgPrice) < avgNum
+                        ? <span className="text-green ml-1">cheaper</span>
+                        : Number(ns.avgPrice) > avgNum
+                          ? <span className="text-red/70 ml-1">pricier</span>
+                          : null
+                    )}
+                  </span>
+                </Link>
+              ))}
+            </div>
           </div>
         </section>
       )}
