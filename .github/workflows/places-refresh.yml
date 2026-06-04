@@ -1,0 +1,52 @@
+name: Refresh Places attributes
+
+# Re-runs the Google Places attribute sweep monthly. Amenities, hours, ratings
+# and editorial summaries change slowly, so monthly keeps `google_attrs_updated_at`
+# fresh while staying under the 1,000-call/month Enterprise+Atmosphere free quota
+# (~815 pubs per sweep = $0). The pub pages read these columns and show the
+# checked date; this job is what keeps that date current.
+#
+# Manual runs: trigger via the Actions tab. Set `limit` to a small number for a
+# cheap smoke test; leave blank for a full sweep.
+
+on:
+  schedule:
+    - cron: "0 17 1 * *" # ~1st of each month (17:00 UTC ≈ 01:00 AWST)
+  workflow_dispatch:
+    inputs:
+      limit:
+        description: "Limit number of pubs (smoke test). Blank = full sweep."
+        required: false
+        default: ""
+
+concurrency:
+  group: places-refresh
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  refresh:
+    name: Sweep Places attributes
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Set up Node 22
+        uses: actions/setup-node@v6
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund --ignore-scripts
+
+      - name: Run Places attribute sweep
+        env:
+          GOOGLE_PLACES_API_KEY: ${{ secrets.GOOGLE_PLACES_API_KEY }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+        run: node scripts/backfill-place-attributes.mjs ${{ github.event.inputs.limit != '' && format('--limit {0}', github.event.inputs.limit) || '' }}
