@@ -40,8 +40,20 @@ export function formatHappyHourDays(days: string | null): string {
   if (uniq.length === 7) return '7 days'
   if (uniq.length === 5 && [1, 2, 3, 4, 5].every(d => uniq.includes(d))) return 'Mon–Fri'
   if (uniq.length === 2 && uniq.includes(0) && uniq.includes(6)) return 'Weekends'
-  if (uniq.length > 2 && uniq.every((v, i) => i === 0 || v === uniq[i - 1] + 1)) {
-    return `${shortByIndex[uniq[0]]}–${shortByIndex[uniq[uniq.length - 1]]}`
+  if (uniq.length > 2) {
+    const consecutive = (arr: number[]) => arr.every((v, i) => i === 0 || v === arr[i - 1] + 1)
+    if (consecutive(uniq)) {
+      return `${shortByIndex[uniq[0]]}–${shortByIndex[uniq[uniq.length - 1]]}`
+    }
+    // Wrap-around run (e.g. Wed–Sun = {3,4,5,6,0}): the present days form a single
+    // run exactly when the missing days are a contiguous block.
+    const present = new Set(uniq)
+    const missing = [0, 1, 2, 3, 4, 5, 6].filter(d => !present.has(d))
+    if (missing.length > 0 && consecutive(missing)) {
+      const start = (missing[missing.length - 1] + 1) % 7
+      const end = (missing[0] + 6) % 7
+      return `${shortByIndex[start]}–${shortByIndex[end]}`
+    }
   }
   return uniq.map(i => shortByIndex[i]).join(', ')
 }

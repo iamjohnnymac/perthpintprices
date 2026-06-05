@@ -33,6 +33,18 @@ function formatPerthTime(date: Date): string {
   }).format(date).replace(' ', '').toLowerCase()
 }
 
+// Format a 24h time string ("17:30") to "5:30pm" / "5pm" (minutes preserved).
+function formatHHTime(value: string | null): string {
+  if (!value) return ''
+  const [h, m = '0'] = value.split(':')
+  const hour = Number(h)
+  const minute = Number(m)
+  if (!Number.isFinite(hour)) return ''
+  const period = hour >= 12 ? 'pm' : 'am'
+  const h12 = hour > 12 ? hour - 12 : hour === 0 ? 12 : hour
+  return minute > 0 ? `${h12}:${String(minute).padStart(2, '0')}${period}` : `${h12}${period}`
+}
+
 function getPubHappyHourStatus(pub: Pub, now: Date): HappyHourStatus {
   return getHappyHourStatus({
     price: pub.regularPrice,
@@ -52,10 +64,14 @@ function getActiveDisplayPrice(pub: Pub, status: HappyHourStatus): number | null
 }
 
 function formatDealWindow(pub: Pub, status: HappyHourStatus): string {
-  if (status.happyHourLabel) return status.happyHourLabel
   const days = formatHappyHourDays(pub.happyHourDays)
-  if (days) return days
-  return pub.happyHour ?? 'Happy hour'
+  if (days) {
+    const time = pub.happyHourStart && pub.happyHourEnd
+      ? ` ${formatHHTime(pub.happyHourStart)}-${formatHHTime(pub.happyHourEnd)}`
+      : ''
+    return `${days}${time}`
+  }
+  return status.happyHourLabel || pub.happyHour || 'Happy hour'
 }
 
 export default function HappyHourClient({ initialPubs, renderedAtIso }: HappyHourClientProps) {
@@ -423,8 +439,8 @@ export default function HappyHourClient({ initialPubs, renderedAtIso }: HappyHou
                       {distance != null && (
                         <span>· {formatDistance(distance)}</span>
                       )}
-                      {pub.happyHourLabel && (
-                        <span>· {pub.happyHourLabel}</span>
+                      {pub.happyHourDays && (
+                        <span>· {formatHappyHourDays(pub.happyHourDays)} {formatHHTime(pub.happyHourStart)}-{formatHHTime(pub.happyHourEnd)}</span>
                       )}
                     </div>
                     {pub.happyHourMinutesRemaining != null && (
