@@ -75,6 +75,7 @@ interface PubDetailClientProps {
   priceRecency: PriceRecencyInfo
   nearbyPubs: Pub[]
   avgPrice: number
+  suburbAvgPrice: number | null
   isTierCPage: boolean
   latestAndrewCallAt: string | null
   nearestVerifiedPub: Pub | null
@@ -86,6 +87,7 @@ export default function PubDetailClient({
   priceRecency,
   nearbyPubs,
   avgPrice,
+  suburbAvgPrice,
   isTierCPage,
   latestAndrewCallAt,
   nearestVerifiedPub,
@@ -146,6 +148,15 @@ export default function PubDetailClient({
     })
     : null
   const checkedDate = priceVerifiedAt ? formatLastVerifiedDate(priceVerifiedAt) : null
+  // Answer-first line (SEO/AEO) — directly answers "how much is a pint at X".
+  const hhWindowText = pub.happyHourDays && pub.happyHourStart && pub.happyHourEnd
+    ? `${formatReadableHappyHourDays(pub.happyHourDays)} ${formatHappyHourTime(pub.happyHourStart, pub.happyHourEnd)}`
+    : null
+  const answerLine = pub.regularPrice != null
+    ? `A pint at ${pub.name} is $${pub.regularPrice.toFixed(2)}${checkedDate ? `, last checked ${checkedDate}` : ''}.`
+    : pub.happyHourPrice != null
+      ? `${pub.name} pours a $${pub.happyHourPrice.toFixed(2)} pint during happy hour${hhWindowText ? ` (${hhWindowText})` : ''}. Standard price not confirmed yet.`
+      : null
   const happyHourDaysText = formatReadableHappyHourDays(pub.happyHourDays)
   const happyHourStartText = formatHappyHourVoiceTime(pub.happyHourStart)
   const happyHourEndText = formatHappyHourVoiceTime(pub.happyHourEnd)
@@ -207,7 +218,7 @@ export default function PubDetailClient({
         pub: pub.name,
         suburb: pub.suburb,
         price: standardPrice,
-        suburbAvg: avgPrice,
+        suburbAvg: suburbAvgPrice,
         checkedDate,
       }),
     },
@@ -237,7 +248,18 @@ export default function PubDetailClient({
       ),
     },
   ].filter((item): item is PubFaq => Boolean(item.answer))
-  const showFaq = faqItems.length >= 3
+  const showFaq = faqItems.length >= 2
+  const faqPageJsonLd = showFaq
+    ? {
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      mainEntity: faqItems.map(item => ({
+        '@type': 'Question',
+        name: item.question,
+        acceptedAnswer: { '@type': 'Answer', text: item.answer },
+      })),
+    }
+    : null
   const trackingTier = isTierCPage ? 'tier_c' : 'priced'
 
   function openReportForm(source: string) {
@@ -283,7 +305,7 @@ export default function PubDetailClient({
           <span className="text-ink font-bold">{pub.name}</span>
         </nav>
 
-        {/* Name + vibe */}
+        {/* Name + vibe + answer-first line */}
         <div>
           <h1 className="type-hero">
             {pub.name}
@@ -294,6 +316,9 @@ export default function PubDetailClient({
               <span className="font-mono text-[0.6rem] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full border border-gray-light text-gray-mid">{pub.vibeTag}</span>
             )}
           </div>
+          {answerLine && (
+            <p className="mt-3 max-w-[42rem] font-body text-[0.95rem] leading-relaxed text-ink">{answerLine}</p>
+          )}
         </div>
 
         {/* Permanently closed notice — Places business_status */}
@@ -477,6 +502,12 @@ export default function PubDetailClient({
           </section>
         )}
 
+        {showFaq && faqPageJsonLd && (
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(faqPageJsonLd).replace(/</g, '\\u003c') }}
+          />
+        )}
         {showFaq && (
           <section className="border-3 border-ink rounded-card bg-white p-5 shadow-hard-sm">
             <div className="mb-4 flex items-center justify-between gap-3">

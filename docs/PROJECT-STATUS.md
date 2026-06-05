@@ -10,6 +10,15 @@ Stack, database, routes, components, and lib files are documented in `CLAUDE.md`
 
 ## What's done recently
 
+### Pub page SEO: price schema + answer-first + happy-hour titles (2026-06-05)
+- **`feat/pub-page-seo`:** an SEO audit (via the `seo-content` skill) of the post-receipt pub template found the pages under-optimised for a wide-open SERP — searching "how much is a pint at [pub]" returns TripAdvisor / booking sites, none of which answer the price. Three fixes, hitting every priced/HH pub at once:
+  - **Exact price in structured data** (`pubJsonLd.ts`): added `makesOffer` → `Offer`/`MenuItem` with the real pint price (+ happy-hour price) in AUD — previously the price was only a coarse `priceRange: "$$"`. Now machine-readable for rich results + AI answers.
+  - **Answer-first line + FAQPage** (`PubDetailClient.tsx`): a plain, un-boxed one-line answer under the H1 — "A pint at {pub} is ${price}, last checked {date}." — restoring the extractable answer the removed Quick-read box used to carry; plus `FAQPage` JSON-LD emitted from the price/HH/nearby Q&A (visible-FAQ gate lowered 3→2 so it renders + matches the schema). FAQ now uses the real **suburb** average (was the city average, mislabelled).
+  - **Happy-hour titles** (`page.tsx` + `voiceCopy.ts`): HH-only pubs (no standard price) now title "$6.00 happy-hour pints" / meta "pours a $6 pint during happy hour…" instead of the flaky "Price TBC" (old title keyed off the time-dependent effective price, so it flipped in/out of HH).
+- **Already good, left alone:** SSR/crawlable render, tiered indexability (dataless pubs `noindex`), self-canonicals, breadcrumb + LocalBusiness schema, internal linking; `aggregateRating` correctly omitted (can't claim Google's stars as first-party).
+- **Deferred (#4, next):** thin per-page content depth — the bigger lever is the suburb/discover/insight "money" pages feeding link equity down; an Ahrefs keyword pass goes there. Added `.claude/seo-content.config.md`.
+- **Verification:** `tsc` clean, 272 tests, signals confirmed in rendered HTML (Offers, answer line, FAQPage, HH titles) on priced + HH-only pubs.
+
 ### Pub page receipt card — site-wide template (2026-06-05)
 - **`feat/pub-receipt-card`:** the pint price card on `/[suburb]/[pub]` is now the "receipt" for every pub — an amber-headed docket (`★ Perth Pint Prices ★` banner + venue name in DM Serif), the hero price, an itemised dotted-leader sheet (Standard pint · Happy hour · Cheaper nearby · Checked · Google rating), amenity stamps, and an in-card report CTA. New self-contained `src/components/PintReceipt.tsx`; the throwaway `_receipt-prototype/` route (A thermal docket / B raffle ticket / C banner card, toggled via a dev-gated `?variant` switcher) was deleted after C won.
 - **Unpriced pubs (most of the 857) handled:** TBC renders cleanly — no false "vs-avg" line, the CTA reads "Know the price?" not "a better price", and the Tier-C "nearest checked price" stub was lifted out of the old card into its own bordered block (verified on The Flaming Galah, Freo → "12 nearby pubs have a checked price — start with Whisper Wine Bar at $9.00").

@@ -165,9 +165,15 @@ export interface PubMetaData {
   checkedDate: string | null
   hhClause?: string | null
   nearbyCheaperClause?: string | null
+  hhPrice?: number | null
+  hhWindow?: string | null
 }
 export function pubMetaDescription(d: PubMetaData): string {
   if (d.price == null) {
+    if (d.hhPrice != null && d.hhPrice > 0) {
+      const window = d.hhWindow ? ` (${d.hhWindow})` : ''
+      return `${d.pub} pours a ${money(d.hhPrice)} pint during happy hour${window} in ${d.suburb}. Standard price not confirmed yet.`
+    }
     const tail = d.nearbyCheaperClause ? ` ${d.nearbyCheaperClause}` : ''
     return `No verified pint price at ${d.pub} in ${d.suburb} yet.${tail}`.trim()
   }

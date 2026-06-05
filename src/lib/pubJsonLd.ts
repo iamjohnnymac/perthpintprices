@@ -141,6 +141,33 @@ function buildAmenityFeatures(pub: Pub): JsonLdNode[] {
     .map(([, name]) => ({ '@type': 'LocationFeatureSpecification', name, value: true }))
 }
 
+// The actual pint price(s) as Offers — the whole point of the site, made
+// machine-readable (rich results / AI answers). Standard pint + happy-hour pint.
+function buildOffers(pub: Pub): JsonLdNode[] {
+  const offers: JsonLdNode[] = []
+  const itemName = pub.beerType ? `Pint (${pub.beerType})` : 'Pint of beer'
+  if (typeof pub.regularPrice === 'number' && pub.regularPrice > 0) {
+    offers.push({
+      '@type': 'Offer',
+      name: 'Pint',
+      price: pub.regularPrice.toFixed(2),
+      priceCurrency: 'AUD',
+      availability: 'https://schema.org/InStock',
+      itemOffered: { '@type': 'MenuItem', name: itemName },
+    })
+  }
+  if (typeof pub.happyHourPrice === 'number' && pub.happyHourPrice > 0) {
+    offers.push({
+      '@type': 'Offer',
+      name: 'Happy hour pint',
+      price: pub.happyHourPrice.toFixed(2),
+      priceCurrency: 'AUD',
+      itemOffered: { '@type': 'MenuItem', name: itemName },
+    })
+  }
+  return offers
+}
+
 function buildPriceRange(price: number | null, avgPrice: number): string | null {
   if (price === null || price <= 0) return null
   if (avgPrice > 0) {
@@ -194,6 +221,10 @@ export function buildPubJsonLd(pub: Pub, avgPrice: number): JsonLdNode {
   }
   if (amenityFeature.length > 0) {
     barOrPub.amenityFeature = amenityFeature
+  }
+  const offers = buildOffers(pub)
+  if (offers.length > 0) {
+    barOrPub.makesOffer = offers
   }
 
   return {

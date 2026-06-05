@@ -85,18 +85,23 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   const indexability = getPubPageIndexability(pub)
   const suburbAvgPrice = await getSuburbAveragePrice(pub.suburb)
-  const price = pub.regularPrice ?? pub.price
-  const priceText = price !== null ? `$${price.toFixed(2)} pints` : 'Price TBC'
+  const hhPrice = typeof pub.happyHourPrice === 'number' && pub.happyHourPrice > 0 ? pub.happyHourPrice : null
+  const stablePrice = pub.regularPrice ?? hhPrice
+  const isHappyHourOnly = pub.regularPrice == null && hhPrice != null
+  const priceText = stablePrice !== null
+    ? `$${stablePrice.toFixed(2)} ${isHappyHourOnly ? 'happy-hour pints' : 'pints'}`
+    : 'Price TBC'
   const title = `${pub.name}, ${pub.suburb}: ${priceText}`
+  const hhWindow = formatMetaHappyHourLabel(pub.happyHourLabel)
   const description = pubMetaDescription({
     pub: pub.name,
     suburb: pub.suburb,
-    price,
+    price: pub.regularPrice,
     suburbAvg: suburbAvgPrice,
     checkedDate: formatMetaDate(pub.priceVerifiedAt || pub.lastVerified),
-    hhClause: formatMetaHappyHourLabel(pub.happyHourLabel)
-      ? `Happy hour: ${formatMetaHappyHourLabel(pub.happyHourLabel)}.`
-      : null,
+    hhClause: hhWindow ? `Happy hour: ${hhWindow}.` : null,
+    hhPrice,
+    hhWindow,
   })
 
   const canonical = absolutePubUrl(pub)
@@ -193,6 +198,7 @@ export default async function PubPage({ params }: PageProps) {
         priceRecency={priceRecency}
         nearbyPubs={nearbyPubs}
         avgPrice={Number(stats.avgPrice)}
+        suburbAvgPrice={suburbAvgPrice}
         isTierCPage={isTierCPage}
         latestAndrewCallAt={latestAndrewCallAt}
         nearestVerifiedPub={nearestVerifiedPub}
