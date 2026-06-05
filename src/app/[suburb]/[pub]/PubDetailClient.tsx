@@ -8,25 +8,22 @@ import WatchlistButton from '@/components/WatchlistButton'
 import PriceHistory from '@/components/PriceHistory'
 import GoodToKnow from '@/components/GoodToKnow'
 import SubmitPubForm from '@/components/SubmitPubForm'
-import { PenLine } from 'lucide-react'
 import { formatHappyHourDays } from '@/lib/happyHourLive'
 import Footer from '@/components/Footer'
 import { pubUrl, suburbUrl } from '@/lib/urls'
 import {
-  answerBlock,
-  bestTime,
   cheaperNearby,
   faqHappyHourAnswer,
   faqNearbyAnswer,
   faqPriceAnswer,
   faqQuestion,
-  pubSubtitle,
   verificationStub,
 } from '@/lib/voiceCopy'
 import { formatDistance } from '@/lib/location'
 import { describePriceSource } from '@/lib/priceProvenance'
 import { trackSiteEvent } from '@/lib/analytics'
-import type { PriceRecencyInfo, PriceRecencyTier } from '@/lib/freshness'
+import type { PriceRecencyInfo } from '@/lib/freshness'
+import PintReceipt, { type PintReceiptData } from '@/components/PintReceipt'
 
 const PubDetailMap = dynamic(() => import('@/components/PubDetailMap'), {
   ssr: false,
@@ -140,12 +137,6 @@ export default function PubDetailClient({
     }
     : null
   const confidenceLabel = pub.priceConfidence === 'low' ? 'Low confidence' : null
-  const recencyBadgeClass: Record<PriceRecencyTier, string> = {
-    fresh: 'text-green bg-green-pale border-green',
-    aging: 'text-amber bg-amber-pale border-amber',
-    stale: 'text-amber bg-amber-pale border-amber',
-    unknown: 'text-gray-mid bg-off-white border-gray-light',
-  }
   const priceMissingCopy = isTierCPage
     ? verificationStub({
       lastAndrewCall: latestAndrewCallAt ? formatLastVerifiedDate(latestAndrewCallAt) : null,
@@ -154,44 +145,10 @@ export default function PubDetailClient({
       nearestPrice: nearestVerifiedPub?.price ?? null,
     })
     : null
-  const reportCtaLabel = isTierCPage ? 'Report the price' : 'Know the price? Report it here'
   const checkedDate = priceVerifiedAt ? formatLastVerifiedDate(priceVerifiedAt) : null
-  const subtitle = pub.vibeTag && pub.vibeTag.toLowerCase() !== 'pub'
-    ? pubSubtitle(pub.suburb, pub.vibeTag)
-    : null
-  const answerCopy = answerBlock({
-    pub: pub.name,
-    suburb: pub.suburb,
-    price: standardPrice,
-    suburbAvg: avgPrice,
-    checkedDate,
-  })
   const happyHourDaysText = formatReadableHappyHourDays(pub.happyHourDays)
   const happyHourStartText = formatHappyHourVoiceTime(pub.happyHourStart)
   const happyHourEndText = formatHappyHourVoiceTime(pub.happyHourEnd)
-  const bestTimeCopy = happyHourDaysText && happyHourStartText && happyHourEndText
-    ? pub.happyHourPrice
-      ? pub.isHappyHourNow
-        ? bestTime({
-          price: standardPrice,
-          hhActiveNow: true,
-          hhLaterToday: false,
-          hhStart: happyHourStartText,
-          hhEnd: happyHourEndText,
-          hhPrice: pub.happyHourPrice,
-          saving: standardPrice !== null ? standardPrice - pub.happyHourPrice : null,
-        })
-        : `Cheapest confirmed window: ${happyHourDaysText} ${happyHourStartText}-${happyHourEndText}, pints down to $${pub.happyHourPrice.toFixed(2)}.`
-      : `Confirmed happy-hour window: ${happyHourDaysText} ${happyHourStartText}-${happyHourEndText}. We still need the discount price.`
-    : bestTime({
-        price: standardPrice,
-        hhActiveNow: false,
-        hhLaterToday: false,
-        hhStart: null,
-        hhEnd: null,
-        hhPrice: pub.happyHourPrice,
-        saving: null,
-      })
   const cheaperNearbyList = currentPrice === null
     ? []
     : nearbyPubs
@@ -206,13 +163,43 @@ export default function PubDetailClient({
   const nearbySummary = nearbyPubs.length > 0 && currentPrice !== null
     ? cheaperNearby(pub.name, cheaperNearbyList, '2km')
     : null
-  const tierCQuickRead = isTierCPage && nearestVerifiedPub?.price !== null && nearestVerifiedPub?.price !== undefined
-    ? `Nearest checked pub: ${nearestVerifiedPub.name} in ${nearestVerifiedPub.suburb}, listed at $${nearestVerifiedPub.price.toFixed(2)}.`
-    : null
-  const quickReadCopy = answerCopy ?? tierCQuickRead
   const nearestCheaper = currentPrice === null
     ? null
     : nearbyPubs.find(nearby => nearby.price !== null && nearby.price < currentPrice)
+
+  // PROTOTYPE — flat data bundle for the receipt-card variants.
+  const receiptAmenities: string[] = []
+  if (pub.outdoorSeating) receiptAmenities.push('Beer garden')
+  if (pub.goodForWatchingSports) receiptAmenities.push('Shows the footy')
+  if (pub.goodForChildren) receiptAmenities.push('Kids welcome')
+  if (pub.allowsDogs) receiptAmenities.push('Dog-friendly')
+  if (pub.liveMusic) receiptAmenities.push('Live music')
+  if (pub.servesFood) receiptAmenities.push('Kitchen')
+  const receiptData: PintReceiptData = {
+    name: pub.name,
+    suburb: pub.suburb,
+    beerType: pub.beerType,
+    price: pub.price,
+    regularPrice: pub.regularPrice,
+    isHappyHourNow: pub.isHappyHourNow,
+    avgPrice,
+    priceDiff,
+    happyHour: (pub.happyHour || pub.happyHourPrice)
+      ? { days: formatReadableHappyHourDays(pub.happyHourDays), time: formatHappyHourTime(pub.happyHourStart, pub.happyHourEnd), price: pub.happyHourPrice }
+      : null,
+    checkedDate,
+    sourcePhrase: priceProvenance?.sourcePhrase ?? null,
+    confidenceLabel,
+    recencyLabel: priceRecency.label,
+    cheaperNearby: nearestCheaper && nearestCheaper.price !== null
+      ? { name: nearestCheaper.name, price: nearestCheaper.price, distance: nearestCheaper.distanceKm != null ? formatDistance(nearestCheaper.distanceKm) : nearestCheaper.suburb }
+      : null,
+    googleRating: pub.googleRating ?? null,
+    googleRatingCount: pub.googleRatingCount ?? null,
+    amenities: receiptAmenities,
+    editorialSummary: pub.googleEditorialSummary ?? null,
+  }
+
   const faqItems: PubFaq[] = [
     {
       question: faqQuestion('price', String(pub.id), pub.name),
@@ -307,9 +294,6 @@ export default function PubDetailClient({
               <span className="font-mono text-[0.6rem] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full border border-gray-light text-gray-mid">{pub.vibeTag}</span>
             )}
           </div>
-          {subtitle && (
-            <p className="mt-3 max-w-[36rem] font-body text-[0.95rem] leading-relaxed text-gray-mid">{subtitle}</p>
-          )}
         </div>
 
         {/* Permanently closed notice — Places business_status */}
@@ -329,141 +313,46 @@ export default function PubDetailClient({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
           {/* Left column */}
           <div className="space-y-8">
-            {(quickReadCopy || bestTimeCopy || nearbySummary) && (
-              <section className="border-3 border-ink rounded-card bg-ink p-5 text-white shadow-hard-sm">
-                <p className="type-eyebrow text-white/55 mb-2">Quick read</p>
-                {quickReadCopy && (
-                  <p className="font-mono text-[1.05rem] font-extrabold leading-snug tracking-[-0.02em]">{quickReadCopy}</p>
+            {/* Pint price card — the receipt (every pub) */}
+            <PintReceipt data={receiptData} onReport={() => openReportForm('pub_page_cta')} />
+
+            {/* Missing-price stub — point unpriced pubs at the nearest checked price */}
+            {priceMissingCopy && (
+              <div className="border-3 border-ink rounded-card bg-white shadow-hard-sm px-5 py-4">
+                {nearestVerifiedPub ? (
+                  <Link
+                    href={pubUrl({ suburb: nearestVerifiedPub.suburb, slug: nearestVerifiedPub.slug })}
+                    onClick={() => trackSiteEvent('pub_nearby_click', {
+                      source: 'pub_missing_price_stub',
+                      pub_slug: pub.slug,
+                      suburb: pub.suburb,
+                      target_slug: nearestVerifiedPub.slug,
+                      target_suburb: nearestVerifiedPub.suburb,
+                      page_tier: trackingTier,
+                    })}
+                    className="block text-[0.86rem] leading-relaxed text-ink hover:text-amber transition-colors no-underline"
+                  >
+                    {priceMissingCopy}
+                  </Link>
+                ) : (
+                  <p className="text-[0.86rem] leading-relaxed text-ink">{priceMissingCopy}</p>
                 )}
-                <div className="mt-4 space-y-3 border-t border-white/15 pt-4">
-                  {bestTimeCopy && <p className="font-body text-[0.84rem] leading-relaxed text-white/75">{bestTimeCopy}</p>}
-                  {nearbySummary && <p className="font-body text-[0.84rem] leading-relaxed text-white/75">{nearbySummary}</p>}
-                </div>
+              </div>
+            )}
+
+            {/* About this pub — bordered card so the prose sits in the page rhythm.
+                Good-to-know is summary-only; the receipt carries rating + amenities. */}
+            {(pub.description || pub.googleEditorialSummary) && (
+              <section className="border-3 border-ink rounded-card bg-white shadow-hard-sm p-5 space-y-4">
+                {pub.description && (
+                  <div>
+                    <p className="type-eyebrow mb-2">About</p>
+                    <p className="text-[0.85rem] text-gray-mid leading-relaxed">{pub.description}</p>
+                  </div>
+                )}
+                <GoodToKnow pub={pub} summaryOnly />
               </section>
             )}
-
-            {/* Price ticket — "betting slip" receipt treatment (Variant B) */}
-            <div className="border-3 border-ink rounded-card bg-white shadow-hard-sm overflow-hidden">
-              {/* Ticket header bar */}
-              <div className="bg-ink text-white px-5 py-2.5 flex items-center justify-between gap-3">
-                <span className="type-eyebrow text-white/70">Pint price</span>
-                {pub.beerType && <span className="font-mono text-[0.65rem] text-white/55 truncate">{pub.beerType}</span>}
-              </div>
-
-              {/* Big price, centred */}
-              <div className="px-5 pt-6 pb-5 text-center">
-                {pub.isHappyHourNow && pub.regularPrice !== null && pub.regularPrice !== pub.price && (
-                  <div className="text-sm text-gray-mid line-through font-mono">${pub.regularPrice.toFixed(2)}</div>
-                )}
-                <div className="type-price text-[clamp(3.2rem,12vw,4.6rem)] mt-0.5">
-                  {pub.price !== null ? `$${pub.price.toFixed(2)}` : 'TBC'}
-                </div>
-                <div className="flex flex-wrap items-center justify-center gap-2 mt-3">
-                  {pub.effectivePrice && Math.abs(priceDiff) >= 0.05 && (
-                    <span className={`inline-block font-mono text-[0.65rem] font-bold px-2.5 py-1 rounded-full border ${
-                      priceDiff < 0
-                        ? 'bg-green-pale text-green border-green'
-                        : 'bg-red-pale text-red border-red'
-                    }`}>
-                      ${Math.abs(priceDiff).toFixed(2)} {priceDiff < 0 ? 'below' : 'above'} avg
-                    </span>
-                  )}
-                  {pub.isHappyHourNow && (
-                    <span className="inline-flex items-center gap-1.5 font-mono text-[0.6rem] font-bold uppercase tracking-wider text-red bg-red-pale px-2.5 py-1 rounded-full border border-red">
-                      HH{pub.happyHourMinutesRemaining ? ` · ${pub.happyHourMinutesRemaining < 1 ? 'ending soon' : pub.happyHourMinutesRemaining < 60 ? `${pub.happyHourMinutesRemaining}m left` : `${Math.floor(pub.happyHourMinutesRemaining / 60)}h ${pub.happyHourMinutesRemaining % 60 > 0 ? `${pub.happyHourMinutesRemaining % 60}m ` : ''}left`}` : ''}
-                    </span>
-                  )}
-                  {pub.price !== null && (
-                    <span
-                      className={`inline-flex items-center gap-1 font-mono text-[0.65rem] font-bold px-2.5 py-1 rounded-full border ${recencyBadgeClass[priceRecency.tier]}`}
-                      title={pub.lastVerified ? `Last verified ${formatLastVerifiedDate(pub.lastVerified)}` : undefined}
-                    >
-                      {priceRecency.label}
-                    </span>
-                  )}
-                </div>
-                {priceProvenance && (
-                  <p className="mt-3 font-mono text-[0.62rem] leading-relaxed text-gray-mid">
-                    Checked {priceProvenance.sourcePhrase} on <time dateTime={priceProvenance.verifiedAt}>{priceProvenance.verifiedDate}</time>
-                    {confidenceLabel && ` · ${confidenceLabel}`}
-                  </p>
-                )}
-              </div>
-
-              {/* Receipt row — happy hour */}
-              {(pub.happyHour || pub.happyHourPrice) && (
-                <div className={`px-5 py-3.5 border-t-2 border-dashed ${pub.isHappyHourNow ? 'border-red' : 'border-gray-light'}`}>
-                  <div className="flex items-baseline gap-2">
-                    <span className="type-eyebrow whitespace-nowrap">Happy hour</span>
-                    <span className="flex-1 border-b border-dashed border-gray-light translate-y-[-3px]" />
-                    {pub.happyHourPrice && (
-                      <span className={`font-mono text-[0.92rem] font-extrabold ${pub.isHappyHourNow ? 'text-red' : 'text-ink'}`}>${pub.happyHourPrice.toFixed(2)}</span>
-                    )}
-                  </div>
-                  {pub.happyHourDays && pub.happyHourStart && pub.happyHourEnd ? (
-                    <p className="text-[0.78rem] text-gray-mid mt-1 text-right">
-                      {formatReadableHappyHourDays(pub.happyHourDays)} · {formatHappyHourTime(pub.happyHourStart, pub.happyHourEnd)}
-                    </p>
-                  ) : (
-                    <div className="text-[0.78rem] text-gray-mid mt-1 text-right">
-                      {pub.happyHourDays && <p>{formatReadableHappyHourDays(pub.happyHourDays)}</p>}
-                      {pub.happyHourStart && pub.happyHourEnd && (
-                        <p>{formatHappyHourTime(pub.happyHourStart, pub.happyHourEnd)}</p>
-                      )}
-                      {!pub.happyHourPrice && !pub.happyHourStart && pub.happyHour && <p>{pub.happyHour}</p>}
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {/* Tier-C / missing-price verification stub */}
-              {priceMissingCopy && (
-                <div className="px-5 py-4 border-t-2 border-dashed border-gray-light">
-                  {nearestVerifiedPub ? (
-                    <Link
-                      href={pubUrl({ suburb: nearestVerifiedPub.suburb, slug: nearestVerifiedPub.slug })}
-                      onClick={() => trackSiteEvent('pub_nearby_click', {
-                        source: 'pub_missing_price_stub',
-                        pub_slug: pub.slug,
-                        suburb: pub.suburb,
-                        target_slug: nearestVerifiedPub.slug,
-                        target_suburb: nearestVerifiedPub.suburb,
-                        page_tier: trackingTier,
-                      })}
-                      className="block text-[0.86rem] leading-relaxed text-ink hover:text-amber transition-colors no-underline"
-                    >
-                      {priceMissingCopy}
-                    </Link>
-                  ) : (
-                    <p className="text-[0.86rem] leading-relaxed text-ink">{priceMissingCopy}</p>
-                  )}
-                </div>
-              )}
-            </div>
-
-            {/* Report a price — prominent CTA */}
-            <button
-              onClick={() => openReportForm('pub_page_cta')}
-              className={`w-full flex items-center justify-center gap-2 font-mono font-bold uppercase tracking-[0.05em] border-3 border-ink rounded-pill shadow-hard-sm hover:translate-x-[1.5px] hover:translate-y-[1.5px] hover:shadow-hard-hover transition-all ${
-                isTierCPage
-                  ? 'text-white bg-amber py-4 text-[0.85rem]'
-                  : 'text-amber bg-amber-pale py-3 text-[0.78rem]'
-              }`}
-            >
-              <PenLine className="w-4 h-4" />
-              {reportCtaLabel}
-            </button>
-
-            {/* About */}
-            {pub.description && (
-              <div>
-                <p className="type-eyebrow mb-2">About</p>
-                <p className="text-[0.85rem] text-gray-mid leading-relaxed">{pub.description}</p>
-              </div>
-            )}
-
-            {/* Good to know — sourced Places attributes */}
-            <GoodToKnow pub={pub} />
 
             {/* Price History */}
             <PriceHistory pubId={pub.id} currentPrice={pub.price} />

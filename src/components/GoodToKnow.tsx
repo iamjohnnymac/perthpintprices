@@ -25,9 +25,9 @@ function formatDate(value: string): string {
   return new Date(value).toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' })
 }
 
-export default function GoodToKnow({ pub }: { pub: Pub }) {
-  const chips = CHIPS.filter(({ key }) => pub[key] === true)
-  const hasRating = pub.googleRating != null
+export default function GoodToKnow({ pub, summaryOnly = false }: { pub: Pub; summaryOnly?: boolean }) {
+  const chips = summaryOnly ? [] : CHIPS.filter(({ key }) => pub[key] === true)
+  const hasRating = !summaryOnly && pub.googleRating != null
   const summary = pub.googleEditorialSummary
 
   if (chips.length === 0 && !hasRating && !summary) return null
@@ -65,7 +65,7 @@ export default function GoodToKnow({ pub }: { pub: Pub }) {
         </p>
       )}
 
-      {pub.googleAttrsUpdatedAt && (
+      {pub.googleAttrsUpdatedAt && !summaryOnly && (
         <p className="mt-2 font-mono text-[0.6rem] text-gray-mid">
           Per Google, checked{' '}
           <time dateTime={pub.googleAttrsUpdatedAt}>{formatDate(pub.googleAttrsUpdatedAt)}</time>

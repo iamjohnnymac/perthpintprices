@@ -10,6 +10,12 @@ Stack, database, routes, components, and lib files are documented in `CLAUDE.md`
 
 ## What's done recently
 
+### Pub page receipt card — site-wide template (2026-06-05)
+- **`feat/pub-receipt-card`:** the pint price card on `/[suburb]/[pub]` is now the "receipt" for every pub — an amber-headed docket (`★ Perth Pint Prices ★` banner + venue name in DM Serif), the hero price, an itemised dotted-leader sheet (Standard pint · Happy hour · Cheaper nearby · Checked · Google rating), amenity stamps, and an in-card report CTA. New self-contained `src/components/PintReceipt.tsx`; the throwaway `_receipt-prototype/` route (A thermal docket / B raffle ticket / C banner card, toggled via a dev-gated `?variant` switcher) was deleted after C won.
+- **Unpriced pubs (most of the 857) handled:** TBC renders cleanly — no false "vs-avg" line, the CTA reads "Know the price?" not "a better price", and the Tier-C "nearest checked price" stub was lifted out of the old card into its own bordered block (verified on The Flaming Galah, Freo → "12 nearby pubs have a checked price — start with Whisper Wine Bar at $9.00").
+- **Page de-dup (the receipt owns this data now):** removed the dark "Quick read" answer-first box (its numbers live in the receipt + the FAQPage schema), the duplicate full-width report button, and the repeated rating/amenity chips below the card (`GoodToKnow` gained a `summaryOnly` prop → editorial blurb only). About + that blurb now share one bordered card instead of floating. Dropped the redundant "Family-friendly in {suburb}" subtitle (the vibe pill already says it).
+- **Verification:** `tsc` clean, **272 tests**, priced + unpriced pubs confirmed in-browser via DOM reads (Chrome screenshot capture wedges on the dev sticky Leaflet map).
+
 ### The Deen suburb correction (2026-06-05)
 - **Data fix (`scripts/fix-deen-suburb.mjs`):** The Deen (pub #7) was tagged `suburb = "North Perth"` but sits at 82 Aberdeen St, **Northbridge** — corrected to Northbridge. Surfaced by the content-review address/suburb audit (the venue is its own Pint-of-the-Day pick, so the wrong tag was visible, and it skewed the Northbridge cluster stats). The pub route looks pubs up by slug and 301-redirects on a suburb mismatch, so **`/north-perth/the-deen` now 308-redirects to `/northbridge/the-deen`** (verified) — no code redirect needed. Script is idempotent + guarded (only touches the row while it is still "North Perth" with a Northbridge address). The wider ~127 address/suburb mismatches stay deferred — most are false positives (CBD naming, border streets).
 
