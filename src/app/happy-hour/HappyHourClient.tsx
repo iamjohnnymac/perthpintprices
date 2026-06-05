@@ -60,9 +60,8 @@ function formatDealWindow(pub: Pub, status: HappyHourStatus): string {
 
 export default function HappyHourClient({ initialPubs, renderedAtIso }: HappyHourClientProps) {
   const [happyHourPubs, setHappyHourPubs] = useState<Pub[]>(initialPubs)
-  const [allPubs, setAllPubs] = useState<Pub[]>(initialPubs.filter(p => p.isHappyHourNow))
+  const [allPubs, setAllPubs] = useState<Pub[]>(initialPubs.filter(hasTimedHappyHour))
   const [loading, setLoading] = useState(false) // Start as false since we have server data
-  const [lastRefresh, setLastRefresh] = useState<Date | null>(null)
   const [clockInstant, setClockInstant] = useState(() => new Date(renderedAtIso))
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null)
   const [locationState, setLocationState] = useState<'pending' | 'granted' | 'denied'>('pending')
@@ -87,8 +86,7 @@ export default function HappyHourClient({ initialPubs, renderedAtIso }: HappyHou
       const pubs = await getPubs()
       const pubsWithHappyHours = pubs.filter((p) => p.happyHour)
       setHappyHourPubs(pubsWithHappyHours)
-      setAllPubs(pubsWithHappyHours.filter((p) => p.isHappyHourNow))
-      setLastRefresh(new Date())
+      setAllPubs(pubsWithHappyHours.filter(hasTimedHappyHour))
     } catch (err) {
       console.error('Error fetching happy hour pubs:', err)
     } finally {
@@ -177,7 +175,27 @@ export default function HappyHourClient({ initialPubs, renderedAtIso }: HappyHou
     const pr = p.happyHourPrice ?? p.price ?? p.regularPrice
     return pr != null && pr < min ? pr : min
   }, Infinity)
-  const activePubCopy = pubs.length === 1 ? 'one happy-hour pub' : `${pubs.length} happy-hour pubs`
+  const faqItems = [
+    {
+      q: 'What time is happy hour in Perth?',
+      a: `Most Perth happy hours run late afternoon to early evening — commonly 4–6pm on weekdays, though some pubs go later or all day. Every pub below lists its exact window${planner.activeCount > 0 ? `, and ${planner.activeCount} ${planner.activeCount === 1 ? 'is' : 'are'} on right now` : ''}.`,
+    },
+    {
+      q: "Where's the cheapest happy-hour pint in Perth?",
+      a: planner.cheapestActive
+        ? `Right now it's ${formatPrice(getActiveDisplayPrice(planner.cheapestActive.pub, planner.cheapestActive.status))} at ${planner.cheapestActive.pub.name} in ${planner.cheapestActive.pub.suburb}. The list below is sorted cheapest first.`
+        : `${minHhPrice !== Infinity ? `Happy-hour pints start from ${formatPrice(minHhPrice)}. ` : ''}The list below is sorted cheapest first, so the best deal is always at the top.`,
+    },
+    {
+      q: 'Which Perth pubs have a happy hour?',
+      a: `We track ${happyHourPubs.length} Perth pubs with a happy hour, each with a live window and pint price — from the CBD and Northbridge to Fremantle and the beaches.`,
+    },
+  ]
+  const faqJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqItems.map(f => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+  }
 
   return (
     <div className="min-h-screen bg-[#FDF8F0]">
@@ -187,31 +205,25 @@ export default function HappyHourClient({ initialPubs, renderedAtIso }: HappyHou
         {/* Page heading */}
         <div className="mb-6">
           <h1 className="type-hero">
-            Perth happy hours, on now
+            Happy hours in Perth
           </h1>
 
-          {!loading && pubs.length > 0 && (
+          {planner.activeCount > 0 && (
             <div className="flex items-center gap-2 mt-3">
               <span className="w-2 h-2 rounded-full bg-green shadow-[0_0_8px_rgba(45,122,61,0.5)] animate-pulse" />
               <span className="font-mono text-[0.75rem] font-bold text-ink">
-                {pubs.length} active now
+                {planner.activeCount} on right now
               </span>
             </div>
           )}
 
           <p className="font-body text-[0.9rem] leading-relaxed text-gray-mid mt-3">
-            {pubs.length > 0 ? (
-              <>Perth has {activePubCopy} running right now{minHhPrice !== Infinity && <>, with pints from <span className="font-mono font-bold text-ink">{formatPrice(minHhPrice)}</span></>}. We list them live, with the pint price, the window, and the last check where we have it.</>
-            ) : (
-              <>No happy hours we&apos;ve confirmed running right now. They move around — check back later, or <Link href="/discover" className="text-amber font-bold hover:underline">see Perth prices</Link>.</>
-            )}
+            Every Perth happy hour we track — {happyHourPubs.length} pubs, each with its exact pint price and window. Most run late afternoon, 4–6pm on weekdays; {planner.activeCount > 0 ? <>{planner.activeCount} {planner.activeCount === 1 ? 'is' : 'are'} live right now</> : 'none are live this minute'}{minHhPrice !== Infinity && <>, with pints from <span className="font-mono font-bold text-ink">{formatPrice(minHhPrice)}</span></>}. Sorted cheapest first, updated continuously.
           </p>
 
-          {lastRefresh && !loading && (
-            <p className="text-gray-mid text-[0.7rem] mt-2">
-              Auto-refreshes every 60s
-            </p>
-          )}
+          <p className="text-gray-mid text-[0.7rem] mt-2">
+            Live data · auto-refreshes every 60s
+          </p>
         </div>
 
         {happyHourPubs.length > 0 && (
@@ -464,6 +476,20 @@ export default function HappyHourClient({ initialPubs, renderedAtIso }: HappyHou
             </Link>
           </div>
         )}
+
+        {/* FAQ — answers the "what time / where cheapest / which pubs" PAA + FAQPage schema */}
+        <section className="mt-10 rounded-card border-3 border-ink bg-white p-5 shadow-hard-sm">
+          <h2 className="type-section leading-tight mb-4">Perth happy hour FAQ</h2>
+          <div className="space-y-4">
+            {faqItems.map(f => (
+              <div key={f.q}>
+                <h3 className="type-card leading-snug">{f.q}</h3>
+                <p className="mt-1 font-body text-[0.85rem] leading-relaxed text-gray-mid">{f.a}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd).replace(/</g, '\\u003c') }} />
       </div>
 
       <Footer />

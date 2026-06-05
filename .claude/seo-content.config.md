@@ -12,7 +12,7 @@ project:
 
 data_layer:
   provider: ahrefs-mcp
-  ahrefs_project_id:           # BLANK — confirm which Ahrefs project maps to perthpintprices.com
+  ahrefs_project_id: 9843078   # Perthpintprices (verified, owned by macca.mck@gmail.com; rank-tracker has 0 keywords set up yet)
   csv_path:
   notes: >
     Ahrefs MCP connected. Money values are USD cents (÷100). Per-pub queries
@@ -21,7 +21,7 @@ data_layer:
     Use Ahrefs for the higher-volume suburb/discover money pages, not the pub template.
 
 keywords:
-  store: docs/seo/keywords.md  # BLANK/not-yet-created — proposed location
+  store: docs/seo/keywords.md  # written 2026-06-05 — money-page keyword set (Ahrefs AU)
   published_index: >
     Supabase `pubs` table (857 rows) → /[suburb]/[pub]; suburbs → /[suburb];
     indexable set in /sitemap.xml. A keyword is "covered" if a matching pub/suburb page exists.

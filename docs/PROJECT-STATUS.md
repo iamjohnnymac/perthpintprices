@@ -10,6 +10,12 @@ Stack, database, routes, components, and lib files are documented in `CLAUDE.md`
 
 ## What's done recently
 
+### SEO #4: money-page keyword pass + `/happy-hour` rebuild (2026-06-05)
+- **Keyword research (Ahrefs, AU)** → `docs/seo/keywords.md`. The on-brand terms are wide open: **happy hour perth (250/mo, KD 0)**, best pubs perth (400, KD 0), beer garden perth (100, KD 0), dog friendly pubs perth (150, KD 0); `cheap pints perth` triggers an **AI Overview** (citation prize). Flagged `rooftop bars perth` (1,500, KD 30) + `bars perth` (800) as high-volume but off the pint-price USP. Filled the Ahrefs project id (9843078) + keyword-store blanks in `.claude/seo-content.config.md`.
+- **`/happy-hour` optimised for "happy hour perth"** (the #1 opportunity). The SERP rewards a comprehensive list (Perth is OK / sitchu listicles rank), but our page filtered the visible list to `isHappyHourNow` — so outside ~4–6pm it showed "No happy hours right now" + an empty list, unrankable for the query. Now it lists **every timed happy hour, cheapest first, with active ones flagged live**: keyword H1 ("Happy hours in Perth"), an answer-first intro, a sharper title ("Happy Hour Perth — Every Deal, Live & Priced"), and a FAQ + `FAQPage` schema (what time / where cheapest / which pubs). Keeps the live board + countdowns — the freshness the static listicles can't match.
+- **Verification:** `tsc` clean, 272 tests, rendered HTML confirmed (full list, keyword H1, FAQPage, no empty state).
+- **Next:** the KD-0 guide gaps — `/guides/dog-friendly-pubs`, `/guides/beer-gardens` (the `allows_dogs` / `outdoor_seating` data already exists).
+
 ### Pub page SEO: price schema + answer-first + happy-hour titles (2026-06-05)
 - **`feat/pub-page-seo`:** an SEO audit (via the `seo-content` skill) of the post-receipt pub template found the pages under-optimised for a wide-open SERP — searching "how much is a pint at [pub]" returns TripAdvisor / booking sites, none of which answer the price. Three fixes, hitting every priced/HH pub at once:
   - **Exact price in structured data** (`pubJsonLd.ts`): added `makesOffer` → `Offer`/`MenuItem` with the real pint price (+ happy-hour price) in AUD — previously the price was only a coarse `priceRange: "$$"`. Now machine-readable for rich results + AI answers.

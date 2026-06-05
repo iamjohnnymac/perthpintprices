@@ -7,9 +7,9 @@ import { pubUrl } from '@/lib/urls'
 export const revalidate = 60 // Revalidate every 60 seconds for fresh happy hour data
 
 export const metadata: Metadata = {
-  title: 'Happy Hours in Perth Right Now',
+  title: 'Happy Hour Perth — Every Deal, Live & Priced',
   description:
-    'Which Perth pubs have happy hour deals on right now. Live countdown timers, savings calculations, and the cheapest pints available today.',
+    'Every Perth happy hour in one live list — the exact pint price and window for each pub, and which deals are on right now. Sorted cheapest first, updated continuously.',
   alternates: { canonical: 'https://perthpintprices.com/happy-hour' },
   openGraph: {
     title: 'Happy Hours Live Now in Perth | Perth Pint Prices',
