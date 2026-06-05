@@ -11,6 +11,7 @@ import { pubUrl } from '@/lib/urls'
 import { getHappyHourStatus, formatHappyHourDays, type HappyHourStatus } from '@/lib/happyHourLive'
 import { getPriceRecency } from '@/lib/freshness'
 import { HAPPY_HOUR_DAYS } from '@/lib/happyHourDays'
+import { happyHourPourLabel, isPintHappyHour } from '@/lib/happyHourPour'
 
 type SortMode = 'price' | 'nearest'
 
@@ -33,6 +34,18 @@ function formatPerthTime(date: Date): string {
   }).format(date).replace(' ', '').toLowerCase()
 }
 
+// Format a 24h time string ("17:30") to "5:30pm" / "5pm" (minutes preserved).
+function formatHHTime(value: string | null): string {
+  if (!value) return ''
+  const [h, m = '0'] = value.split(':')
+  const hour = Number(h)
+  const minute = Number(m)
+  if (!Number.isFinite(hour)) return ''
+  const period = hour >= 12 ? 'pm' : 'am'
+  const h12 = hour > 12 ? hour - 12 : hour === 0 ? 12 : hour
+  return minute > 0 ? `${h12}:${String(minute).padStart(2, '0')}${period}` : `${h12}${period}`
+}
+
 function getPubHappyHourStatus(pub: Pub, now: Date): HappyHourStatus {
   return getHappyHourStatus({
     price: pub.regularPrice,
@@ -52,10 +65,14 @@ function getActiveDisplayPrice(pub: Pub, status: HappyHourStatus): number | null
 }
 
 function formatDealWindow(pub: Pub, status: HappyHourStatus): string {
-  if (status.happyHourLabel) return status.happyHourLabel
   const days = formatHappyHourDays(pub.happyHourDays)
-  if (days) return days
-  return pub.happyHour ?? 'Happy hour'
+  if (days) {
+    const time = pub.happyHourStart && pub.happyHourEnd
+      ? ` ${formatHHTime(pub.happyHourStart)}-${formatHHTime(pub.happyHourEnd)}`
+      : ''
+    return `${days}${time}`
+  }
+  return status.happyHourLabel || pub.happyHour || 'Happy hour'
 }
 
 export default function HappyHourClient({ initialPubs, renderedAtIso }: HappyHourClientProps) {
@@ -153,11 +170,28 @@ export default function HappyHourClient({ initialPubs, renderedAtIso }: HappyHou
       activeCount: activeRows.length,
       timedCount: timedRows.length,
       freshCount,
-      cheapestActive: activeRows[0] ?? null,
+      cheapestActive: activeRows.find(r => isPintHappyHour(r.pub.slug)) ?? null,
       nextDeal: upcomingRows[0] ?? null,
       laterDeal: laterRows[0] ?? null,
     }
   }, [happyHourPubs, clockInstant])
+
+  // Editorial "best of" picks, auto-selected from live data. "Cheapest pint" and
+  // the picks only count real pints — schooner/small-pour happy hours are excluded
+  // (see happyHourPour) so we never headline a non-pint as the cheapest.
+  const bestOf = useMemo(() => {
+    const priced = allPubs.filter(p => p.happyHourPrice != null)
+    const pints = priced.filter(p => isPintHappyHour(p.slug))
+    const byPrice = (a: Pub, b: Pub) => (a.happyHourPrice ?? 999) - (b.happyHourPrice ?? 999)
+    const biggestSaving = priced
+      .filter(p => isPintHappyHour(p.slug) && p.regularPrice != null && p.happyHourPrice != null && p.regularPrice > p.happyHourPrice)
+      .sort((a, b) => (b.regularPrice! - b.happyHourPrice!) - (a.regularPrice! - a.happyHourPrice!))[0] ?? null
+    return {
+      cheapestPint: [...pints].sort(byPrice)[0] ?? null,
+      biggestSaving,
+      beerGarden: [...pints].filter(p => p.outdoorSeating).sort(byPrice)[0] ?? null,
+    }
+  }, [allPubs])
 
   const formatMinutesRemaining = (mins: number | null): string => {
     if (mins == null) return ''
@@ -171,10 +205,6 @@ export default function HappyHourClient({ initialPubs, renderedAtIso }: HappyHou
 
   const hasLocation = locationState === 'granted' && userLocation !== null
 
-  const minHhPrice = pubs.reduce((min, p) => {
-    const pr = p.happyHourPrice ?? p.price ?? p.regularPrice
-    return pr != null && pr < min ? pr : min
-  }, Infinity)
   const faqItems = [
     {
       q: 'What time is happy hour in Perth?',
@@ -182,9 +212,9 @@ export default function HappyHourClient({ initialPubs, renderedAtIso }: HappyHou
     },
     {
       q: "Where's the cheapest happy-hour pint in Perth?",
-      a: planner.cheapestActive
-        ? `Right now it's ${formatPrice(getActiveDisplayPrice(planner.cheapestActive.pub, planner.cheapestActive.status))} at ${planner.cheapestActive.pub.name} in ${planner.cheapestActive.pub.suburb}. The list below is sorted cheapest first.`
-        : `${minHhPrice !== Infinity ? `Happy-hour pints start from ${formatPrice(minHhPrice)}. ` : ''}The list below is sorted cheapest first, so the best deal is always at the top.`,
+      a: bestOf.cheapestPint
+        ? `${bestOf.cheapestPint.name} in ${bestOf.cheapestPint.suburb} has the cheapest happy-hour pint we've found — ${formatPrice(bestOf.cheapestPint.happyHourPrice)}. (We don't count schooner or small-pour deals as pints.) The list below is sorted cheapest first.`
+        : 'The list below is sorted cheapest first, so the best deal is always at the top.',
     },
     {
       q: 'Which Perth pubs have a happy hour?',
@@ -218,13 +248,46 @@ export default function HappyHourClient({ initialPubs, renderedAtIso }: HappyHou
           )}
 
           <p className="font-body text-[0.9rem] leading-relaxed text-gray-mid mt-3">
-            Every Perth happy hour we track — {happyHourPubs.length} pubs, each with its exact pint price and window. Most run late afternoon, 4–6pm on weekdays; {planner.activeCount > 0 ? <>{planner.activeCount} {planner.activeCount === 1 ? 'is' : 'are'} live right now</> : 'none are live this minute'}{minHhPrice !== Infinity && <>, with pints from <span className="font-mono font-bold text-ink">{formatPrice(minHhPrice)}</span></>}. Sorted cheapest first, updated continuously.
+            Every Perth happy hour we track — {happyHourPubs.length} pubs, each with its exact pint price and window. Most run late afternoon, 4–6pm on weekdays; {planner.activeCount > 0 ? <>{planner.activeCount} {planner.activeCount === 1 ? 'is' : 'are'} live right now</> : 'none are live this minute'}{bestOf.cheapestPint && <>, with pints from <span className="font-mono font-bold text-ink">{formatPrice(bestOf.cheapestPint.happyHourPrice)}</span></>}. Sorted cheapest first, updated continuously.
           </p>
 
           <p className="text-gray-mid text-[0.7rem] mt-2">
             Live data · auto-refreshes every 60s
           </p>
         </div>
+
+        {/* Best-of editorial picks — auto-selected from live data, pour-aware */}
+        {(bestOf.cheapestPint || bestOf.biggestSaving || bestOf.beerGarden) && (
+          <section className="mb-6">
+            <h2 className="type-section leading-tight mb-3">Perth&apos;s best happy-hour pints</h2>
+            <div className="grid gap-3 sm:grid-cols-3">
+              {bestOf.cheapestPint && (
+                <Link href={pubUrl(bestOf.cheapestPint)} className="block rounded-card border-3 border-ink bg-white p-4 shadow-hard-sm no-underline hover:translate-x-[1.5px] hover:translate-y-[1.5px] hover:shadow-hard-hover transition-all">
+                  <p className="type-eyebrow text-amber">Cheapest pint</p>
+                  <p className="mt-1 type-price text-[1.7rem] leading-none">{formatPrice(bestOf.cheapestPint.happyHourPrice)}</p>
+                  <p className="mt-2 font-mono text-[0.82rem] font-bold text-ink truncate">{bestOf.cheapestPint.name}</p>
+                  <p className="font-body text-[0.76rem] text-gray-mid">{bestOf.cheapestPint.suburb} · {formatHappyHourDays(bestOf.cheapestPint.happyHourDays)} {formatHHTime(bestOf.cheapestPint.happyHourStart)}-{formatHHTime(bestOf.cheapestPint.happyHourEnd)}</p>
+                </Link>
+              )}
+              {bestOf.biggestSaving && (
+                <Link href={pubUrl(bestOf.biggestSaving)} className="block rounded-card border-3 border-ink bg-white p-4 shadow-hard-sm no-underline hover:translate-x-[1.5px] hover:translate-y-[1.5px] hover:shadow-hard-hover transition-all">
+                  <p className="type-eyebrow text-amber">Biggest saving</p>
+                  <p className="mt-1 type-price text-[1.7rem] leading-none text-green">{formatPrice((bestOf.biggestSaving.regularPrice ?? 0) - (bestOf.biggestSaving.happyHourPrice ?? 0))} off</p>
+                  <p className="mt-2 font-mono text-[0.82rem] font-bold text-ink truncate">{bestOf.biggestSaving.name}</p>
+                  <p className="font-body text-[0.76rem] text-gray-mid">{formatPrice(bestOf.biggestSaving.happyHourPrice)}, was {formatPrice(bestOf.biggestSaving.regularPrice)} · {bestOf.biggestSaving.suburb}</p>
+                </Link>
+              )}
+              {bestOf.beerGarden && (
+                <Link href={pubUrl(bestOf.beerGarden)} className="block rounded-card border-3 border-ink bg-white p-4 shadow-hard-sm no-underline hover:translate-x-[1.5px] hover:translate-y-[1.5px] hover:shadow-hard-hover transition-all">
+                  <p className="type-eyebrow text-amber">Best beer garden</p>
+                  <p className="mt-1 type-price text-[1.7rem] leading-none">{formatPrice(bestOf.beerGarden.happyHourPrice)}</p>
+                  <p className="mt-2 font-mono text-[0.82rem] font-bold text-ink truncate">{bestOf.beerGarden.name}</p>
+                  <p className="font-body text-[0.76rem] text-gray-mid">{bestOf.beerGarden.suburb} · pints in the sun</p>
+                </Link>
+              )}
+            </div>
+          </section>
+        )}
 
         {happyHourPubs.length > 0 && (
           <section className="mb-6 overflow-hidden rounded-card border-3 border-ink bg-white shadow-hard-sm">
@@ -423,8 +486,11 @@ export default function HappyHourClient({ initialPubs, renderedAtIso }: HappyHou
                       {distance != null && (
                         <span>· {formatDistance(distance)}</span>
                       )}
-                      {pub.happyHourLabel && (
-                        <span>· {pub.happyHourLabel}</span>
+                      {pub.happyHourDays && (
+                        <span>· {formatHappyHourDays(pub.happyHourDays)} {formatHHTime(pub.happyHourStart)}-{formatHHTime(pub.happyHourEnd)}</span>
+                      )}
+                      {happyHourPourLabel(pub.slug) && (
+                        <span className="font-bold text-amber">· {happyHourPourLabel(pub.slug)}</span>
                       )}
                     </div>
                     {pub.happyHourMinutesRemaining != null && (
