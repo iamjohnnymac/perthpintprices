@@ -24,8 +24,10 @@ test('pub page renders price, freshness, map, and nearby prices', async ({ page 
 
   await expect(page.getByRole('heading', { name: 'The Court Hotel' })).toBeVisible()
   await expect(page.getByText(/pint price/i).first()).toBeVisible()
-  await expect(page.getByText(/Checked \d+d ago/i)).toBeVisible()
-  await expect(page.getByText(/Cheaper nearby|Nearby verified prices/i)).toBeVisible()
+  // Freshness: the receipt shows an absolute "Checked <date>" (e.g. "17 Feb 2026")
+  await expect(page.getByText(/Checked/i).first()).toBeVisible()
+  await expect(page.getByText(/\d{1,2} [A-Z][a-z]{2} \d{4}/).first()).toBeVisible()
+  await expect(page.getByText(/Cheaper nearby|Nearby verified prices/i).first()).toBeVisible()
   await expect(page.locator('.leaflet-container')).toBeVisible()
 
   await attachProof(page, testInfo, 'pub-page')
