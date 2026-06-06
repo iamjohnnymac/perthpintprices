@@ -316,10 +316,38 @@ export default function PubDetailClient({
               <span className="font-mono text-[0.6rem] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full border border-gray-light text-gray-mid">{pub.vibeTag}</span>
             )}
           </div>
+          {pub.address && (
+            <p className="mt-1 font-body text-[0.78rem] text-gray-mid">{pub.address}</p>
+          )}
           {answerLine && (
             <p className="mt-3 max-w-[42rem] font-body text-[0.95rem] leading-relaxed text-ink">{answerLine}</p>
           )}
         </div>
+
+        {/* Venue photo — Google Places, with required contributor attribution */}
+        {pub.googlePhotoUrl && (
+          <figure>
+            {/* Plain img on purpose: Google photos must be hotlinked + refreshed, not re-hosted/optimised on our CDN. */}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={pub.googlePhotoUrl}
+              alt={`${pub.name}, ${pub.suburb}`}
+              loading="lazy"
+              className="h-56 w-full rounded-card border-3 border-ink object-cover shadow-hard-sm sm:h-72"
+            />
+            <figcaption className="mt-1 text-right font-body text-[0.62rem] text-gray-mid">
+              Photo:{' '}
+              {pub.googlePhotoAttributionUri ? (
+                <a href={pub.googlePhotoAttributionUri} target="_blank" rel="noopener noreferrer nofollow" className="underline hover:text-amber">
+                  {pub.googlePhotoAttribution || 'contributor'}
+                </a>
+              ) : (
+                pub.googlePhotoAttribution || 'contributor'
+              )}{' '}
+              · Google Maps
+            </figcaption>
+          </figure>
+        )}
 
         {/* Permanently closed notice — Places business_status */}
         {pub.businessStatus === 'CLOSED_PERMANENTLY' && (
@@ -378,6 +406,26 @@ export default function PubDetailClient({
                 <GoodToKnow pub={pub} summaryOnly />
               </section>
             )}
+
+            {/* Opening hours — sourced from Google, shown structured (the ranking listicles don't) */}
+            {pub.googleOpeningHours?.weekdayDescriptions?.length ? (
+              <section className="border-3 border-ink rounded-card bg-white shadow-hard-sm p-5">
+                <p className="type-eyebrow mb-3">Opening hours</p>
+                <ul className="space-y-1.5">
+                  {pub.googleOpeningHours.weekdayDescriptions.map((line, i) => {
+                    const [day, ...rest] = line.split(': ')
+                    const hours = rest.join(': ')
+                    return (
+                      <li key={i} className="flex justify-between gap-4 font-mono text-[0.76rem]">
+                        <span className="text-gray-mid">{day}</span>
+                        <span className="text-right text-ink">{hours || '—'}</span>
+                      </li>
+                    )
+                  })}
+                </ul>
+                <p className="mt-3 font-mono text-[0.58rem] text-gray-mid">Hours via Google Maps</p>
+              </section>
+            ) : null}
 
             {/* Price History */}
             <PriceHistory pubId={pub.id} currentPrice={pub.price} />

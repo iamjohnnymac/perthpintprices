@@ -64,3 +64,11 @@ perth_pubs_pricing/
 # Supabase local config (but track migrations)
 supabase/*
 !supabase/migrations/
+
+# Throwaway photo-review / curation artifacts (downloaded images, contact sheets)
+.photo-review/
+.photo-candidates/
+public/photo-review/
+
+# Loop/scheduler runtime lock
+.claude/scheduled_tasks.lock

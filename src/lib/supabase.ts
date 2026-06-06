@@ -137,6 +137,9 @@ function toPub(row: any): Pub {
     googleEditorialSummary: row.google_editorial_summary || null,
     googleOpeningHours: row.google_opening_hours || null,
     googleAttrsUpdatedAt: row.google_attrs_updated_at || null,
+    googlePhotoUrl: row.google_photo_url || null,
+    googlePhotoAttribution: row.google_photo_attribution || null,
+    googlePhotoAttributionUri: row.google_photo_attribution_uri || null,
   }
 }
 
