@@ -1,6 +1,6 @@
 # Perth Pint Prices Project Status
 
-Last updated: 2026-06-05
+Last updated: 2026-06-06
 
 ## What this is
 
@@ -9,6 +9,13 @@ Perth Pint Prices (perthpintprices.com) tracks pint prices across **857 Perth pu
 Stack, database, routes, components, and lib files are documented in `CLAUDE.md` (auto-loaded every session). This file covers history, recent work, and the backlog.
 
 ## What's done recently
+
+### #164: happy-hour area listicle + attributed venue photos + opening hours (2026-06-06)
+- **PR #164 (`054340e`):** `/happy-hour` rebuilt as an editorial **area-grouped listicle** (CBD/Northbridge, North, Coast, Freo/South, Hills — cheapest first), with a live **"on right now"** section (countdowns), best-of picks, per-venue write-ups, and a collapsible opening-hours + address line. Every **pub page** gains an attributed Google Places hero photo, structured opening hours, and a visible street address; `BarOrPub` JSON-LD now carries the photo as an `ImageObject` (creditText + author) for richer local results. New `src/lib/perthRegions.ts` (suburb→region map).
+- **Google Places photo pipeline** (`scripts/backfill-place-attributes.mjs` + migration `20260605000000_pub_google_photos.sql`): one attributed photo per pub at **$0** (rides the existing Details call), stored in separate columns (`google_photo_url/_attribution/_attribution_uri`) so curation never clobbers `image_url`. **Smart-picks** the best candidate (business + landscape over food/portrait). Photos are **hotlinked + monthly-refreshed (not re-hosted)** and always shown with the contributor + Google Maps attribution, per Places API policy. ~772 pubs backfilled.
+- **Photo quality — vision curation:** Google's pub photos run ~30–38% food/drink close-ups, which no metadata heuristic can catch. Agents *viewed* every photo: the 51 weak listicle ones were re-picked from candidates (49 real venue shots + 2 hidden), and **186 weak long-tail ones hidden** (`hide-bad-photos.mjs`) — all recorded as `slug→ref`/`"NONE"` in `scripts/photo-overrides.json` (237 entries) so the monthly refresh keeps the hand-vetted choices. Net: every photo on prod is a real venue shot or none — no burgers/selfies/menus.
+- **Verification:** `tsc` clean, Playwright CI green, **prod live** (perthpintprices.com/happy-hour rendering photos), SSR + DOM confirmed on listicle + pub pages.
+- **Flagged follow-up:** Supabase egress is over the 5 GB free tier — the app's `getPubs` pulls the full ~2.4 MB pubs table uncached on every render. Structural fix: trim `select('*')` / lean on `getPubsLite` / cache the list.
 
 ### SEO #4: money-page keyword pass + `/happy-hour` rebuild (2026-06-05)
 - **Keyword research (Ahrefs, AU)** → `docs/seo/keywords.md`. The on-brand terms are wide open: **happy hour perth (250/mo, KD 0)**, best pubs perth (400, KD 0), beer garden perth (100, KD 0), dog friendly pubs perth (150, KD 0); `cheap pints perth` triggers an **AI Overview** (citation prize). Flagged `rooftop bars perth` (1,500, KD 30) + `bars perth` (800) as high-volume but off the pint-price USP. Filled the Ahrefs project id (9843078) + keyword-store blanks in `.claude/seo-content.config.md`.
