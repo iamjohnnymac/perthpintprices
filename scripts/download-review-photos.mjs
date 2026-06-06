@@ -12,6 +12,7 @@ import { mkdir, writeFile, rm } from 'fs/promises'
 config({ path: '.env.local' })
 
 const HAPPY_HOUR_ONLY = process.argv.includes('--happy-hour')
+const EXCLUDE_HAPPY_HOUR = process.argv.includes('--exclude-happy-hour')
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://ifxkoblvgttelzboenpi.supabase.co',
   process.env.SUPABASE_SERVICE_ROLE_KEY,
@@ -22,6 +23,7 @@ let q = supabase
   .select('slug,name,suburb,google_photo_url,google_photo_attribution')
   .not('google_photo_url', 'is', null)
 if (HAPPY_HOUR_ONLY) q = q.not('happy_hour', 'is', null)
+if (EXCLUDE_HAPPY_HOUR) q = q.is('happy_hour', null)
 q = q.order('name')
 
 const { data, error } = await q
