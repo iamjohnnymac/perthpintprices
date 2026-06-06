@@ -215,6 +215,18 @@ export function buildPubJsonLd(pub: Pub, avgPrice: number): JsonLdNode {
   }
 
   if (pub.website) barOrPub.url = pub.website
+  // Google Places photo as the entity image — a strong local rich-result signal.
+  // ImageObject carries the required contributor credit into the structured data.
+  if (pub.googlePhotoUrl) {
+    barOrPub.image = pub.googlePhotoAttribution
+      ? {
+          '@type': 'ImageObject',
+          url: pub.googlePhotoUrl,
+          creditText: pub.googlePhotoAttribution,
+          ...(pub.googlePhotoAttributionUri ? { author: { '@type': 'Person', name: pub.googlePhotoAttribution, url: pub.googlePhotoAttributionUri } } : {}),
+        }
+      : pub.googlePhotoUrl
+  }
   if (priceRange) barOrPub.priceRange = priceRange
   if (openingHoursSpecification.length > 0) {
     barOrPub.openingHoursSpecification = openingHoursSpecification

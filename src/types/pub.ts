@@ -57,6 +57,11 @@ export interface Pub {
   googleEditorialSummary?: string | null
   googleOpeningHours?: GoogleOpeningHours | null
   googleAttrsUpdatedAt?: string | null
+  // One Google Places photo + its required contributor attribution. Refreshed on
+  // the monthly Places sweep; must always be displayed with the attribution.
+  googlePhotoUrl?: string | null
+  googlePhotoAttribution?: string | null
+  googlePhotoAttributionUri?: string | null
 }
 
 // Subset of the Places (New) regularOpeningHours object we persist + render.
