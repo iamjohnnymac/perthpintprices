@@ -226,6 +226,9 @@ export function buildPubJsonLd(pub: Pub, avgPrice: number): JsonLdNode {
           ...(pub.googlePhotoAttributionUri ? { author: { '@type': 'Person', name: pub.googlePhotoAttribution, url: pub.googlePhotoAttributionUri } } : {}),
         }
       : pub.googlePhotoUrl
+  } else if (pub.imageUrl) {
+    // Manually-supplied photo (venue-provided or own) when Google has none.
+    barOrPub.image = pub.imageUrl
   }
   if (priceRange) barOrPub.priceRange = priceRange
   if (openingHoursSpecification.length > 0) {
