@@ -42,6 +42,7 @@ const PICKS = {
   'tgi-fridays-carousel': '00',
   'the-arbor': '03',
   'the-brass-monkey': '02',
+  'the-bird': '07',
   'the-brook-bar-and-bistro': '00',
   'the-garden': '00',
   'the-gate-bar-and-bistro': '00',
@@ -58,25 +59,25 @@ const PICKS = {
   'upperhand-burgers': '03',
   'warnbro-tavern': 'NONE',
   'waverley-brewhouse': '00',
+  'brown-street-grill': '00',
+  'crown-sports-bar': '00',
+  'indi-bar': '00',
+  'indian-ocean-hotel': '06',
+  'mojos-bar': '03',
+  'oceans-6019': 'NONE',
+  'the-norfolk-hotel': '02',
+  'the-quarie-bar-and-brasserie': 'NONE',
+  'the-sporting-globe-belmont': 'NONE',
+  'the-sporting-globe-rockingham': '00',
 }
 
-const rows = (await readFile('.photo-candidates/manifest.tsv', 'utf8'))
-  .trim()
-  .split('\n')
-  .filter(Boolean)
-  .map((l) => l.split('\t'))
-
-const refByKey = {}
-for (const [slug, nn, ref] of rows) refByKey[`${slug}/${nn}`] = ref
-
-const overrides = {}
-const missing = []
+// Overrides are stored as the photo INDEX (refs rotate; array order is stable).
+// Merge into any existing overrides (e.g. the long-tail "NONE" hides) rather than
+// clobbering them.
+const overrides = JSON.parse(await readFile('scripts/photo-overrides.json', 'utf8').catch(() => '{}'))
 for (const [slug, nn] of Object.entries(PICKS)) {
-  if (nn === 'NONE') { overrides[slug] = 'NONE'; continue }
-  const ref = refByKey[`${slug}/${nn}`]
-  if (ref) overrides[slug] = ref
-  else missing.push(`${slug}/${nn}`)
+  overrides[slug] = nn === 'NONE' ? 'NONE' : parseInt(nn, 10)
 }
 
 await writeFile('scripts/photo-overrides.json', JSON.stringify(overrides, null, 2) + '\n')
-console.log(`wrote ${Object.keys(overrides).length} overrides; missing refs: ${missing.join(', ') || 'none'}`)
+console.log(`merged ${Object.keys(PICKS).length} index picks; overrides total now ${Object.keys(overrides).length}`)
