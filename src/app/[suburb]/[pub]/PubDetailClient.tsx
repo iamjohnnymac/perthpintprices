@@ -324,27 +324,33 @@ export default function PubDetailClient({
           )}
         </div>
 
-        {/* Venue photo — Google Places, with required contributor attribution */}
-        {pub.googlePhotoUrl && (
+        {/* Venue photo — Google Places (attributed), falling back to a manually-supplied shot */}
+        {(pub.googlePhotoUrl || pub.imageUrl) && (
           <figure>
             {/* Plain img on purpose: Google photos must be hotlinked + refreshed, not re-hosted/optimised on our CDN. */}
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src={pub.googlePhotoUrl}
+              src={(pub.googlePhotoUrl || pub.imageUrl)!}
               alt={`${pub.name}, ${pub.suburb}`}
               loading="lazy"
               className="h-56 w-full rounded-card border-3 border-ink object-cover shadow-hard-sm sm:h-72"
             />
             <figcaption className="mt-1 text-right font-body text-[0.62rem] text-gray-mid">
-              Photo:{' '}
-              {pub.googlePhotoAttributionUri ? (
-                <a href={pub.googlePhotoAttributionUri} target="_blank" rel="noopener noreferrer nofollow" className="underline hover:text-amber">
-                  {pub.googlePhotoAttribution || 'contributor'}
-                </a>
+              {pub.googlePhotoUrl ? (
+                <>
+                  Photo:{' '}
+                  {pub.googlePhotoAttributionUri ? (
+                    <a href={pub.googlePhotoAttributionUri} target="_blank" rel="noopener noreferrer nofollow" className="underline hover:text-amber">
+                      {pub.googlePhotoAttribution || 'contributor'}
+                    </a>
+                  ) : (
+                    pub.googlePhotoAttribution || 'contributor'
+                  )}{' '}
+                  · Google Maps
+                </>
               ) : (
-                pub.googlePhotoAttribution || 'contributor'
-              )}{' '}
-              · Google Maps
+                <>Photo: courtesy of {pub.name}</>
+              )}
             </figcaption>
           </figure>
         )}

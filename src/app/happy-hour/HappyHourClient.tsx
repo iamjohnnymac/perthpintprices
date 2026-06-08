@@ -378,26 +378,32 @@ export default function HappyHourClient({ initialPubs, renderedAtIso }: HappyHou
                 <div>
                   {group.entries.map(({ pub, status }) => (
                     <div key={pub.id} className="py-4 border-b border-gray-light last:border-b-0">
-                      {pub.googlePhotoUrl && (
+                      {(pub.googlePhotoUrl || pub.imageUrl) && (
                         <figure className="mb-3">
                           {/* Plain img on purpose: Google photos must be hotlinked + refreshed, not re-hosted/optimised on our CDN. */}
                           {/* eslint-disable-next-line @next/next/no-img-element */}
                           <img
-                            src={pub.googlePhotoUrl}
+                            src={(pub.googlePhotoUrl || pub.imageUrl)!}
                             alt={`${pub.name}, ${pub.suburb}`}
                             loading="lazy"
                             className="h-48 w-full rounded-card border-3 border-ink object-cover"
                           />
                           <figcaption className="mt-1 text-right font-body text-[0.6rem] text-gray-mid">
-                            Photo:{' '}
-                            {pub.googlePhotoAttributionUri ? (
-                              <a href={pub.googlePhotoAttributionUri} target="_blank" rel="noopener noreferrer nofollow" className="underline hover:text-amber">
-                                {pub.googlePhotoAttribution || 'contributor'}
-                              </a>
+                            {pub.googlePhotoUrl ? (
+                              <>
+                                Photo:{' '}
+                                {pub.googlePhotoAttributionUri ? (
+                                  <a href={pub.googlePhotoAttributionUri} target="_blank" rel="noopener noreferrer nofollow" className="underline hover:text-amber">
+                                    {pub.googlePhotoAttribution || 'contributor'}
+                                  </a>
+                                ) : (
+                                  pub.googlePhotoAttribution || 'contributor'
+                                )}{' '}
+                                · Google Maps
+                              </>
                             ) : (
-                              pub.googlePhotoAttribution || 'contributor'
-                            )}{' '}
-                            · Google Maps
+                              <>Photo: courtesy of {pub.name}</>
+                            )}
                           </figcaption>
                         </figure>
                       )}
