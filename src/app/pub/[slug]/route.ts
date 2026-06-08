@@ -12,8 +12,11 @@ export const dynamic = 'force-dynamic'
 export async function GET(request: Request, { params }: RouteContext) {
   const pub = await getPubBySlug(params.slug)
 
+  // The /pub/* namespace is permanently retired in favour of /{suburb}/{slug}.
+  // When the slug no longer maps to a pub (venue removed or re-slugged), return
+  // 410 Gone rather than 404 so Google drops the dead URL from its index faster.
   if (!pub) {
-    return new Response('Not found', { status: 404 })
+    return new Response('Gone', { status: 410 })
   }
 
   const destination = new URL(pubUrl(pub), request.url)
