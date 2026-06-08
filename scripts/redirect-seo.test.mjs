@@ -19,6 +19,17 @@ const legacySuburbRedirect = redirects.find(redirect => redirect.source === '/su
 assert.equal(legacySuburbRedirect?.destination, '/:slug')
 assert.equal(legacySuburbRedirect?.statusCode, 301, 'legacy suburb redirect must be an explicit 301')
 
+// Section index pages collapse into /discover. These must be edge redirects in
+// vercel.json (NOT a page-component permanentRedirect, which Vercel's CDN cached
+// as a 308 with no Location header — Googlebot reported that as a "Redirect error").
+const legacySectionRedirects = ['/guides', '/insights']
+for (const source of legacySectionRedirects) {
+  const sectionRedirect = redirects.find(redirect => redirect.source === source)
+  assert.equal(sectionRedirect?.destination, '/discover', `${source} must redirect to /discover`)
+  assert.equal(sectionRedirect?.statusCode, 301, `${source} redirect must be an explicit 301`)
+}
+
 const oldPubRoute = await readFile(new URL('../src/app/pub/[slug]/route.ts', import.meta.url), 'utf8')
 
 assert.match(oldPubRoute, /NextResponse\.redirect\([^,]+,\s*301\)/, 'legacy pub route must redirect with status 301')
+assert.match(oldPubRoute, /status:\s*410/, 'retired /pub/{slug} URLs must return 410 Gone, not 404')

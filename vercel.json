@@ -10,6 +10,16 @@
       "source": "/suburb/:slug",
       "destination": "/:slug",
       "statusCode": 301
+    },
+    {
+      "source": "/guides",
+      "destination": "/discover",
+      "statusCode": 301
+    },
+    {
+      "source": "/insights",
+      "destination": "/discover",
+      "statusCode": 301
     }
   ],
   "crons": [
