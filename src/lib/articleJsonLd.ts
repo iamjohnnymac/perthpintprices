@@ -38,11 +38,14 @@ export function buildArticleJsonLd({
     },
     publisher: {
       '@type': 'Organization',
+      '@id': 'https://perthpintprices.com/#organization',
       name: 'Perth Pint Prices',
       url: 'https://perthpintprices.com',
       logo: {
         '@type': 'ImageObject',
-        url: 'https://perthpintprices.com/og-image.png',
+        url: 'https://perthpintprices.com/logo.png',
+        width: 1024,
+        height: 1024,
       },
     },
     image: imageUrl || 'https://perthpintprices.com/og-image.png',
