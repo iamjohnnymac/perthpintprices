@@ -46,6 +46,9 @@ const MISSING_PHOTOS_ONLY = process.argv.includes('--missing-photos')
 const PHOTOS_ONLY = process.argv.includes('--photos-only')
 // --overrides-only: only sweep pubs that have a curated photo override (apply picks).
 const OVERRIDES_ONLY = process.argv.includes('--overrides-only')
+// --slugs a,b,c: only sweep these specific pubs (targeted single-pub photo re-pick).
+const slugsArg = process.argv.indexOf('--slugs')
+const SLUGS_FILTER = slugsArg !== -1 && process.argv[slugsArg + 1] ? process.argv[slugsArg + 1].split(',').map((s) => s.trim()) : null
 
 const GOOGLE_KEY = process.env.GOOGLE_PLACES_API_KEY
 if (!GOOGLE_KEY) {
@@ -128,11 +131,13 @@ function mapResponse(json) {
 // the venue's OWN (business-attributed) landscape shots and demote portrait photos.
 function pickBestPhoto(photos, pubName, slug) {
   if (!Array.isArray(photos) || photos.length === 0) return null
-  // Curated override: force a specific photo by its stable ref (skip the heuristic).
-  const overrideRef = PHOTO_OVERRIDES[slug]
-  if (overrideRef && overrideRef !== 'NONE') {
-    const forced = photos.find((p) => (p.name || '').endsWith(`/photos/${overrideRef}`))
-    if (forced) return forced
+  // Curated override: force a specific photo by its INDEX in the photos array.
+  // Google's photo refs rotate every request (verified), but the array ORDER is
+  // stable — so the index is the reliable pin, not the ref.
+  const override = PHOTO_OVERRIDES[slug]
+  if (override !== undefined && override !== 'NONE') {
+    const idx = Number(override)
+    if (Number.isInteger(idx) && idx >= 0 && photos[idx]) return photos[idx]
   }
   const norm = (s) => (s || '').toLowerCase().replace(/[^a-z0-9]/g, '')
   const pn = norm(pubName)
@@ -188,6 +193,7 @@ let query = supabase
 if (HAPPY_HOUR_ONLY) query = query.not('happy_hour', 'is', null)
 if (MISSING_PHOTOS_ONLY) query = query.is('google_photo_url', null)
 if (OVERRIDES_ONLY) query = query.in('slug', Object.keys(PHOTO_OVERRIDES))
+if (SLUGS_FILTER) query = query.in('slug', SLUGS_FILTER)
 query = query.order('id')
 if (LIMIT) query = query.limit(LIMIT)
 
