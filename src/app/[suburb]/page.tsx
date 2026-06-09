@@ -2,6 +2,7 @@ import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { getAllSuburbs, getSuburbBySlug, getSuburbPubs, getNearbySuburbs, getSiteStats } from '@/lib/supabase'
 import { getSuburbStory } from '@/lib/suburbStory'
+import { slimPubForList } from '@/lib/pubPhoto'
 import { absoluteSuburbUrl } from '@/lib/urls'
 import SuburbClient from './SuburbClient'
 
@@ -133,6 +134,13 @@ export default async function SuburbPage({ params }: PageProps) {
     }] : []),
   ]
 
+  // The suburb list/cards render none of the heavy Google enrichment, so slim
+  // it out of the per-pub payload before serialising. The server-side story +
+  // JSON-LD above use the full `pubs`; SuburbClient re-derives its own story
+  // from this slimmed array, which is safe only because getSuburbStory reads no
+  // slimmed field (see slimPubForList) — keep it that way.
+  const slimPubs = pubs.map(slimPubForList)
+
   return (
     <>
       <script
@@ -160,7 +168,7 @@ export default async function SuburbPage({ params }: PageProps) {
 
       <SuburbClient
         suburb={suburb}
-        pubs={pubs}
+        pubs={slimPubs}
         nearbySuburbs={nearbySuburbs}
         perthAvgPrice={perthAvgPrice}
         suburbSlug={params.suburb}

@@ -7,6 +7,7 @@ import Footer from '@/components/Footer'
 import { getPubs } from '@/lib/supabase'
 import { Pub } from '@/types/pub'
 import { pubUrl } from '@/lib/urls'
+import { resizeGooglePhoto } from '@/lib/pubPhoto'
 import { getHappyHourStatus, formatHappyHourDays, type HappyHourStatus } from '@/lib/happyHourLive'
 import { HAPPY_HOUR_DAYS } from '@/lib/happyHourDays'
 import { happyHourPourLabel, isPintHappyHour } from '@/lib/happyHourPour'
@@ -383,7 +384,7 @@ export default function HappyHourClient({ initialPubs, renderedAtIso }: HappyHou
                           {/* Plain img on purpose: Google photos must be hotlinked + refreshed, not re-hosted/optimised on our CDN. */}
                           {/* eslint-disable-next-line @next/next/no-img-element */}
                           <img
-                            src={(pub.googlePhotoUrl || pub.imageUrl)!}
+                            src={resizeGooglePhoto(pub.googlePhotoUrl || pub.imageUrl)!}
                             alt={`${pub.name}, ${pub.suburb}`}
                             loading="lazy"
                             className="h-48 w-full rounded-card border-3 border-ink object-cover"
