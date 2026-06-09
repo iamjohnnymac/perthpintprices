@@ -16,8 +16,13 @@ test('resizeGooglePhoto appends a size token when none is present', () => {
   assert.equal(resizeGooglePhoto(LH3), `${LH3}=w640`)
 })
 
-test('resizeGooglePhoto leaves non-Google and empty values untouched', () => {
+test('resizeGooglePhoto leaves non-Google, query-string and empty values untouched', () => {
   assert.equal(resizeGooglePhoto('https://cdn.example.com/pub.jpg'), 'https://cdn.example.com/pub.jpg')
+  // A Google URL carrying a query string is left alone (stored Place photos never have one).
+  assert.equal(
+    resizeGooglePhoto('https://lh3.googleusercontent.com/place-photos/ABC?sz=100'),
+    'https://lh3.googleusercontent.com/place-photos/ABC?sz=100',
+  )
   assert.equal(resizeGooglePhoto(null), null)
   assert.equal(resizeGooglePhoto(undefined), undefined)
   assert.equal(resizeGooglePhoto(''), '')

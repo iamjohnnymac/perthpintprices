@@ -30,6 +30,9 @@ export function resizeGooglePhoto(
   width: number = DEFAULT_WIDTH,
 ): string | null | undefined {
   if (!url || !url.includes(GOOGLE_PHOTO_HOST)) return url
+  // Stored Place photos carry the size token in the path and never a query
+  // string; bail on any `?`-bearing URL so we never mangle a query param.
+  if (url.includes('?')) return url
   // The size token is a trailing `=...` segment with no slash; replace it,
   // otherwise append one.
   return /=[^/=]+$/.test(url)
@@ -44,7 +47,10 @@ export function resizeGooglePhoto(
 // pubs just bloats the payload (the homepage hit ~2.1MB, past Googlebot's 2MB
 // crawl limit). Every field here is optional on `Pub`, so dropping it leaves a
 // value that's still assignable to `Pub` (consumers already treat these as
-// "unknown"). Pages that DO render this data must use the full pub.
+// "unknown"). Pages that DO render this data must use the full pub — and note
+// that anything computed from a slimmed array, including client-side (e.g.
+// SuburbClient re-deriving its suburb story), must never read a field listed
+// here.
 const LIST_OMITTED_FIELDS = [
   'googlePhotoUrl',
   'googlePhotoAttribution',
