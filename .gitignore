@@ -72,3 +72,8 @@ public/photo-review/
 
 # Loop/scheduler runtime lock
 .claude/scheduled_tasks.lock
+
+# AI-drafted article drafts (scripts/draft-article.mjs) — review + paste into src/lib/articles.ts
+/drafts/
+# Pexels stock images downloaded for draft previews (dev-only, never published)
+/public/_drafts/
