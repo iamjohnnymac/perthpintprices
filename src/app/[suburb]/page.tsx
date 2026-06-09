@@ -2,6 +2,7 @@ import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { getAllSuburbs, getSuburbBySlug, getSuburbPubs, getNearbySuburbs, getSiteStats } from '@/lib/supabase'
 import { getSuburbStory } from '@/lib/suburbStory'
+import { slimPubForList } from '@/lib/pubPhoto'
 import { absoluteSuburbUrl } from '@/lib/urls'
 import SuburbClient from './SuburbClient'
 
@@ -133,6 +134,11 @@ export default async function SuburbPage({ params }: PageProps) {
     }] : []),
   ]
 
+  // The suburb list/cards render no photos, hours, ratings or editorial — slim
+  // that Google enrichment out of the per-pub payload before it's serialised
+  // into the page. The story + JSON-LD above keep the full data.
+  const slimPubs = pubs.map(slimPubForList)
+
   return (
     <>
       <script
@@ -160,7 +166,7 @@ export default async function SuburbPage({ params }: PageProps) {
 
       <SuburbClient
         suburb={suburb}
-        pubs={pubs}
+        pubs={slimPubs}
         nearbySuburbs={nearbySuburbs}
         perthAvgPrice={perthAvgPrice}
         suburbSlug={params.suburb}
