@@ -72,9 +72,8 @@ export default function PintReceipt({ data, onReport }: { data: PintReceiptData;
   return (
     <div className="border-3 border-ink rounded-card bg-white shadow-hard-sm overflow-hidden">
       {/* Banner */}
-      <div className="bg-amber border-b-3 border-ink px-4 py-2.5 text-center text-ink">
-        <p className="font-mono text-[0.62rem] font-bold uppercase tracking-[0.2em]">★ Perth Pint Prices ★</p>
-        <p className="font-display text-[1.2rem] leading-none mt-1">{data.name}</p>
+      <div className="bg-amber border-b-3 border-ink px-4 py-3 text-center text-ink">
+        <p className="font-display text-[1.2rem] leading-none">{data.name}</p>
         <p className="font-mono text-[0.6rem] uppercase tracking-[0.16em] mt-1">{data.suburb}{data.beerType ? ` · ${data.beerType}` : ''}</p>
       </div>
 
