@@ -367,12 +367,6 @@ function HomeContent({ initialPubs }: { initialPubs: Pub[] }) {
       {/* ═══ LIVE HAPPY HOUR BANNER ═══ */}
       <LiveHappyHourBanner pubs={pubs} />
 
-      <ArticleRail
-        title="Pub notes with numbers attached"
-        intro="Start with the new under-$10 list, then sanity-check happy hours and glass sizes before someone declares a $9 schooner a bargain."
-        source="home_article_rail"
-      />
-
       {/* ═══ FILTER BAR - below header, above content ═══ */}
       <FilterSection
         viewMode={viewMode}
@@ -418,6 +412,12 @@ function HomeContent({ initialPubs }: { initialPubs: Pub[] }) {
           onShowAll={() => setShowAllPubs(true)}
         />
       </div>
+
+      <ArticleRail
+        title="Pub notes with numbers attached"
+        intro="Start with the new under-$10 list, then sanity-check happy hours and glass sizes before someone declares a $9 schooner a bargain."
+        source="home_article_rail"
+      />
 
       <ScrollReveal><HowItWorks venueCount={pubs.length} suburbCount={suburbs.length} /></ScrollReveal>
       <ScrollReveal><SocialProof venueCount={pubs.length} suburbCount={suburbs.length} avgPrice={stats.avgPrice} cheapestPrice={stats.minPrice} priciestPrice={stats.maxPriceValue} onSubmitClick={() => openSubmitForm('home_social_proof')} /></ScrollReveal>
