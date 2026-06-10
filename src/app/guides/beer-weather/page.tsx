@@ -1,5 +1,7 @@
 import type { Metadata } from 'next'
 import BreadcrumbJsonLd from '@/components/BreadcrumbJsonLd'
+import { getPubs } from '@/lib/supabase'
+import { slimPubForFeature } from '@/lib/pubPhoto'
 import BeerWeatherPage from './BeerWeatherPage'
 
 export const metadata: Metadata = {
@@ -18,7 +20,14 @@ export const metadata: Metadata = {
   twitter: { card: 'summary_large_image' },
 }
 
-export default function Page() {
+export const revalidate = 300
+
+export default async function Page() {
+  // Server-fetch so the page content ships in the initial HTML instead of
+  // spinning while the browser round-trips to Supabase. Slimmed to keep the
+  // serialised payload under crawl limits.
+  const initialPubs = (await getPubs()).map(slimPubForFeature)
+
   return (
     <>
       <BreadcrumbJsonLd items={[
@@ -26,14 +35,14 @@ export default function Page() {
         { name: 'Discover', url: 'https://perthpintprices.com/discover' },
         { name: 'Beer Weather', url: 'https://perthpintprices.com/guides/beer-weather' },
       ]} />
+      {/* The H1 + intro now render visibly via FeaturePageShell, so this crawl
+          block only carries the nav links. */}
       <div className="sr-only" aria-hidden="true">
-        <h1>Beer Weather Perth - Today&apos;s Best Pub Picks</h1>
-        <p>Today&apos;s Perth forecast matched to the right pub — beer gardens for hot days, sheltered corners for the rain, and rooftop spots for warm evenings.</p>
         <a href="/">Home</a>
         <a href="/discover">Discover</a>
         <a href="/happy-hour">Happy Hours</a>
       </div>
-      <BeerWeatherPage />
+      <BeerWeatherPage initialPubs={initialPubs} />
     </>
   )
 }

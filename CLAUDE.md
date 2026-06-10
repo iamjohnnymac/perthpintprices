@@ -71,7 +71,7 @@ freshness, happyHourLive, location, mapTheme, mapTile, perthClock, priceLabel, s
 
 ### Colors (always use Tailwind tokens, never hardcode hex)
 - `text-ink` / `bg-ink` — #171717
-- `text-gray-mid` — #8A8A85
+- `text-gray-mid` — #6E6E69
 - `bg-off-white` — #F7F7F5
 - `bg-[#FDF8F0]` — page background
 - `text-amber` / `bg-amber` — #D4740A
@@ -94,4 +94,4 @@ freshness, happyHourLive, location, mapTheme, mapTile, perthClock, priceLabel, s
 - Container: `max-w-container` (800px) with `px-6`
 - All pages must include `<Footer />`
 - Sub-pages use `<SubPageNav />` for header
-- Homepage nav (`MobileNav`) has 2 links — Discover, Happy Hours — plus a "Submit a Price" CTA
+- Homepage nav has 3 links — Discover, Happy Hours, Articles — plus a "Submit a Price" CTA (`MobileNav` mirrors the same three)

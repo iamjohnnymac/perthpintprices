@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
 import type { Pub } from '@/types/pub'
-import { resizeGooglePhoto, slimPubForList } from './pubPhoto'
+import { resizeGooglePhoto, slimPubForFeature, slimPubForList } from './pubPhoto'
 
 const LH3 = 'https://lh3.googleusercontent.com/place-photos/AJRVUZabc_123'
 
@@ -68,4 +68,32 @@ test('slimPubForList drops heavy Google enrichment but keeps list fields', () =>
   assert.equal(trimmed.beerType, 'Lager')
   assert.equal(trimmed.happyHour, '4-6pm')
   assert.equal(trimmed.vibeTag, 'cosy')
+})
+
+test('slimPubForFeature keeps the amenity flags the pub-pick filters read', () => {
+  const pub = {
+    id: 8,
+    name: 'The Pick Test',
+    slug: 'the-pick-test',
+    suburb: 'Morley',
+    price: 9,
+    goodForChildren: true,
+    outdoorSeating: true,
+    goodForWatchingSports: false,
+    googlePhotoUrl: `${LH3}=s4800-w1024`,
+    googleEditorialSummary: 'Still heavy, still dropped.',
+    googleRating: 4.1,
+    businessStatus: 'OPERATIONAL',
+  } as unknown as Pub
+
+  const trimmed = slimPubForFeature(pub)
+
+  // The isDadBar inputs survive.
+  assert.equal(trimmed.goodForChildren, true)
+  assert.equal(trimmed.outdoorSeating, true)
+  assert.equal(trimmed.goodForWatchingSports, false)
+  // The heavy enrichment still goes.
+  for (const dropped of ['googlePhotoUrl', 'googleEditorialSummary', 'googleRating', 'businessStatus']) {
+    assert.equal(dropped in trimmed, false, `${dropped} should be dropped`)
+  }
 })

@@ -1,5 +1,7 @@
 import type { Metadata } from 'next'
 import BreadcrumbJsonLd from '@/components/BreadcrumbJsonLd'
+import { getPubs } from '@/lib/supabase'
+import { slimPubForFeature } from '@/lib/pubPhoto'
 import SuburbRankingsPage from './SuburbRankingsPage'
 
 export const metadata: Metadata = {
@@ -18,7 +20,14 @@ export const metadata: Metadata = {
   twitter: { card: 'summary_large_image' },
 }
 
-export default function Page() {
+export const revalidate = 300
+
+export default async function Page() {
+  // Server-fetch so the page content ships in the initial HTML instead of
+  // spinning while the browser round-trips to Supabase. Slimmed to keep the
+  // serialised payload under crawl limits.
+  const initialPubs = (await getPubs()).map(slimPubForFeature)
+
   return (
     <>
       <BreadcrumbJsonLd items={[
@@ -27,13 +36,12 @@ export default function Page() {
         { name: 'Suburb Rankings', url: 'https://perthpintprices.com/insights/suburb-rankings' },
       ]} />
       <div className="sr-only" aria-hidden="true">
-        <h1>Perth Suburb Pint Rankings - Cheapest Areas for a Beer</h1>
         <p>Every Perth suburb ranked cheapest to dearest by its average verified pint, each price dated. See which areas run cheap and which sit at the top.</p>
         <a href="/">Home</a>
         <a href="/discover">Discover</a>
         <a href="/happy-hour">Happy Hours</a>
       </div>
-      <SuburbRankingsPage />
+      <SuburbRankingsPage initialPubs={initialPubs} />
     </>
   )
 }

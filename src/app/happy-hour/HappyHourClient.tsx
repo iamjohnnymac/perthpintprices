@@ -207,6 +207,10 @@ export default function HappyHourClient({ initialPubs, renderedAtIso }: HappyHou
 
   const cheapestRegion = bestOf.cheapestPint ? perthRegion(bestOf.cheapestPint.suburb) : null
 
+  // Anchor ids for the area jump nav — the page runs long enough that finding
+  // your own area otherwise means scrolling past dozens of venues.
+  const regionAnchor = (region: string) => `area-${region.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')}`
+
   const faqItems = [
     {
       q: 'What time is happy hour in Perth?',
@@ -256,6 +260,21 @@ export default function HappyHourClient({ initialPubs, renderedAtIso }: HappyHou
           <p className="text-gray-mid text-[0.7rem] mt-2">
             Live data · auto-refreshes every 60s
           </p>
+
+          {regionGroups.length > 1 && (
+            <nav aria-label="Jump to area" className="mt-5 flex flex-wrap gap-2">
+              {regionGroups.map(group => (
+                <a
+                  key={group.region}
+                  href={`#${regionAnchor(group.region)}`}
+                  className="inline-flex items-baseline gap-1.5 font-mono text-[0.68rem] font-bold uppercase tracking-[0.04em] text-ink bg-white border-3 border-ink rounded-pill px-3.5 py-1.5 no-underline hover:bg-amber-pale transition-colors"
+                >
+                  {group.region}
+                  <span className="text-gray-mid font-normal">{group.entries.length}</span>
+                </a>
+              ))}
+            </nav>
+          )}
         </div>
 
         {/* On right now — the live, cheapest-first list with time left on the clock */}
@@ -364,7 +383,7 @@ export default function HappyHourClient({ initialPubs, renderedAtIso }: HappyHou
         {!loading && regionGroups.length > 0 && (
           <div className="mb-4">
             {regionGroups.map(group => (
-              <section key={group.region} className="mb-9">
+              <section key={group.region} id={regionAnchor(group.region)} className="mb-9 scroll-mt-6">
                 <div className="flex items-baseline justify-between gap-3 border-b-3 border-ink pb-2">
                   <h2 className="type-section leading-tight">{group.region}</h2>
                   <span className="flex-shrink-0 font-mono text-[0.68rem] font-bold uppercase tracking-wider text-gray-mid">

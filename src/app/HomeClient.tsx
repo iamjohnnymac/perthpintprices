@@ -333,6 +333,7 @@ function HomeContent({ initialPubs }: { initialPubs: Pub[] }) {
           {[
             { href: '/discover', label: 'Discover' },
             { href: '/happy-hour', label: 'Happy Hours' },
+            { href: '/articles', label: 'Articles' },
           ].map((link) => (
             <Link
               key={link.href}
