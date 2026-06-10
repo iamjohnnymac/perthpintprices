@@ -10,6 +10,24 @@ Stack, database, routes, components, and lib files are documented in `CLAUDE.md`
 
 ## What's done recently
 
+### Pint receipt readability pass (2026-06-10)
+- Prompted by a user screenshot of The Vale Bar & Brasserie on mobile. Five fixes to `PintReceipt.tsx`:
+- **Happy hour row** no longer reads "TBC · 7 days 4pm - 5pm" — the schedule is the value when the price is unknown, "7 days" renders as "daily", and a known price shows red with the schedule on a right-aligned sub-line (no more crushed dotted leaders).
+- **Stale prices flagged** — the Checked row renders amber with "· Nd ago" appended when the recency tier is aging/stale (tier now passed into the receipt data).
+- **Provenance jargon humanized** — "from an aggregator lead" → "spotted online" (`priceProvenance.ts`), moved to its own SOURCE row.
+- **Duplicate price removed** — the standard-pint row only renders when it differs from the hero (it repeated the big number on every non-happy-hour pub).
+- **Type floor raised** 8px → ~10px (banner sub-line, price label, amenity chips, CTA); the vs-avg line now includes the reference ("$1.10 below the $9.10 avg"); CTA flex-wraps.
+- **Self-branding line removed** — the "★ Perth Pint Prices ★" banner row is gone; the pub name now leads the card.
+- **Verification:** `tsc` clean, 309 tests pass, Playwright screenshots at 375x812 + 1280x800 on both happy-hour variants (The Vale = schedule-only, Ezra Pound = priced). Commit `5edfde2`.
+
+### Slack notifications for the review queue (2026-06-10)
+- **Why:** a pending price report (Gage Roads, Single Fin $14.50) sat unnoticed for 4 days — nothing told the admin the queue had work in it.
+- **New `src/lib/slackNotify.ts`** — posts to a Slack incoming webhook via the `SLACK_WEBHOOK_URL` env var. Best-effort by design: missing env var or a Slack outage logs and moves on, never breaks a submission or cron. Message formatters are pure functions with unit tests.
+- **Instant ping:** `/api/price-report` POST notifies Slack the moment a report lands — price reports, happy hour reports, and stale-price flags each get their own wording, with pub name, suburb, beer, price, source, and a link to `/admin`.
+- **Daily reminder:** the existing daily `price-check` cron (8am Perth) now also counts pending `price_reports` (with the oldest report's age) and `pub_submissions`, and sends a queue summary — silent when empty. Piggybacked on the existing cron because Vercel Hobby caps cron jobs at two and both slots are taken.
+- **Action needed:** create a Slack incoming webhook and add `SLACK_WEBHOOK_URL` to Vercel env vars — until then the code no-ops with a console warning.
+- **Verification:** `tsc` clean, **308 unit tests** pass (+7 new in `slackNotify.test.ts`). Commit `dce54d2`.
+
 ### Homepage World Cup strip: mobile polish (2026-06-10)
 - The strip's header crammed both labels side-by-side at 375px (each wrapped to two lines); now they stack on mobile, side-by-side from `sm:` up.
 - The fixture rail scrolls full-bleed (`-mx-6`/`px-6` with `scroll-pl-6`) with snap points and a hidden scrollbar, matching the /discover picks rail — the next card peeks at the screen edge instead of being chopped at the container boundary.

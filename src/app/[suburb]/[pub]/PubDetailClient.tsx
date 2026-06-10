@@ -203,6 +203,7 @@ export default function PubDetailClient({
     sourcePhrase: priceProvenance?.sourcePhrase ?? null,
     confidenceLabel,
     recencyLabel: priceRecency.label,
+    recencyTier: priceRecency.tier,
     cheaperNearby: nearestCheaper && nearestCheaper.price !== null
       ? { name: nearestCheaper.name, price: nearestCheaper.price, distance: nearestCheaper.distanceKm != null ? formatDistance(nearestCheaper.distanceKm) : nearestCheaper.suburb }
       : null,

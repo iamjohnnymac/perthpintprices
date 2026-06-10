@@ -125,7 +125,7 @@ export function describePriceSource(source: string | null | undefined): string |
     return 'from the venue'
   }
   if (normalized === 'aggregator_lead') {
-    return 'from an aggregator lead'
+    return 'spotted online'
   }
   if (normalized === 'crowdsourced' || normalized === 'manual' || normalized === 'community_bounty') {
     return 'by a local'

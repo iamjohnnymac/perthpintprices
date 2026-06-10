@@ -1,6 +1,7 @@
 import { serviceClient } from '@/lib/supabaseGateway'
 import { NextRequest, NextResponse } from 'next/server'
 import { pubUrl } from '@/lib/urls'
+import { formatPendingReminderMessage, sendSlackMessage } from '@/lib/slackNotify'
 
 interface PriceChange {
   slug: string
@@ -135,7 +136,11 @@ export async function GET(request: NextRequest) {
       }
     }
 
+    // 7. Slack reminder if anything is sitting in the review queue
+    const pendingReminder = await remindPendingReviews(supabase)
+
     return NextResponse.json({
+      pendingReminder,
       checked: currentPubs.length,
       changes: changes.length,
       drops: drops.length,
@@ -151,5 +156,37 @@ export async function GET(request: NextRequest) {
   } catch (err) {
     console.error('Price check cron error:', err)
     return NextResponse.json({ error: 'Internal error' }, { status: 500 })
+  }
+}
+
+/**
+ * Checks the review queue (pending price reports + pub submissions) and sends
+ * a Slack reminder if anything is waiting. Stays silent on an empty queue.
+ */
+async function remindPendingReviews(supabase: ReturnType<typeof serviceClient>) {
+  try {
+    const [reportsResult, oldestResult, submissionsResult] = await Promise.all([
+      supabase.from('price_reports').select('id', { count: 'exact', head: true }).eq('status', 'pending'),
+      supabase.from('price_reports').select('created_at').eq('status', 'pending').order('created_at', { ascending: true }).limit(1),
+      supabase.from('pub_submissions').select('id', { count: 'exact', head: true }).eq('status', 'pending'),
+    ])
+
+    const message = formatPendingReminderMessage({
+      pendingReports: reportsResult.count || 0,
+      oldestReportAt: oldestResult.data?.[0]?.created_at || null,
+      pendingSubmissions: submissionsResult.count || 0,
+    })
+
+    if (!message) return { pendingReports: 0, pendingSubmissions: 0, notified: false }
+
+    const notified = await sendSlackMessage(message)
+    return {
+      pendingReports: reportsResult.count || 0,
+      pendingSubmissions: submissionsResult.count || 0,
+      notified,
+    }
+  } catch (err) {
+    console.error('Pending review reminder failed:', err)
+    return { error: 'reminder failed' }
   }
 }
