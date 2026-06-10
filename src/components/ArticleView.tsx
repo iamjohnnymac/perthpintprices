@@ -1,11 +1,13 @@
 import Image from 'next/image'
-import { ArrowUpRight, Beer, CalendarDays, Clock, GlassWater } from 'lucide-react'
+import { ArrowUpRight, Beer, CalendarDays, Clock, GlassWater, Trophy } from 'lucide-react'
 import Footer from '@/components/Footer'
 import SubPageNav from '@/components/SubPageNav'
 import TrackedLink from '@/components/TrackedLink'
-import { articleUrl, formatArticleDate, type Article, type ArticleInlineImage } from '@/lib/articles'
+import WorldCupCountdown from '@/components/WorldCupCountdown'
+import { articleUrl, formatArticleDate, type Article, type ArticleInlineImage, type ArticleSectionStat } from '@/lib/articles'
 import { formatHappyHourDays } from '@/lib/happyHourLive'
 import { pubUrl } from '@/lib/urls'
+import { WC_FIXTURES, TRADING_BADGES, tradingStatus, formatKickoff, fixtureDay, formatDayHeading } from '@/lib/worldCup'
 import type { Pub } from '@/types/pub'
 
 // The visual body of an article — shared by the live /articles/[slug] route and
@@ -247,9 +249,64 @@ function GlassSizesModule() {
   )
 }
 
+function WorldCupFixturesModule({ articleSlug }: { articleSlug: string }) {
+  const socceroos = WC_FIXTURES.filter(fixture => fixture.socceroos)
+
+  return (
+    <section className="rounded-card border-3 border-ink bg-white p-5 shadow-hard-sm">
+      <div className="mb-4 flex items-center justify-between gap-4">
+        <div>
+          <p className="type-eyebrow">Live board</p>
+          <h2 className="type-section">The Socceroos, in Perth time</h2>
+        </div>
+        <Trophy className="h-5 w-5 text-amber" />
+      </div>
+      <div className="grid gap-3 sm:grid-cols-3">
+        {socceroos.map(fixture => (
+          <div key={fixture.id} className="rounded-card border-2 border-ink bg-amber-pale p-4">
+            <p className="font-mono text-[0.72rem] font-bold uppercase text-gray-mid">{formatDayHeading(fixtureDay(fixture.kickoff))}</p>
+            <p className="mt-1 font-mono text-2xl font-extrabold text-ink">{formatKickoff(fixture.kickoff)}</p>
+            <p className="mt-1 font-mono text-[0.78rem] font-bold text-ink">{fixture.home} v {fixture.away}</p>
+            <WorldCupCountdown
+              kickoff={fixture.kickoff}
+              prefix="Kicks off in "
+              className="mt-2 block min-h-[1rem] font-mono text-[0.68rem] font-bold text-amber"
+            />
+            <p className="mt-1 text-[0.66rem] text-gray-mid">{TRADING_BADGES[tradingStatus(fixture.kickoff)].label}</p>
+          </div>
+        ))}
+      </div>
+      <TrackedLink
+        href="/world-cup"
+        eventName="article_internal_click"
+        eventProperties={{
+          source: 'article_world_cup_module',
+          article_slug: articleSlug,
+          target_path: '/world-cup',
+        }}
+        className="mt-4 flex items-center justify-between rounded-card border border-gray-light px-4 py-3 font-mono text-[0.76rem] font-bold text-ink no-underline hover:border-amber hover:text-amber"
+      >
+        Every group game in Perth time, with trading windows
+        <ArrowUpRight className="h-3.5 w-3.5" />
+      </TrackedLink>
+    </section>
+  )
+}
+
+function SectionStat({ stat }: { stat: ArticleSectionStat }) {
+  return (
+    <div className="mt-4 inline-block rounded-card border-3 border-ink bg-amber-pale px-5 py-4 shadow-hard-sm">
+      <p className="type-eyebrow">{stat.label}</p>
+      <p className="mt-1 font-mono text-3xl font-extrabold text-ink">{stat.value}</p>
+      {stat.note && <p className="mt-1 text-[0.72rem] text-gray-mid">{stat.note}</p>}
+    </div>
+  )
+}
+
 function ArticleLiveModule({ module, pubs, articleSlug }: { module: string; pubs: Pub[]; articleSlug: string }) {
   if (module === 'under10') return <Under10Module pubs={pubs} articleSlug={articleSlug} />
   if (module === 'happyHoursByDay') return <HappyHoursByDayModule pubs={pubs} articleSlug={articleSlug} />
+  if (module === 'worldCupFixtures') return <WorldCupFixturesModule articleSlug={articleSlug} />
   return <GlassSizesModule />
 }
 
@@ -292,15 +349,24 @@ export function ArticleView({ article, pubs }: { article: Article; pubs: Pub[] }
           }}
         />
 
-        <div className="space-y-7">
-          {article.sections.map(section => {
+        <div className="space-y-9">
+          {article.sections.map((section, sectionIndex) => {
             const inlineImage = sectionImages.get(section.heading)
             return (
               <section key={section.heading}>
-                <h2 className="type-section">{section.heading}</h2>
+                <p className="type-eyebrow text-amber">{String(sectionIndex + 1).padStart(2, '0')}</p>
+                <h2 className="mt-1 type-section">{section.heading}</h2>
+                {section.stat && <SectionStat stat={section.stat} />}
                 <div className="mt-3 space-y-3">
-                  {section.body.map(paragraph => (
-                    <p key={paragraph} className="font-body text-[0.92rem] leading-relaxed text-gray-mid">
+                  {section.body.map((paragraph, paragraphIndex) => (
+                    <p
+                      key={paragraph}
+                      className={
+                        sectionIndex === 0 && paragraphIndex === 0
+                          ? 'font-body text-[1.05rem] leading-relaxed text-ink'
+                          : 'font-body text-[0.92rem] leading-relaxed text-gray-mid'
+                      }
+                    >
                       {paragraph}
                     </p>
                   ))}
