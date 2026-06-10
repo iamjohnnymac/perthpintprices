@@ -76,12 +76,12 @@ export default function PubCardList({
               <span className="font-body text-base font-bold text-ink">
                 {pub.name}
                 {pub.id === cheapestId && (
-                  <span className="font-mono text-[0.58rem] font-bold uppercase tracking-[0.05em] px-1.5 py-0.5 rounded-pill ml-1.5 border-2 bg-amber text-white border-amber inline-block align-middle">
+                  <span className="font-mono text-[0.5rem] font-bold uppercase tracking-[0.06em] px-1.5 py-[2px] rounded-pill ml-1.5 bg-amber text-white inline-block align-middle -translate-y-px">
                     Cheapest
                   </span>
                 )}
                 {pub.isHappyHourNow && (
-                  <span className="font-mono text-[0.58rem] font-bold uppercase tracking-[0.05em] px-1.5 py-0.5 rounded-pill ml-1.5 border-2 bg-red-pale text-red border-red inline-block align-middle">
+                  <span className="font-mono text-[0.5rem] font-bold uppercase tracking-[0.06em] px-1.5 py-[2px] rounded-pill ml-1.5 border border-red bg-red-pale text-red inline-block align-middle -translate-y-px">
                     HH
                   </span>
                 )}
