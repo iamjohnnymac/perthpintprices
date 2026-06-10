@@ -1,5 +1,7 @@
 import type { Metadata } from 'next'
 import BreadcrumbJsonLd from '@/components/BreadcrumbJsonLd'
+import { getPubs } from '@/lib/supabase'
+import { slimPubForFeature } from '@/lib/pubPhoto'
 import SunsetSippersPage from './SunsetSippersPage'
 
 export const metadata: Metadata = {
@@ -18,7 +20,14 @@ export const metadata: Metadata = {
   twitter: { card: 'summary_large_image' },
 }
 
-export default function Page() {
+export const revalidate = 300
+
+export default async function Page() {
+  // Server-fetch so the page content ships in the initial HTML instead of
+  // spinning while the browser round-trips to Supabase. Slimmed to keep the
+  // serialised payload under crawl limits.
+  const initialPubs = (await getPubs()).map(slimPubForFeature)
+
   return (
     <>
       <BreadcrumbJsonLd items={[
@@ -27,13 +36,12 @@ export default function Page() {
         { name: 'Sunset Sippers', url: 'https://perthpintprices.com/guides/sunset-sippers' },
       ]} />
       <div className="sr-only" aria-hidden="true">
-        <h1>Sunset Sippers Perth - Best Golden Hour Pubs</h1>
         <p>Watch the sun go down with a cold pint at Perth&apos;s best sunset venues. West-facing views, beer gardens, and rooftop bars with verified prices across Perth.</p>
         <a href="/">Home</a>
         <a href="/discover">Discover</a>
         <a href="/happy-hour">Happy Hours</a>
       </div>
-      <SunsetSippersPage />
+      <SunsetSippersPage initialPubs={initialPubs} />
     </>
   )
 }

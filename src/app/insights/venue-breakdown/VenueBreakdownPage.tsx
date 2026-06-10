@@ -1,11 +1,12 @@
 'use client'
 
 import FeaturePageShell from '@/components/FeaturePageShell'
+import type { Pub } from '@/types/pub'
 import VenueIntel from '@/components/VenueIntel'
 
-export default function VenueBreakdownPage() {
+export default function VenueBreakdownPage({ initialPubs }: { initialPubs?: Pub[] }) {
   return (
-    <FeaturePageShell title="Perth Pub Prices by Bracket" breadcrumbs={[
+    <FeaturePageShell initialPubs={initialPubs} title="Perth Pub Prices by Bracket" breadcrumbs={[
       { label: 'Discover', href: '/discover' },
       { label: 'Venue Breakdown' },
     ]}>

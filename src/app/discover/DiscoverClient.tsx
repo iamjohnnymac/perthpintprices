@@ -27,11 +27,12 @@ function getPubHappyHourStatus(pub: Pub, now: Date): HappyHourStatus {
 /* ════════════════════════════════════════════════════════════
    MAIN COMPONENT
    ════════════════════════════════════════════════════════════ */
-export default function DiscoverClient() {
-  const [pubs, setPubs] = useState<Pub[]>([])
+export default function DiscoverClient({ initialPubs }: { initialPubs?: Pub[] }) {
+  const hasServerPubs = Boolean(initialPubs && initialPubs.length > 0)
+  const [pubs, setPubs] = useState<Pub[]>(initialPubs ?? [])
   const [crowdReports, setCrowdReports] = useState<Record<string, CrowdReport>>({})
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
+  const [isLoading, setIsLoading] = useState(!hasServerPubs)
   const [clockInstant, setClockInstant] = useState(() => new Date())
   const [pintOfTheDay, setPintOfTheDay] = useState<{
     pub: { name: string; slug: string; suburb: string; price: number; effectivePrice: number; beerType: string; isHappyHourNow: boolean }
@@ -42,9 +43,13 @@ export default function DiscoverClient() {
   // ─── Data Fetching ───
   useEffect(() => {
     async function load() {
-      const [pubData, crowdData] = await Promise.all([getPubs(), getCrowdLevels()])
-      setPubs(pubData)
-      setCrowdReports(crowdData)
+      if (hasServerPubs) {
+        setCrowdReports(await getCrowdLevels())
+      } else {
+        const [pubData, crowdData] = await Promise.all([getPubs(), getCrowdLevels()])
+        setPubs(pubData)
+        setCrowdReports(crowdData)
+      }
       setIsLoading(false)
     }
     load()
@@ -53,7 +58,7 @@ export default function DiscoverClient() {
       .then(res => res.json())
       .then(data => { if (data.pub) setPintOfTheDay(data) })
       .catch(() => {})
-  }, [])
+  }, [hasServerPubs])
 
   useEffect(() => {
     if (typeof window !== 'undefined' && navigator.geolocation) {
@@ -149,14 +154,24 @@ export default function DiscoverClient() {
           </p>
         </section>
 
-        <div className="-mx-6 mb-10 sm:mb-14">
-          <ArticleRail
-            eyebrow="New"
-            title="Pub notes worth reading first"
-            intro="The price-led explainers behind the lists: under-$10 pints, happy hours that actually drop, and why glass size does the maths."
-            source="discover_article_rail"
-          />
-        </div>
+        {/* Fetch-failure fallback — without it the sections below render as
+            headers over empty lists */}
+        {pubs.length === 0 && (
+          <section className="mb-10 sm:mb-14">
+            <div className="bg-white border-3 border-ink rounded-card shadow-hard-sm p-8 text-center">
+              <h2 className="font-mono text-lg font-extrabold text-ink mb-2">The pub list didn&apos;t load</h2>
+              <p className="font-body text-[0.9rem] leading-relaxed text-gray-mid mb-5 max-w-[420px] mx-auto">
+                Could be a patchy connection, could be us. Give it another go.
+              </p>
+              <button
+                onClick={() => window.location.reload()}
+                className="font-mono text-[0.72rem] font-bold uppercase tracking-[0.05em] text-ink bg-white border-3 border-ink rounded-pill px-5 py-2.5 shadow-hard-sm hover:translate-x-[1.5px] hover:translate-y-[1.5px] hover:shadow-hard-hover transition-all cursor-pointer"
+              >
+                Try again
+              </button>
+            </div>
+          </section>
+        )}
 
         {/* ════════════════════════════════════════════
             1. HERO: Pint of the Day
@@ -289,6 +304,19 @@ export default function DiscoverClient() {
             <div className="absolute right-0 top-0 bottom-4 w-12 pointer-events-none bg-gradient-to-l from-[#FDF8F0] to-transparent" />
           </div>
         </section>
+
+        {/* ════════════════════════════════════════════
+            4. ARTICLE RAIL — after the live data and picks, matching the
+            homepage's prices-before-reading order
+            ════════════════════════════════════════════ */}
+        <div className="-mx-6 mb-10 sm:mb-14">
+          <ArticleRail
+            eyebrow="New"
+            title="Pub notes worth a read"
+            intro="The price-led explainers behind the lists: under-$10 pints, happy hours that actually drop, and why glass size does the maths."
+            source="discover_article_rail"
+          />
+        </div>
 
         {/* ════════════════════════════════════════════
             5. CONTRIBUTE CTA BANNER
