@@ -17,6 +17,7 @@ Stack, database, routes, components, and lib files are documented in `CLAUDE.md`
 - **Provenance jargon humanized** — "from an aggregator lead" → "spotted online" (`priceProvenance.ts`), moved to its own SOURCE row.
 - **Duplicate price removed** — the standard-pint row only renders when it differs from the hero (it repeated the big number on every non-happy-hour pub).
 - **Type floor raised** 8px → ~10px (banner sub-line, price label, amenity chips, CTA); the vs-avg line now includes the reference ("$1.10 below the $9.10 avg"); CTA flex-wraps.
+- **Self-branding line removed** — the "★ Perth Pint Prices ★" banner row is gone; the pub name now leads the card.
 - **Verification:** `tsc` clean, 309 tests pass, Playwright screenshots at 375x812 + 1280x800 on both happy-hour variants (The Vale = schedule-only, Ezra Pound = priced). Commit `5edfde2`.
 
 ### Slack notifications for the review queue (2026-06-10)
