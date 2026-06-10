@@ -18,6 +18,30 @@ Stack, database, routes, components, and lib files are documented in `CLAUDE.md`
 - **Action needed:** create a Slack incoming webhook and add `SLACK_WEBHOOK_URL` to Vercel env vars — until then the code no-ops with a console warning.
 - **Verification:** `tsc` clean, **308 unit tests** pass (+7 new in `slackNotify.test.ts`). Commit `dce54d2`.
 
+### Homepage World Cup strip: mobile polish (2026-06-10)
+- The strip's header crammed both labels side-by-side at 375px (each wrapped to two lines); now they stack on mobile, side-by-side from `sm:` up.
+- The fixture rail scrolls full-bleed (`-mx-6`/`px-6` with `scroll-pl-6`) with snap points and a hidden scrollbar, matching the /discover picks rail — the next card peeks at the screen edge instead of being chopped at the container boundary.
+- Verified with Playwright at 375x812 (rest + scrolled states); `tsc` clean.
+
+### Brand assets: stale arvo/PintDex images replaced (2026-06-10)
+- The OG share card still said **"arvo"** with dead stats (420+ venues / 154 suburbs); `logo.png`, `favicon.ico` and the PWA/iOS icons were older still (**"PintDex"**) — so every WhatsApp/social preview, browser tab and the Organization JSON-LD logo showed retired branding.
+- New `scripts/generate-brand-assets.mjs` (Playwright render of the real fonts/tokens) regenerates `og-image.png` (evergreen copy, no counts to go stale), `logo.png`, `icon-512/192`, `apple-touch-icon`; `scripts/build-favicon.py` assembles `favicon.ico`. Manifest colours updated to current tokens. Commit `eb3abc8`. PR #178.
+- Note: WhatsApp/Facebook cache link previews — after deploy, re-scrape via developers.facebook.com/tools/debug or just wait out the cache.
+
+### Visual audit fixes: SSR guide data, AA contrast, jump nav, empty states (2026-06-10)
+- **Guide/insight pages + /discover server-fetch pubs** — all 8 `FeaturePageShell` consumers and `/discover` were client-only (multi-second spinner, blank sections when the browser-to-Supabase fetch failed). Each `page.tsx` now fetches server-side (`revalidate = 300`) and passes `initialPubs` down; new `slimPubForFeature` in `pubPhoto.ts` keeps the `isDadBar` amenity booleans while still dropping the heavy Google enrichment (~850KB HTML per page, under the 2MB crawl limit).
+- **Empty states** — `FeaturePageShell` and `/discover` render a "pub list didn't load / try again" card instead of section headers over empty lists.
+- **Beer Weather page de-thinned** — visible H1 + intro via the shell's new `intro` prop (was a bare widget with an sr-only heading). Duplicate sr-only `<h1>` removed from all 8 shell pages (every one had two H1s: the crawl block's + the shell's).
+- **WCAG AA contrast** — `gray-mid` darkened `#8A8A85` → `#6E6E69` (~3.3:1 → ~4.9:1 on the cream background; body text now passes AA). CLAUDE.md design tokens updated.
+- **/happy-hour area jump nav** — pill anchors (with counts) under the standfirst jump to each region section; the listicle runs ~62k px tall.
+- **PriceHistory skeleton removed** — most pubs have <2 history points, so it flashed a grey block then collapsed (layout shift on the majority of pub pages).
+- **Homepage desktop nav links Articles** — was reachable from every page except the homepage (MobileNav already had it).
+- **Verification** — `tsc` clean, **302 unit tests** (+1 `slimPubForFeature`), lint clean bar pre-existing SunsetSippers warnings, Playwright screenshots at 1280x800 + 375x812 for home, /discover, beer-weather, /happy-hour, pub detail. Commit `af4b69c`. PR #178.
+
+### Homepage: article rail moved below the pub list (2026-06-10)
+- The blog post rail (`ArticleRail`, "Pub notes with numbers attached") sat between the live happy hour banner and the filter bar, pushing the price list down the page. It now renders after `PubCardList` (below the "View all venues" button, above How It Works), so prices are the first thing under the hero.
+- Verified with Playwright screenshots at 1280x800 and 375x812; `tsc` clean. Commit `a98cc30`.
+
 ### /world-cup live hub page (2026-06-10)
 - **New `/world-cup` route** — a FANZO-style fixture hub with the trust layer they fake: all **72 group-stage fixtures in AWST** (captured from FANZO's geo-localised rail, cross-checked against two AEST schedule sources; Socceroos times triple-verified against the official announcement), each tagged with its **WA trading window** — `permit hours` (midnight–6am any day, plus Sunday before 10am), `early doors` (6–9am, legal on a standard licence), `normal trading`. Knockouts deliberately omitted until the bracket settles — nothing TBC ships.
 - **`src/lib/worldCup.ts`** — fixtures data + `tradingStatus()` classifier built on `perthClock` (standard hours 6am–midnight Mon–Sat / 10am Sunday per DLGSC, checked 10 June 2026; World Cup extended-trading permit announced 5 June 2026), `formatKickoff` (midnight/midday/3am/8.30am style), `CONFIRMED_OPENINGS` ledger (renders an honest empty state until venues confirm door times — no Andrew for now, so confirmations are manual + report-form), `FORM_GUIDE_SLUGS`.

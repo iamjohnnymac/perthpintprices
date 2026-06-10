@@ -1,6 +1,8 @@
 import { Metadata } from 'next'
 import BreadcrumbJsonLd from '@/components/BreadcrumbJsonLd'
 import DiscoverClient from './DiscoverClient'
+import { getPubs } from '@/lib/supabase'
+import { slimPubForFeature } from '@/lib/pubPhoto'
 
 export const metadata: Metadata = {
   title: 'Discover: Perth Pint Guides, Stats & Pub Picks',
@@ -27,14 +29,20 @@ export const metadata: Metadata = {
   twitter: { card: 'summary_large_image' },
 }
 
-export default function DiscoverPage() {
+export const revalidate = 300
+
+export default async function DiscoverPage() {
+  // Server-fetch so the page content ships in the initial HTML instead of
+  // spinning while the browser round-trips to Supabase.
+  const initialPubs = (await getPubs()).map(slimPubForFeature)
+
   return (
     <>
       <BreadcrumbJsonLd items={[
         { name: 'Home', url: 'https://perthpintprices.com' },
         { name: 'Discover' },
       ]} />
-      <DiscoverClient />
+      <DiscoverClient initialPubs={initialPubs} />
     </>
   )
 }

@@ -18,7 +18,7 @@ export default function HomeWorldCup() {
 
   return (
     <section aria-label="World Cup 2026" className="max-w-container mx-auto px-6 mb-6">
-      <div className="mb-3 flex items-center justify-between gap-3">
+      <div className="mb-3 flex flex-col items-start gap-1 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
         <p className="type-eyebrow">World Cup 2026 · free on SBS</p>
         <Link
           href="/world-cup"
@@ -28,12 +28,15 @@ export default function HomeWorldCup() {
           <ArrowUpRight className="h-3 w-3" />
         </Link>
       </div>
-      <div className="flex gap-3 overflow-x-auto pb-1 sm:grid sm:grid-cols-3 sm:overflow-visible sm:pb-0">
+      <div
+        className="-mx-6 flex snap-x snap-mandatory gap-3 overflow-x-auto scroll-pl-6 px-6 pb-1 sm:mx-0 sm:grid sm:grid-cols-3 sm:overflow-visible sm:px-0 sm:pb-0"
+        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none', WebkitOverflowScrolling: 'touch' }}
+      >
         {socceroos.map(fixture => (
           <Link
             key={fixture.id}
             href="/world-cup"
-            className="block min-w-[230px] flex-1 overflow-hidden rounded-card border-3 border-ink bg-white shadow-hard-sm no-underline transition-all hover:translate-x-[1.5px] hover:translate-y-[1.5px] hover:shadow-hard-hover sm:min-w-0"
+            className="block min-w-[240px] flex-1 snap-start overflow-hidden rounded-card border-3 border-ink bg-white shadow-hard-sm no-underline transition-all hover:translate-x-[1.5px] hover:translate-y-[1.5px] hover:shadow-hard-hover sm:min-w-0"
           >
             <TeamStripes home={fixture.home} away={fixture.away} />
             <div className="px-4 py-3">

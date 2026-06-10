@@ -48,11 +48,10 @@ export default function PriceHistory({ pubId, currentPrice }: PriceHistoryProps)
     load()
   }, [pubId])
 
-  if (isLoading) {
-    return (
-      <div className="h-24 bg-off-white rounded-card animate-pulse" />
-    )
-  }
+  // No skeleton: most pubs have under two history points, so the section
+  // usually resolves to nothing — a placeholder would just flash a grey block
+  // and collapse (layout shift) on the majority of pub pages.
+  if (isLoading) return null
 
   // Need at least 2 data points for meaningful history
   const pricePoints = history.filter(h => h.price !== null)

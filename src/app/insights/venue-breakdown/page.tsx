@@ -1,5 +1,7 @@
 import type { Metadata } from 'next'
 import BreadcrumbJsonLd from '@/components/BreadcrumbJsonLd'
+import { getPubs } from '@/lib/supabase'
+import { slimPubForFeature } from '@/lib/pubPhoto'
 import VenueBreakdownPage from './VenueBreakdownPage'
 
 export const metadata: Metadata = {
@@ -18,7 +20,14 @@ export const metadata: Metadata = {
   twitter: { card: 'summary_large_image' },
 }
 
-export default function Page() {
+export const revalidate = 300
+
+export default async function Page() {
+  // Server-fetch so the page content ships in the initial HTML instead of
+  // spinning while the browser round-trips to Supabase. Slimmed to keep the
+  // serialised payload under crawl limits.
+  const initialPubs = (await getPubs()).map(slimPubForFeature)
+
   return (
     <>
       <BreadcrumbJsonLd items={[
@@ -27,13 +36,12 @@ export default function Page() {
         { name: 'Venue Breakdown', url: 'https://perthpintprices.com/insights/venue-breakdown' },
       ]} />
       <div className="sr-only" aria-hidden="true">
-        <h1>Perth Pub Prices by Bracket</h1>
         <p>How every Perth pub we track stacks up by the numbers — the price spread, how many sit under $10, and which suburbs run cheap. The data behind the Index.</p>
         <a href="/">Home</a>
         <a href="/discover">Discover</a>
         <a href="/happy-hour">Happy Hours</a>
       </div>
-      <VenueBreakdownPage />
+      <VenueBreakdownPage initialPubs={initialPubs} />
     </>
   )
 }

@@ -1,11 +1,12 @@
 'use client'
 
 import FeaturePageShell from '@/components/FeaturePageShell'
+import type { Pub } from '@/types/pub'
 import PuntNPints from '@/components/PuntNPints'
 
-export default function PuntAndPintsPage() {
+export default function PuntAndPintsPage({ initialPubs }: { initialPubs?: Pub[] }) {
   return (
-    <FeaturePageShell title="Perth Pubs with TAB Facilities" breadcrumbs={[
+    <FeaturePageShell initialPubs={initialPubs} title="Perth Pubs with TAB Facilities" breadcrumbs={[
       { label: 'Discover', href: '/discover' },
       { label: 'Punt & Pints' },
     ]}>

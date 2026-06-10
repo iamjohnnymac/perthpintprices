@@ -32,7 +32,10 @@ const config: Config = {
         'gray': {
           DEFAULT: '#D4D4D0',
           light: '#EFEFED',
-          mid: '#8A8A85',
+          // #8A8A85 only hit ~3.3:1 against the cream page background --
+          // below WCAG AA's 4.5:1 for body-size text. This shade clears it
+          // on every background we set it over while keeping the warm hue.
+          mid: '#6E6E69',
         },
         'ink': {
           DEFAULT: '#171717',

@@ -1,5 +1,7 @@
 import type { Metadata } from 'next'
 import BreadcrumbJsonLd from '@/components/BreadcrumbJsonLd'
+import { getPubs } from '@/lib/supabase'
+import { slimPubForFeature } from '@/lib/pubPhoto'
 import TonightsBestBetsPage from './TonightsBestBetsPage'
 
 export const metadata: Metadata = {
@@ -18,7 +20,14 @@ export const metadata: Metadata = {
   twitter: { card: 'summary_large_image' },
 }
 
-export default function Page() {
+export const revalidate = 300
+
+export default async function Page() {
+  // Server-fetch so the page content ships in the initial HTML instead of
+  // spinning while the browser round-trips to Supabase. Slimmed to keep the
+  // serialised payload under crawl limits.
+  const initialPubs = (await getPubs()).map(slimPubForFeature)
+
   return (
     <>
       <BreadcrumbJsonLd items={[
@@ -27,13 +36,12 @@ export default function Page() {
         { name: "Tonight's Best Bets", url: 'https://perthpintprices.com/insights/tonights-best-bets' },
       ]} />
       <div className="sr-only" aria-hidden="true">
-        <h1>Tonight&#39;s Best Pints in Perth</h1>
         <p>The cheapest pints and live happy hours in Perth right now. What&#39;s on, what the pint costs, and where — updated as the night moves.</p>
         <a href="/">Home</a>
         <a href="/discover">Discover</a>
         <a href="/happy-hour">Happy Hours</a>
       </div>
-      <TonightsBestBetsPage />
+      <TonightsBestBetsPage initialPubs={initialPubs} />
     </>
   )
 }

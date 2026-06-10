@@ -85,3 +85,27 @@ export function slimPubForList(pub: Pub): SlimPub {
   for (const field of LIST_OMITTED_FIELDS) delete trimmed[field]
   return trimmed as SlimPub
 }
+
+// The guide/insight pages run the pub-pick filters (isDadBar) over their pub
+// arrays, and those read three of the boolean amenity flags slimmed out above.
+// Keeping just the booleans costs ~bytes per pub; the heavy fields stay dropped.
+const FEATURE_KEPT_FIELDS = [
+  'goodForChildren',
+  'outdoorSeating',
+  'goodForWatchingSports',
+] as const satisfies readonly (keyof Pub)[]
+
+export type FeatureSlimPub = SlimPub & Pick<Pub, (typeof FEATURE_KEPT_FIELDS)[number]>
+
+/**
+ * Like slimPubForList, but keeps the amenity flags the pub-pick filters read.
+ * Use for guide/insight pages that serialise the full pub array into HTML.
+ */
+export function slimPubForFeature(pub: Pub): FeatureSlimPub {
+  const kept = new Set<keyof Pub>(FEATURE_KEPT_FIELDS)
+  const trimmed: Partial<Pub> = { ...pub }
+  for (const field of LIST_OMITTED_FIELDS) {
+    if (!kept.has(field)) delete trimmed[field]
+  }
+  return trimmed as FeatureSlimPub
+}

@@ -1,11 +1,12 @@
 'use client'
 
 import FeaturePageShell from '@/components/FeaturePageShell'
+import type { Pub } from '@/types/pub'
 import RainyDay from '@/components/RainyDay'
 
-export default function CozyCornersPage() {
+export default function CozyCornersPage({ initialPubs }: { initialPubs?: Pub[] }) {
   return (
-    <FeaturePageShell title="Cosy Corners Perth" breadcrumbs={[
+    <FeaturePageShell initialPubs={initialPubs} title="Cosy Corners Perth" breadcrumbs={[
       { label: 'Discover', href: '/discover' },
       { label: 'Cosy Corners' },
     ]}>

@@ -1,11 +1,12 @@
 'use client'
 
 import FeaturePageShell from '@/components/FeaturePageShell'
+import type { Pub } from '@/types/pub'
 import SunsetSippers from '@/components/SunsetSippers'
 
-export default function SunsetSippersPage() {
+export default function SunsetSippersPage({ initialPubs }: { initialPubs?: Pub[] }) {
   return (
-    <FeaturePageShell title="Sunset Sippers Perth" breadcrumbs={[
+    <FeaturePageShell initialPubs={initialPubs} title="Sunset Sippers Perth" breadcrumbs={[
       { label: 'Discover', href: '/discover' },
       { label: 'Sunset Sippers' },
     ]}>
