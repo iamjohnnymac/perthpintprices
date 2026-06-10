@@ -177,7 +177,7 @@ export default async function WorldCupPage() {
                     href="/?submit=1"
                     className="mt-4 inline-block rounded-pill border-3 border-ink bg-white px-5 py-2.5 font-mono text-[0.72rem] font-bold uppercase tracking-[0.06em] text-ink no-underline shadow-hard-sm hover:translate-x-[1.5px] hover:translate-y-[1.5px] hover:shadow-hard-hover transition-all"
                   >
-                    Tell us about an early open
+                    Report an early open
                   </Link>
                 </>
               ) : (

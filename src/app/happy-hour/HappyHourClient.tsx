@@ -326,7 +326,7 @@ export default function HappyHourClient({ initialPubs, renderedAtIso }: HappyHou
             <h2 className="type-section leading-tight mb-3">Perth&apos;s best happy-hour pints</h2>
             <div className="grid gap-3 sm:grid-cols-3">
               {bestOf.cheapestPint && (
-                <Link href={pubUrl(bestOf.cheapestPint)} className="block rounded-card border-3 border-ink bg-white p-4 shadow-hard-sm no-underline hover:translate-x-[1.5px] hover:translate-y-[1.5px] hover:shadow-hard-hover transition-all">
+                <Link href={pubUrl(bestOf.cheapestPint)} className="block min-w-0 rounded-card border-3 border-ink bg-white p-4 shadow-hard-sm no-underline hover:translate-x-[1.5px] hover:translate-y-[1.5px] hover:shadow-hard-hover transition-all">
                   <p className="type-eyebrow text-amber">Cheapest pint</p>
                   <p className="mt-1 type-price text-[1.7rem] leading-none">{formatPrice(bestOf.cheapestPint.happyHourPrice)}</p>
                   <p className="mt-2 font-mono text-[0.82rem] font-bold text-ink truncate">{bestOf.cheapestPint.name}</p>
@@ -334,7 +334,7 @@ export default function HappyHourClient({ initialPubs, renderedAtIso }: HappyHou
                 </Link>
               )}
               {bestOf.biggestSaving && (
-                <Link href={pubUrl(bestOf.biggestSaving)} className="block rounded-card border-3 border-ink bg-white p-4 shadow-hard-sm no-underline hover:translate-x-[1.5px] hover:translate-y-[1.5px] hover:shadow-hard-hover transition-all">
+                <Link href={pubUrl(bestOf.biggestSaving)} className="block min-w-0 rounded-card border-3 border-ink bg-white p-4 shadow-hard-sm no-underline hover:translate-x-[1.5px] hover:translate-y-[1.5px] hover:shadow-hard-hover transition-all">
                   <p className="type-eyebrow text-amber">Biggest saving</p>
                   <p className="mt-1 type-price text-[1.7rem] leading-none text-green">{formatPrice((bestOf.biggestSaving.regularPrice ?? 0) - (bestOf.biggestSaving.happyHourPrice ?? 0))} off</p>
                   <p className="mt-2 font-mono text-[0.82rem] font-bold text-ink truncate">{bestOf.biggestSaving.name}</p>
@@ -342,7 +342,7 @@ export default function HappyHourClient({ initialPubs, renderedAtIso }: HappyHou
                 </Link>
               )}
               {bestOf.beerGarden && (
-                <Link href={pubUrl(bestOf.beerGarden)} className="block rounded-card border-3 border-ink bg-white p-4 shadow-hard-sm no-underline hover:translate-x-[1.5px] hover:translate-y-[1.5px] hover:shadow-hard-hover transition-all">
+                <Link href={pubUrl(bestOf.beerGarden)} className="block min-w-0 rounded-card border-3 border-ink bg-white p-4 shadow-hard-sm no-underline hover:translate-x-[1.5px] hover:translate-y-[1.5px] hover:shadow-hard-hover transition-all">
                   <p className="type-eyebrow text-amber">Best beer garden</p>
                   <p className="mt-1 type-price text-[1.7rem] leading-none">{formatPrice(bestOf.beerGarden.happyHourPrice)}</p>
                   <p className="mt-2 font-mono text-[0.82rem] font-bold text-ink truncate">{bestOf.beerGarden.name}</p>
