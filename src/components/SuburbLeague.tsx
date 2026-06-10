@@ -42,7 +42,7 @@ export default function SuburbLeague({ pubs }: { pubs: Pub[] }) {
       const pos = i + 1
 
       if (pos === 5 && total > 5) {
-        items.push({ type: 'divider', label: '- Promotion Zone -', colorClass: 'bg-amber-pale text-amber border-amber/30' })
+        items.push({ type: 'divider', label: '- Promotion Zone -', colorClass: 'bg-amber-pale text-ink border-amber/30' })
       }
 
       if (pos === total - 2 && total > 6) {

@@ -140,13 +140,13 @@ function StatCard({ label, value, sub, icon: Icon }: {
 
 function StatusBadge({ status }: { status: string }) {
   const styles: Record<string, string> = {
-    pending: 'bg-amber-pale text-amber border-amber',
+    pending: 'bg-amber-pale text-ink border-amber',
     verified: 'bg-green-pale text-green border-green',
     approved: 'bg-green-pale text-green border-green',
     rejected: 'bg-red-pale text-red border-red',
     success: 'bg-green-pale text-green border-green',
     error: 'bg-red-pale text-red border-red',
-    warning: 'bg-amber-pale text-amber border-amber',
+    warning: 'bg-amber-pale text-ink border-amber',
   }
   return (
     <span className={`inline-flex items-center gap-1 px-2 py-0.5 border-2 rounded-pill font-mono text-[0.6rem] font-bold uppercase tracking-[0.05em] ${styles[status] || 'bg-gray-light text-gray-mid border-gray'}`}>
@@ -501,7 +501,7 @@ function ReportsTab({ data, password, onRefresh }: { data: DashboardData; passwo
                       <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1.5">
                         <span className="font-mono text-[0.9rem] font-extrabold text-ink tabular-nums">${Number(r.reportedPrice).toFixed(2)}</span>
                         {r.reportType === 'happy_hour_report' && (
-                          <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 bg-amber-pale text-amber border-2 border-amber rounded-pill font-mono text-[0.55rem] font-bold uppercase tracking-[0.05em]">
+                          <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 bg-amber-pale text-ink border-2 border-amber rounded-pill font-mono text-[0.55rem] font-bold uppercase tracking-[0.05em]">
                             <Clock size={9} />HH
                           </span>
                         )}

@@ -84,7 +84,7 @@ export default function DadBar({ pubs, userLocation }: { pubs: Pub[], userLocati
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <span className="font-mono text-[0.58rem] font-bold uppercase tracking-[0.05em] px-1.5 py-0.5 rounded-pill border-2 border-amber/30 bg-amber-pale text-amber">
+            <span className="font-mono text-[0.58rem] font-bold uppercase tracking-[0.05em] px-1.5 py-0.5 rounded-pill border-2 border-amber bg-amber text-white">
               {dadPubs.length} venues
             </span>
             {!isExpanded && dadPubs[0]?.price && (

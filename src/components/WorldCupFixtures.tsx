@@ -37,7 +37,7 @@ interface WorldCupFixturesProps {
 type Filter = 'all' | 'groupD'
 
 const STATUS_CHIP_CLASSES: Record<TradingStatus, string> = {
-  permit: 'bg-amber-pale text-amber border-2 border-amber/50',
+  permit: 'bg-white text-amber border-2 border-amber',
   early: 'bg-white text-ink border-2 border-ink/30',
   normal: 'bg-off-white text-gray-mid border-2 border-ink/10',
 }

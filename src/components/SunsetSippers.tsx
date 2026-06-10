@@ -211,7 +211,7 @@ export default function SunsetSippers({ pubs, userLocation }: SunsetSippersProps
             <div className="flex items-center justify-center gap-2 mb-4">
               <StatusIcon className="w-5 h-5 text-amber" />
               {isGoldenHour && (
-                <span className="font-mono text-[0.6rem] font-bold uppercase tracking-[0.05em] px-2.5 py-1 rounded-pill border-2 border-amber bg-amber-pale text-amber">
+                <span className="font-mono text-[0.6rem] font-bold uppercase tracking-[0.05em] px-2.5 py-1 rounded-pill border-2 border-amber bg-amber text-white">
                   Golden Hour
                 </span>
               )}
