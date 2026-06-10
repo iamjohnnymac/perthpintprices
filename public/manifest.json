@@ -4,8 +4,8 @@
   "description": "Perth's pint prices, sorted. Real prices from real people.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#FAF7F2",
-  "theme_color": "#E8792B",
+  "background_color": "#FDF8F0",
+  "theme_color": "#D4740A",
   "orientation": "portrait",
   "icons": [
     {
