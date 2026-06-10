@@ -152,11 +152,9 @@ export function tradingStatus(kickoffIso: string): TradingStatus {
 
 // --- Formatting helpers ---------------------------------------------------
 
-/** "midnight", "midday", "3am", "8.30am" */
+/** "12am", "12pm", "3am", "8.30am" */
 export function formatKickoff(kickoffIso: string): string {
   const minutes = perthNow(new Date(kickoffIso)).minutesOfDay
-  if (minutes === 0) return 'midnight'
-  if (minutes === 12 * 60) return 'midday'
   const h24 = Math.floor(minutes / 60)
   const mins = minutes % 60
   const suffix = h24 < 12 ? 'am' : 'pm'

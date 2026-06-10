@@ -10,6 +10,10 @@ Stack, database, routes, components, and lib files are documented in `CLAUDE.md`
 
 ## What's done recently
 
+### Cheapest chip + header breakpoint fixes (2026-06-10)
+- **Pub list "cheapest" treatment replaced** — the #1 row's amber left-bar + star + tint (flagged as looking AI-generated) is gone. The rank number is back, and a solid amber `CHEAPEST` chip sits next to the pub name. The chip now marks the genuinely cheapest priced pub in view rather than whatever row sorts first (the old star wrongly starred row one under name/distance sort).
+- **Header no longer wraps at mid widths** — at ~700-770px the homepage header crammed brand + 3 nav links + badge + button onto one row, wrapping the brand and "Happy Hours" onto two lines. Desktop nav/button cutover moved `sm:` → `md:` in HomeClient, SubPageNav, and MobileNav (hamburger now lives until 768px), brand wordmarks get `whitespace-nowrap`. Verified zero overflow and single-line header at 375/640/735/768/900/1024/1280.
+
 ### Homepage live banner softened (2026-06-10)
 - The live happy-hour banner was the last solid-black element on the homepage: `bg-ink` pill with amber-light text (and a bare `shadow-hard`, which the design system bans). Now white with ink text, the green pulse + LIVE eyebrow kept, amber reserved for the price, `shadow-hard-sm`. Verified with Playwright; `tsc` clean.
 
