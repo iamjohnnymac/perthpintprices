@@ -55,6 +55,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${BASE_URL}/cheapest-pints`, lastModified: latestPubModified, changeFrequency: 'daily', priority: 0.8 },
     { url: `${BASE_URL}/how-much-is-a-pint-in-perth`, lastModified: latestPubModified, changeFrequency: 'daily', priority: 0.8 },
     { url: `${BASE_URL}/student-pints-perth`, lastModified: latestPubModified, changeFrequency: 'weekly', priority: 0.7 },
+    { url: `${BASE_URL}/world-cup`, lastModified: latestPubModified, changeFrequency: 'daily', priority: 0.8 },
     { url: `${BASE_URL}/articles`, lastModified: articles[0]?.updatedAt || FALLBACK_LAST_MODIFIED, changeFrequency: 'weekly', priority: 0.8 },
   ]
 

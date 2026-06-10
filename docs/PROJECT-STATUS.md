@@ -1,6 +1,6 @@
 # Perth Pint Prices Project Status
 
-Last updated: 2026-06-08
+Last updated: 2026-06-10
 
 ## What this is
 
@@ -9,6 +9,13 @@ Perth Pint Prices (perthpintprices.com) tracks pint prices across **857 Perth pu
 Stack, database, routes, components, and lib files are documented in `CLAUDE.md` (auto-loaded every session). This file covers history, recent work, and the backlog.
 
 ## What's done recently
+
+### /world-cup live hub page (2026-06-10)
+- **New `/world-cup` route** — a FANZO-style fixture hub with the trust layer they fake: all **72 group-stage fixtures in AWST** (captured from FANZO's geo-localised rail, cross-checked against two AEST schedule sources; Socceroos times triple-verified against the official announcement), each tagged with its **WA trading window** — `permit hours` (midnight–6am any day, plus Sunday before 10am), `early doors` (6–9am, legal on a standard licence), `normal trading`. Knockouts deliberately omitted until the bracket settles — nothing TBC ships.
+- **`src/lib/worldCup.ts`** — fixtures data + `tradingStatus()` classifier built on `perthClock` (standard hours 6am–midnight Mon–Sat / 10am Sunday per DLGSC, checked 10 June 2026; World Cup extended-trading permit announced 5 June 2026), `formatKickoff` (midnight/midday/3am/8.30am style), `CONFIRMED_OPENINGS` ledger (renders an honest empty state until venues confirm door times — no Andrew for now, so confirmations are manual + report-form), `FORM_GUIDE_SLUGS`.
+- **`src/components/WorldCupFixtures.tsx`** — client fixture list grouped by Perth day: live clock (60s tick), ON NOW / NEXT chips, played matches auto-collapse, All / Socceroos & Group D filter, Socceroos rows highlighted.
+- **Page** (`src/app/world-cup/page.tsx`) — hero stat cards, Socceroos cards, dark confirmed-opens card with report CTA, **screens form guide** pulling live pint prices + checked dates from our own pubs data (the moat: FANZO lists venues, we list venues *with the price and the date we checked it*), Northbridge Piazza free-screen note, FAQPage JSON-LD + visible Q&A, breadcrumb schema, sitemap + footer link.
+- **Verification** — tsc clean, lint clean (one pre-existing SunsetSippers warning), **294 unit tests** pass (+18 new for fixtures data sanity, the licensing classifier incl. Sunday edge cases, kickoff formatting, match phases), Playwright screenshots at 1280x800 + 375x812 (mobile chip-wrap fixed).
 
 ### Fix Ahrefs size regressions: slim list payloads + resize venue photos (2026-06-09)
 - **Diagnosis from the 2026-06-08 Ahrefs crawl:** the photo-recovery work (#173) introduced every new Error this week. Verified live with `curl`: the homepage shipped **2.22MB** of HTML — all 857 pubs' full objects serialised into the RSC payload — tripping Googlebot's 2MB crawl limit; pub photos were hotlinked at up to **4800px (~208KB each)**, flagging "Image file size too large" on 15 pages. The real bulk wasn't the photos (~240KB) but the **full Pub enrichment the lists never render**: `periods` (441KB), editorial summaries (352KB), 15 Google attributes (282KB), opening-hours text (217KB).
