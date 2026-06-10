@@ -10,6 +10,15 @@ Stack, database, routes, components, and lib files are documented in `CLAUDE.md`
 
 ## What's done recently
 
+### Pint receipt readability pass (2026-06-10)
+- Prompted by a user screenshot of The Vale Bar & Brasserie on mobile. Five fixes to `PintReceipt.tsx`:
+- **Happy hour row** no longer reads "TBC · 7 days 4pm - 5pm" — the schedule is the value when the price is unknown, "7 days" renders as "daily", and a known price shows red with the schedule on a right-aligned sub-line (no more crushed dotted leaders).
+- **Stale prices flagged** — the Checked row renders amber with "· Nd ago" appended when the recency tier is aging/stale (tier now passed into the receipt data).
+- **Provenance jargon humanized** — "from an aggregator lead" → "spotted online" (`priceProvenance.ts`), moved to its own SOURCE row.
+- **Duplicate price removed** — the standard-pint row only renders when it differs from the hero (it repeated the big number on every non-happy-hour pub).
+- **Type floor raised** 8px → ~10px (banner sub-line, price label, amenity chips, CTA); the vs-avg line now includes the reference ("$1.10 below the $9.10 avg"); CTA flex-wraps.
+- **Verification:** `tsc` clean, 309 tests pass, Playwright screenshots at 375x812 + 1280x800 on both happy-hour variants (The Vale = schedule-only, Ezra Pound = priced). Commit `5edfde2`.
+
 ### Slack notifications for the review queue (2026-06-10)
 - **Why:** a pending price report (Gage Roads, Single Fin $14.50) sat unnoticed for 4 days — nothing told the admin the queue had work in it.
 - **New `src/lib/slackNotify.ts`** — posts to a Slack incoming webhook via the `SLACK_WEBHOOK_URL` env var. Best-effort by design: missing env var or a Slack outage logs and moves on, never breaks a submission or cron. Message formatters are pure functions with unit tests.
