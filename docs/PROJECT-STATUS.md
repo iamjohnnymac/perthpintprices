@@ -10,6 +10,14 @@ Stack, database, routes, components, and lib files are documented in `CLAUDE.md`
 
 ## What's done recently
 
+### Slack notifications for the review queue (2026-06-10)
+- **Why:** a pending price report (Gage Roads, Single Fin $14.50) sat unnoticed for 4 days — nothing told the admin the queue had work in it.
+- **New `src/lib/slackNotify.ts`** — posts to a Slack incoming webhook via the `SLACK_WEBHOOK_URL` env var. Best-effort by design: missing env var or a Slack outage logs and moves on, never breaks a submission or cron. Message formatters are pure functions with unit tests.
+- **Instant ping:** `/api/price-report` POST notifies Slack the moment a report lands — price reports, happy hour reports, and stale-price flags each get their own wording, with pub name, suburb, beer, price, source, and a link to `/admin`.
+- **Daily reminder:** the existing daily `price-check` cron (8am Perth) now also counts pending `price_reports` (with the oldest report's age) and `pub_submissions`, and sends a queue summary — silent when empty. Piggybacked on the existing cron because Vercel Hobby caps cron jobs at two and both slots are taken.
+- **Action needed:** create a Slack incoming webhook and add `SLACK_WEBHOOK_URL` to Vercel env vars — until then the code no-ops with a console warning.
+- **Verification:** `tsc` clean, **308 unit tests** pass (+7 new in `slackNotify.test.ts`). Commit `dce54d2`.
+
 ### /world-cup live hub page (2026-06-10)
 - **New `/world-cup` route** — a FANZO-style fixture hub with the trust layer they fake: all **72 group-stage fixtures in AWST** (captured from FANZO's geo-localised rail, cross-checked against two AEST schedule sources; Socceroos times triple-verified against the official announcement), each tagged with its **WA trading window** — `permit hours` (midnight–6am any day, plus Sunday before 10am), `early doors` (6–9am, legal on a standard licence), `normal trading`. Knockouts deliberately omitted until the bracket settles — nothing TBC ships.
 - **`src/lib/worldCup.ts`** — fixtures data + `tradingStatus()` classifier built on `perthClock` (standard hours 6am–midnight Mon–Sat / 10am Sunday per DLGSC, checked 10 June 2026; World Cup extended-trading permit announced 5 June 2026), `formatKickoff` (midnight/midday/3am/8.30am style), `CONFIRMED_OPENINGS` ledger (renders an honest empty state until venues confirm door times — no Andrew for now, so confirmations are manual + report-form), `FORM_GUIDE_SLUGS`.
