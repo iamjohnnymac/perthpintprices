@@ -181,6 +181,24 @@ export function formatDayHeading(ymd: string): string {
 
 // --- Live state -----------------------------------------------------------
 
+/**
+ * Countdown text for a kickoff. Seconds tick only inside the final day —
+ * "9d 14h 32m" further out, "14h 32m 08s" inside a day, "32m 08s" inside
+ * an hour. Zero or negative means kickoff has passed.
+ */
+export function formatCountdown(msUntil: number): string {
+  const total = Math.max(0, Math.floor(msUntil / 1000))
+  const days = Math.floor(total / 86400)
+  const hours = Math.floor((total % 86400) / 3600)
+  const minutes = Math.floor((total % 3600) / 60)
+  const seconds = total % 60
+  const pad = (n: number) => String(n).padStart(2, '0')
+  if (days > 0) return `${days}d ${hours}h ${pad(minutes)}m`
+  if (hours > 0) return `${hours}h ${pad(minutes)}m ${pad(seconds)}s`
+  if (minutes > 0) return `${minutes}m ${pad(seconds)}s`
+  return `${seconds}s`
+}
+
 export type MatchPhase = 'upcoming' | 'live' | 'played'
 
 const MATCH_RUNTIME_MS = 120 * 60 * 1000

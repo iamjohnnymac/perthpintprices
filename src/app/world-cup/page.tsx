@@ -4,6 +4,7 @@ import { ArrowUpRight, ClipboardCheck, Tv } from 'lucide-react'
 import BreadcrumbJsonLd from '@/components/BreadcrumbJsonLd'
 import Footer from '@/components/Footer'
 import SubPageNav from '@/components/SubPageNav'
+import WorldCupCountdown from '@/components/WorldCupCountdown'
 import WorldCupFixtures from '@/components/WorldCupFixtures'
 import { formatAudPrice } from '@/lib/pintPriceStats'
 import { getPubs } from '@/lib/supabase'
@@ -144,6 +145,11 @@ export default async function WorldCupPage() {
                 <p className="type-eyebrow">{formatDayHeading(fixtureDay(fixture.kickoff))}</p>
                 <p className="mt-2 font-mono text-3xl font-extrabold text-ink">{formatKickoff(fixture.kickoff)}</p>
                 <p className="mt-1 font-mono text-[0.82rem] font-bold text-ink">{fixture.home} v {fixture.away}</p>
+                <WorldCupCountdown
+                  kickoff={fixture.kickoff}
+                  prefix="Kicks off in "
+                  className="mt-2 block min-h-[1.1rem] font-mono text-[0.72rem] font-bold text-amber"
+                />
                 <p className="mt-2 text-[0.76rem] leading-relaxed text-gray-mid">{SOCCEROOS_NOTES[fixture.id]}</p>
               </div>
             ))}

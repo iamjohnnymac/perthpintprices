@@ -4,6 +4,7 @@ import {
   WC_FIXTURES,
   tradingStatus,
   formatKickoff,
+  formatCountdown,
   fixtureDay,
   formatDayHeading,
   matchPhase,
@@ -109,6 +110,34 @@ describe('formatDayHeading', () => {
     assert.equal(formatDayHeading('2026-06-12'), 'Friday 12 June')
     assert.equal(formatDayHeading('2026-06-14'), 'Sunday 14 June')
     assert.equal(formatDayHeading('2026-06-28'), 'Sunday 28 June')
+  })
+})
+
+describe('formatCountdown', () => {
+  const SEC = 1000
+  const MIN = 60 * SEC
+  const HOUR = 60 * MIN
+  const DAY = 24 * HOUR
+
+  it('shows only seconds inside a minute', () => {
+    assert.equal(formatCountdown(42 * SEC), '42s')
+  })
+
+  it('shows minutes and padded seconds inside an hour', () => {
+    assert.equal(formatCountdown(5 * MIN + 3 * SEC), '5m 03s')
+  })
+
+  it('shows hours, minutes and seconds inside a day', () => {
+    assert.equal(formatCountdown(3 * HOUR + 5 * MIN + 9 * SEC), '3h 05m 09s')
+  })
+
+  it('drops the ticking seconds beyond a day', () => {
+    assert.equal(formatCountdown(2 * DAY + 4 * HOUR + 32 * MIN + 50 * SEC), '2d 4h 32m')
+  })
+
+  it('clamps passed kickoffs to zero', () => {
+    assert.equal(formatCountdown(0), '0s')
+    assert.equal(formatCountdown(-5 * MIN), '0s')
   })
 })
 

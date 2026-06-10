@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
+import WorldCupCountdown from '@/components/WorldCupCountdown'
 import {
   WC_FIXTURES,
   TRADING_BADGES,
@@ -136,6 +137,7 @@ export default function WorldCupFixtures({ renderedAtIso }: WorldCupFixturesProp
                       {isNext && phase === 'upcoming' && (
                         <span className="font-mono text-[0.6rem] font-bold uppercase tracking-[0.06em] px-2 py-0.5 rounded-pill bg-ink text-white">
                           Next
+                          <WorldCupCountdown kickoff={fixture.kickoff} prefix=" · " liveText={null} className="normal-case" />
                         </span>
                       )}
                       {(fixture.socceroos || fixture.groupD) && (
