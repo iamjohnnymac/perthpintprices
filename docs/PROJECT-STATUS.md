@@ -10,6 +10,11 @@ Stack, database, routes, components, and lib files are documented in `CLAUDE.md`
 
 ## What's done recently
 
+### Brand assets: stale arvo/PintDex images replaced (2026-06-10)
+- The OG share card still said **"arvo"** with dead stats (420+ venues / 154 suburbs); `logo.png`, `favicon.ico` and the PWA/iOS icons were older still (**"PintDex"**) — so every WhatsApp/social preview, browser tab and the Organization JSON-LD logo showed retired branding.
+- New `scripts/generate-brand-assets.mjs` (Playwright render of the real fonts/tokens) regenerates `og-image.png` (evergreen copy, no counts to go stale), `logo.png`, `icon-512/192`, `apple-touch-icon`; `scripts/build-favicon.py` assembles `favicon.ico`. Manifest colours updated to current tokens. Commit `eb3abc8`. PR #178.
+- Note: WhatsApp/Facebook cache link previews — after deploy, re-scrape via developers.facebook.com/tools/debug or just wait out the cache.
+
 ### Visual audit fixes: SSR guide data, AA contrast, jump nav, empty states (2026-06-10)
 - **Guide/insight pages + /discover server-fetch pubs** — all 8 `FeaturePageShell` consumers and `/discover` were client-only (multi-second spinner, blank sections when the browser-to-Supabase fetch failed). Each `page.tsx` now fetches server-side (`revalidate = 300`) and passes `initialPubs` down; new `slimPubForFeature` in `pubPhoto.ts` keeps the `isDadBar` amenity booleans while still dropping the heavy Google enrichment (~850KB HTML per page, under the 2MB crawl limit).
 - **Empty states** — `FeaturePageShell` and `/discover` render a "pub list didn't load / try again" card instead of section headers over empty lists.
