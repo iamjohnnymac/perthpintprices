@@ -10,6 +10,9 @@ Stack, database, routes, components, and lib files are documented in `CLAUDE.md`
 
 ## What's done recently
 
+### Homepage live banner softened (2026-06-10)
+- The live happy-hour banner was the last solid-black element on the homepage: `bg-ink` pill with amber-light text (and a bare `shadow-hard`, which the design system bans). Now white with ink text, the green pulse + LIVE eyebrow kept, amber reserved for the price, `shadow-hard-sm`. Verified with Playwright; `tsc` clean.
+
 ### Pill no-wrap guard + happy-hour grid blowout fix (2026-06-10)
 - Global CSS guard in `globals.css`: anything with `rounded-pill` gets `white-space: nowrap` — a pill label breaking onto a second line reads as broken UI (spotted on the world-cup "Tell us about an early open" button, label shortened to "Report an early open").
 - While verifying at 320px, found a pre-existing 14px horizontal page overflow on /happy-hour: the best-of pick cards' `truncate` pub names couldn't clip because grid items refuse to shrink below content width. `min-w-0` on the three card links fixes it. All of /, /world-cup, /happy-hour now measure zero horizontal overflow at 320px and 375px.

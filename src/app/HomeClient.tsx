@@ -46,19 +46,19 @@ function LiveHappyHourBanner({ pubs }: { pubs: Pub[] }) {
 
   return (
     <Link href="/happy-hour" className="block max-w-container mx-auto px-6 mb-5">
-      <div className="bg-ink border-3 border-ink rounded-pill px-6 py-3 flex items-center gap-3 shadow-hard">
+      <div className="bg-white border-3 border-ink rounded-pill px-6 py-3 flex items-center gap-3 shadow-hard-sm">
         <div className="flex items-center gap-1.5 flex-shrink-0">
           <span className="w-2 h-2 rounded-full bg-green shadow-[0_0_8px_rgba(45,122,61,0.5)] animate-pulse" />
-          <span className="type-eyebrow text-white">Live</span>
+          <span className="type-eyebrow">Live</span>
         </div>
-        <span className="text-white font-medium text-[0.85rem] flex-1 truncate transition-opacity duration-300" key={current.slug}>
-          <strong className="text-amber-light font-bold">{current.name}</strong> has ${current.price?.toFixed(2)} pints right now
+        <span className="text-ink font-medium text-[0.85rem] flex-1 truncate transition-opacity duration-300" key={current.slug}>
+          <strong className="font-bold">{current.name}</strong> has ${current.price?.toFixed(2)} pints right now
         </span>
-        <span className="type-price text-[1.1rem] text-amber-light flex-shrink-0">
+        <span className="type-price text-[1.1rem] text-amber flex-shrink-0">
           ${current.price?.toFixed(2)}
         </span>
         {liveHHPubs.length > 1 && (
-          <span className="font-mono text-[0.6rem] font-bold text-white/50 flex-shrink-0">
+          <span className="font-mono text-[0.6rem] font-bold text-gray-mid flex-shrink-0">
             {(activeIndex % liveHHPubs.length) + 1}/{liveHHPubs.length}
           </span>
         )}
