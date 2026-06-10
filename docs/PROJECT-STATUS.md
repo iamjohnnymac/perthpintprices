@@ -10,6 +10,11 @@ Stack, database, routes, components, and lib files are documented in `CLAUDE.md`
 
 ## What's done recently
 
+### Homepage World Cup strip: mobile polish (2026-06-10)
+- The strip's header crammed both labels side-by-side at 375px (each wrapped to two lines); now they stack on mobile, side-by-side from `sm:` up.
+- The fixture rail scrolls full-bleed (`-mx-6`/`px-6` with `scroll-pl-6`) with snap points and a hidden scrollbar, matching the /discover picks rail — the next card peeks at the screen edge instead of being chopped at the container boundary.
+- Verified with Playwright at 375x812 (rest + scrolled states); `tsc` clean.
+
 ### Brand assets: stale arvo/PintDex images replaced (2026-06-10)
 - The OG share card still said **"arvo"** with dead stats (420+ venues / 154 suburbs); `logo.png`, `favicon.ico` and the PWA/iOS icons were older still (**"PintDex"**) — so every WhatsApp/social preview, browser tab and the Organization JSON-LD logo showed retired branding.
 - New `scripts/generate-brand-assets.mjs` (Playwright render of the real fonts/tokens) regenerates `og-image.png` (evergreen copy, no counts to go stale), `logo.png`, `icon-512/192`, `apple-touch-icon`; `scripts/build-favicon.py` assembles `favicon.ico`. Manifest colours updated to current tokens. Commit `eb3abc8`. PR #178.
