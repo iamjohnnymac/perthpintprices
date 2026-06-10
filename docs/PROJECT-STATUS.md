@@ -28,6 +28,12 @@ Stack, database, routes, components, and lib files are documented in `CLAUDE.md`
 - **Action needed:** create a Slack incoming webhook and add `SLACK_WEBHOOK_URL` to Vercel env vars — until then the code no-ops with a console warning.
 - **Verification:** `tsc` clean, **308 unit tests** pass (+7 new in `slackNotify.test.ts`). Commit `dce54d2`.
 
+### /world-cup: softer confirmed-opens card + flag chips on fixture rows (2026-06-10)
+- The "Confirmed early opens" card was a solid `bg-ink` block mid-page — restyled to `bg-amber-pale` with ink text and the standard white pill button (user found the dark block harsh).
+- `TEAM_COLOURS` extended from Group D (4 teams) to **all 48 qualified teams** with real flag-stripe palettes; fixture rows now show a small stacked-stripe flag chip glued to each team name (no emoji), and the team-colour bands on Socceroos cards pick up the new entries automatically.
+- Fixture row layout moved from ragged flex-wrap to a grid: time column, teams with flags, chips right-aligned on desktop and indented under the match on mobile. Trading chips crispened (`border-2`, stronger tints).
+- Verified with Playwright at 375x812; `tsc` clean, 302 tests pass.
+
 ### Homepage World Cup strip: mobile polish (2026-06-10)
 - The strip's header crammed both labels side-by-side at 375px (each wrapped to two lines); now they stack on mobile, side-by-side from `sm:` up.
 - The fixture rail scrolls full-bleed (`-mx-6`/`px-6` with `scroll-pl-6`) with snap points and a hidden scrollbar, matching the /discover picks rail — the next card peeks at the screen edge instead of being chopped at the container boundary.
