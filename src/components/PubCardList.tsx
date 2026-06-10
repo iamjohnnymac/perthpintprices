@@ -4,7 +4,7 @@ import { Pub } from '@/types/pub'
 import { CrowdReport } from '@/lib/supabase'
 import { getDistanceKm, formatDistance } from '@/lib/location'
 import Link from 'next/link'
-import { Beer, Star } from 'lucide-react'
+import { Beer } from 'lucide-react'
 import { pubUrl } from '@/lib/urls'
 
 interface PubCardListProps {
@@ -26,6 +26,13 @@ export default function PubCardList({
   onShowAll,
 }: PubCardListProps) {
   const displayPubs = showAll ? pubs : pubs.slice(0, initialCount)
+
+  // The chip marks the genuinely cheapest priced pub in view, not row one —
+  // the list can be sorted by name or distance.
+  const cheapestId = displayPubs.reduce<{ id: number; price: number } | null>(
+    (min, pub) => (pub.price !== null && (min === null || pub.price < min.price) ? { id: pub.id, price: pub.price } : min),
+    null,
+  )?.id ?? null
 
   return (
     <div className="max-w-container mx-auto px-6">
@@ -53,27 +60,26 @@ export default function PubCardList({
           ? formatDistance(distanceKm)
           : null
 
-        const isFirst = index === 0
-
         return (
           <Link
             key={pub.id}
             href={pubUrl(pub)}
-            className={`flex items-baseline justify-between py-3.5 px-2.5 -mx-2.5 border-b border-gray-light rounded-lg cursor-pointer no-underline text-ink hover:bg-off-white transition-colors ${
-              isFirst ? 'border-l-[4px] border-l-amber bg-amber-pale/30 ml-0 pl-3' : ''
-            }`}
+            className="flex items-baseline justify-between py-3.5 px-2.5 -mx-2.5 border-b border-gray-light rounded-lg cursor-pointer no-underline text-ink hover:bg-off-white transition-colors"
           >
             {/* Rank */}
-            <span className={`font-mono text-[0.75rem] font-bold min-w-[28px] mr-1 ${
-              isFirst ? 'text-amber' : 'text-gray-mid'
-            }`}>
-              {isFirst ? <Star className="w-3.5 h-3.5 fill-current" /> : `${index + 1}.`}
+            <span className="font-mono text-[0.75rem] font-bold min-w-[28px] mr-1 text-gray-mid">
+              {index + 1}.
             </span>
 
             {/* Info */}
             <div className="flex-1 min-w-0">
               <span className="font-body text-base font-bold text-ink">
                 {pub.name}
+                {pub.id === cheapestId && (
+                  <span className="font-mono text-[0.58rem] font-bold uppercase tracking-[0.05em] px-1.5 py-0.5 rounded-pill ml-1.5 border-2 bg-amber text-white border-amber inline-block align-middle">
+                    Cheapest
+                  </span>
+                )}
                 {pub.isHappyHourNow && (
                   <span className="font-mono text-[0.58rem] font-bold uppercase tracking-[0.05em] px-1.5 py-0.5 rounded-pill ml-1.5 border-2 bg-red-pale text-red border-red inline-block align-middle">
                     HH
