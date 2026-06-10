@@ -15,13 +15,20 @@
 
 begin;
 
+-- pubs.place_id is UNIQUE, so stash the duplicates' Google data and free the
+-- values BEFORE copying them onto the keepers (first run failed on 23505).
+create temp table dupe_place_data on commit drop as
+  select id, place_id, image_url from pubs where id in (893, 384);
+
+update pubs set place_id = null where id in (893, 384);
+
 -- ── SKOL / SKØL (35 Ewen St, Scarborough) ──────────────────────────────────
 -- Keep 138 (slug "skol", $10 verified). Take the official Ø name + place data.
 update pubs set
   name = 'SKØL',
   place_id = coalesce(pubs.place_id, d.place_id),
   image_url = coalesce(pubs.image_url, d.image_url)
-from (select place_id, image_url from pubs where id = 893) d
+from (select place_id, image_url from dupe_place_data where id = 893) d
 where pubs.id = 138;
 
 -- ── 399 Bar / 399 Small Bar (Northbridge) ──────────────────────────────────
@@ -49,7 +56,7 @@ update pubs set
   name = 'i Darts NIX',
   place_id = coalesce(pubs.place_id, d.place_id),
   image_url = coalesce(pubs.image_url, d.image_url)
-from (select place_id, image_url from pubs where id = 384) d
+from (select place_id, image_url from dupe_place_data where id = 384) d
 where pubs.id = 205;
 
 -- ── Re-point anything that referenced a duplicate ───────────────────────────
