@@ -10,6 +10,10 @@ Stack, database, routes, components, and lib files are documented in `CLAUDE.md`
 
 ## What's done recently
 
+### Homepage: article rail moved below the pub list (2026-06-10)
+- The blog post rail (`ArticleRail`, "Pub notes with numbers attached") sat between the live happy hour banner and the filter bar, pushing the price list down the page. It now renders after `PubCardList` (below the "View all venues" button, above How It Works), so prices are the first thing under the hero.
+- Verified with Playwright screenshots at 1280x800 and 375x812; `tsc` clean. Commit `a98cc30`.
+
 ### /world-cup live hub page (2026-06-10)
 - **New `/world-cup` route** — a FANZO-style fixture hub with the trust layer they fake: all **72 group-stage fixtures in AWST** (captured from FANZO's geo-localised rail, cross-checked against two AEST schedule sources; Socceroos times triple-verified against the official announcement), each tagged with its **WA trading window** — `permit hours` (midnight–6am any day, plus Sunday before 10am), `early doors` (6–9am, legal on a standard licence), `normal trading`. Knockouts deliberately omitted until the bracket settles — nothing TBC ships.
 - **`src/lib/worldCup.ts`** — fixtures data + `tradingStatus()` classifier built on `perthClock` (standard hours 6am–midnight Mon–Sat / 10am Sunday per DLGSC, checked 10 June 2026; World Cup extended-trading permit announced 5 June 2026), `formatKickoff` (midnight/midday/3am/8.30am style), `CONFIRMED_OPENINGS` ledger (renders an honest empty state until venues confirm door times — no Andrew for now, so confirmations are manual + report-form), `FORM_GUIDE_SLUGS`.
