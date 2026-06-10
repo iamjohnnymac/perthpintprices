@@ -7,6 +7,7 @@ const NAV_LINKS = [
   { href: '/how-much-is-a-pint-in-perth', label: 'Pint Cost' },
   { href: '/student-pints-perth', label: 'Student Pints' },
   { href: '/pubs-near-perth-station', label: 'Near Station' },
+  { href: '/world-cup', label: 'World Cup' },
   { href: '/articles', label: 'Articles' },
   { href: '/suburbs', label: 'Suburbs' },
 ]
