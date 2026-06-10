@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { revalidatePath, revalidateTag } from 'next/cache'
 import { anonClient } from '@/lib/supabaseGateway'
 import { toSuburbSlug } from '@/lib/urls'
+import { formatNewReportMessage, sendSlackMessage } from '@/lib/slackNotify'
 import { preparePriceReport } from './intake'
 
 const supabase = anonClient()
@@ -11,13 +12,15 @@ async function revalidateReportedPub(pubSlug: string) {
 
   const { data: pub } = await supabase
     .from('pubs')
-    .select('slug, suburb')
+    .select('slug, name, suburb')
     .eq('slug', pubSlug)
     .single()
 
   if (pub?.slug && pub.suburb) {
     revalidatePath(`/${toSuburbSlug(pub.suburb)}/${pub.slug}`)
   }
+
+  return pub
 }
 
 export async function POST(req: NextRequest) {
@@ -55,7 +58,18 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Failed to submit report' }, { status: 500 })
     }
 
-    await revalidateReportedPub(prepared.value.pubSlug)
+    const pub = await revalidateReportedPub(prepared.value.pubSlug)
+
+    const insert = prepared.value.insertData
+    await sendSlackMessage(formatNewReportMessage({
+      pubName: pub?.name || prepared.value.pubSlug,
+      suburb: pub?.suburb || null,
+      reportedPrice: Number(insert.reported_price) || 0,
+      beerType: typeof insert.beer_type === 'string' ? insert.beer_type : null,
+      reporterName: typeof insert.reporter_name === 'string' ? insert.reporter_name : 'Anonymous',
+      reportType: String(insert.report_type),
+      submissionSource: String(insert.submission_source),
+    }))
 
     const message = body.outdated === true
       ? 'Thanks for flagging — we\'ll check this price.'
