@@ -247,7 +247,7 @@ export default function TonightsMoves({ pubs, userLocation }: TonightsMovesProps
                           <p className="font-body text-[0.7rem] text-gray-mid">{pub.suburb}{userLocation && ` · ${formatDistance(getDistanceKm(userLocation.lat, userLocation.lng, pub.lat, pub.lng))}`}</p>
                         </div>
                         <div className="flex items-center gap-2 flex-shrink-0">
-                          <span className="font-mono text-[0.58rem] font-bold uppercase tracking-[0.05em] px-1.5 py-0.5 rounded-pill border-2 border-amber/30 bg-amber-pale text-amber">
+                          <span className="font-mono text-[0.58rem] font-bold uppercase tracking-[0.05em] px-1.5 py-0.5 rounded-pill border-2 border-amber bg-amber text-white">
                             {status.countdown}
                           </span>
                           <span className="font-mono text-[1rem] font-extrabold text-gray-mid">{status.effectivePrice !== null ? `$${status.effectivePrice.toFixed(2)}` : 'TBC'}</span>

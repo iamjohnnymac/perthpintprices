@@ -831,7 +831,7 @@ export default function SubmitPubForm({ isOpen, onClose, userLocation, initialPu
                       onClick={() => setPriceType('happy_hour')}
                       className={`flex-1 px-3 py-1.5 rounded-pill font-mono text-[0.65rem] font-bold transition-all ${
                         priceType === 'happy_hour'
-                          ? 'bg-amber-pale text-amber shadow-hard-sm'
+                          ? 'bg-amber text-white shadow-hard-sm'
                           : 'text-gray-mid hover:text-ink'
                       }`}
                     >
@@ -986,7 +986,7 @@ export default function SubmitPubForm({ isOpen, onClose, userLocation, initialPu
                               onClick={() => updateExtractedItem(i, 'price_type', item.price_type === 'regular' ? 'happy_hour' : 'regular')}
                               className={`flex-shrink-0 px-2 py-1 rounded-pill font-mono text-[0.55rem] font-bold border-2 transition-all ${
                                 item.price_type === 'happy_hour'
-                                  ? 'bg-amber-pale text-amber border-amber/30'
+                                  ? 'bg-amber text-white border-amber'
                                   : 'bg-white text-gray-mid border-gray-light'
                               }`}
                             >

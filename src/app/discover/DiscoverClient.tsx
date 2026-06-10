@@ -194,7 +194,7 @@ export default function DiscoverClient({ initialPubs }: { initialPubs?: Pub[] })
               </div>
               <p className="text-[0.75rem] text-gray-mid mt-1">{pintOfTheDay.reason}</p>
               {pintOfTheDay.pub.isHappyHourNow && (
-                <span className="inline-flex items-center gap-1 mt-2 px-2.5 py-1 bg-amber-pale text-amber border-2 border-amber/30 rounded-pill font-mono text-[0.6rem] font-bold uppercase tracking-[0.05em]">
+                <span className="inline-flex items-center gap-1 mt-2 px-2.5 py-1 bg-amber text-white border-2 border-amber rounded-pill font-mono text-[0.6rem] font-bold uppercase tracking-[0.05em]">
                   <Clock className="w-3 h-3" />Happy Hour Active
                 </span>
               )}
@@ -250,7 +250,7 @@ export default function DiscoverClient({ initialPubs }: { initialPubs?: Pub[] })
                       <p className="text-xs text-gray-mid">{pub.suburb}</p>
                     </div>
                     <div className="flex items-center gap-2 flex-shrink-0">
-                      <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold ${status.isActive ? 'bg-amber-pale text-amber border border-amber/30' : 'bg-off-white text-gray-mid border border-gray-light'}`}>
+                      <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold ${status.isActive ? 'bg-amber text-white border border-amber' : 'bg-off-white text-gray-mid border border-gray-light'}`}>
                         {status.countdown || status.happyHourLabel}
                       </span>
                       <span className="font-mono text-lg font-extrabold text-ink tabular-nums">{status.effectivePrice !== null ? `$${status.effectivePrice.toFixed(2)}` : 'TBC'}</span>

@@ -10,6 +10,14 @@ Stack, database, routes, components, and lib files are documented in `CLAUDE.md`
 
 ## What's done recently
 
+### Pill no-wrap guard + happy-hour grid blowout fix (2026-06-10)
+- Global CSS guard in `globals.css`: anything with `rounded-pill` gets `white-space: nowrap` — a pill label breaking onto a second line reads as broken UI (spotted on the world-cup "Tell us about an early open" button, label shortened to "Report an early open").
+- While verifying at 320px, found a pre-existing 14px horizontal page overflow on /happy-hour: the best-of pick cards' `truncate` pub names couldn't clip because grid items refuse to shrink below content width. `min-w-0` on the three card links fixes it. All of /, /world-cup, /happy-hour now measure zero horizontal overflow at 320px and 375px.
+
+### Amber-on-amber chip restyle, site-wide (2026-06-10)
+- Killed every tone-on-tone amber combo (`text-amber` on `bg-amber-pale`) — flagged as looking cheap. New rules: active/live chips (happy-hour-active, Golden Hour, HH toggles) go solid `bg-amber text-white`; passive badges (admin pending/warning, promotion-zone divider) keep the pale tint but switch to ink text; the World Cup permit chip becomes amber-on-white with an amber border.
+- Touched: WorldCupFixtures, SunsetSippers, TonightsMoves, DadBar, SubmitPubForm, SuburbLeague, admin dashboard, DiscoverClient, SuburbsClient (hover state). `tsc` clean; verified on /world-cup at 375x812.
+
 ### Pint receipt readability pass (2026-06-10)
 - Prompted by a user screenshot of The Vale Bar & Brasserie on mobile. Five fixes to `PintReceipt.tsx`:
 - **Happy hour row** no longer reads "TBC · 7 days 4pm - 5pm" — the schedule is the value when the price is unknown, "7 days" renders as "daily", and a known price shows red with the schedule on a right-aligned sub-line (no more crushed dotted leaders).

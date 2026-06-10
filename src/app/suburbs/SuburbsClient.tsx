@@ -176,7 +176,7 @@ export default function SuburbsClient({ suburbs }: SuburbsClientProps) {
             <a
               key={letter}
               href={`#${letter}`}
-              className="font-mono text-[0.7rem] font-bold w-8 h-8 flex items-center justify-center rounded-md text-gray-mid hover:text-amber hover:bg-amber-pale transition-colors no-underline"
+              className="font-mono text-[0.7rem] font-bold w-8 h-8 flex items-center justify-center rounded-md text-gray-mid hover:text-ink hover:bg-amber-pale transition-colors no-underline"
             >
               {letter}
             </a>
