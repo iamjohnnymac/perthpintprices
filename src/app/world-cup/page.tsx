@@ -4,6 +4,7 @@ import { ArrowUpRight, ClipboardCheck, Tv } from 'lucide-react'
 import BreadcrumbJsonLd from '@/components/BreadcrumbJsonLd'
 import Footer from '@/components/Footer'
 import SubPageNav from '@/components/SubPageNav'
+import TeamStripes from '@/components/TeamStripes'
 import WorldCupCountdown from '@/components/WorldCupCountdown'
 import WorldCupFixtures from '@/components/WorldCupFixtures'
 import { formatAudPrice } from '@/lib/pintPriceStats'
@@ -141,16 +142,19 @@ export default async function WorldCupPage() {
           <h2 id="socceroos-heading" className="type-section mb-4">The Socceroos, in Perth time</h2>
           <div className="grid gap-3 sm:grid-cols-3">
             {socceroos.map(fixture => (
-              <div key={fixture.id} className="rounded-card border-3 border-ink bg-white p-5 shadow-hard-sm">
-                <p className="type-eyebrow">{formatDayHeading(fixtureDay(fixture.kickoff))}</p>
-                <p className="mt-2 font-mono text-3xl font-extrabold text-ink">{formatKickoff(fixture.kickoff)}</p>
-                <p className="mt-1 font-mono text-[0.82rem] font-bold text-ink">{fixture.home} v {fixture.away}</p>
-                <WorldCupCountdown
-                  kickoff={fixture.kickoff}
-                  prefix="Kicks off in "
-                  className="mt-2 block min-h-[1.1rem] font-mono text-[0.72rem] font-bold text-amber"
-                />
-                <p className="mt-2 text-[0.76rem] leading-relaxed text-gray-mid">{SOCCEROOS_NOTES[fixture.id]}</p>
+              <div key={fixture.id} className="overflow-hidden rounded-card border-3 border-ink bg-white shadow-hard-sm">
+                <TeamStripes home={fixture.home} away={fixture.away} />
+                <div className="p-5">
+                  <p className="type-eyebrow">{formatDayHeading(fixtureDay(fixture.kickoff))}</p>
+                  <p className="mt-2 font-mono text-3xl font-extrabold text-ink">{formatKickoff(fixture.kickoff)}</p>
+                  <p className="mt-1 font-mono text-[0.82rem] font-bold text-ink">{fixture.home} v {fixture.away}</p>
+                  <WorldCupCountdown
+                    kickoff={fixture.kickoff}
+                    prefix="Kicks off in "
+                    className="mt-2 block min-h-[1.1rem] font-mono text-[0.72rem] font-bold text-amber"
+                  />
+                  <p className="mt-2 text-[0.76rem] leading-relaxed text-gray-mid">{SOCCEROOS_NOTES[fixture.id]}</p>
+                </div>
               </div>
             ))}
           </div>

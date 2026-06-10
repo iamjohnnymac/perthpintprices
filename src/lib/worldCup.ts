@@ -211,6 +211,22 @@ export function matchPhase(fixture: WcFixture, now: Date): MatchPhase {
   return 'played'
 }
 
+// --- Team colours ----------------------------------------------------------
+// Flag/kit colours for the stripe band on fixture cards. Group D only for
+// now — knockout opponents get added when the bracket settles. Unknown teams
+// fall back to a neutral stripe so a missing entry never breaks a card.
+
+export const TEAM_COLOURS: Record<string, string[]> = {
+  Australia: ['#FFCD00', '#00843D'],
+  'Türkiye': ['#E30A17', '#FFFFFF'],
+  USA: ['#041E42', '#FFFFFF', '#BF0D3E'],
+  Paraguay: ['#D52B1E', '#FFFFFF', '#0038A8'],
+}
+
+export function teamColours(team: string): string[] {
+  return TEAM_COLOURS[team] ?? ['#8A8A85']
+}
+
 // --- Confirmed openings ---------------------------------------------------
 // A venue lands here only once its opening time for a specific match is
 // confirmed — with the date we checked. No guesses: an empty list renders
