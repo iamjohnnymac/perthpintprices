@@ -160,41 +160,41 @@ export default async function WorldCupPage() {
           </div>
         </section>
 
-        <section className="mb-10 rounded-card border-3 border-ink bg-ink p-5 text-white shadow-hard-sm" aria-labelledby="confirmed-heading">
+        <section className="mb-10 rounded-card border-3 border-ink bg-amber-pale p-5 shadow-hard-sm" aria-labelledby="confirmed-heading">
           <div className="flex items-start gap-3">
-            <ClipboardCheck className="mt-1 h-5 w-5 shrink-0 text-amber-light" />
+            <ClipboardCheck className="mt-1 h-5 w-5 shrink-0 text-amber" />
             <div className="min-w-0 flex-1">
-              <p className="type-eyebrow text-white/55">Checked and dated</p>
-              <h2 id="confirmed-heading" className="mt-2 type-section text-white">Confirmed early opens</h2>
+              <p className="type-eyebrow">Checked and dated</p>
+              <h2 id="confirmed-heading" className="mt-2 type-section">Confirmed early opens</h2>
               {CONFIRMED_OPENINGS.length === 0 ? (
                 <>
-                  <p className="mt-3 font-body text-[0.9rem] leading-relaxed text-white/70">
+                  <p className="mt-3 font-body text-[0.9rem] leading-relaxed text-gray-mid">
                     None confirmed yet — checked {TIMES_CHECKED}. When a venue confirms a door time for a
                     specific match, it gets listed here with the date we checked, same as every pint price
                     on this site. No venue gets listed on a maybe.
                   </p>
                   <Link
                     href="/?submit=1"
-                    className="mt-4 inline-block rounded-pill border-3 border-white/90 bg-amber px-5 py-2.5 font-mono text-[0.72rem] font-bold uppercase tracking-[0.06em] text-white no-underline shadow-hard-sm hover:bg-amber-light"
+                    className="mt-4 inline-block rounded-pill border-3 border-ink bg-white px-5 py-2.5 font-mono text-[0.72rem] font-bold uppercase tracking-[0.06em] text-ink no-underline shadow-hard-sm hover:translate-x-[1.5px] hover:translate-y-[1.5px] hover:shadow-hard-hover transition-all"
                   >
                     Tell us about an early open
                   </Link>
                 </>
               ) : (
-                <ul className="mt-3 divide-y divide-white/15">
+                <ul className="mt-3 divide-y divide-ink/10">
                   {CONFIRMED_OPENINGS.map(opening => {
                     const fixture = WC_FIXTURES.find(f => f.id === opening.fixtureId)
                     return (
                       <li key={`${opening.venue}-${opening.fixtureId}`} className="flex flex-wrap items-baseline gap-x-3 gap-y-1 py-3">
-                        <span className="font-mono text-[0.86rem] font-extrabold">{opening.venue}</span>
-                        <span className="text-[0.72rem] text-white/55">{opening.suburb}</span>
+                        <span className="font-mono text-[0.86rem] font-extrabold text-ink">{opening.venue}</span>
+                        <span className="text-[0.72rem] text-gray-mid">{opening.suburb}</span>
                         {fixture && (
-                          <span className="text-[0.78rem] text-white/70">
+                          <span className="text-[0.78rem] text-gray-mid">
                             {fixture.home} v {fixture.away}, {formatKickoff(fixture.kickoff)} {formatDayHeading(fixtureDay(fixture.kickoff))}
                           </span>
                         )}
-                        <span className="font-mono text-[0.78rem] font-bold text-amber-light">{opening.doors}</span>
-                        <span className="text-[0.68rem] text-white/45">Confirmed {opening.confirmedAt} · {opening.source}</span>
+                        <span className="font-mono text-[0.78rem] font-bold text-amber">{opening.doors}</span>
+                        <span className="text-[0.68rem] text-gray-mid">Confirmed {opening.confirmedAt} · {opening.source}</span>
                       </li>
                     )
                   })}
