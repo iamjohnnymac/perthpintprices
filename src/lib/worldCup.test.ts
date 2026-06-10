@@ -38,7 +38,7 @@ describe('WC_FIXTURES data sanity', () => {
   it('every kickoff lands between midnight and midday AWST', () => {
     for (const f of WC_FIXTURES) {
       const label = formatKickoff(f.kickoff)
-      assert.ok(!label.endsWith('pm') || label === 'midday' || false, `${f.id} kicks off at ${label}`)
+      assert.ok(!label.endsWith('pm') || label === '12pm', `${f.id} kicks off at ${label}`)
     }
   })
 
@@ -92,9 +92,9 @@ describe('tradingStatus', () => {
 })
 
 describe('formatKickoff', () => {
-  it('uses midnight and midday for the edges', () => {
-    assert.equal(formatKickoff('2026-06-16T00:00:00+08:00'), 'midnight')
-    assert.equal(formatKickoff('2026-06-14T12:00:00+08:00'), 'midday')
+  it('uses 12am and 12pm for the edges', () => {
+    assert.equal(formatKickoff('2026-06-16T00:00:00+08:00'), '12am')
+    assert.equal(formatKickoff('2026-06-14T12:00:00+08:00'), '12pm')
   })
 
   it('formats whole and half hours without trailing zeros', () => {
