@@ -15,9 +15,11 @@ interface SubPageNavProps {
   title?: string
   subtitle?: string
   showSubmit?: boolean
+  /** Optional chip rendered after the page label, e.g. "Beta". */
+  badge?: string
 }
 
-export default function SubPageNav({ breadcrumbs, title, subtitle, showSubmit = true }: SubPageNavProps) {
+export default function SubPageNav({ breadcrumbs, title, subtitle, showSubmit = true, badge }: SubPageNavProps) {
   const pathname = usePathname()
   const navLinks = [
     { href: '/discover', label: 'Discover' },
@@ -46,6 +48,9 @@ export default function SubPageNav({ breadcrumbs, title, subtitle, showSubmit = 
             <div className="flex md:hidden items-center gap-1.5 min-w-0">
               <span className="text-gray-mid text-sm flex-shrink-0">/</span>
               <span className="font-mono text-[0.72rem] font-bold uppercase tracking-[0.05em] text-ink truncate">{pageLabel}</span>
+              {badge && (
+                <span className="font-mono text-[0.53rem] font-extrabold uppercase tracking-[0.08em] bg-amber text-white rounded-pill px-2 py-0.5 flex-shrink-0 whitespace-nowrap">{badge}</span>
+              )}
             </div>
           )}
         </div>
@@ -96,6 +101,9 @@ export default function SubPageNav({ breadcrumbs, title, subtitle, showSubmit = 
               <span className="font-mono text-[0.72rem] font-bold uppercase tracking-[0.05em] text-ink truncate">{title}</span>
             </div>
           ) : null}
+          {badge && (
+            <span className="hidden md:inline-flex font-mono text-[0.53rem] font-extrabold uppercase tracking-[0.08em] bg-amber text-white rounded-pill px-2 py-0.5 flex-shrink-0 whitespace-nowrap">{badge}</span>
+          )}
         </div>
 
         {showSubmit && (
