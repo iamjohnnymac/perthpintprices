@@ -10,6 +10,16 @@ Stack, database, routes, components, and lib files are documented in `CLAUDE.md`
 
 ## What's done recently
 
+### Visual audit fixes: SSR guide data, AA contrast, jump nav, empty states (2026-06-10)
+- **Guide/insight pages + /discover server-fetch pubs** — all 8 `FeaturePageShell` consumers and `/discover` were client-only (multi-second spinner, blank sections when the browser-to-Supabase fetch failed). Each `page.tsx` now fetches server-side (`revalidate = 300`) and passes `initialPubs` down; new `slimPubForFeature` in `pubPhoto.ts` keeps the `isDadBar` amenity booleans while still dropping the heavy Google enrichment (~850KB HTML per page, under the 2MB crawl limit).
+- **Empty states** — `FeaturePageShell` and `/discover` render a "pub list didn't load / try again" card instead of section headers over empty lists.
+- **Beer Weather page de-thinned** — visible H1 + intro via the shell's new `intro` prop (was a bare widget with an sr-only heading). Duplicate sr-only `<h1>` removed from all 8 shell pages (every one had two H1s: the crawl block's + the shell's).
+- **WCAG AA contrast** — `gray-mid` darkened `#8A8A85` → `#6E6E69` (~3.3:1 → ~4.9:1 on the cream background; body text now passes AA). CLAUDE.md design tokens updated.
+- **/happy-hour area jump nav** — pill anchors (with counts) under the standfirst jump to each region section; the listicle runs ~62k px tall.
+- **PriceHistory skeleton removed** — most pubs have <2 history points, so it flashed a grey block then collapsed (layout shift on the majority of pub pages).
+- **Homepage desktop nav links Articles** — was reachable from every page except the homepage (MobileNav already had it).
+- **Verification** — `tsc` clean, **302 unit tests** (+1 `slimPubForFeature`), lint clean bar pre-existing SunsetSippers warnings, Playwright screenshots at 1280x800 + 375x812 for home, /discover, beer-weather, /happy-hour, pub detail. Commit `af4b69c`. PR #178.
+
 ### Homepage: article rail moved below the pub list (2026-06-10)
 - The blog post rail (`ArticleRail`, "Pub notes with numbers attached") sat between the live happy hour banner and the filter bar, pushing the price list down the page. It now renders after `PubCardList` (below the "View all venues" button, above How It Works), so prices are the first thing under the hero.
 - Verified with Playwright screenshots at 1280x800 and 375x812; `tsc` clean. Commit `a98cc30`.
