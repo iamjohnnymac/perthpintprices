@@ -57,6 +57,7 @@ describe('price provenance helpers', () => {
     assert.equal(describePriceSource('menu_scan'), 'from a menu scan')
     assert.equal(describePriceSource('official_menu'), 'from an official menu')
     assert.equal(describePriceSource('venue_submission'), 'from the venue')
+    assert.equal(describePriceSource('aggregator_lead'), 'spotted online')
     assert.equal(describePriceSource(null), null)
   })
 })
