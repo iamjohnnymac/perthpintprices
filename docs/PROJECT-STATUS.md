@@ -10,6 +10,11 @@ Stack, database, routes, components, and lib files are documented in `CLAUDE.md`
 
 ## What's done recently
 
+### Pint Signal Phase 1 (2026-06-10)
+- **The feature:** one mate lights the signal (pub + time), the crew gets the link, everyone answers IN/OUT with one tap; signals burn out 3h after the meet time. No accounts, no push — the group chat is the delivery (share sheet). Plan: `docs/pint-signal-plan.md`; prototype: `docs/prototypes/pint-signal.html`.
+- **New:** `signals` + `signal_answers` schema (`scripts/pint-signal-schema.sql` — **must be run in the Supabase SQL editor before the feature works**), `signalId`/`signals` libs (+14 tests), `POST /api/signal` (5/hr per ip_hash, auto-INs the lighter), `GET/POST /api/signal/[id](/answer)` (410 after expiry, one answer per IP, 30s poll), `/signal/new` (price-aware picker, live-HH pubs first, Perth-time chips), `/signal/[id]` (the dark beacon card + draining-glass timer + crew list, noindex, force-dynamic, graceful burned-out/missing states), robots disallow `/signal/`, `SubPageNav` gains an optional Beta `badge` prop.
+- **Verification:** tsc clean, **321 tests** pass, lint clean bar pre-existing warnings, Playwright screenshots of `/signal/new` (375+1280) and the no-signal state. Built by a subagent against the plan spec, reviewed + verified by the orchestrating session.
+
 ### Cheapest chip + header breakpoint fixes (2026-06-10)
 - **Pub list "cheapest" treatment replaced** — the #1 row's amber left-bar + star + tint (flagged as looking AI-generated) is gone. The rank number is back, and a solid amber `CHEAPEST` chip sits next to the pub name. The chip now marks the genuinely cheapest priced pub in view rather than whatever row sorts first (the old star wrongly starred row one under name/distance sort).
 - **Header no longer wraps at mid widths** — at ~700-770px the homepage header crammed brand + 3 nav links + badge + button onto one row, wrapping the brand and "Happy Hours" onto two lines. Desktop nav/button cutover moved `sm:` → `md:` in HomeClient, SubPageNav, and MobileNav (hamburger now lives until 768px), brand wordmarks get `whitespace-nowrap`. Verified zero overflow and single-line header at 375/640/735/768/900/1024/1280.
