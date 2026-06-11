@@ -5,7 +5,7 @@ import { ArrowUpRight, Beer, CalendarDays, ListChecks } from 'lucide-react'
 import BreadcrumbJsonLd from '@/components/BreadcrumbJsonLd'
 import Footer from '@/components/Footer'
 import SubPageNav from '@/components/SubPageNav'
-import { getPubs } from '@/lib/supabase'
+import { getCachedPubs } from '@/lib/cachedPubs'
 import { BASE_URL, pubUrl } from '@/lib/urls'
 import type { Pub } from '@/types/pub'
 
@@ -57,7 +57,7 @@ function buildItemList(rows: Pub[]) {
 }
 
 export default async function CheapestPintsPage() {
-  const pubs = await getPubs()
+  const pubs = await getCachedPubs()
   const verified = pubs
     .filter(pub => pub.priceVerified && pub.regularPrice !== null)
     .sort((a, b) => (a.regularPrice ?? 999) - (b.regularPrice ?? 999))

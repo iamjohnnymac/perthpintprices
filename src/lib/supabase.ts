@@ -147,18 +147,53 @@ function toBoolOrNull(value: unknown): boolean | null {
   return value === true ? true : value === false ? false : null
 }
 
-export async function getPubs(): Promise<Pub[]> {
+// Exactly the columns toPub() reads. select('*') also dragged in columns nothing
+// maps (context, created_at, phone, place_id, updated_at) — dead egress on every
+// pull. google_opening_hours is split out because it alone is ~735KB across the
+// table (35% of a full pull) and only the pub detail page and the happy-hour
+// listicle render it.
+const PUB_LIST_COLUMNS = 'id, slug, name, suburb, price, image_url, vibe_tag, address, website, lat, lng, beer_type, happy_hour, description, price_source, price_verified_at, price_confidence, last_updated, sunset_spot, price_verified, has_tab, kid_friendly, cozy_pub, happy_hour_price, happy_hour_days, happy_hour_start, happy_hour_end, last_verified, serves_beer, serves_food, outdoor_seating, good_for_children, good_for_groups, good_for_watching_sports, allows_dogs, live_music, restroom, reservable, google_rating, google_rating_count, google_price_level, business_status, google_editorial_summary, google_attrs_updated_at, google_photo_url, google_photo_attribution, google_photo_attribution_uri'
+const PUB_FULL_COLUMNS = `${PUB_LIST_COLUMNS}, google_opening_hours`
+
+/**
+ * Raw row fetchers, exported for `cachedPubs.ts` to wrap in unstable_cache.
+ * Rows (not Pub objects) are what gets cached so toPub() — which computes the
+ * LIVE happy-hour status and effective price — runs fresh on every render.
+ */
+export async function fetchPubListRows(): Promise<any[]> {
   const { data, error } = await supabase
     .from('pubs')
-    .select('*')
+    .select(PUB_LIST_COLUMNS)
     .order('price', { ascending: true, nullsFirst: false })
-  
+
   if (error) {
     console.error('Error fetching pubs:', error)
     return []
   }
-  
-  return (data || []).map(toPub)
+  return data || []
+}
+
+// Happy-hour pages render opening hours/photos/write-ups, so they get the full
+// columns — but only for pubs that can possibly show a happy hour (any of the
+// happy-hour fields set), which keeps the pull (and its cache entry) small.
+export async function fetchHappyHourPubRows(): Promise<any[]> {
+  const { data, error } = await supabase
+    .from('pubs')
+    .select(PUB_FULL_COLUMNS)
+    .or('happy_hour.not.is.null,happy_hour_days.not.is.null,and(happy_hour_start.not.is.null,happy_hour_end.not.is.null)')
+    .order('price', { ascending: true, nullsFirst: false })
+
+  if (error) {
+    console.error('Error fetching happy hour pubs:', error)
+    return []
+  }
+  return data || []
+}
+
+export { toPub }
+
+export async function getPubs(): Promise<Pub[]> {
+  return (await fetchPubListRows()).map(toPub)
 }
 
 // Lightweight pub fetch for homepage — only fields needed for rendering + SSR links
@@ -236,7 +271,7 @@ export async function getPubsLite(): Promise<PubLite[]> {
 export async function getPubBySlug(slug: string): Promise<Pub | null> {
   const { data, error } = await supabase
     .from('pubs')
-    .select('*')
+    .select(PUB_FULL_COLUMNS)
     .eq('slug', slug)
     .single()
   
@@ -346,7 +381,7 @@ export async function getIndexablePubSlugPairs(): Promise<IndexablePubSlugPair[]
 async function getSameSuburbPricedPubs(suburb: string, excludeId: number, limit: number): Promise<Pub[]> {
   const { data, error } = await supabase
     .from('pubs')
-    .select('*')
+    .select(PUB_LIST_COLUMNS)
     .eq('suburb', suburb)
     .neq('id', excludeId)
     .not('price', 'is', null)
@@ -369,7 +404,7 @@ async function getRadiusCandidatePubs(pub: Pub, radiusKm: number, limit: number)
 
   const { data, error } = await supabase
     .from('pubs')
-    .select('*')
+    .select(PUB_LIST_COLUMNS)
     .neq('id', pub.id)
     .not('price', 'is', null)
     .or('price_verified.is.null,price_verified.eq.true')
@@ -398,7 +433,7 @@ export async function getNearbyPubs(pub: Pub, limit: number = 4): Promise<Pub[]>
 export async function getVerifiedPricePubs(): Promise<Pub[]> {
   const { data, error } = await supabase
     .from('pubs')
-    .select('*')
+    .select(PUB_LIST_COLUMNS)
     .not('price', 'is', null)
     .or('price_verified.is.null,price_verified.eq.true')
     .order('price', { ascending: true, nullsFirst: false })
@@ -447,7 +482,7 @@ export async function getLatestAndrewCallAtByPubId(): Promise<Record<number, str
 export async function getSimilarPricePubs(price: number, excludeSuburb: string, excludeId: number, limit: number = 6): Promise<Pub[]> {
   const { data, error } = await supabase
     .from('pubs')
-    .select('*')
+    .select(PUB_LIST_COLUMNS)
     .neq('suburb', excludeSuburb)
     .neq('id', excludeId)
     .not('price', 'is', null)
@@ -493,8 +528,9 @@ export async function getPriceHistory(pubId: number): Promise<PriceHistoryPoint[
   }))
 }
 
-// Dynamic site-wide stats for SEO metadata and components
-export async function getSiteStats(): Promise<{
+// Dynamic site-wide stats for SEO metadata and components.
+// Pass `allPubs` (e.g. from getCachedPubs) to avoid a fresh full-table pull.
+export async function getSiteStats(allPubs?: Pub[]): Promise<{
   venueCount: number
   suburbCount: number
   avgPrice: string
@@ -504,7 +540,7 @@ export async function getSiteStats(): Promise<{
   // OG metadata match the Pint Index and every other surface. venue/suburb
   // counts are coverage (all tracked pubs / all suburbs); avg + cheapest are
   // the verified price stats. The weekly snapshot is used only for trend lines.
-  const pubs = await getPubs()
+  const pubs = allPubs ?? await getPubs()
   const stats = getPintPriceStats(pubs)
   return {
     venueCount: stats.trackedCount,
@@ -534,8 +570,8 @@ export interface SuburbInfo {
 // the internal getAllSuburbs() usage below keep working unchanged.
 export { toSuburbSlug }
 
-export async function getAllSuburbs(): Promise<SuburbInfo[]> {
-  const pubs = await getPubs()
+export async function getAllSuburbs(allPubs?: Pub[]): Promise<SuburbInfo[]> {
+  const pubs = allPubs ?? await getPubs()
   const grouped: Record<string, typeof pubs> = {}
   
   for (const pub of pubs) {
@@ -593,13 +629,13 @@ export async function getSuburbAveragePrice(suburbName: string): Promise<number 
   return prices.reduce((sum, price) => sum + price, 0) / prices.length
 }
 
-export async function getSuburbBySlug(slug: string): Promise<SuburbInfo | null> {
-  const suburbs = await getAllSuburbs()
+export async function getSuburbBySlug(slug: string, allPubs?: Pub[]): Promise<SuburbInfo | null> {
+  const suburbs = await getAllSuburbs(allPubs)
   return suburbs.find(s => s.slug === slug) || null
 }
 
-export async function getSuburbPubs(suburbName: string): Promise<Pub[]> {
-  const allPubs = await getPubs()
+export async function getSuburbPubs(suburbName: string, pubs?: Pub[]): Promise<Pub[]> {
+  const allPubs = pubs ?? await getPubs()
   return allPubs
     .filter(p => p.suburb === suburbName)
     .sort((a, b) => {
@@ -610,9 +646,9 @@ export async function getSuburbPubs(suburbName: string): Promise<Pub[]> {
     })
 }
 
-export async function getNearbySuburbs(suburbName: string, limit: number = 5): Promise<SuburbInfo[]> {
+export async function getNearbySuburbs(suburbName: string, limit: number = 5, pubs?: Pub[]): Promise<SuburbInfo[]> {
   // Get pubs in the target suburb to find their average lat/lng
-  const allPubs = await getPubs()
+  const allPubs = pubs ?? await getPubs()
   const suburbPubs = allPubs.filter(p => p.suburb === suburbName)
   if (suburbPubs.length === 0) return []
 
@@ -638,6 +674,6 @@ export async function getNearbySuburbs(suburbName: string, limit: number = 5): P
   suburbDistances.sort((a, b) => a.distance - b.distance)
   const nearbyNames = suburbDistances.slice(0, limit).map(s => s.name)
 
-  const allSuburbs = await getAllSuburbs()
+  const allSuburbs = await getAllSuburbs(allPubs)
   return allSuburbs.filter(s => nearbyNames.includes(s.name))
 }

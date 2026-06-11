@@ -5,7 +5,7 @@ import BreadcrumbJsonLd from '@/components/BreadcrumbJsonLd'
 import Footer from '@/components/Footer'
 import SubPageNav from '@/components/SubPageNav'
 import { getMapTileUrl } from '@/lib/mapTile'
-import { getPubs } from '@/lib/supabase'
+import { getCachedPubs } from '@/lib/cachedPubs'
 import { rankStudentPints, rankStudentPintsForCampus, STUDENT_CAMPUSES, type StudentPintPub } from '@/lib/studentPints'
 import { BASE_URL, pubUrl } from '@/lib/urls'
 
@@ -62,7 +62,7 @@ function buildItemList(rows: StudentPintPub[]) {
 }
 
 export default async function StudentPintsPerthPage() {
-  const pubs = await getPubs()
+  const pubs = await getCachedPubs()
   const campusRows = STUDENT_CAMPUSES.map(campus => ({
     campus,
     rows: rankStudentPintsForCampus(pubs, campus),

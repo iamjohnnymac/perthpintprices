@@ -8,7 +8,7 @@ import TeamStripes from '@/components/TeamStripes'
 import WorldCupCountdown from '@/components/WorldCupCountdown'
 import WorldCupFixtures from '@/components/WorldCupFixtures'
 import { formatAudPrice } from '@/lib/pintPriceStats'
-import { getPubs } from '@/lib/supabase'
+import { getCachedPubs } from '@/lib/cachedPubs'
 import { BASE_URL, pubUrl } from '@/lib/urls'
 import {
   WC_FIXTURES,
@@ -86,7 +86,7 @@ function formatDate(value: string | null | undefined): string {
 }
 
 export default async function WorldCupPage() {
-  const pubs = await getPubs()
+  const pubs = await getCachedPubs()
   const bySlug = new Map(pubs.map(pub => [pub.slug, pub]))
   const formGuide = FORM_GUIDE_SLUGS
     .map(slug => bySlug.get(slug))

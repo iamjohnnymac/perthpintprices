@@ -9,7 +9,7 @@ import TrackedLink from '@/components/TrackedLink'
 import { buildArticleJsonLd } from '@/lib/articleJsonLd'
 import { absoluteArticleUrl, articleUrl, articles, formatArticleDate, getArticle, type ArticleInlineImage } from '@/lib/articles'
 import { formatHappyHourDays } from '@/lib/happyHourLive'
-import { getPubs } from '@/lib/supabase'
+import { getCachedPubs } from '@/lib/cachedPubs'
 import { pubUrl } from '@/lib/urls'
 import type { Pub } from '@/types/pub'
 
@@ -294,7 +294,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
   const article = getArticle(params.slug)
   if (!article) notFound()
 
-  const pubs = await getPubs()
+  const pubs = await getCachedPubs()
   const canonical = absoluteArticleUrl(article.slug)
   const articleJsonLd = buildArticleJsonLd({
     url: canonical,

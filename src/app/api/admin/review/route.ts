@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { revalidateTag } from 'next/cache'
 import { serviceClient } from '@/lib/supabaseGateway'
 import { timingSafeEqual } from 'crypto'
 import { reviewPriceReport } from './priceReportReview'
+import { PUBS_CACHE_TAG } from '@/lib/cachedPubs'
 
 export const dynamic = 'force-dynamic'
 
@@ -40,6 +42,11 @@ export async function POST(request: NextRequest) {
   try {
     if (type === 'price_report') {
       const result = await reviewPriceReport(supabase, { id, action, target_slug })
+      if (result.status === 200 && result.body.action === 'approved') {
+        // Approved prices update the pubs table — expire the shared hourly
+        // cache so list pages pick the change up on their next render.
+        revalidateTag(PUBS_CACHE_TAG)
+      }
       return NextResponse.json(result.body, { status: result.status })
 
     } else if (type === 'pub_submission') {
@@ -94,6 +101,7 @@ export async function POST(request: NextRequest) {
           .update({ status: 'approved', reviewed_at: now })
           .eq('id', id)
 
+        revalidateTag(PUBS_CACHE_TAG)
         return NextResponse.json({ success: true, action: 'approved', slug })
 
       } else if (action === 'reject') {

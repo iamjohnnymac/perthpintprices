@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { getPintPriceStats } from '@/lib/pintPriceStats'
-import { getPubs, supabase } from '@/lib/supabase'
+import { supabase } from '@/lib/supabase'
+import { getCachedPubs } from '@/lib/cachedPubs'
 
 export const revalidate = 3600
 
@@ -11,7 +12,7 @@ export const revalidate = 3600
  * weekly-snapshot series for the trend line + % change.
  */
 export async function GET() {
-  const pubs = await getPubs()
+  const pubs = await getCachedPubs()
   const stats = getPintPriceStats(pubs)
 
   const { data } = await supabase

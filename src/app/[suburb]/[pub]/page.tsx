@@ -1,7 +1,8 @@
 import { Metadata } from 'next'
 import { unstable_cache } from 'next/cache'
 import { notFound, permanentRedirect } from 'next/navigation'
-import { getPubBySlug, getIndexablePubSlugPairs, getLatestAndrewCallAtByPubId, getNearestPubFromList, getNearbyPubs, getSiteStats, getSuburbAveragePrice, getVerifiedPricePubs } from '@/lib/supabase'
+import { getPubBySlug, getIndexablePubSlugPairs, getLatestAndrewCallAtByPubId, getNearestPubFromList, getNearbyPubs, getSuburbAveragePrice, getVerifiedPricePubs } from '@/lib/supabase'
+import { getCachedSiteStats } from '@/lib/cachedPubs'
 import { getPubIndexability } from '@/lib/pubIndexability'
 import { getPriceRecency } from '@/lib/freshness'
 import { buildPubJsonLd } from '@/lib/pubJsonLd'
@@ -170,7 +171,7 @@ export default async function PubPage({ params }: PageProps) {
   const [nearbyPubs, [nearbyVerifiedPriceCount, latestAndrewCallAt, nearestVerifiedPub], stats, suburbAvgPrice] = await Promise.all([
     getNearbyPubs(pub, 4),
     tierCDetails,
-    getSiteStats(),
+    getCachedSiteStats(),
     getSuburbAveragePrice(pub.suburb),
   ])
 

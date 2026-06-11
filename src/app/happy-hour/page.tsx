@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import BreadcrumbJsonLd from '@/components/BreadcrumbJsonLd'
 import HappyHourClient from './HappyHourClient'
-import { getPubs } from '@/lib/supabase'
+import { getCachedHappyHourPubs } from '@/lib/cachedPubs'
 import { pubUrl } from '@/lib/urls'
 
 export const revalidate = 60 // Revalidate every 60 seconds for fresh happy hour data
@@ -26,7 +26,7 @@ export const metadata: Metadata = {
 
 export default async function HappyHourPage() {
   // Fetch pubs server-side so content appears in initial HTML
-  const allPubs = await getPubs()
+  const allPubs = await getCachedHappyHourPubs()
   const happyHourPubs = allPubs.filter(p => p.happyHour) // All pubs WITH happy hour info
   const renderedAtIso = new Date().toISOString()
 

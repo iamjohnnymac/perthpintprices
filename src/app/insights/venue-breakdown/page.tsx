@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import BreadcrumbJsonLd from '@/components/BreadcrumbJsonLd'
-import { getPubs } from '@/lib/supabase'
+import { getCachedPubs } from '@/lib/cachedPubs'
 import { slimPubForFeature } from '@/lib/pubPhoto'
 import VenueBreakdownPage from './VenueBreakdownPage'
 
@@ -26,7 +26,7 @@ export default async function Page() {
   // Server-fetch so the page content ships in the initial HTML instead of
   // spinning while the browser round-trips to Supabase. Slimmed to keep the
   // serialised payload under crawl limits.
-  const initialPubs = (await getPubs()).map(slimPubForFeature)
+  const initialPubs = (await getCachedPubs()).map(slimPubForFeature)
 
   return (
     <>
