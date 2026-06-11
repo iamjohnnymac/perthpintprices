@@ -4,7 +4,7 @@ import BreadcrumbJsonLd from '@/components/BreadcrumbJsonLd'
 import Footer from '@/components/Footer'
 import SubPageNav from '@/components/SubPageNav'
 import { getMapTileUrl } from '@/lib/mapTile'
-import { getPubs } from '@/lib/supabase'
+import { getCachedPubs } from '@/lib/cachedPubs'
 import { rankPubsForTransportHub, TRANSPORT_HUBS, type TransportHub, type TransportHubPub } from '@/lib/transportHubs'
 import { BASE_URL, pubUrl } from '@/lib/urls'
 
@@ -52,7 +52,7 @@ function buildItemList(rows: TransportHubPub[], hub: TransportHub) {
 }
 
 export default async function TransportHubPage({ hub }: TransportHubPageProps) {
-  const pubs = await getPubs()
+  const pubs = await getCachedPubs()
   const nearbyPubs = rankPubsForTransportHub(pubs, hub)
   const pricedRows = nearbyPubs.filter(pub => pub.priceVerified && pub.regularPrice !== null)
   const cheapest = pricedRows

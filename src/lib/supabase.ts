@@ -101,7 +101,6 @@ function toPub(row: any): Pub {
     beerType: titleCase(row.beer_type || ''),
     happyHour: happyHourText,
     description: row.description || null,
-    source: row.source || undefined,
     priceSource: row.price_source || null,
     priceVerifiedAt: row.price_verified_at || null,
     priceConfidence: normalizePriceConfidence(row.price_confidence),

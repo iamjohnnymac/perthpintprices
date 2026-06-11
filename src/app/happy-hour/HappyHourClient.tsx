@@ -241,7 +241,7 @@ export default function HappyHourClient({ initialPubs, renderedAtIso }: HappyHou
           </p>
 
           <p className="text-gray-mid text-[0.7rem] mt-2">
-            Live data · auto-refreshes every 60s
+            Live data · status updates every 60s
           </p>
 
           {regionGroups.length > 1 && (
