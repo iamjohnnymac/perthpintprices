@@ -3,6 +3,9 @@ import { anonClient } from '@/lib/supabaseGateway'
 import { isExpired, type Signal, type SignalAnswer } from '@/lib/signals'
 
 export const dynamic = 'force-dynamic'
+// Without this, Next's data cache memoises the supabase REST fetches and the
+// 30s poll serves stale answers (answers appeared, then vanished on poll).
+export const fetchCache = 'force-no-store'
 
 /**
  * GET /api/signal/[id] — the answer page polls this every 30s for fresh

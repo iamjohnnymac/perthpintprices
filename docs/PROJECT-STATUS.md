@@ -10,6 +10,10 @@ Stack, database, routes, components, and lib files are documented in `CLAUDE.md`
 
 ## What's done recently
 
+### Pint Signal: stale-answer fix + weekly sweep (2026-06-11)
+- **Answers vanished after posting** — `force-dynamic` doesn't stop Next's data cache memoising supabase-js fetches, so the 30s poll served a stale answers list and wiped the optimistic row (the answer was always in the DB). `fetchCache = 'force-no-store'` on `/signal/[id]` page + GET route, `cache: 'no-store'` on the client poll.
+- **Signals now delete themselves** — the daily price-check cron sweeps signals whose `expires_at` is >7 days old (dead links show the burned-out state for a week, then the rows go). noindex + robots `Disallow: /signal/` confirmed already live.
+
 ### Pint Signal Phase 1 (2026-06-10)
 - **The feature:** one mate lights the signal (pub + time), the crew gets the link, everyone answers IN/OUT with one tap; signals burn out 3h after the meet time. No accounts, no push — the group chat is the delivery (share sheet). Plan: `docs/pint-signal-plan.md`; prototype: `docs/prototypes/pint-signal.html`.
 - **New:** `signals` + `signal_answers` schema (`scripts/pint-signal-schema.sql` — **must be run in the Supabase SQL editor before the feature works**), `signalId`/`signals` libs (+14 tests), `POST /api/signal` (5/hr per ip_hash, auto-INs the lighter), `GET/POST /api/signal/[id](/answer)` (410 after expiry, one answer per IP, 30s poll), `/signal/new` (price-aware picker, live-HH pubs first, Perth-time chips), `/signal/[id]` (the dark beacon card + draining-glass timer + crew list, noindex, force-dynamic, graceful burned-out/missing states), robots disallow `/signal/`, `SubPageNav` gains an optional Beta `badge` prop.

@@ -198,7 +198,7 @@ export default function SignalClient({ view, initialAnswers, state }: SignalClie
     if (state !== 'live' || !signalId) return
     const interval = setInterval(async () => {
       try {
-        const res = await fetch(`/api/signal/${signalId}`)
+        const res = await fetch(`/api/signal/${signalId}`, { cache: 'no-store' })
         if (res.status === 404 || res.status === 410) {
           setBurnedOut(true)
           return
@@ -247,7 +247,7 @@ export default function SignalClient({ view, initialAnswers, state }: SignalClie
   const refreshAnswers = useCallback(async () => {
     if (!signalId) return
     try {
-      const res = await fetch(`/api/signal/${signalId}`)
+      const res = await fetch(`/api/signal/${signalId}`, { cache: 'no-store' })
       if (!res.ok) return
       const data = await res.json()
       if (Array.isArray(data.answers)) setAnswers(data.answers)

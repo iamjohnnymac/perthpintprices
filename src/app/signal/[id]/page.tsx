@@ -12,7 +12,11 @@ import {
 import SignalClient, { type SignalView } from './SignalClient'
 
 // Signals are live, semi-private objects — never cache, never index.
+// force-dynamic alone is not enough: supabase-js rides Next's patched fetch,
+// and the data cache will happily serve a stale answers list on a dynamic
+// route. force-no-store opts every fetch in this segment out of the cache.
 export const dynamic = 'force-dynamic'
+export const fetchCache = 'force-no-store'
 
 interface SignalPub {
   name: string
