@@ -10,6 +10,14 @@ Stack, database, routes, components, and lib files are documented in `CLAUDE.md`
 
 ## What's done recently
 
+### Supabase egress fix: shared cached pubs pull + kill browser poll (2026-06-11)
+- **Why:** free-tier egress warnings. Measured through a local byte-counting proxy: one production build = **167.2MB / 1,108 requests** (450 full-table-ish `select=*` pulls — suburb pages pulled the full table up to 8x per render via getSuburbBySlug + getSuburbPubs + getNearbySuburbs + getSiteStats); 7 list pages cost 4.4MB per 5-min revalidation window; and **HappyHourClient re-fetched the entire table from every visitor's browser every 60s (~122MB/hour per open tab)**.
+- **Fixes:** new `src/lib/cachedPubs.ts` — unstable_cache-shared raw-row pulls (1h TTL, tag `pubs`), with toPub() mapped fresh per render so live happy-hour status never staleness; ~20 server routes + suburb/pub-page aggregates switched to it. `select('*')` replaced with explicit column lists; `google_opening_hours` (~735KB, 35% of a pull) excluded from the shared list pull (keeps the cache entry under Vercel's 2MB data-cache limit) — happy-hour pages get a second small full-column pull filtered to happy-hour pubs; pub detail keeps full columns via getPubBySlug. HappyHourClient poll deleted (live state was already clock-derived). `/api/admin/review` calls `revalidateTag('pubs')` on approvals so price changes don't wait out the TTL.
+- **Measured after:** build **1.7MB / 240 requests (−99%)**; warm cache: 6 different pages = **1** Supabase request; per-pull 377KB → 249KB compressed. Steady state ≈ 6MB/day of hourly refreshes vs multiple GB/day.
+- **Verification:** independent agent run — tsc clean, 309 tests pass, diff review (no correctness bugs), 12 routes content-checked against the built app, **exact venue parity with production** (/happy-hour 168=168 with identical link sets, /fremantle 63=63), screenshots eyeballed. Its three minor flags (uncached TransportHubPage, dead `Pub.source` field, stale "auto-refreshes" copy) fixed in `47a69d3`.
+- **Gotcha for future measurement work:** an EADDRINUSE'd `next start` left a stale server on the port and silently invalidated the first after-measurement — caught because the proxy log showed `select=*` queries that no longer existed in the code. Check the server actually started.
+- Commits `2f77fef` + `47a69d3`.
+
 ### Pint receipt readability pass (2026-06-10)
 - Prompted by a user screenshot of The Vale Bar & Brasserie on mobile. Five fixes to `PintReceipt.tsx`:
 - **Happy hour row** no longer reads "TBC · 7 days 4pm - 5pm" — the schedule is the value when the price is unknown, "7 days" renders as "daily", and a known price shows red with the schedule on a right-aligned sub-line (no more crushed dotted leaders).
