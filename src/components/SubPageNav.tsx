@@ -15,9 +15,11 @@ interface SubPageNavProps {
   title?: string
   subtitle?: string
   showSubmit?: boolean
+  /** Optional chip rendered after the page label, e.g. "Beta". */
+  badge?: string
 }
 
-export default function SubPageNav({ breadcrumbs, title, subtitle, showSubmit = true }: SubPageNavProps) {
+export default function SubPageNav({ breadcrumbs, title, subtitle, showSubmit = true, badge }: SubPageNavProps) {
   const pathname = usePathname()
   const navLinks = [
     { href: '/discover', label: 'Discover' },
@@ -38,21 +40,24 @@ export default function SubPageNav({ breadcrumbs, title, subtitle, showSubmit = 
             <div className="w-7 h-7 bg-amber border-2 border-ink rounded-md flex items-center justify-center text-sm shadow-[2px_2px_0_#171717]">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 2v20M2 12h20M4.93 4.93l14.14 14.14M19.07 4.93L4.93 19.07" stroke="white" strokeWidth="2.5" strokeLinecap="round"/></svg>
             </div>
-            <span className="font-mono text-[0.95rem] sm:text-[1.05rem] font-extrabold text-ink tracking-[-0.04em] leading-none">Perth Pint Prices</span>
+            <span className="font-mono text-[0.95rem] sm:text-[1.05rem] font-extrabold text-ink tracking-[-0.04em] leading-none whitespace-nowrap">Perth Pint Prices</span>
           </Link>
 
           {/* Mobile-only breadcrumb (page name) */}
           {pageLabel && (
-            <div className="flex sm:hidden items-center gap-1.5 min-w-0">
+            <div className="flex md:hidden items-center gap-1.5 min-w-0">
               <span className="text-gray-mid text-sm flex-shrink-0">/</span>
               <span className="font-mono text-[0.72rem] font-bold uppercase tracking-[0.05em] text-ink truncate">{pageLabel}</span>
+              {badge && (
+                <span className="font-mono text-[0.53rem] font-extrabold uppercase tracking-[0.08em] bg-amber text-white rounded-pill px-2 py-0.5 flex-shrink-0 whitespace-nowrap">{badge}</span>
+              )}
             </div>
           )}
         </div>
 
         <div className="flex items-center gap-1">
           {/* Desktop nav links */}
-          <nav className="hidden sm:flex items-center gap-1">
+          <nav className="hidden md:flex items-center gap-1">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
@@ -76,7 +81,7 @@ export default function SubPageNav({ breadcrumbs, title, subtitle, showSubmit = 
 
           {/* Desktop-only breadcrumb (page name, no subtitle) */}
           {breadcrumbs ? (
-            <nav aria-label="Breadcrumb" className="hidden sm:flex items-center gap-1.5 min-w-0 overflow-hidden">
+            <nav aria-label="Breadcrumb" className="hidden md:flex items-center gap-1.5 min-w-0 overflow-hidden">
               {breadcrumbs.map((crumb, i) => (
                 <span key={i} className="flex items-center gap-1.5 min-w-0">
                   <span className="text-gray-mid text-sm flex-shrink-0">/</span>
@@ -91,11 +96,14 @@ export default function SubPageNav({ breadcrumbs, title, subtitle, showSubmit = 
               ))}
             </nav>
           ) : title ? (
-            <div className="hidden sm:flex items-center gap-1.5 min-w-0">
+            <div className="hidden md:flex items-center gap-1.5 min-w-0">
               <span className="text-gray-mid text-sm flex-shrink-0">/</span>
               <span className="font-mono text-[0.72rem] font-bold uppercase tracking-[0.05em] text-ink truncate">{title}</span>
             </div>
           ) : null}
+          {badge && (
+            <span className="hidden md:inline-flex font-mono text-[0.53rem] font-extrabold uppercase tracking-[0.08em] bg-amber text-white rounded-pill px-2 py-0.5 flex-shrink-0 whitespace-nowrap">{badge}</span>
+          )}
         </div>
 
         {showSubmit && (

@@ -18,6 +18,30 @@ Stack, database, routes, components, and lib files are documented in `CLAUDE.md`
 - **Gotcha for future measurement work:** an EADDRINUSE'd `next start` left a stale server on the port and silently invalidated the first after-measurement — caught because the proxy log showed `select=*` queries that no longer existed in the code. Check the server actually started.
 - Commits `2f77fef` + `47a69d3`.
 
+### Pint Signal: stale-answer fix + weekly sweep (2026-06-11)
+- **Answers vanished after posting** — `force-dynamic` doesn't stop Next's data cache memoising supabase-js fetches, so the 30s poll served a stale answers list and wiped the optimistic row (the answer was always in the DB). `fetchCache = 'force-no-store'` on `/signal/[id]` page + GET route, `cache: 'no-store'` on the client poll.
+- **Signals now delete themselves** — the daily price-check cron sweeps signals whose `expires_at` is >7 days old (dead links show the burned-out state for a week, then the rows go). noindex + robots `Disallow: /signal/` confirmed already live.
+
+### Pint Signal Phase 1 (2026-06-10)
+- **The feature:** one mate lights the signal (pub + time), the crew gets the link, everyone answers IN/OUT with one tap; signals burn out 3h after the meet time. No accounts, no push — the group chat is the delivery (share sheet). Plan: `docs/pint-signal-plan.md`; prototype: `docs/prototypes/pint-signal.html`.
+- **New:** `signals` + `signal_answers` schema (`scripts/pint-signal-schema.sql` — **must be run in the Supabase SQL editor before the feature works**), `signalId`/`signals` libs (+14 tests), `POST /api/signal` (5/hr per ip_hash, auto-INs the lighter), `GET/POST /api/signal/[id](/answer)` (410 after expiry, one answer per IP, 30s poll), `/signal/new` (price-aware picker, live-HH pubs first, Perth-time chips), `/signal/[id]` (the dark beacon card + draining-glass timer + crew list, noindex, force-dynamic, graceful burned-out/missing states), robots disallow `/signal/`, `SubPageNav` gains an optional Beta `badge` prop.
+- **Verification:** tsc clean, **321 tests** pass, lint clean bar pre-existing warnings, Playwright screenshots of `/signal/new` (375+1280) and the no-signal state. Built by a subagent against the plan spec, reviewed + verified by the orchestrating session.
+
+### Cheapest chip + header breakpoint fixes (2026-06-10)
+- **Pub list "cheapest" treatment replaced** — the #1 row's amber left-bar + star + tint (flagged as looking AI-generated) is gone. The rank number is back, and a solid amber `CHEAPEST` chip sits next to the pub name. The chip now marks the genuinely cheapest priced pub in view rather than whatever row sorts first (the old star wrongly starred row one under name/distance sort).
+- **Header no longer wraps at mid widths** — at ~700-770px the homepage header crammed brand + 3 nav links + badge + button onto one row, wrapping the brand and "Happy Hours" onto two lines. Desktop nav/button cutover moved `sm:` → `md:` in HomeClient, SubPageNav, and MobileNav (hamburger now lives until 768px), brand wordmarks get `whitespace-nowrap`. Verified zero overflow and single-line header at 375/640/735/768/900/1024/1280.
+
+### Homepage live banner softened (2026-06-10)
+- The live happy-hour banner was the last solid-black element on the homepage: `bg-ink` pill with amber-light text (and a bare `shadow-hard`, which the design system bans). Now white with ink text, the green pulse + LIVE eyebrow kept, amber reserved for the price, `shadow-hard-sm`. Verified with Playwright; `tsc` clean.
+
+### Pill no-wrap guard + happy-hour grid blowout fix (2026-06-10)
+- Global CSS guard in `globals.css`: anything with `rounded-pill` gets `white-space: nowrap` — a pill label breaking onto a second line reads as broken UI (spotted on the world-cup "Tell us about an early open" button, label shortened to "Report an early open").
+- While verifying at 320px, found a pre-existing 14px horizontal page overflow on /happy-hour: the best-of pick cards' `truncate` pub names couldn't clip because grid items refuse to shrink below content width. `min-w-0` on the three card links fixes it. All of /, /world-cup, /happy-hour now measure zero horizontal overflow at 320px and 375px.
+
+### Amber-on-amber chip restyle, site-wide (2026-06-10)
+- Killed every tone-on-tone amber combo (`text-amber` on `bg-amber-pale`) — flagged as looking cheap. New rules: active/live chips (happy-hour-active, Golden Hour, HH toggles) go solid `bg-amber text-white`; passive badges (admin pending/warning, promotion-zone divider) keep the pale tint but switch to ink text; the World Cup permit chip becomes amber-on-white with an amber border.
+- Touched: WorldCupFixtures, SunsetSippers, TonightsMoves, DadBar, SubmitPubForm, SuburbLeague, admin dashboard, DiscoverClient, SuburbsClient (hover state). `tsc` clean; verified on /world-cup at 375x812.
+
 ### Pint receipt readability pass (2026-06-10)
 - Prompted by a user screenshot of The Vale Bar & Brasserie on mobile. Five fixes to `PintReceipt.tsx`:
 - **Happy hour row** no longer reads "TBC · 7 days 4pm - 5pm" — the schedule is the value when the price is unknown, "7 days" renders as "daily", and a known price shows red with the schedule on a right-aligned sub-line (no more crushed dotted leaders).
@@ -35,6 +59,12 @@ Stack, database, routes, components, and lib files are documented in `CLAUDE.md`
 - **Daily reminder:** the existing daily `price-check` cron (8am Perth) now also counts pending `price_reports` (with the oldest report's age) and `pub_submissions`, and sends a queue summary — silent when empty. Piggybacked on the existing cron because Vercel Hobby caps cron jobs at two and both slots are taken.
 - **Action needed:** create a Slack incoming webhook and add `SLACK_WEBHOOK_URL` to Vercel env vars — until then the code no-ops with a console warning.
 - **Verification:** `tsc` clean, **308 unit tests** pass (+7 new in `slackNotify.test.ts`). Commit `dce54d2`.
+
+### /world-cup: softer confirmed-opens card + flag chips on fixture rows (2026-06-10)
+- The "Confirmed early opens" card was a solid `bg-ink` block mid-page — restyled to `bg-amber-pale` with ink text and the standard white pill button (user found the dark block harsh).
+- `TEAM_COLOURS` extended from Group D (4 teams) to **all 48 qualified teams** with real flag-stripe palettes; fixture rows now show a small stacked-stripe flag chip glued to each team name (no emoji), and the team-colour bands on Socceroos cards pick up the new entries automatically.
+- Fixture row layout moved from ragged flex-wrap to a grid: time column, teams with flags, chips right-aligned on desktop and indented under the match on mobile. Trading chips crispened (`border-2`, stronger tints).
+- Verified with Playwright at 375x812; `tsc` clean, 302 tests pass.
 
 ### Homepage World Cup strip: mobile polish (2026-06-10)
 - The strip's header crammed both labels side-by-side at 375px (each wrapped to two lines); now they stack on mobile, side-by-side from `sm:` up.

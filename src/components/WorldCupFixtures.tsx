@@ -5,6 +5,7 @@ import WorldCupCountdown from '@/components/WorldCupCountdown'
 import {
   WC_FIXTURES,
   TRADING_BADGES,
+  teamColours,
   tradingStatus,
   formatKickoff,
   fixtureDay,
@@ -15,6 +16,20 @@ import {
   type WcFixture,
 } from '@/lib/worldCup'
 
+// Tiny stacked-stripe flag, glued to its team name so a wrap never separates them.
+function TeamName({ team, bold }: { team: string; bold?: boolean }) {
+  return (
+    <span className={`inline-flex items-center gap-1.5 ${bold ? 'font-bold' : ''}`}>
+      <span aria-hidden="true" className="flex h-[11px] w-[17px] shrink-0 flex-col overflow-hidden rounded-[2px] border border-ink/30">
+        {teamColours(team).map((colour, i) => (
+          <span key={i} className="w-full flex-1" style={{ backgroundColor: colour }} />
+        ))}
+      </span>
+      {team}
+    </span>
+  )
+}
+
 interface WorldCupFixturesProps {
   renderedAtIso: string
 }
@@ -22,9 +37,9 @@ interface WorldCupFixturesProps {
 type Filter = 'all' | 'groupD'
 
 const STATUS_CHIP_CLASSES: Record<TradingStatus, string> = {
-  permit: 'bg-amber-pale text-amber border border-amber/30',
-  early: 'bg-white text-ink/70 border border-ink/25',
-  normal: 'bg-off-white text-gray-mid border border-ink/10',
+  permit: 'bg-white text-amber border-2 border-amber',
+  early: 'bg-white text-ink border-2 border-ink/30',
+  normal: 'bg-off-white text-gray-mid border-2 border-ink/10',
 }
 
 interface DayGroup {
@@ -118,17 +133,19 @@ export default function WorldCupFixtures({ renderedAtIso }: WorldCupFixturesProp
                 return (
                   <li
                     key={fixture.id}
-                    className={`flex flex-wrap items-center gap-x-3 gap-y-1.5 px-4 py-3 ${
+                    className={`grid grid-cols-[4.2rem_1fr] items-center gap-x-3 gap-y-2 px-4 py-3.5 sm:grid-cols-[4.2rem_1fr_auto] ${
                       fixture.socceroos ? 'bg-amber-pale/60' : ''
                     } ${dimmed ? 'opacity-45' : ''}`}
                   >
-                    <span className="font-mono text-[0.85rem] font-bold text-ink w-[4.5rem] shrink-0">
+                    <span className="font-mono text-[0.85rem] font-bold text-ink">
                       {formatKickoff(fixture.kickoff)}
                     </span>
-                    <span className={`font-body text-[0.9rem] text-ink min-w-[11rem] flex-1 ${fixture.socceroos ? 'font-bold' : ''}`}>
-                      {fixture.home} v {fixture.away}
+                    <span className="flex flex-wrap items-center gap-x-2 gap-y-1 font-body text-[0.9rem] text-ink">
+                      <TeamName team={fixture.home} bold={fixture.socceroos} />
+                      <span className="font-mono text-[0.7rem] text-gray-mid">v</span>
+                      <TeamName team={fixture.away} bold={fixture.socceroos} />
                     </span>
-                    <span className="ml-auto flex items-center gap-1.5 flex-wrap justify-end">
+                    <span className="col-start-2 flex flex-wrap items-center gap-1.5 sm:col-start-3 sm:row-start-1 sm:justify-end">
                       {phase === 'live' && (
                         <span className="font-mono text-[0.6rem] font-bold uppercase tracking-[0.06em] px-2 py-0.5 rounded-pill bg-amber text-white">
                           On now

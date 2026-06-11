@@ -522,3 +522,10 @@
 ::-webkit-scrollbar-thumb:hover {
   background: #a8a29e;
 }
+
+/* Pills never wrap — a pill whose label breaks onto a second line reads as
+   broken UI. If a label doesn't fit on one line at 320px, shorten the label
+   rather than removing this guard. */
+[class*="rounded-pill"] {
+  white-space: nowrap;
+}

@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pint Signal — The Norfolk Hotel, 6pm | Perth Pint Prices</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=DM+Serif+Display:ital@1&family=Plus+Jakarta+Sans:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #171717; --night: #100F0C; --cream: #FDF8F0; --off: #F7F7F5;
+    --amber: #D4740A; --amber-light: #F2A91A; --amber-pale: #FFF3E0;
+    --gray-mid: #6E6E69; --gray-light: #EFEFED; --gray: #D4D4D0; --green: #2D7A3D; --red: #C43D2E;
+    --mono: 'JetBrains Mono', monospace; --serif: 'DM Serif Display', serif; --body: 'Plus Jakarta Sans', sans-serif;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--cream); font-family: var(--body); color: var(--ink); }
+  .topbar { height: 8px; background: var(--amber); }
+  .container { max-width: 800px; margin: 0 auto; padding: 0 24px; }
+
+  /* type system */
+  .eyebrow { font-family: var(--mono); font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--gray-mid); }
+  .pill-btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    font-family: var(--mono); font-size: 11.5px; font-weight: 800; letter-spacing: .05em; text-transform: uppercase;
+    border: 3px solid var(--ink); border-radius: 999px; cursor: pointer; transition: all .12s;
+    box-shadow: 3px 3px 0 var(--ink); background: #fff; color: var(--ink); padding: 12px 22px; white-space: nowrap;
+  }
+  .pill-btn:hover { transform: translate(1.5px,1.5px); box-shadow: 1.5px 1.5px 0 var(--ink); }
+  .pill-btn:active { transform: translate(3px,3px); box-shadow: 0 0 0 var(--ink); }
+
+  /* ── site header ── */
+  header.site { padding: 22px 0 16px; }
+  header.site .row1 { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .brand { display: flex; align-items: center; gap: 8px; text-decoration: none; color: var(--ink); }
+  .mark { width: 28px; height: 28px; background: var(--amber); border: 2px solid var(--ink); border-radius: 7px; box-shadow: 2px 2px 0 var(--ink); display: grid; place-items: center; flex-shrink: 0; }
+  .brand b { font-family: var(--mono); font-size: 16px; font-weight: 800; letter-spacing: -0.04em; white-space: nowrap; }
+  nav.links { display: flex; gap: 4px; }
+  nav.links a { font-family: var(--mono); font-size: 11px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--gray-mid); text-decoration: none; padding: 6px 10px; white-space: nowrap; }
+  nav.links a:hover { color: var(--amber); }
+  .crumb { display: flex; align-items: center; gap: 8px; margin-top: 12px; }
+  .crumb .px { font-family: var(--mono); font-size: 12px; font-weight: 800; color: var(--amber); }
+  .crumb .sep { color: var(--gray-mid); font-size: 13px; }
+  .crumb .here { font-family: var(--mono); font-size: 11px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; }
+  .beta { font-family: var(--mono); font-size: 8.5px; font-weight: 800; letter-spacing: .08em; background: var(--amber); color: #fff; border-radius: 999px; padding: 2.5px 8px; margin-left: 2px; }
+
+  /* ── the special moment: dark signal card in the cream page ── */
+  .signal-card {
+    position: relative; margin-top: 18px; border: 3px solid var(--ink); border-radius: 14px;
+    background: var(--night); color: var(--cream); overflow: hidden;
+    box-shadow: 4px 4px 0 var(--ink);
+  }
+  .signal-card .sky {
+    position: absolute; inset: 0;
+    background: radial-gradient(130% 120% at 50% 130%, #2c2216 0%, #18130d 48%, #100F0C 100%);
+  }
+  .signal-card .stars { position: absolute; inset: 0; opacity: .5; background-image:
+      radial-gradient(1px 1px at 12% 30%, #fff8 0, transparent 100%),
+      radial-gradient(1px 1px at 80% 18%, #fff6 0, transparent 100%),
+      radial-gradient(1.5px 1.5px at 60% 12%, #fff7 0, transparent 100%),
+      radial-gradient(1px 1px at 30% 14%, #fff5 0, transparent 100%),
+      radial-gradient(1px 1px at 92% 44%, #fff5 0, transparent 100%); }
+  .signal-card .beam {
+    position: absolute; bottom: -20%; left: 50%; width: 300px; height: 150%;
+    transform-origin: 50% 100%; transform: translateX(-50%) rotate(8deg);
+    background: linear-gradient(to top, rgba(242,169,26,.32), rgba(242,169,26,.1) 55%, transparent);
+    clip-path: polygon(43% 100%, 57% 100%, 100% 0, 0 0);
+    animation: sway 8s ease-in-out infinite alternate, flicker 4.2s steps(12) infinite;
+  }
+  @keyframes sway { from { transform: translateX(-50%) rotate(7deg); } to { transform: translateX(-50%) rotate(-7deg); } }
+  @keyframes flicker { 0%,100% { opacity: 1; } 48% { opacity: .84; } 52% { opacity: .96; } 71% { opacity: .8; } 74% { opacity: 1; } }
+  .signal-inner { position: relative; padding: 34px 24px 30px; text-align: center; }
+  .glyph { width: 92px; height: 92px; margin: 0 auto; display: grid; place-items: center; border-radius: 50%;
+    background: radial-gradient(circle, rgba(242,169,26,.28) 0%, transparent 70%); animation: glow 4.2s ease-in-out infinite; }
+  @keyframes glow { 0%,100% { filter: brightness(1); } 50% { filter: brightness(1.3); } }
+  .glyph svg { filter: drop-shadow(0 0 18px rgba(242,169,26,.8)); }
+  .sig-eyebrow { font-family: var(--mono); font-size: 10px; font-weight: 700; letter-spacing: .26em; text-transform: uppercase; color: var(--amber-light); margin-top: 6px; }
+  .sig-h { font-family: var(--mono); font-weight: 800; font-size: clamp(28px, 6vw, 38px); letter-spacing: -0.05em; line-height: 1.05; margin-top: 8px; }
+  .sig-h em { font-family: var(--serif); font-style: italic; font-weight: 400; color: var(--amber-light); letter-spacing: 0; }
+  .sig-sub { font-size: 13px; color: rgba(253,248,240,.62); margin-top: 8px; }
+  .sig-sub b { color: var(--cream); }
+  .countdown { display: flex; gap: 8px; justify-content: center; margin-top: 18px; }
+  .cd { background: rgba(253,248,240,.05); border: 2px solid rgba(242,169,26,.4); border-radius: 10px; padding: 8px 0 6px; width: 74px; }
+  .cd b { display: block; font-family: var(--mono); font-weight: 800; font-size: 22px; color: var(--amber-light); }
+  .cd span { font-family: var(--mono); font-size: 8px; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; color: rgba(253,248,240,.45); }
+  /* burn bar lives on the card's bottom edge */
+  .burn { position: relative; border-top: 3px solid var(--ink); background: var(--amber-pale); padding: 10px 18px 12px; color: var(--ink); }
+  .burn .lbl { display: flex; justify-content: space-between; font-family: var(--mono); font-size: 9px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--gray-mid); margin-bottom: 5px; }
+  .burn .lbl b { color: var(--amber); font-size: 10px; }
+  .burn .track { height: 12px; border: 2.5px solid var(--ink); border-radius: 999px; background: #fff; overflow: hidden; }
+  .burn .fill { height: 100%; width: 97%; background: linear-gradient(90deg, var(--amber), var(--amber-light)); transition: width 1s linear; }
+
+  /* ── the call: pub row, site list style ── */
+  section.block { margin-top: 40px; }
+  .list-head { display: flex; justify-content: space-between; align-items: baseline; padding-bottom: 9px; border-bottom: 3px solid var(--ink); }
+  .pub-row { display: flex; align-items: baseline; gap: 12px; padding: 15px 2px; border-bottom: 1px solid var(--gray-light); }
+  .pub-row .nm { font-weight: 700; font-size: 17px; }
+  .chip { font-family: var(--mono); font-size: 8px; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; border-radius: 999px; padding: 2.5px 8px; margin-left: 7px; vertical-align: 2px; white-space: nowrap; }
+  .chip.hh { background: var(--amber); color: #fff; }
+  .pub-row .meta { font-size: 12px; color: var(--gray-mid); margin-top: 2px; }
+  .pub-row .right { margin-left: auto; text-align: right; flex-shrink: 0; }
+  .pub-row .price { font-family: var(--mono); font-weight: 800; font-size: 19px; }
+  .pub-row .checked { font-size: 10.5px; color: var(--gray-mid); margin-top: 1px; }
+  .hh-strip { display: flex; align-items: center; gap: 8px; background: #fff; border: 3px solid var(--ink); border-radius: 999px; box-shadow: 3px 3px 0 var(--ink); padding: 9px 16px; margin-top: 14px; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); box-shadow: 0 0 8px rgba(45,122,61,.5); animation: pulsedot 1.6s ease-in-out infinite; flex-shrink: 0; }
+  @keyframes pulsedot { 50% { opacity: .4; } }
+  .hh-strip .t { font-size: 12.5px; }
+  .hh-strip .t b { font-weight: 700; }
+  .hh-strip .p { margin-left: auto; font-family: var(--mono); font-weight: 800; font-size: 15px; color: var(--amber); }
+
+  /* answer buttons */
+  .answer { display: flex; gap: 10px; margin-top: 22px; flex-wrap: wrap; }
+  .imin { flex: 2 1 200px; background: var(--green); color: #fff; border: 3px solid var(--ink); border-radius: 999px;
+    font-family: var(--mono); font-weight: 800; font-size: 14px; letter-spacing: .1em; text-transform: uppercase;
+    padding: 16px 0; cursor: pointer; box-shadow: 3px 3px 0 var(--ink); transition: all .12s; white-space: nowrap; }
+  .imin:hover { transform: translate(1.5px,1.5px); box-shadow: 1.5px 1.5px 0 var(--ink); }
+  .imin:active { transform: translate(3px,3px); box-shadow: 0 0 0 var(--ink); }
+  .imin.done { background: var(--ink); }
+  .cant { flex: 1 1 130px; }
+  .second { display: flex; gap: 18px; justify-content: center; margin-top: 14px; }
+  .second a { font-family: var(--mono); font-size: 10.5px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--gray-mid); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+  .second a:hover { color: var(--amber); }
+
+  /* who's answered */
+  .r { display: flex; align-items: center; gap: 11px; padding: 11px 2px; border-bottom: 1px solid var(--gray-light); opacity: 0; transform: translateY(7px); animation: landed .35s ease-out forwards; }
+  @keyframes landed { to { opacity: 1; transform: none; } }
+  .av { width: 30px; height: 30px; border-radius: 50%; border: 2.5px solid var(--ink); display: grid; place-items: center; font-family: var(--mono); font-size: 10px; font-weight: 800; color: #fff; flex-shrink: 0; }
+  .r .who { font-family: var(--mono); font-weight: 800; font-size: 13.5px; }
+  .r .note { font-size: 11.5px; color: var(--gray-mid); }
+  .r .stat { margin-left: auto; font-family: var(--mono); font-size: 9px; font-weight: 800; letter-spacing: .06em; border-radius: 999px; padding: 3px 10px; white-space: nowrap; }
+  .in { background: var(--green); color: #fff; }
+  .out { background: var(--off); color: var(--gray-mid); border: 1.5px solid var(--gray-light); }
+  .table-note { font-family: var(--mono); font-size: 11px; font-weight: 800; color: var(--green); text-align: center; padding: 12px 0 2px; display: none; }
+
+  /* alt suggestion */
+  .alt { display: flex; align-items: center; gap: 10px; background: var(--off); border: 1.5px solid var(--gray-light); border-radius: 12px; padding: 11px 14px; margin-top: 22px; }
+  .alt .t { font-size: 12px; color: var(--gray-mid); }
+  .alt .t b { color: var(--ink); font-weight: 700; }
+  .alt a { margin-left: auto; font-family: var(--mono); font-size: 10px; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; color: var(--amber); text-decoration: none; white-space: nowrap; }
+
+  /* footer */
+  footer.site { margin-top: 44px; background: var(--ink); color: var(--cream); padding: 26px 0 30px; }
+  footer.site .container { display: flex; flex-direction: column; gap: 10px; }
+  footer.site .brand b { color: var(--cream); }
+  footer.site p { font-size: 12px; color: rgba(253,248,240,.55); max-width: 420px; }
+  footer.site .fine { font-family: var(--mono); font-size: 9.5px; letter-spacing: .1em; text-transform: uppercase; color: rgba(253,248,240,.35); margin-top: 8px; }
+
+  /* toast */
+  .toast { position: fixed; left: 50%; bottom: 26px; transform: translateX(-50%) translateY(80px); background: var(--ink); color: #fff; font-family: var(--mono); font-size: 11px; font-weight: 700; border-radius: 999px; padding: 11px 20px; transition: transform .3s cubic-bezier(.2,.9,.3,1.2); box-shadow: 0 8px 30px rgba(0,0,0,.35); z-index: 50; }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  @media (max-width: 560px) {
+    nav.links a:not(:last-child) { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="topbar"></div>
+
+<header class="site">
+  <div class="container">
+    <div class="row1">
+      <a class="brand" href="#">
+        <span class="mark"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 2v20M2 12h20M4.93 4.93l14.14 14.14M19.07 4.93L4.93 19.07" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/></svg></span>
+        <b>Perth Pint Prices</b>
+      </a>
+      <nav class="links">
+        <a href="#">Discover</a><a href="#">Happy Hours</a><a href="#">Articles</a>
+      </nav>
+    </div>
+    <div class="crumb">
+      <span class="px">$9.10 ▲</span>
+      <span class="sep">/</span>
+      <span class="here">Pint Signal</span>
+      <span class="beta">Beta</span>
+    </div>
+  </div>
+</header>
+
+<main class="container">
+
+  <!-- ═══ THE SPECIAL MOMENT — dark signal card in the cream page ═══ -->
+  <div class="signal-card">
+    <div class="sky"></div><div class="stars"></div><div class="beam"></div>
+    <div class="signal-inner">
+      <div class="glyph">
+        <svg width="46" height="46" viewBox="0 0 24 24" fill="none">
+          <path d="M8 3h8l-1 9.5a3 3 0 0 1-3 2.5 3 3 0 0 1-3-2.5L8 3Z" stroke="#F2A91A" stroke-width="1.6" stroke-linejoin="round"/>
+          <path d="M16 5h2.2a1.8 1.8 0 0 1 0 3.6H15.6" stroke="#F2A91A" stroke-width="1.6" stroke-linecap="round"/>
+          <path d="M12 15v4M9.5 19h5" stroke="#F2A91A" stroke-width="1.6" stroke-linecap="round"/>
+          <path d="M9 6.5c.8.7 2.2.7 3 0 .8-.7 2.2-.7 3 0" stroke="#F2A91A" stroke-width="1.2" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="sig-eyebrow">The signal is up · Fremantle crew</div>
+      <h1 class="sig-h">Norfolk. <em>6pm.</em></h1>
+      <p class="sig-sub">Lit by <b>Johnny</b> · $8.00 pints, <b>$6.50 till 6</b></p>
+    </div>
+    <div class="burn">
+      <div class="lbl"><span>The glass is draining</span><b id="burnLeft">2h 55m left</b></div>
+      <div class="track"><div class="fill" id="burnFill"></div></div>
+    </div>
+  </div>
+
+  <div class="answer">
+    <button class="imin" id="in">I'm in</button>
+    <button class="pill-btn cant" id="cant">Can't tonight</button>
+  </div>
+  <div class="second">
+    <a id="share">Share to the group chat</a>
+  </div>
+
+
+  <!-- ═══ WHO'S ANSWERED ═══ -->
+  <section class="block">
+    <div class="list-head">
+      <span class="eyebrow">Who's answered</span>
+      <span class="eyebrow" id="hc">2 of 6</span>
+    </div>
+    <div id="list">
+      <div class="r" style="animation-delay:.1s">
+        <div class="av" style="background:#D4740A">JM</div>
+        <span class="who">Johnny</span><span class="note">lit the signal</span>
+        <span class="stat in">IN</span>
+      </div>
+      <div class="r" style="animation-delay:.25s">
+        <div class="av" style="background:#2D7A3D">MC</div>
+        <span class="who">Macca</span><span class="note">first round's mine</span>
+        <span class="stat in">IN</span>
+      </div>
+    </div>
+    <div class="table-note" id="tableNote">That's a table. See you down there.</div>
+
+  </section>
+</main>
+
+<footer class="site">
+  <div class="container">
+    <a class="brand" href="#">
+      <span class="mark"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 2v20M2 12h20M4.93 4.93l14.14 14.14M19.07 4.93L4.93 19.07" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/></svg></span>
+      <b>Perth Pint Prices</b>
+    </a>
+    <p>Real pint prices across Perth's pubs — checked, dated, and sorted cheapest first. Community-powered, est. 2026.</p>
+    <span class="fine">Pint Signal beta · signals burn out after 3 hours · drink responsibly</span>
+  </div>
+</footer>
+
+<div class="toast" id="toast">Link copied — paste it in the chat</div>
+
+<script>
+  // countdown + draining glass
+  const total = 3 * 3600
+  let left = 2 * 3600 + 55 * 60 + 48
+  setInterval(() => {
+    left = Math.max(0, left - 1)
+    document.getElementById('burnFill').style.width = (left / total * 100) + '%'
+    document.getElementById('burnLeft').textContent = `${Math.floor(left/3600)}h ${String(Math.floor(left%3600/60)).padStart(2,'0')}m left`
+  }, 1000)
+
+  let answered = 2, inCount = 2
+  const CREW = 6
+  function refresh() {
+    document.getElementById('hc').textContent = `${answered} of ${CREW}`
+    if (inCount >= 4) document.getElementById('tableNote').style.display = 'block'
+  }
+  function addRow({ initials, color, who, note, ok }) {
+    const d = document.createElement('div')
+    d.className = 'r'
+    d.innerHTML = `<div class="av" style="background:${color}">${initials}</div>
+      <span class="who">${who}</span><span class="note">${note}</span>
+      <span class="stat ${ok ? 'in' : 'out'}">${ok ? 'IN' : 'OUT'}</span>`
+    document.getElementById('list').appendChild(d)
+    answered++; if (ok) inCount++
+    refresh()
+  }
+
+  const feed = [
+    [{ initials: 'DZ', color: '#C43D2E', who: 'Dazza', note: 'bringing Tom', ok: true }, 2600],
+    [{ initials: 'SH', color: '#5B5BD6', who: 'Shano', note: 'kids tonight', ok: false }, 6400],
+    [{ initials: 'TB', color: '#946800', who: 'TB', note: 'there at 6.30', ok: true }, 9600],
+  ]
+  feed.forEach(([r, t]) => setTimeout(() => addRow(r), t))
+
+  document.getElementById('in').addEventListener('click', e => {
+    const b = e.currentTarget
+    if (b.classList.contains('done')) return
+    b.classList.add('done')
+    b.textContent = 'Locked in — see you at 6'
+    addRow({ initials: 'YOU', color: '#171717', who: 'You', note: 'locked in', ok: true })
+  })
+  document.getElementById('cant').addEventListener('click', e => {
+    if (e.currentTarget.dataset.done) return
+    e.currentTarget.dataset.done = '1'
+    addRow({ initials: 'YOU', color: '#171717', who: 'You', note: 'next time', ok: false })
+  })
+  document.getElementById('share').addEventListener('click', () => {
+    const t = document.getElementById('toast')
+    t.classList.add('show')
+    setTimeout(() => t.classList.remove('show'), 2200)
+  })
+</script>
+</body>
+</html>

@@ -46,19 +46,19 @@ function LiveHappyHourBanner({ pubs }: { pubs: Pub[] }) {
 
   return (
     <Link href="/happy-hour" className="block max-w-container mx-auto px-6 mb-5">
-      <div className="bg-ink border-3 border-ink rounded-pill px-6 py-3 flex items-center gap-3 shadow-hard">
+      <div className="bg-white border-3 border-ink rounded-pill px-6 py-3 flex items-center gap-3 shadow-hard-sm">
         <div className="flex items-center gap-1.5 flex-shrink-0">
           <span className="w-2 h-2 rounded-full bg-green shadow-[0_0_8px_rgba(45,122,61,0.5)] animate-pulse" />
-          <span className="type-eyebrow text-white">Live</span>
+          <span className="type-eyebrow">Live</span>
         </div>
-        <span className="text-white font-medium text-[0.85rem] flex-1 truncate transition-opacity duration-300" key={current.slug}>
-          <strong className="text-amber-light font-bold">{current.name}</strong> has ${current.price?.toFixed(2)} pints right now
+        <span className="text-ink font-medium text-[0.85rem] flex-1 truncate transition-opacity duration-300" key={current.slug}>
+          <strong className="font-bold">{current.name}</strong> has ${current.price?.toFixed(2)} pints right now
         </span>
-        <span className="type-price text-[1.1rem] text-amber-light flex-shrink-0">
+        <span className="type-price text-[1.1rem] text-amber flex-shrink-0">
           ${current.price?.toFixed(2)}
         </span>
         {liveHHPubs.length > 1 && (
-          <span className="font-mono text-[0.6rem] font-bold text-white/50 flex-shrink-0">
+          <span className="font-mono text-[0.6rem] font-bold text-gray-mid flex-shrink-0">
             {(activeIndex % liveHHPubs.length) + 1}/{liveHHPubs.length}
           </span>
         )}
@@ -327,9 +327,9 @@ function HomeContent({ initialPubs }: { initialPubs: Pub[] }) {
           <div className="w-7 h-7 bg-amber border-2 border-ink rounded-md flex items-center justify-center text-sm shadow-[2px_2px_0_#171717]">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 2v20M2 12h20M4.93 4.93l14.14 14.14M19.07 4.93L4.93 19.07" stroke="white" strokeWidth="2.5" strokeLinecap="round"/></svg>
           </div>
-          <span className="font-mono text-[0.95rem] sm:text-[1.05rem] font-extrabold text-ink tracking-[-0.04em] leading-none">Perth Pint Prices</span>
+          <span className="font-mono text-[0.95rem] sm:text-[1.05rem] font-extrabold text-ink tracking-[-0.04em] leading-none whitespace-nowrap">Perth Pint Prices</span>
         </Link>
-        <nav className="hidden sm:flex items-center gap-0.5">
+        <nav className="hidden md:flex items-center gap-0.5">
           {[
             { href: '/discover', label: 'Discover' },
             { href: '/happy-hour', label: 'Happy Hours' },
@@ -338,7 +338,7 @@ function HomeContent({ initialPubs }: { initialPubs: Pub[] }) {
             <Link
               key={link.href}
               href={link.href}
-              className="font-mono text-[0.7rem] font-bold uppercase tracking-[0.04em] text-gray-mid hover:text-amber transition-colors no-underline px-2.5 py-1.5"
+              className="font-mono text-[0.7rem] font-bold uppercase tracking-[0.04em] text-gray-mid hover:text-amber transition-colors no-underline px-2.5 py-1.5 whitespace-nowrap"
             >
               {link.label}
             </Link>
@@ -348,7 +348,7 @@ function HomeContent({ initialPubs }: { initialPubs: Pub[] }) {
           <PintIndexBadge />
           <button
             onClick={() => openSubmitForm('home_header')}
-            className="hidden sm:inline-flex font-mono text-[0.72rem] font-bold uppercase tracking-[0.05em] text-ink bg-white border-3 border-ink rounded-pill px-5 py-2.5 shadow-hard-sm hover:translate-x-[1.5px] hover:translate-y-[1.5px] hover:shadow-hard-hover transition-all cursor-pointer"
+            className="hidden md:inline-flex font-mono text-[0.72rem] font-bold uppercase tracking-[0.05em] text-ink bg-white border-3 border-ink rounded-pill px-5 py-2.5 shadow-hard-sm hover:translate-x-[1.5px] hover:translate-y-[1.5px] hover:shadow-hard-hover transition-all cursor-pointer"
             data-submit-trigger
           >
             Report a price

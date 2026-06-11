@@ -237,27 +237,9 @@ export default function HappyHourClient({ initialPubs, renderedAtIso }: HappyHou
           )}
 
           <p className="font-body text-[0.9rem] leading-relaxed text-gray-mid mt-3">
-            Every Perth happy hour we track — {happyHourPubs.length} pubs, each with its exact pint price and window. Most run late afternoon, 4–6pm on weekdays; {activeCount > 0 ? <>{activeCount} {activeCount === 1 ? 'is' : 'are'} live right now</> : 'none are live this minute'}{bestOf.cheapestPint && <>, with pints from <span className="font-mono font-bold text-ink">{formatPrice(bestOf.cheapestPint.happyHourPrice)}</span></>}. Grouped by area below, cheapest first in each — updated continuously.
+            Every Perth happy hour we track — {happyHourPubs.length} pubs, each with its exact pint price and window. Most run late afternoon, 4–6pm on weekdays; {activeCount > 0 ? <>{activeCount} {activeCount === 1 ? 'is' : 'are'} live right now</> : 'none are live this minute'}{bestOf.cheapestPint && <>, with pints from <span className="font-mono font-bold text-ink">{formatPrice(bestOf.cheapestPint.happyHourPrice)}</span></>}. Grouped by area below, cheapest first in each.
           </p>
 
-          <p className="text-gray-mid text-[0.7rem] mt-2">
-            Live data · status updates every 60s
-          </p>
-
-          {regionGroups.length > 1 && (
-            <nav aria-label="Jump to area" className="mt-5 flex flex-wrap gap-2">
-              {regionGroups.map(group => (
-                <a
-                  key={group.region}
-                  href={`#${regionAnchor(group.region)}`}
-                  className="inline-flex items-baseline gap-1.5 font-mono text-[0.68rem] font-bold uppercase tracking-[0.04em] text-ink bg-white border-3 border-ink rounded-pill px-3.5 py-1.5 no-underline hover:bg-amber-pale transition-colors"
-                >
-                  {group.region}
-                  <span className="text-gray-mid font-normal">{group.entries.length}</span>
-                </a>
-              ))}
-            </nav>
-          )}
         </div>
 
         {/* On right now — the live, cheapest-first list with time left on the clock */}
@@ -267,8 +249,8 @@ export default function HappyHourClient({ initialPubs, renderedAtIso }: HappyHou
               <span className="h-2.5 w-2.5 rounded-full bg-green animate-pulse shadow-[0_0_8px_rgba(45,122,61,0.5)]" />
               <h2 className="type-section leading-tight">On right now</h2>
             </div>
-            <p className="mt-1 mb-4 font-body text-[0.82rem] leading-relaxed text-gray-mid">
-              {activeCount} Perth happy {activeCount === 1 ? 'hour is' : 'hours are'} pouring this minute ({formatPerthTime(clockInstant)} AWST). Cheapest first, with time left on the clock — something no static list can tell you.
+            <p className="mt-1 mb-4 font-mono text-[0.68rem] font-bold uppercase tracking-[0.05em] text-gray-mid">
+              {formatPerthTime(clockInstant)} AWST · cheapest first
             </p>
             <div className="divide-y divide-gray-light">
               {onNow.slice(0, ON_NOW_LIMIT).map(({ pub, status }) => (
@@ -309,7 +291,7 @@ export default function HappyHourClient({ initialPubs, renderedAtIso }: HappyHou
             <h2 className="type-section leading-tight mb-3">Perth&apos;s best happy-hour pints</h2>
             <div className="grid gap-3 sm:grid-cols-3">
               {bestOf.cheapestPint && (
-                <Link href={pubUrl(bestOf.cheapestPint)} className="block rounded-card border-3 border-ink bg-white p-4 shadow-hard-sm no-underline hover:translate-x-[1.5px] hover:translate-y-[1.5px] hover:shadow-hard-hover transition-all">
+                <Link href={pubUrl(bestOf.cheapestPint)} className="block min-w-0 rounded-card border-3 border-ink bg-white p-4 shadow-hard-sm no-underline hover:translate-x-[1.5px] hover:translate-y-[1.5px] hover:shadow-hard-hover transition-all">
                   <p className="type-eyebrow text-amber">Cheapest pint</p>
                   <p className="mt-1 type-price text-[1.7rem] leading-none">{formatPrice(bestOf.cheapestPint.happyHourPrice)}</p>
                   <p className="mt-2 font-mono text-[0.82rem] font-bold text-ink truncate">{bestOf.cheapestPint.name}</p>
@@ -317,7 +299,7 @@ export default function HappyHourClient({ initialPubs, renderedAtIso }: HappyHou
                 </Link>
               )}
               {bestOf.biggestSaving && (
-                <Link href={pubUrl(bestOf.biggestSaving)} className="block rounded-card border-3 border-ink bg-white p-4 shadow-hard-sm no-underline hover:translate-x-[1.5px] hover:translate-y-[1.5px] hover:shadow-hard-hover transition-all">
+                <Link href={pubUrl(bestOf.biggestSaving)} className="block min-w-0 rounded-card border-3 border-ink bg-white p-4 shadow-hard-sm no-underline hover:translate-x-[1.5px] hover:translate-y-[1.5px] hover:shadow-hard-hover transition-all">
                   <p className="type-eyebrow text-amber">Biggest saving</p>
                   <p className="mt-1 type-price text-[1.7rem] leading-none text-green">{formatPrice((bestOf.biggestSaving.regularPrice ?? 0) - (bestOf.biggestSaving.happyHourPrice ?? 0))} off</p>
                   <p className="mt-2 font-mono text-[0.82rem] font-bold text-ink truncate">{bestOf.biggestSaving.name}</p>
@@ -325,7 +307,7 @@ export default function HappyHourClient({ initialPubs, renderedAtIso }: HappyHou
                 </Link>
               )}
               {bestOf.beerGarden && (
-                <Link href={pubUrl(bestOf.beerGarden)} className="block rounded-card border-3 border-ink bg-white p-4 shadow-hard-sm no-underline hover:translate-x-[1.5px] hover:translate-y-[1.5px] hover:shadow-hard-hover transition-all">
+                <Link href={pubUrl(bestOf.beerGarden)} className="block min-w-0 rounded-card border-3 border-ink bg-white p-4 shadow-hard-sm no-underline hover:translate-x-[1.5px] hover:translate-y-[1.5px] hover:shadow-hard-hover transition-all">
                   <p className="type-eyebrow text-amber">Best beer garden</p>
                   <p className="mt-1 type-price text-[1.7rem] leading-none">{formatPrice(bestOf.beerGarden.happyHourPrice)}</p>
                   <p className="mt-2 font-mono text-[0.82rem] font-bold text-ink truncate">{bestOf.beerGarden.name}</p>
@@ -365,6 +347,20 @@ export default function HappyHourClient({ initialPubs, renderedAtIso }: HappyHou
         {/* The listicle — happy hours grouped by area, cheapest first in each */}
         {!loading && regionGroups.length > 0 && (
           <div className="mb-4">
+            {regionGroups.length > 1 && (
+              <nav aria-label="Jump to area" className="mb-6 flex flex-wrap items-baseline gap-x-4 gap-y-1.5 border-b border-gray-light pb-4">
+                <span className="type-eyebrow">Jump to</span>
+                {regionGroups.map(group => (
+                  <a
+                    key={group.region}
+                    href={`#${regionAnchor(group.region)}`}
+                    className="font-mono text-[0.7rem] font-bold uppercase tracking-[0.04em] text-ink no-underline hover:text-amber transition-colors"
+                  >
+                    {group.region}
+                  </a>
+                ))}
+              </nav>
+            )}
             {regionGroups.map(group => (
               <section key={group.region} id={regionAnchor(group.region)} className="mb-9 scroll-mt-6">
                 <div className="flex items-baseline justify-between gap-3 border-b-3 border-ink pb-2">

@@ -30,6 +30,16 @@ export async function GET(request: NextRequest) {
 
   const supabase = serviceClient()
 
+  // Sweep burned-out signals: dead share links keep working for a week (the
+  // page shows the burned-out state), then the rows go. Best-effort — a
+  // failure here must never break the price check.
+  try {
+    const cutoff = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()
+    await supabase.from('signals').delete().lt('expires_at', cutoff)
+  } catch (err) {
+    console.error('Signal sweep failed:', err)
+  }
+
   try {
     // 1. Fetch current verified prices
     const { data: currentPubs, error: pubError } = await supabase

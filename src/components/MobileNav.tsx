@@ -31,14 +31,14 @@ export default function MobileNav({ onSubmitClick }: MobileNavProps) {
     <>
       <button
         onClick={() => setOpen(true)}
-        className="sm:hidden flex items-center justify-center w-10 h-10 -mr-2"
+        className="md:hidden flex items-center justify-center w-10 h-10 -mr-2"
         aria-label="Open menu"
       >
         <Menu className="w-5 h-5 text-ink" />
       </button>
 
       {open && (
-        <div className="fixed inset-0 z-[100] sm:hidden">
+        <div className="fixed inset-0 z-[100] md:hidden">
           {/* Backdrop */}
           <div
             className="absolute inset-0 bg-ink/30 backdrop-blur-sm animate-fadeIn"

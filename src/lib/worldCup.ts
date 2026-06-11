@@ -152,11 +152,9 @@ export function tradingStatus(kickoffIso: string): TradingStatus {
 
 // --- Formatting helpers ---------------------------------------------------
 
-/** "midnight", "midday", "3am", "8.30am" */
+/** "12am", "12pm", "3am", "8.30am" */
 export function formatKickoff(kickoffIso: string): string {
   const minutes = perthNow(new Date(kickoffIso)).minutesOfDay
-  if (minutes === 0) return 'midnight'
-  if (minutes === 12 * 60) return 'midday'
   const h24 = Math.floor(minutes / 60)
   const mins = minutes % 60
   const suffix = h24 < 12 ? 'am' : 'pm'
@@ -212,15 +210,60 @@ export function matchPhase(fixture: WcFixture, now: Date): MatchPhase {
 }
 
 // --- Team colours ----------------------------------------------------------
-// Flag/kit colours for the stripe band on fixture cards. Group D only for
-// now — knockout opponents get added when the bracket settles. Unknown teams
-// fall back to a neutral stripe so a missing entry never breaks a card.
+// Flag colours (top-to-bottom stripes) for every qualified team in the
+// fixture list — drives the stripe bands on fixture cards and the flag chips
+// in the fixture rows. Unknown teams fall back to a neutral stripe so a
+// missing entry never breaks a card.
 
 export const TEAM_COLOURS: Record<string, string[]> = {
+  Algeria: ['#006233', '#FFFFFF', '#D21034'],
+  Argentina: ['#74ACDF', '#FFFFFF', '#74ACDF'],
   Australia: ['#FFCD00', '#00843D'],
-  'Türkiye': ['#E30A17', '#FFFFFF'],
-  USA: ['#041E42', '#FFFFFF', '#BF0D3E'],
+  Austria: ['#ED2939', '#FFFFFF', '#ED2939'],
+  Belgium: ['#000000', '#FDDA24', '#EF3340'],
+  'Bosnia & Herzegovina': ['#002395', '#FECB00', '#002395'],
+  Brazil: ['#009C3B', '#FFDF00', '#002776'],
+  Canada: ['#FF0000', '#FFFFFF', '#FF0000'],
+  'Cape Verde': ['#003893', '#FFFFFF', '#CF2027'],
+  Colombia: ['#FCD116', '#003893', '#CE1126'],
+  Croatia: ['#FF0000', '#FFFFFF', '#171796'],
+  'Curaçao': ['#002B7F', '#F9E814', '#002B7F'],
+  'Czech Republic': ['#FFFFFF', '#D7141A', '#11457E'],
+  'DR Congo': ['#007FFF', '#F7D618', '#CE1021'],
+  Ecuador: ['#FFDD00', '#034EA2', '#ED1C24'],
+  Egypt: ['#CE1126', '#FFFFFF', '#000000'],
+  England: ['#FFFFFF', '#CE1124', '#FFFFFF'],
+  France: ['#0055A4', '#FFFFFF', '#EF4135'],
+  Germany: ['#000000', '#DD0000', '#FFCE00'],
+  Ghana: ['#CE1126', '#FCD116', '#006B3F'],
+  Haiti: ['#00209F', '#D21034'],
+  Iran: ['#239F40', '#FFFFFF', '#DA0000'],
+  Iraq: ['#CE1126', '#FFFFFF', '#000000'],
+  'Ivory Coast': ['#FF8200', '#FFFFFF', '#009A44'],
+  Japan: ['#FFFFFF', '#BC002D', '#FFFFFF'],
+  Jordan: ['#000000', '#FFFFFF', '#007A3D'],
+  Mexico: ['#006847', '#FFFFFF', '#CE1126'],
+  Morocco: ['#C1272D', '#006233'],
+  Netherlands: ['#AE1C28', '#FFFFFF', '#21468B'],
+  'New Zealand': ['#00247D', '#CC142B'],
+  Norway: ['#BA0C2F', '#FFFFFF', '#00205B'],
+  Panama: ['#DA121A', '#FFFFFF', '#072357'],
   Paraguay: ['#D52B1E', '#FFFFFF', '#0038A8'],
+  Portugal: ['#046A38', '#DA291C'],
+  Qatar: ['#8A1538', '#FFFFFF'],
+  'Saudi Arabia': ['#006C35', '#FFFFFF'],
+  Scotland: ['#005EB8', '#FFFFFF', '#005EB8'],
+  Senegal: ['#00853F', '#FDEF42', '#E31B23'],
+  'South Africa': ['#E03C31', '#007749', '#001489'],
+  'South Korea': ['#FFFFFF', '#CD2E3A', '#0047A0'],
+  Spain: ['#AA151B', '#F1BF00', '#AA151B'],
+  Sweden: ['#006AA7', '#FECC02', '#006AA7'],
+  Switzerland: ['#DA291C', '#FFFFFF', '#DA291C'],
+  'Türkiye': ['#E30A17', '#FFFFFF'],
+  Tunisia: ['#E70013', '#FFFFFF', '#E70013'],
+  USA: ['#041E42', '#FFFFFF', '#BF0D3E'],
+  Uruguay: ['#0038A8', '#FFFFFF', '#0038A8'],
+  Uzbekistan: ['#0099B5', '#FFFFFF', '#1EB53A'],
 }
 
 export function teamColours(team: string): string[] {
