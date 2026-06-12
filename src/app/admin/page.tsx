@@ -37,7 +37,7 @@ interface DashboardData {
     recent: Array<{
       id: string
       pubSlug: string
-      reportedPrice: number
+      reportedPrice: number | null
       beerType: string
       reporter: string
       reportType: string
@@ -499,7 +499,13 @@ function ReportsTab({ data, password, onRefresh }: { data: DashboardData; passwo
                         </div>
                       )}
                       <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1.5">
-                        <span className="font-mono text-[0.9rem] font-extrabold text-ink tabular-nums">${Number(r.reportedPrice).toFixed(2)}</span>
+                        {r.reportType === 'outdated_flag' ? (
+                          <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 bg-amber-pale text-ink border-2 border-amber rounded-pill font-mono text-[0.55rem] font-bold uppercase tracking-[0.05em]">
+                            <AlertTriangle size={9} />Stale flag
+                          </span>
+                        ) : (
+                          <span className="font-mono text-[0.9rem] font-extrabold text-ink tabular-nums">${Number(r.reportedPrice).toFixed(2)}</span>
+                        )}
                         {r.reportType === 'happy_hour_report' && (
                           <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 bg-amber-pale text-ink border-2 border-amber rounded-pill font-mono text-[0.55rem] font-bold uppercase tracking-[0.05em]">
                             <Clock size={9} />HH
@@ -507,7 +513,7 @@ function ReportsTab({ data, password, onRefresh }: { data: DashboardData; passwo
                         )}
                         {r.beerType && <span className="font-mono text-[0.65rem] text-gray-mid">{r.beerType}</span>}
                         <span className="font-mono text-[0.65rem] text-gray-mid">by {r.reporter}</span>
-                        {r.submissionSource && (
+                        {r.submissionSource && r.submissionSource !== 'stale_flag' && (
                           <span className="font-mono text-[0.6rem] font-bold uppercase tracking-[0.05em] text-amber">
                             {r.submissionSource.replace(/_/g, ' ')}
                           </span>
