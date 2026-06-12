@@ -3,22 +3,8 @@
 import { useEffect, useState, useRef } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { supabase } from '@/lib/supabase';
+import { fetchPriceSnapshots, type PriceSnapshot } from '@/lib/priceSnapshots';
 import { BarChart3 } from 'lucide-react';
-
-interface PriceSnapshot {
-  snapshot_date: string;
-  avg_price: number;
-  median_price: number;
-  min_price: number;
-  max_price: number;
-  total_pubs: number;
-  total_suburbs: number;
-  cheapest_suburb: string;
-  cheapest_suburb_avg: number;
-  most_expensive_suburb: string;
-  most_expensive_suburb_avg: number;
-  price_distribution: Record<string, number>;
-}
 
 interface TooltipState {
   x: number;
@@ -210,25 +196,7 @@ export default function PintIndex({ live }: { live: PintIndexLive }) {
   const [expanded, setExpanded] = useState(true);
 
   useEffect(() => {
-    async function fetchSnapshots() {
-      const { data, error } = await supabase
-        .from('price_snapshots')
-        .select('*')
-        .order('snapshot_date', { ascending: true });
-
-      if (data && !error) {
-        setSnapshots(data.map(d => ({
-          ...d,
-          avg_price: parseFloat(d.avg_price),
-          median_price: parseFloat(d.median_price),
-          min_price: parseFloat(d.min_price),
-          max_price: parseFloat(d.max_price),
-          cheapest_suburb_avg: parseFloat(d.cheapest_suburb_avg),
-          most_expensive_suburb_avg: parseFloat(d.most_expensive_suburb_avg),
-        })));
-      }
-    }
-    fetchSnapshots();
+    fetchPriceSnapshots(supabase).then(setSnapshots);
   }, []);
 
   // Displayed figures are always the live canonical stats; the weekly snapshot

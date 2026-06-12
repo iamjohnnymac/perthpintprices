@@ -1,3 +1,10 @@
+// Price formatting + labelling seam. Consolidated here (issue #57) so all
+// price presentation lives in one place rather than at the src/ root.
+
+export function formatPrice(cents: number): string {
+  return `$${(cents / 100).toFixed(2)}`
+}
+
 export type PriceLabelType = 'bargain' | 'fair' | 'pricey' | null
 
 export function getPriceLabel(price: number | null, avgPrice: number = 9.20): { label: string; type: PriceLabelType } {
