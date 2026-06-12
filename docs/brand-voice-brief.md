@@ -22,6 +22,7 @@ It should not feel:
 
 - Corporate or brochure-y
 - **Corny or try-hard** — no "grab a cold one with ya mates", no exclamation-mark boosterism
+- **Precious or self-admiring** — no aphorisms, no copy that pauses to admire its own honesty
 - Like a tourism listicle ("nestled in the heart of...")
 - Generic — copy that could run on any pub-finder in any city
 - Clever at the expense of useful
@@ -180,6 +181,8 @@ perfect · ultimate · hidden gem · nestled · boasts · vibrant · bustling ·
 
 **Corny tells (watch these hardest):** exclamation marks · *scorcher* · *grab a cold one* · *ya mates* · *legends* · *the Perth way* · *no worries* · *cheeky* more than once a page · any stacked slang that's there for flavour, not information.
 
+**Polished tells (the quiet version of corny):** balanced aphorisms (*"Dated claims age visibly. Undated ones just quietly go wrong."*) · grand openers (*"The arithmetic is unforgiving."*) · headings that name the virtue instead of the content (*"We'll keep this page honest"* → *Updates and corrections*) · stacked "X, not Y" pivots (*"a real session, not a maybe"* — one per page is plenty) · any sentence about our own integrity that runs longer than the fact it's attached to. Polish is a brand performing depth the way exclamation marks are a brand performing fun. State the process in one flat line and move on.
+
 ### AI-tell phrases to avoid
 
 - *everything you need to know about* / *the ultimate guide to*
@@ -242,6 +245,10 @@ Real lines from the live site that hit the brief. Treat as the canonical referen
 
 *The problem:* exclamation-mark boosterism plus stacked slang (*scorcher*, *cold one*) — the corny tell the whole brief guards against. The fact (hot day → beach pubs) is fine; the delivery is loud. Fix: *Hot one today — head for the beach pubs.*
 
+> Dated claims age visibly. Undated ones just quietly go wrong.
+
+*The problem:* the opposite failure — not loud, precious. An aphorism admiring its own principles instead of stating the process. Nobody talks like this at the bar. Fix: *Every confirmed venue gets the date we checked it. Look at the date before you set an alarm.*
+
 ## Voice test
 
 Before publishing copy, ask:
@@ -252,6 +259,6 @@ Before publishing copy, ask:
 4. Does it avoid sounding bigger or more certain than the data supports?
 5. Would it still sound human read out loud in a Perth accent?
 6. Could it run unchanged on any other pub-finder? (If yes — it's not on-brand. Rewrite.)
-7. Read it aloud: does it sound like a person being dry, or a brand trying to be fun? An exclamation mark or stacked slang is the tell it's the latter.
+7. Read it aloud: does it sound like a person being dry, or a brand performing? Exclamation marks and stacked slang are the loud tell; aphorisms and balanced "X, not Y" pivots are the quiet one.
 
 If fewer than 6 of 7 pass, fix the high-leverage surfaces (headline, first sentence, CTA) before anything else.
