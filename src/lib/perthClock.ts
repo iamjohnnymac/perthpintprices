@@ -16,11 +16,6 @@
 const PERTH_OFFSET_MS = 8 * 60 * 60 * 1000 // UTC+8, fixed (Western Australia has no DST)
 
 export interface PerthNow {
-  /**
-   * A Date whose UTC fields read as Perth wall-clock time.
-   * Prefer the structured fields below; if you must read this Date, use getUTC*.
-   */
-  date: Date
   /** Day of week in Perth: 0 = Sunday … 6 = Saturday. */
   dayOfWeek: number
   /** Minutes since Perth midnight, 0..1439. */
@@ -29,11 +24,17 @@ export interface PerthNow {
   ymd: string
 }
 
-/** Resolve the current Perth wall-clock fields for a given instant. */
+/**
+ * Resolve the current Perth wall-clock fields for a given instant.
+ *
+ * The +8h-shifted Date is intentionally kept private: exposing it invited
+ * callers to read local getters (getHours/getDate) off it, which double-shifts
+ * on a non-Perth host (issue #58). Only the derived numeric/string fields,
+ * which are host-timezone independent, leave this function.
+ */
 export function perthNow(now: Date = new Date()): PerthNow {
   const shifted = new Date(now.getTime() + PERTH_OFFSET_MS)
   return {
-    date: shifted,
     dayOfWeek: shifted.getUTCDay(),
     minutesOfDay: shifted.getUTCHours() * 60 + shifted.getUTCMinutes(),
     ymd: shifted.toISOString().slice(0, 10),

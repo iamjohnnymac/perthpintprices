@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { serviceClient } from '@/lib/supabaseGateway'
+import { fetchLatestPriceSnapshot } from '@/lib/priceSnapshots'
 import type { SupabaseClient } from '@supabase/supabase-js'
 import { timingSafeEqual } from 'crypto'
 
@@ -178,7 +179,7 @@ export async function GET(request: NextRequest) {
       // Total pubs and breakdown
       supabase.from('pubs').select('id, slug, name, price, suburb, price_verified, last_verified, last_updated, cozy_pub, sunset_spot, kid_friendly, has_tab, happy_hour_price, happy_hour_days, vibe_tag', { count: 'exact' }),
       // Latest snapshot
-      supabase.from('price_snapshots').select('*').order('snapshot_date', { ascending: false }).limit(1),
+      fetchLatestPriceSnapshot(supabase),
       // Recent price changes
       supabase.from('price_history').select('*', { count: 'exact' }).order('changed_at', { ascending: false }).limit(10),
       // Price reports (crowdsourced)
@@ -266,7 +267,7 @@ export async function GET(request: NextRequest) {
           createdAt: r.created_at,
         })),
       },
-      snapshot: snapshotResult.data?.[0] || null,
+      snapshot: snapshotResult || null,
       priceHistory: {
         totalChanges: priceHistoryResult.count || 0,
         recent: (priceHistoryResult.data || []).map((h: any) => {
