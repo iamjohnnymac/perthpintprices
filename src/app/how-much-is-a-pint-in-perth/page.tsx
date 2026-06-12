@@ -6,7 +6,7 @@ import BreadcrumbJsonLd from '@/components/BreadcrumbJsonLd'
 import Footer from '@/components/Footer'
 import SubPageNav from '@/components/SubPageNav'
 import { formatAudPrice, getPintPriceStats } from '@/lib/pintPriceStats'
-import { getPubs } from '@/lib/supabase'
+import { getCachedPubs } from '@/lib/cachedPubs'
 import { BASE_URL, pubUrl } from '@/lib/urls'
 import type { Pub } from '@/types/pub'
 
@@ -53,7 +53,7 @@ function buildItemList(rows: Pub[]) {
 }
 
 export default async function HowMuchIsAPintInPerthPage() {
-  const pubs = await getPubs()
+  const pubs = await getCachedPubs()
   const stats = getPintPriceStats(pubs)
   const cheapestRows = stats.verifiedPubs.slice(0, 8)
   const cheapest = stats.cheapestPub

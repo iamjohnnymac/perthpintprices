@@ -1,7 +1,7 @@
 import { Metadata } from 'next'
 import BreadcrumbJsonLd from '@/components/BreadcrumbJsonLd'
 import DiscoverClient from './DiscoverClient'
-import { getPubs } from '@/lib/supabase'
+import { getCachedPubs } from '@/lib/cachedPubs'
 import { slimPubForFeature } from '@/lib/pubPhoto'
 
 export const metadata: Metadata = {
@@ -34,7 +34,7 @@ export const revalidate = 300
 export default async function DiscoverPage() {
   // Server-fetch so the page content ships in the initial HTML instead of
   // spinning while the browser round-trips to Supabase.
-  const initialPubs = (await getPubs()).map(slimPubForFeature)
+  const initialPubs = (await getCachedPubs()).map(slimPubForFeature)
 
   return (
     <>

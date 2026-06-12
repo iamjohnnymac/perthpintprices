@@ -1,5 +1,6 @@
 import { MetadataRoute } from 'next'
-import { getAllPubLastModifiedPairs, getIndexablePubSlugPairs, getAllSuburbs } from '@/lib/supabase'
+import { getAllPubLastModifiedPairs, getIndexablePubSlugPairs } from '@/lib/supabase'
+import { getCachedAllSuburbs } from '@/lib/cachedPubs'
 import { articles, absoluteArticleUrl } from '@/lib/articles'
 import { HAPPY_HOUR_DAYS } from '@/lib/happyHourDays'
 import { TRANSPORT_HUBS } from '@/lib/transportHubs'
@@ -21,7 +22,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const [slugPairs, allPubDates, suburbs] = await Promise.all([
     getIndexablePubSlugPairs(),
     getAllPubLastModifiedPairs(),
-    getAllSuburbs(),
+    getCachedAllSuburbs(),
   ])
   const latestPubModified = allPubDates
     .map(pair => toLastModified(pair.lastModified))

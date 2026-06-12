@@ -1,10 +1,9 @@
 'use client'
 
-import { useEffect, useState, useCallback, useMemo } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import Link from 'next/link'
 import SubPageNav from '@/components/SubPageNav'
 import Footer from '@/components/Footer'
-import { getPubs } from '@/lib/supabase'
 import { Pub } from '@/types/pub'
 import { pubUrl } from '@/lib/urls'
 import { resizeGooglePhoto } from '@/lib/pubPhoto'
@@ -123,29 +122,13 @@ function venueWriteUp(pub: Pub, isActive: boolean): string[] {
 }
 
 export default function HappyHourClient({ initialPubs, renderedAtIso }: HappyHourClientProps) {
-  const [happyHourPubs, setHappyHourPubs] = useState<Pub[]>(initialPubs)
-  const [allPubs, setAllPubs] = useState<Pub[]>(initialPubs.filter(hasTimedHappyHour))
-  const [loading, setLoading] = useState(false) // Start as false since we have server data
+  // Schedules don't change mid-session — the ticking clock below re-derives the
+  // live "on now" state from them, so no refetching is needed. (A previous
+  // version re-pulled the entire pubs table from every browser every 60s.)
+  const [happyHourPubs] = useState<Pub[]>(initialPubs)
+  const [allPubs] = useState<Pub[]>(initialPubs.filter(hasTimedHappyHour))
+  const [loading] = useState(false) // Server data arrives via initialPubs
   const [clockInstant, setClockInstant] = useState(() => new Date(renderedAtIso))
-
-  const fetchPubs = useCallback(async () => {
-    try {
-      const pubs = await getPubs()
-      const pubsWithHappyHours = pubs.filter((p) => p.happyHour)
-      setHappyHourPubs(pubsWithHappyHours)
-      setAllPubs(pubsWithHappyHours.filter(hasTimedHappyHour))
-    } catch (err) {
-      console.error('Error fetching happy hour pubs:', err)
-    } finally {
-      setLoading(false)
-    }
-  }, [])
-
-  useEffect(() => {
-    // Server-rendered data arrives via initialPubs; only poll for live updates.
-    const interval = setInterval(fetchPubs, 60_000)
-    return () => clearInterval(interval)
-  }, [fetchPubs])
 
   useEffect(() => {
     const interval = setInterval(() => setClockInstant(new Date()), 60_000)

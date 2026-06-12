@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { getPubs } from '@/lib/supabase'
+import { getCachedPubs } from '@/lib/cachedPubs'
 import { slimPubForList } from '@/lib/pubPhoto'
 import NewSignalClient from './NewSignalClient'
 
@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 export const revalidate = 300
 
 export default async function NewSignalPage() {
-  const pubs = (await getPubs()).map(slimPubForList)
+  const pubs = (await getCachedPubs()).map(slimPubForList)
 
   return <NewSignalClient pubs={pubs} />
 }

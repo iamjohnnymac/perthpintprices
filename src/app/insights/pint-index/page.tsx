@@ -3,7 +3,8 @@ import BreadcrumbJsonLd from '@/components/BreadcrumbJsonLd'
 import { buildArticleJsonLd } from '@/lib/articleJsonLd'
 import { formatAudPrice, getPintPriceStats } from '@/lib/pintPriceStats'
 import { getPricedSuburbCount, getSuburbExtremes } from '@/lib/suburbStats'
-import { getAllPubLastModifiedPairs, getPubs } from '@/lib/supabase'
+import { getAllPubLastModifiedPairs } from '@/lib/supabase'
+import { getCachedPubs } from '@/lib/cachedPubs'
 import { pubUrl } from '@/lib/urls'
 import PintIndexPage from './PintIndexPage'
 
@@ -44,7 +45,7 @@ function latestModifiedDate(values: Array<{ lastModified: string | null }>): str
 export default async function Page() {
   const [pubDates, pubs] = await Promise.all([
     getAllPubLastModifiedPairs(),
-    getPubs(),
+    getCachedPubs(),
   ])
   const latestPubModified = latestModifiedDate(pubDates)
   const stats = getPintPriceStats(pubs)

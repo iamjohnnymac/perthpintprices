@@ -8,7 +8,7 @@ import Footer from '@/components/Footer'
 import SubPageNav from '@/components/SubPageNav'
 import { HAPPY_HOUR_DAYS, getHappyHourDayBySlug, pubHasHappyHourOnDay } from '@/lib/happyHourDays'
 import { formatHappyHourDays } from '@/lib/happyHourLive'
-import { getPubs } from '@/lib/supabase'
+import { getCachedHappyHourPubs } from '@/lib/cachedPubs'
 import { BASE_URL, pubUrl } from '@/lib/urls'
 import type { Pub } from '@/types/pub'
 
@@ -95,7 +95,7 @@ export default async function HappyHourDayPage({ params }: DayPageProps) {
   const day = getHappyHourDayBySlug(params.day)
   if (!day) notFound()
 
-  const pubs = await getPubs()
+  const pubs = await getCachedHappyHourPubs()
   const dayPubs = pubs
     .filter(pub => pubHasHappyHourOnDay(pub.happyHourDays, day.index))
     .sort((a, b) => (a.happyHourPrice ?? 999) - (b.happyHourPrice ?? 999))

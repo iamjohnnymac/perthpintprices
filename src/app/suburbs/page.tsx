@@ -1,5 +1,5 @@
 import { Metadata } from 'next'
-import { getAllSuburbs } from '@/lib/supabase'
+import { getCachedAllSuburbs } from '@/lib/cachedPubs'
 import BreadcrumbJsonLd from '@/components/BreadcrumbJsonLd'
 import SuburbsClient from './SuburbsClient'
 
@@ -22,7 +22,7 @@ export const metadata: Metadata = {
 export const revalidate = 300
 
 export default async function SuburbsPage() {
-  const suburbs = await getAllSuburbs()
+  const suburbs = await getCachedAllSuburbs()
   return (
     <>
       <BreadcrumbJsonLd items={[

@@ -1,6 +1,7 @@
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { getAllSuburbs, getSuburbBySlug, getSuburbPubs, getNearbySuburbs, getSiteStats } from '@/lib/supabase'
+import { getCachedPubs, getCachedSuburbBySlug } from '@/lib/cachedPubs'
+import { getSuburbPubs, getNearbySuburbs, getSiteStats } from '@/lib/supabase'
 import { getSuburbStory } from '@/lib/suburbStory'
 import { slimPubForList } from '@/lib/pubPhoto'
 import { absoluteSuburbUrl } from '@/lib/urls'
@@ -24,13 +25,14 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const suburb = await getSuburbBySlug(params.suburb)
+  const suburb = await getCachedSuburbBySlug(params.suburb)
   if (!suburb) return { title: 'Suburb Not Found' }
 
+  const allPubs = await getCachedPubs()
   const [pubs, nearbySuburbs, siteStats] = await Promise.all([
-    getSuburbPubs(suburb.name),
-    getNearbySuburbs(suburb.name, 5),
-    getSiteStats(),
+    getSuburbPubs(suburb.name, allPubs),
+    getNearbySuburbs(suburb.name, 5, allPubs),
+    getSiteStats(allPubs),
   ])
   const suburbStory = getSuburbStory({
     suburb,
@@ -81,13 +83,14 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 export const revalidate = 300
 
 export default async function SuburbPage({ params }: PageProps) {
-  const suburb = await getSuburbBySlug(params.suburb)
+  const suburb = await getCachedSuburbBySlug(params.suburb)
   if (!suburb) notFound()
 
+  const allPubs = await getCachedPubs()
   const [pubs, nearbySuburbs, siteStats] = await Promise.all([
-    getSuburbPubs(suburb.name),
-    getNearbySuburbs(suburb.name, 5),
-    getSiteStats(),
+    getSuburbPubs(suburb.name, allPubs),
+    getNearbySuburbs(suburb.name, 5, allPubs),
+    getSiteStats(allPubs),
   ])
   const perthAvgPrice = Number(siteStats.avgPrice)
   const suburbStory = getSuburbStory({

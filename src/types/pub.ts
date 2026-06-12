@@ -11,7 +11,6 @@ export interface Pub {
   happyHour: string | null
   website: string | null
   description: string | null
-  source?: string
   priceSource: string | null
   priceVerifiedAt: string | null
   priceConfidence: 'high' | 'medium' | 'low' | null
