@@ -1,6 +1,6 @@
 # Perth Pint Prices Project Status
 
-Last updated: 2026-06-10
+Last updated: 2026-06-12
 
 ## What this is
 
@@ -9,6 +9,10 @@ Perth Pint Prices (perthpintprices.com) tracks pint prices across **857 Perth pu
 Stack, database, routes, components, and lib files are documented in `CLAUDE.md` (auto-loaded every session). This file covers history, recent work, and the backlog.
 
 ## What's done recently
+
+### PR backlog cleared + Slack notifications go-live (2026-06-12)
+- **All 8 open PRs resolved:** merged #188 (egress fix), #190 (consolidated safe dependabot bumps: supabase-js 2.107, openai 6.42, radix-ui 1.5, @types/node 24, upload-artifact v7), #176 (AI article drafting pipeline + dev-only /draft preview), #189 (app-store plan doc). Closed #168 (react-leaflet-cluster 4 needs React 19 — parked with Next 15/Tailwind 4 migration), #163/#170 (superseded), #175 (stale).
+- **Slack price-report notifications live-ish:** the incoming-webhook integration was added to #all-perth-pint-prices (2026-06-12 8:31am) and verified working. `SLACK_WEBHOOK_URL` believed added to Vercel ~11:17am — **after** the last production deploy, so this docs commit doubles as the redeploy that activates it. Notification paths: instant ping on each new price report (`/api/price-report`) + 8am pending-queue reminder (`/api/cron/price-check`).
 
 ### Supabase egress fix: shared cached pubs pull + kill browser poll (2026-06-11)
 - **Why:** free-tier egress warnings. Measured through a local byte-counting proxy: one production build = **167.2MB / 1,108 requests** (450 full-table-ish `select=*` pulls — suburb pages pulled the full table up to 8x per render via getSuburbBySlug + getSuburbPubs + getNearbySuburbs + getSiteStats); 7 list pages cost 4.4MB per 5-min revalidation window; and **HappyHourClient re-fetched the entire table from every visitor's browser every 60s (~122MB/hour per open tab)**.
