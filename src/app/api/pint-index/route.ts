@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { getPintPriceStats } from '@/lib/pintPriceStats'
 import { supabase } from '@/lib/supabase'
 import { getCachedPubs } from '@/lib/cachedPubs'
+import { fetchPriceSnapshots } from '@/lib/priceSnapshots'
 
 export const revalidate = 3600
 
@@ -15,16 +16,8 @@ export async function GET() {
   const pubs = await getCachedPubs()
   const stats = getPintPriceStats(pubs)
 
-  const { data } = await supabase
-    .from('price_snapshots')
-    .select('avg_price, snapshot_date')
-    .order('snapshot_date', { ascending: false })
-    .limit(12)
-
-  const spark = (data ?? [])
-    .map((d: { avg_price: string | number }) => parseFloat(String(d.avg_price)))
-    .filter((n: number) => Number.isFinite(n))
-    .reverse()
+  const snapshots = await fetchPriceSnapshots(supabase, { ascending: false, limit: 12 })
+  const spark = snapshots.map((s) => s.avg_price).reverse()
 
   return NextResponse.json({
     price: stats.averagePrice ?? null,

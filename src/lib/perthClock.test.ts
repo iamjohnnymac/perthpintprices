@@ -48,3 +48,28 @@ describe('perthToday', () => {
     assert.equal(perthToday(new Date('2026-03-01T17:00:00.000Z')), '2026-03-02')
   })
 })
+
+describe('host-timezone independence', () => {
+  it('produces identical fields regardless of the host TZ (proves no double-shift)', () => {
+    // Node re-reads process.env.TZ for Date operations created after it changes,
+    // so flipping it here exercises the exact host-dependent path the dropped
+    // `.date` field used to expose (issue #58) — within a single test run.
+    const instant = new Date('2026-01-15T20:00:00.000Z')
+    const original = process.env.TZ
+    try {
+      process.env.TZ = 'America/New_York' // UTC-5
+      const east = perthNow(instant)
+      process.env.TZ = 'Australia/Perth' // UTC+8
+      const perth = perthNow(instant)
+      process.env.TZ = 'UTC'
+      const utc = perthNow(instant)
+      assert.deepEqual(east, perth)
+      assert.deepEqual(perth, utc)
+      assert.equal(perth.ymd, '2026-01-16')
+      assert.equal(perth.minutesOfDay, 4 * 60)
+    } finally {
+      if (original === undefined) delete process.env.TZ
+      else process.env.TZ = original
+    }
+  })
+})
