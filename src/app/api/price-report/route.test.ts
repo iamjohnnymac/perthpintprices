@@ -64,7 +64,7 @@ describe('price-report intake preparation', () => {
     assert.equal(result.ok, true)
     if (!result.ok) return
     assert.equal(result.value.insertData.submission_source, 'stale_flag')
-    assert.equal(result.value.insertData.reported_price, 0)
+    assert.equal(result.value.insertData.reported_price, null)
     assert.equal(result.value.insertData.report_type, 'outdated_flag')
   })
 

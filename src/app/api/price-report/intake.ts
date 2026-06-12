@@ -66,7 +66,9 @@ export function preparePriceReport(body: any, ipHash: string): PriceReportPrepar
       isMenuScan,
       insertData: {
         pub_slug,
-        reported_price: isOutdatedReport ? 0 : price,
+        // Null, not 0: the DB's reported_price check rejects out-of-range
+        // prices, and checks pass on null. A stale flag has no price.
+        reported_price: isOutdatedReport ? null : price,
         beer_type: beer_type || null,
         reporter_name: reporter_name || 'Anonymous',
         ip_hash: ipHash,
