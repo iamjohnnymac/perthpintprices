@@ -14,6 +14,7 @@
     "build:official-menu-review": "tsx scripts/build-official-menu-review.mjs",
     "import:official-menu-review": "tsx scripts/import-official-menu-review.mjs",
     "test:redirects": "node scripts/redirect-seo.test.mjs",
+    "check:fingerprints": "tsx scripts/check-pub-fingerprints.mjs",
     "test:e2e": "playwright test",
     "test:e2e:headed": "playwright test --headed",
     "test:e2e:video": "PLAYWRIGHT_VIDEO=on playwright test"
