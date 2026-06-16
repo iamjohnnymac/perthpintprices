@@ -22,7 +22,7 @@ export default function HomeWorldCup() {
         <p className="type-eyebrow">World Cup 2026 · free on SBS</p>
         <Link
           href="/world-cup"
-          className="inline-flex items-center gap-1 font-mono text-[0.68rem] font-bold uppercase tracking-[0.05em] text-amber no-underline hover:underline"
+          className="inline-flex items-center gap-1 font-mono text-[0.68rem] font-bold uppercase tracking-[0.05em] text-amber-deep no-underline hover:underline"
         >
           Every kickoff in Perth time
           <ArrowUpRight className="h-3 w-3" />
@@ -50,7 +50,7 @@ export default function HomeWorldCup() {
               <WorldCupCountdown
                 kickoff={fixture.kickoff}
                 prefix="Kicks off in "
-                className="mt-1 block min-h-[1rem] font-mono text-[0.64rem] font-bold text-amber"
+                className="mt-1 block min-h-[1rem] font-mono text-[0.64rem] font-bold text-amber-deep"
               />
             </div>
           </Link>

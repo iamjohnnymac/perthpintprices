@@ -139,22 +139,25 @@ export default async function HomePage() {
       {/* ═══ SERVER-RENDERED CRAWLABLE LINKS ═══
           These render in the initial HTML so Googlebot can discover all pages.
           The client component overlays this with the interactive UI on hydration. */}
+      {/* aria-hidden hides these from the a11y tree, so the anchors carry
+          tabIndex={-1} to stay out of the keyboard focus order too. href is
+          untouched, so Googlebot still discovers every page from here. */}
       <div id="ssr-links" className="sr-only" aria-hidden="true">
         <nav>
-          <a href="/">Home</a>
-          <a href="/discover">Discover</a>
-          <a href="/happy-hour">Happy Hours</a>
-          <a href="/suburbs">All Suburbs</a>
+          <a href="/" tabIndex={-1}>Home</a>
+          <a href="/discover" tabIndex={-1}>Discover</a>
+          <a href="/happy-hour" tabIndex={-1}>Happy Hours</a>
+          <a href="/suburbs" tabIndex={-1}>All Suburbs</a>
         </nav>
 
         <h2>Perth Suburbs</h2>
         {suburbs.map(suburb => (
-          <a key={suburb} href={suburbUrl(suburb)}>{suburb}</a>
+          <a key={suburb} href={suburbUrl(suburb)} tabIndex={-1}>{suburb}</a>
         ))}
 
         <h2>Perth Pubs - Cheapest Pints</h2>
         {pubs.slice(0, 50).map(pub => (
-          <a key={pub.slug} href={pubUrl(pub)}>
+          <a key={pub.slug} href={pubUrl(pub)} tabIndex={-1}>
             {pub.name} - {pub.suburb}
             {pub.price ? ` - $${pub.price.toFixed(2)}` : ''}
           </a>

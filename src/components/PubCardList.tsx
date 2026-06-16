@@ -76,7 +76,7 @@ export default function PubCardList({
               <span className="font-body text-base font-bold text-ink">
                 {pub.name}
                 {pub.id === cheapestId && (
-                  <span className="font-mono text-[0.5rem] font-bold uppercase tracking-[0.06em] px-1.5 py-[2px] rounded-pill ml-1.5 bg-amber text-white inline-block align-middle -translate-y-px">
+                  <span className="font-mono text-[0.5rem] font-bold uppercase tracking-[0.06em] px-1.5 py-[2px] rounded-pill ml-1.5 bg-amber text-ink inline-block align-middle -translate-y-px">
                     Cheapest
                   </span>
                 )}
@@ -114,7 +114,7 @@ export default function PubCardList({
         <div className="pt-2 pb-10">
           <button
             onClick={onShowAll}
-            className="w-full font-mono text-[0.85rem] font-bold uppercase tracking-[0.06em] text-white bg-amber border-3 border-ink rounded-pill py-[18px] px-8 shadow-hard hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-hard-hover active:translate-x-[4px] active:translate-y-[4px] active:shadow-none transition-all cursor-pointer"
+            className="w-full font-mono text-[0.85rem] font-bold uppercase tracking-[0.06em] text-ink bg-amber border-3 border-ink rounded-pill py-[18px] px-8 shadow-hard hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-hard-hover active:translate-x-[4px] active:translate-y-[4px] active:shadow-none transition-all cursor-pointer"
           >
             View all {pubs.length} venues →
           </button>
