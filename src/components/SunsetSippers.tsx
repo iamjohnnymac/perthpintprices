@@ -362,7 +362,7 @@ export default function SunsetSippers({ pubs, userLocation }: SunsetSippersProps
                       </p>
                     </div>
                     {pub.isHappyHourNow && (
-                      <span className="font-mono text-[0.58rem] font-bold uppercase tracking-[0.05em] px-1.5 py-0.5 rounded-pill border-2 bg-red-pale text-red border-red flex-shrink-0">
+                      <span className="font-mono text-[0.58rem] font-bold uppercase tracking-[0.05em] px-1.5 py-0.5 rounded-pill border-2 bg-red-pale text-red-deep border-red flex-shrink-0">
                         HH
                       </span>
                     )}

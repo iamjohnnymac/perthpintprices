@@ -54,7 +54,7 @@ function LiveHappyHourBanner({ pubs }: { pubs: Pub[] }) {
         <span className="text-ink font-medium text-[0.85rem] flex-1 truncate transition-opacity duration-300" key={current.slug}>
           <strong className="font-bold">{current.name}</strong> has ${current.price?.toFixed(2)} pints right now
         </span>
-        <span className="type-price text-[1.1rem] text-amber flex-shrink-0">
+        <span className="type-price text-[1.1rem] text-amber-deep flex-shrink-0">
           ${current.price?.toFixed(2)}
         </span>
         {liveHHPubs.length > 1 && (

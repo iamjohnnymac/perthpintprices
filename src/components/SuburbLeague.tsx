@@ -46,7 +46,7 @@ export default function SuburbLeague({ pubs }: { pubs: Pub[] }) {
       }
 
       if (pos === total - 2 && total > 6) {
-        items.push({ type: 'divider', label: '- Relegation Zone -', colorClass: 'bg-red-pale text-red border-red' })
+        items.push({ type: 'divider', label: '- Relegation Zone -', colorClass: 'bg-red-pale text-red-deep border-red' })
       }
 
       const isRelegation = pos > total - 3 && total > 6
