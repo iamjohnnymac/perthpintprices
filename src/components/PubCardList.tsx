@@ -81,7 +81,7 @@ export default function PubCardList({
                   </span>
                 )}
                 {pub.isHappyHourNow && (
-                  <span className="font-mono text-[0.5rem] font-bold uppercase tracking-[0.06em] px-1.5 py-[2px] rounded-pill ml-1.5 border border-red bg-red-pale text-red inline-block align-middle -translate-y-px">
+                  <span className="font-mono text-[0.5rem] font-bold uppercase tracking-[0.06em] px-1.5 py-[2px] rounded-pill ml-1.5 border border-red bg-red-pale text-red-deep inline-block align-middle -translate-y-px">
                     HH
                   </span>
                 )}

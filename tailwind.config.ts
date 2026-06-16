@@ -54,6 +54,10 @@ const config: Config = {
         'red': {
           DEFAULT: '#C43D2E',
           pale: '#FDEAEA',
+          // #C43D2E on red-pale is 4.47:1 — a hair under AA's 4.5:1 for the
+          // small "HH"/status badges. This deeper red clears it (4.9:1) with a
+          // near-imperceptible hue shift. Use on red-pale badges only.
+          deep: '#BA3829',
         },
         'green': {
           DEFAULT: '#2D7A3D',
