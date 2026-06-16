@@ -63,7 +63,7 @@ export default function Footer() {
 
         {/* Beer sizes — compact inline reference */}
         <div className="flex items-center gap-4 mb-8">
-          <span className="type-eyebrow text-white/30">Glass sizes</span>
+          <span className="type-eyebrow text-white/50">Glass sizes</span>
           {GLASS_SIZES.map((size) => (
             <span key={size.name} className="font-mono text-[0.65rem] text-white/50">
               <span className="font-bold text-white/70">{size.name}</span> {size.ml}
@@ -73,7 +73,7 @@ export default function Footer() {
 
         {/* Divider */}
         <div className="border-t border-white/10 pt-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-          <p className="text-[0.75rem] text-white/40 leading-relaxed max-w-[400px]">
+          <p className="text-[0.75rem] text-white/55 leading-relaxed max-w-[400px]">
             Prices are community-submitted and may vary. Drink responsibly.
           </p>
           <p className="font-display text-[1rem] italic text-white/60">

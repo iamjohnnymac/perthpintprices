@@ -1,6 +1,6 @@
 # Perth Pint Prices Project Status
 
-Last updated: 2026-06-12
+Last updated: 2026-06-16
 
 ## What this is
 
@@ -9,6 +9,14 @@ Perth Pint Prices (perthpintprices.com) tracks pint prices across **857 Perth pu
 Stack, database, routes, components, and lib files are documented in `CLAUDE.md` (auto-loaded every session). This file covers history, recent work, and the backlog.
 
 ## What's done recently
+
+### PageSpeed mobile fixes — perf + a11y, zero SEO change (2026-06-16)
+PR #201. Worked the mobile PageSpeed report. The PSI API was quota-blocked at the project level (`defaultPerDayPerProject` = 0), so audits were captured by running `lighthouse` directly against the live URL and re-verified against a local **production** build. Mobile Lighthouse: **Performance 72→89** (FCP 3.6s→1.8s, LCP 5.3s→3.6s), **Accessibility 77→100**, **Best Practices →100 on deploy**, SEO unchanged at 100.
+- **Perf:** AVIF/WebP `images.formats` in `next.config.js` (article PNGs −121→−69 KiB); Google Analytics `afterInteractive`→`lazyOnload` (160 KB gtag off the critical path — the main FCP/LCP win); `display:'swap'` on all three `next/font` families.
+- **A11y (→100):** `aria-label` on the two `FilterSection` `<select>`s + the icon-only Near/$ buttons; `min-w-[44px]` tap targets (were 23px); `tabIndex={-1}` on the `aria-hidden` `#ssr-links` anchors (hrefs untouched, still crawlable); new `amber.deep` #A85A00 token for small amber text, ink-on-amber for small badges/buttons (`PubCardList` cheapest pill + view-all button, `HeroSection` cheapest-card eyebrow), footer faint-white bumped to AA. `text-amber`→`text-amber-deep` in `ArticleRail` + `HomeWorldCup`.
+- **Best Practices:** dropped the on-load `navigator.geolocation` request in `HomeClient` (the manual "Near" button already triggers it) — fixes `geolocation-on-start`; `productionBrowserSourceMaps: true` for `valid-source-maps` (note: one residual flag from the App-Router inline bootstrap script; chunk maps are emitted + served).
+- **Reverted mid-work:** a modern `browserslist` — it didn't move the 11 KiB legacy-JS chunk (third-party, Next won't re-transpile), so it wasn't shipped.
+- **No URLs, redirects, canonicals, metadata or crawlable links changed.** `tsc` clean, prod build green, screenshots eyeballed at mobile (375×812) + desktop (1280×800).
 
 ### Milestone backlog: five issues cleared autonomously (2026-06-12)
 Worked the open-milestone backlog (Andrew left untouched by request). Four PRs:

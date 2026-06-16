@@ -6,9 +6,9 @@ import Providers from './Providers'
 import { getSiteStats } from '@/lib/supabase'
 import './globals.css'
 
-const plusJakarta = Plus_Jakarta_Sans({ subsets: ['latin'], variable: '--font-plus-jakarta', weight: ['300', '400', '500', '600', '700', '800'] })
-const dmSerif = DM_Serif_Display({ weight: '400', subsets: ['latin'], variable: '--font-dm-serif' })
-const jetbrainsMono = JetBrains_Mono({ subsets: ['latin'], variable: '--font-jetbrains-mono' })
+const plusJakarta = Plus_Jakarta_Sans({ subsets: ['latin'], variable: '--font-plus-jakarta', weight: ['300', '400', '500', '600', '700', '800'], display: 'swap' })
+const dmSerif = DM_Serif_Display({ weight: '400', subsets: ['latin'], variable: '--font-dm-serif', display: 'swap' })
+const jetbrainsMono = JetBrains_Mono({ subsets: ['latin'], variable: '--font-jetbrains-mono', display: 'swap' })
 
 export const viewport: Viewport = {
   width: 'device-width',
@@ -67,9 +67,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        {/* Google Analytics */}
-        <Script src="https://www.googletagmanager.com/gtag/js?id=G-1WN68Q85SY" strategy="afterInteractive" />
-        <Script id="google-analytics" strategy="afterInteractive">
+        {/* Google Analytics — loaded on idle so the 160 KB gtag bundle stays
+            off the critical path (PageSpeed flagged it as unused JS on load). */}
+        <Script src="https://www.googletagmanager.com/gtag/js?id=G-1WN68Q85SY" strategy="lazyOnload" />
+        <Script id="google-analytics" strategy="lazyOnload">
           {`
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}

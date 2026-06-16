@@ -72,7 +72,7 @@ export default function ArticleRail({
                 <p className="mt-3 flex-1 font-body text-[0.82rem] leading-relaxed text-gray-mid">
                   {article.deck}
                 </p>
-                <span className="mt-5 inline-flex items-center gap-1 type-eyebrow text-amber">
+                <span className="mt-5 inline-flex items-center gap-1 type-eyebrow text-amber-deep">
                   Read it <ArrowUpRight className="h-3.5 w-3.5" />
                 </span>
               </div>
@@ -85,7 +85,7 @@ export default function ArticleRail({
           eventName="article_hub_click"
           eventProperties={{ source }}
           className={`mt-5 inline-flex items-center gap-1 type-eyebrow no-underline hover:underline ${
-            isDark ? 'text-amber-light' : 'text-amber'
+            isDark ? 'text-amber-light' : 'text-amber-deep'
           }`}
         >
           All articles <ArrowUpRight className="h-3.5 w-3.5" />

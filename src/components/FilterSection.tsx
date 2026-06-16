@@ -90,6 +90,7 @@ export function FilterSection({
         <div className="flex gap-1.5 sm:gap-2 w-full sm:w-auto">
           {sortBy === 'nearest' && hasLocation ? (
             <select
+              aria-label="Filter by distance"
               value={nearbyRadius}
               onChange={(e) => setNearbyRadius?.(Number(e.target.value))}
               className={`${selectClasses} flex-1 min-w-0 sm:flex-none sm:w-auto sm:min-w-[150px] text-ink`}
@@ -101,6 +102,7 @@ export function FilterSection({
             </select>
           ) : (
             <select
+              aria-label="Filter by suburb"
               value={selectedSuburb || 'all'}
               onChange={(e) => setSelectedSuburb(e.target.value)}
               className={`${selectClasses} flex-1 min-w-0 sm:flex-none sm:w-auto sm:min-w-[150px] ${selectedSuburb && selectedSuburb !== 'all' ? 'text-ink' : 'text-gray-mid'}`}
@@ -115,7 +117,8 @@ export function FilterSection({
           <div className="bg-white border-3 border-ink rounded-pill overflow-hidden flex shrink-0 sm:min-w-[170px]">
             <button
               onClick={() => setSortBy('price')}
-              className={`flex-1 font-mono text-[0.7rem] font-bold uppercase tracking-[0.04em] px-2 sm:px-3 py-3 transition-all ${
+              aria-label="Sort by price"
+              className={`flex-1 min-w-[44px] font-mono text-[0.7rem] font-bold uppercase tracking-[0.04em] px-2 sm:px-3 py-3 transition-all ${
                 sortBy === 'price' ? 'bg-ink text-white' : 'text-gray-mid'
               }`}
             >
@@ -123,7 +126,8 @@ export function FilterSection({
             </button>
             <button
               onClick={handleNearestClick}
-              className={`flex-1 font-mono text-[0.7rem] font-bold uppercase tracking-[0.04em] px-2 sm:px-3 py-3 transition-all flex items-center justify-center gap-1 ${
+              aria-label="Sort by nearest"
+              className={`flex-1 min-w-[44px] font-mono text-[0.7rem] font-bold uppercase tracking-[0.04em] px-2 sm:px-3 py-3 transition-all flex items-center justify-center gap-1 ${
                 sortBy === 'nearest' ? 'bg-ink text-white' : 'text-gray-mid'
               }`}
             >
