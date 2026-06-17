@@ -1,18 +1,38 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { ArrowUpRight } from 'lucide-react'
 import TeamStripes from '@/components/TeamStripes'
 import WorldCupCountdown from '@/components/WorldCupCountdown'
 import { perthToday } from '@/lib/perthClock'
-import { WC_FIXTURES, WC_LAST_DAY, fixtureDay, formatDayHeading, formatKickoff } from '@/lib/worldCup'
+import { WC_FIXTURES, WC_LAST_DAY, fixtureDay, formatDayHeading, formatKickoff, matchPhase } from '@/lib/worldCup'
 
 export default function HomeWorldCup() {
+  // Tick the clock so the strip drops a game the moment it finishes. Starts
+  // null so the server render and first client render agree (hydration-safe,
+  // the same pattern WorldCupCountdown/WorldCupFixtures use), then refines.
+  const [now, setNow] = useState<Date | null>(null)
+  useEffect(() => {
+    setNow(new Date())
+    const interval = setInterval(() => setNow(new Date()), 60_000)
+    return () => clearInterval(interval)
+  }, [])
+
+  const today = perthToday()
   // The strip renders during the World Cup and disappears on its own once the
   // tournament is over (WC_LAST_DAY = Perth date of the final).
-  if (perthToday() > WC_LAST_DAY) return null
+  if (today > WC_LAST_DAY) return null
 
-  const socceroos = WC_FIXTURES.filter(fixture => fixture.socceroos)
+  // Only current games at the top. Before mount we don't know the client clock,
+  // so render today-onwards (stable for hydration); once mounted, drop any match
+  // that has already finished so this morning's games never linger. Australia's
+  // games keep a Socceroos tag while they're still on.
+  const current = (now
+    ? WC_FIXTURES.filter(fixture => matchPhase(fixture, now) !== 'played')
+    : WC_FIXTURES.filter(fixture => fixtureDay(fixture.kickoff) >= today)
+  ).slice(0, 3)
+  if (current.length === 0) return null
 
   return (
     <section aria-label="World Cup 2026" className="max-w-container mx-auto px-6 mb-6">
@@ -30,7 +50,7 @@ export default function HomeWorldCup() {
         className="-mx-6 flex snap-x snap-mandatory gap-3 overflow-x-auto scroll-pl-6 px-6 pb-1 sm:mx-0 sm:grid sm:grid-cols-3 sm:overflow-visible sm:px-0 sm:pb-0"
         style={{ scrollbarWidth: 'none', msOverflowStyle: 'none', WebkitOverflowScrolling: 'touch' }}
       >
-        {socceroos.map(fixture => (
+        {current.map(fixture => (
           <Link
             key={fixture.id}
             href="/world-cup"
@@ -40,6 +60,8 @@ export default function HomeWorldCup() {
             <div className="px-4 py-3">
               <p className="font-mono text-[0.62rem] font-bold uppercase tracking-[0.06em] text-gray-mid">
                 {formatDayHeading(fixtureDay(fixture.kickoff))}
+                {fixture.socceroos && <span className="text-amber-deep"> · Socceroos</span>}
+                {fixture.round && <span className="text-amber-deep"> · {fixture.round}</span>}
               </p>
               <p className="mt-0.5 font-mono text-[0.95rem] font-extrabold text-ink">
                 {formatKickoff(fixture.kickoff)}
