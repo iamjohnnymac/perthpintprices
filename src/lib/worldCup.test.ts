@@ -12,8 +12,10 @@ import {
 } from './worldCup'
 
 describe('WC_FIXTURES data sanity', () => {
-  it('contains the full 72-match group stage', () => {
-    assert.equal(WC_FIXTURES.length, 72)
+  it('contains all 104 matches: 72 group + 32 knockout', () => {
+    assert.equal(WC_FIXTURES.length, 104)
+    assert.equal(WC_FIXTURES.filter(f => !f.round).length, 72)
+    assert.equal(WC_FIXTURES.filter(f => f.round).length, 32)
   })
 
   it('has unique ids', () => {
@@ -28,11 +30,25 @@ describe('WC_FIXTURES data sanity', () => {
     }
   })
 
-  it('all fixtures land 12-28 June 2026 in Perth', () => {
+  it('all fixtures land 12 June – 20 July 2026 in Perth', () => {
     for (const f of WC_FIXTURES) {
       const day = fixtureDay(f.kickoff)
-      assert.ok(day >= '2026-06-12' && day <= '2026-06-28', `${f.id} on ${day}`)
+      assert.ok(day >= '2026-06-12' && day <= '2026-07-20', `${f.id} on ${day}`)
     }
+  })
+
+  it('is authored in chronological order', () => {
+    for (let i = 1; i < WC_FIXTURES.length; i++) {
+      const prev = new Date(WC_FIXTURES[i - 1].kickoff).getTime()
+      const curr = new Date(WC_FIXTURES[i].kickoff).getTime()
+      assert.ok(curr >= prev, `${WC_FIXTURES[i].id} is out of order`)
+    }
+  })
+
+  it('ends with the final on Perth date 20 July 2026', () => {
+    const final = WC_FIXTURES[WC_FIXTURES.length - 1]
+    assert.equal(final.round, 'Final')
+    assert.equal(fixtureDay(final.kickoff), '2026-07-20')
   })
 
   it('every kickoff lands between midnight and midday AWST', () => {

@@ -5,14 +5,12 @@ import { ArrowUpRight } from 'lucide-react'
 import TeamStripes from '@/components/TeamStripes'
 import WorldCupCountdown from '@/components/WorldCupCountdown'
 import { perthToday } from '@/lib/perthClock'
-import { WC_FIXTURES, fixtureDay, formatDayHeading, formatKickoff } from '@/lib/worldCup'
-
-// Last day of the tournament (the final, 19 July 2026, Perth date). The strip
-// renders during the World Cup and disappears on its own afterwards.
-const LAST_DAY = '2026-07-19'
+import { WC_FIXTURES, WC_LAST_DAY, fixtureDay, formatDayHeading, formatKickoff } from '@/lib/worldCup'
 
 export default function HomeWorldCup() {
-  if (perthToday() > LAST_DAY) return null
+  // The strip renders during the World Cup and disappears on its own once the
+  // tournament is over (WC_LAST_DAY = Perth date of the final).
+  if (perthToday() > WC_LAST_DAY) return null
 
   const socceroos = WC_FIXTURES.filter(fixture => fixture.socceroos)
 

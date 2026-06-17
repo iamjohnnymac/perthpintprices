@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
 import Link from 'next/link'
 import dynamic from 'next/dynamic'
 import { Pub } from '@/types/pub'
@@ -81,6 +81,8 @@ interface PubDetailClientProps {
   latestAndrewCallAt: string | null
   nearestVerifiedPub: Pub | null
   nearbyVerifiedPriceCount: number
+  /** Server-rendered World Cup kickoffs card, or null for pubs that don't show sport. */
+  worldCup?: ReactNode
 }
 
 export default function PubDetailClient({
@@ -93,6 +95,7 @@ export default function PubDetailClient({
   latestAndrewCallAt,
   nearestVerifiedPub,
   nearbyVerifiedPriceCount,
+  worldCup,
 }: PubDetailClientProps) {
   const [distance, setDistance] = useState<string | null>(null)
   const [showSubmitForm, setShowSubmitForm] = useState(false)
@@ -479,6 +482,9 @@ export default function PubDetailClient({
             <PubDetailMap lat={pub.lat} lng={pub.lng} name={pub.name} price={pub.price} />
           </div>
         </div>
+
+        {/* World Cup kickoffs — only for pubs that show sport, retires after the final */}
+        {worldCup}
 
         {/* Nearby Pubs */}
         {nearbyPubs.length > 0 && (
