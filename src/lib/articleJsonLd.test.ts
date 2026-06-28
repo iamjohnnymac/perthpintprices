@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
 import { buildArticleJsonLd } from './articleJsonLd'
+import { ORGANIZATION_ID } from './siteJsonLd'
 
 test('buildArticleJsonLd emits Article schema with freshness fields', () => {
   const jsonLd = buildArticleJsonLd({
@@ -19,7 +20,8 @@ test('buildArticleJsonLd emits Article schema with freshness fields', () => {
     '@id': 'https://perthpintprices.com/insights/pint-index',
     lastReviewed: '2026-05-31T00:00:00.000Z',
   })
-  assert.equal(jsonLd.author.name, 'Perth Pint Prices')
+  assert.deepEqual(jsonLd.author, { '@id': ORGANIZATION_ID })
+  assert.equal(jsonLd.publisher['@id'], ORGANIZATION_ID)
   assert.equal(jsonLd.dateModified, '2026-05-31T00:00:00.000Z')
   assert.equal('dateReviewed' in jsonLd, false)
 })

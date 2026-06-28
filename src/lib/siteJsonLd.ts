@@ -14,6 +14,8 @@ const LOGO_URL = `${BASE_URL}/logo.png`
 const SAME_AS = [
   'https://facebook.com/arvopints',
   'https://instagram.com/arvopints',
+  'https://tiktok.com/@arvopints',
+  'https://x.com/arvopints',
 ]
 
 // Returns the Organization node WITHOUT an @context so it can be embedded in a
@@ -51,5 +53,15 @@ export function buildWebSiteJsonLd(): Record<string, unknown> {
     description: "What a pint costs across Perth's pubs — checked, dated, and sorted cheapest first.",
     publisher: { '@id': ORGANIZATION_ID },
     inLanguage: 'en-AU',
+  }
+}
+
+export function buildSiteJsonLdGraph(): Record<string, unknown> {
+  return {
+    '@context': 'https://schema.org',
+    '@graph': [
+      buildOrganizationJsonLd(),
+      buildWebSiteJsonLd(),
+    ],
   }
 }

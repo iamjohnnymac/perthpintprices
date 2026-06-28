@@ -1,3 +1,5 @@
+import { ORGANIZATION_ID } from './siteJsonLd'
+
 interface ArticleJsonLdInput {
   url: string
   headline: string
@@ -32,13 +34,11 @@ export function buildArticleJsonLd({
       lastReviewed,
     },
     author: {
-      '@type': 'Organization',
-      name: 'Perth Pint Prices',
-      url: 'https://perthpintprices.com',
+      '@id': ORGANIZATION_ID,
     },
     publisher: {
       '@type': 'Organization',
-      '@id': 'https://perthpintprices.com/#organization',
+      '@id': ORGANIZATION_ID,
       name: 'Perth Pint Prices',
       url: 'https://perthpintprices.com',
       logo: {
