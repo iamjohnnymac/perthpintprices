@@ -3,6 +3,7 @@ import BreadcrumbJsonLd from '@/components/BreadcrumbJsonLd'
 import { getCachedPubs } from '@/lib/cachedPubs'
 import { slimPubForFeature } from '@/lib/pubPhoto'
 import TonightsBestBetsPage from './TonightsBestBetsPage'
+import Link from 'next/link'
 
 export const metadata: Metadata = {
   title: "Tonight's Best Pints in Perth",
@@ -37,9 +38,9 @@ export default async function Page() {
       ]} />
       <div className="sr-only" aria-hidden="true">
         <p>The cheapest pints and live happy hours in Perth right now. What&#39;s on, what the pint costs, and where — updated as the night moves.</p>
-        <a href="/">Home</a>
-        <a href="/discover">Discover</a>
-        <a href="/happy-hour">Happy Hours</a>
+        <Link href="/">Home</Link>
+        <Link href="/discover">Discover</Link>
+        <Link href="/happy-hour">Happy Hours</Link>
       </div>
       <TonightsBestBetsPage initialPubs={initialPubs} />
     </>

@@ -3,6 +3,7 @@ import BreadcrumbJsonLd from '@/components/BreadcrumbJsonLd'
 import { getCachedPubs } from '@/lib/cachedPubs'
 import { slimPubForFeature } from '@/lib/pubPhoto'
 import SuburbRankingsPage from './SuburbRankingsPage'
+import Link from 'next/link'
 
 export const metadata: Metadata = {
   title: 'Perth Suburb Pint Rankings: Cheapest Areas',
@@ -37,9 +38,9 @@ export default async function Page() {
       ]} />
       <div className="sr-only" aria-hidden="true">
         <p>Every Perth suburb ranked cheapest to dearest by its average verified pint, each price dated. See which areas run cheap and which sit at the top.</p>
-        <a href="/">Home</a>
-        <a href="/discover">Discover</a>
-        <a href="/happy-hour">Happy Hours</a>
+        <Link href="/">Home</Link>
+        <Link href="/discover">Discover</Link>
+        <Link href="/happy-hour">Happy Hours</Link>
       </div>
       <SuburbRankingsPage initialPubs={initialPubs} />
     </>

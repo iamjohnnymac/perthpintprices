@@ -10,6 +10,7 @@ import { absolutePubUrl, pubUrl, toSuburbSlug } from '@/lib/urls'
 import { pubMetaDescription } from '@/lib/voiceCopy'
 import type { Pub } from '@/types/pub'
 import PubDetailClient from './PubDetailClient'
+import Link from 'next/link'
 
 interface PageProps {
   params: { suburb: string; pub: string }
@@ -186,11 +187,11 @@ export default async function PubPage({ params }: PageProps) {
 
       {/* Server-rendered links for crawlers — ensures this pub page has strong internal linking */}
       <div className="sr-only" aria-hidden="true">
-        <a href="/">Home</a>
-        <a href={`/${suburbSlug}`}>{pub.suburb}</a>
-        <a href="/suburbs">All Suburbs</a>
+        <Link href="/">Home</Link>
+        <Link href={`/${suburbSlug}`}>{pub.suburb}</Link>
+        <Link href="/suburbs">All Suburbs</Link>
         {nearbyPubs.map(np => (
-          <a key={np.slug} href={pubUrl({ suburb: np.suburb, slug: np.slug })}>{np.name} - {np.suburb}</a>
+          <Link key={np.slug} href={pubUrl({ suburb: np.suburb, slug: np.slug })}>{np.name} - {np.suburb}</Link>
         ))}
       </div>
 

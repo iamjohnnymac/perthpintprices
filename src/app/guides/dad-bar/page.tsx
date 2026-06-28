@@ -3,6 +3,7 @@ import BreadcrumbJsonLd from '@/components/BreadcrumbJsonLd'
 import { getCachedPubs } from '@/lib/cachedPubs'
 import { slimPubForFeature } from '@/lib/pubPhoto'
 import DadBarPage from './DadBarPage'
+import Link from 'next/link'
 
 export const metadata: Metadata = {
   title: 'The Dad Bar: Classic Perth Pubs for Dads',
@@ -37,9 +38,9 @@ export default async function Page() {
       ]} />
       <div className="sr-only" aria-hidden="true">
         <p>No craft cocktails, no pretentious menus. Find honest Perth pubs where you can enjoy a cold pint in peace. Includes kid-friendly spots with cheap prices and classic pub vibes.</p>
-        <a href="/">Home</a>
-        <a href="/discover">Discover</a>
-        <a href="/happy-hour">Happy Hours</a>
+        <Link href="/">Home</Link>
+        <Link href="/discover">Discover</Link>
+        <Link href="/happy-hour">Happy Hours</Link>
       </div>
       <DadBarPage initialPubs={initialPubs} />
     </>
