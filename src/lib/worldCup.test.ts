@@ -2,6 +2,7 @@ import assert from 'node:assert/strict'
 import { describe, it } from 'node:test'
 import {
   WC_FIXTURES,
+  TEAM_COLOURS,
   tradingStatus,
   formatKickoff,
   formatCountdown,
@@ -76,6 +77,42 @@ describe('WC_FIXTURES data sanity', () => {
     const groupD = WC_FIXTURES.filter(f => f.groupD)
     assert.equal(groupD.length, 3)
     assert.ok(groupD.every(f => !f.socceroos))
+  })
+
+  it('has confirmed Round of 32 teams from the FIFA fixture feed', () => {
+    const roundOf32 = WC_FIXTURES.filter(f => f.round === 'Round of 32')
+
+    assert.equal(roundOf32.length, 16)
+    assert.deepEqual(
+      roundOf32.map(f => [f.kickoff, f.home, f.away]),
+      [
+        ['2026-06-29T03:00:00+08:00', 'South Africa', 'Canada'],
+        ['2026-06-30T01:00:00+08:00', 'Brazil', 'Japan'],
+        ['2026-06-30T04:30:00+08:00', 'Germany', 'Paraguay'],
+        ['2026-06-30T09:00:00+08:00', 'Netherlands', 'Morocco'],
+        ['2026-07-01T01:00:00+08:00', 'Ivory Coast', 'Norway'],
+        ['2026-07-01T05:00:00+08:00', 'France', 'Sweden'],
+        ['2026-07-01T09:00:00+08:00', 'Mexico', 'Ecuador'],
+        ['2026-07-02T00:00:00+08:00', 'England', 'DR Congo'],
+        ['2026-07-02T04:00:00+08:00', 'Belgium', 'Senegal'],
+        ['2026-07-02T08:00:00+08:00', 'USA', 'Bosnia & Herzegovina'],
+        ['2026-07-03T03:00:00+08:00', 'Spain', 'Austria'],
+        ['2026-07-03T07:00:00+08:00', 'Portugal', 'Croatia'],
+        ['2026-07-03T11:00:00+08:00', 'Switzerland', 'Algeria'],
+        ['2026-07-04T02:00:00+08:00', 'Australia', 'Egypt'],
+        ['2026-07-04T06:00:00+08:00', 'Argentina', 'Cape Verde'],
+        ['2026-07-04T09:30:00+08:00', 'Colombia', 'Ghana'],
+      ],
+    )
+  })
+
+  it('does not show bracket placeholders or neutral stripes in the Round of 32', () => {
+    const placeholder = /\b(Winner|Runner-up|3rd place|TBD)\b/
+    for (const fixture of WC_FIXTURES.filter(f => f.round === 'Round of 32')) {
+      assert.doesNotMatch(`${fixture.home} ${fixture.away}`, placeholder, `${fixture.id} has confirmed teams`)
+      assert.notEqual(TEAM_COLOURS[fixture.home]?.[0], undefined, `${fixture.home} has team colours`)
+      assert.notEqual(TEAM_COLOURS[fixture.away]?.[0], undefined, `${fixture.away} has team colours`)
+    }
   })
 })
 

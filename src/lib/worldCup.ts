@@ -3,10 +3,9 @@ import { perthNow } from './perthClock'
 // 2026 FIFA World Cup — fixtures in Perth time (AWST, UTC+8).
 // Group-stage times cross-checked against two AEST schedule sources on
 // 10 June 2026 (AWST = AEST − 2h). Knockout kickoffs (Round of 32 → final)
-// added 17 June 2026, cross-checked against the official schedule: the dates,
-// times and order are fixed, but the teams are bracket slots ("Winner Group A")
-// until results come in, then they get filled in match by match.
-export const TIMES_CHECKED = '10 June 2026'
+// added 17 June 2026, cross-checked against the official schedule. Round of 32
+// teams were updated from FIFA's official fixture feed on 29 June 2026.
+export const TIMES_CHECKED = '29 June 2026'
 
 // Perth calendar date of the final. The final kicks off 3am AWST on 20 July
 // 2026 (7pm 19 July US Eastern), so World Cup surfaces render up to and
@@ -118,29 +117,29 @@ export const WC_FIXTURES: WcFixture[] = [
   { id: '2026-06-28-jordan-argentina', kickoff: '2026-06-28T10:00:00+08:00', home: 'Jordan', away: 'Argentina' },
   { id: '2026-06-28-algeria-austria', kickoff: '2026-06-28T10:00:00+08:00', home: 'Algeria', away: 'Austria' },
 
-  // --- Round of 32 (teams are bracket slots until the group stage settles) ---
+  // --- Round of 32 ---
   // Monday 29 June
-  { id: '2026-06-29-r32-m73', kickoff: '2026-06-29T03:00:00+08:00', home: 'Runner-up A', away: 'Runner-up B', round: 'Round of 32' },
+  { id: '2026-06-29-r32-m73', kickoff: '2026-06-29T03:00:00+08:00', home: 'South Africa', away: 'Canada', round: 'Round of 32' },
   // Tuesday 30 June
-  { id: '2026-06-30-r32-m76', kickoff: '2026-06-30T01:00:00+08:00', home: 'Winner C', away: 'Runner-up F', round: 'Round of 32' },
-  { id: '2026-06-30-r32-m74', kickoff: '2026-06-30T04:30:00+08:00', home: 'Winner E', away: '3rd place', round: 'Round of 32' },
-  { id: '2026-06-30-r32-m75', kickoff: '2026-06-30T09:00:00+08:00', home: 'Winner F', away: 'Runner-up C', round: 'Round of 32' },
+  { id: '2026-06-30-r32-m76', kickoff: '2026-06-30T01:00:00+08:00', home: 'Brazil', away: 'Japan', round: 'Round of 32' },
+  { id: '2026-06-30-r32-m74', kickoff: '2026-06-30T04:30:00+08:00', home: 'Germany', away: 'Paraguay', round: 'Round of 32' },
+  { id: '2026-06-30-r32-m75', kickoff: '2026-06-30T09:00:00+08:00', home: 'Netherlands', away: 'Morocco', round: 'Round of 32' },
   // Wednesday 1 July
-  { id: '2026-07-01-r32-m78', kickoff: '2026-07-01T01:00:00+08:00', home: 'Runner-up E', away: 'Runner-up I', round: 'Round of 32' },
-  { id: '2026-07-01-r32-m77', kickoff: '2026-07-01T05:00:00+08:00', home: 'Winner I', away: '3rd place', round: 'Round of 32' },
-  { id: '2026-07-01-r32-m79', kickoff: '2026-07-01T09:00:00+08:00', home: 'Winner A', away: '3rd place', round: 'Round of 32' },
+  { id: '2026-07-01-r32-m78', kickoff: '2026-07-01T01:00:00+08:00', home: 'Ivory Coast', away: 'Norway', round: 'Round of 32' },
+  { id: '2026-07-01-r32-m77', kickoff: '2026-07-01T05:00:00+08:00', home: 'France', away: 'Sweden', round: 'Round of 32' },
+  { id: '2026-07-01-r32-m79', kickoff: '2026-07-01T09:00:00+08:00', home: 'Mexico', away: 'Ecuador', round: 'Round of 32' },
   // Thursday 2 July
-  { id: '2026-07-02-r32-m80', kickoff: '2026-07-02T00:00:00+08:00', home: 'Winner L', away: '3rd place', round: 'Round of 32' },
-  { id: '2026-07-02-r32-m82', kickoff: '2026-07-02T04:00:00+08:00', home: 'Winner G', away: '3rd place', round: 'Round of 32' },
-  { id: '2026-07-02-r32-m81', kickoff: '2026-07-02T08:00:00+08:00', home: 'Winner D', away: '3rd place', round: 'Round of 32' },
+  { id: '2026-07-02-r32-m80', kickoff: '2026-07-02T00:00:00+08:00', home: 'England', away: 'DR Congo', round: 'Round of 32' },
+  { id: '2026-07-02-r32-m82', kickoff: '2026-07-02T04:00:00+08:00', home: 'Belgium', away: 'Senegal', round: 'Round of 32' },
+  { id: '2026-07-02-r32-m81', kickoff: '2026-07-02T08:00:00+08:00', home: 'USA', away: 'Bosnia & Herzegovina', round: 'Round of 32' },
   // Friday 3 July
-  { id: '2026-07-03-r32-m84', kickoff: '2026-07-03T03:00:00+08:00', home: 'Winner H', away: 'Runner-up J', round: 'Round of 32' },
-  { id: '2026-07-03-r32-m83', kickoff: '2026-07-03T07:00:00+08:00', home: 'Runner-up K', away: 'Runner-up L', round: 'Round of 32' },
-  { id: '2026-07-03-r32-m85', kickoff: '2026-07-03T11:00:00+08:00', home: 'Winner B', away: '3rd place', round: 'Round of 32' },
+  { id: '2026-07-03-r32-m84', kickoff: '2026-07-03T03:00:00+08:00', home: 'Spain', away: 'Austria', round: 'Round of 32' },
+  { id: '2026-07-03-r32-m83', kickoff: '2026-07-03T07:00:00+08:00', home: 'Portugal', away: 'Croatia', round: 'Round of 32' },
+  { id: '2026-07-03-r32-m85', kickoff: '2026-07-03T11:00:00+08:00', home: 'Switzerland', away: 'Algeria', round: 'Round of 32' },
   // Saturday 4 July
-  { id: '2026-07-04-r32-m88', kickoff: '2026-07-04T02:00:00+08:00', home: 'Runner-up D', away: 'Runner-up G', round: 'Round of 32' },
-  { id: '2026-07-04-r32-m86', kickoff: '2026-07-04T06:00:00+08:00', home: 'Winner J', away: 'Runner-up H', round: 'Round of 32' },
-  { id: '2026-07-04-r32-m87', kickoff: '2026-07-04T09:30:00+08:00', home: 'Winner K', away: '3rd place', round: 'Round of 32' },
+  { id: '2026-07-04-r32-m88', kickoff: '2026-07-04T02:00:00+08:00', home: 'Australia', away: 'Egypt', round: 'Round of 32' },
+  { id: '2026-07-04-r32-m86', kickoff: '2026-07-04T06:00:00+08:00', home: 'Argentina', away: 'Cape Verde', round: 'Round of 32' },
+  { id: '2026-07-04-r32-m87', kickoff: '2026-07-04T09:30:00+08:00', home: 'Colombia', away: 'Ghana', round: 'Round of 32' },
 
   // --- Round of 16 ---
   // Sunday 5 July
