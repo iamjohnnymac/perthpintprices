@@ -179,7 +179,7 @@ export default function WorldCupFixtures({ renderedAtIso }: WorldCupFixturesProp
 
       {visibleDays.length === 0 && !showPlayed && (
         <p className="font-body text-[0.9rem] text-gray-mid">
-          Group stage done. Knockout kickoff times land here once the bracket settles.
+          That&apos;s the 2026 World Cup done and dusted. Back to the regular pint hunt.
         </p>
       )}
     </div>

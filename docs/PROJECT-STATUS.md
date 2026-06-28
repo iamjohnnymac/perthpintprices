@@ -1,6 +1,6 @@
 # Perth Pint Prices Project Status
 
-Last updated: 2026-06-16
+Last updated: 2026-06-29
 
 ## What this is
 
@@ -9,6 +9,16 @@ Perth Pint Prices (perthpintprices.com) tracks pint prices across **857 Perth pu
 Stack, database, routes, components, and lib files are documented in `CLAUDE.md` (auto-loaded every session). This file covers history, recent work, and the backlog.
 
 ## What's done recently
+
+### World Cup kickoffs on pub pages + knockout fixtures (2026-06-17)
+Added a `PubWorldCup` card to pub detail pages (`/[suburb]/[pub]`) — the one World Cup surface that was missing (the `/world-cup` hub, `HomeWorldCup` strip and `worldCup.ts` engine already shipped 2026-06-10). Decided via a quick sub-agent fan-out (data signals / product / SEO / architecture) rather than guessing.
+- **Extended `WC_FIXTURES` from 72 → 104:** added all 32 knockout fixtures (Round of 32 → final) in AWST, cross-checked 17 June against the official schedule. Teams are bracket slots ("Winner Group A", "Winner M73") until results come in — dates/times/order are fixed. New optional `round` field on `WcFixture`; group fixtures leave it unset. Without these, the pub widget would have gone dark after the group stage ends ~28 June (10 days of runway), missing the entire knockout phase.
+- **`PubWorldCup` is a server component**, passed into `PubDetailClient` as a `worldCup` slot prop so the fixture data stays off the client bundle for all 850+ pub pages; only the existing `WorldCupCountdown` is a client island. Shows the next 3 upcoming kickoffs with Perth time, day heading, knockout round, the `tradingStatus` permit/early/normal badge, and a "Next · countdown" ticker.
+- **Gated on `goodForWatchingSports === true || hasTab === true`.** Live Supabase counts: `has_tab` is near-dead (56 pubs, 6.6% — hand-curated, never seeded), Google's `good_for_watching_sports` is the real signal (228, 27%); union lights up **250 pubs (29%)**. Non-sport pubs render nothing (no misleading "watch here" on a wine bar). No `SportsEvent`/`BroadcastEvent` schema — would falsely imply the pub hosts the match; honest framing only ("opening for a given kickoff is up to the venue").
+- **Self-retiring:** new shared `WC_LAST_DAY = '2026-07-20'` (Perth date of the final, which kicks off 3am AWST — the old `HomeWorldCup` `LAST_DAY = '2026-07-19'` would have hidden everything *during* the final; now both import the shared constant). Card returns `null` once the tournament is past or no upcoming fixtures remain — no manual cleanup. Hub empty-state copy updated (knockouts are listed now, so "lands once the bracket settles" was stale).
+- **Homepage strip now shows only current games:** `HomeWorldCup` previously rendered the three Socceroos fixtures regardless of whether they'd been played (so a finished game sat at the top of the homepage). Now it shows the next few kickoffs that haven't finished yet — hydration-safe via a mounted clock (mirrors `WorldCupFixtures`): server/pre-hydration render uses today-onwards (`fixtureDay >= today`, stable for hydration), then drops `matchPhase === 'played'` once the client clock is known. Australia's games keep a Socceroos tag; knockout games show their round.
+- **2026-06-29 follow-up (`5e1920c`):** tightened the homepage strip again so it shows only future kickoffs, not matches already live. Added `upcomingFixtures()` plus regression tests proving the strip uses the full fixture list rather than Australia-only.
+- **Verified:** `tsc` clean, 332/332 tests pass (worldCup tests updated to assert 104 = 72 group + 32 knockout, chronological order, final on 2026-07-20), lint clean. Playwright screenshots at 1280×800 + 375×812 against a live sport pub (The Royal on the Waterfront) — card renders with real upcoming fixtures + ticking countdown; confirmed a non-sport pub (Parley Bar) renders nothing. PR #204 (CI green); an independent agent reviewed the live Vercel preview (desktop + mobile, console-error capture) and returned PASS with no blockers.
 
 ### PageSpeed mobile fixes — perf + a11y, zero SEO change (2026-06-16)
 PR #201 (+ follow-ups #202 image, #203 happy-hour contrast). Worked the mobile PageSpeed report. The PSI API was quota-blocked at the project level (`defaultPerDayPerProject` = 0), so audits were captured by running `lighthouse` directly against the live URL. **Live production after deploy: Performance 72→88, Accessibility 77→100, Best Practices 96→100, SEO 100 (unchanged); FCP 3.6s→1.8s, LCP 5.3s→3.5s, CLS 0.001.**

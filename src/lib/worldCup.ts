@@ -1,10 +1,17 @@
 import { perthNow } from './perthClock'
 
-// 2026 FIFA World Cup — group-stage fixtures in Perth time (AWST, UTC+8).
-// Times cross-checked against two AEST schedule sources on 10 June 2026
-// (AWST = AEST − 2h). Knockout kickoffs are TBC until the bracket settles —
-// they are deliberately not listed rather than guessed.
+// 2026 FIFA World Cup — fixtures in Perth time (AWST, UTC+8).
+// Group-stage times cross-checked against two AEST schedule sources on
+// 10 June 2026 (AWST = AEST − 2h). Knockout kickoffs (Round of 32 → final)
+// added 17 June 2026, cross-checked against the official schedule: the dates,
+// times and order are fixed, but the teams are bracket slots ("Winner Group A")
+// until results come in, then they get filled in match by match.
 export const TIMES_CHECKED = '10 June 2026'
+
+// Perth calendar date of the final. The final kicks off 3am AWST on 20 July
+// 2026 (7pm 19 July US Eastern), so World Cup surfaces render up to and
+// including this Perth day, then retire themselves.
+export const WC_LAST_DAY = '2026-07-20'
 
 export interface WcFixture {
   id: string
@@ -16,6 +23,8 @@ export interface WcFixture {
   socceroos?: boolean
   /** Group D fixture that affects Australia's path */
   groupD?: boolean
+  /** Knockout round label, e.g. "Round of 32". Absent for group fixtures. */
+  round?: string
 }
 
 export const WC_FIXTURES: WcFixture[] = [
@@ -108,6 +117,67 @@ export const WC_FIXTURES: WcFixture[] = [
   { id: '2026-06-28-dr-congo-uzbekistan', kickoff: '2026-06-28T07:30:00+08:00', home: 'DR Congo', away: 'Uzbekistan' },
   { id: '2026-06-28-jordan-argentina', kickoff: '2026-06-28T10:00:00+08:00', home: 'Jordan', away: 'Argentina' },
   { id: '2026-06-28-algeria-austria', kickoff: '2026-06-28T10:00:00+08:00', home: 'Algeria', away: 'Austria' },
+
+  // --- Round of 32 (teams are bracket slots until the group stage settles) ---
+  // Monday 29 June
+  { id: '2026-06-29-r32-m73', kickoff: '2026-06-29T03:00:00+08:00', home: 'Runner-up A', away: 'Runner-up B', round: 'Round of 32' },
+  // Tuesday 30 June
+  { id: '2026-06-30-r32-m76', kickoff: '2026-06-30T01:00:00+08:00', home: 'Winner C', away: 'Runner-up F', round: 'Round of 32' },
+  { id: '2026-06-30-r32-m74', kickoff: '2026-06-30T04:30:00+08:00', home: 'Winner E', away: '3rd place', round: 'Round of 32' },
+  { id: '2026-06-30-r32-m75', kickoff: '2026-06-30T09:00:00+08:00', home: 'Winner F', away: 'Runner-up C', round: 'Round of 32' },
+  // Wednesday 1 July
+  { id: '2026-07-01-r32-m78', kickoff: '2026-07-01T01:00:00+08:00', home: 'Runner-up E', away: 'Runner-up I', round: 'Round of 32' },
+  { id: '2026-07-01-r32-m77', kickoff: '2026-07-01T05:00:00+08:00', home: 'Winner I', away: '3rd place', round: 'Round of 32' },
+  { id: '2026-07-01-r32-m79', kickoff: '2026-07-01T09:00:00+08:00', home: 'Winner A', away: '3rd place', round: 'Round of 32' },
+  // Thursday 2 July
+  { id: '2026-07-02-r32-m80', kickoff: '2026-07-02T00:00:00+08:00', home: 'Winner L', away: '3rd place', round: 'Round of 32' },
+  { id: '2026-07-02-r32-m82', kickoff: '2026-07-02T04:00:00+08:00', home: 'Winner G', away: '3rd place', round: 'Round of 32' },
+  { id: '2026-07-02-r32-m81', kickoff: '2026-07-02T08:00:00+08:00', home: 'Winner D', away: '3rd place', round: 'Round of 32' },
+  // Friday 3 July
+  { id: '2026-07-03-r32-m84', kickoff: '2026-07-03T03:00:00+08:00', home: 'Winner H', away: 'Runner-up J', round: 'Round of 32' },
+  { id: '2026-07-03-r32-m83', kickoff: '2026-07-03T07:00:00+08:00', home: 'Runner-up K', away: 'Runner-up L', round: 'Round of 32' },
+  { id: '2026-07-03-r32-m85', kickoff: '2026-07-03T11:00:00+08:00', home: 'Winner B', away: '3rd place', round: 'Round of 32' },
+  // Saturday 4 July
+  { id: '2026-07-04-r32-m88', kickoff: '2026-07-04T02:00:00+08:00', home: 'Runner-up D', away: 'Runner-up G', round: 'Round of 32' },
+  { id: '2026-07-04-r32-m86', kickoff: '2026-07-04T06:00:00+08:00', home: 'Winner J', away: 'Runner-up H', round: 'Round of 32' },
+  { id: '2026-07-04-r32-m87', kickoff: '2026-07-04T09:30:00+08:00', home: 'Winner K', away: '3rd place', round: 'Round of 32' },
+
+  // --- Round of 16 ---
+  // Sunday 5 July
+  { id: '2026-07-05-r16-m90', kickoff: '2026-07-05T01:00:00+08:00', home: 'Winner M73', away: 'Winner M75', round: 'Round of 16' },
+  { id: '2026-07-05-r16-m89', kickoff: '2026-07-05T05:00:00+08:00', home: 'Winner M74', away: 'Winner M77', round: 'Round of 16' },
+  // Monday 6 July
+  { id: '2026-07-06-r16-m91', kickoff: '2026-07-06T04:00:00+08:00', home: 'Winner M76', away: 'Winner M78', round: 'Round of 16' },
+  { id: '2026-07-06-r16-m92', kickoff: '2026-07-06T08:00:00+08:00', home: 'Winner M79', away: 'Winner M80', round: 'Round of 16' },
+  // Tuesday 7 July
+  { id: '2026-07-07-r16-m93', kickoff: '2026-07-07T03:00:00+08:00', home: 'Winner M83', away: 'Winner M84', round: 'Round of 16' },
+  { id: '2026-07-07-r16-m94', kickoff: '2026-07-07T08:00:00+08:00', home: 'Winner M81', away: 'Winner M82', round: 'Round of 16' },
+  // Wednesday 8 July
+  { id: '2026-07-08-r16-m95', kickoff: '2026-07-08T00:00:00+08:00', home: 'Winner M86', away: 'Winner M88', round: 'Round of 16' },
+  { id: '2026-07-08-r16-m96', kickoff: '2026-07-08T04:00:00+08:00', home: 'Winner M85', away: 'Winner M87', round: 'Round of 16' },
+
+  // --- Quarter-finals ---
+  // Friday 10 July
+  { id: '2026-07-10-qf-m97', kickoff: '2026-07-10T04:00:00+08:00', home: 'Winner M89', away: 'Winner M90', round: 'Quarter-final' },
+  // Saturday 11 July
+  { id: '2026-07-11-qf-m98', kickoff: '2026-07-11T03:00:00+08:00', home: 'Winner M93', away: 'Winner M94', round: 'Quarter-final' },
+  // Sunday 12 July
+  { id: '2026-07-12-qf-m99', kickoff: '2026-07-12T05:00:00+08:00', home: 'Winner M91', away: 'Winner M92', round: 'Quarter-final' },
+  { id: '2026-07-12-qf-m100', kickoff: '2026-07-12T08:00:00+08:00', home: 'Winner M95', away: 'Winner M96', round: 'Quarter-final' },
+
+  // --- Semi-finals ---
+  // Wednesday 15 July
+  { id: '2026-07-15-sf-m101', kickoff: '2026-07-15T03:00:00+08:00', home: 'Winner M97', away: 'Winner M98', round: 'Semi-final' },
+  // Thursday 16 July
+  { id: '2026-07-16-sf-m102', kickoff: '2026-07-16T03:00:00+08:00', home: 'Winner M99', away: 'Winner M100', round: 'Semi-final' },
+
+  // --- Third-place play-off ---
+  // Sunday 19 July
+  { id: '2026-07-19-third-m103', kickoff: '2026-07-19T05:00:00+08:00', home: 'Loser M101', away: 'Loser M102', round: 'Third-place play-off' },
+
+  // --- Final ---
+  // Monday 20 July (3am AWST)
+  { id: '2026-07-20-final-m104', kickoff: '2026-07-20T03:00:00+08:00', home: 'Winner M101', away: 'Winner M102', round: 'Final' },
 ]
 
 // --- WA licensing windows -------------------------------------------------
@@ -207,6 +277,12 @@ export function matchPhase(fixture: WcFixture, now: Date): MatchPhase {
   if (t < kickoff) return 'upcoming'
   if (t < kickoff + MATCH_RUNTIME_MS) return 'live'
   return 'played'
+}
+
+export function upcomingFixtures(now: Date, limit = 3): WcFixture[] {
+  return WC_FIXTURES
+    .filter(fixture => matchPhase(fixture, now) === 'upcoming')
+    .slice(0, limit)
 }
 
 // --- Team colours ----------------------------------------------------------
