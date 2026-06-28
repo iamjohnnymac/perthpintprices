@@ -57,12 +57,12 @@ export default function HeroSection({ pubs }: HeroSectionProps) {
         {cheapestPub ? (
           <Link href={pubUrl(cheapestPub)} className="border-3 border-ink rounded-card px-5 py-3.5 text-center min-w-[100px] bg-amber shadow-hard-sm animate-fade-up stagger-7 hover:translate-y-[-2px] transition-transform">
             <span className="type-price text-[1.6rem] block leading-[1.1] text-white">${cheapest}</span>
-            <span className="type-eyebrow block mt-0.5 text-white/80">Cheapest</span>
+            <span className="type-eyebrow block mt-0.5 text-ink">Cheapest</span>
           </Link>
         ) : (
           <div className="border-3 border-ink rounded-card px-5 py-3.5 text-center min-w-[100px] bg-amber shadow-hard-sm animate-fade-up stagger-7">
             <span className="type-price text-[1.6rem] block leading-[1.1] text-white">TBC</span>
-            <span className="type-eyebrow block mt-0.5 text-white/80">Cheapest</span>
+            <span className="type-eyebrow block mt-0.5 text-ink">Cheapest</span>
           </div>
         )}
       </div>

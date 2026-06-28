@@ -15,11 +15,15 @@ const imageFocusBySlug: Record<string, string> = {
 
 export default function ArticleImageSlot({ article, size, className = '' }: ArticleImageSlotProps) {
   const isFeature = size === 'feature'
+  // Mobile width is the card's content box (full viewport minus the px-6 = 3rem
+  // container gutters), not 100vw — that over-served a 750px variant for a
+  // ~360px slot. Quality 60 on AVIF is visually clean for these decorative
+  // thumbnails and trims another chunk off each image (PageSpeed image-delivery).
   const sizes = isFeature
-    ? '(min-width: 640px) 260px, 100vw'
+    ? '(min-width: 640px) 260px, calc(100vw - 3rem)'
     : size === 'rail'
-      ? '(min-width: 640px) 245px, 100vw'
-      : '(min-width: 640px) 390px, 100vw'
+      ? '(min-width: 640px) 245px, calc(100vw - 3rem)'
+      : '(min-width: 640px) 390px, calc(100vw - 3rem)'
 
   return (
     <div className={`relative overflow-hidden bg-amber-pale ${className}`}>
@@ -28,6 +32,7 @@ export default function ArticleImageSlot({ article, size, className = '' }: Arti
         alt={article.imageAlt}
         fill
         sizes={sizes}
+        quality={60}
         className="object-cover transition-transform duration-300 group-hover:scale-[1.03]"
         style={{ objectPosition: imageFocusBySlug[article.slug] ?? '50% 40%' }}
       />

@@ -54,7 +54,7 @@ function LiveHappyHourBanner({ pubs }: { pubs: Pub[] }) {
         <span className="text-ink font-medium text-[0.85rem] flex-1 truncate transition-opacity duration-300" key={current.slug}>
           <strong className="font-bold">{current.name}</strong> has ${current.price?.toFixed(2)} pints right now
         </span>
-        <span className="type-price text-[1.1rem] text-amber flex-shrink-0">
+        <span className="type-price text-[1.1rem] text-amber-deep flex-shrink-0">
           ${current.price?.toFixed(2)}
         </span>
         {liveHHPubs.length > 1 && (
@@ -181,21 +181,9 @@ function HomeContent({ initialPubs }: { initialPubs: Pub[] }) {
     return () => clearInterval(interval)
   }, [])
 
-  useEffect(() => {
-    if (typeof window !== 'undefined' && navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          setUserLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude })
-          setLocationState('granted')
-          // Only auto-set to nearest if no sort was specified in URL
-          if (!searchParams.get('sort')) setSortBy('nearest')
-        },
-        () => setLocationState('denied'),
-        { enableHighAccuracy: false, timeout: 8000, maximumAge: 300000 }
-      )
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  // Geolocation is requested only on a user action (the NEAREST button below),
+  // never on page load — auto-prompting for location on load is a dark pattern
+  // and PageSpeed/Lighthouse flags it ("geolocation-on-start").
 
   // Manual location request (triggered by NEAREST button when location not yet granted)
   const requestLocation = () => {

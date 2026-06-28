@@ -45,10 +45,19 @@ const config: Config = {
           DEFAULT: '#D4740A',
           light: '#F2A91A',
           pale: '#FFF3E0',
+          // #D4740A only reaches ~3.3:1 on white/cream — below WCAG AA's 4.5:1
+          // for small text. This deeper shade clears AA for fine-print amber
+          // text/links while keeping the warm brand hue. Use for small text
+          // only; the brighter DEFAULT stays for fills, borders and large UI.
+          deep: '#A85A00',
         },
         'red': {
           DEFAULT: '#C43D2E',
           pale: '#FDEAEA',
+          // #C43D2E on red-pale is 4.47:1 — a hair under AA's 4.5:1 for the
+          // small "HH"/status badges. This deeper red clears it (4.9:1) with a
+          // near-imperceptible hue shift. Use on red-pale badges only.
+          deep: '#BA3829',
         },
         'green': {
           DEFAULT: '#2D7A3D',
