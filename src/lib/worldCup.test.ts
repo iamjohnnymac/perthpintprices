@@ -8,6 +8,7 @@ import {
   fixtureDay,
   formatDayHeading,
   matchPhase,
+  upcomingFixtures,
   type WcFixture,
 } from './worldCup'
 
@@ -176,5 +177,27 @@ describe('matchPhase', () => {
 
   it('is played after the two-hour window', () => {
     assert.equal(matchPhase(fixture, new Date('2026-06-20T05:00:00+08:00')), 'played')
+  })
+})
+
+describe('upcomingFixtures', () => {
+  it('returns the next future matches from the full fixture list, not only Australia', () => {
+    const fixtures = upcomingFixtures(new Date('2026-06-20T05:01:00+08:00'))
+
+    assert.deepEqual(
+      fixtures.map(f => f.id),
+      [
+        '2026-06-20-scotland-morocco',
+        '2026-06-20-brazil-haiti',
+        '2026-06-20-turkiye-paraguay',
+      ],
+    )
+    assert.ok(fixtures.some(f => !f.socceroos))
+  })
+
+  it('excludes matches that have already kicked off', () => {
+    const fixtures = upcomingFixtures(new Date('2026-06-20T03:30:00+08:00'))
+
+    assert.equal(fixtures.some(f => f.id === '2026-06-20-usa-australia'), false)
   })
 })

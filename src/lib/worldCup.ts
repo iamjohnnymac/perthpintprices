@@ -279,6 +279,12 @@ export function matchPhase(fixture: WcFixture, now: Date): MatchPhase {
   return 'played'
 }
 
+export function upcomingFixtures(now: Date, limit = 3): WcFixture[] {
+  return WC_FIXTURES
+    .filter(fixture => matchPhase(fixture, now) === 'upcoming')
+    .slice(0, limit)
+}
+
 // --- Team colours ----------------------------------------------------------
 // Flag colours (top-to-bottom stripes) for every qualified team in the
 // fixture list — drives the stripe bands on fixture cards and the flag chips

@@ -6,7 +6,7 @@ import { ArrowUpRight } from 'lucide-react'
 import TeamStripes from '@/components/TeamStripes'
 import WorldCupCountdown from '@/components/WorldCupCountdown'
 import { perthToday } from '@/lib/perthClock'
-import { WC_FIXTURES, WC_LAST_DAY, fixtureDay, formatDayHeading, formatKickoff, matchPhase } from '@/lib/worldCup'
+import { WC_FIXTURES, WC_LAST_DAY, fixtureDay, formatDayHeading, formatKickoff, upcomingFixtures } from '@/lib/worldCup'
 
 export default function HomeWorldCup() {
   // Tick the clock so the strip drops a game the moment it finishes. Starts
@@ -24,12 +24,12 @@ export default function HomeWorldCup() {
   // tournament is over (WC_LAST_DAY = Perth date of the final).
   if (today > WC_LAST_DAY) return null
 
-  // Only current games at the top. Before mount we don't know the client clock,
-  // so render today-onwards (stable for hydration); once mounted, drop any match
-  // that has already finished so this morning's games never linger. Australia's
-  // games keep a Socceroos tag while they're still on.
+  // Only future kickoffs at the top. Before mount we don't know the client
+  // clock, so render today-onwards (stable for hydration); once mounted, drop
+  // anything that has already kicked off so this morning's games never linger.
+  // Australia's games keep a Socceroos tag while they're still to come.
   const current = (now
-    ? WC_FIXTURES.filter(fixture => matchPhase(fixture, now) !== 'played')
+    ? upcomingFixtures(now)
     : WC_FIXTURES.filter(fixture => fixtureDay(fixture.kickoff) >= today)
   ).slice(0, 3)
   if (current.length === 0) return null
@@ -63,7 +63,7 @@ export default function HomeWorldCup() {
                 {fixture.socceroos && <span className="text-amber-deep"> · Socceroos</span>}
                 {fixture.round && <span className="text-amber-deep"> · {fixture.round}</span>}
               </p>
-              <p className="mt-0.5 font-mono text-[0.95rem] font-extrabold text-ink">
+              <p className="mt-0.5 font-mono text-[0.84rem] font-extrabold leading-snug text-ink sm:text-[0.86rem]">
                 {formatKickoff(fixture.kickoff)}
                 <span className="text-[0.8rem] font-bold"> · {fixture.home} v {fixture.away}</span>
               </p>
