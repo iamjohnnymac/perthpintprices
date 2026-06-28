@@ -3,6 +3,7 @@ import BreadcrumbJsonLd from '@/components/BreadcrumbJsonLd'
 import { getCachedPubs } from '@/lib/cachedPubs'
 import { slimPubForFeature } from '@/lib/pubPhoto'
 import CozyCornersPage from './CozyCornersPage'
+import Link from 'next/link'
 
 export const metadata: Metadata = {
   title: 'Cosy Corners Perth: Best Rainy Day Pubs',
@@ -37,9 +38,9 @@ export default async function Page() {
       ]} />
       <div className="sr-only" aria-hidden="true">
         <p>Perth&apos;s cosiest pubs for when the weather turns — sheltered venues with fireplaces, covered beer gardens, and warm corners for a slow pint when it&apos;s wet out.</p>
-        <a href="/">Home</a>
-        <a href="/discover">Discover</a>
-        <a href="/happy-hour">Happy Hours</a>
+        <Link href="/">Home</Link>
+        <Link href="/discover">Discover</Link>
+        <Link href="/happy-hour">Happy Hours</Link>
       </div>
       <CozyCornersPage initialPubs={initialPubs} />
     </>

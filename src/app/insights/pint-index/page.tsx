@@ -7,6 +7,7 @@ import { getAllPubLastModifiedPairs } from '@/lib/supabase'
 import { getCachedPubs } from '@/lib/cachedPubs'
 import { pubUrl } from '@/lib/urls'
 import PintIndexPage from './PintIndexPage'
+import Link from 'next/link'
 
 const canonical = 'https://perthpintprices.com/insights/pint-index'
 const description = "The median pint in Perth, tracked across the pubs we cover and updated as prices come in — the spread by suburb, the quarter's moves, and who's still under $10."
@@ -89,9 +90,9 @@ export default async function Page() {
       <div className="sr-only" aria-hidden="true">
         <h1>Perth Pint Index - Live Beer Price Tracker</h1>
         <p>The median pint in Perth, tracked across every pub we cover and updated as prices come in. The Index shows the spread by suburb, which way prices moved this quarter, and the pubs still holding under $10.</p>
-        <a href="/">Home</a>
-        <a href="/discover">Discover</a>
-        <a href="/happy-hour">Happy Hours</a>
+        <Link href="/">Home</Link>
+        <Link href="/discover">Discover</Link>
+        <Link href="/happy-hour">Happy Hours</Link>
       </div>
       <PintIndexPage live={live} stats={{
         averagePrice: formatAudPrice(stats.averagePrice),

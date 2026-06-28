@@ -6,6 +6,7 @@ import { getSuburbStory } from '@/lib/suburbStory'
 import { slimPubForList } from '@/lib/pubPhoto'
 import { absoluteSuburbUrl } from '@/lib/urls'
 import SuburbClient from './SuburbClient'
+import Link from 'next/link'
 
 interface PageProps {
   params: { suburb: string }
@@ -157,16 +158,16 @@ export default async function SuburbPage({ params }: PageProps) {
         <p>Compare pint prices across {pubs.length} pubs in {suburb.name}. Community-verified prices updated daily.</p>
         <h2>All Pubs in {suburb.name}</h2>
         {pubs.map(pub => (
-          <a key={pub.slug} href={`/${params.suburb}/${pub.slug}`}>
+          <Link key={pub.slug} href={`/${params.suburb}/${pub.slug}`}>
             {pub.name} - {pub.suburb}{pub.regularPrice ? ` - $${pub.regularPrice.toFixed(2)}` : ''}
-          </a>
+          </Link>
         ))}
         <h2>Nearby Suburbs</h2>
         {nearbySuburbs.map(ns => (
-          <a key={ns.slug} href={`/${ns.slug}`}>{ns.name}</a>
+          <Link key={ns.slug} href={`/${ns.slug}`}>{ns.name}</Link>
         ))}
-        <a href="/">Home</a>
-        <a href="/suburbs">All Suburbs</a>
+        <Link href="/">Home</Link>
+        <Link href="/suburbs">All Suburbs</Link>
       </div>
 
       <SuburbClient

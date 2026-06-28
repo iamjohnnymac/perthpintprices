@@ -5,6 +5,7 @@ import { getCachedPubs } from '@/lib/cachedPubs'
 import { slimPubForList } from '@/lib/pubPhoto'
 import { pubUrl, suburbUrl, BASE_URL } from '@/lib/urls'
 import { buildOrganizationJsonLd, buildWebSiteJsonLd } from '@/lib/siteJsonLd'
+import Link from 'next/link'
 
 export async function generateMetadata(): Promise<Metadata> {
   const stats = await getSiteStats()
@@ -144,23 +145,23 @@ export default async function HomePage() {
           untouched, so Googlebot still discovers every page from here. */}
       <div id="ssr-links" className="sr-only" aria-hidden="true">
         <nav>
-          <a href="/" tabIndex={-1}>Home</a>
-          <a href="/discover" tabIndex={-1}>Discover</a>
-          <a href="/happy-hour" tabIndex={-1}>Happy Hours</a>
-          <a href="/suburbs" tabIndex={-1}>All Suburbs</a>
+          <Link href="/" tabIndex={-1}>Home</Link>
+          <Link href="/discover" tabIndex={-1}>Discover</Link>
+          <Link href="/happy-hour" tabIndex={-1}>Happy Hours</Link>
+          <Link href="/suburbs" tabIndex={-1}>All Suburbs</Link>
         </nav>
 
         <h2>Perth Suburbs</h2>
         {suburbs.map(suburb => (
-          <a key={suburb} href={suburbUrl(suburb)} tabIndex={-1}>{suburb}</a>
+          <Link key={suburb} href={suburbUrl(suburb)} tabIndex={-1}>{suburb}</Link>
         ))}
 
         <h2>Perth Pubs - Cheapest Pints</h2>
         {pubs.slice(0, 50).map(pub => (
-          <a key={pub.slug} href={pubUrl(pub)} tabIndex={-1}>
+          <Link key={pub.slug} href={pubUrl(pub)} tabIndex={-1}>
             {pub.name} - {pub.suburb}
             {pub.price ? ` - $${pub.price.toFixed(2)}` : ''}
-          </a>
+          </Link>
         ))}
       </div>
 

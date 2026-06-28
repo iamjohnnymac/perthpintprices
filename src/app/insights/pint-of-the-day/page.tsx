@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import BreadcrumbJsonLd from '@/components/BreadcrumbJsonLd'
 import PintOfTheDayPage from './PintOfTheDayPage'
+import Link from 'next/link'
 
 export const metadata: Metadata = {
   title: "Perth Pint of the Day: Today's Best Value Beer",
@@ -29,9 +30,9 @@ export default function Page() {
       <div className="sr-only" aria-hidden="true">
         <h1>Perth Pint of the Day - Today&#39;s Best Value Beer</h1>
         <p>One pub, one price, picked daily for value. Today&#39;s pint, how it compares to the suburb average, and the date we last checked — updated every day from verified prices.</p>
-        <a href="/">Home</a>
-        <a href="/discover">Discover</a>
-        <a href="/happy-hour">Happy Hours</a>
+        <Link href="/">Home</Link>
+        <Link href="/discover">Discover</Link>
+        <Link href="/happy-hour">Happy Hours</Link>
       </div>
       <PintOfTheDayPage />
     </>
