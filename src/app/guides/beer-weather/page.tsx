@@ -3,6 +3,7 @@ import BreadcrumbJsonLd from '@/components/BreadcrumbJsonLd'
 import { getCachedPubs } from '@/lib/cachedPubs'
 import { slimPubForFeature } from '@/lib/pubPhoto'
 import BeerWeatherPage from './BeerWeatherPage'
+import Link from 'next/link'
 
 export const metadata: Metadata = {
   title: 'Beer Weather Perth',
@@ -38,9 +39,9 @@ export default async function Page() {
       {/* The H1 + intro now render visibly via FeaturePageShell, so this crawl
           block only carries the nav links. */}
       <div className="sr-only" aria-hidden="true">
-        <a href="/">Home</a>
-        <a href="/discover">Discover</a>
-        <a href="/happy-hour">Happy Hours</a>
+        <Link href="/">Home</Link>
+        <Link href="/discover">Discover</Link>
+        <Link href="/happy-hour">Happy Hours</Link>
       </div>
       <BeerWeatherPage initialPubs={initialPubs} />
     </>

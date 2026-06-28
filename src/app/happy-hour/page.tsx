@@ -3,6 +3,7 @@ import BreadcrumbJsonLd from '@/components/BreadcrumbJsonLd'
 import HappyHourClient from './HappyHourClient'
 import { getCachedHappyHourPubs } from '@/lib/cachedPubs'
 import { pubUrl } from '@/lib/urls'
+import Link from 'next/link'
 
 export const revalidate = 60 // Revalidate every 60 seconds for fresh happy hour data
 
@@ -41,9 +42,9 @@ export default async function HappyHourPage() {
       <div className="sr-only" aria-hidden="true">
         <h2>Happy Hour Deals in Perth</h2>
         {happyHourPubs.map(pub => (
-          <a key={pub.slug} href={pubUrl(pub)}>
+          <Link key={pub.slug} href={pubUrl(pub)}>
             {pub.name} - {pub.suburb} - Happy Hour
-          </a>
+          </Link>
         ))}
       </div>
 

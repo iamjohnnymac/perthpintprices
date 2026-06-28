@@ -5,6 +5,7 @@ import { getCachedPubs } from '@/lib/cachedPubs'
 import { slimPubForList } from '@/lib/pubPhoto'
 import { pubUrl, suburbUrl, BASE_URL } from '@/lib/urls'
 import { buildOrganizationJsonLd, buildWebSiteJsonLd } from '@/lib/siteJsonLd'
+import Link from 'next/link'
 
 export async function generateMetadata(): Promise<Metadata> {
   const stats = await getSiteStats()
@@ -141,23 +142,23 @@ export default async function HomePage() {
           The client component overlays this with the interactive UI on hydration. */}
       <div id="ssr-links" className="sr-only" aria-hidden="true">
         <nav>
-          <a href="/">Home</a>
-          <a href="/discover">Discover</a>
-          <a href="/happy-hour">Happy Hours</a>
-          <a href="/suburbs">All Suburbs</a>
+          <Link href="/">Home</Link>
+          <Link href="/discover">Discover</Link>
+          <Link href="/happy-hour">Happy Hours</Link>
+          <Link href="/suburbs">All Suburbs</Link>
         </nav>
 
         <h2>Perth Suburbs</h2>
         {suburbs.map(suburb => (
-          <a key={suburb} href={suburbUrl(suburb)}>{suburb}</a>
+          <Link key={suburb} href={suburbUrl(suburb)}>{suburb}</Link>
         ))}
 
         <h2>Perth Pubs - Cheapest Pints</h2>
         {pubs.slice(0, 50).map(pub => (
-          <a key={pub.slug} href={pubUrl(pub)}>
+          <Link key={pub.slug} href={pubUrl(pub)}>
             {pub.name} - {pub.suburb}
             {pub.price ? ` - $${pub.price.toFixed(2)}` : ''}
-          </a>
+          </Link>
         ))}
       </div>
 

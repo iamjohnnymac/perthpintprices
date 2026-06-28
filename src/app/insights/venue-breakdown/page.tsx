@@ -3,6 +3,7 @@ import BreadcrumbJsonLd from '@/components/BreadcrumbJsonLd'
 import { getCachedPubs } from '@/lib/cachedPubs'
 import { slimPubForFeature } from '@/lib/pubPhoto'
 import VenueBreakdownPage from './VenueBreakdownPage'
+import Link from 'next/link'
 
 export const metadata: Metadata = {
   title: 'Perth Pub Prices by Bracket',
@@ -37,9 +38,9 @@ export default async function Page() {
       ]} />
       <div className="sr-only" aria-hidden="true">
         <p>How every Perth pub we track stacks up by the numbers — the price spread, how many sit under $10, and which suburbs run cheap. The data behind the Index.</p>
-        <a href="/">Home</a>
-        <a href="/discover">Discover</a>
-        <a href="/happy-hour">Happy Hours</a>
+        <Link href="/">Home</Link>
+        <Link href="/discover">Discover</Link>
+        <Link href="/happy-hour">Happy Hours</Link>
       </div>
       <VenueBreakdownPage initialPubs={initialPubs} />
     </>
