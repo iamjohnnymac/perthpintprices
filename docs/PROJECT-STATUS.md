@@ -1,6 +1,6 @@
 # Perth Pint Prices Project Status
 
-Last updated: 2026-06-17
+Last updated: 2026-06-29
 
 ## What this is
 
@@ -17,6 +17,7 @@ Added a `PubWorldCup` card to pub detail pages (`/[suburb]/[pub]`) — the one W
 - **Gated on `goodForWatchingSports === true || hasTab === true`.** Live Supabase counts: `has_tab` is near-dead (56 pubs, 6.6% — hand-curated, never seeded), Google's `good_for_watching_sports` is the real signal (228, 27%); union lights up **250 pubs (29%)**. Non-sport pubs render nothing (no misleading "watch here" on a wine bar). No `SportsEvent`/`BroadcastEvent` schema — would falsely imply the pub hosts the match; honest framing only ("opening for a given kickoff is up to the venue").
 - **Self-retiring:** new shared `WC_LAST_DAY = '2026-07-20'` (Perth date of the final, which kicks off 3am AWST — the old `HomeWorldCup` `LAST_DAY = '2026-07-19'` would have hidden everything *during* the final; now both import the shared constant). Card returns `null` once the tournament is past or no upcoming fixtures remain — no manual cleanup. Hub empty-state copy updated (knockouts are listed now, so "lands once the bracket settles" was stale).
 - **Homepage strip now shows only current games:** `HomeWorldCup` previously rendered the three Socceroos fixtures regardless of whether they'd been played (so a finished game sat at the top of the homepage). Now it shows the next few kickoffs that haven't finished yet — hydration-safe via a mounted clock (mirrors `WorldCupFixtures`): server/pre-hydration render uses today-onwards (`fixtureDay >= today`, stable for hydration), then drops `matchPhase === 'played'` once the client clock is known. Australia's games keep a Socceroos tag; knockout games show their round.
+- **2026-06-29 follow-up (`5e1920c`):** tightened the homepage strip again so it shows only future kickoffs, not matches already live. Added `upcomingFixtures()` plus regression tests proving the strip uses the full fixture list rather than Australia-only.
 - **Verified:** `tsc` clean, 332/332 tests pass (worldCup tests updated to assert 104 = 72 group + 32 knockout, chronological order, final on 2026-07-20), lint clean. Playwright screenshots at 1280×800 + 375×812 against a live sport pub (The Royal on the Waterfront) — card renders with real upcoming fixtures + ticking countdown; confirmed a non-sport pub (Parley Bar) renders nothing. PR #204 (CI green); an independent agent reviewed the live Vercel preview (desktop + mobile, console-error capture) and returned PASS with no blockers.
 
 ### PageSpeed mobile fixes — perf + a11y, zero SEO change (2026-06-16)
