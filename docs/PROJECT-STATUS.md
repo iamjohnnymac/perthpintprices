@@ -10,6 +10,11 @@ Stack, database, routes, components, and lib files are documented in `CLAUDE.md`
 
 ## What's done recently
 
+### Site-wide brand schema + sameAs cleanup (2026-06-29)
+- **Commit `0974a62`:** moved the canonical `Organization` + `WebSite` JSON-LD graph into the root layout so the Perth Pint Prices brand entity is present site-wide, not only on the homepage. Added a small `JsonLdScript` helper that escapes `<` per Next.js JSON-LD guidance.
+- **`sameAs` now matches the real footer profiles:** Facebook, Instagram, TikTok, and X (`arvopints`) are all listed in the Organization node. Homepage JSON-LD now stays focused on the homepage FAQ and links back to the site-level `WebSite` via `isPartOf`.
+- **Article schema now references the same brand entity:** `author` and `publisher` point at `https://perthpintprices.com/#organization` rather than creating disconnected anonymous Organization nodes. Verified with `npm test -- --runInBand` (338/338) and `npx tsc --noEmit`.
+
 ### World Cup kickoffs on pub pages + knockout fixtures (2026-06-17)
 Added a `PubWorldCup` card to pub detail pages (`/[suburb]/[pub]`) — the one World Cup surface that was missing (the `/world-cup` hub, `HomeWorldCup` strip and `worldCup.ts` engine already shipped 2026-06-10). Decided via a quick sub-agent fan-out (data signals / product / SEO / architecture) rather than guessing.
 - **Extended `WC_FIXTURES` from 72 → 104:** added all 32 knockout fixtures (Round of 32 → final) in AWST, cross-checked 17 June against the official schedule. Teams are bracket slots ("Winner Group A", "Winner M73") until results come in — dates/times/order are fixed. New optional `round` field on `WcFixture`; group fixtures leave it unset. Without these, the pub widget would have gone dark after the group stage ends ~28 June (10 days of runway), missing the entire knockout phase.
