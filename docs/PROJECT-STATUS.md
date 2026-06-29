@@ -10,9 +10,13 @@ Stack, database, routes, components, and lib files are documented in `CLAUDE.md`
 
 ## What's done recently
 
+### Removed unowned `sameAs` profile links (2026-06-29)
+- **Commit `3ecd439`:** removed Facebook, Instagram, TikTok, and X links from the Perth Pint Prices `Organization.sameAs` schema because those `arvopints` profiles are not owned/controlled by the site owner. `sameAs` is now omitted until there are confirmed official profiles. Added a regression test so `sameAs` only returns when verified owned profiles exist.
+- **Verified:** `npm test -- --runInBand` (338/338) and `npx tsc --noEmit`.
+
 ### Site-wide brand schema + sameAs cleanup (2026-06-29)
 - **Commit `0974a62`:** moved the canonical `Organization` + `WebSite` JSON-LD graph into the root layout so the Perth Pint Prices brand entity is present site-wide, not only on the homepage. Added a small `JsonLdScript` helper that escapes `<` per Next.js JSON-LD guidance.
-- **`sameAs` now matches the real footer profiles:** Facebook, Instagram, TikTok, and X (`arvopints`) are all listed in the Organization node. Homepage JSON-LD now stays focused on the homepage FAQ and links back to the site-level `WebSite` via `isPartOf`.
+- **`sameAs` follow-up:** the initial profile links were removed in `3ecd439` because they were not owned/controlled Perth Pint Prices profiles. Homepage JSON-LD stays focused on the homepage FAQ and links back to the site-level `WebSite` via `isPartOf`.
 - **Article schema now references the same brand entity:** `author` and `publisher` point at `https://perthpintprices.com/#organization` rather than creating disconnected anonymous Organization nodes. Verified with `npm test -- --runInBand` (338/338) and `npx tsc --noEmit`.
 
 ### World Cup kickoffs on pub pages + knockout fixtures (2026-06-17)

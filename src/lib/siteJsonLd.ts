@@ -9,15 +9,6 @@ export const WEBSITE_ID = `${BASE_URL}/#website`
 const LOGO_ID = `${BASE_URL}/#logo`
 const LOGO_URL = `${BASE_URL}/logo.png`
 
-// Brand profiles the site already links from the footer. Kept in sync so the
-// on-page links and the sameAs signal agree.
-const SAME_AS = [
-  'https://facebook.com/arvopints',
-  'https://instagram.com/arvopints',
-  'https://tiktok.com/@arvopints',
-  'https://x.com/arvopints',
-]
-
 // Returns the Organization node WITHOUT an @context so it can be embedded in a
 // page-level @graph. The logo is the square brand mark (not the landscape OG
 // image) — Google uses it for the knowledge-panel / search branding.
@@ -37,7 +28,6 @@ export function buildOrganizationJsonLd(): Record<string, unknown> {
       caption: 'Perth Pint Prices',
     },
     image: { '@id': LOGO_ID },
-    sameAs: SAME_AS,
   }
 }
 

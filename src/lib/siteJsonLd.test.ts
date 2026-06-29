@@ -26,14 +26,8 @@ test('buildOrganizationJsonLd emits a complete brand entity', () => {
   assert.equal(logo.width, 1024)
   assert.equal(logo.height, 1024)
 
-  // sameAs must list real, linked brand profiles.
-  assert.ok(Array.isArray(org.sameAs))
-  const sameAs = org.sameAs as string[]
-  assert.ok(sameAs.includes('https://facebook.com/arvopints'))
-  assert.ok(sameAs.includes('https://instagram.com/arvopints'))
-  assert.ok(sameAs.includes('https://tiktok.com/@arvopints'))
-  assert.ok(sameAs.includes('https://x.com/arvopints'))
-  assert.ok(sameAs.every(url => url.startsWith('https://')))
+  // sameAs must only be emitted for profiles the site owner controls.
+  assert.equal('sameAs' in org, false)
 })
 
 test('buildWebSiteJsonLd links to the Organization as publisher', () => {
