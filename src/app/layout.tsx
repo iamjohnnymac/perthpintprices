@@ -80,6 +80,17 @@ export default function RootLayout({
             gtag('config', 'G-1WN68Q85SY');
           `}
         </Script>
+        {/* Microsoft Clarity — session recordings + heatmaps. Lazy-loaded to
+            match GA and keep the tag off the critical path. */}
+        <Script id="microsoft-clarity" strategy="lazyOnload">
+          {`
+            (function(c,l,a,r,i,t,y){
+                c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+                t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+                y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+            })(window, document, "clarity", "script", "xez4co2ysd");
+          `}
+        </Script>
         <link rel="manifest" href="/manifest.json" />
         <meta name="theme-color" content="#FDF8F0" />
         <JsonLdScript data={buildSiteJsonLdGraph()} />
