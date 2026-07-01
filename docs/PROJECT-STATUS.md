@@ -1,6 +1,6 @@
 # Perth Pint Prices Project Status
 
-Last updated: 2026-06-30
+Last updated: 2026-07-01
 
 ## What this is
 
@@ -9,6 +9,11 @@ Perth Pint Prices (perthpintprices.com) tracks pint prices across **857 Perth pu
 Stack, database, routes, components, and lib files are documented in `CLAUDE.md` (auto-loaded every session). This file covers history, recent work, and the backlog.
 
 ## What's done recently
+
+### World Cup knockout fixture freshness (2026-07-01)
+- **Commit `7e30777`:** refreshed the FIFA 2026 knockout fixtures from the official FIFA fixture feed. Updated the Mexico v Ecuador Round of 32 kickoff to 10am AWST, confirmed Round of 16 slots for Canada v Morocco, Paraguay v France, Brazil v Norway, and Mexico v Winner M80, and moved quarter-final M100 to 9am AWST. Preserved local naming style (`Ivory Coast`, `DR Congo`, `Cape Verde`, `Bosnia & Herzegovina`) while leaving unresolved knockout sides as bracket placeholders.
+- **Regression coverage:** `worldCup.test.ts` now locks the confirmed Round of 16 fixtures, FIFA-confirmed knockout kickoff changes, and team-colour coverage for every confirmed team in the fixture list.
+- **Verified:** `npm test -- --runInBand` (341/341), `npx tsc --noEmit`, and Playwright homepage screenshots at 1280×800 + 375×812.
 
 ### Microsoft Clarity analytics added (2026-06-30)
 - **Commit `3a87b56`:** added Microsoft Clarity (project `xez4co2ysd`) for session recordings and heatmaps. The tag loads via `next/script` with `strategy="lazyOnload"` in the root layout, mirroring the existing Google Analytics setup so it stays off the critical path.
