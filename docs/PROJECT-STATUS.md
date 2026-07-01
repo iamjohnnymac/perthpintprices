@@ -1,6 +1,6 @@
 # Perth Pint Prices Project Status
 
-Last updated: 2026-06-29
+Last updated: 2026-07-01
 
 ## What this is
 
@@ -9,6 +9,11 @@ Perth Pint Prices (perthpintprices.com) tracks pint prices across **857 Perth pu
 Stack, database, routes, components, and lib files are documented in `CLAUDE.md` (auto-loaded every session). This file covers history, recent work, and the backlog.
 
 ## What's done recently
+
+### World Cup knockout fixture freshness (2026-07-01)
+- **Commit `7e30777`:** refreshed the FIFA 2026 knockout fixtures from the official FIFA fixture feed. Updated the Mexico v Ecuador Round of 32 kickoff to 10am AWST, confirmed Round of 16 slots for Canada v Morocco, Paraguay v France, Brazil v Norway, and Mexico v Winner M80, and moved quarter-final M100 to 9am AWST. Preserved local naming style (`Ivory Coast`, `DR Congo`, `Cape Verde`, `Bosnia & Herzegovina`) while leaving unresolved knockout sides as bracket placeholders.
+- **Regression coverage:** `worldCup.test.ts` now locks the confirmed Round of 16 fixtures, FIFA-confirmed knockout kickoff changes, and team-colour coverage for every confirmed team in the fixture list.
+- **Verified:** `npm test -- --runInBand` (341/341), `npx tsc --noEmit`, and Playwright homepage screenshots at 1280×800 + 375×812.
 
 ### Removed unowned `sameAs` profile links (2026-06-29)
 - **Commit `3ecd439`:** removed Facebook, Instagram, TikTok, and X links from the Perth Pint Prices `Organization.sameAs` schema because those `arvopints` profiles are not owned/controlled by the site owner. `sameAs` is now omitted until there are confirmed official profiles. Added a regression test so `sameAs` only returns when verified owned profiles exist.
