@@ -15,6 +15,10 @@ Stack, database, routes, components, and lib files are documented in `CLAUDE.md`
 - **Regression coverage:** `worldCup.test.ts` now locks the confirmed Round of 16 fixtures, FIFA-confirmed knockout kickoff changes, and team-colour coverage for every confirmed team in the fixture list.
 - **Verified:** `npm test -- --runInBand` (341/341), `npx tsc --noEmit`, and Playwright homepage screenshots at 1280×800 + 375×812.
 
+### Microsoft Clarity analytics added (2026-06-30)
+- **Commit `3a87b56`:** added Microsoft Clarity (project `xez4co2ysd`) for session recordings and heatmaps. The tag loads via `next/script` with `strategy="lazyOnload"` in the root layout, mirroring the existing Google Analytics setup so it stays off the critical path.
+- **Verified:** `npx tsc --noEmit` clean; a headless load check confirmed `window.clarity` initialises and the tag fetches `clarity.ms/tag/xez4co2ysd` at runtime.
+
 ### Removed unowned `sameAs` profile links (2026-06-29)
 - **Commit `3ecd439`:** removed Facebook, Instagram, TikTok, and X links from the Perth Pint Prices `Organization.sameAs` schema because those `arvopints` profiles are not owned/controlled by the site owner. `sameAs` is now omitted until there are confirmed official profiles. Added a regression test so `sameAs` only returns when verified owned profiles exist.
 - **Verified:** `npm test -- --runInBand` (338/338) and `npx tsc --noEmit`.
