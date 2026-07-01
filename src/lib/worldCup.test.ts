@@ -92,7 +92,7 @@ describe('WC_FIXTURES data sanity', () => {
         ['2026-06-30T09:00:00+08:00', 'Netherlands', 'Morocco'],
         ['2026-07-01T01:00:00+08:00', 'Ivory Coast', 'Norway'],
         ['2026-07-01T05:00:00+08:00', 'France', 'Sweden'],
-        ['2026-07-01T09:00:00+08:00', 'Mexico', 'Ecuador'],
+        ['2026-07-01T10:00:00+08:00', 'Mexico', 'Ecuador'],
         ['2026-07-02T00:00:00+08:00', 'England', 'DR Congo'],
         ['2026-07-02T04:00:00+08:00', 'Belgium', 'Senegal'],
         ['2026-07-02T08:00:00+08:00', 'USA', 'Bosnia & Herzegovina'],
@@ -112,6 +112,41 @@ describe('WC_FIXTURES data sanity', () => {
       assert.doesNotMatch(`${fixture.home} ${fixture.away}`, placeholder, `${fixture.id} has confirmed teams`)
       assert.notEqual(TEAM_COLOURS[fixture.home]?.[0], undefined, `${fixture.home} has team colours`)
       assert.notEqual(TEAM_COLOURS[fixture.away]?.[0], undefined, `${fixture.away} has team colours`)
+    }
+  })
+
+  it('has confirmed Round of 16 teams from the FIFA fixture feed while preserving unresolved slots', () => {
+    const roundOf16 = WC_FIXTURES.filter(f => f.round === 'Round of 16')
+
+    assert.equal(roundOf16.length, 8)
+    assert.deepEqual(
+      roundOf16.map(f => [f.id, f.kickoff, f.home, f.away]),
+      [
+        ['2026-07-05-r16-m90', '2026-07-05T01:00:00+08:00', 'Canada', 'Morocco'],
+        ['2026-07-05-r16-m89', '2026-07-05T05:00:00+08:00', 'Paraguay', 'France'],
+        ['2026-07-06-r16-m91', '2026-07-06T04:00:00+08:00', 'Brazil', 'Norway'],
+        ['2026-07-06-r16-m92', '2026-07-06T08:00:00+08:00', 'Mexico', 'Winner M80'],
+        ['2026-07-07-r16-m93', '2026-07-07T03:00:00+08:00', 'Winner M83', 'Winner M84'],
+        ['2026-07-07-r16-m94', '2026-07-07T08:00:00+08:00', 'Winner M81', 'Winner M82'],
+        ['2026-07-08-r16-m95', '2026-07-08T00:00:00+08:00', 'Winner M86', 'Winner M88'],
+        ['2026-07-08-r16-m96', '2026-07-08T04:00:00+08:00', 'Winner M85', 'Winner M87'],
+      ],
+    )
+  })
+
+  it('keeps FIFA-confirmed knockout kickoff changes', () => {
+    const byId = new Map(WC_FIXTURES.map(f => [f.id, f]))
+
+    assert.equal(byId.get('2026-07-01-r32-m79')?.kickoff, '2026-07-01T10:00:00+08:00')
+    assert.equal(byId.get('2026-07-12-qf-m100')?.kickoff, '2026-07-12T09:00:00+08:00')
+  })
+
+  it('has team colours for every confirmed team in the fixture list', () => {
+    const placeholder = /\b(Winner|Loser|Runner-up|3rd place|TBD)\b/
+    const teams = new Set(WC_FIXTURES.flatMap(f => [f.home, f.away]).filter(team => !placeholder.test(team)))
+
+    for (const team of teams) {
+      assert.notEqual(TEAM_COLOURS[team]?.[0], undefined, `${team} has team colours`)
     }
   })
 })
