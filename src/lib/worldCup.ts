@@ -4,8 +4,8 @@ import { perthNow } from './perthClock'
 // Group-stage times cross-checked against two AEST schedule sources on
 // 10 June 2026 (AWST = AEST − 2h). Knockout kickoffs (Round of 32 → final)
 // added 17 June 2026, cross-checked against the official schedule. Round of 32
-// teams were updated from FIFA's official fixture feed on 1 July 2026.
-export const TIMES_CHECKED = '1 July 2026'
+// teams were updated from FIFA's official fixture feed on 2 July 2026.
+export const TIMES_CHECKED = '2 July 2026'
 
 // Perth calendar date of the final. The final kicks off 3am AWST on 20 July
 // 2026 (7pm 19 July US Eastern), so World Cup surfaces render up to and
@@ -147,10 +147,10 @@ export const WC_FIXTURES: WcFixture[] = [
   { id: '2026-07-05-r16-m89', kickoff: '2026-07-05T05:00:00+08:00', home: 'Paraguay', away: 'France', round: 'Round of 16' },
   // Monday 6 July
   { id: '2026-07-06-r16-m91', kickoff: '2026-07-06T04:00:00+08:00', home: 'Brazil', away: 'Norway', round: 'Round of 16' },
-  { id: '2026-07-06-r16-m92', kickoff: '2026-07-06T08:00:00+08:00', home: 'Mexico', away: 'Winner M80', round: 'Round of 16' },
+  { id: '2026-07-06-r16-m92', kickoff: '2026-07-06T08:00:00+08:00', home: 'Mexico', away: 'England', round: 'Round of 16' },
   // Tuesday 7 July
   { id: '2026-07-07-r16-m93', kickoff: '2026-07-07T03:00:00+08:00', home: 'Winner M83', away: 'Winner M84', round: 'Round of 16' },
-  { id: '2026-07-07-r16-m94', kickoff: '2026-07-07T08:00:00+08:00', home: 'Winner M81', away: 'Winner M82', round: 'Round of 16' },
+  { id: '2026-07-07-r16-m94', kickoff: '2026-07-07T08:00:00+08:00', home: 'USA', away: 'Belgium', round: 'Round of 16' },
   // Wednesday 8 July
   { id: '2026-07-08-r16-m95', kickoff: '2026-07-08T00:00:00+08:00', home: 'Winner M86', away: 'Winner M88', round: 'Round of 16' },
   { id: '2026-07-08-r16-m96', kickoff: '2026-07-08T04:00:00+08:00', home: 'Winner M85', away: 'Winner M87', round: 'Round of 16' },
