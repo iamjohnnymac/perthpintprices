@@ -1,6 +1,6 @@
 # Perth Pint Prices Project Status
 
-Last updated: 2026-07-01
+Last updated: 2026-07-03
 
 ## What this is
 
@@ -9,6 +9,11 @@ Perth Pint Prices (perthpintprices.com) tracks pint prices across **857 Perth pu
 Stack, database, routes, components, and lib files are documented in `CLAUDE.md` (auto-loaded every session). This file covers history, recent work, and the backlog.
 
 ## What's done recently
+
+### World Cup Round of 16 fixture freshness (2026-07-03)
+- **Commit `279c5f9`:** refreshed the FIFA 2026 knockout fixtures from the official FIFA fixture feed. Confirmed Round of 16 slots for Mexico v England, Portugal v Spain, USA v Belgium, and Switzerland v Winner M87. Kickoff times still match FIFA and unresolved future sides remain bracket placeholders.
+- **Regression coverage:** `worldCup.test.ts` now locks the newly confirmed Round of 16 teams while the existing team-colour coverage guards every confirmed side in the fixture list.
+- **Verified:** FIFA feed comparison returned `DIFFS=0`; `npm test -- --runInBand` (341/341), `npx tsc --noEmit`, and Playwright homepage screenshots at 1280×800 (`/tmp/perth-pint-prices-screenshots/world-cup-home-desktop-2026-07-03.png`) + 375×812 (`/tmp/perth-pint-prices-screenshots/world-cup-home-mobile-2026-07-03.png`).
 
 ### World Cup knockout fixture freshness (2026-07-01)
 - **Commit `7e30777`:** refreshed the FIFA 2026 knockout fixtures from the official FIFA fixture feed. Updated the Mexico v Ecuador Round of 32 kickoff to 10am AWST, confirmed Round of 16 slots for Canada v Morocco, Paraguay v France, Brazil v Norway, and Mexico v Winner M80, and moved quarter-final M100 to 9am AWST. Preserved local naming style (`Ivory Coast`, `DR Congo`, `Cape Verde`, `Bosnia & Herzegovina`) while leaving unresolved knockout sides as bracket placeholders.
