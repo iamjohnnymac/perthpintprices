@@ -15,6 +15,16 @@ Stack, database, routes, components, and lib files are documented in `CLAUDE.md`
 - **Regression coverage:** `worldCup.test.ts` now locks the fully confirmed Round of 16 fixtures and continues to require team-colour coverage for every confirmed team in the fixture list.
 - **Verified:** `npm test -- --runInBand` (341/341), `npx tsc --noEmit`, and Playwright homepage screenshots at 1280×800 + 375×812.
 
+### World Cup Round of 16 fixture freshness (2026-07-03)
+- **Commit `279c5f9`:** refreshed the FIFA 2026 knockout fixtures from the official FIFA fixture feed. Confirmed Round of 16 slots for Mexico v England, Portugal v Spain, USA v Belgium, and Switzerland v Winner M87. Kickoff times still match FIFA and unresolved future sides remain bracket placeholders.
+- **Regression coverage:** `worldCup.test.ts` now locks the newly confirmed Round of 16 teams while the existing team-colour coverage guards every confirmed side in the fixture list.
+- **Verified:** FIFA feed comparison returned `DIFFS=0`; `npm test -- --runInBand` (341/341), `npx tsc --noEmit`, and Playwright homepage screenshots at 1280×800 (`/tmp/perth-pint-prices-screenshots/world-cup-home-desktop-2026-07-03.png`) + 375×812 (`/tmp/perth-pint-prices-screenshots/world-cup-home-mobile-2026-07-03.png`).
+
+### World Cup Round of 16 fixture freshness (2026-07-02)
+- **Commit `4c3ac2f`:** refreshed the FIFA 2026 knockout fixtures from the official FIFA fixture feed. Confirmed Round of 16 slots for Mexico v England and USA v Belgium, updated `TIMES_CHECKED` to 2 July 2026, and kept unresolved future knockout slots as bracket placeholders.
+- **Regression coverage:** `worldCup.test.ts` now locks the newly confirmed Round of 16 teams while the existing confirmed-team colour coverage guards England, USA, and Belgium.
+- **Verified:** `npm test -- --runInBand` (341/341), `npx tsc --noEmit`, and Playwright homepage screenshots at 1280×800 (`/tmp/world-cup-home-desktop-2026-07-02.png`) + 375×812 (`/tmp/world-cup-home-mobile-2026-07-02.png`).
+
 ### World Cup knockout fixture freshness (2026-07-01)
 - **Commit `7e30777`:** refreshed the FIFA 2026 knockout fixtures from the official FIFA fixture feed. Updated the Mexico v Ecuador Round of 32 kickoff to 10am AWST, confirmed Round of 16 slots for Canada v Morocco, Paraguay v France, Brazil v Norway, and Mexico v Winner M80, and moved quarter-final M100 to 9am AWST. Preserved local naming style (`Ivory Coast`, `DR Congo`, `Cape Verde`, `Bosnia & Herzegovina`) while leaving unresolved knockout sides as bracket placeholders.
 - **Regression coverage:** `worldCup.test.ts` now locks the confirmed Round of 16 fixtures, FIFA-confirmed knockout kickoff changes, and team-colour coverage for every confirmed team in the fixture list.
