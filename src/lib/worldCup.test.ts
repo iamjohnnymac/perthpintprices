@@ -115,7 +115,7 @@ describe('WC_FIXTURES data sanity', () => {
     }
   })
 
-  it('has confirmed Round of 16 teams from the FIFA fixture feed while preserving unresolved slots', () => {
+  it('has confirmed Round of 16 teams from the FIFA fixture feed', () => {
     const roundOf16 = WC_FIXTURES.filter(f => f.round === 'Round of 16')
 
     assert.equal(roundOf16.length, 8)
@@ -125,11 +125,26 @@ describe('WC_FIXTURES data sanity', () => {
         ['2026-07-05-r16-m90', '2026-07-05T01:00:00+08:00', 'Canada', 'Morocco'],
         ['2026-07-05-r16-m89', '2026-07-05T05:00:00+08:00', 'Paraguay', 'France'],
         ['2026-07-06-r16-m91', '2026-07-06T04:00:00+08:00', 'Brazil', 'Norway'],
-        ['2026-07-06-r16-m92', '2026-07-06T08:00:00+08:00', 'Mexico', 'Winner M80'],
-        ['2026-07-07-r16-m93', '2026-07-07T03:00:00+08:00', 'Winner M83', 'Winner M84'],
-        ['2026-07-07-r16-m94', '2026-07-07T08:00:00+08:00', 'Winner M81', 'Winner M82'],
-        ['2026-07-08-r16-m95', '2026-07-08T00:00:00+08:00', 'Winner M86', 'Winner M88'],
-        ['2026-07-08-r16-m96', '2026-07-08T04:00:00+08:00', 'Winner M85', 'Winner M87'],
+        ['2026-07-06-r16-m92', '2026-07-06T08:00:00+08:00', 'Mexico', 'England'],
+        ['2026-07-07-r16-m93', '2026-07-07T03:00:00+08:00', 'Portugal', 'Spain'],
+        ['2026-07-07-r16-m94', '2026-07-07T08:00:00+08:00', 'USA', 'Belgium'],
+        ['2026-07-08-r16-m95', '2026-07-08T00:00:00+08:00', 'Argentina', 'Egypt'],
+        ['2026-07-08-r16-m96', '2026-07-08T04:00:00+08:00', 'Switzerland', 'Colombia'],
+      ],
+    )
+  })
+
+  it('has the FIFA-confirmed first quarter-final while preserving future unresolved slots', () => {
+    const quarterFinals = WC_FIXTURES.filter(f => f.round === 'Quarter-final')
+
+    assert.equal(quarterFinals.length, 4)
+    assert.deepEqual(
+      quarterFinals.map(f => [f.id, f.kickoff, f.home, f.away]),
+      [
+        ['2026-07-10-qf-m97', '2026-07-10T04:00:00+08:00', 'France', 'Morocco'],
+        ['2026-07-11-qf-m98', '2026-07-11T03:00:00+08:00', 'Winner M93', 'Winner M94'],
+        ['2026-07-12-qf-m99', '2026-07-12T05:00:00+08:00', 'Winner M91', 'Winner M92'],
+        ['2026-07-12-qf-m100', '2026-07-12T09:00:00+08:00', 'Winner M95', 'Winner M96'],
       ],
     )
   })
