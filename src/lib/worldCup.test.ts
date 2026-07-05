@@ -115,7 +115,7 @@ describe('WC_FIXTURES data sanity', () => {
     }
   })
 
-  it('has confirmed Round of 16 teams from the FIFA fixture feed while preserving unresolved slots', () => {
+  it('has confirmed Round of 16 teams from the FIFA fixture feed', () => {
     const roundOf16 = WC_FIXTURES.filter(f => f.round === 'Round of 16')
 
     assert.equal(roundOf16.length, 8)
@@ -128,8 +128,8 @@ describe('WC_FIXTURES data sanity', () => {
         ['2026-07-06-r16-m92', '2026-07-06T08:00:00+08:00', 'Mexico', 'England'],
         ['2026-07-07-r16-m93', '2026-07-07T03:00:00+08:00', 'Portugal', 'Spain'],
         ['2026-07-07-r16-m94', '2026-07-07T08:00:00+08:00', 'USA', 'Belgium'],
-        ['2026-07-08-r16-m95', '2026-07-08T00:00:00+08:00', 'Winner M86', 'Winner M88'],
-        ['2026-07-08-r16-m96', '2026-07-08T04:00:00+08:00', 'Switzerland', 'Winner M87'],
+        ['2026-07-08-r16-m95', '2026-07-08T00:00:00+08:00', 'Argentina', 'Egypt'],
+        ['2026-07-08-r16-m96', '2026-07-08T04:00:00+08:00', 'Switzerland', 'Colombia'],
       ],
     )
   })
