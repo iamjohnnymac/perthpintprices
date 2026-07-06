@@ -3,9 +3,9 @@ import { perthNow } from './perthClock'
 // 2026 FIFA World Cup — fixtures in Perth time (AWST, UTC+8).
 // Group-stage times cross-checked against two AEST schedule sources on
 // 10 June 2026 (AWST = AEST − 2h). Knockout kickoffs (Round of 32 → final)
-// added 17 June 2026, cross-checked against the official schedule. Round of 32
-// teams were updated from FIFA's official fixture feed on 4 July 2026.
-export const TIMES_CHECKED = '4 July 2026'
+// added 17 June 2026, cross-checked against the official schedule. Knockout
+// teams were updated from FIFA's official fixture feed on 5 July 2026.
+export const TIMES_CHECKED = '5 July 2026'
 
 // Perth calendar date of the final. The final kicks off 3am AWST on 20 July
 // 2026 (7pm 19 July US Eastern), so World Cup surfaces render up to and
@@ -157,7 +157,7 @@ export const WC_FIXTURES: WcFixture[] = [
 
   // --- Quarter-finals ---
   // Friday 10 July
-  { id: '2026-07-10-qf-m97', kickoff: '2026-07-10T04:00:00+08:00', home: 'Winner M89', away: 'Winner M90', round: 'Quarter-final' },
+  { id: '2026-07-10-qf-m97', kickoff: '2026-07-10T04:00:00+08:00', home: 'France', away: 'Morocco', round: 'Quarter-final' },
   // Saturday 11 July
   { id: '2026-07-11-qf-m98', kickoff: '2026-07-11T03:00:00+08:00', home: 'Winner M93', away: 'Winner M94', round: 'Quarter-final' },
   // Sunday 12 July

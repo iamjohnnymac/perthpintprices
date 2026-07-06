@@ -134,6 +134,21 @@ describe('WC_FIXTURES data sanity', () => {
     )
   })
 
+  it('has the FIFA-confirmed first quarter-final while preserving future unresolved slots', () => {
+    const quarterFinals = WC_FIXTURES.filter(f => f.round === 'Quarter-final')
+
+    assert.equal(quarterFinals.length, 4)
+    assert.deepEqual(
+      quarterFinals.map(f => [f.id, f.kickoff, f.home, f.away]),
+      [
+        ['2026-07-10-qf-m97', '2026-07-10T04:00:00+08:00', 'France', 'Morocco'],
+        ['2026-07-11-qf-m98', '2026-07-11T03:00:00+08:00', 'Winner M93', 'Winner M94'],
+        ['2026-07-12-qf-m99', '2026-07-12T05:00:00+08:00', 'Winner M91', 'Winner M92'],
+        ['2026-07-12-qf-m100', '2026-07-12T09:00:00+08:00', 'Winner M95', 'Winner M96'],
+      ],
+    )
+  })
+
   it('keeps FIFA-confirmed knockout kickoff changes', () => {
     const byId = new Map(WC_FIXTURES.map(f => [f.id, f]))
 
