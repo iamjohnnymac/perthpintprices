@@ -160,3 +160,27 @@ test('omits happy-hour openingHoursSpecification for invalid time values', () =>
 
   assert.equal(barOrPub.openingHoursSpecification, undefined)
 })
+
+test('reconciles the pub to its Google listing via sameAs + hasMap when place_id is set', () => {
+  const jsonLd = buildPubJsonLd(makePub({ placeId: 'ChIJN1t_tDeuEmsRUsoyG83frY4' }), 10)
+  const barOrPub = (jsonLd['@graph'] as Record<string, unknown>[])[1]
+
+  const placeUrl = 'https://www.google.com/maps/place/?q=place_id:ChIJN1t_tDeuEmsRUsoyG83frY4'
+  assert.deepEqual(barOrPub.sameAs, [placeUrl])
+  assert.equal(barOrPub.hasMap, placeUrl)
+})
+
+test('falls back to a lat/lng map search and omits sameAs when there is no place_id', () => {
+  const barOrPub = (buildPubJsonLd(makePub(), 10)['@graph'] as Record<string, unknown>[])[1]
+
+  assert.equal(barOrPub.hasMap, 'https://www.google.com/maps/search/?api=1&query=-32.0569,115.7439')
+  assert.equal(barOrPub.sameAs, undefined)
+})
+
+test('emits telephone only when a phone number is present', () => {
+  const withPhone = buildPubJsonLd(makePub({ phone: '+61 8 9335 1234' }), 10)
+  const withoutPhone = buildPubJsonLd(makePub(), 10)
+
+  assert.equal(((withPhone['@graph'] as Record<string, unknown>[])[1]).telephone, '+61 8 9335 1234')
+  assert.equal(((withoutPhone['@graph'] as Record<string, unknown>[])[1]).telephone, undefined)
+})
