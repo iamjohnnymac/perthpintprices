@@ -191,6 +191,11 @@ export function buildPubJsonLd(pub: Pub, avgPrice: number): JsonLdNode {
   const happyHourSpec = buildHappyHourOpeningHours(pub)
   const openingHoursSpecification = [...buildRegularOpeningHours(pub), ...(happyHourSpec ? [happyHourSpec] : [])]
   const amenityFeature = buildAmenityFeatures(pub)
+  // Canonical Google Business Profile URL built from the stored place_id — the
+  // stable, official form for linking to a place (Google Maps URLs spec).
+  const googlePlaceUrl = pub.placeId
+    ? `https://www.google.com/maps/place/?q=place_id:${encodeURIComponent(pub.placeId)}`
+    : null
 
   const barOrPub: JsonLdNode = {
     '@type': 'BarOrPub',
@@ -205,16 +210,29 @@ export function buildPubJsonLd(pub: Pub, avgPrice: number): JsonLdNode {
     },
   }
 
-  if (Number.isFinite(pub.lat) && Number.isFinite(pub.lng) && pub.lat !== 0 && pub.lng !== 0) {
+  const hasGeo = Number.isFinite(pub.lat) && Number.isFinite(pub.lng) && pub.lat !== 0 && pub.lng !== 0
+  if (hasGeo) {
     barOrPub.geo = {
       '@type': 'GeoCoordinates',
       latitude: pub.lat,
       longitude: pub.lng,
     }
+  }
+
+  // Map link prefers the canonical Google listing (from place_id); falls back to a
+  // lat/lng search when we only have coordinates.
+  if (googlePlaceUrl) {
+    barOrPub.hasMap = googlePlaceUrl
+  } else if (hasGeo) {
     barOrPub.hasMap = `https://www.google.com/maps/search/?api=1&query=${pub.lat},${pub.lng}`
   }
 
+  // sameAs reconciles this pub to its authoritative Google Business Profile — the
+  // entity signal linking our page to the pub's real-world listing.
+  if (googlePlaceUrl) barOrPub.sameAs = [googlePlaceUrl]
+
   if (pub.website) barOrPub.url = pub.website
+  if (pub.phone) barOrPub.telephone = pub.phone
   // Google Places photo as the entity image — a strong local rich-result signal.
   // ImageObject carries the required contributor credit into the structured data.
   if (pub.googlePhotoUrl) {

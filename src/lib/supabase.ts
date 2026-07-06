@@ -139,6 +139,8 @@ function toPub(row: any): Pub {
     googlePhotoUrl: row.google_photo_url || null,
     googlePhotoAttribution: row.google_photo_attribution || null,
     googlePhotoAttributionUri: row.google_photo_attribution_uri || null,
+    placeId: row.place_id || null,
+    phone: row.phone || null,
   }
 }
 
@@ -147,12 +149,13 @@ function toBoolOrNull(value: unknown): boolean | null {
 }
 
 // Exactly the columns toPub() reads. select('*') also dragged in columns nothing
-// maps (context, created_at, phone, place_id, updated_at) — dead egress on every
-// pull. google_opening_hours is split out because it alone is ~735KB across the
-// table (35% of a full pull) and only the pub detail page and the happy-hour
-// listicle render it.
+// maps (context, created_at, updated_at) — dead egress on every pull.
+// PUB_FULL_COLUMNS adds the heavy / detail-only fields: google_opening_hours is
+// ~735KB across the table (35% of a full pull), and place_id/phone feed the pub
+// detail page's schema.org sameAs / hasMap / telephone — none are needed on the
+// big list pulls, so they stay out of PUB_LIST_COLUMNS.
 const PUB_LIST_COLUMNS = 'id, slug, name, suburb, price, image_url, vibe_tag, address, website, lat, lng, beer_type, happy_hour, description, price_source, price_verified_at, price_confidence, last_updated, sunset_spot, price_verified, has_tab, kid_friendly, cozy_pub, happy_hour_price, happy_hour_days, happy_hour_start, happy_hour_end, last_verified, serves_beer, serves_food, outdoor_seating, good_for_children, good_for_groups, good_for_watching_sports, allows_dogs, live_music, restroom, reservable, google_rating, google_rating_count, google_price_level, business_status, google_editorial_summary, google_attrs_updated_at, google_photo_url, google_photo_attribution, google_photo_attribution_uri'
-const PUB_FULL_COLUMNS = `${PUB_LIST_COLUMNS}, google_opening_hours`
+const PUB_FULL_COLUMNS = `${PUB_LIST_COLUMNS}, google_opening_hours, place_id, phone`
 
 /**
  * Raw row fetchers, exported for `cachedPubs.ts` to wrap in unstable_cache.

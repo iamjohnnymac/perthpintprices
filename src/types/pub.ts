@@ -61,6 +61,12 @@ export interface Pub {
   googlePhotoUrl?: string | null
   googlePhotoAttribution?: string | null
   googlePhotoAttributionUri?: string | null
+  // Canonical Google listing id + contact number — surfaced only on the pub
+  // detail page for schema.org sameAs / hasMap / telephone. Optional (like the
+  // Places fields above) so the many direct Pub fixtures don't need updating;
+  // null when unknown.
+  placeId?: string | null
+  phone?: string | null
 }
 
 // Subset of the Places (New) regularOpeningHours object we persist + render.
