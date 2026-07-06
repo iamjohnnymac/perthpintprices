@@ -1,6 +1,6 @@
 # Perth Pint Prices Project Status
 
-Last updated: 2026-07-05
+Last updated: 2026-07-06
 
 ## What this is
 
@@ -9,6 +9,11 @@ Perth Pint Prices (perthpintprices.com) tracks pint prices across **857 Perth pu
 Stack, database, routes, components, and lib files are documented in `CLAUDE.md` (auto-loaded every session). This file covers history, recent work, and the backlog.
 
 ## What's done recently
+
+### Pub pages linked to their Google listing via schema.org `sameAs` (2026-07-06)
+- **Commit `6391d4a`:** each pub's `BarOrPub` JSON-LD now emits `sameAs` + `hasMap` pointing at the canonical Google Business Profile (built from the stored `place_id`), plus `telephone` from the stored phone number. `place_id`/`phone` are surfaced through `PUB_FULL_COLUMNS` and `toPub()` — deliberately kept out of `PUB_LIST_COLUMNS` so the big list pulls stay lean. Pubs without a `place_id` degrade gracefully (lat/lng `hasMap`, no `sameAs`). Reconciles each pub page to its real-world Google entity; pub social profiles (FB/IG) are still not collected, so they remain out of `sameAs`.
+- **Commit `d45277e`:** restored `"target": "ES2017"` to `tsconfig.json`. The config mirrors the Next 14 `create-next-app` default but had lost its `target` line, so `tsc` defaulted to ES3/ES5 and rejected a `Set` iteration in `worldCup.test.ts` (TS2802) — making `npx tsc --noEmit` impossible to pass cleanly. `lib` is unchanged and `next build` uses SWC (browserslist-driven), so this only touches `tsc`'s downlevel typecheck; build output is unaffected.
+- **Verified:** `npx tsc --noEmit` clean (a stale `tsconfig.tsbuildinfo` from `incremental: true` masked the fix until cleared), full unit suite **345/345** via `tsx --test`. New `pubJsonLd.test.ts` cases lock the `sameAs`/`hasMap` place-id path, the lat/lng fallback, and `telephone`.
 
 ### World Cup knockout fixture freshness (2026-07-05)
 - **Commit `7bba585`:** refreshed the FIFA 2026 knockout fixtures from the official FIFA fixture feed. Confirmed the remaining Round of 16 slots as Mexico v England, Portugal v Spain, USA v Belgium, Argentina v Egypt, and Switzerland v Colombia, and confirmed quarter-final M97 as France v Morocco. Future quarter-finals, semi-finals, third-place play-off, and final remain bracket placeholders where FIFA has not confirmed both teams.
