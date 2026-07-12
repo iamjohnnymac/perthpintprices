@@ -11,7 +11,7 @@ Stack, database, routes, components, and lib files are documented in `CLAUDE.md`
 ## What's done recently
 
 ### World Cup knockout fixture freshness (2026-07-12)
-- **Commit `PENDING`:** refreshed the FIFA 2026 knockout fixtures from the official FIFA fixture feed. Confirmed the remaining Round of 16 slots, all quarter-final teams, France v Spain for semi-final M101, and England v Winner M100 for semi-final M102. Kickoff times still match the existing Perth/AWST schedule, and unresolved future sides remain as bracket placeholders only where FIFA has not confirmed both teams.
+- **Commit `896a56a`:** refreshed the FIFA 2026 knockout fixtures from the official FIFA fixture feed. Confirmed the remaining Round of 16 slots, all quarter-final teams, France v Spain for semi-final M101, and England v Winner M100 for semi-final M102. Kickoff times still match the existing Perth/AWST schedule, and unresolved future sides remain as bracket placeholders only where FIFA has not confirmed both teams.
 - **Regression coverage:** `worldCup.test.ts` now locks the confirmed Round of 16, quarter-final, and semi-final fixture state, while keeping team-colour coverage for every confirmed team in the fixture list.
 - **Verified:** `npm test -- --runInBand` (343/343), `npx tsc --noEmit`, and Playwright homepage screenshots at 1280×800 + 375×812.
 
