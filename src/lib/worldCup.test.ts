@@ -134,7 +134,7 @@ describe('WC_FIXTURES data sanity', () => {
     )
   })
 
-  it('has the FIFA-confirmed first quarter-final while preserving future unresolved slots', () => {
+  it('has FIFA-confirmed teams for every quarter-final', () => {
     const quarterFinals = WC_FIXTURES.filter(f => f.round === 'Quarter-final')
 
     assert.equal(quarterFinals.length, 4)
@@ -142,11 +142,32 @@ describe('WC_FIXTURES data sanity', () => {
       quarterFinals.map(f => [f.id, f.kickoff, f.home, f.away]),
       [
         ['2026-07-10-qf-m97', '2026-07-10T04:00:00+08:00', 'France', 'Morocco'],
-        ['2026-07-11-qf-m98', '2026-07-11T03:00:00+08:00', 'Winner M93', 'Winner M94'],
-        ['2026-07-12-qf-m99', '2026-07-12T05:00:00+08:00', 'Winner M91', 'Winner M92'],
-        ['2026-07-12-qf-m100', '2026-07-12T09:00:00+08:00', 'Winner M95', 'Winner M96'],
+        ['2026-07-11-qf-m98', '2026-07-11T03:00:00+08:00', 'Spain', 'Belgium'],
+        ['2026-07-12-qf-m99', '2026-07-12T05:00:00+08:00', 'Norway', 'England'],
+        ['2026-07-12-qf-m100', '2026-07-12T09:00:00+08:00', 'Argentina', 'Switzerland'],
       ],
     )
+  })
+
+  it('has FIFA-confirmed teams from the semi-finals through the final', () => {
+    assert.deepEqual(
+      WC_FIXTURES.filter(f => ['Semi-final', 'Third-place play-off', 'Final'].includes(f.round ?? ''))
+        .map(f => [f.id, f.kickoff, f.home, f.away]),
+      [
+        ['2026-07-15-sf-m101', '2026-07-15T03:00:00+08:00', 'France', 'Spain'],
+        ['2026-07-16-sf-m102', '2026-07-16T03:00:00+08:00', 'England', 'Argentina'],
+        ['2026-07-19-third-m103', '2026-07-19T05:00:00+08:00', 'France', 'England'],
+        ['2026-07-20-final-m104', '2026-07-20T03:00:00+08:00', 'Spain', 'Argentina'],
+      ],
+    )
+  })
+
+  it('has no unresolved bracket placeholders now FIFA has confirmed the knockout field', () => {
+    const placeholder = /\b(Winner|Loser|Runner-up|3rd place|TBD)\b/
+
+    for (const fixture of WC_FIXTURES.filter(f => f.round)) {
+      assert.doesNotMatch(`${fixture.home} ${fixture.away}`, placeholder, `${fixture.id} has confirmed teams`)
+    }
   })
 
   it('keeps FIFA-confirmed knockout kickoff changes', () => {
