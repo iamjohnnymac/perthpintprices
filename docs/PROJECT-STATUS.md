@@ -1,6 +1,6 @@
 # Perth Pint Prices Project Status
 
-Last updated: 2026-07-06
+Last updated: 2026-07-18
 
 ## What this is
 
@@ -9,6 +9,11 @@ Perth Pint Prices (perthpintprices.com) tracks pint prices across **857 Perth pu
 Stack, database, routes, components, and lib files are documented in `CLAUDE.md` (auto-loaded every session). This file covers history, recent work, and the backlog.
 
 ## What's done recently
+
+### World Cup knockout fixture freshness through final (2026-07-18)
+- **Commit `8ee1ec0`:** refreshed the FIFA 2026 knockout fixtures from the official FIFA fixture feed. Corrected Mexico v England to 9am AWST, confirmed the remaining quarter-finals (Spain v Belgium, Norway v England, Argentina v Switzerland), both semi-finals, the third-place play-off, and the final (Spain v Argentina). Local naming style remains preserved while `TIMES_CHECKED` now reflects 18 July 2026.
+- **Regression coverage:** `worldCup.test.ts` now locks the confirmed quarter-finals, semi-finals, third-place play-off, final, the Mexico v England kickoff correction, and team-colour coverage for every confirmed team in the fixture list.
+- **Verified:** FIFA feed comparison returned zero differences for knockout matches M73-M104; `npm test -- --runInBand` (346/346), `npx tsc --noEmit`, and Playwright homepage screenshots at `/tmp/perth-pint-prices-worldcup-2026-07-18/home-desktop.png` and `/tmp/perth-pint-prices-worldcup-2026-07-18/home-mobile.png`.
 
 ### Pub pages linked to their Google listing via schema.org `sameAs` (2026-07-06)
 - **Commit `6391d4a`:** each pub's `BarOrPub` JSON-LD now emits `sameAs` + `hasMap` pointing at the canonical Google Business Profile (built from the stored `place_id`), plus `telephone` from the stored phone number. `place_id`/`phone` are surfaced through `PUB_FULL_COLUMNS` and `toPub()` — deliberately kept out of `PUB_LIST_COLUMNS` so the big list pulls stay lean. Pubs without a `place_id` degrade gracefully (lat/lng `hasMap`, no `sameAs`). Reconciles each pub page to its real-world Google entity; pub social profiles (FB/IG) are still not collected, so they remain out of `sameAs`.

@@ -125,7 +125,7 @@ describe('WC_FIXTURES data sanity', () => {
         ['2026-07-05-r16-m90', '2026-07-05T01:00:00+08:00', 'Canada', 'Morocco'],
         ['2026-07-05-r16-m89', '2026-07-05T05:00:00+08:00', 'Paraguay', 'France'],
         ['2026-07-06-r16-m91', '2026-07-06T04:00:00+08:00', 'Brazil', 'Norway'],
-        ['2026-07-06-r16-m92', '2026-07-06T08:00:00+08:00', 'Mexico', 'England'],
+        ['2026-07-06-r16-m92', '2026-07-06T09:00:00+08:00', 'Mexico', 'England'],
         ['2026-07-07-r16-m93', '2026-07-07T03:00:00+08:00', 'Portugal', 'Spain'],
         ['2026-07-07-r16-m94', '2026-07-07T08:00:00+08:00', 'USA', 'Belgium'],
         ['2026-07-08-r16-m95', '2026-07-08T00:00:00+08:00', 'Argentina', 'Egypt'],
@@ -134,7 +134,7 @@ describe('WC_FIXTURES data sanity', () => {
     )
   })
 
-  it('has the FIFA-confirmed first quarter-final while preserving future unresolved slots', () => {
+  it('has confirmed quarter-final teams from the FIFA fixture feed', () => {
     const quarterFinals = WC_FIXTURES.filter(f => f.round === 'Quarter-final')
 
     assert.equal(quarterFinals.length, 4)
@@ -142,9 +142,25 @@ describe('WC_FIXTURES data sanity', () => {
       quarterFinals.map(f => [f.id, f.kickoff, f.home, f.away]),
       [
         ['2026-07-10-qf-m97', '2026-07-10T04:00:00+08:00', 'France', 'Morocco'],
-        ['2026-07-11-qf-m98', '2026-07-11T03:00:00+08:00', 'Winner M93', 'Winner M94'],
-        ['2026-07-12-qf-m99', '2026-07-12T05:00:00+08:00', 'Winner M91', 'Winner M92'],
-        ['2026-07-12-qf-m100', '2026-07-12T09:00:00+08:00', 'Winner M95', 'Winner M96'],
+        ['2026-07-11-qf-m98', '2026-07-11T03:00:00+08:00', 'Spain', 'Belgium'],
+        ['2026-07-12-qf-m99', '2026-07-12T05:00:00+08:00', 'Norway', 'England'],
+        ['2026-07-12-qf-m100', '2026-07-12T09:00:00+08:00', 'Argentina', 'Switzerland'],
+      ],
+    )
+  })
+
+  it('has confirmed semi-final, third-place, and final teams from the FIFA fixture feed', () => {
+    const lateKnockouts = WC_FIXTURES.filter(f =>
+      f.round === 'Semi-final' || f.round === 'Third-place play-off' || f.round === 'Final'
+    )
+
+    assert.deepEqual(
+      lateKnockouts.map(f => [f.id, f.kickoff, f.home, f.away]),
+      [
+        ['2026-07-15-sf-m101', '2026-07-15T03:00:00+08:00', 'France', 'Spain'],
+        ['2026-07-16-sf-m102', '2026-07-16T03:00:00+08:00', 'England', 'Argentina'],
+        ['2026-07-19-third-m103', '2026-07-19T05:00:00+08:00', 'France', 'England'],
+        ['2026-07-20-final-m104', '2026-07-20T03:00:00+08:00', 'Spain', 'Argentina'],
       ],
     )
   })
@@ -153,6 +169,7 @@ describe('WC_FIXTURES data sanity', () => {
     const byId = new Map(WC_FIXTURES.map(f => [f.id, f]))
 
     assert.equal(byId.get('2026-07-01-r32-m79')?.kickoff, '2026-07-01T10:00:00+08:00')
+    assert.equal(byId.get('2026-07-06-r16-m92')?.kickoff, '2026-07-06T09:00:00+08:00')
     assert.equal(byId.get('2026-07-12-qf-m100')?.kickoff, '2026-07-12T09:00:00+08:00')
   })
 

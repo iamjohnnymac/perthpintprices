@@ -4,8 +4,8 @@ import { perthNow } from './perthClock'
 // Group-stage times cross-checked against two AEST schedule sources on
 // 10 June 2026 (AWST = AEST − 2h). Knockout kickoffs (Round of 32 → final)
 // added 17 June 2026, cross-checked against the official schedule. Knockout
-// teams were updated from FIFA's official fixture feed on 5 July 2026.
-export const TIMES_CHECKED = '5 July 2026'
+// teams were updated from FIFA's official fixture feed on 18 July 2026.
+export const TIMES_CHECKED = '18 July 2026'
 
 // Perth calendar date of the final. The final kicks off 3am AWST on 20 July
 // 2026 (7pm 19 July US Eastern), so World Cup surfaces render up to and
@@ -147,7 +147,7 @@ export const WC_FIXTURES: WcFixture[] = [
   { id: '2026-07-05-r16-m89', kickoff: '2026-07-05T05:00:00+08:00', home: 'Paraguay', away: 'France', round: 'Round of 16' },
   // Monday 6 July
   { id: '2026-07-06-r16-m91', kickoff: '2026-07-06T04:00:00+08:00', home: 'Brazil', away: 'Norway', round: 'Round of 16' },
-  { id: '2026-07-06-r16-m92', kickoff: '2026-07-06T08:00:00+08:00', home: 'Mexico', away: 'England', round: 'Round of 16' },
+  { id: '2026-07-06-r16-m92', kickoff: '2026-07-06T09:00:00+08:00', home: 'Mexico', away: 'England', round: 'Round of 16' },
   // Tuesday 7 July
   { id: '2026-07-07-r16-m93', kickoff: '2026-07-07T03:00:00+08:00', home: 'Portugal', away: 'Spain', round: 'Round of 16' },
   { id: '2026-07-07-r16-m94', kickoff: '2026-07-07T08:00:00+08:00', home: 'USA', away: 'Belgium', round: 'Round of 16' },
@@ -159,24 +159,24 @@ export const WC_FIXTURES: WcFixture[] = [
   // Friday 10 July
   { id: '2026-07-10-qf-m97', kickoff: '2026-07-10T04:00:00+08:00', home: 'France', away: 'Morocco', round: 'Quarter-final' },
   // Saturday 11 July
-  { id: '2026-07-11-qf-m98', kickoff: '2026-07-11T03:00:00+08:00', home: 'Winner M93', away: 'Winner M94', round: 'Quarter-final' },
+  { id: '2026-07-11-qf-m98', kickoff: '2026-07-11T03:00:00+08:00', home: 'Spain', away: 'Belgium', round: 'Quarter-final' },
   // Sunday 12 July
-  { id: '2026-07-12-qf-m99', kickoff: '2026-07-12T05:00:00+08:00', home: 'Winner M91', away: 'Winner M92', round: 'Quarter-final' },
-  { id: '2026-07-12-qf-m100', kickoff: '2026-07-12T09:00:00+08:00', home: 'Winner M95', away: 'Winner M96', round: 'Quarter-final' },
+  { id: '2026-07-12-qf-m99', kickoff: '2026-07-12T05:00:00+08:00', home: 'Norway', away: 'England', round: 'Quarter-final' },
+  { id: '2026-07-12-qf-m100', kickoff: '2026-07-12T09:00:00+08:00', home: 'Argentina', away: 'Switzerland', round: 'Quarter-final' },
 
   // --- Semi-finals ---
   // Wednesday 15 July
-  { id: '2026-07-15-sf-m101', kickoff: '2026-07-15T03:00:00+08:00', home: 'Winner M97', away: 'Winner M98', round: 'Semi-final' },
+  { id: '2026-07-15-sf-m101', kickoff: '2026-07-15T03:00:00+08:00', home: 'France', away: 'Spain', round: 'Semi-final' },
   // Thursday 16 July
-  { id: '2026-07-16-sf-m102', kickoff: '2026-07-16T03:00:00+08:00', home: 'Winner M99', away: 'Winner M100', round: 'Semi-final' },
+  { id: '2026-07-16-sf-m102', kickoff: '2026-07-16T03:00:00+08:00', home: 'England', away: 'Argentina', round: 'Semi-final' },
 
   // --- Third-place play-off ---
   // Sunday 19 July
-  { id: '2026-07-19-third-m103', kickoff: '2026-07-19T05:00:00+08:00', home: 'Loser M101', away: 'Loser M102', round: 'Third-place play-off' },
+  { id: '2026-07-19-third-m103', kickoff: '2026-07-19T05:00:00+08:00', home: 'France', away: 'England', round: 'Third-place play-off' },
 
   // --- Final ---
   // Monday 20 July (3am AWST)
-  { id: '2026-07-20-final-m104', kickoff: '2026-07-20T03:00:00+08:00', home: 'Winner M101', away: 'Winner M102', round: 'Final' },
+  { id: '2026-07-20-final-m104', kickoff: '2026-07-20T03:00:00+08:00', home: 'Spain', away: 'Argentina', round: 'Final' },
 ]
 
 // --- WA licensing windows -------------------------------------------------
