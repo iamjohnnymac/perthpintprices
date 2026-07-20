@@ -46,6 +46,7 @@ Aligned versions:
 20260605000000  20260605000000
 20260612000000  20260612000000
 20260720000000  20260720000000
+20260721000000  20260721000000
 ```
 
 Pre-apply checks and result:
@@ -55,5 +56,6 @@ Pre-apply checks and result:
 - dry run proposed only `20260604000000`, `20260605000000`, `20260612000000`, and `20260720000000`
 - all four migrations applied successfully
 - older migration files were fetched from the live migration history, then literal historical credentials were removed from the repository copies before merge
+- `20260721000000` removed the exposed legacy `app_config` push secret and disabled the two Tasklet triggers that contained an exposed webhook token
 
 This file contains migration metadata only. It must never contain database credentials or secret values.
