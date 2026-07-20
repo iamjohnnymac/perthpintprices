@@ -10,6 +10,11 @@ Stack, database, routes, components, and lib files are documented in `CLAUDE.md`
 
 ## What's done recently
 
+### Pint of the Day is server-rendered (2026-07-21)
+- **Commit `0a9a16b`:** moved the deterministic daily selection into one shared server contract used by both the page and API. The insight page now renders the selected pub, canonical link, suburb, effective price, Perth-local date, reason, and runner-up in its initial HTML; sharing and local storage remain client-side enhancements.
+- **Review follow-up `12df690`:** canonical price/ID/slug ordering now makes tied-price input independent of database row order; refreshed server props replace and persist the current decision; nullable pub addresses remain nullable in the shared API contract. The page and API are explicitly request-dynamic with no revalidation window, preventing a Perth-date-labelled result from surviving local midnight. Focused tests cover all of these cases plus server HTML and the empty state; full unit tests (343), TypeScript, and lint pass.
+- **Evidence closeout:** the authorised Infisical `supabase-read` injection passed its metadata-only online check (HTTP 200), and the production build passed against 849 pubs. Raw initial HTML contains the selected venue, canonical pub link, Perth date, effective price, reason, and runner-up before hydration; the response is explicitly `no-store`. Desktop/mobile before-and-after screenshots and browser results (zero console errors, no framework overlay, working Share → Copied enhancement) are recorded in `artifacts/pint-of-the-day-234/README.md`.
+
 ### World Cup retirement and release health check (2026-07-21)
 - **Commits `7879bef`, `8342152`, `9791a79`, and `efd5477`:** campaign retirement, site/agent hardening, sanitized production migration history, and legacy credential revocation.
 - Removed the finished World Cup hub, homepage/pub cards, fixture data, countdowns, team treatments, sitemap entry, and article cross-links. `/world-cup` now redirects permanently to the homepage instead of leaving a dead campaign page.

@@ -1,63 +1,26 @@
 'use client'
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { Beer, CircleCheck, Copy, Lightbulb, Medal } from 'lucide-react'
 import { absolutePubUrl, pubUrl } from '@/lib/urls'
+import type { PintOfTheDayData } from '@/lib/pintOfTheDay'
 
-interface PintOfTheDayData {
-  date: string
-  pub: {
-    name: string
-    slug: string
-    suburb: string
-    address: string
-    price: number
-    effectivePrice: number
-    beerType: string | null
-    happyHour: string | null
-    isHappyHourNow: boolean
-    imageUrl: string | null
-  }
-  reason: string
-  runnerUp: {
-    name: string
-    slug: string
-    suburb: string
-    price: number
-  } | null
-}
-
-export default function PintOfTheDay() {
-  const [data, setData] = useState<PintOfTheDayData | null>(null)
-  const [loading, setLoading] = useState(true)
+export default function PintOfTheDay({ initialData }: { initialData: PintOfTheDayData | null }) {
+  const data = initialData
   const [shared, setShared] = useState(false)
+  const displayDate = data
+    ? new Intl.DateTimeFormat('en-AU', {
+        timeZone: 'Australia/Perth',
+        weekday: 'long',
+        day: 'numeric',
+        month: 'short',
+      }).format(new Date(`${data.date}T00:00:00+08:00`))
+    : null
 
   useEffect(() => {
-    // Check cache first
-    try {
-      const cached = localStorage.getItem('arvo-potd')
-      if (cached) {
-        const parsed = JSON.parse(cached)
-        const today = new Date().toLocaleDateString('en-CA', { timeZone: 'Australia/Perth' })
-        if (parsed.date === today) {
-          setData(parsed)
-          setLoading(false)
-          return
-        }
-      }
-    } catch {}
-
-    fetch('/api/pint-of-the-day')
-      .then(res => res.json())
-      .then(result => {
-        if (result.pub) {
-          setData(result)
-          try { localStorage.setItem('arvo-potd', JSON.stringify(result)) } catch {}
-        }
-        setLoading(false)
-      })
-      .catch(() => setLoading(false))
-  }, [])
+    if (!data) return
+    try { localStorage.setItem('arvo-potd', JSON.stringify(data)) } catch {}
+  }, [data])
 
   async function handleShare() {
     if (!data) return
@@ -72,19 +35,9 @@ export default function PintOfTheDay() {
     }
   }
 
-  if (loading) {
-    return (
-      <div className="bg-gradient-to-br from-amber/5 to-amber/10 rounded-card border border-amber/20 p-4 sm:p-5 animate-pulse">
-        <div className="h-4 bg-amber/10 rounded w-32 mb-3" />
-        <div className="h-6 bg-amber/10 rounded w-48 mb-2" />
-        <div className="h-4 bg-amber/10 rounded w-24" />
-      </div>
-    )
-  }
-
   if (!data) return (
     <div className="bg-white rounded-card border border-gray-light/40 p-6 text-center">
-      <p className="text-gray-mid text-sm">Pint of the Day loading...</p>
+      <p className="text-gray-mid text-sm">Today&apos;s Pint of the Day is unavailable. Please check back shortly.</p>
     </div>
   )
 
@@ -96,7 +49,7 @@ export default function PintOfTheDay() {
           <Beer className="w-5 h-5 text-amber" />
           <div>
             <h3 className="type-card text-amber">Pint of the Day</h3>
-            <p className="text-[10px] text-gray-mid">{new Date(data.date + 'T00:00:00+08:00').toLocaleDateString('en-AU', { weekday: 'long', day: 'numeric', month: 'short' })}</p>
+            <p className="text-[10px] text-gray-mid">{displayDate}</p>
           </div>
         </div>
         <button
@@ -112,7 +65,9 @@ export default function PintOfTheDay() {
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0 flex-1">
             <h4 className="type-card text-lg group-hover:text-amber transition-colors truncate">{data.pub.name}</h4>
-            <p className="text-xs text-gray-mid mt-0.5">{data.pub.suburb} · {data.pub.address}</p>
+            <p className="text-xs text-gray-mid mt-0.5">
+              {data.pub.suburb}{data.pub.address ? ` · ${data.pub.address}` : ''}
+            </p>
             {data.pub.beerType && (
               <p className="text-xs text-gray-mid mt-0.5">{data.pub.beerType}</p>
             )}

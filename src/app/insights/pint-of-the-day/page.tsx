@@ -2,6 +2,11 @@ import type { Metadata } from 'next'
 import BreadcrumbJsonLd from '@/components/BreadcrumbJsonLd'
 import PintOfTheDayPage from './PintOfTheDayPage'
 import Link from 'next/link'
+import { getPintOfTheDay, type PintOfTheDayData } from '@/lib/pintOfTheDay'
+
+// A daily Perth-labelled result must be rendered afresh at each request.
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
 
 export const metadata: Metadata = {
   title: "Perth Pint of the Day: Today's Best Value Beer",
@@ -19,7 +24,14 @@ export const metadata: Metadata = {
   twitter: { card: 'summary_large_image' },
 }
 
-export default function Page() {
+export default async function Page() {
+  let initialData: PintOfTheDayData | null = null
+  try {
+    initialData = await getPintOfTheDay()
+  } catch (error) {
+    console.error('Pint of the Day page error:', error)
+  }
+
   return (
     <>
       <BreadcrumbJsonLd items={[
@@ -34,7 +46,7 @@ export default function Page() {
         <Link href="/discover">Discover</Link>
         <Link href="/happy-hour">Happy Hours</Link>
       </div>
-      <PintOfTheDayPage />
+      <PintOfTheDayPage initialData={initialData} />
     </>
   )
 }
