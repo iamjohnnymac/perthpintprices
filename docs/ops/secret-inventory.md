@@ -2,9 +2,11 @@
 
 Perth Pint Prices follows the HeyBlip access pattern: agents receive the smallest named credential bundle required for one task. There is no catch-all bundle, no root secret export, and no command may print a credential value.
 
+Infisical is the canonical store for every password, key, token, and webhook secret under `/external/perth-pint-prices/*`. Vercel, ElevenLabs, GitHub Actions, and local operator processes receive only the scoped runtime copy they need; references to those services below describe runtime mirrors, not the source of truth.
+
 Run `npm run access:preflight -- <bundle>` before a task that needs external access. Output is metadata only: variable name and `present` or `missing`. Add `--online` for `supabase-read`, `supabase-admin`, `elevenlabs-admin`, `vercel-deploy`, or `sentry-read` to verify the credential against a read-only identity or one-row endpoint. Online checks print only the HTTP result.
 
-| Bundle | Variables | Purpose | Store / owner | Rotation and verification |
+| Bundle | Variables | Purpose | Runtime mirror / owner | Rotation and verification |
 | --- | --- | --- | --- | --- |
 | `supabase-read` | `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Public, RLS-bound reads and build verification | Vercel environment / project owner | Verify before builds; rotate anon key after policy changes or exposure response |
 | `supabase-admin` | `NEXT_PUBLIC_SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` | Authenticated maintenance that must bypass RLS | Vercel encrypted environment / project owner | Review quarterly and after staff or automation changes |
@@ -28,8 +30,8 @@ Runtime, CI, deploy, and human operator identities remain separate. A missing re
 
 Before deploying the webhook hardening change:
 
-1. Create separate record-price, kickoff, and post-call secrets.
-2. Store them as `ELEVENLABS_RECORD_PRICE_TOOL_SECRET`, `PINTSWEEP_KICKOFF_SECRET`, and `ELEVENLABS_POST_CALL_WEBHOOK_SECRET` in the appropriate Vercel environments.
+1. Create separate record-price, kickoff, and post-call secrets in Infisical.
+2. Sync `ELEVENLABS_RECORD_PRICE_TOOL_SECRET`, `PINTSWEEP_KICKOFF_SECRET`, and `ELEVENLABS_POST_CALL_WEBHOOK_SECRET` from Infisical to the appropriate Vercel and ElevenLabs runtime scopes.
 3. Update the ElevenLabs record-price tool and post-call webhook settings.
 4. Run the metadata-only preflight for each bundle.
 5. Send signed preview requests and confirm one log entry is created.

@@ -1,6 +1,6 @@
 # Perth Pint Prices Project Status
 
-Last updated: 2026-07-18
+Last updated: 2026-07-21
 
 ## What this is
 
@@ -9,6 +9,14 @@ Perth Pint Prices (perthpintprices.com) tracks pint prices across **857 Perth pu
 Stack, database, routes, components, and lib files are documented in `CLAUDE.md` (auto-loaded every session). This file covers history, recent work, and the backlog.
 
 ## What's done recently
+
+### World Cup retirement and release health check (2026-07-21)
+- **Commits `7879bef` and `8342152`:** campaign retirement and site/agent hardening. Production migration history was recovered separately and sanitized before merge.
+- Removed the finished World Cup hub, homepage/pub cards, fixture data, countdowns, team treatments, sitemap entry, and article cross-links. `/world-cup` now redirects permanently to the homepage instead of leaving a dead campaign page.
+- Hardened the agent webhooks with three separate credentials, HMAC verification for ElevenLabs post-call delivery, idempotent call logging, transactional price writes, kickoff cooldown reservations, and durable admin rate limiting. Added Sentry wiring, privacy filters, security headers, CSP reporting, build-data checks, and regression coverage.
+- Applied the pending Supabase migrations through `20260720000000_phone_call_log_idempotency.sql`. Recovered the older production migration files into the repository so local and remote history agree; literal credentials from two historical migrations were removed from repository history and are being rotated.
+- Infisical is the credential source of truth under `/external/perth-pint-prices/*`. Only scoped runtime copies are synced to Vercel; no secret values are stored in Git or documentation.
+- Preview checks passed for invalid/valid post-call signatures, single-write replay protection, record-price auth, kickoff dry-run auth, CSP Report-Only headers, CSP report intake, desktop/mobile rendering, and browser console errors. The owner waived the Sentry event gate because the organisation is over quota. Production was rolled back while the historical credentials are contained and rotated.
 
 ### World Cup knockout fixture freshness through final (2026-07-18)
 - **Commit `8ee1ec0`:** refreshed the FIFA 2026 knockout fixtures from the official FIFA fixture feed. Corrected Mexico v England to 9am AWST, confirmed the remaining quarter-finals (Spain v Belgium, Norway v England, Argentina v Switzerland), both semi-finals, the third-place play-off, and the final (Spain v Argentina). Local naming style remains preserved while `TIMES_CHECKED` now reflects 18 July 2026.
