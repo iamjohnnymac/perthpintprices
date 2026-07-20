@@ -2,8 +2,7 @@
 // Production deploy trigger
 import { useState, useMemo, useEffect, useRef, useCallback, Suspense } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
-import { Pub } from '@/types/pub'
-import { getCrowdLevels, CrowdReport } from '@/lib/supabase'
+import type { HomePub } from '@/lib/homePub'
 
 import { getDistanceKm } from '@/lib/location'
 import Link from 'next/link'
@@ -16,10 +15,8 @@ import SocialProof from '@/components/SocialProof'
 import FAQ from '@/components/FAQ'
 import Footer from '@/components/Footer'
 import SubmitPubForm from '@/components/SubmitPubForm'
-import CrowdReporter from '@/components/CrowdReporter'
 import MobileNav from '@/components/MobileNav'
 import PintIndexBadge from '@/components/PintIndexBadge'
-import { getPintPriceStats } from '@/lib/pintPriceStats'
 import ScrollReveal from '@/components/ScrollReveal'
 import ArticleRail from '@/components/ArticleRail'
 import { trackSiteEvent } from '@/lib/analytics'
@@ -27,7 +24,7 @@ import { trackSiteEvent } from '@/lib/analytics'
 const INITIAL_PUB_COUNT = 10
 const HH_ROTATE_INTERVAL = 4000
 
-function LiveHappyHourBanner({ pubs }: { pubs: Pub[] }) {
+function LiveHappyHourBanner({ pubs }: { pubs: HomePub[] }) {
   const liveHHPubs = useMemo(() => pubs.filter(p => p.isHappyHourNow), [pubs])
   const [activeIndex, setActiveIndex] = useState(0)
 
@@ -85,15 +82,14 @@ function LoadingSkeleton() {
 }
 
 interface HomeClientProps {
-  initialPubs: Pub[]
-  initialStats: { venueCount: number; suburbCount: number; avgPrice: string; cheapestPrice: string }
+  initialPubs: HomePub[]
 }
 
-function HomeContent({ initialPubs }: { initialPubs: Pub[] }) {
+function HomeContent({ initialPubs }: { initialPubs: HomePub[] }) {
   const searchParams = useSearchParams()
   const router = useRouter()
 
-  const [pubs] = useState<Pub[]>(initialPubs)
+  const [pubs] = useState<HomePub[]>(initialPubs)
   const [isLoading] = useState(false)
   const [searchTerm, setSearchTerm] = useState(searchParams.get('q') || '')
   const [selectedSuburb, setSelectedSuburb] = useState(searchParams.get('suburb') || '')
@@ -109,8 +105,6 @@ function HomeContent({ initialPubs }: { initialPubs: Pub[] }) {
   const [showHappyHourOnly, setShowHappyHourOnly] = useState(false)
   const [showMiniMaps, setShowMiniMaps] = useState(true)
   const [showSubmitForm, setShowSubmitForm] = useState(false)
-  const [crowdReports, setCrowdReports] = useState<Record<string, CrowdReport>>({})
-  const [crowdReportPub, setCrowdReportPub] = useState<Pub | null>(null)
   const [currentTime, setCurrentTime] = useState(new Date())
   const [viewMode, setViewMode] = useState<'cards' | 'list'>('list')
   const [showMoreFilters, setShowMoreFilters] = useState(false)
@@ -174,12 +168,6 @@ function HomeContent({ initialPubs }: { initialPubs: Pub[] }) {
     return () => clearInterval(interval)
   }, [])
 
-  useEffect(() => {
-    fetchCrowdReports()
-    const interval = setInterval(fetchCrowdReports, 60000)
-    return () => clearInterval(interval)
-  }, [])
-
   // Geolocation is requested only on a user action (the NEAREST button below),
   // never on page load — auto-prompting for location on load is a dark pattern
   // and PageSpeed/Lighthouse flags it ("geolocation-on-start").
@@ -231,11 +219,6 @@ function HomeContent({ initialPubs }: { initialPubs: Pub[] }) {
     return () => observer.disconnect()
   }, [isNavExpanded])
 
-  async function fetchCrowdReports() {
-    const reports = await getCrowdLevels()
-    setCrowdReports(reports)
-  }
-
   const suburbs = useMemo(() => {
     const suburbSet = new Set(pubs.map(pub => pub.suburb))
     return Array.from(suburbSet).sort()
@@ -285,14 +268,17 @@ function HomeContent({ initialPubs }: { initialPubs: Pub[] }) {
   const stats = useMemo(() => {
     // Canonical figures: verified regular-pint prices, so the homepage average
     // matches the Pint Index "Answer First" box and every other surface.
-    const base = getPintPriceStats(pubs)
-    const cheapest = base.cheapestPub
-    const priciest = base.verifiedPubs.at(-1) ?? null
+    const verified = pubs
+      .filter(pub => pub.priceVerified && pub.regularPrice !== null)
+      .sort((a, b) => (a.regularPrice ?? Number.MAX_VALUE) - (b.regularPrice ?? Number.MAX_VALUE))
+    const prices = verified.map(pub => pub.regularPrice as number)
+    const cheapest = verified[0] ?? null
+    const priciest = verified.at(-1) ?? null
     return {
-      total: base.verifiedCount,
-      minPrice: base.minPrice ?? 0,
-      maxPriceValue: base.maxPrice ?? 0,
-      avgPrice: base.averagePrice != null ? base.averagePrice.toFixed(2) : '0',
+      total: verified.length,
+      minPrice: prices[0] ?? 0,
+      maxPriceValue: prices.at(-1) ?? 0,
+      avgPrice: prices.length > 0 ? (prices.reduce((sum, price) => sum + price, 0) / prices.length).toFixed(2) : '0',
       happyHourNow: pubs.filter(p => p.isHappyHourNow).length,
       cheapestSuburb: cheapest?.suburb || '',
       cheapestSlug: cheapest?.slug || '',
@@ -389,9 +375,7 @@ function HomeContent({ initialPubs }: { initialPubs: Pub[] }) {
       <div ref={contentRef}>
         <PubCardList
           pubs={filteredPubs}
-          crowdReports={crowdReports}
           userLocation={userLocation}
-          onCrowdReport={setCrowdReportPub}
           showAll={showAllPubs}
           initialCount={INITIAL_PUB_COUNT}
           onShowAll={() => setShowAllPubs(true)}
@@ -411,22 +395,11 @@ function HomeContent({ initialPubs }: { initialPubs: Pub[] }) {
 
       <SubmitPubForm isOpen={showSubmitForm} onClose={() => setShowSubmitForm(false)} userLocation={userLocation} />
 
-      {crowdReportPub && (
-        <CrowdReporter
-          pubId={String(crowdReportPub.id)}
-          pubName={crowdReportPub.name}
-          onClose={() => setCrowdReportPub(null)}
-          onReport={() => {
-            setCrowdReportPub(null)
-            fetchCrowdReports()
-          }}
-        />
-      )}
     </main>
   )
 }
 
-export default function HomeClient({ initialPubs, initialStats }: HomeClientProps) {
+export default function HomeClient({ initialPubs }: HomeClientProps) {
   return (
     <Suspense fallback={<LoadingSkeleton />}>
       <HomeContent initialPubs={initialPubs} />

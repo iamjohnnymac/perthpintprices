@@ -1,48 +1,61 @@
 import assert from 'node:assert/strict'
+import crypto from 'node:crypto'
 import { describe, it } from 'node:test'
 import { NextRequest } from 'next/server'
 
 import { handlePostCall } from './handler'
 
-function jsonRequest(body: unknown) {
+function jsonRequest(body: unknown, timestamp = Math.floor(Date.now() / 1000).toString()) {
+  const rawBody = JSON.stringify(body)
+  const signature = crypto.createHmac('sha256', 'test-secret').update(`${timestamp}.${rawBody}`).digest('hex')
   return new NextRequest('http://localhost/api/agents/post-call', {
     method: 'POST',
     headers: {
       'content-type': 'application/json',
-      'x-agent-secret': 'test-secret',
+      'elevenlabs-signature': `t=${timestamp},v0=${signature}`,
     },
-    body: JSON.stringify(body),
+    body: rawBody,
   })
 }
 
-describe('post-call fallback', () => {
-  it('writes extracted price data when the mid-call tool missed it', async () => {
-    process.env.AGENT_WEBHOOK_SECRET = 'test-secret'
+describe('post-call webhook', () => {
+  it('rejects the legacy shared-secret header without an HMAC signature', async () => {
+    process.env.ELEVENLABS_POST_CALL_WEBHOOK_SECRET = 'test-secret'
+    const response = await handlePostCall(new NextRequest('http://localhost/api/agents/post-call', {
+      method: 'POST',
+      headers: { 'x-agent-secret': 'test-secret' },
+      body: JSON.stringify(postCallBody()),
+    }), {})
 
-    let callLogInsert: Record<string, unknown> | null = null
-    let pubUpdate: Record<string, unknown> | null = null
-    let historyInsert: Record<string, unknown> | null = null
+    assert.equal(response.status, 401)
+  })
+
+  it('rejects a valid signature with a stale timestamp', async () => {
+    process.env.ELEVENLABS_POST_CALL_WEBHOOK_SECRET = 'test-secret'
+    const staleTimestamp = (Math.floor(Date.now() / 1000) - 31 * 60).toString()
+    const response = await handlePostCall(jsonRequest(postCallBody(), staleTimestamp), {})
+
+    assert.equal(response.status, 401)
+  })
+
+  it('writes extracted price data when the mid-call tool missed it', async () => {
+    process.env.ELEVENLABS_POST_CALL_WEBHOOK_SECRET = 'test-secret'
+
+    let rpcArgs: Record<string, unknown> | null = null
     const supabase = {
       from(table: string) {
         if (table === 'pubs') {
           return pubsQuery({
             pub: { id: 42, price: null, price_verified: false },
-            onUpdate: (updates) => {
-              pubUpdate = updates
-            },
-          })
-        }
-        if (table === 'phone_call_log') {
-          return insertQuery((row) => {
-            callLogInsert = row
-          })
-        }
-        if (table === 'price_history') {
-          return insertQuery((row) => {
-            historyInsert = row
+            onUpdate: () => {},
           })
         }
         throw new Error(`Unexpected table ${table}`)
+      },
+      rpc(fn: string, args: Record<string, unknown>) {
+        assert.equal(fn, 'process_agent_post_call')
+        rpcArgs = args
+        return Promise.resolve({ data: { processed: true, fallback_written: true }, error: null })
       },
     }
 
@@ -55,9 +68,12 @@ describe('post-call fallback', () => {
     assert.equal(response.status, 200)
     assert.equal(body.ok, true)
     assert.equal(body.fallback_wrote, true)
-    assert.ok(callLogInsert)
-    assert.equal((callLogInsert as Record<string, unknown>).parsed_price, 9)
-    assert.equal((callLogInsert as Record<string, unknown>).parsed_beer_type, 'Swan Draught')
+    assert.ok(rpcArgs)
+    const callLogInsert = (rpcArgs as Record<string, unknown>).p_call_log as Record<string, unknown>
+    const pubUpdate = (rpcArgs as Record<string, unknown>).p_pub_updates as Record<string, unknown>
+    const historyInsert = (rpcArgs as Record<string, unknown>).p_price_history as Record<string, unknown>
+    assert.equal(callLogInsert.parsed_price, 9)
+    assert.equal(callLogInsert.parsed_beer_type, 'Swan Draught')
     assert.deepEqual(pubUpdate, {
       price: 9,
       price_verified: true,
@@ -80,7 +96,7 @@ describe('post-call fallback', () => {
   })
 
   it('logs call initiation failures so failed attempts count toward cooldown', async () => {
-    process.env.AGENT_WEBHOOK_SECRET = 'test-secret'
+    process.env.ELEVENLABS_POST_CALL_WEBHOOK_SECRET = 'test-secret'
 
     let callLogInsert: Record<string, unknown> | null = null
     const supabase = {
@@ -92,6 +108,9 @@ describe('post-call fallback', () => {
           })
         }
         throw new Error(`Unexpected table ${table}`)
+      },
+      rpc() {
+        throw new Error('RPC is not used for call initiation failures')
       },
     }
 
@@ -108,7 +127,7 @@ describe('post-call fallback', () => {
   })
 
   it('returns a server error when call logging fails', async () => {
-    process.env.AGENT_WEBHOOK_SECRET = 'test-secret'
+    process.env.ELEVENLABS_POST_CALL_WEBHOOK_SECRET = 'test-secret'
 
     const supabase = {
       from(table: string) {
@@ -118,15 +137,10 @@ describe('post-call fallback', () => {
             onUpdate: () => {},
           })
         }
-        if (table === 'phone_call_log') {
-          return {
-            insert() {
-              return Promise.resolve({ error: { message: 'insert failed' } })
-            },
-          }
-        }
-        if (table === 'price_history') return insertQuery(() => {})
         throw new Error(`Unexpected table ${table}`)
+      },
+      rpc() {
+        return Promise.resolve({ data: null, error: { message: 'transaction failed' } })
       },
     }
 
@@ -135,7 +149,58 @@ describe('post-call fallback', () => {
 
     assert.equal(response.status, 500)
     assert.equal(body.ok, false)
-    assert.match(body.error, /insert failed/)
+    assert.match(body.error, /transaction failed/)
+  })
+
+  it('does not claim the delivery when the pub lookup fails', async () => {
+    process.env.ELEVENLABS_POST_CALL_WEBHOOK_SECRET = 'test-secret'
+    let rpcCalled = false
+    const supabase = {
+      from(table: string) {
+        assert.equal(table, 'pubs')
+        return pubsQuery({
+          pub: null,
+          error: { message: 'database unavailable' },
+          onUpdate: () => {},
+        })
+      },
+      rpc() {
+        rpcCalled = true
+        return Promise.resolve({ data: { processed: true, fallback_written: true }, error: null })
+      },
+    }
+
+    const response = await handlePostCall(jsonRequest(postCallBody()), { supabase })
+
+    assert.equal(response.status, 500)
+    assert.equal(rpcCalled, false)
+  })
+
+  it('acknowledges a duplicate delivery without repeating price side effects', async () => {
+    process.env.ELEVENLABS_POST_CALL_WEBHOOK_SECRET = 'test-secret'
+    let rpcCallCount = 0
+    const supabase = {
+      from(table: string) {
+        if (table === 'pubs') {
+          return pubsQuery({
+            pub: { id: 42, price: null, price_verified: false },
+            onUpdate: () => {},
+          })
+        }
+        throw new Error(`Unexpected table ${table}`)
+      },
+      rpc() {
+        rpcCallCount += 1
+        return Promise.resolve({ data: { processed: false, fallback_written: false }, error: null })
+      },
+    }
+
+    const response = await handlePostCall(jsonRequest(postCallBody()), { supabase })
+    const body = await response.json()
+
+    assert.equal(response.status, 200)
+    assert.equal(body.duplicate, true)
+    assert.equal(rpcCallCount, 1)
   })
 })
 
@@ -193,7 +258,8 @@ function callInitiationFailureBody() {
 }
 
 function pubsQuery(options: {
-  pub: { id: number; price: number | null; price_verified: boolean }
+  pub: { id: number; price: number | null; price_verified: boolean } | null
+  error?: { message: string } | null
   onUpdate: (updates: Record<string, unknown>) => void
 }) {
   return {
@@ -203,8 +269,8 @@ function pubsQuery(options: {
     eq() {
       return this
     },
-    single() {
-      return Promise.resolve({ data: options.pub, error: null })
+    maybeSingle() {
+      return Promise.resolve({ data: options.pub, error: options.error ?? null })
     },
     update(updates: Record<string, unknown>) {
       options.onUpdate(updates)

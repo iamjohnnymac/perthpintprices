@@ -13,7 +13,7 @@ import PubDetailClient from './PubDetailClient'
 import Link from 'next/link'
 
 interface PageProps {
-  params: { suburb: string; pub: string }
+  params: Promise<{ suburb: string; pub: string }>
 }
 
 function getCachedPubBySlug(slug: string) {
@@ -81,7 +81,8 @@ function formatMetaHappyHourLabel(value: string | null): string | null {
   return value.replace(/,\s*/g, ', ')
 }
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+export async function generateMetadata(props: PageProps): Promise<Metadata> {
+  const params = await props.params
   const pub = await getCachedPubBySlug(params.pub)
   if (!pub) return { title: 'Pub Not Found' }
 
@@ -142,7 +143,8 @@ export async function generateStaticParams() {
 export const dynamicParams = true
 export const revalidate = 3600
 
-export default async function PubPage({ params }: PageProps) {
+export default async function PubPage(props: PageProps) {
+  const params = await props.params
   const pub = await getCachedPubBySlug(params.pub)
   if (!pub) notFound()
 

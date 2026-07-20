@@ -22,7 +22,7 @@ test('homepage renders the core discovery experience', async ({ page }, testInfo
 test('pub page renders price, freshness, map, and nearby prices', async ({ page }, testInfo) => {
   await page.goto('/northbridge/the-court-hotel')
 
-  await expect(page.getByRole('heading', { name: 'The Court Hotel' })).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'The Court Hotel', exact: true, level: 1 })).toBeVisible()
   await expect(page.getByText(/pint price/i).first()).toBeVisible()
   // Freshness: the receipt shows an absolute "Checked <date>" (e.g. "17 Feb 2026")
   await expect(page.getByText(/Checked/i).first()).toBeVisible()
@@ -31,4 +31,29 @@ test('pub page renders price, freshness, map, and nearby prices', async ({ page 
   await expect(page.locator('.leaflet-container')).toBeVisible()
 
   await attachProof(page, testInfo, 'pub-page')
+})
+
+test('discover and happy-hour pages render their primary experiences', async ({ page }, testInfo) => {
+  await page.goto('/discover')
+  await expect(page.getByRole('heading', { name: /where to find a cheap pint/i })).toBeAttached()
+  await expect(page.getByText(/pint of the day/i).first()).toBeVisible()
+
+  await page.goto('/happy-hour')
+  await expect(page.getByRole('heading', { name: /happy hours/i }).first()).toBeVisible()
+  await expect(page.getByText(/deals|happy hour/i).first()).toBeVisible()
+
+  await attachProof(page, testInfo, 'discover-happy-hour')
+})
+
+test('robots and sitemap endpoints expose crawlable production URLs', async ({ request }) => {
+  const robots = await request.get('/robots.txt')
+  expect(robots.ok()).toBeTruthy()
+  expect(await robots.text()).toContain('Sitemap: https://perthpintprices.com/sitemap.xml')
+
+  const sitemap = await request.get('/sitemap.xml')
+  expect(sitemap.ok()).toBeTruthy()
+  const xml = await sitemap.text()
+  expect(xml).toContain('<urlset')
+  expect(xml).toContain('https://perthpintprices.com/')
+  expect(xml).not.toContain('/world-cup')
 })

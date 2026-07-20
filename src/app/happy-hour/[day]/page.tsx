@@ -13,7 +13,7 @@ import { BASE_URL, pubUrl } from '@/lib/urls'
 import type { Pub } from '@/types/pub'
 
 type DayPageProps = {
-  params: { day: string }
+  params: Promise<{ day: string }>
 }
 
 export const revalidate = 3600
@@ -22,7 +22,8 @@ export function generateStaticParams() {
   return HAPPY_HOUR_DAYS.map(day => ({ day: day.slug }))
 }
 
-export function generateMetadata({ params }: DayPageProps): Metadata {
+export async function generateMetadata(props: DayPageProps): Promise<Metadata> {
+  const params = await props.params
   const day = getHappyHourDayBySlug(params.day)
   if (!day) return {}
   const canonical = `${BASE_URL}/happy-hour/${day.slug}`
@@ -91,7 +92,8 @@ function buildItemList(rows: Pub[], dayLabel: string) {
   }
 }
 
-export default async function HappyHourDayPage({ params }: DayPageProps) {
+export default async function HappyHourDayPage(props: DayPageProps) {
+  const params = await props.params
   const day = getHappyHourDayBySlug(params.day)
   if (!day) notFound()
 

@@ -98,7 +98,6 @@ export default function RainyDay({ pubs, userLocation }: RainyDayProps) {
   const quip = useMemo(() => {
     const quips = isRaining ? RAIN_QUIPS : DRY_QUIPS
     return quips[Math.floor(Math.random() * quips.length)]
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isRaining])
 
   // Weather is a progressive enhancement, not a gate — render the cosy list

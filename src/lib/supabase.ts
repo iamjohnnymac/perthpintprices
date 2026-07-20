@@ -275,12 +275,13 @@ export async function getPubBySlug(slug: string): Promise<Pub | null> {
     .from('pubs')
     .select(PUB_FULL_COLUMNS)
     .eq('slug', slug)
-    .single()
+    .maybeSingle()
   
-  if (error || !data) {
+  if (error) {
     console.error('Error fetching pub:', error)
     return null
   }
+  if (!data) return null
   
   return toPub(data)
 }

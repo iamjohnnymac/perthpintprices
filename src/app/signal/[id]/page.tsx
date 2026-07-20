@@ -74,7 +74,8 @@ async function fetchPub(slug: string): Promise<SignalPub | null> {
   }
 }
 
-export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
+export async function generateMetadata(props: { params: Promise<{ id: string }> }): Promise<Metadata> {
+  const params = await props.params
   const signal = await fetchSignal(params.id)
   const pub = signal ? await fetchPub(signal.pub_slug) : null
   const title = signal
@@ -87,7 +88,8 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
   }
 }
 
-export default async function SignalPage({ params }: { params: { id: string } }) {
+export default async function SignalPage(props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   const signal = await fetchSignal(params.id)
 
   if (!signal) {

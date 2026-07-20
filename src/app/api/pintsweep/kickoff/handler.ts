@@ -6,8 +6,7 @@ import { randomUUID } from 'node:crypto'
 // variables (pub name/suburb/slug), and submits a single batch scheduled for
 // the next valid window.
 //
-// Protected by AGENT_WEBHOOK_SECRET — either send it as the `x-agent-secret`
-// header or pass ?key=<secret> as a query string.
+// Protected by a dedicated kickoff secret sent in the `x-agent-secret` header.
 //
 // Request body (optional):
 //   { limit?: number, scheduled_time_unix?: number, dry_run?: boolean }
@@ -54,10 +53,10 @@ const PHONE_LOG_PAGE_SIZE = 1000
 const MIN_COOLDOWN_HOURS = 72
 
 export async function handleKickoff(req: NextRequest, deps: KickoffDeps) {
-  const secret = process.env.AGENT_WEBHOOK_SECRET
+  const secret = process.env.PINTSWEEP_KICKOFF_SECRET
   if (!secret) return NextResponse.json({ ok: false, error: 'server misconfigured' }, { status: 500 })
 
-  const provided = req.headers.get('x-agent-secret') || req.nextUrl.searchParams.get('key')
+  const provided = req.headers.get('x-agent-secret')
   if (provided !== secret) {
     return NextResponse.json({ ok: false, error: 'unauthorised' }, { status: 401 })
   }

@@ -8,7 +8,7 @@ import { preparePriceReport } from './intake'
 const supabase = anonClient()
 
 async function revalidateReportedPub(pubSlug: string) {
-  revalidateTag(`pub:${pubSlug}`)
+  revalidateTag(`pub:${pubSlug}`, 'max')
 
   const { data: pub } = await supabase
     .from('pubs')

@@ -9,7 +9,7 @@ import SuburbClient from './SuburbClient'
 import Link from 'next/link'
 
 interface PageProps {
-  params: { suburb: string }
+  params: Promise<{ suburb: string }>
 }
 
 export const dynamicParams = true
@@ -25,7 +25,8 @@ export async function generateStaticParams() {
   return topSlugs.map(suburb => ({ suburb }))
 }
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+export async function generateMetadata(props: PageProps): Promise<Metadata> {
+  const params = await props.params
   const suburb = await getCachedSuburbBySlug(params.suburb)
   if (!suburb) return { title: 'Suburb Not Found' }
 
@@ -83,7 +84,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export const revalidate = 300
 
-export default async function SuburbPage({ params }: PageProps) {
+export default async function SuburbPage(props: PageProps) {
+  const params = await props.params
   const suburb = await getCachedSuburbBySlug(params.suburb)
   if (!suburb) notFound()
 

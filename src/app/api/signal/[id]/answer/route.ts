@@ -6,7 +6,8 @@ import { hashRequestIp } from '../../ipHash'
 // Max answers one IP can post per hour (across all signals).
 const RATE_LIMIT_PER_HOUR = 10
 
-export async function POST(req: NextRequest, { params }: { params: { id: string } }) {
+export async function POST(req: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   let body: Record<string, unknown>
   try {
     body = await req.json()

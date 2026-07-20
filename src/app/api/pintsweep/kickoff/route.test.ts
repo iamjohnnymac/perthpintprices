@@ -16,8 +16,21 @@ function jsonRequest(body: unknown) {
 }
 
 describe('pintsweep kickoff safety filters', () => {
+  it('rejects secrets supplied in the URL', async () => {
+    process.env.PINTSWEEP_KICKOFF_SECRET = 'test-secret'
+    const request = new NextRequest('http://localhost/api/pintsweep/kickoff?key=test-secret', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: '{}',
+    })
+
+    const response = await handleKickoff(request, {})
+
+    assert.equal(response.status, 401)
+  })
+
   it('excludes do-not-call pubs and recently called pubs from dry-run recipients', async () => {
-    process.env.AGENT_WEBHOOK_SECRET = 'test-secret'
+    process.env.PINTSWEEP_KICKOFF_SECRET = 'test-secret'
     process.env.ELEVENLABS_AGENT_ID = 'agent_123'
     process.env.ELEVENLABS_PHONE_NUMBER_ID = 'phone_123'
     process.env.ELEVENLABS_API_KEY = 'xi_123'
@@ -59,7 +72,7 @@ describe('pintsweep kickoff safety filters', () => {
   })
 
   it('reserves submitted recipients before handing the batch to ElevenLabs', async () => {
-    process.env.AGENT_WEBHOOK_SECRET = 'test-secret'
+    process.env.PINTSWEEP_KICKOFF_SECRET = 'test-secret'
     process.env.ELEVENLABS_AGENT_ID = 'agent_123'
     process.env.ELEVENLABS_PHONE_NUMBER_ID = 'phone_123'
     process.env.ELEVENLABS_API_KEY = 'xi_123'
@@ -109,7 +122,7 @@ describe('pintsweep kickoff safety filters', () => {
   })
 
   it('aborts after reservation if another kickoff reserved the same pub', async () => {
-    process.env.AGENT_WEBHOOK_SECRET = 'test-secret'
+    process.env.PINTSWEEP_KICKOFF_SECRET = 'test-secret'
     process.env.ELEVENLABS_AGENT_ID = 'agent_123'
     process.env.ELEVENLABS_PHONE_NUMBER_ID = 'phone_123'
     process.env.ELEVENLABS_API_KEY = 'xi_123'

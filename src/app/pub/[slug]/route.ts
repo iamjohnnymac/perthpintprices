@@ -3,13 +3,14 @@ import { getPubBySlug } from '@/lib/supabase'
 import { pubUrl } from '@/lib/urls'
 
 interface RouteContext {
-  params: { slug: string }
+  params: Promise<{ slug: string }>
 }
 
 export const dynamic = 'force-dynamic'
 
 // Old pub URL redirect: /pub/{slug} -> /{suburb}/{slug}
-export async function GET(request: Request, { params }: RouteContext) {
+export async function GET(request: Request, props: RouteContext) {
+  const params = await props.params
   const pub = await getPubBySlug(params.slug)
 
   // The /pub/* namespace is permanently retired in favour of /{suburb}/{slug}.

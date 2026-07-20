@@ -44,23 +44,21 @@ jobs:
       - name: Redirect + SEO config test
         run: npm run test:redirects
 
+      - name: Security header config test
+        run: npm run test:headers
+
+      - name: Agent access contract test
+        run: npm run test:access
+
       - name: Build
-        # Builds get to access the same env vars production has access to.
-        # We don't fail the build if env vars are missing locally — Next.js
-        # falls back to inline defaults from src/lib/supabase.ts where applicable.
+        # prebuild checks Supabase reachability/data volume; postbuild checks
+        # that the generated pub pages have healthy content diversity.
         run: npm run build
         env:
           NEXT_TELEMETRY_DISABLED: "1"
           # Stub vars so generateStaticParams() can hit Supabase during build
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
-
-      - name: Pub fingerprint guard
-        # Quantifies scaled-content exposure: asserts prerendered pub pages span
-        # many distinct content shells rather than collapsing to 1-2 thin
-        # templates. Skips automatically if the build prerendered too few pages
-        # (e.g. missing DB secrets). See scripts/check-pub-fingerprints.mjs (#80).
-        run: npm run check:fingerprints
 
       - name: Install Playwright browser
         run: npx playwright install --with-deps chromium
