@@ -22,7 +22,6 @@ import PintIndexBadge from '@/components/PintIndexBadge'
 import { getPintPriceStats } from '@/lib/pintPriceStats'
 import ScrollReveal from '@/components/ScrollReveal'
 import ArticleRail from '@/components/ArticleRail'
-import HomeWorldCup from '@/components/HomeWorldCup'
 import { trackSiteEvent } from '@/lib/analytics'
 
 const INITIAL_PUB_COUNT = 10
@@ -344,9 +343,6 @@ function HomeContent({ initialPubs }: { initialPubs: Pub[] }) {
           <MobileNav />
         </div>
       </header>
-
-      {/* ═══ WORLD CUP STRIP — tournament window only, self-removes after the final ═══ */}
-      <HomeWorldCup />
 
       {/* ═══ HERO - beer glass, dots, stat strip ═══ */}
       <div ref={heroRef}>

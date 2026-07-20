@@ -10,7 +10,6 @@ import { absolutePubUrl, pubUrl, toSuburbSlug } from '@/lib/urls'
 import { pubMetaDescription } from '@/lib/voiceCopy'
 import type { Pub } from '@/types/pub'
 import PubDetailClient from './PubDetailClient'
-import PubWorldCup from '@/components/PubWorldCup'
 import Link from 'next/link'
 
 interface PageProps {
@@ -179,12 +178,6 @@ export default async function PubPage({ params }: PageProps) {
 
   const jsonLd = buildPubJsonLd(pub, suburbAvgPrice ?? Number(stats.avgPrice))
 
-  // Surface World Cup kickoffs only on venues that screen sport. hasTab is a
-  // sparse hand-curated flag (~6% of pubs); Google's goodForWatchingSports is
-  // the denser signal (~27%), so together they light up the venues where this
-  // is actually relevant. PubWorldCup itself retires after the final.
-  const showsSport = pub.goodForWatchingSports === true || pub.hasTab === true
-
   return (
     <>
       <script
@@ -212,7 +205,6 @@ export default async function PubPage({ params }: PageProps) {
         latestAndrewCallAt={latestAndrewCallAt}
         nearestVerifiedPub={nearestVerifiedPub}
         nearbyVerifiedPriceCount={nearbyVerifiedPriceCount}
-        worldCup={showsSport ? <PubWorldCup pubName={pub.name} /> : null}
       />
     </>
   )

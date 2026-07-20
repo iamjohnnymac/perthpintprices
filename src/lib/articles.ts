@@ -1,6 +1,6 @@
 export type ArticleCategory = 'Cheap pints' | 'Happy hour' | 'Pub data' | 'Perth drinking basics'
 
-export type ArticleLiveModule = 'under10' | 'happyHoursByDay' | 'glassSizes' | 'worldCupFixtures'
+export type ArticleLiveModule = 'under10' | 'happyHoursByDay' | 'glassSizes'
 
 /** Optional data callout rendered between a section's heading and its prose. */
 export interface ArticleSectionStat {
