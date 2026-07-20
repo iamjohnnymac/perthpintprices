@@ -50,12 +50,35 @@ describe('Pint of the Day selection contract', () => {
     assert.ok(first?.runnerUp)
   })
 
+  it('selects the same winner and runner-up when tied-price rows arrive in a different order', () => {
+    const tiedPubs = Array.from({ length: 6 }, (_, index): PintOfTheDayPub => ({
+      ...pubs[1],
+      id: index + 10,
+      name: `Tied Hotel ${index}`,
+      slug: `tied-hotel-${index}`,
+      price: 8,
+    }))
+    const now = new Date('2026-07-21T09:00:00.000Z')
+
+    const ordered = selectPintOfTheDay(tiedPubs, now)
+    const permuted = selectPintOfTheDay([...tiedPubs].reverse(), now)
+
+    assert.equal(ordered?.pub.slug, permuted?.pub.slug)
+    assert.equal(ordered?.runnerUp?.slug, permuted?.runnerUp?.slug)
+  })
+
   it('rolls the decision date at Perth midnight, not UTC midnight', () => {
     const beforeMidnight = selectPintOfTheDay(pubs, new Date('2026-07-21T15:59:00.000Z'))
     const afterMidnight = selectPintOfTheDay(pubs, new Date('2026-07-21T16:00:00.000Z'))
 
     assert.equal(beforeMidnight?.date, '2026-07-21')
     assert.equal(afterMidnight?.date, '2026-07-22')
+  })
+
+  it('preserves a nullable winner address in the shared API contract', () => {
+    const decision = selectPintOfTheDay([{ ...pubs[0], address: null }], new Date('2026-07-21T09:00:00.000Z'))
+
+    assert.equal(decision?.pub.address, null)
   })
 
   it('uses the same serializable decision for server initial HTML', () => {
@@ -69,6 +92,26 @@ describe('Pint of the Day selection contract', () => {
     assert.ok(html.includes(decision.reason.replace("'", '&#x27;')))
     assert.match(html, /Tuesday 21 July/)
     assert.match(html, /Runner up/)
+  })
+
+  it('renders replacement server props instead of retaining the previous daily decision', () => {
+    const firstDecision = selectPintOfTheDay(pubs, new Date('2026-07-21T09:00:00.000Z'))
+    assert.ok(firstDecision)
+    const refreshedDecision = {
+      ...firstDecision,
+      date: '2026-07-22',
+      pub: {
+        ...firstDecision.pub,
+        name: 'Refreshed Hotel',
+        slug: 'refreshed-hotel',
+      },
+    }
+
+    const refreshedHtml = renderToStaticMarkup(createElement(PintOfTheDay, { initialData: refreshedDecision }))
+
+    assert.match(refreshedHtml, /Refreshed Hotel/)
+    assert.match(refreshedHtml, /Wednesday 22 July/)
+    assert.doesNotMatch(refreshedHtml, new RegExp(firstDecision.pub.name))
   })
 
   it('server-renders useful unavailable guidance without a loading spinner', () => {

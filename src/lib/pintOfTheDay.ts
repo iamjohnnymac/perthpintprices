@@ -24,7 +24,7 @@ export interface PintOfTheDayData {
     name: string
     slug: string
     suburb: string
-    address: string
+    address: string | null
     price: number
     effectivePrice: number
     beerType: string | null
@@ -52,12 +52,17 @@ export function selectPintOfTheDay(pubs: PintOfTheDayPub[], now: Date = new Date
 
   const date = perthToday(now)
   const seed = date.split('-').reduce((total, value) => total + Number(value), 0)
-  const prices = pubs.map(pub => Number(pub.price))
+  const canonicalPubs = [...pubs].sort((a, b) =>
+    Number(a.price) - Number(b.price)
+    || a.id - b.id
+    || a.slug.localeCompare(b.slug),
+  )
+  const prices = canonicalPubs.map(pub => Number(pub.price))
   const minPrice = Math.min(...prices)
   const maxPrice = Math.max(...prices)
   const priceRange = maxPrice - minPrice || 1
 
-  const scored = pubs.map((pub, index) => {
+  const scored = canonicalPubs.map((pub, index) => {
     let score = ((maxPrice - Number(pub.price)) / priceRange) * 50
 
     if (pub.happy_hour_days && pub.happy_hour_start) {
@@ -103,7 +108,7 @@ export function selectPintOfTheDay(pubs: PintOfTheDayPub[], now: Date = new Date
       name: winner.name,
       slug: winner.slug,
       suburb: winner.suburb,
-      address: winner.address || '',
+      address: winner.address,
       price: Number(winner.price),
       effectivePrice: happyHour.effectivePrice ?? Number(winner.price),
       beerType: winner.beer_type,

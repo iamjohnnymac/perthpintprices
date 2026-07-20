@@ -6,7 +6,7 @@ import { absolutePubUrl, pubUrl } from '@/lib/urls'
 import type { PintOfTheDayData } from '@/lib/pintOfTheDay'
 
 export default function PintOfTheDay({ initialData }: { initialData: PintOfTheDayData | null }) {
-  const [data] = useState(initialData)
+  const data = initialData
   const [shared, setShared] = useState(false)
   const displayDate = data
     ? new Intl.DateTimeFormat('en-AU', {
@@ -65,7 +65,9 @@ export default function PintOfTheDay({ initialData }: { initialData: PintOfTheDa
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0 flex-1">
             <h4 className="type-card text-lg group-hover:text-amber transition-colors truncate">{data.pub.name}</h4>
-            <p className="text-xs text-gray-mid mt-0.5">{data.pub.suburb} · {data.pub.address}</p>
+            <p className="text-xs text-gray-mid mt-0.5">
+              {data.pub.suburb}{data.pub.address ? ` · ${data.pub.address}` : ''}
+            </p>
             {data.pub.beerType && (
               <p className="text-xs text-gray-mid mt-0.5">{data.pub.beerType}</p>
             )}
