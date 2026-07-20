@@ -1,11 +1,9 @@
-'use client'
-
 import SubPageNav from '@/components/SubPageNav'
 import PintOfTheDay from '@/components/PintOfTheDay'
 import Footer from '@/components/Footer'
-import { ErrorBoundary } from '@/components/ErrorBoundary'
+import type { PintOfTheDayData } from '@/lib/pintOfTheDay'
 
-export default function PintOfTheDayPage() {
+export default function PintOfTheDayPage({ initialData }: { initialData: PintOfTheDayData | null }) {
   return (
     <main className="min-h-screen bg-[#FDF8F0]">
       <SubPageNav breadcrumbs={[
@@ -14,7 +12,7 @@ export default function PintOfTheDayPage() {
       ]} />
       <h1 className="sr-only">Perth Pint of the Day</h1>
       <div className="max-w-container mx-auto px-6 py-8 sm:py-12">
-        <ErrorBoundary><PintOfTheDay /></ErrorBoundary>
+        <PintOfTheDay initialData={initialData} />
       </div>
       <Footer />
     </main>
