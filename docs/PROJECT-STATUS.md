@@ -10,6 +10,11 @@ Stack, database, routes, components, and lib files are documented in `CLAUDE.md`
 
 ## What's done recently
 
+### Pint of the Day is server-rendered (2026-07-21)
+- **Commit `0a9a16b`:** moved the deterministic daily selection into one shared server contract used by both the page and API. The insight page now renders the selected pub, canonical link, suburb, effective price, Perth-local date, reason, and runner-up in its initial HTML; sharing and local storage remain client-side enhancements.
+- The page and API are explicitly request-dynamic with no revalidation window, preventing a Perth-date-labelled result from surviving local midnight. Focused tests cover deterministic selection, Perth rollover, server HTML (including the empty state), and the route cache contract; full unit tests (339), TypeScript, and lint pass.
+- Live Supabase/browser proof remains pending a scoped `supabase-read` injection: the documented preflight reports `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` missing, so no fallback credential was used for build or screenshot verification.
+
 ### World Cup retirement and release health check (2026-07-21)
 - **Commits `7879bef`, `8342152`, `9791a79`, and `efd5477`:** campaign retirement, site/agent hardening, sanitized production migration history, and legacy credential revocation.
 - Removed the finished World Cup hub, homepage/pub cards, fixture data, countdowns, team treatments, sitemap entry, and article cross-links. `/world-cup` now redirects permanently to the homepage instead of leaving a dead campaign page.
