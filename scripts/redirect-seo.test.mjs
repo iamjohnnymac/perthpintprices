@@ -29,6 +29,11 @@ for (const source of legacySectionRedirects) {
   assert.equal(sectionRedirect?.statusCode, 301, `${source} redirect must be an explicit 301`)
 }
 
+const retiredWorldCupRedirect = redirects.find(redirect => redirect.source === '/world-cup')
+
+assert.equal(retiredWorldCupRedirect?.destination, '/')
+assert.equal(retiredWorldCupRedirect?.statusCode, 301, 'retired World Cup route must redirect home with an explicit 301')
+
 const oldPubRoute = await readFile(new URL('../src/app/pub/[slug]/route.ts', import.meta.url), 'utf8')
 
 assert.match(oldPubRoute, /NextResponse\.redirect\([^,]+,\s*301\)/, 'legacy pub route must redirect with status 301')

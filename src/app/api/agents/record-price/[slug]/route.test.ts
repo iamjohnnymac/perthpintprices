@@ -17,21 +17,23 @@ function jsonRequest(body: unknown) {
 
 describe('record-price route', () => {
   it('does not bump last_verified for happy-hour-only captures', async () => {
-    process.env.AGENT_WEBHOOK_SECRET = 'test-secret'
+    process.env.ELEVENLABS_RECORD_PRICE_TOOL_SECRET = 'test-secret'
 
-    let pubUpdate: Record<string, unknown> | null = null
+    let rpcArgs: Record<string, unknown> | null = null
     const supabase = {
       from(table: string) {
         if (table === 'pubs') {
           return pubsQuery({
             pub: { id: 42, name: 'Test Pub', price: 12, price_verified: true },
-            onUpdate: (updates) => {
-              pubUpdate = updates
-            },
+            onUpdate: () => {},
           })
         }
-        if (table === 'price_history') return insertQuery()
         throw new Error(`Unexpected table ${table}`)
+      },
+      rpc(fn: string, args: Record<string, unknown>) {
+        assert.equal(fn, 'record_agent_price')
+        rpcArgs = args
+        return Promise.resolve({ data: null, error: null })
       },
     }
 
@@ -44,30 +46,29 @@ describe('record-price route', () => {
 
     assert.equal(response.status, 200)
     assert.equal(body.ok, true)
-    assert.deepEqual(pubUpdate, { happy_hour: 'Mon-Fri 4-6pm $8 pints' })
+    assert.ok(rpcArgs)
+    assert.deepEqual((rpcArgs as Record<string, unknown>).p_pub_updates, { happy_hour: 'Mon-Fri 4-6pm $8 pints' })
+    assert.equal((rpcArgs as Record<string, unknown>).p_price_history, null)
   })
 
   it('persists provenance when Andrew records a price', async () => {
-    process.env.AGENT_WEBHOOK_SECRET = 'test-secret'
+    process.env.ELEVENLABS_RECORD_PRICE_TOOL_SECRET = 'test-secret'
 
-    let pubUpdate: Record<string, unknown> | null = null
-    let historyInsert: Record<string, unknown> | null = null
+    let rpcArgs: Record<string, unknown> | null = null
     const supabase = {
       from(table: string) {
         if (table === 'pubs') {
           return pubsQuery({
             pub: { id: 42, slug: 'test-pub', suburb: 'Perth', name: 'Test Pub', price: 12, price_verified: true },
-            onUpdate: (updates) => {
-              pubUpdate = updates
-            },
-          })
-        }
-        if (table === 'price_history') {
-          return insertQuery((row) => {
-            historyInsert = row
+            onUpdate: () => {},
           })
         }
         throw new Error(`Unexpected table ${table}`)
+      },
+      rpc(fn: string, args: Record<string, unknown>) {
+        assert.equal(fn, 'record_agent_price')
+        rpcArgs = args
+        return Promise.resolve({ data: null, error: null })
       },
     }
 
@@ -80,7 +81,8 @@ describe('record-price route', () => {
 
     assert.equal(response.status, 200)
     assert.equal(body.ok, true)
-    assert.deepEqual(pubUpdate, {
+    assert.ok(rpcArgs)
+    assert.deepEqual((rpcArgs as Record<string, unknown>).p_pub_updates, {
       price: 10,
       price_verified: true,
       last_verified: '2026-05-31T00:00:00.000Z',
@@ -89,7 +91,7 @@ describe('record-price route', () => {
       price_confidence: 'high',
       beer_type: 'Swan Draught',
     })
-    assert.deepEqual(historyInsert, {
+    assert.deepEqual((rpcArgs as Record<string, unknown>).p_price_history, {
       pub_id: 42,
       price: 10,
       beer_type: 'Swan Draught',
@@ -121,15 +123,6 @@ function pubsQuery(options: {
     },
     then(resolve: (value: { error: null }) => void) {
       resolve({ error: null })
-    },
-  }
-}
-
-function insertQuery(onInsert: (row: Record<string, unknown>) => void = () => {}) {
-  return {
-    insert(row: Record<string, unknown>) {
-      onInsert(row)
-      return Promise.resolve({ error: null })
     },
   }
 }

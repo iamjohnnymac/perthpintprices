@@ -1,17 +1,14 @@
 'use client'
 
-import { Pub } from '@/types/pub'
-import { CrowdReport } from '@/lib/supabase'
+import type { HomePub } from '@/lib/homePub'
 import { getDistanceKm, formatDistance } from '@/lib/location'
 import Link from 'next/link'
 import { Beer } from 'lucide-react'
 import { pubUrl } from '@/lib/urls'
 
 interface PubCardListProps {
-  pubs: Pub[]
-  crowdReports: Record<string, CrowdReport>
+  pubs: HomePub[]
   userLocation: { lat: number; lng: number } | null
-  onCrowdReport: (pub: Pub) => void
   showAll: boolean
   initialCount: number
   onShowAll: () => void

@@ -54,6 +54,8 @@ const UNIT_TO_PINT: Record<string, number> = {
   pot: 570 / 285,
 }
 
+const WEBHOOK_TIMESTAMP_TOLERANCE_SECONDS = 30 * 60
+
 function extractValue(field: unknown): unknown {
   if (field && typeof field === 'object' && 'value' in (field as Record<string, unknown>)) {
     return (field as DataCollectionField).value
@@ -74,13 +76,17 @@ function parseString(value: unknown): string | null {
   return s
 }
 
-function verifySignature(rawBody: string, header: string | null, secret: string): boolean {
+function verifySignature(rawBody: string, header: string | null, secret: string, now: Date): boolean {
   if (!header) return false
   // ElevenLabs format: "t=<timestamp>,v0=<hex>"
   const parts = Object.fromEntries(header.split(',').map((p) => p.trim().split('=') as [string, string]))
   const t = parts.t
   const v0 = parts.v0
   if (!t || !v0) return false
+  const timestamp = Number(t)
+  if (!Number.isSafeInteger(timestamp)) return false
+  const ageSeconds = Math.abs(Math.floor(now.getTime() / 1000) - timestamp)
+  if (ageSeconds > WEBHOOK_TIMESTAMP_TOLERANCE_SECONDS) return false
   const signed = `${t}.${rawBody}`
   const expected = crypto.createHmac('sha256', secret).update(signed).digest('hex')
   const actualBuffer = Buffer.from(v0, 'hex')
@@ -92,26 +98,25 @@ function verifySignature(rawBody: string, header: string | null, secret: string)
 interface PostCallDeps {
   supabase?: {
     from(table: string): any
+    rpc(fn: string, args: Record<string, unknown>): any
   }
   getSupabase?: () => {
     from(table: string): any
+    rpc(fn: string, args: Record<string, unknown>): any
   }
   now?: Date
+  signatureNow?: Date
 }
 
 export async function handlePostCall(req: NextRequest, deps: PostCallDeps) {
   const rawBody = await req.text()
-  const secret = process.env.AGENT_WEBHOOK_SECRET
+  const secret = process.env.ELEVENLABS_POST_CALL_WEBHOOK_SECRET
   if (!secret) {
     return NextResponse.json({ ok: false, error: 'server misconfigured' }, { status: 500 })
   }
 
   const sig = req.headers.get('elevenlabs-signature')
-  // During initial setup the webhook might not have HMAC configured yet — also
-  // accept the same shared-secret header the record-price route uses, as a
-  // fallback so we can test without fiddling with HMAC first.
-  const shared = req.headers.get('x-agent-secret')
-  const ok = verifySignature(rawBody, sig, secret) || shared === secret
+  const ok = verifySignature(rawBody, sig, secret, deps.signatureNow ?? new Date())
   if (!ok) {
     console.warn('[agent post-call] bad signature')
     return NextResponse.json({ ok: false, error: 'unauthorised' }, { status: 401 })
@@ -139,13 +144,17 @@ export async function handlePostCall(req: NextRequest, deps: PostCallDeps) {
   const pubSlug = d.conversation_initiation_client_data?.dynamic_variables?.pub_slug || null
 
   let pubId: number | null = null
-  let existingPrice: number | null = null
-  let priceVerified = false
   if (pubSlug) {
-    const { data: pub } = await supabase.from('pubs').select('id, price, price_verified').eq('slug', pubSlug).single()
+    const { data: pub, error: pubError } = await supabase
+      .from('pubs')
+      .select('id')
+      .eq('slug', pubSlug)
+      .maybeSingle()
+    if (pubError) {
+      console.error('[agent post-call] pub lookup failed:', pubError.message)
+      return NextResponse.json({ ok: false, error: `pub lookup failed: ${pubError.message}` }, { status: 500 })
+    }
     pubId = pub?.id ?? null
-    existingPrice = pub?.price ?? null
-    priceVerified = !!pub?.price_verified
   }
 
   const transcriptText = (d.transcript || [])
@@ -160,7 +169,7 @@ export async function handlePostCall(req: NextRequest, deps: PostCallDeps) {
   const parsedConfidence = parseString(extractValue(collection.confidence)) || d.analysis?.call_successful || null
   const priceConfidence = normalizePriceConfidence(parsedConfidence)
 
-  const { error: logErr } = await supabase.from('phone_call_log').insert({
+  const callLog = {
     pub_id: pubId,
     call_sid: d.conversation_id,
     transcript: transcriptText,
@@ -169,14 +178,11 @@ export async function handlePostCall(req: NextRequest, deps: PostCallDeps) {
     parsed_beer_type: parsedBeerType,
     parsed_confidence: parsedConfidence,
     parsed_notes: d.analysis?.transcript_summary || null,
-  })
-  if (logErr) {
-    console.error('[agent post-call] log insert failed:', logErr.message)
-    return NextResponse.json({ ok: false, error: `call log insert failed: ${logErr.message}` }, { status: 500 })
   }
 
-  let fallbackWrote = false
-  if (pubId && !priceVerified) {
+  const updates: Record<string, unknown> = {}
+  let priceHistory: Record<string, unknown> | null = null
+  if (pubId) {
     const hasPrice = parsedPrice != null
     const hasHH = !!parsedHappyHour
     const hasBrand = !!parsedBeerType
@@ -186,9 +192,8 @@ export async function handlePostCall(req: NextRequest, deps: PostCallDeps) {
       let pintPrice: number | null = hasPrice ? Number((parsedPrice! * unitMultiplier).toFixed(2)) : null
       if (pintPrice != null && (pintPrice < 5 || pintPrice > 20)) pintPrice = null
 
-      const updates: Record<string, unknown> = {}
       const verifiedAt = (deps.now ?? new Date()).toISOString()
-      if (pintPrice != null && pintPrice !== existingPrice) {
+      if (pintPrice != null) {
         updates.price = pintPrice
         updates.price_verified = true
         updates.last_verified = verifiedAt
@@ -199,27 +204,35 @@ export async function handlePostCall(req: NextRequest, deps: PostCallDeps) {
       if (hasBrand) updates.beer_type = parsedBeerType
       if (hasHH) updates.happy_hour = parsedHappyHour
 
-      if (Object.keys(updates).length > 0) {
-        const { error: upErr } = await supabase.from('pubs').update(updates).eq('id', pubId)
-        if (upErr) {
-          console.error('[agent post-call] fallback update failed:', upErr.message)
-        } else {
-          fallbackWrote = true
-          if (pintPrice != null) {
-            await supabase.from('price_history').insert({
-              pub_id: pubId,
-              price: pintPrice,
-              beer_type: parsedBeerType,
-              change_type: 'phone_agent',
-              source: `ElevenLabs ${d.conversation_id} (post-call fallback)`,
-              verified_at: verifiedAt,
-              confidence: priceConfidence,
-            })
-          }
+      if (pintPrice != null) {
+        priceHistory = {
+          pub_id: pubId,
+          price: pintPrice,
+          beer_type: parsedBeerType,
+          change_type: 'phone_agent',
+          source: `ElevenLabs ${d.conversation_id} (post-call fallback)`,
+          verified_at: verifiedAt,
+          confidence: priceConfidence,
         }
       }
     }
   }
+
+  const { data: processResult, error: processError } = await supabase.rpc('process_agent_post_call', {
+    p_call_log: callLog,
+    p_pub_id: pubId,
+    p_pub_updates: updates,
+    p_price_history: priceHistory,
+  })
+  if (processError) {
+    console.error('[agent post-call] transaction failed:', processError.message)
+    return NextResponse.json({ ok: false, error: `post-call transaction failed: ${processError.message}` }, { status: 500 })
+  }
+  if (processResult?.processed === false) {
+    return NextResponse.json({ ok: true, duplicate: true })
+  }
+
+  const fallbackWrote = processResult?.fallback_written === true
 
   console.log(
     `[agent post-call] conv=${d.conversation_id} pub=${pubSlug} dur=${d.call_duration_secs}s success=${d.analysis?.call_successful} price=${parsedPrice ?? 'n/a'} beer=${parsedBeerType ?? 'n/a'} fallback=${fallbackWrote}`,
@@ -234,7 +247,13 @@ async function handleCallInitiationFailure(
 ) {
   const d = body.data
   const targetNumber = failureTargetNumber(d.metadata)
-  const pubId = targetNumber ? await findPubIdByPhone(supabase, targetNumber) : null
+  let pubId: number | null = null
+  try {
+    pubId = targetNumber ? await findPubIdByPhone(supabase, targetNumber) : null
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error)
+    return NextResponse.json({ ok: false, error: `pub phone lookup failed: ${message}` }, { status: 500 })
+  }
   const { error: logErr } = await supabase.from('phone_call_log').insert({
     pub_id: pubId,
     call_sid: d.conversation_id,
@@ -251,6 +270,9 @@ async function handleCallInitiationFailure(
   })
 
   if (logErr) {
+    if (logErr.code === '23505') {
+      return NextResponse.json({ ok: true, duplicate: true })
+    }
     console.error('[agent post-call] initiation failure log insert failed:', logErr.message)
     return NextResponse.json({ ok: false, error: `call log insert failed: ${logErr.message}` }, { status: 500 })
   }
@@ -273,8 +295,7 @@ async function findPubIdByPhone(supabase: { from(table: string): any }, targetNu
   if (!target) return null
   const { data, error } = await supabase.from('pubs').select('id, phone').not('phone', 'is', null)
   if (error) {
-    console.error('[agent post-call] failed pub phone lookup:', error.message)
-    return null
+    throw new Error(error.message)
   }
   const match = ((data || []) as PubPhoneRow[]).find((pub) => pub.phone && toE164(pub.phone) === target)
   return match?.id ?? null

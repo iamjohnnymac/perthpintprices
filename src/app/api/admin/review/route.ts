@@ -1,36 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { revalidateTag } from 'next/cache'
-import { serviceClient } from '@/lib/supabaseGateway'
-import { timingSafeEqual } from 'crypto'
+import type { SupabaseClient } from '@supabase/supabase-js'
 import { reviewPriceReport } from './priceReportReview'
 import { PUBS_CACHE_TAG } from '@/lib/cachedPubs'
+import { authenticateAdminRequest } from '@/lib/adminAuth'
 
 export const dynamic = 'force-dynamic'
 
-function safeCompare(a: string, b: string): boolean {
-  try {
-    const bufA = Buffer.from(a, 'utf-8')
-    const bufB = Buffer.from(b, 'utf-8')
-    if (bufA.length !== bufB.length) {
-      timingSafeEqual(bufA, Buffer.alloc(bufA.length))
-      return false
-    }
-    return timingSafeEqual(bufA, bufB)
-  } catch {
-    return false
-  }
+interface AdminReviewDeps {
+  getServiceClient?: () => SupabaseClient
 }
 
-export async function POST(request: NextRequest) {
-  const authHeader = request.headers.get('authorization')
-  const password = authHeader?.replace('Bearer ', '') || ''
-  if (!process.env.ADMIN_PASSWORD || !safeCompare(password, process.env.ADMIN_PASSWORD)) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  }
-
-  // Privileged client (bypasses RLS). Throws if the service-role key is missing
-  // rather than silently downgrading to the anon key.
-  const supabase = serviceClient()
+export async function handleAdminReview(request: NextRequest, deps: AdminReviewDeps = {}) {
+  const auth = await authenticateAdminRequest(request, deps)
+  if (!auth.authenticated) return auth.response
+  const supabase = auth.supabase
 
   const body = await request.json()
   const { type, id, action, target_slug } = body
@@ -45,7 +29,7 @@ export async function POST(request: NextRequest) {
       if (result.status === 200 && result.body.action === 'approved') {
         // Approved prices update the pubs table — expire the shared hourly
         // cache so list pages pick the change up on their next render.
-        revalidateTag(PUBS_CACHE_TAG)
+        revalidateTag(PUBS_CACHE_TAG, 'max')
       }
       return NextResponse.json(result.body, { status: result.status })
 
@@ -101,7 +85,7 @@ export async function POST(request: NextRequest) {
           .update({ status: 'approved', reviewed_at: now })
           .eq('id', id)
 
-        revalidateTag(PUBS_CACHE_TAG)
+        revalidateTag(PUBS_CACHE_TAG, 'max')
         return NextResponse.json({ success: true, action: 'approved', slug })
 
       } else if (action === 'reject') {
@@ -119,4 +103,8 @@ export async function POST(request: NextRequest) {
     const message = err instanceof Error ? err.message : 'Unknown error'
     return NextResponse.json({ error: message }, { status: 500 })
   }
+}
+
+export async function POST(request: NextRequest) {
+  return handleAdminReview(request)
 }

@@ -1,6 +1,6 @@
 # Perth Pint Prices Project Status
 
-Last updated: 2026-07-18
+Last updated: 2026-07-21
 
 ## What this is
 
@@ -9,6 +9,14 @@ Perth Pint Prices (perthpintprices.com) tracks pint prices across **857 Perth pu
 Stack, database, routes, components, and lib files are documented in `CLAUDE.md` (auto-loaded every session). This file covers history, recent work, and the backlog.
 
 ## What's done recently
+
+### World Cup retirement and release health check (2026-07-21)
+- **Commits `7879bef`, `8342152`, `9791a79`, and `efd5477`:** campaign retirement, site/agent hardening, sanitized production migration history, and legacy credential revocation.
+- Removed the finished World Cup hub, homepage/pub cards, fixture data, countdowns, team treatments, sitemap entry, and article cross-links. `/world-cup` now redirects permanently to the homepage instead of leaving a dead campaign page.
+- Hardened the agent webhooks with three separate credentials, HMAC verification for ElevenLabs post-call delivery, idempotent call logging, transactional price writes, kickoff cooldown reservations, and durable admin rate limiting. Added Sentry wiring, privacy filters, security headers, CSP reporting, build-data checks, and regression coverage.
+- Applied the Supabase migrations through `20260721000000_revoke_legacy_embedded_credentials.sql`. Local and remote migration ledgers agree; literal credentials were removed from the recovered history, the exposed push credential was rotated, and the obsolete Tasklet triggers containing an exposed token were disabled.
+- Infisical is the credential source of truth under `/external/perth-pint-prices/*`. Only scoped runtime copies are synced to Vercel; no secret values are stored in Git or documentation.
+- Preview and production checks passed for invalid/valid post-call signatures, single-write replay protection, record-price auth, kickoff dry-run auth, CSP Report-Only headers, CSP report intake, desktop/mobile rendering, browser console errors, and the permanent `/world-cup` redirect. The replacement ElevenLabs HMAC webhook is enabled, its generated secret is stored canonically in Infisical, and the old auto-disabled Tasklet webhook is retired. The sanitized build was promoted to production after credential containment. The owner waived the Sentry event gate.
 
 ### World Cup knockout fixture freshness through final (2026-07-18)
 - **Commit `8ee1ec0`:** refreshed the FIFA 2026 knockout fixtures from the official FIFA fixture feed. Corrected Mexico v England to 9am AWST, confirmed the remaining quarter-finals (Spain v Belgium, Norway v England, Argentina v Switzerland), both semi-finals, the third-place play-off, and the final (Spain v Argentina). Local naming style remains preserved while `TIMES_CHECKED` now reflects 18 July 2026.

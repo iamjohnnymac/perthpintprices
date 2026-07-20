@@ -14,7 +14,7 @@ import type { Article } from '@/lib/articles'
 export const dynamic = 'force-dynamic'
 
 interface DraftPreviewProps {
-  params: { slug: string }
+  params: Promise<{ slug: string }>
 }
 
 const isProduction = process.env.NODE_ENV === 'production'
@@ -37,7 +37,8 @@ export function generateMetadata(): Metadata {
   return { title: 'Draft preview', robots: { index: false, follow: false } }
 }
 
-export default async function DraftPreviewPage({ params }: DraftPreviewProps) {
+export default async function DraftPreviewPage(props: DraftPreviewProps) {
+  const params = await props.params
   if (isProduction) notFound()
 
   const article = await loadDraft(params.slug)

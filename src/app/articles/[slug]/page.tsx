@@ -7,14 +7,15 @@ import { absoluteArticleUrl, articles, getArticle } from '@/lib/articles'
 import { getCachedPubs } from '@/lib/cachedPubs'
 
 interface ArticlePageProps {
-  params: { slug: string }
+  params: Promise<{ slug: string }>
 }
 
 export function generateStaticParams() {
   return articles.map(article => ({ slug: article.slug }))
 }
 
-export function generateMetadata({ params }: ArticlePageProps): Metadata {
+export async function generateMetadata(props: ArticlePageProps): Promise<Metadata> {
+  const params = await props.params
   const article = getArticle(params.slug)
   if (!article) return {}
   const canonical = absoluteArticleUrl(article.slug)
@@ -43,7 +44,8 @@ export function generateMetadata({ params }: ArticlePageProps): Metadata {
   }
 }
 
-export default async function ArticlePage({ params }: ArticlePageProps) {
+export default async function ArticlePage(props: ArticlePageProps) {
+  const params = await props.params
   const article = getArticle(params.slug)
   if (!article) notFound()
 

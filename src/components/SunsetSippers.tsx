@@ -111,6 +111,7 @@ export default function SunsetSippers({ pubs, userLocation }: SunsetSippersProps
   const [showAllPubs, setShowAllPubs] = useState(false)
   const [apiSunriseHour, setApiSunriseHour] = useState<number | null>(null)
   const [apiSunsetHour, setApiSunsetHour] = useState<number | null>(null)
+  const dateKey = now.toDateString()
 
   useEffect(() => {
     const timer = setInterval(() => setNow(new Date()), 30000) // Update every 30s
@@ -132,9 +133,9 @@ export default function SunsetSippers({ pubs, userLocation }: SunsetSippersProps
         setApiSunsetHour(ssH + ssM / 60)
       })
       .catch(() => {}) // Fall back to calculation silently
-  }, [now.toDateString()])
+  }, [dateKey])
 
-  const sunTimes = useMemo(() => {
+  const sunTimes = (() => {
     if (apiSunriseHour !== null && apiSunsetHour !== null) {
       const sunrise = new Date(now)
       sunrise.setHours(Math.floor(apiSunriseHour), Math.round((apiSunriseHour % 1) * 60), 0, 0)
@@ -143,7 +144,7 @@ export default function SunsetSippers({ pubs, userLocation }: SunsetSippersProps
       return { sunrise, sunset, goldenHourStart: new Date(sunset.getTime() - 60 * 60 * 1000) }
     }
     return getSunTimes(now)
-  }, [apiSunriseHour, apiSunsetHour, now.toDateString()])
+  })()
 
   const sunPosition = getSunPosition(now, sunTimes.sunrise, sunTimes.sunset)
 

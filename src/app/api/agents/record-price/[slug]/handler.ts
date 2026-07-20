@@ -25,9 +25,11 @@ const UNIT_TO_PINT: Record<string, number> = {
 interface RecordPriceDeps {
   supabase?: {
     from(table: string): any
+    rpc(fn: string, args: Record<string, unknown>): any
   }
   getSupabase?: () => {
     from(table: string): any
+    rpc(fn: string, args: Record<string, unknown>): any
   }
   now?: Date
   afterWrite?: (pub: { slug: string; suburb: string }) => void
@@ -38,7 +40,7 @@ export async function handleRecordPrice(
   { params }: { params: { slug: string } },
   deps: RecordPriceDeps,
 ) {
-  const expected = process.env.AGENT_WEBHOOK_SECRET
+  const expected = process.env.ELEVENLABS_RECORD_PRICE_TOOL_SECRET
   if (!expected) return NextResponse.json({ ok: false, error: 'server misconfigured' }, { status: 500 })
 
   const got = req.headers.get('x-agent-secret')
@@ -109,16 +111,8 @@ export async function handleRecordPrice(
     return NextResponse.json({ ok: false, error: 'price out of range, no other data' }, { status: 400 })
   }
 
-  const { error: upErr } = await supabase.from('pubs').update(updates).eq('id', pub.id)
-  if (upErr) {
-    console.error('[agent tool] update failed:', upErr.message)
-    return NextResponse.json({ ok: false, error: upErr.message }, { status: 500 })
-  }
-
-  // Only append to price_history if we actually got a price (happy-hour-only
-  // captures aren't price events).
-  if (pintPrice != null) {
-    await supabase.from('price_history').insert({
+  const priceHistory = pintPrice != null
+    ? {
       pub_id: pub.id,
       price: pintPrice,
       beer_type: body.beer_type || null,
@@ -126,7 +120,16 @@ export async function handleRecordPrice(
       source: body.conversation_id ? `ElevenLabs ${body.conversation_id}` : 'phone_agent',
       verified_at: verifiedAt,
       confidence,
-    })
+    }
+    : null
+  const { error: writeError } = await supabase.rpc('record_agent_price', {
+    p_pub_id: pub.id,
+    p_pub_updates: updates,
+    p_price_history: priceHistory,
+  })
+  if (writeError) {
+    console.error('[agent tool] transaction failed:', writeError.message)
+    return NextResponse.json({ ok: false, error: writeError.message }, { status: 500 })
   }
 
   deps.afterWrite?.({ slug: pub.slug || pubSlug, suburb: pub.suburb })

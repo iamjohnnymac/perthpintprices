@@ -8,7 +8,7 @@
  * scaled-content exposure at build time, before Google sees it.
  *
  * Run after `next build`:  npm run check:fingerprints
- * Exit 0 = healthy (or nothing to check); exit 1 = collapsed shells.
+ * Exit 0 = healthy; exit 1 = missing/partial output or collapsed shells.
  */
 import { readFileSync } from 'node:fs'
 import { globSync } from 'node:fs'
@@ -20,7 +20,7 @@ const BUILD_DIR = '.next/server/app'
 // happy hour live/later/none, nearby available, verification tier), so the
 // distinct count is bounded by composition variety, not page count. These floors
 // catch a collapse to one/two shells without demanding a unique page each.
-const MIN_PAGES_TO_ENFORCE = 25 // below this, assume a partial/no-secrets build and skip
+const MIN_PAGES_TO_ENFORCE = 25
 const MIN_DISTINCT_SHELLS = 6
 const MAX_LARGEST_CLUSTER_SHARE = 0.9 // no single shell may cover >90% of pages
 
@@ -35,8 +35,8 @@ function main() {
   try {
     files = globSync(join(BUILD_DIR, '**/*.html'))
   } catch {
-    console.log('[fingerprint-guard] no build output found — run `next build` first. Skipping.')
-    return 0
+    console.error('[fingerprint-guard] no build output found — run `next build` first.')
+    return 1
   }
 
   const pubFingerprints = []
@@ -53,9 +53,9 @@ function main() {
   if (report.total < MIN_PAGES_TO_ENFORCE) {
     console.log(
       `[fingerprint-guard] only ${report.total} pub page(s) prerendered (< ${MIN_PAGES_TO_ENFORCE}); ` +
-        'likely a partial build without DB secrets. Skipping the guard.',
+        'build is partial or missing required data.',
     )
-    return 0
+    return 1
   }
 
   console.log(

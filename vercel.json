@@ -20,6 +20,11 @@
       "source": "/insights",
       "destination": "/discover",
       "statusCode": 301
+    },
+    {
+      "source": "/world-cup",
+      "destination": "/",
+      "statusCode": 301
     }
   ],
   "crons": [

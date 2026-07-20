@@ -2,11 +2,16 @@
   "name": "perthpintprices",
   "version": "1.2.0",
   "private": true,
+  "engines": {
+    "node": ">=20.17.0"
+  },
   "scripts": {
     "dev": "next dev",
+    "prebuild": "tsx scripts/check-build-data.ts",
     "build": "next build",
+    "postbuild": "npm run check:fingerprints && npm run check:payload",
     "start": "next start",
-    "lint": "next lint --max-warnings 50",
+    "lint": "eslint . --max-warnings 50",
     "test": "tsx --test \"src/**/*.test.ts\"",
     "crawl:official-menus": "tsx scripts/crawl-official-menus.mjs",
     "discover:official-menu-sources": "tsx scripts/discover-official-menu-sources.mjs",
@@ -14,12 +19,17 @@
     "build:official-menu-review": "tsx scripts/build-official-menu-review.mjs",
     "import:official-menu-review": "tsx scripts/import-official-menu-review.mjs",
     "test:redirects": "node scripts/redirect-seo.test.mjs",
+    "test:headers": "node scripts/security-headers.test.mjs",
+    "test:access": "node scripts/agent-access-preflight.test.mjs",
+    "access:preflight": "node scripts/agent-access-preflight.mjs",
     "check:fingerprints": "tsx scripts/check-pub-fingerprints.mjs",
+    "check:payload": "node scripts/check-homepage-payload.mjs",
     "test:e2e": "playwright test",
     "test:e2e:headed": "playwright test --headed",
     "test:e2e:video": "PLAYWRIGHT_VIDEO=on playwright test"
   },
   "dependencies": {
+    "@sentry/nextjs": "^10.66.0",
     "@supabase/supabase-js": "^2.108.2",
     "@vercel/analytics": "^2.0.1",
     "class-variance-authority": "^0.7.1",
@@ -28,7 +38,7 @@
     "leaflet": "^1.9.4",
     "leaflet.markercluster": "^1.5.3",
     "lucide-react": "^1.21.0",
-    "next": "^14.2.35",
+    "next": "^16.2.10",
     "openai": "^6.44.0",
     "radix-ui": "^1.6.0",
     "react": "^18.3.1",
@@ -37,7 +47,6 @@
     "react-leaflet-cluster": "^2.1.0",
     "tailwind-merge": "^3.6.0",
     "tailwindcss-animate": "^1.0.7",
-    "twilio": "^6.0.2",
     "web-push": "^3.6.7"
   },
   "devDependencies": {
@@ -49,13 +58,18 @@
     "@types/react-dom": "^18.3.0",
     "autoprefixer": "^10.5.0",
     "dotenv": "^17.4.2",
-    "eslint": "^8.57.1",
-    "eslint-config-next": "^15.5.19",
+    "eslint": "^9.39.1",
+    "eslint-config-next": "^16.2.10",
     "pdf-parse": "^2.4.5",
     "postcss": "^8.5.15",
     "tailwindcss": "^3.4.3",
     "tesseract.js": "^7.0.0",
     "tsx": "^4.22.4",
     "typescript": "^6.0.3"
+  },
+  "overrides": {
+    "next": {
+      "postcss": "^8.5.20"
+    }
   }
 }

@@ -2,7 +2,7 @@ import { Metadata } from 'next'
 import HomeClient from './HomeClient'
 import { getSiteStats } from '@/lib/supabase'
 import { getCachedPubs } from '@/lib/cachedPubs'
-import { slimPubForList } from '@/lib/pubPhoto'
+import { toHomePub } from '@/lib/homePub'
 import { pubUrl, suburbUrl, BASE_URL } from '@/lib/urls'
 import JsonLdScript from '@/components/JsonLdScript'
 import { WEBSITE_ID } from '@/lib/siteJsonLd'
@@ -112,13 +112,12 @@ export const revalidate = 300
 
 export default async function HomePage() {
   const pubsFull = await getCachedPubs()
-  const stats = await getSiteStats(pubsFull)
 
   // The homepage list/cards never show photos, opening hours, ratings or the
   // other Google enrichment, so drop those fields before serialising ~850 pubs
   // into the HTML. Shipping the full objects pushed the page past Googlebot's
   // 2MB crawl limit.
-  const pubs = pubsFull.map(slimPubForList)
+  const pubs = pubsFull.map(toHomePub)
 
   // Get unique suburbs from pub data for server-rendered links
   const suburbs = Array.from(new Set(pubs.map(p => p.suburb))).sort()
@@ -155,7 +154,7 @@ export default async function HomePage() {
         ))}
       </div>
 
-      <HomeClient initialPubs={pubs} initialStats={stats} />
+      <HomeClient initialPubs={pubs} />
     </>
   )
 }

@@ -11,7 +11,8 @@ export const fetchCache = 'force-no-store'
  * GET /api/signal/[id] — the answer page polls this every 30s for fresh
  * answers. Public read via the anon client (RLS allows select only).
  */
-export async function GET(_req: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(_req: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   const supabase = anonClient()
 
   const { data: signal, error: signalError } = await supabase
