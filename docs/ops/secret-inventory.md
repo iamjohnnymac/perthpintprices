@@ -28,11 +28,11 @@ Run `npm run access:preflight -- <bundle>` before a task that needs external acc
 
 Runtime, CI, deploy, and human operator identities remain separate. A missing required bundle fails closed; unrelated tasks continue without it. Never place service-role, ElevenLabs, Vercel, or Sentry tokens in `NEXT_PUBLIC_*` variables, logs, screenshots, commits, or task transcripts.
 
-Before deploying the webhook hardening change:
+Release verification completed on 2026-07-21:
 
-1. Create separate record-price, kickoff, and post-call secrets in Infisical.
-2. Sync `ELEVENLABS_RECORD_PRICE_TOOL_SECRET`, `PINTSWEEP_KICKOFF_SECRET`, and `ELEVENLABS_POST_CALL_WEBHOOK_SECRET` from Infisical to the appropriate Vercel and ElevenLabs runtime scopes.
-3. Update the ElevenLabs record-price tool and post-call webhook settings.
-4. Run the metadata-only preflight for each bundle.
-5. Send signed preview requests and confirm one log entry is created.
-6. Audit `phone_call_log.call_sid` duplicates before applying the migration.
+1. Separate record-price, kickoff, and post-call secrets were created in Infisical.
+2. `ELEVENLABS_RECORD_PRICE_TOOL_SECRET`, `PINTSWEEP_KICKOFF_SECRET`, and `ELEVENLABS_POST_CALL_WEBHOOK_SECRET` were synced only to their required Vercel and ElevenLabs runtime scopes.
+3. The ElevenLabs record-price tool and HMAC post-call webhook were updated; the obsolete Tasklet webhook was disabled.
+4. Metadata-only preflights passed without printing credential values.
+5. Signed preview and production requests created exactly one idempotent log entry, which was removed after verification.
+6. `phone_call_log.call_sid` had no duplicates before the idempotency migration was applied.
