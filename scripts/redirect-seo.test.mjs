@@ -19,6 +19,23 @@ const legacySuburbRedirect = redirects.find(redirect => redirect.source === '/su
 assert.equal(legacySuburbRedirect?.destination, '/:slug')
 assert.equal(legacySuburbRedirect?.statusCode, 301, 'legacy suburb redirect must be an explicit 301')
 
+// GSC's dated 404 report included five previous pub slugs that still resolve to
+// exactly one current pub. Keep those mappings explicit rather than relying on
+// a broad pattern that could send a removed venue to an irrelevant destination.
+const renamedPubRedirects = {
+  '/midland/the-7th-ave-bar-and-restaurant': '/midland/7th-ave-bar-and-restaurant',
+  '/northbridge/i-darts-nix-perth': '/northbridge/idartsnix',
+  '/scarborough/sk-l': '/scarborough/skol',
+  '/perth-cbd/helvetica-bar': '/perth/399-small-bar',
+  '/henley-brook/the-naked-fox-wine-bar': '/henley-brook/the-naked-fox-wine-bar-kitchen-and-caf',
+}
+
+for (const [source, destination] of Object.entries(renamedPubRedirects)) {
+  const redirect = redirects.find(candidate => candidate.source === source)
+  assert.equal(redirect?.destination, destination, `${source} must use its one-to-one replacement`)
+  assert.equal(redirect?.statusCode, 301, `${source} must use an explicit 301`)
+}
+
 // Section index pages collapse into /discover. These must be edge redirects in
 // vercel.json (NOT a page-component permanentRedirect, which Vercel's CDN cached
 // as a 308 with no Location header — Googlebot reported that as a "Redirect error").

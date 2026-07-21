@@ -62,3 +62,17 @@ test('robots and sitemap endpoints expose crawlable production URLs', async ({ r
   expect(xml).toContain('https://perthpintprices.com/')
   expect(xml).not.toContain('/world-cup')
 })
+
+test('technical SEO routes return canonical, title, and removed-route responses', async ({ request }) => {
+  const henleyBrook = await request.get('/henley-brook/the-henley-brook')
+  expect(henleyBrook.status()).toBe(200)
+  const henleyBrookHtml = await henleyBrook.text()
+  expect(henleyBrookHtml).toContain('rel="canonical" href="https://perthpintprices.com/henley-brook/the-henley-brook"')
+  expect(henleyBrookHtml).toMatch(/<title>The Henley Brook, Henley Brook:/)
+
+  const retiredLegacyPub = await request.get('/pub/ruin-bar')
+  expect(retiredLegacyPub.status()).toBe(410)
+
+  const retiredFeature = await request.get('/pub-golf')
+  expect(retiredFeature.status()).toBe(404)
+})
