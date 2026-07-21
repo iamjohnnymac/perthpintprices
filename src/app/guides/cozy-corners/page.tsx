@@ -36,8 +36,10 @@ export default async function Page() {
         { name: 'Discover', url: 'https://perthpintprices.com/discover' },
         { name: 'Cosy Corners', url: 'https://perthpintprices.com/guides/cozy-corners' },
       ]} />
-      <GuideEvidence kind="cozy" pubs={initialPubs} />
-      <CozyCornersPage initialPubs={initialPubs} />
+      <CozyCornersPage
+        initialPubs={initialPubs}
+        beforeContent={<GuideEvidence kind="cozy" pubs={initialPubs} />}
+      />
     </>
   )
 }
