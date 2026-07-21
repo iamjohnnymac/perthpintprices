@@ -50,3 +50,16 @@ test('pub sitemap routes preserve every legitimate price state and exclude confi
   }
   assert.equal(urls.has('https://perthpintprices.com/fremantle/closed'), false)
 })
+
+test('suburb sitemap routes use venue coverage, not price verification', () => {
+  const routeSets = getSitemapRouteSets([], [], [
+    { slug: 'zero-venues', pubCount: 0 },
+    { slug: 'one-tbc-venue', pubCount: 1 },
+    { slug: 'mixed-data', pubCount: 2 },
+  ])
+  const urls = new Set(routeSets.suburbRoutes.map(route => route.url))
+
+  assert.equal(urls.has('https://perthpintprices.com/zero-venues'), false)
+  assert.equal(urls.has('https://perthpintprices.com/one-tbc-venue'), true)
+  assert.equal(urls.has('https://perthpintprices.com/mixed-data'), true)
+})
