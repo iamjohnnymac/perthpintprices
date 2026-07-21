@@ -41,6 +41,12 @@ jobs:
       - name: Test
         run: npm test
 
+      - name: Install Playwright browser
+        run: npx playwright install --with-deps chromium
+
+      - name: GSC baseline refresh contract test
+        run: npm run test:gsc-baseline
+
       - name: Redirect + SEO config test
         run: npm run test:redirects
 
@@ -59,9 +65,6 @@ jobs:
           # Stub vars so generateStaticParams() can hit Supabase during build
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
-
-      - name: Install Playwright browser
-        run: npx playwright install --with-deps chromium
 
       - name: Playwright PR proof
         run: npm run test:e2e

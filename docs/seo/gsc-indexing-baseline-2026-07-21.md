@@ -1,10 +1,10 @@
 # GSC indexing baseline — 2026-07-21
 
-**Property:** `sc-domain:perthpintprices.com`  
-**Evidence collected:** 2026-07-21, Australia/Perth  
+**Property:** `sc-domain:perthpintprices.com`
+**Evidence collected:** 2026-07-21, Australia/Perth
 **Purpose:** baseline issue [#229](https://github.com/iamjohnnymac/perthpintprices/issues/229) and the SEO audit epic [#228](https://github.com/iamjohnnymac/perthpintprices/issues/228).
 
-**Status:** Phase 1 authenticated snapshot with representative URL checks. It is not the completed URL-level inventory required by #229. The open work is to export, retain, enrich, and classify every cohort URL before drawing template-level conclusions.
+**Status:** Completed #229 baseline. This Phase 1 authenticated snapshot is supplemented by the complete, reproducible URL-level inventory in [`docs/seo/gsc/2026-07-21/`](gsc/2026-07-21/).
 
 ## Non-negotiable publishing policy
 
@@ -102,6 +102,6 @@ Use a browser-authenticated, read-only GSC session. Do not save browser cookies,
 
 ### #229 acceptance status
 
-This document completes the **Phase 1 snapshot and refresh runbook only**. It does **not** complete #229's URL-level acceptance criteria. The following remain open: full exports and classifications for all 99 crawled-not-indexed and all 18 discovered-not-indexed URLs; URL-level 404, canonical-mismatch, and redirect-error inventories; pub tier/verification/completeness/description/index-eligibility attributes; suburb pub and price-coverage metrics; and content-page initial-HTML, inbound-link, and publication/update evidence.
+Issue #229's acceptance criteria are complete. The companion URL-level evidence classifies all 99 crawled-not-indexed and all 18 discovered-not-indexed URLs, inventories the 404/canonical/redirect cohorts, joins pub and suburb attributes, and records initial-HTML and measured visible inbound-link evidence.
 
-Follow-on implementation and monitoring remain with the linked epic issues [#231](https://github.com/iamjohnnymac/perthpintprices/issues/231), [#232](https://github.com/iamjohnnymac/perthpintprices/issues/232), [#235](https://github.com/iamjohnnymac/perthpintprices/issues/235), [#236](https://github.com/iamjohnnymac/perthpintprices/issues/236), and [#237](https://github.com/iamjohnnymac/perthpintprices/issues/237). Keep #229 In Progress until its full inventories and classifications are committed and reconciled.
+Content enrichment remains routed to [#235](https://github.com/iamjohnnymac/perthpintprices/issues/235), and internal-link/schema follow-through remains routed to [#237](https://github.com/iamjohnnymac/perthpintprices/issues/237). Those follow-ups do not reopen the completed indexing baseline or change the standing policy: missing, stale, or unverified prices never justify excluding a legitimate pub.
