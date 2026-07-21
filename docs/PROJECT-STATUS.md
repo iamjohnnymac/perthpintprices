@@ -10,6 +10,11 @@ Stack, database, routes, components, and lib files are documented in `CLAUDE.md`
 
 ## What's done recently
 
+### Guide evidence follows the page header (2026-07-21)
+- **Commit `f62fe7a`:** moved the server-rendered Checked Picks panel below `SubPageNav` on Cosy Corners, Sunset Sippers, and Punt & Pints. The evidence remains in initial HTML while the brand, breadcrumb, and navigation now lead the page on desktop and mobile.
+- **Regression evidence:** the focused Playwright contract fails against the previous production order and passes for all three routes at 1280×800 and 375×812. Inspected before/after screenshots are committed in `artifacts/guide-evidence-placement/`.
+- **Verification:** TypeScript, lint, 371 unit tests, the two-project Playwright regression, and the Infisical-backed production build against 849 pubs pass.
+
 ### Evidence-led guide depth ready for review (2026-07-21)
 - **Issue #235 / branch `codex/issue-235-content` / commit `c45df72`:** strengthened only the three GSC crawled-not-indexed guide routes: Cosy Corners, Sunset Sippers, and Punt & Pints. Each now leads with a visible, server-rendered first-party shortlist of tagged pubs with listed pint prices and last-checked dates, explicit selection limits, and three contextual onward links.
 - **Scope discipline:** `/happy-hour` was not in the #229 rejected cohort and was left alone. The target rationale is recorded in `docs/seo/gsc/2026-07-21/issue-235-targets.md`; no pub was noindexed, removed, or treated differently because its price is missing or stale.
