@@ -3,7 +3,7 @@ import BreadcrumbJsonLd from '@/components/BreadcrumbJsonLd'
 import { getCachedPubs } from '@/lib/cachedPubs'
 import { slimPubForFeature } from '@/lib/pubPhoto'
 import CozyCornersPage from './CozyCornersPage'
-import Link from 'next/link'
+import GuideEvidence from '@/components/GuideEvidence'
 
 export const metadata: Metadata = {
   title: 'Cosy Corners Perth: Best Rainy Day Pubs',
@@ -36,12 +36,7 @@ export default async function Page() {
         { name: 'Discover', url: 'https://perthpintprices.com/discover' },
         { name: 'Cosy Corners', url: 'https://perthpintprices.com/guides/cozy-corners' },
       ]} />
-      <div className="sr-only" aria-hidden="true">
-        <p>Perth&apos;s cosiest pubs for when the weather turns — sheltered venues with fireplaces, covered beer gardens, and warm corners for a slow pint when it&apos;s wet out.</p>
-        <Link href="/">Home</Link>
-        <Link href="/discover">Discover</Link>
-        <Link href="/happy-hour">Happy Hours</Link>
-      </div>
+      <GuideEvidence kind="cozy" pubs={initialPubs} />
       <CozyCornersPage initialPubs={initialPubs} />
     </>
   )

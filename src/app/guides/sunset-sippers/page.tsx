@@ -3,7 +3,7 @@ import BreadcrumbJsonLd from '@/components/BreadcrumbJsonLd'
 import { getCachedPubs } from '@/lib/cachedPubs'
 import { slimPubForFeature } from '@/lib/pubPhoto'
 import SunsetSippersPage from './SunsetSippersPage'
-import Link from 'next/link'
+import GuideEvidence from '@/components/GuideEvidence'
 
 export const metadata: Metadata = {
   title: 'Sunset Sippers Perth: Best Golden Hour Pubs',
@@ -36,12 +36,7 @@ export default async function Page() {
         { name: 'Discover', url: 'https://perthpintprices.com/discover' },
         { name: 'Sunset Sippers', url: 'https://perthpintprices.com/guides/sunset-sippers' },
       ]} />
-      <div className="sr-only" aria-hidden="true">
-        <p>Watch the sun go down with a cold pint at Perth&apos;s best sunset venues. West-facing views, beer gardens, and rooftop bars with verified prices across Perth.</p>
-        <Link href="/">Home</Link>
-        <Link href="/discover">Discover</Link>
-        <Link href="/happy-hour">Happy Hours</Link>
-      </div>
+      <GuideEvidence kind="sunset" pubs={initialPubs} />
       <SunsetSippersPage initialPubs={initialPubs} />
     </>
   )

@@ -6,7 +6,7 @@ import SunsetSippers from '@/components/SunsetSippers'
 
 export default function SunsetSippersPage({ initialPubs }: { initialPubs?: Pub[] }) {
   return (
-    <FeaturePageShell initialPubs={initialPubs} title="Sunset Sippers Perth" breadcrumbs={[
+    <FeaturePageShell initialPubs={initialPubs} breadcrumbs={[
       { label: 'Discover', href: '/discover' },
       { label: 'Sunset Sippers' },
     ]}>
