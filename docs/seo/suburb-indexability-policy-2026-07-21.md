@@ -2,7 +2,7 @@
 
 Issue: [#231](https://github.com/iamjohnnymac/perthpintprices/issues/231)
 
-Implementation commit: [`4fa1b53`](https://github.com/iamjohnnymac/perthpintprices/commit/4fa1b53)
+Implementation commit: [`2e23a99`](https://github.com/iamjohnnymac/perthpintprices/commit/2e23a99)
 
 ## Decision
 
