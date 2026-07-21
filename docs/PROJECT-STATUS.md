@@ -11,6 +11,7 @@ Stack, database, routes, components, and lib files are documented in `CLAUDE.md`
 ## What's done recently
 
 ### URL-level GSC cohort reconciliation (2026-07-21)
+- **PR #246 implementation commit `421e1b1`:** completes the current URL-level evidence refresh and validation changes.
 - **Issue #229:** committed a sanitized, repeatable classification of all 99 submitted-sitemap `Crawled — currently not indexed` URLs and all 18 `Discovered — currently not indexed` URLs. The raw browser exports remain outside Git; the review-safe URL/report fields and current evidence are in `docs/seo/gsc/2026-07-21/`.
 - **Current-state result:** 91 cohort pub URLs joined to the read-only Infisical-backed inventory. Every legitimate cohort URL is currently `200`, self-canonical and in the correct segmented sitemap; one independently confirmed permanent closure is correctly excluded. Exchange Bar remains the concrete stale-report example because it is now indexed despite appearing in the older cohort.
 - **Actionable enrichment cohorts:** 20 pub URLs lack a price, 27 lack complete happy-hour data, and 65 lack a description; all remain legitimate and indexable. This is an honest content-depth queue for #235, not a noindex or sitemap-removal rule. The 18 N/A-crawl/new-content URLs and normal visible inbound-path evidence provide the #237 follow-up queue.
