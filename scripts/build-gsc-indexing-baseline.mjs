@@ -10,12 +10,15 @@
  *     --crawled /secure/export/Table.csv --discovered /secure/export/Table.csv
  */
 import { createClient } from '@supabase/supabase-js'
+import { chromium } from 'playwright'
 import { realpathSync } from 'node:fs'
 import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import { fileURLToPath } from 'node:url'
 import path from 'node:path'
 
 const BASE_URL = 'https://perthpintprices.com'
+export const EXPECTED_CRAWLED_COUNT = 99
+export const EXPECTED_DISCOVERED_COUNT = 18
 const UNJOINED_PUB_ROUTE_REASONS = new Map()
 
 function requiredArg(name) {
@@ -64,6 +67,11 @@ export function validateCohorts(crawled, discovered) {
     }
   }
   return seen
+}
+
+export function validateExpectedCardinalities(crawled, discovered) {
+  if (crawled.length !== EXPECTED_CRAWLED_COUNT) throw new Error(`Crawled cohort cardinality mismatch: expected ${EXPECTED_CRAWLED_COUNT}, got ${crawled.length}`)
+  if (discovered.length !== EXPECTED_DISCOVERED_COUNT) throw new Error(`Discovered cohort cardinality mismatch: expected ${EXPECTED_DISCOVERED_COUNT}, got ${discovered.length}`)
 }
 
 export function assertRowIdentity(inputUrls, results) {
@@ -129,17 +137,22 @@ function contentDates(type, pathname) {
   return 'n/a'
 }
 
-function visibleLinksFromHtml(html) {
+export function collectVisibleLinks(baseUrl) {
   const links = new Set()
-  for (const match of html.matchAll(/<a\b([^>]*)>/gi)) {
-    const attributes = match[1]
-    if (/\bsr-only\b|aria-hidden=["']true["']|display\s*:\s*none/i.test(attributes)) continue
-    const href = attributes.match(/\bhref=["']([^"']+)["']/i)?.[1]
-    if (!href) continue
+  for (const anchor of globalThis.document.querySelectorAll('a[href]')) {
+    let hidden = false
+    for (let element = anchor; element; element = element.parentElement) {
+      const style = globalThis.getComputedStyle(element)
+      if (element.hidden || element.inert || element.getAttribute('aria-hidden') === 'true' || style.display === 'none' || style.visibility === 'hidden' || style.visibility === 'collapse' || style.contentVisibility === 'hidden' || Number(style.opacity) === 0) {
+        hidden = true
+        break
+      }
+    }
+    if (hidden || ![...anchor.getClientRects()].some(rect => rect.width > 0 && rect.height > 0)) continue
     let target
-    try { target = new URL(href, BASE_URL) } catch { continue }
-    if (target.origin !== BASE_URL || target.search || target.hash) continue
-    links.add(target.href.replace(/\/$/, '') || BASE_URL)
+    try { target = new URL(anchor.href, baseUrl) } catch { continue }
+    if (target.origin !== baseUrl || target.search || target.hash) continue
+    links.add(target.href.replace(/\/$/, '') || baseUrl)
   }
   return [...links]
 }
@@ -151,23 +164,23 @@ async function fetchPage(url) {
     const canonical = html.match(/<link[^>]+rel=["']canonical["'][^>]+href=["']([^"']+)/i)?.[1] || ''
     const robots = html.match(/<meta[^>]+name=["']robots["'][^>]+content=["']([^"']+)/i)?.[1] || ''
     const answerCount = Number(html.match(/"numberOfItems":(\d+)/)?.[1] || 0)
-    const visiblePathLinks = [...html.matchAll(/<a\b[^>]*\bhref="(\/[^"?#]+)"/gi)].length
+    const initialHtmlPathLinks = [...html.matchAll(/<a\b[^>]*\bhref="(\/[^"?#]+)"/gi)].length
     const hasH1 = /<h1\b/i.test(html)
     const hasMethodology = /how we (?:rank|calculate)|methodology/i.test(html)
-    const usefulHtml = hasH1 && (answerCount > 0 || hasMethodology) && visiblePathLinks > 0 ? 'yes' : 'limited'
-    const htmlEvidence = `h1=${hasH1 ? 'yes' : 'no'}; item_list=${answerCount}; visible_path_links=${visiblePathLinks}; methodology=${hasMethodology ? 'yes' : 'no'}`
-    return { status: response.status, location: response.headers.get('location') || '', canonical, robots, usefulHtml, htmlEvidence, visibleLinks: visibleLinksFromHtml(html) }
+    const usefulHtml = hasH1 && (answerCount > 0 || hasMethodology) && initialHtmlPathLinks > 0 ? 'yes' : 'limited'
+    const htmlEvidence = `h1=${hasH1 ? 'yes' : 'no'}; item_list=${answerCount}; initial_html_path_links=${initialHtmlPathLinks}; methodology=${hasMethodology ? 'yes' : 'no'}`
+    return { status: response.status, location: response.headers.get('location') || '', canonical, robots, usefulHtml, htmlEvidence }
   } catch (error) {
-    return { status: 'fetch-error', location: '', canonical: '', robots: '', usefulHtml: 'unavailable', htmlEvidence: 'fetch unavailable', visibleLinks: [] }
+    return { status: 'fetch-error', location: '', canonical: '', robots: '', usefulHtml: 'unavailable', htmlEvidence: 'fetch unavailable' }
   }
 }
 
 function buildInboundEvidence(pages) {
   const inbound = new Map()
   const adjacency = new Map()
-  for (const [source, page] of pages) {
-    adjacency.set(source, page.visibleLinks)
-    for (const target of page.visibleLinks) {
+  for (const [source, visibleLinks] of pages) {
+    adjacency.set(source, visibleLinks)
+    for (const target of visibleLinks) {
       const sources = inbound.get(target) || new Set()
       sources.add(source)
       inbound.set(target, sources)
@@ -198,6 +211,28 @@ async function mapWithConcurrency(values, limit, mapper) {
   return output
 }
 
+async function crawlVisibleLinkGraph(urls) {
+  const browser = await chromium.launch({ headless: true })
+  const context = await browser.newContext({ viewport: { width: 1280, height: 900 } })
+  await context.route('**/*', route => ['image', 'media', 'font'].includes(route.request().resourceType()) ? route.abort() : route.continue())
+  try {
+    const rows = await mapWithConcurrency(urls, 8, async sourceUrl => {
+      const page = await context.newPage()
+      try {
+        const response = await page.goto(sourceUrl, { waitUntil: 'domcontentloaded', timeout: 30000 })
+        if (!response || response.status() !== 200) throw new Error(`Rendered-link crawl failed for ${sourceUrl}: HTTP ${response?.status() || 'no response'}`)
+        return [sourceUrl, await page.evaluate(collectVisibleLinks, BASE_URL)]
+      } finally {
+        await page.close()
+      }
+    })
+    return new Map(rows)
+  } finally {
+    await context.close()
+    await browser.close()
+  }
+}
+
 async function main() {
   const reportDate = validDate(requiredArg('--report-date'), 'report date')
   const exportDate = validDate(requiredArg('--export-date'), 'export date')
@@ -210,6 +245,7 @@ async function main() {
   const OUTPUT_CSV = outputCsv
   const crawled = csvRows(await readFile(requiredArg('--crawled'), 'utf8'), 'crawled')
   const discoveredInput = csvRows(await readFile(requiredArg('--discovered'), 'utf8'), 'discovered')
+  validateExpectedCardinalities(crawled, discoveredInput)
   const inputUrls = validateCohorts(crawled, discoveredInput)
   const discovered = discoveredInput.map(row => ({ ...row, crawled: 'N/A (GSC export encoded unavailable as 1970-01-01)' }))
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
@@ -246,7 +282,7 @@ async function main() {
     }
     sitemapCounts.set(new URL(location).pathname, [...xml.matchAll(/<url>/g)].length)
   }
-  const graphPages = new Map(await mapWithConcurrency([...sitemapUrls], 16, async sourceUrl => [sourceUrl, await fetchPage(sourceUrl)]))
+  const graphPages = await crawlVisibleLinkGraph([...new Set([BASE_URL, ...sitemapUrls])])
   const inboundGraph = buildInboundEvidence(graphPages)
   const cohortRows = [...crawled.map(row => ({ ...row, gscReason: 'Crawled — currently not indexed' })), ...discovered.map(row => ({ ...row, gscReason: 'Discovered — currently not indexed' }))]
   assertPubJoins(cohortRows, pubByPath)
@@ -255,7 +291,7 @@ async function main() {
     const type = routeType(cohort.url)
     const pub = type === 'pub' ? pubByPath.get(pathname) : null
     const suburb = type === 'suburb' ? suburbs.get(pathname.slice(1)) : null
-    const page = graphPages.get(cohort.url) || await fetchPage(cohort.url)
+    const page = await fetchPage(cohort.url)
     const measuredSources = [...(inboundGraph.inbound.get(cohort.url) || [])].sort()
     const measuredDepth = inboundGraph.depth.get(cohort.url)
     const selfCanonical = page.canonical === cohort.url ? 'yes' : page.canonical ? 'no' : 'missing'
@@ -312,9 +348,9 @@ async function main() {
     .replace('/18** classified.', `/${discovered.length}** classified.`)
     .replace('**849 routable rows; 833 legitimate/indexable pubs; 16 independently confirmed permanent closures**. The segmented sitemap contains **32 content + 150 suburb + 833 pub = 1,015 URLs**.', `**${routablePubs.length} routable rows; ${eligiblePubs.length} legitimate/indexable pubs; ${routablePubs.length - eligiblePubs.length} independently confirmed permanent closures**. The segmented sitemap contains **${totalSitemapUrls} URLs** (content ${sitemapCounts.get('/sitemap-content.xml') || 0}; suburbs ${sitemapCounts.get('/sitemap-suburbs.xml') || 0}; pubs ${sitemapCounts.get('/sitemap-pubs.xml') || 0}).`)
     .replace(/- Exchange Bar[\s\S]*?stored GSC remained unknown\./, '- Stored URL Inspection observations belong only in their dated source evidence; this refresh does not carry them forward unless supplied as input.')
-    .replace('## Actionable follow-through', '## Initial HTML evidence\n\n`initial_html_useful` is deterministic and does not use a word count: the initial response must include an H1, at least one visible path link, and either a non-zero schema.org ItemList count (current answer/data) or methodology text. `initial_html_evidence` records all four observed values for every URL. This closes the evidence gap for each happy-hour day and transport hub.\n\n## Actionable follow-through')
+    .replace('## Actionable follow-through', '## Initial HTML evidence\n\n`initial_html_useful` is deterministic and does not use a word count: the server response must include an H1, at least one same-origin path link, and either a non-zero schema.org ItemList count (current answer/data) or methodology text. `initial_html_evidence` records all four observed values for every URL. This closes the evidence gap for each happy-hour day and transport hub.\n\n## Actionable follow-through')
     .replace('When zero, use the reconciled 150/150 current suburb directories context above.', `Aggregate suburb context: ${suburbs.size} routable suburb groups; ${indexableSuburbCount} with a legitimate/indexable pub; ${eligiblePubs.length} legitimate/indexable pubs; ${pricedEligiblePubCount}/${eligiblePubs.length} with a current stored price.`)
-    .replace('## Actionable follow-through', '## Visible inbound-link graph\n\nInbound counts, shortest homepage depth and concrete source paths come from normal rendered `<a href>` elements crawled across every current sitemap URL. Sitemap membership seeds the crawl inventory but is never counted as an inbound link. Hidden (`sr-only`, `aria-hidden` or `display:none`) anchors are excluded, and URLs with no rendered inbound source record an explicit zero.\n\n## Actionable follow-through')
+    .replace('## Actionable follow-through', '## Visible inbound-link graph\n\nInbound counts, shortest homepage depth and concrete source paths come from `<a href>` elements rendered in Playwright Chromium at a fixed 1280×900 viewport across every current sitemap URL. Sitemap membership seeds the crawl inventory but is never counted as an inbound link. Links with a hidden, inert, `aria-hidden`, CSS-hidden, fully transparent or empty-layout ancestor are excluded, and URLs with no rendered inbound source record an explicit zero.\n\n## Actionable follow-through')
     .replace(' --crawled /secure/cni/Table.csv --discovered /secure/dni/Table.csv', ' --report-date YYYY-MM-DD --export-date YYYY-MM-DD --output-dir docs/seo/gsc/YYYY-MM-DD --crawled /secure/cni/Table.csv --discovered /secure/dni/Table.csv'))
   console.log(`GSC_CRAWLED_ROWS=${crawled.length}`)
   console.log(`GSC_DISCOVERED_ROWS=${discovered.length}`)

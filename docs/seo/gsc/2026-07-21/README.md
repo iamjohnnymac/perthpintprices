@@ -29,11 +29,11 @@ Every legitimate cohort URL currently returned 200, self-canonical and sitemap-l
 
 ## Initial HTML evidence
 
-`initial_html_useful` is deterministic and does not use a word count: the initial response must include an H1, at least one visible path link, and either a non-zero schema.org ItemList count (current answer/data) or methodology text. `initial_html_evidence` records all four observed values for every URL. This closes the evidence gap for each happy-hour day and transport hub.
+`initial_html_useful` is deterministic and does not use a word count: the server response must include an H1, at least one same-origin path link, and either a non-zero schema.org ItemList count (current answer/data) or methodology text. `initial_html_evidence` records all four observed values for every URL. This closes the evidence gap for each happy-hour day and transport hub.
 
 ## Visible inbound-link graph
 
-Inbound counts, shortest homepage depth and concrete source paths come from normal rendered `<a href>` elements crawled across every current sitemap URL. Sitemap membership seeds the crawl inventory but is never counted as an inbound link. Hidden (`sr-only`, `aria-hidden` or `display:none`) anchors are excluded, and URLs with no rendered inbound source record an explicit zero.
+Inbound counts, shortest homepage depth and concrete source paths come from `<a href>` elements rendered in Playwright Chromium at a fixed 1280×900 viewport across every current sitemap URL. Sitemap membership seeds the crawl inventory but is never counted as an inbound link. Links with a hidden, inert, `aria-hidden`, CSS-hidden, fully transparent or empty-layout ancestor are excluded, and URLs with no rendered inbound source record an explicit zero.
 
 ## Actionable follow-through
 
