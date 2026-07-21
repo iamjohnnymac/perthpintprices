@@ -16,7 +16,7 @@ Issue [#237](https://github.com/iamjohnnymac/perthpintprices/issues/237) is a me
 | Duplicate/prohibited URLs | 0 / 0 |
 | Non-200 or non-self-canonical sitemap routes | 0 |
 
-This validator rejects sitemap redirects, unexpected route responses and a missing or mismatched canonical. The emitted URL set contains no admin, API, signal, World Cup, or redirected section-root route. Legitimate pubs remain eligible regardless of whether their price is missing, stale or unverified.
+This validator rejects sitemap redirects, unexpected route responses, a missing or mismatched canonical, plus `noindex` or `nofollow` in either an `X-Robots-Tag` header or a page-level robots meta tag. The emitted URL set contains no admin, API, signal, World Cup, or redirected section-root route. Legitimate pubs remain eligible regardless of whether their price is missing, stale or unverified.
 
 Representative initial-HTML checks also passed for a Tier A pub (`/west-leederville/exchange-bar`), a no-price-coverage suburb (`/connolly`), a qualifying suburb (`/fremantle`), an article, the changed Cosy Corners guide, an insight, Pint of the Day and a Friday happy-hour page: each returned 200, had its expected self-canonical, no `noindex`, a page-specific title and JSON-LD. Exchange Bar's rendered `BarOrPub` JSON-LD matches the visible venue name and suburb; its WebPage URL matches the canonical.
 
