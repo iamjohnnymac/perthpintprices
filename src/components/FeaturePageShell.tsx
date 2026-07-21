@@ -17,6 +17,8 @@ interface FeaturePageShellProps {
   title?: string
   /** Render the H1 visibly (type-hero) instead of sr-only, with an intro line under it. */
   intro?: string
+  /** Server-rendered page context placed after the guide header. */
+  beforeContent?: ReactNode
   needsCrowd?: boolean
   /** Server-fetched pubs. When provided the shell renders content in the initial
    *  HTML instead of spinning while the browser fetches from Supabase. */
@@ -28,7 +30,7 @@ interface FeaturePageShellProps {
   }) => ReactNode
 }
 
-export default function FeaturePageShell({ breadcrumbs, title, intro, needsCrowd = false, initialPubs, children }: FeaturePageShellProps) {
+export default function FeaturePageShell({ breadcrumbs, title, intro, beforeContent, needsCrowd = false, initialPubs, children }: FeaturePageShellProps) {
   const hasServerPubs = Boolean(initialPubs && initialPubs.length > 0)
   const [pubs, setPubs] = useState<Pub[]>(initialPubs ?? [])
   const [crowdReports, setCrowdReports] = useState<Record<string, CrowdReport>>({})
@@ -99,6 +101,7 @@ export default function FeaturePageShell({ breadcrumbs, title, intro, needsCrowd
   return (
     <main className="min-h-screen bg-[#FDF8F0]">
       <SubPageNav breadcrumbs={breadcrumbs} />
+      {beforeContent}
       {title && (intro ? (
         <div className="max-w-container mx-auto px-6 pt-8 sm:pt-12">
           <h1 className="type-hero">{title}</h1>

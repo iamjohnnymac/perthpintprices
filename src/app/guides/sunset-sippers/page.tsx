@@ -36,8 +36,10 @@ export default async function Page() {
         { name: 'Discover', url: 'https://perthpintprices.com/discover' },
         { name: 'Sunset Sippers', url: 'https://perthpintprices.com/guides/sunset-sippers' },
       ]} />
-      <GuideEvidence kind="sunset" pubs={initialPubs} />
-      <SunsetSippersPage initialPubs={initialPubs} />
+      <SunsetSippersPage
+        initialPubs={initialPubs}
+        beforeContent={<GuideEvidence kind="sunset" pubs={initialPubs} />}
+      />
     </>
   )
 }

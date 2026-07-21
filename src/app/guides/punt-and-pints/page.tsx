@@ -36,8 +36,10 @@ export default async function Page() {
         { name: 'Discover', url: 'https://perthpintprices.com/discover' },
         { name: 'Punt & Pints', url: 'https://perthpintprices.com/guides/punt-and-pints' },
       ]} />
-      <GuideEvidence kind="tab" pubs={initialPubs} />
-      <PuntAndPintsPage initialPubs={initialPubs} />
+      <PuntAndPintsPage
+        initialPubs={initialPubs}
+        beforeContent={<GuideEvidence kind="tab" pubs={initialPubs} />}
+      />
     </>
   )
 }

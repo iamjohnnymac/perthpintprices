@@ -50,6 +50,33 @@ test('discover and happy-hour pages render their primary experiences', async ({ 
   await attachProof(page, testInfo, 'discover-happy-hour')
 })
 
+test('guide evidence follows the guide header', async ({ page }, testInfo) => {
+  const guides = [
+    { path: '/guides/cozy-corners', headingId: 'cozy-evidence-heading' },
+    { path: '/guides/sunset-sippers', headingId: 'sunset-evidence-heading' },
+    { path: '/guides/punt-and-pints', headingId: 'tab-evidence-heading' },
+  ]
+
+  for (const guide of guides) {
+    await page.goto(guide.path)
+
+    const header = page.locator('header')
+    const evidenceSelector = `section[aria-labelledby="${guide.headingId}"]`
+    const evidence = page.locator(evidenceSelector)
+
+    await expect(header).toBeVisible()
+    await expect(evidence).toBeVisible()
+    expect(await header.evaluate((element, selector) => {
+      const evidenceElement = document.querySelector(selector)
+      return evidenceElement
+        ? Boolean(element.compareDocumentPosition(evidenceElement) & Node.DOCUMENT_POSITION_FOLLOWING)
+        : false
+    }, evidenceSelector)).toBe(true)
+  }
+
+  await attachProof(page, testInfo, 'guide-evidence-placement')
+})
+
 test('robots and sitemap endpoints expose crawlable production URLs', async ({ request }) => {
   const robots = await request.get('/robots.txt')
   expect(robots.ok()).toBeTruthy()
