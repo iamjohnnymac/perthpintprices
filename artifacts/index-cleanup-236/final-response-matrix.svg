@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2600" height="1040" viewBox="0 0 2600 1040">
+  <rect width="2600" height="1040" fill="#f7f7f5"/>
+  <style>
+    text { font-family: Menlo, Monaco, monospace; fill: #171717; }
+    .title { font-size: 32px; font-weight: 700; }
+    .sub { font-size: 20px; fill: #555; }
+    .head { font-size: 20px; font-weight: 700; }
+    .row { font-size: 18px; }
+    .pass { fill: #146c43; font-weight: 700; }
+    .rule { stroke: #171717; stroke-width: 2; }
+  </style>
+  <text x="60" y="72" class="title">Issue #236 — final response and canonical matrix</text>
+  <text x="60" y="108" class="sub">Generated 2026-07-21 · production evidence + local configuration verification</text>
+  <line x1="60" y1="142" x2="2540" y2="142" class="rule"/>
+  <text x="60" y="182" class="head">URL / cohort</text><text x="650" y="182" class="head">Result</text><text x="850" y="182" class="head">Destination / canonical</text>
+  <text x="60" y="224" class="row">/guides and /insights (production)</text><text x="650" y="224" class="row">301</text><text x="850" y="224" class="row">/discover</text>
+  <text x="60" y="264" class="row">/henley-brook/the-henley-brook (production)</text><text x="650" y="264" class="row">200</text><text x="850" y="264" class="row">self-canonical /henley-brook/the-henley-brook</text>
+  <text x="60" y="304" class="row">five renamed venue routes (configuration)</text><text x="650" y="304" class="row">301</text><text x="850" y="304" class="row">exact one-to-one current pub URL</text>
+  <text x="60" y="344" class="row">six retired /pub/* legacy misses (production)</text><text x="650" y="344" class="row">410</text><text x="850" y="344" class="row">Gone; no irrelevant replacement</text>
+  <text x="60" y="384" class="row">three removed pubs + /pub-golf (production)</text><text x="650" y="384" class="row">404</text><text x="850" y="384" class="row">intentional; no current replacement</text>
+  <line x1="60" y1="420" x2="2540" y2="420" class="rule"/>
+  <text x="60" y="468" class="head">Renamed-pub mappings asserted in scripts/redirect-seo.test.mjs</text>
+  <text x="90" y="510" class="row">/midland/the-7th-ave-bar-and-restaurant → /midland/7th-ave-bar-and-restaurant</text>
+  <text x="90" y="546" class="row">/northbridge/i-darts-nix-perth → /northbridge/idartsnix</text>
+  <text x="90" y="582" class="row">/scarborough/sk-l → /scarborough/skol</text>
+  <text x="90" y="618" class="row">/perth-cbd/helvetica-bar → /perth/399-small-bar</text>
+  <text x="90" y="654" class="row">/henley-brook/the-naked-fox-wine-bar → /henley-brook/the-naked-fox-wine-bar-kitchen-and-caf</text>
+  <line x1="60" y1="692" x2="2540" y2="692" class="rule"/>
+  <text x="60" y="740" class="head">Verification</text>
+  <text x="90" y="780" class="pass">PASS  npx tsc --noEmit</text>
+  <text x="90" y="816" class="pass">PASS  npm run test:redirects</text>
+  <text x="90" y="852" class="pass">PASS  npm test — 358 tests</text>
+  <text x="90" y="888" class="pass">PASS  npm run lint</text>
+  <text x="90" y="924" class="pass">PASS  npm run build — 849 pubs; 242 static pages</text>
+  <text x="60" y="982" class="sub">No price status was used for any redirect, 404/410, canonical, sitemap, or indexing decision.</text>
+</svg>

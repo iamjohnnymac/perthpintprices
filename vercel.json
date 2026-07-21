@@ -12,6 +12,31 @@
       "statusCode": 301
     },
     {
+      "source": "/midland/the-7th-ave-bar-and-restaurant",
+      "destination": "/midland/7th-ave-bar-and-restaurant",
+      "statusCode": 301
+    },
+    {
+      "source": "/northbridge/i-darts-nix-perth",
+      "destination": "/northbridge/idartsnix",
+      "statusCode": 301
+    },
+    {
+      "source": "/scarborough/sk-l",
+      "destination": "/scarborough/skol",
+      "statusCode": 301
+    },
+    {
+      "source": "/perth-cbd/helvetica-bar",
+      "destination": "/perth/399-small-bar",
+      "statusCode": 301
+    },
+    {
+      "source": "/henley-brook/the-naked-fox-wine-bar",
+      "destination": "/henley-brook/the-naked-fox-wine-bar-kitchen-and-caf",
+      "statusCode": 301
+    },
+    {
       "source": "/guides",
       "destination": "/discover",
       "statusCode": 301
