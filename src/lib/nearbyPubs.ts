@@ -72,3 +72,13 @@ export function rankNearbyPubs(
     })
     .slice(0, limit)
 }
+
+export function getEligibleVerifiedPubsInSuburb(currentPub: Pub, candidates: Pub[]): Pub[] {
+  return uniqueById(candidates).filter(candidate =>
+    candidate.id !== currentPub.id
+    && candidate.suburb === currentPub.suburb
+    && candidate.price !== null
+    && candidate.priceVerified
+    && isCanonicalPubLinkEligible(candidate)
+  )
+}

@@ -295,7 +295,7 @@ export default function SuburbClient({ suburb, pubs, nearbySuburbs, perthAvgPric
           <div className="border-3 border-ink rounded-card bg-white shadow-hard-sm overflow-hidden">
             <div className="px-4 py-3 border-b border-gray-light flex items-center justify-between gap-3">
               <h2 className="type-card-header">Nearby suburbs</h2>
-              <Link href="/insights/suburb-rankings" className="font-mono text-[0.62rem] font-bold uppercase tracking-wider text-amber no-underline hover:underline">
+              <Link href="/insights/suburb-rankings" className="inline-flex min-h-12 items-center px-2 text-right font-mono text-[0.62rem] font-bold uppercase tracking-wider text-amber no-underline hover:underline">
                 See all suburb rankings
               </Link>
             </div>
@@ -333,7 +333,7 @@ export default function SuburbClient({ suburb, pubs, nearbySuburbs, perthAvgPric
               <Link
                 key={link.href}
                 href={link.href}
-                className="rounded-pill border-2 border-ink bg-white px-3.5 py-2 font-mono text-[0.7rem] font-bold text-ink no-underline transition-colors hover:bg-ink hover:text-white"
+                className="inline-flex min-h-12 items-center rounded-pill border-2 border-ink bg-white px-3.5 py-2 font-mono text-[0.7rem] font-bold text-ink no-underline transition-colors hover:bg-ink hover:text-white"
               >
                 {link.label}
               </Link>

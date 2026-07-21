@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
 import type { Pub } from '@/types/pub'
-import { rankNearbyPubs } from './nearbyPubs'
+import { getEligibleVerifiedPubsInSuburb, rankNearbyPubs } from './nearbyPubs'
 
 function pub(overrides: Partial<Pub>): Pub {
   return {
@@ -81,4 +81,47 @@ test('rankNearbyPubs excludes a confirmed permanent closure independently of pri
   ])
 
   assert.deepEqual(ranked.map(item => item.name), ['Open TBC Pub'])
+})
+
+test('Tier-C context skips a closed checked pub while keeping a legitimate TBC pub linkable', () => {
+  const current = pub({ price: null, regularPrice: null, effectivePrice: null })
+  const closedChecked = pub({
+    id: 2,
+    name: 'Closed Checked Pub',
+    slug: 'closed-checked',
+    price: 5,
+    regularPrice: 5,
+    effectivePrice: 5,
+    businessStatus: 'CLOSED_PERMANENTLY',
+    lat: -31.95231,
+    lng: 115.86131,
+  })
+  const openChecked = pub({
+    id: 3,
+    name: 'Open Checked Pub',
+    slug: 'open-checked',
+    price: 9,
+    regularPrice: 9,
+    effectivePrice: 9,
+    lat: -31.953,
+    lng: 115.862,
+  })
+  const openTbc = pub({
+    id: 4,
+    name: 'Open TBC Pub',
+    slug: 'open-tbc',
+    price: null,
+    regularPrice: null,
+    effectivePrice: null,
+    priceVerified: false,
+    lat: -31.9524,
+    lng: 115.8614,
+  })
+
+  const checked = getEligibleVerifiedPubsInSuburb(current, [closedChecked, openChecked, openTbc])
+  const linked = rankNearbyPubs(current, [closedChecked, openChecked, openTbc])
+
+  assert.deepEqual(checked.map(item => item.name), ['Open Checked Pub'])
+  assert.equal(linked.some(item => item.name === 'Open TBC Pub'), true)
+  assert.equal(linked.some(item => item.name === 'Closed Checked Pub'), false)
 })

@@ -420,7 +420,7 @@ async function getSameSuburbPubs(suburb: string, excludeId: number): Promise<Pub
 
   if (error || !data) return []
 
-  return data.map(toPub)
+  return data.map(toPub).filter(isCanonicalPubLinkEligible)
 }
 
 async function getRadiusCandidatePubs(pub: Pub, radiusKm: number): Promise<Pub[]> {
@@ -466,7 +466,7 @@ export async function getVerifiedPricePubs(): Promise<Pub[]> {
 
   if (error || !data) return []
 
-  return data.map(toPub)
+  return data.map(toPub).filter(isCanonicalPubLinkEligible)
 }
 
 export function getNearestPubFromList(pubs: Pub[], lat: number, lng: number): Pub | null {

@@ -33,6 +33,8 @@ Targeted screenshots put the new navigation in the viewport:
 - `after-pub-links-mobile.png`
 - `after-suburb-links-desktop.png`
 - `after-suburb-links-mobile.png`
+- `after-suburb-ranking-desktop.png`
+- `after-suburb-ranking-mobile.png`
 
 ## Checks
 
@@ -41,9 +43,21 @@ Targeted screenshots put the new navigation in the viewport:
   Perth's cheapest pints and Perth happy hours.
 - Fremantle's visible, scrollable list contains all 63 legitimate venues,
   including TBC rows, followed by nearby-suburb and comparison links.
+- Canonical-link eligibility is applied before Discover's slim payload removes
+  business status, and the Tier-C checked-price fallback excludes confirmed
+  closures without excluding legitimate missing or unverified-price pubs from
+  contextual links.
+- New contextual and suburb-ranking links provide at least a 48px touch target;
+  the targeted mobile and desktop captures show the final sizing without
+  clipping.
 - Raw initial HTML contained all five data-tool links, the Cheapest Pints
   destination, TBC pub recommendations and 63 unique Fremantle pub links.
 - No layout clipping was found at either viewport.
+
+Automated verification passed with 358/358 unit tests, 9/9 focused link-policy
+tests, TypeScript, lint, redirect and security-header contracts, an
+Infisical-backed production build, and all 8 PR-proof Playwright checks across
+desktop and mobile Chromium.
 
 The missing Google venue photo in the Federal Hotel captures is unchanged from
 the before evidence and is external to this issue. A pre-existing Leaflet map

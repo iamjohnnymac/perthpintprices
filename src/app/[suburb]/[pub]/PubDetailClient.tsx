@@ -567,7 +567,7 @@ export default function PubDetailClient({
               <Link
                 key={link.href}
                 href={link.href}
-                className="rounded-pill border-2 border-ink bg-white px-3.5 py-2 font-mono text-[0.7rem] font-bold text-ink no-underline transition-colors hover:bg-ink hover:text-white"
+                className="inline-flex min-h-12 items-center rounded-pill border-2 border-ink bg-white px-3.5 py-2 font-mono text-[0.7rem] font-bold text-ink no-underline transition-colors hover:bg-ink hover:text-white"
               >
                 {link.label}
               </Link>
