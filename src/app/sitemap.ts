@@ -1,5 +1,10 @@
 import { MetadataRoute } from 'next'
-import { getAllPubLastModifiedPairs, getIndexablePubSlugPairs } from '@/lib/supabase'
+import {
+  getAllPubLastModifiedPairs,
+  getIndexablePubSlugPairs,
+  type IndexablePubSlugPair,
+  type PubLastModifiedPair,
+} from '@/lib/supabase'
 import { getCachedAllSuburbs } from '@/lib/cachedPubs'
 import { articles, absoluteArticleUrl } from '@/lib/articles'
 import { HAPPY_HOUR_DAYS } from '@/lib/happyHourDays'
@@ -18,12 +23,20 @@ function toLastModified(value: string | null | undefined): string {
   return new Date(value).toISOString()
 }
 
-export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [slugPairs, allPubDates, suburbs] = await Promise.all([
-    getIndexablePubSlugPairs(),
-    getAllPubLastModifiedPairs(),
-    getCachedAllSuburbs(),
-  ])
+export interface SitemapRouteSets {
+  staticRoutes: MetadataRoute.Sitemap
+  happyHourDayRoutes: MetadataRoute.Sitemap
+  transportHubRoutes: MetadataRoute.Sitemap
+  articleRoutes: MetadataRoute.Sitemap
+  suburbRoutes: MetadataRoute.Sitemap
+  pubRoutes: MetadataRoute.Sitemap
+}
+
+export function getSitemapRouteSets(
+  slugPairs: IndexablePubSlugPair[],
+  allPubDates: PubLastModifiedPair[],
+  suburbs: Array<{ slug: string }>,
+): SitemapRouteSets {
   const latestPubModified = allPubDates
     .map(pair => toLastModified(pair.lastModified))
     .sort()
@@ -94,5 +107,23 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: pair.indexabilityTier === 'A' ? 0.6 : 0.5,
   }))
 
-  return [...staticRoutes, ...happyHourDayRoutes, ...transportHubRoutes, ...articleRoutes, ...suburbRoutes, ...pubRoutes]
+  return { staticRoutes, happyHourDayRoutes, transportHubRoutes, articleRoutes, suburbRoutes, pubRoutes }
+}
+
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const [slugPairs, allPubDates, suburbs] = await Promise.all([
+    getIndexablePubSlugPairs(),
+    getAllPubLastModifiedPairs(),
+    getCachedAllSuburbs(),
+  ])
+  const routes = getSitemapRouteSets(slugPairs, allPubDates, suburbs)
+
+  return [
+    ...routes.staticRoutes,
+    ...routes.happyHourDayRoutes,
+    ...routes.transportHubRoutes,
+    ...routes.articleRoutes,
+    ...routes.suburbRoutes,
+    ...routes.pubRoutes,
+  ]
 }

@@ -1,15 +1,14 @@
-import { Metadata } from 'next'
+import type { Metadata } from 'next'
 import { unstable_cache } from 'next/cache'
 import { notFound, permanentRedirect } from 'next/navigation'
 import { getPubBySlug, getIndexablePubSlugPairs, getLatestAndrewCallAtByPubId, getNearestPubFromList, getNearbyPubs, getSuburbAveragePrice, getVerifiedPricePubs } from '@/lib/supabase'
 import { getCachedSiteStats } from '@/lib/cachedPubs'
-import { getPubIndexability } from '@/lib/pubIndexability'
 import { getPriceRecency } from '@/lib/freshness'
 import { buildPubJsonLd } from '@/lib/pubJsonLd'
-import { absolutePubUrl, pubUrl, toSuburbSlug } from '@/lib/urls'
-import { pubMetaDescription } from '@/lib/voiceCopy'
+import { pubUrl, toSuburbSlug } from '@/lib/urls'
 import type { Pub } from '@/types/pub'
 import PubDetailClient from './PubDetailClient'
+import { buildPubPageMetadata, getPubPageIndexability } from './pubMetadata'
 import Link from 'next/link'
 
 interface PageProps {
@@ -45,92 +44,13 @@ const getCachedLatestAndrewCallAtByPubId = unstable_cache(
   },
 )
 
-function getPubPageIndexability(pub: Pub) {
-  return getPubIndexability({
-    price: pub.regularPrice,
-    priceVerified: pub.priceVerified,
-    lastVerified: pub.lastVerified,
-    happyHour: pub.happyHour,
-    happyHourPrice: pub.happyHourPrice,
-    happyHourDays: pub.happyHourDays,
-    happyHourStart: pub.happyHourStart,
-    happyHourEnd: pub.happyHourEnd,
-    beerType: pub.beerType,
-    vibeTag: pub.vibeTag,
-    hasTab: pub.hasTab,
-    kidFriendly: pub.kidFriendly,
-    cozyPub: pub.cozyPub,
-    sunsetSpot: pub.sunsetSpot,
-    website: pub.website,
-    businessStatus: pub.businessStatus,
-  })
-}
-
-function formatMetaDate(value: string | null): string | null {
-  if (!value) return null
-  return new Date(value).toLocaleDateString('en-AU', {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-    timeZone: 'Australia/Perth',
-  })
-}
-
-function formatMetaHappyHourLabel(value: string | null): string | null {
-  if (!value) return null
-  return value.replace(/,\s*/g, ', ')
-}
-
 export async function generateMetadata(props: PageProps): Promise<Metadata> {
   const params = await props.params
   const pub = await getCachedPubBySlug(params.pub)
   if (!pub) return { title: 'Pub Not Found' }
 
-  const indexability = getPubPageIndexability(pub)
   const suburbAvgPrice = await getSuburbAveragePrice(pub.suburb)
-  const hhPrice = typeof pub.happyHourPrice === 'number' && pub.happyHourPrice > 0 ? pub.happyHourPrice : null
-  const stablePrice = pub.regularPrice ?? hhPrice
-  const isHappyHourOnly = pub.regularPrice == null && hhPrice != null
-  const priceText = stablePrice !== null
-    ? `$${stablePrice.toFixed(2)} ${isHappyHourOnly ? 'happy-hour pints' : 'pints'}`
-    : 'Price TBC'
-  const title = `${pub.name}, ${pub.suburb}: ${priceText}`
-  const hhWindow = formatMetaHappyHourLabel(pub.happyHourLabel)
-  const description = pubMetaDescription({
-    pub: pub.name,
-    suburb: pub.suburb,
-    price: pub.regularPrice,
-    suburbAvg: suburbAvgPrice,
-    checkedDate: formatMetaDate(pub.priceVerifiedAt || pub.lastVerified),
-    hhClause: hhWindow ? `Happy hour: ${hhWindow}.` : null,
-    hhPrice,
-    hhWindow,
-  })
-
-  const canonical = absolutePubUrl(pub)
-
-  return {
-    title,
-    description,
-    alternates: { canonical },
-    robots: indexability.isIndexable
-      ? { index: true, follow: true }
-      : { index: false, follow: true },
-    openGraph: {
-      title: `${pub.name}: ${priceText}`,
-      description,
-      url: canonical,
-      siteName: 'Perth Pint Prices',
-      locale: 'en_AU',
-      type: 'website',
-      images: [{ url: '/og-image.png', width: 1200, height: 630, alt: `${pub.name} pint prices | Perth Pint Prices` }],
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title: `${pub.name}: ${priceText} | Perth Pint Prices`,
-      description,
-    },
-  }
+  return buildPubPageMetadata(pub, suburbAvgPrice)
 }
 
 export async function generateStaticParams() {

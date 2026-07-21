@@ -316,6 +316,29 @@ export interface IndexablePubSlugPair {
   indexabilityTier: PubIndexabilityTier
 }
 
+export interface PubSitemapRow {
+  slug?: string | null
+  suburb?: string | null
+  price?: number | string | null
+  price_verified?: boolean | null
+  last_verified?: string | null
+  last_updated?: string | null
+  updated_at?: string | null
+  happy_hour?: string | null
+  happy_hour_price?: number | string | null
+  happy_hour_days?: string | null
+  happy_hour_start?: string | null
+  happy_hour_end?: string | null
+  beer_type?: string | null
+  vibe_tag?: string | null
+  has_tab?: boolean | null
+  kid_friendly?: boolean | null
+  cozy_pub?: boolean | null
+  sunset_spot?: boolean | null
+  website?: string | null
+  business_status?: string | null
+}
+
 export interface PubLastModifiedPair {
   suburb: string
   lastModified: string | null
@@ -344,8 +367,12 @@ export async function getIndexablePubSlugPairs(): Promise<IndexablePubSlugPair[]
 
   if (error || !data) return []
 
-  return data
-    .filter(row => row.slug && row.suburb)
+  return toIndexablePubSlugPairs(data)
+}
+
+export function toIndexablePubSlugPairs(rows: PubSitemapRow[], now?: Date): IndexablePubSlugPair[] {
+  return rows
+    .filter((row): row is PubSitemapRow & { slug: string; suburb: string } => Boolean(row.slug && row.suburb))
     .map(row => {
       const price = row.price != null ? Number(row.price) : null
       const happyHourPrice = row.happy_hour_price != null ? Number(row.happy_hour_price) : null
@@ -366,6 +393,7 @@ export async function getIndexablePubSlugPairs(): Promise<IndexablePubSlugPair[]
         sunsetSpot: row.sunset_spot,
         website: row.website || null,
         businessStatus: row.business_status || null,
+        now,
       })
 
       return {
