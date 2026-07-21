@@ -11,7 +11,7 @@ Stack, database, routes, components, and lib files are documented in `CLAUDE.md`
 ## What's done recently
 
 ### Indexing technical cleanup (2026-07-21)
-- **Issue #236 / commit `COMMIT_PENDING`:** classified every URL in GSC's dated 15-URL 404 cohort using current production responses and the public venue catalogue. Added five explicit, one-to-one legacy-slug `301` redirects; retained six retired `/pub/*` URLs as `410`, three removed pub paths and the retired `/pub-golf` feature as honest `404`s, and made no price-status-based indexing decisions.
+- **Issue #236 / commit `071c597`:** classified every URL in GSC's dated 15-URL 404 cohort using current production responses and the public venue catalogue. Added five explicit, one-to-one legacy-slug `301` redirects; retained six retired `/pub/*` URLs as `410`, three removed pub paths and the retired `/pub-golf` feature as honest `404`s, and made no price-status-based indexing decisions.
 - **GSC reconciliation:** `/henley-brook/the-henley-brook` is a live `200` with its self-canonical, while `/guides` and `/insights` are clean edge `301`s to `/discover`; their obsolete section-layout metadata sources were removed. These are stale GSC report entries pending the validation already started in Search Console.
 
 ### Authenticated GSC Phase-1 indexing baseline (2026-07-21)
