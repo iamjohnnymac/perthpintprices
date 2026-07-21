@@ -5,11 +5,10 @@ import { getPubBySlug, getIndexablePubSlugPairs, getLatestAndrewCallAtByPubId, g
 import { getCachedSiteStats } from '@/lib/cachedPubs'
 import { getPriceRecency } from '@/lib/freshness'
 import { buildPubJsonLd } from '@/lib/pubJsonLd'
-import { pubUrl, toSuburbSlug } from '@/lib/urls'
+import { toSuburbSlug } from '@/lib/urls'
 import type { Pub } from '@/types/pub'
 import PubDetailClient from './PubDetailClient'
 import { buildPubPageMetadata, getPubPageIndexability } from './pubMetadata'
-import Link from 'next/link'
 
 interface PageProps {
   params: Promise<{ suburb: string; pub: string }>
@@ -106,16 +105,6 @@ export default async function PubPage(props: PageProps) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, '\\u003c') }}
       />
-
-      {/* Server-rendered links for crawlers — ensures this pub page has strong internal linking */}
-      <div className="sr-only" aria-hidden="true">
-        <Link href="/">Home</Link>
-        <Link href={`/${suburbSlug}`}>{pub.suburb}</Link>
-        <Link href="/suburbs">All Suburbs</Link>
-        {nearbyPubs.map(np => (
-          <Link key={np.slug} href={pubUrl({ suburb: np.suburb, slug: np.slug })}>{np.name} - {np.suburb}</Link>
-        ))}
-      </div>
 
       <PubDetailClient
         pub={pub}

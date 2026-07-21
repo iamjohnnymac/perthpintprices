@@ -6,7 +6,6 @@ import { getSuburbStory } from '@/lib/suburbStory'
 import { slimPubForList } from '@/lib/pubPhoto'
 import { absoluteSuburbUrl } from '@/lib/urls'
 import SuburbClient from './SuburbClient'
-import Link from 'next/link'
 
 interface PageProps {
   params: Promise<{ suburb: string }>
@@ -153,25 +152,6 @@ export default async function SuburbPage(props: PageProps) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      {/* Server-rendered links for crawlers — ensures ALL pubs are discoverable
-          (SuburbClient only shows first 10 behind a "Show all" button) */}
-      <div className="sr-only" aria-hidden="true">
-        <h2>Cheapest Pints in {suburb.name}, Perth</h2>
-        <p>Compare pint prices across {pubs.length} pubs in {suburb.name}. Community-verified prices updated daily.</p>
-        <h2>All Pubs in {suburb.name}</h2>
-        {pubs.map(pub => (
-          <Link key={pub.slug} href={`/${params.suburb}/${pub.slug}`}>
-            {pub.name} - {pub.suburb}{pub.regularPrice ? ` - $${pub.regularPrice.toFixed(2)}` : ''}
-          </Link>
-        ))}
-        <h2>Nearby Suburbs</h2>
-        {nearbySuburbs.map(ns => (
-          <Link key={ns.slug} href={`/${ns.slug}`}>{ns.name}</Link>
-        ))}
-        <Link href="/">Home</Link>
-        <Link href="/suburbs">All Suburbs</Link>
-      </div>
-
       <SuburbClient
         suburb={suburb}
         pubs={slimPubs}
