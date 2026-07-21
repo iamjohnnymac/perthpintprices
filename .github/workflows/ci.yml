@@ -41,6 +41,9 @@ jobs:
       - name: Test
         run: npm test
 
+      - name: GSC baseline refresh contract test
+        run: npm run test:gsc-baseline
+
       - name: Redirect + SEO config test
         run: npm run test:redirects
 

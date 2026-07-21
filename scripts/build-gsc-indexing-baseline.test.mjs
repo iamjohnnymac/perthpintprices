@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import { assertPubJoins, assertRowIdentity, csvRows, validateCohorts } from './build-gsc-indexing-baseline.mjs'
+import { assertPubJoins, assertRowIdentity, csvRows, validDate, validateCohorts } from './build-gsc-indexing-baseline.mjs'
 
 const row = (url, crawled = '2026-07-01') => `https://perthpintprices.com${url},${crawled}`
 const csv = rows => `URL,Last crawled\n${rows.join('\n')}\n`
@@ -17,4 +17,10 @@ test('rejects dropped output and unjoined pub routes', () => {
   const input = new Set(['https://perthpintprices.com/perth/example'])
   assert.throws(() => assertRowIdentity(input, []), /identity mismatch/)
   assert.throws(() => assertPubJoins([{ url: 'https://perthpintprices.com/perth/example' }], new Map()), /Unjoined current pub route/)
+})
+
+test('rejects calendar-impossible dates instead of normalizing them', () => {
+  assert.equal(validDate('2026-02-28', 'report date'), '2026-02-28')
+  assert.throws(() => validDate('2026-02-30', 'report date'), /Invalid report date/)
+  assert.throws(() => validDate('2026-13-01', 'export date'), /Invalid export date/)
 })

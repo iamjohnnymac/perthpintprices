@@ -13,6 +13,7 @@
     "start": "next start",
     "lint": "eslint . --max-warnings 50",
     "test": "tsx --test \"src/**/*.test.ts\"",
+    "test:gsc-baseline": "node --test scripts/build-gsc-indexing-baseline.test.mjs",
     "crawl:official-menus": "tsx scripts/crawl-official-menus.mjs",
     "discover:official-menu-sources": "tsx scripts/discover-official-menu-sources.mjs",
     "build:official-menu-seeds": "tsx scripts/build-official-menu-seeds.mjs",
