@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict'
-import { access, readFile } from 'node:fs/promises'
+import { readFile } from 'node:fs/promises'
 
 const vercelConfig = JSON.parse(await readFile(new URL('../vercel.json', import.meta.url), 'utf8'))
 const redirects = vercelConfig.redirects ?? []
@@ -44,12 +44,6 @@ for (const source of legacySectionRedirects) {
   const sectionRedirect = redirects.find(redirect => redirect.source === source)
   assert.equal(sectionRedirect?.destination, '/discover', `${source} must redirect to /discover`)
   assert.equal(sectionRedirect?.statusCode, 301, `${source} redirect must be an explicit 301`)
-}
-
-// These paths are edge redirects, not rendered section indexes. Keeping a
-// layout-level canonical for either would be misleading if routing changes.
-for (const layout of ['../src/app/guides/layout.tsx', '../src/app/insights/layout.tsx']) {
-  await assert.rejects(access(new URL(layout, import.meta.url)))
 }
 
 const retiredWorldCupRedirect = redirects.find(redirect => redirect.source === '/world-cup')

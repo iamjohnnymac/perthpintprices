@@ -1,0 +1,23 @@
+BASE	https://perthpintprices-git-co-a6bb7a-maccamckvercel-gmailcoms-projects.vercel.app
+PATH	STATUS	LOCATION_OR_CANONICAL
+/midland/the-7th-ave-bar-and-restaurant	301	/midland/7th-ave-bar-and-restaurant
+/northbridge/i-darts-nix-perth	301	/northbridge/idartsnix
+/scarborough/sk-l	301	/scarborough/skol
+/perth-cbd/helvetica-bar	301	/perth/399-small-bar
+/henley-brook/the-naked-fox-wine-bar	301	/henley-brook/the-naked-fox-wine-bar-kitchen-and-caf
+/guides	301	/discover
+/insights	301	/discover
+/suburb/north-perth	301	/north-perth
+/pub/badlands-bar	410	-
+/pub/jack-rabbit-slims	410	-
+/pub/w-churchill	410	-
+/pub/wolf-lane	410	-
+/pub/ruin-bar	410	-
+/pub/the-flying-scotsman	410	-
+/northbridge/ruin-bar	404	-
+/mount-lawley/five-bar	404	-
+/perth-cbd/halford-bar	404	-
+/pub-golf	404	-
+/henley-brook/the-henley-brook	200	https://perthpintprices.com/henley-brook/the-henley-brook	The Henley Brook, Henley Brook: $6.50 happy-hour pints | Perth Pint Prices
+www:/suburb/north-perth	308	https://perthpintprices.com/suburb/north-perth
+RESULT	PASS

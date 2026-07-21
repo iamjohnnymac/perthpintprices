@@ -36,4 +36,4 @@ The GSC evidence available for this issue contains no URL-level impressions evid
 
 ## Evidence
 
-The final local response and canonical matrix, along with the verification result, is recorded in [the issue #236 artifact](../../artifacts/index-cleanup-236/final-response-matrix.png). It is a generated terminal-proof image; it contains no credentials or raw GSC exports.
+The executed preview/prod response matrix is recorded as both raw terminal output and [a faithful terminal render](../../artifacts/index-cleanup-236/route-evidence-terminal.png). The capture individually checks all 15 reported 404 URLs, the redirected roots, a legacy suburb route, Henley Brook's response/canonical/title, and the live `www` host redirect. The `www` host is terminated by Vercel before app routing and returned a permanent `308` to the apex URL; the app configuration retains its explicit `301` host redirect contract for environments where that platform redirect does not pre-empt it.
