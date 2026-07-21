@@ -5,11 +5,11 @@ import { getPubBySlug, getIndexablePubSlugPairs, getLatestAndrewCallAtByPubId, g
 import { getCachedSiteStats } from '@/lib/cachedPubs'
 import { getPriceRecency } from '@/lib/freshness'
 import { buildPubJsonLd } from '@/lib/pubJsonLd'
-import { pubUrl, toSuburbSlug } from '@/lib/urls'
+import { toSuburbSlug } from '@/lib/urls'
 import type { Pub } from '@/types/pub'
 import PubDetailClient from './PubDetailClient'
 import { buildPubPageMetadata, getPubPageIndexability } from './pubMetadata'
-import Link from 'next/link'
+import { getEligibleVerifiedPubsInSuburb } from '@/lib/nearbyPubs'
 
 interface PageProps {
   params: Promise<{ suburb: string; pub: string }>
@@ -79,9 +79,7 @@ export default async function PubPage(props: PageProps) {
   const isTierCPage = indexability.tier === 'C'
   const tierCDetails: Promise<[number, string | null, Pub | null]> = isTierCPage
     ? Promise.all([getCachedVerifiedPricePubs(), getCachedLatestAndrewCallAtByPubId()]).then(([verifiedPricePubs, latestAndrewCallAtByPubId]) => {
-      const sameSuburbVerifiedPubs = verifiedPricePubs.filter(nearbyPub =>
-        nearbyPub.suburb === pub.suburb && nearbyPub.id !== pub.id
-      )
+      const sameSuburbVerifiedPubs = getEligibleVerifiedPubsInSuburb(pub, verifiedPricePubs)
 
       return [
         sameSuburbVerifiedPubs.length,
@@ -106,16 +104,6 @@ export default async function PubPage(props: PageProps) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, '\\u003c') }}
       />
-
-      {/* Server-rendered links for crawlers — ensures this pub page has strong internal linking */}
-      <div className="sr-only" aria-hidden="true">
-        <Link href="/">Home</Link>
-        <Link href={`/${suburbSlug}`}>{pub.suburb}</Link>
-        <Link href="/suburbs">All Suburbs</Link>
-        {nearbyPubs.map(np => (
-          <Link key={np.slug} href={pubUrl({ suburb: np.suburb, slug: np.slug })}>{np.name} - {np.suburb}</Link>
-        ))}
-      </div>
 
       <PubDetailClient
         pub={pub}

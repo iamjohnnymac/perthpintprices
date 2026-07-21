@@ -1,4 +1,5 @@
 import { haversineDistanceKm } from '@/lib/location'
+import { isCanonicalPubLinkEligible } from '@/lib/internalLinks'
 import type { Pub } from '@/types/pub'
 
 export const NEARBY_RADIUS_KM = 2
@@ -45,15 +46,15 @@ export function rankNearbyPubs(
   limit = 4,
   radiusKm = NEARBY_RADIUS_KM,
 ): Pub[] {
-  const pricedCandidates = uniqueById(candidates)
-    .filter(pub => pub.id !== currentPub.id && pub.price !== null && pub.priceVerified)
+  const eligibleCandidates = uniqueById(candidates)
+    .filter(pub => pub.id !== currentPub.id && isCanonicalPubLinkEligible(pub))
     .map(pub => withDistance(currentPub, pub))
 
   const inRadius = hasUsableCoordinates(currentPub)
-    ? pricedCandidates.filter(pub => typeof pub.distanceKm === 'number' && pub.distanceKm <= radiusKm)
+    ? eligibleCandidates.filter(pub => typeof pub.distanceKm === 'number' && pub.distanceKm <= radiusKm)
     : []
 
-  const sameSuburb = pricedCandidates.filter(pub => pub.suburb === currentPub.suburb)
+  const sameSuburb = eligibleCandidates.filter(pub => pub.suburb === currentPub.suburb)
   const candidatePool = uniqueById(
     inRadius.length >= NEARBY_FALLBACK_MIN_RESULTS
       ? inRadius
@@ -61,14 +62,23 @@ export function rankNearbyPubs(
   )
 
   const currentPrice = comparablePrice(currentPub)
-  const cheaperPubs = currentPrice === null
-    ? []
-    : candidatePool.filter(pub => {
-      const price = comparablePrice(pub)
-      return price !== null && price < currentPrice
+  return candidatePool
+    .sort((a, b) => {
+      const aPrice = comparablePrice(a)
+      const bPrice = comparablePrice(b)
+      const aCheaper = currentPrice !== null && aPrice !== null && aPrice < currentPrice ? 0 : 1
+      const bCheaper = currentPrice !== null && bPrice !== null && bPrice < currentPrice ? 0 : 1
+      return aCheaper - bCheaper || sortNearby(a, b)
     })
-
-  return (cheaperPubs.length > 0 ? cheaperPubs : candidatePool)
-    .sort(sortNearby)
     .slice(0, limit)
+}
+
+export function getEligibleVerifiedPubsInSuburb(currentPub: Pub, candidates: Pub[]): Pub[] {
+  return uniqueById(candidates).filter(candidate =>
+    candidate.id !== currentPub.id
+    && candidate.suburb === currentPub.suburb
+    && candidate.price !== null
+    && candidate.priceVerified
+    && isCanonicalPubLinkEligible(candidate)
+  )
 }

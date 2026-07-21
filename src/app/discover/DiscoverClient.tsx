@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useMemo } from 'react'
+import type { ReactNode } from 'react'
 import Link from 'next/link'
 import { Pub } from '@/types/pub'
 import { getPubs, getCrowdLevels, CrowdReport } from '@/lib/supabase'
@@ -13,6 +14,7 @@ import LucideIcon from '@/components/LucideIcon'
 import { pubUrl } from '@/lib/urls'
 import { isDadBar } from '@/lib/pubPicks'
 import ArticleRail from '@/components/ArticleRail'
+import { DISCOVER_BEST_BUYS_HREF } from '@/lib/internalLinks'
 
 function getPubHappyHourStatus(pub: Pub, now: Date): HappyHourStatus {
   return getHappyHourStatus({
@@ -27,7 +29,13 @@ function getPubHappyHourStatus(pub: Pub, now: Date): HappyHourStatus {
 /* ════════════════════════════════════════════════════════════
    MAIN COMPONENT
    ════════════════════════════════════════════════════════════ */
-export default function DiscoverClient({ initialPubs }: { initialPubs?: Pub[] }) {
+export default function DiscoverClient({
+  initialPubs,
+  dataToolsRail,
+}: {
+  initialPubs?: Pub[]
+  dataToolsRail: ReactNode
+}) {
   const hasServerPubs = Boolean(initialPubs && initialPubs.length > 0)
   const [pubs, setPubs] = useState<Pub[]>(initialPubs ?? [])
   const [crowdReports, setCrowdReports] = useState<Record<string, CrowdReport>>({})
@@ -230,8 +238,8 @@ export default function DiscoverClient({ initialPubs }: { initialPubs?: Pub[] })
                   </Link>
                 ))}
               </div>
-              <Link href="/insights/tonights-best-bets" className="block mt-4 font-mono text-[0.75rem] font-bold text-amber hover:underline no-underline">
-                View all →
+              <Link href={DISCOVER_BEST_BUYS_HREF} className="block mt-4 font-mono text-[0.75rem] font-bold text-amber hover:underline no-underline">
+                See Perth&apos;s cheapest pints →
               </Link>
             </div>
 
@@ -265,6 +273,8 @@ export default function DiscoverClient({ initialPubs }: { initialPubs?: Pub[] })
 
           </div>
         </section>
+
+        {dataToolsRail}
 
         {/* ════════════════════════════════════════════
             3. PUB PICKS CAROUSEL

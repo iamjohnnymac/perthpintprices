@@ -27,7 +27,8 @@ test('pub page renders price, freshness, map, and nearby prices', async ({ page 
   // Freshness: the receipt shows an absolute "Checked <date>" (e.g. "17 Feb 2026")
   await expect(page.getByText(/Checked/i).first()).toBeVisible()
   await expect(page.getByText(/\d{1,2} [A-Z][a-z]{2} \d{4}/).first()).toBeVisible()
-  await expect(page.getByText(/Cheaper nearby|Nearby verified prices/i).first()).toBeVisible()
+  await expect(page.getByRole('heading', { name: /Cheaper nearby|Pubs nearby/i }).first()).toBeVisible()
+  await expect(page.getByRole('link', { name: /All Northbridge pub prices/i })).toBeVisible()
   await expect(page.locator('.leaflet-container')).toBeVisible()
 
   await attachProof(page, testInfo, 'pub-page')
@@ -37,6 +38,10 @@ test('discover and happy-hour pages render their primary experiences', async ({ 
   await page.goto('/discover')
   await expect(page.getByRole('heading', { name: /where to find a cheap pint/i })).toBeAttached()
   await expect(page.getByText(/pint of the day/i).first()).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Data & Tools' })).toBeVisible()
+  await expect(page.getByRole('link', { name: /Perth Pint Index/i })).toBeVisible()
+  await expect(page.getByRole('link', { name: /Venue Breakdown/i })).toBeVisible()
+  await expect(page.getByRole('link', { name: /See Perth's cheapest pints/i })).toHaveAttribute('href', '/cheapest-pints')
 
   await page.goto('/happy-hour')
   await expect(page.getByRole('heading', { name: /happy hours/i }).first()).toBeVisible()

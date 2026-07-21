@@ -25,6 +25,7 @@ import { describePriceSource } from '@/lib/priceProvenance'
 import { trackSiteEvent } from '@/lib/analytics'
 import type { PriceRecencyInfo } from '@/lib/freshness'
 import PintReceipt, { type PintReceiptData } from '@/components/PintReceipt'
+import { getPubContextLinks } from '@/lib/internalLinks'
 
 const PubDetailMap = dynamic(() => import('@/components/PubDetailMap'), {
   ssr: false,
@@ -128,7 +129,7 @@ export default function PubDetailClient({
   const currentPrice = pub.effectivePrice ?? pub.price
   const standardPrice = pub.regularPrice ?? pub.price
   const hasCheaperNearby = currentPrice !== null && nearbyPubs.some(nearby =>
-    nearby.price !== null && nearby.price < currentPrice
+    nearby.priceVerified && nearby.price !== null && nearby.price < currentPrice
   )
   const priceSourcePhrase = describePriceSource(pub.priceSource)
   const priceVerifiedAt = pub.priceVerifiedAt || pub.lastVerified
@@ -164,7 +165,7 @@ export default function PubDetailClient({
   const cheaperNearbyList = currentPrice === null
     ? []
     : nearbyPubs
-      .filter(nearby => nearby.price !== null && nearby.price < currentPrice)
+      .filter(nearby => nearby.priceVerified && nearby.price !== null && nearby.price < currentPrice)
       .map(nearby => ({
         name: nearby.name,
         price: nearby.price as number,
@@ -177,7 +178,8 @@ export default function PubDetailClient({
     : null
   const nearestCheaper = currentPrice === null
     ? null
-    : nearbyPubs.find(nearby => nearby.price !== null && nearby.price < currentPrice)
+    : nearbyPubs.find(nearby => nearby.priceVerified && nearby.price !== null && nearby.price < currentPrice)
+  const contextLinks = getPubContextLinks(pub)
 
   // PROTOTYPE — flat data bundle for the receipt-card variants.
   const receiptAmenities: string[] = []
@@ -486,7 +488,7 @@ export default function PubDetailClient({
             <div className="px-4 py-3 border-b border-gray-light flex items-center justify-between">
               <div>
                 <h2 className="type-card-header">
-                  {hasCheaperNearby ? 'Cheaper nearby' : 'Nearby verified prices'}
+                  {hasCheaperNearby ? 'Cheaper nearby' : 'Pubs nearby'}
                 </h2>
                 {nearbySummary && <p className="mt-1 text-[0.72rem] leading-snug text-gray-mid">{nearbySummary}</p>}
               </div>
@@ -507,8 +509,8 @@ export default function PubDetailClient({
               const distanceText = nearby.distanceKm !== null && nearby.distanceKm !== undefined
                 ? `${formatDistance(nearby.distanceKm)} away`
                 : null
-              const priceText = nearby.price !== null ? `$${nearby.price.toFixed(2)}` : 'TBC'
-              const priceDelta = currentPrice !== null && nearby.price !== null
+              const priceText = nearby.priceVerified && nearby.price !== null ? `$${nearby.price.toFixed(2)}` : 'TBC'
+              const priceDelta = currentPrice !== null && nearby.priceVerified && nearby.price !== null
                 ? currentPrice - nearby.price
                 : null
 
@@ -557,6 +559,21 @@ export default function PubDetailClient({
             })}
           </section>
         )}
+
+        <section id="related-pub-links" className="scroll-mt-6 border-3 border-ink rounded-card bg-amber-pale p-5 shadow-hard-sm">
+          <h2 className="type-card-header">Keep comparing</h2>
+          <div className="mt-3 flex flex-wrap gap-2">
+            {contextLinks.map(link => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className="inline-flex min-h-12 items-center rounded-pill border-2 border-ink bg-white px-3.5 py-2 font-mono text-[0.7rem] font-bold text-ink no-underline transition-colors hover:bg-ink hover:text-white"
+              >
+                {link.label}
+              </Link>
+            ))}
+          </div>
+        </section>
 
         {showFaq && faqPageJsonLd && (
           <script

@@ -2,7 +2,8 @@ import { Metadata } from 'next'
 import BreadcrumbJsonLd from '@/components/BreadcrumbJsonLd'
 import DiscoverClient from './DiscoverClient'
 import { getCachedPubs } from '@/lib/cachedPubs'
-import { slimPubForFeature } from '@/lib/pubPhoto'
+import DataToolsRail from '@/components/DataToolsRail'
+import { prepareDiscoverPubs } from '@/lib/discoverPubs'
 
 export const metadata: Metadata = {
   title: 'Discover: Perth Pint Guides, Stats & Pub Picks',
@@ -34,7 +35,7 @@ export const revalidate = 300
 export default async function DiscoverPage() {
   // Server-fetch so the page content ships in the initial HTML instead of
   // spinning while the browser round-trips to Supabase.
-  const initialPubs = (await getCachedPubs()).map(slimPubForFeature)
+  const initialPubs = prepareDiscoverPubs(await getCachedPubs())
 
   return (
     <>
@@ -42,7 +43,7 @@ export default async function DiscoverPage() {
         { name: 'Home', url: 'https://perthpintprices.com' },
         { name: 'Discover' },
       ]} />
-      <DiscoverClient initialPubs={initialPubs} />
+      <DiscoverClient initialPubs={initialPubs} dataToolsRail={<DataToolsRail />} />
     </>
   )
 }

@@ -6,6 +6,7 @@ import { hasUsableCoordinates, NEARBY_RADIUS_KM, rankNearbyPubs } from '@/lib/ne
 import { getPubIndexability, PubIndexabilityTier } from '@/lib/pubIndexability'
 import { normalizePriceConfidence } from '@/lib/priceProvenance'
 import { getPintPriceStats } from '@/lib/pintPriceStats'
+import { isCanonicalPubLinkEligible } from '@/lib/internalLinks'
 import { toSuburbSlug } from './urls'
 
 function titleCase(str: string): string {
@@ -409,23 +410,20 @@ export function toIndexablePubSlugPairs(rows: PubSitemapRow[], now?: Date): Inde
     .map(({ isIndexable, ...row }) => row)
 }
 
-async function getSameSuburbPricedPubs(suburb: string, excludeId: number, limit: number): Promise<Pub[]> {
+async function getSameSuburbPubs(suburb: string, excludeId: number): Promise<Pub[]> {
   const { data, error } = await supabase
     .from('pubs')
     .select(PUB_LIST_COLUMNS)
     .eq('suburb', suburb)
     .neq('id', excludeId)
-    .not('price', 'is', null)
-    .or('price_verified.is.null,price_verified.eq.true')
     .order('price', { ascending: true, nullsFirst: false })
-    .limit(limit)
 
   if (error || !data) return []
 
-  return data.map(toPub)
+  return data.map(toPub).filter(isCanonicalPubLinkEligible)
 }
 
-async function getRadiusCandidatePubs(pub: Pub, radiusKm: number, limit: number): Promise<Pub[]> {
+async function getRadiusCandidatePubs(pub: Pub, radiusKm: number): Promise<Pub[]> {
   if (!hasUsableCoordinates(pub)) return []
 
   const latDelta = radiusKm / 111
@@ -437,14 +435,11 @@ async function getRadiusCandidatePubs(pub: Pub, radiusKm: number, limit: number)
     .from('pubs')
     .select(PUB_LIST_COLUMNS)
     .neq('id', pub.id)
-    .not('price', 'is', null)
-    .or('price_verified.is.null,price_verified.eq.true')
     .gte('lat', pub.lat - latDelta)
     .lte('lat', pub.lat + latDelta)
     .gte('lng', pub.lng - lngDelta)
     .lte('lng', pub.lng + lngDelta)
     .order('price', { ascending: true, nullsFirst: false })
-    .limit(Math.max(limit * 4, 12))
 
   if (error || !data) return []
 
@@ -453,10 +448,10 @@ async function getRadiusCandidatePubs(pub: Pub, radiusKm: number, limit: number)
 
 // Fetch geo-aware nearby pubs, falling back to same-suburb links when sparse.
 export async function getNearbyPubs(pub: Pub, limit: number = 4): Promise<Pub[]> {
-  const radiusCandidates = await getRadiusCandidatePubs(pub, NEARBY_RADIUS_KM, limit)
-  const sameSuburbCandidates = radiusCandidates.length < limit
-    ? await getSameSuburbPricedPubs(pub.suburb, pub.id, limit)
-    : []
+  const [radiusCandidates, sameSuburbCandidates] = await Promise.all([
+    getRadiusCandidatePubs(pub, NEARBY_RADIUS_KM),
+    getSameSuburbPubs(pub.suburb, pub.id),
+  ])
 
   return rankNearbyPubs(pub, [...radiusCandidates, ...sameSuburbCandidates], limit)
 }
@@ -471,7 +466,7 @@ export async function getVerifiedPricePubs(): Promise<Pub[]> {
 
   if (error || !data) return []
 
-  return data.map(toPub)
+  return data.map(toPub).filter(isCanonicalPubLinkEligible)
 }
 
 export function getNearestPubFromList(pubs: Pub[], lat: number, lng: number): Pub | null {
@@ -602,7 +597,7 @@ export interface SuburbInfo {
 export { toSuburbSlug }
 
 export async function getAllSuburbs(allPubs?: Pub[]): Promise<SuburbInfo[]> {
-  const pubs = allPubs ?? await getPubs()
+  const pubs = (allPubs ?? await getPubs()).filter(isCanonicalPubLinkEligible)
   const grouped: Record<string, typeof pubs> = {}
   
   for (const pub of pubs) {
@@ -668,7 +663,7 @@ export async function getSuburbBySlug(slug: string, allPubs?: Pub[]): Promise<Su
 export async function getSuburbPubs(suburbName: string, pubs?: Pub[]): Promise<Pub[]> {
   const allPubs = pubs ?? await getPubs()
   return allPubs
-    .filter(p => p.suburb === suburbName)
+    .filter(p => p.suburb === suburbName && isCanonicalPubLinkEligible(p))
     .sort((a, b) => {
       if (a.price === null && b.price === null) return 0
       if (a.price === null) return 1
@@ -679,7 +674,7 @@ export async function getSuburbPubs(suburbName: string, pubs?: Pub[]): Promise<P
 
 export async function getNearbySuburbs(suburbName: string, limit: number = 5, pubs?: Pub[]): Promise<SuburbInfo[]> {
   // Get pubs in the target suburb to find their average lat/lng
-  const allPubs = pubs ?? await getPubs()
+  const allPubs = (pubs ?? await getPubs()).filter(isCanonicalPubLinkEligible)
   const suburbPubs = allPubs.filter(p => p.suburb === suburbName)
   if (suburbPubs.length === 0) return []
 
