@@ -10,6 +10,11 @@ Stack, database, routes, components, and lib files are documented in `CLAUDE.md`
 
 ## What's done recently
 
+### Evidence-led guide depth ready for review (2026-07-21)
+- **Issue #235 / branch `codex/issue-235-content` / commit `c45df72`:** strengthened only the three GSC crawled-not-indexed guide routes: Cosy Corners, Sunset Sippers, and Punt & Pints. Each now leads with a visible, server-rendered first-party shortlist of tagged pubs with listed pint prices and last-checked dates, explicit selection limits, and three contextual onward links.
+- **Scope discipline:** `/happy-hour` was not in the #229 rejected cohort and was left alone. The target rationale is recorded in `docs/seo/gsc/2026-07-21/issue-235-targets.md`; no pub was noindexed, removed, or treated differently because its price is missing or stale.
+- **Verification:** 371 tests, redirects/headers/access checks, Infisical-backed build with 849 pubs, metadata/canonical checks, diff/secret scan, and inspected 1280×800 + 375×812 before/after captures for all three routes.
+
 ### URL-level GSC cohort reconciliation (2026-07-21)
 - **PR #246 implementation commit `421e1b1`:** completes the current URL-level evidence refresh and validation changes.
 - **Issue #229:** committed a sanitized, repeatable classification of all 99 submitted-sitemap `Crawled — currently not indexed` URLs and all 18 `Discovered — currently not indexed` URLs. The raw browser exports remain outside Git; the review-safe URL/report fields and current evidence are in `docs/seo/gsc/2026-07-21/`.
