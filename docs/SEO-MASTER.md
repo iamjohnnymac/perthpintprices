@@ -37,8 +37,11 @@ User-Agent: *
 Allow: /
 Disallow: /admin
 Disallow: /api/
+Disallow: /signal/
 Sitemap: https://perthpintprices.com/sitemap.xml
 ```
+
+The same allow/disallow set is emitted explicitly for GPTBot, PerplexityBot and Google-Extended. `/signal/*` pages also publish `noindex, nofollow`; privileged admin/API data remains protected by authentication, because robots directives are crawl guidance rather than access control.
 
 ### Global metadata (`src/app/layout.tsx`)
 
