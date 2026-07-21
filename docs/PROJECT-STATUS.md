@@ -10,6 +10,11 @@ Stack, database, routes, components, and lib files are documented in `CLAUDE.md`
 
 ## What's done recently
 
+### Useful suburb directories stay indexable (2026-07-21)
+- **Issue #231 / commit `2e23a99`:** made the suburb indexability policy explicit and shared by page metadata and sitemap generation. A suburb with at least one legitimate venue remains `index, follow` with its self-canonical; price availability, verification and freshness are not inputs. Zero-legitimate-venue routes are the only exclusion, and the existing source pipeline does not create them.
+- **Assessment:** all 150 existing suburb directories remain indexable and all 833 independently reconciled legitimate pubs remain reachable through normal directory paths. The 16 Google-confirmed permanent closures stay excluded independently of price data. The rationale and before/after counts are recorded in `docs/seo/suburb-indexability-policy-2026-07-21.md`.
+- **Verification:** 364 unit tests, TypeScript, lint and the production build passed against 849 source rows. The route regression guard covers 150 suburb slugs; terminal-proof evidence is in `artifacts/suburb-indexability-231/terminal-proof.png`. No visible UI changed, so before/after page screenshots are not applicable.
+
 ### Authenticated GSC Phase-1 indexing baseline (2026-07-21)
 - **Issue #229 / merge commit `c7961ee`:** captured the authenticated Google Search Console Phase-1 snapshot and repeatable read-only refresh runbook in `docs/seo/gsc-indexing-baseline-2026-07-21.md`. It separates the Page indexing report dated 2026-07-10 from live production checks, records submitted-sitemap coverage and representative URL inspections, and documents report-lag evidence: `/west-leederville/exchange-bar` was already indexed after appearing in the older crawl-not-indexed cohort.
 - **Publishing policy:** a legitimate pub must never be noindexed, removed from the sitemap, or removed solely because its price is missing, stale, or unverified. Price state may inform page presentation and ranking, while closure/duplicate decisions require independent venue-status evidence.
