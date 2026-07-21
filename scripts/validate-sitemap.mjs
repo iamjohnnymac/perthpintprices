@@ -11,6 +11,22 @@ function localUrl(url) {
   return new URL(`${parsed.pathname}${parsed.search}`, baseUrl).toString()
 }
 
+function attribute(tag, name) {
+  return tag.match(new RegExp(`\\b${name}\\s*=\\s*["']([^"']*)["']`, 'i'))?.[1] ?? ''
+}
+
+function robotsDirectives(response, html) {
+  const header = response.headers.get('x-robots-tag') ?? ''
+  const meta = [...html.matchAll(/<meta\b[^>]*>/gi)]
+    .filter(match => attribute(match[0], 'name').toLowerCase() === 'robots')
+    .map(match => attribute(match[0], 'content'))
+  return [header, ...meta].join(',').toLowerCase()
+}
+
+function blocksIndexing(directives) {
+  return /(^|[\s,;])(?:noindex|nofollow)(?=$|[\s,;])/.test(directives)
+}
+
 async function getText(url) {
   const response = await fetch(url, { redirect: 'manual' })
   return { response, text: await response.text() }
@@ -40,6 +56,7 @@ if (duplicates.length || prohibited.length) throw new Error(`Duplicate URLs: ${d
 
 let cursor = 0
 const failures = []
+const robotsFailures = []
 async function worker() {
   while (cursor < allUrls.length) {
     const index = cursor++
@@ -49,6 +66,10 @@ async function worker() {
       const canonical = text.match(/<link rel="canonical" href="([^"]+)"/i)?.[1]
       if (response.status !== 200 || canonical !== canonicalUrl) {
         failures.push(`${canonicalUrl}\tstatus=${response.status}\tcanonical=${canonical || 'missing'}`)
+      }
+      const directives = robotsDirectives(response, text)
+      if (blocksIndexing(directives)) {
+        robotsFailures.push(`${canonicalUrl}\tdirectives=${directives}`)
       }
     } catch (error) {
       failures.push(`${canonicalUrl}\terror=${error instanceof Error ? error.message : String(error)}`)
@@ -64,5 +85,7 @@ console.log(`TOTAL_SITEMAP_URLS\t${allUrls.length}`)
 console.log(`DUPLICATE_URLS\t${duplicates.length}`)
 console.log(`PROHIBITED_URLS\t${prohibited.length}`)
 console.log(`ROUTE_OR_CANONICAL_FAILURES\t${failures.length}`)
+console.log(`ROBOTS_DIRECTIVE_FAILURES\t${robotsFailures.length}`)
 for (const failure of failures.slice(0, 20)) console.log(`FAILURE\t${failure}`)
-process.exit(failures.length ? 1 : 0)
+for (const failure of robotsFailures.slice(0, 20)) console.log(`ROBOTS_FAILURE\t${failure}`)
+process.exit(failures.length || robotsFailures.length ? 1 : 0)
