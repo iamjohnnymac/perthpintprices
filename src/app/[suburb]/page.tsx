@@ -5,6 +5,7 @@ import { getSuburbPubs, getNearbySuburbs, getSiteStats } from '@/lib/supabase'
 import { getSuburbStory } from '@/lib/suburbStory'
 import { slimPubForList } from '@/lib/pubPhoto'
 import { absoluteSuburbUrl } from '@/lib/urls'
+import { getSuburbIndexability } from '@/lib/suburbIndexability'
 import SuburbClient from './SuburbClient'
 
 interface PageProps {
@@ -42,6 +43,7 @@ export async function generateMetadata(props: PageProps): Promise<Metadata> {
     perthAvgPrice: Number(siteStats.avgPrice),
     suburbSlug: params.suburb,
   })
+  const indexability = getSuburbIndexability({ legitimatePubCount: pubs.length })
 
   const priceText = suburbStory.minPrice !== null
     ? `${suburb.pubCount} Pubs from $${suburbStory.minPrice.toFixed(2)}`
@@ -64,6 +66,7 @@ export async function generateMetadata(props: PageProps): Promise<Metadata> {
     alternates: {
       canonical: absoluteSuburbUrl(params.suburb),
     },
+    robots: { index: indexability.isIndexable, follow: true },
     openGraph: {
       title: `${title} | Perth Pint Prices`,
       description,

@@ -10,6 +10,7 @@ import { articles, absoluteArticleUrl } from '@/lib/articles'
 import { HAPPY_HOUR_DAYS } from '@/lib/happyHourDays'
 import { TRANSPORT_HUBS } from '@/lib/transportHubs'
 import { BASE_URL, absolutePubUrl, absoluteSuburbUrl, toSuburbSlug } from '@/lib/urls'
+import { getSuburbIndexability } from '@/lib/suburbIndexability'
 
 // Regenerate hourly so new pubs added to Supabase appear in the sitemap
 // within 60 min. Without this, Next defaults to build-time generation and
@@ -35,7 +36,7 @@ export interface SitemapRouteSets {
 export function getSitemapRouteSets(
   slugPairs: IndexablePubSlugPair[],
   allPubDates: PubLastModifiedPair[],
-  suburbs: Array<{ slug: string }>,
+  suburbs: Array<{ slug: string; pubCount: number }>,
 ): SitemapRouteSets {
   const latestPubModified = allPubDates
     .map(pair => toLastModified(pair.lastModified))
@@ -93,12 +94,14 @@ export function getSitemapRouteSets(
     priority: 0.7,
   }))
 
-  const suburbRoutes: MetadataRoute.Sitemap = suburbs.map(s => ({
-    url: absoluteSuburbUrl(s.slug),
-    lastModified: latestBySuburb.get(s.slug) || latestPubModified,
-    changeFrequency: 'weekly' as const,
-    priority: 0.8,
-  }))
+  const suburbRoutes: MetadataRoute.Sitemap = suburbs
+    .filter(suburb => getSuburbIndexability({ legitimatePubCount: suburb.pubCount }).isIndexable)
+    .map(suburb => ({
+      url: absoluteSuburbUrl(suburb.slug),
+      lastModified: latestBySuburb.get(suburb.slug) || latestPubModified,
+      changeFrequency: 'weekly' as const,
+      priority: 0.8,
+    }))
 
   const pubRoutes: MetadataRoute.Sitemap = slugPairs.map(pair => ({
     url: absolutePubUrl(pair),

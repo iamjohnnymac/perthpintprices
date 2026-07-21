@@ -10,6 +10,11 @@ Stack, database, routes, components, and lib files are documented in `CLAUDE.md`
 
 ## What's done recently
 
+### Useful suburb directories stay indexable (2026-07-21)
+- **Issue #231 / commit `2e23a99`:** made the suburb indexability policy explicit and shared by page metadata and sitemap generation. A suburb with at least one legitimate venue remains `index, follow` with its self-canonical; price availability, verification and freshness are not inputs. Zero-legitimate-venue routes are the only exclusion, and the existing source pipeline does not create them.
+- **Assessment:** all 150 existing suburb directories remain indexable and all 833 independently reconciled legitimate pubs remain reachable through normal directory paths. The 16 Google-confirmed permanent closures stay excluded independently of price data. The rationale and before/after counts are recorded in `docs/seo/suburb-indexability-policy-2026-07-21.md`.
+- **Verification:** 364 unit tests, TypeScript, lint and the production build passed against 849 source rows. The route regression guard covers 150 suburb slugs; terminal-proof evidence is in `artifacts/suburb-indexability-231/terminal-proof.png`. No visible UI changed, so before/after page screenshots are not applicable.
+
 ### Indexing technical cleanup (2026-07-21)
 - **Issue #236 / commit `071c597`:** classified every URL in GSC's dated 15-URL 404 cohort using current production responses and the public venue catalogue. Added five explicit, one-to-one legacy-slug `301` redirects; retained six retired `/pub/*` URLs as `410`, three removed pub paths and the retired `/pub-golf` feature as honest `404`s, and made no price-status-based indexing decisions.
 - **GSC reconciliation:** `/henley-brook/the-henley-brook` is a live `200` with its self-canonical, while `/guides` and `/insights` are clean edge `301`s to `/discover`; their obsolete section-layout metadata sources were removed. These are stale GSC report entries pending the validation already started in Search Console.

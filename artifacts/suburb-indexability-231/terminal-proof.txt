@@ -1,0 +1,18 @@
+Perth Pint Prices — issue #231 verification
+2026-07-21
+
+Policy: index a suburb directory when it has >= 1 legitimate venue.
+Price, verification and freshness are not eligibility inputs.
+
+Tests:       364 passed, 0 failed
+TypeScript:  npx tsc --noEmit passed
+Lint:        npm run lint passed
+Build:       npm run build passed
+Build data:  849 pubs and sentinel present
+Route guard: 150 suburb slugs passed
+
+Inventory reconciliation (issue #230 baseline):
+  833 legitimate pubs retained in normal directory paths
+   16 independently confirmed permanent closures excluded
+
+Suburb count before / after: 150 / 150 indexable
