@@ -1,0 +1,24 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Issue #236 terminal capture</title>
+<style>
+  body { margin: 0; background: #171717; color: #f7f7f5; }
+  pre { box-sizing: border-box; margin: 0; min-height: 100vh; padding: 36px; font: 18px/1.55 Menlo, Monaco, monospace; white-space: pre-wrap; }
+</style>
+<pre>$ INFISICAL_SCOPED_READ=enabled node scripts/build-gsc-indexing-baseline.mjs
+
+GSC_CRAWLED_ROWS=99
+GSC_DISCOVERED_ROWS=18
+PUB_JOINED_ROWS=91
+PUB_TIER_A=88
+PUB_TIER_B=3
+PUB_TIER_C=0
+PUB_MISSING_PRICE=20
+PUB_MISSING_HAPPY_HOUR=27
+PUB_MISSING_DESCRIPTION=65
+CURRENT_EXPECTED_CLOSURE_EXCLUSIONS=1
+CURRENT_UNEXPECTED_HTTP_CANONICAL_SITEMAP_EXCEPTIONS=0
+SANITIZED_OUTPUT=docs/seo/gsc/2026-07-21/url-classification.csv
+DIFF_FORMAT_CHECK=pass
+SECRET_VALUE_PATTERN_SCAN=0
+</pre>
