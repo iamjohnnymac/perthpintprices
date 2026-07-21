@@ -40,6 +40,8 @@ export function getPubIndexability(pub: PubIndexabilityInput): PubIndexability {
   // Permanently-closed venues (Places business_status) are forced out of indexing
   // and the sitemap below — but keep their data-driven tier so on-page rendering
   // (e.g. the Tier-C "no price yet" stub) stays correct for closed-but-priced pubs.
+  // Price, verification, and freshness only classify the presentation tier;
+  // they never make an otherwise legitimate pub non-indexable.
   const closed = pub.businessStatus === 'CLOSED_PERMANENTLY'
 
   const hasPrice = hasPositiveNumber(pub.price)
@@ -77,7 +79,7 @@ export function getPubIndexability(pub: PubIndexabilityInput): PubIndexability {
       ? { dataScore, tier: 'A', isIndexable: true }
       : hasPrice || hasHappyHour
         ? { dataScore, tier: 'B', isIndexable: true }
-        : { dataScore, tier: 'C', isIndexable: false }
+        : { dataScore, tier: 'C', isIndexable: true }
 
   return closed ? { ...base, isIndexable: false } : base
 }

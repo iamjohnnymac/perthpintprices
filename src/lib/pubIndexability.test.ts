@@ -5,7 +5,7 @@ import { getPubIndexability } from './pubIndexability'
 const NOW = new Date('2026-06-01T12:00:00.000Z')
 
 describe('getPubIndexability', () => {
-  it('noindexes NAP-only pub pages', () => {
+  it('indexes NAP-only pub pages', () => {
     const result = getPubIndexability({
       price: null,
       happyHour: null,
@@ -13,7 +13,7 @@ describe('getPubIndexability', () => {
     })
 
     assert.equal(result.tier, 'C')
-    assert.equal(result.isIndexable, false)
+    assert.equal(result.isIndexable, true)
   })
 
   it('indexes pubs with a price even when other data is sparse', () => {
@@ -25,6 +25,39 @@ describe('getPubIndexability', () => {
 
     assert.equal(result.tier, 'B')
     assert.equal(result.isIndexable, true)
+  })
+
+  it('keeps every price trust and freshness state indexable for robots and sitemap consumers', () => {
+    const cases = [
+      {
+        label: 'fresh',
+        pub: { price: 12, priceVerified: true, lastVerified: '2026-05-31T00:00:00.000Z' },
+      },
+      {
+        label: 'aging',
+        pub: { price: 12, priceVerified: true, lastVerified: '2026-04-15T00:00:00.000Z' },
+      },
+      {
+        label: 'stale',
+        pub: { price: 12, priceVerified: true, lastVerified: '2026-01-01T00:00:00.000Z' },
+      },
+      {
+        label: 'missing verification date',
+        pub: { price: 12, priceVerified: true, lastVerified: null },
+      },
+      {
+        label: 'unverified price',
+        pub: { price: 12, priceVerified: false, lastVerified: '2026-05-31T00:00:00.000Z' },
+      },
+      {
+        label: 'missing price',
+        pub: { price: null, priceVerified: false, lastVerified: null },
+      },
+    ] as const
+
+    for (const { label, pub } of cases) {
+      assert.equal(getPubIndexability({ ...pub, now: NOW }).isIndexable, true, label)
+    }
   })
 
   it('promotes verified priced pubs to Tier A', () => {
@@ -69,17 +102,25 @@ describe('getPubIndexability', () => {
     assert.equal(stale.dataScore, 2)
   })
 
-  it('noindexes permanently-closed venues but keeps their data tier for rendering', () => {
-    const result = getPubIndexability({
+  it('keeps the permanent-closure exception separate from price quality', () => {
+    const priced = getPubIndexability({
       price: 11.5,
       priceVerified: true,
       lastVerified: '2026-05-31T00:00:00.000Z',
       now: NOW,
       businessStatus: 'CLOSED_PERMANENTLY',
     })
+    const missingPrice = getPubIndexability({
+      price: null,
+      priceVerified: false,
+      lastVerified: null,
+      businessStatus: 'CLOSED_PERMANENTLY',
+    })
 
-    assert.equal(result.isIndexable, false) // out of index + sitemap
-    assert.equal(result.tier, 'A') // tier preserved so the page doesn't show a "no price" stub
+    assert.equal(priced.isIndexable, false)
+    assert.equal(priced.tier, 'A')
+    assert.equal(missingPrice.isIndexable, false)
+    assert.equal(missingPrice.tier, 'C')
   })
 
   it('indexes happy-hour pubs without a regular price', () => {

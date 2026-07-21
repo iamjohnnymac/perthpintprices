@@ -1,6 +1,6 @@
 # Pub Page Content Plan v2 — "Perth's practical pub-price layer"
 
-**Status:** Spec / not yet built. Panel-tightened 2026-05-31 (5-expert review + synthesis). Build nothing until prioritised.
+**Status:** Historical delivery plan. The owner superseded its Tier-C noindex rule on 2026-07-21 in issue #230: every legitimate pub remains indexable and sitemap-listed regardless of price, verification, or freshness.
 **Supersedes:** v1 (8-module draft). Owner decisions locked — see §0.
 
 ---
@@ -8,7 +8,7 @@
 ## 0. Locked decisions (owner)
 
 1. **Pint price schema:** CUT `Menu`/`MenuItem`/`Offer` for v1. Win the citation via a visible answer-first sentence + crawlable price table. Revisit `Offer` only if real menu data lands.
-2. **663 price-less pubs:** **Tier-C = "hidden honest page"** — keep each pub URL live (verification stub + nearby cheaper pubs), but `robots: noindex, follow` + exclude from sitemap. Auto-promotes to indexable the moment a price/HH lands. (Not folding into suburb page — reversible, self-healing.)
+2. **Price-less pubs:** **Tier-C = "honest missing-price page"** — keep each legitimate pub URL canonical, indexable, and in the sitemap. Price and verification status control truthful presentation only; they never control index eligibility.
 3. **Phone/NAP:** only emit `telephone`/hours in schema when sourced from the **Google Places backfill** (Phase 4). No manual GBP reconciliation pass; don't publish unverified NAP.
 4. **`revalidate`:** raise 300 → **3600** + event-driven `revalidatePath` from write paths (so the timer rarely matters).
 
@@ -61,10 +61,10 @@ Single connected **`@graph` with stable `@id`s** (fixes today's disconnected nod
 Keyed on a per-pub **`dataScore`**, wired into **both** robots metadata **and** sitemap (they must agree):
 - **Tier A** (fresh price OR HH + attributes) → index + prerender + sitemap.
 - **Tier B** (price OR HH, little else) → index, ISR, sitemap, low priority.
-- **Tier C** (NAP + map only — the 663 husks) → `robots: { index: false, follow: true }` + **excluded from sitemap**, still crawlable/internally linked so equity flows. **Auto-promotes** when a price/HH lands (`generateMetadata` already reads live data).
+- **Tier C** (NAP + map only) → index + sitemap with an honest missing-price state and report-price CTA. It remains Tier C for presentation and quality measurement only.
 
 Plus:
-- `getIndexablePubSlugPairs()` for the sitemap; keep `getAllPubSlugPairs()` for routing only.
+- `getIndexablePubSlugPairs()` includes every legitimate pub; the separate, evidence-backed permanent-closure rule remains the only current sitemap exclusion.
 - Every module renders from real per-pub data; **no AI-generated blurbs from nothing**; no copied menus.
 - **Titles conditional on data** — don't promise "Pint Prices & Happy Hour" on a page with neither. New title: `[Venue] Pint Prices & Happy Hour | [Suburb]` (<60 chars) only when data supports it.
 - **De-dup meta descriptions** — drop the constant "Community-verified… updated daily" suffix; let price-delta / HH-window / nearest-cheaper-pub clauses carry uniqueness.
@@ -81,7 +81,7 @@ The "migration" is **largely already done** — `page.tsx` already has `revalida
 ## 7. Build sequence (single source of truth → issues)
 
 **Phase 0 — Indexability & honesty (do FIRST; protects the whole template)**
-1. `dataScore` + 3-tier robots metadata + sitemap inclusion gate (`getIndexablePubSlugPairs`). **M / NOW**
+1. `dataScore` presentation tiers + preservation-first robots metadata and sitemap membership (`getIndexablePubSlugPairs`). **M / NOW**
 2. Sitemap `lastModified` → real `last_verified`/`updated_at`. **S / NOW**
 3. Raise `revalidate`→3600; event-driven `revalidatePath`/`revalidateTag` from write paths. **M / NOW**
 
@@ -114,7 +114,7 @@ The "migration" is **largely already done** — `page.tsx` already has `revalida
 ## 8. Key reframes vs v1 (so the delta is clear)
 
 - 8 modules → 4–5 (cut Venue Essentials + What It's Good For; merged the two "nearby" modules).
-- Added the missing safeguard: explicit 3-tier `noindex`/sitemap-exclusion for 663 husks. Gating alone only *hides* thinness.
+- Tier-C pages stay honest and lightweight, but price thinness is no longer an index or sitemap exclusion signal.
 - Re-sequenced: indexability + sitemap honesty + schema fixes move FIRST; the headline "rendering migration" demoted to last (mostly already live).
 - Killed Menu/Offer schema; fixed the live invalid `priceRange` bug; mandated connected `@graph` + `@id` + `dateModified`.
 - "BACKFILL" hid three different sources: hours/phone come near-free from a Places call pintsweep already pays for; food from menu-scan vision; generic amenities cut. Andrew stays price-only.
@@ -128,8 +128,8 @@ Baselines captured 2026-05-31 (GSC + Ahrefs). Each metric names the phase that s
 | # | Metric | Baseline | Target | Verified by |
 |---|---|---|---|---|
 | M1 | **Clicks on `[venue] menu` / `[venue] happy hour` queries** (sir henrys menu, fuse bar menu, sweetwater/sandbar happy hour, etc.) | 0 clicks at pos 9–30 | ≥1 click on each of the top-20 such queries within 60d of Phase 3 ship | GSC query report |
-| M2 | **Crawled-not-indexed + discovered-not-indexed pub URLs** | 58 + 67 | Trend down; Tier-C husks formally `noindex` (stop fighting Google) | GSC Pages report |
-| M3 | **Indexable pub URLs in sitemap** | ~850 (all, incl. 663 price-less) | = Tier A+B count only (`getIndexablePubSlugPairs`); 663 husks excluded | sitemap.xml diff |
+| M2 | **Crawled-not-indexed + discovered-not-indexed pub URLs** | 58 + 67 | Trend down while every legitimate Tier-C URL remains eligible for indexing | GSC Pages report |
+| M3 | **Indexable pub URLs in sitemap** | ~850 | = full legitimate pub inventory across Tiers A, B, and C (`getIndexablePubSlugPairs`) | sitemap.xml diff |
 | M4 | **Sitemap `lastModified` honesty** | 100% stamped build-time `Date.now()` | 0% build-time; every URL = real `last_verified`/`updated_at` | sitemap.xml inspection |
 | M5 | **Schema validity on indexable pub pages** | invalid `priceRange` string sitewide; disconnected nodes | 0 invalid `priceRange`; connected `@graph` + `@id` + `dateModified` on 100% | Rich Results Test / schema validator |
 | M6 | **Distinct rendered-DOM fingerprint count** (scaled-content guard) | not measured | High distinct-shell count; CI duplicate-cluster guard passes (no collapse to 1–2 shells) | Phase 5 CI guard (#16) |

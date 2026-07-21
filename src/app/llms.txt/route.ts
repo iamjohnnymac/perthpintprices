@@ -38,7 +38,7 @@ const lines = [
   '',
   `- Sitemap: ${BASE_URL}/sitemap.xml`,
   '- Pub pages expose visible last-verified dates where available.',
-  '- Price-less pub pages may be crawlable but intentionally noindexed until useful price or happy-hour data exists.',
+  '- All legitimate pub pages are indexable and listed in the sitemap, including pubs without a confirmed price.',
 ]
 
 export async function GET() {
