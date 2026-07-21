@@ -12,7 +12,7 @@ Issue [#232](https://github.com/iamjohnnymac/perthpintprices/issues/232) replace
 
 Editorial route timestamps live in `EDITORIAL_LAST_MODIFIED` and must only change with the relevant page/template content. They are deliberately independent of unrelated pub writes. Article dates come from the article source record. Live data surfaces use the most recent relevant pub record.
 
-Pub timestamps use that pub's `last_verified`, then `updated_at`, then `last_updated`; an absent or invalid value falls back to `2026-05-31T00:00:00.000Z`. Suburb timestamps use the latest valid pub timestamp from that suburb; where none exists they fall back to the latest valid timestamp across the inventory, then the same documented fixed fallback. This provides stable, honest XML without falsely announcing a site-wide editorial update.
+Pub timestamps use that pub's `last_verified`, then `updated_at`, then `last_updated`; an absent or invalid value falls back to `2026-05-31T00:00:00.000Z`. Suburb timestamps use the latest valid timestamp from an eligible pub in that suburb; where none exists they fall back to the latest valid timestamp across the eligible inventory, then the same documented fixed fallback. Confirmed closures are excluded from freshness exactly as they are from URL membership. This provides stable, honest XML without falsely announcing a site-wide editorial update.
 
 ## Release check
 

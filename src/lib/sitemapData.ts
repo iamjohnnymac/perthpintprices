@@ -1,7 +1,7 @@
 import { articles, absoluteArticleUrl } from '@/lib/articles'
 import { HAPPY_HOUR_DAYS } from '@/lib/happyHourDays'
 import { getCachedAllSuburbs } from '@/lib/cachedPubs'
-import { getAllPubLastModifiedPairs, getIndexablePubSlugPairs, type IndexablePubSlugPair, type PubLastModifiedPair } from '@/lib/supabase'
+import { getIndexablePubSlugPairs, type IndexablePubSlugPair, type PubLastModifiedPair } from '@/lib/supabase'
 import { TRANSPORT_HUBS } from '@/lib/transportHubs'
 import { absolutePubUrl, absoluteSuburbUrl, BASE_URL, toSuburbSlug } from '@/lib/urls'
 import { getSuburbIndexability } from '@/lib/suburbIndexability'
@@ -123,10 +123,10 @@ export function buildSitemapRouteSets(
 }
 
 export async function getSitemapRouteSets(): Promise<SitemapRouteSets> {
-  const [slugPairs, allPubDates, suburbs] = await Promise.all([
+  const [slugPairs, suburbs] = await Promise.all([
     getIndexablePubSlugPairs(),
-    getAllPubLastModifiedPairs(),
     getCachedAllSuburbs(),
   ])
+  const allPubDates = slugPairs.map(pair => ({ suburb: pair.suburb, lastModified: pair.lastModified }))
   return buildSitemapRouteSets(slugPairs, allPubDates, suburbs)
 }

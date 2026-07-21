@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import { toIndexablePubSlugPairs, type PubSitemapRow } from '@/lib/supabase'
+import { toIndexablePubLastModifiedPairs, toIndexablePubSlugPairs, type PubSitemapRow } from '@/lib/supabase'
 import { buildSitemapRouteSets, SITEMAP_FALLBACK_LAST_MODIFIED } from './sitemapData'
 
 const NOW = new Date('2026-07-21T00:00:00.000Z')
@@ -84,6 +84,25 @@ test('pub and suburb modified dates use their relevant source data and a documen
   assert.equal(routes.pubs[0].lastModified, SITEMAP_FALLBACK_LAST_MODIFIED)
   assert.equal(routes.suburbs.find(route => route.url.endsWith('/fremantle'))?.lastModified, '2026-07-20T00:00:00.000Z')
   assert.equal(routes.suburbs.find(route => route.url.endsWith('/perth'))?.lastModified, '2026-07-20T00:00:00.000Z')
+})
+
+test('a newer confirmed closure cannot advance eligible suburb or content freshness', () => {
+  const eligibleRows = [makeRow('current-pub', { last_verified: '2026-06-01T00:00:00.000Z' })]
+  const rowsWithNewerClosure = [
+    ...eligibleRows,
+    makeRow('closed-pub', {
+      business_status: 'CLOSED_PERMANENTLY',
+      last_verified: '2026-07-21T00:00:00.000Z',
+    }),
+  ]
+  const eligibleDates = toIndexablePubLastModifiedPairs(eligibleRows, NOW)
+  const datesWithClosure = toIndexablePubLastModifiedPairs(rowsWithNewerClosure, NOW)
+  const first = buildSitemapRouteSets(toIndexablePubSlugPairs(eligibleRows, NOW), eligibleDates, [{ slug: 'fremantle', pubCount: 1 }])
+  const second = buildSitemapRouteSets(toIndexablePubSlugPairs(rowsWithNewerClosure, NOW), datesWithClosure, [{ slug: 'fremantle', pubCount: 1 }])
+
+  assert.deepEqual(datesWithClosure, eligibleDates)
+  assert.equal(second.suburbs[0].lastModified, first.suburbs[0].lastModified)
+  assert.equal(second.content.find(route => route.url.endsWith('/discover'))?.lastModified, first.content.find(route => route.url.endsWith('/discover'))?.lastModified)
 })
 
 test('sitemap inventories contain no duplicate or private/redirect URLs', () => {

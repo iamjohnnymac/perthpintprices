@@ -348,16 +348,12 @@ export interface PubLastModifiedPair {
 export async function getAllPubLastModifiedPairs(): Promise<PubLastModifiedPair[]> {
   const { data, error } = await supabase
     .from('pubs')
-    .select('suburb, last_verified, last_updated, updated_at')
+    .select('slug, suburb, price, price_verified, last_verified, last_updated, updated_at, happy_hour, happy_hour_price, happy_hour_days, happy_hour_start, happy_hour_end, beer_type, vibe_tag, has_tab, kid_friendly, cozy_pub, sunset_spot, website, business_status')
+    .order('slug')
 
   if (error || !data) return []
 
-  return data
-    .filter(row => row.suburb)
-    .map(row => ({
-      suburb: row.suburb,
-      lastModified: row.last_verified || row.updated_at || row.last_updated || null,
-    }))
+  return toIndexablePubLastModifiedPairs(data)
 }
 
 export async function getIndexablePubSlugPairs(): Promise<IndexablePubSlugPair[]> {
@@ -408,6 +404,18 @@ export function toIndexablePubSlugPairs(rows: PubSitemapRow[], now?: Date): Inde
     })
     .filter(row => row.isIndexable)
     .map(({ isIndexable, ...row }) => row)
+}
+
+/**
+ * Freshness feeds use the identical legitimate-pub predicate as sitemap URL
+ * membership. A confirmed closure must not make an otherwise current suburb,
+ * content page, or sitemap index appear newly updated.
+ */
+export function toIndexablePubLastModifiedPairs(rows: PubSitemapRow[], now?: Date): PubLastModifiedPair[] {
+  return toIndexablePubSlugPairs(rows, now).map(pair => ({
+    suburb: pair.suburb,
+    lastModified: pair.lastModified,
+  }))
 }
 
 async function getSameSuburbPubs(suburb: string, excludeId: number): Promise<Pub[]> {
