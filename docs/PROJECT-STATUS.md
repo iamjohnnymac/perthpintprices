@@ -10,6 +10,12 @@ Stack, database, routes, components, and lib files are documented in `CLAUDE.md`
 
 ## What's done recently
 
+### Honest segmented sitemap and crawl-control inventory (2026-07-21)
+- **Issue #232:** replaced the single mixed sitemap with a sitemap index and distinct content, suburb, and pub feeds. `/suburbs` is now an explicit canonical hub; redirecting `/guides` and `/insights`, World Cup, admin, API, signal, legacy, and invalid routes are absent.
+- **Publishing policy:** all 833 legitimate pubs remain in the pub sitemap regardless of missing, stale, or unverified prices. The suburb feed consumes the shared #231 pure eligibility rule, so all 150 current legitimate-venue suburbs remain included. Confirmed permanent closures remain a separately evidenced exception.
+- **Freshness and access:** editorial timestamps are fixed to their real content/template changes rather than arbitrary pub writes; pub/suburb dates derive from relevant records with documented fallbacks. Admin now publishes noindex metadata while its privileged APIs continue to enforce authentication; signal URLs remain noindex and robots-blocked.
+- **Verification:** 370 unit tests, TypeScript, lint, redirect checks, and the production build passed. A built local crawl verified the sitemap index and every one of 1,015 emitted URLs: 200 response, self-canonical, zero duplicates, zero prohibited URLs, and exactly 833 legitimate pubs. Raw/PNG terminal evidence: `artifacts/segmented-sitemap-232/terminal-proof.*`.
+
 ### Useful suburb directories stay indexable (2026-07-21)
 - **Issue #231 / commit `2e23a99`:** made the suburb indexability policy explicit and shared by page metadata and sitemap generation. A suburb with at least one legitimate venue remains `index, follow` with its self-canonical; price availability, verification and freshness are not inputs. Zero-legitimate-venue routes are the only exclusion, and the existing source pipeline does not create them.
 - **Assessment:** all 150 existing suburb directories remain indexable and all 833 independently reconciled legitimate pubs remain reachable through normal directory paths. The 16 Google-confirmed permanent closures stay excluded independently of price data. The rationale and before/after counts are recorded in `docs/seo/suburb-indexability-policy-2026-07-21.md`.

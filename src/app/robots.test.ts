@@ -24,3 +24,13 @@ test('robots keeps semi-private signal links out of every crawler', () => {
     assert.ok(disallow.includes('/signal/'))
   }
 })
+
+test('robots keeps administrative surfaces out of crawl while API routes enforce authentication separately', () => {
+  const result = robots()
+  const rules = Array.isArray(result.rules) ? result.rules : [result.rules]
+  for (const rule of rules) {
+    const disallow = Array.isArray(rule.disallow) ? rule.disallow : [rule.disallow]
+    assert.ok(disallow.includes('/admin'))
+    assert.ok(disallow.includes('/api/'))
+  }
+})

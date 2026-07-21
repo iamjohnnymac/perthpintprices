@@ -1,0 +1,19 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Issue #232 sitemap validation terminal capture</title>
+<style>
+  body { margin: 0; background: #171717; color: #f7f7f5; }
+  pre { box-sizing: border-box; margin: 0; min-height: 100vh; padding: 36px; font: 18px/1.55 Menlo, Monaco, monospace; white-space: pre-wrap; }
+</style>
+<pre>$ SITEMAP_VALIDATION_BASE_URL=http://127.0.0.1:3000 node scripts/validate-sitemap.mjs
+
+SITEMAP_INDEX_STATUS	200
+SITEMAP_URLS	https://perthpintprices.com/sitemap-content.xml	32
+SITEMAP_URLS	https://perthpintprices.com/sitemap-suburbs.xml	150
+SITEMAP_URLS	https://perthpintprices.com/sitemap-pubs.xml	833
+LEGITIMATE_PUB_URLS	833
+TOTAL_SITEMAP_URLS	1015
+DUPLICATE_URLS	0
+PROHIBITED_URLS	0
+ROUTE_OR_CANONICAL_FAILURES	0
+</pre>
