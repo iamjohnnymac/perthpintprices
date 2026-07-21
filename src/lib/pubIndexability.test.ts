@@ -27,7 +27,7 @@ describe('getPubIndexability', () => {
     assert.equal(result.isIndexable, true)
   })
 
-  it('keeps every price trust and freshness state indexable for robots and sitemap consumers', () => {
+  it('keeps every price trust and freshness state indexable', () => {
     const cases = [
       {
         label: 'fresh',
