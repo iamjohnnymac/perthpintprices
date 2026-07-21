@@ -57,10 +57,46 @@ test('robots and sitemap endpoints expose crawlable production URLs', async ({ r
 
   const sitemap = await request.get('/sitemap.xml')
   expect(sitemap.ok()).toBeTruthy()
-  const xml = await sitemap.text()
-  expect(xml).toContain('<urlset')
-  expect(xml).toContain('https://perthpintprices.com/')
-  expect(xml).not.toContain('/world-cup')
+  expect(sitemap.headers()['content-type']).toContain('application/xml')
+  const indexXml = await sitemap.text()
+  expect(indexXml).toContain('<sitemapindex')
+  expect(indexXml).not.toContain('/world-cup')
+  expect([...indexXml.matchAll(/<loc>([^<]+)<\/loc>/g)].map(match => match[1])).toEqual([
+    'https://perthpintprices.com/sitemap-content.xml',
+    'https://perthpintprices.com/sitemap-suburbs.xml',
+    'https://perthpintprices.com/sitemap-pubs.xml',
+  ])
+
+  const feeds = [
+    {
+      path: '/sitemap-content.xml',
+      includes: ['https://perthpintprices.com</loc>', 'https://perthpintprices.com/suburbs</loc>'],
+      excludes: ['https://perthpintprices.com/guides</loc>', 'https://perthpintprices.com/insights</loc>', '/world-cup'],
+    },
+    {
+      path: '/sitemap-suburbs.xml',
+      includes: ['https://perthpintprices.com/fremantle</loc>', 'https://perthpintprices.com/northbridge</loc>'],
+      excludes: ['/admin', '/signal/', '/world-cup'],
+    },
+    {
+      path: '/sitemap-pubs.xml',
+      includes: [
+        'https://perthpintprices.com/fremantle/federal-hotel</loc>',
+        'https://perthpintprices.com/fremantle/the-norfolk-hotel</loc>',
+      ],
+      excludes: ['/pub/ruin-bar', '/admin', '/signal/', '/world-cup'],
+    },
+  ]
+
+  for (const feed of feeds) {
+    const response = await request.get(feed.path)
+    expect(response.ok()).toBeTruthy()
+    expect(response.headers()['content-type']).toContain('application/xml')
+    const xml = await response.text()
+    expect(xml).toContain('<urlset')
+    for (const expected of feed.includes) expect(xml).toContain(expected)
+    for (const excluded of feed.excludes) expect(xml).not.toContain(excluded)
+  }
 })
 
 test('technical SEO routes return canonical, title, and removed-route responses', async ({ request }) => {

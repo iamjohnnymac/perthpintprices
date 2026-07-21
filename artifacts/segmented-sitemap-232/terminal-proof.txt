@@ -1,0 +1,11 @@
+$ SITEMAP_VALIDATION_BASE_URL=http://127.0.0.1:3000 node scripts/validate-sitemap.mjs
+
+SITEMAP_INDEX_STATUS	200
+SITEMAP_URLS	https://perthpintprices.com/sitemap-content.xml	32
+SITEMAP_URLS	https://perthpintprices.com/sitemap-suburbs.xml	150
+SITEMAP_URLS	https://perthpintprices.com/sitemap-pubs.xml	833
+LEGITIMATE_PUB_URLS	833
+TOTAL_SITEMAP_URLS	1015
+DUPLICATE_URLS	0
+PROHIBITED_URLS	0
+ROUTE_OR_CANONICAL_FAILURES	0

@@ -16,19 +16,19 @@ This is the SEO playbook for Perth Pint Prices. Reference this document before m
 
 ## 1. Current implementation
 
-### Sitemap (`src/app/sitemap.ts`)
+### Sitemaps (`src/app/sitemap*.xml/route.ts`, `src/lib/sitemapData.ts`)
 
-Dynamic XML sitemap with tiered priorities:
+`/sitemap.xml` is an XML sitemap index with three observable feeds:
 
-| Priority | Routes |
-|----------|--------|
-| 1.0 | Homepage |
-| 0.9 | discover, happy-hour |
-| 0.8 | pint-of-the-day, pint-index, tonights-best-bets, beer-weather, sunset-sippers, suburb pages |
-| 0.7 | suburb-rankings, venue-breakdown, punt-and-pints, dad-bar, cozy-corners |
-| 0.6 | individual pub pages |
+| Feed | Current inventory | Policy |
+|------|-------------------|--------|
+| `/sitemap-content.xml` | 32 | Canonical editorial, tool, article, transport-hub and happy-hour URLs, including `/suburbs` |
+| `/sitemap-suburbs.xml` | 150 | A suburb is included when it has at least one legitimate venue |
+| `/sitemap-pubs.xml` | 833 | Every legitimate pub, regardless of missing, stale or unverified price data |
 
-All entries use current timestamp for `lastModified`. Dynamic routes (pubs, suburbs) generated from Supabase at build time.
+Confirmed permanent closures, duplicates, invalid rows, redirects (including `/guides` and `/insights`), 404/410, admin, API and signal URLs are excluded. Price verification and freshness never affect pub membership.
+
+`lastModified` is source-based: articles use their content record; editorial routes use explicit real-change dates; live-data routes use eligible pub data; pubs use their own `last_verified` → `updated_at` → `last_updated`; and suburbs use the latest eligible venue date. Missing/invalid pub dates use the documented fixed fallback, while a suburb without a valid venue date falls back to the latest eligible inventory date and then the same fixed fallback. Confirmed closures cannot advance freshness.
 
 ### Robots (`src/app/robots.ts`)
 
@@ -37,8 +37,11 @@ User-Agent: *
 Allow: /
 Disallow: /admin
 Disallow: /api/
+Disallow: /signal/
 Sitemap: https://perthpintprices.com/sitemap.xml
 ```
+
+The same allow/disallow set is emitted explicitly for GPTBot, PerplexityBot and Google-Extended. `/signal/*` pages also publish `noindex, nofollow`; privileged admin/API data remains protected by authentication, because robots directives are crawl guidance rather than access control.
 
 ### Global metadata (`src/app/layout.tsx`)
 
@@ -393,7 +396,7 @@ Source: backlinko.com/technical-seo-guide
 
 | File | Purpose |
 |------|---------|
-| `src/app/sitemap.ts` | Dynamic XML sitemap |
+| `src/app/sitemap*.xml/route.ts`, `src/lib/sitemapData.ts`, `src/lib/sitemapXml.ts` | Segmented XML sitemap index, inventories, freshness and serialization |
 | `src/app/robots.ts` | Robots.txt configuration |
 | `src/app/layout.tsx` | Global metadata, OG image, analytics |
 | `src/app/page.tsx` | Homepage metadata + WebSite JSON-LD |
