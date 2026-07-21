@@ -10,6 +10,11 @@ Stack, database, routes, components, and lib files are documented in `CLAUDE.md`
 
 ## What's done recently
 
+### Authenticated GSC Phase-1 indexing baseline (2026-07-21)
+- **Issue #229 / merge commit `c7961ee`:** captured the authenticated Google Search Console Phase-1 snapshot and repeatable read-only refresh runbook in `docs/seo/gsc-indexing-baseline-2026-07-21.md`. It separates the Page indexing report dated 2026-07-10 from live production checks, records submitted-sitemap coverage and representative URL inspections, and documents report-lag evidence: `/west-leederville/exchange-bar` was already indexed after appearing in the older crawl-not-indexed cohort.
+- **Publishing policy:** a legitimate pub must never be noindexed, removed from the sitemap, or removed solely because its price is missing, stale, or unverified. Price state may inform page presentation and ranking, while closure/duplicate decisions require independent venue-status evidence.
+- **Still open:** #229 remains In Progress. This Phase-1 baseline does not replace the full URL-level export, enrichment, classification, and reconciliation of every crawl-not-indexed, discovered-not-indexed, 404, canonical-mismatch, and redirect-error URL; that work remains the tracked follow-through before the issue can close.
+
 ### Visible internal-link rails replace crawl-only scaffolding (2026-07-21)
 - **Issue #233 / commit `b0fe340`:** Discover now has a visible server-rendered Data & Tools rail for the Pint Index, Pint of the Day, Tonight's Best Bets, Suburb Rankings and Venue Breakdown. Best Buys now sends its all-results link to `/cheapest-pints`.
 - Pub recommendations are eligibility-first: every legitimate nearby pub may be linked regardless of missing or unverified price data, while price can still rank useful options. Confirmed permanent closures and invalid route records are filtered independently. Pub pages also link visibly to their suburb, Perth's cheapest pints and Perth happy hours.
