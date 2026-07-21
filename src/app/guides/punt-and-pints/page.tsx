@@ -3,7 +3,7 @@ import BreadcrumbJsonLd from '@/components/BreadcrumbJsonLd'
 import { getCachedPubs } from '@/lib/cachedPubs'
 import { slimPubForFeature } from '@/lib/pubPhoto'
 import PuntAndPintsPage from './PuntAndPintsPage'
-import Link from 'next/link'
+import GuideEvidence from '@/components/GuideEvidence'
 
 export const metadata: Metadata = {
   title: 'Punt & Pints: Perth Pubs with TAB Facilities',
@@ -36,12 +36,7 @@ export default async function Page() {
         { name: 'Discover', url: 'https://perthpintprices.com/discover' },
         { name: 'Punt & Pints', url: 'https://perthpintprices.com/guides/punt-and-pints' },
       ]} />
-      <div className="sr-only" aria-hidden="true">
-        <p>Find Perth pubs with TAB facilities for watching the races while enjoying a cold pint. Verified prices and locations across Perth suburbs.</p>
-        <Link href="/">Home</Link>
-        <Link href="/discover">Discover</Link>
-        <Link href="/happy-hour">Happy Hours</Link>
-      </div>
+      <GuideEvidence kind="tab" pubs={initialPubs} />
       <PuntAndPintsPage initialPubs={initialPubs} />
     </>
   )
