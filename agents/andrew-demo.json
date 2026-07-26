@@ -64,6 +64,7 @@
         "recorded": false,
         "proposed": {
           "pint_price": "number|null",
+          "unit": "pint|schooner|pot|null",
           "beer_type": "string|null",
           "happy_hour": "string|null",
           "confidence": "high|medium|low"

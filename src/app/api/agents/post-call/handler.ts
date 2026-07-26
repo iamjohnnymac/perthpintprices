@@ -129,14 +129,12 @@ export async function handlePostCall(req: NextRequest, deps: PostCallDeps) {
 
   const d = body.data
   const pubSlug = d.conversation_initiation_client_data?.dynamic_variables?.pub_slug || null
-  let demoCall = isAndrewDemoCall(pubSlug, d.agent_id, process.env.ELEVENLABS_DEMO_AGENT_ID)
-  if (!demoCall && (body.type === 'call_initiation_failure' || !pubSlug)) {
-    const reservation = await findDemoReservation(supabase, d.conversation_id)
-    if (reservation.error) {
-      return NextResponse.json({ ok: false, error: 'demo reservation lookup failed' }, { status: 500 })
-    }
-    demoCall = reservation.matched
+  const reservation = await findDemoReservation(supabase, d.conversation_id)
+  if (reservation.error) {
+    return NextResponse.json({ ok: false, error: 'demo reservation lookup failed' }, { status: 500 })
   }
+  const demoCall = reservation.matched
+    || isAndrewDemoCall(pubSlug, d.agent_id, process.env.ELEVENLABS_DEMO_AGENT_ID)
 
   if (body.type === 'call_initiation_failure') {
     return demoCall

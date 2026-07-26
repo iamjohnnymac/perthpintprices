@@ -44,6 +44,7 @@ describe('post-call webhook', () => {
     let rpcArgs: Record<string, unknown> | null = null
     const supabase = {
       from(table: string) {
+        if (table === 'phone_call_log') return emptyDemoReservationQuery()
         if (table === 'pubs') {
           return pubsQuery({
             pub: { id: 42, price: null, price_verified: false },
@@ -193,6 +194,64 @@ describe('post-call webhook', () => {
     }
   })
 
+  it('treats a persisted demo reservation as authoritative for transcription callbacks', async () => {
+    process.env.ELEVENLABS_POST_CALL_WEBHOOK_SECRET = 'test-secret'
+
+    for (const demoAgentEnv of [undefined, 'agent_rotated_after_call_started']) {
+      if (demoAgentEnv) process.env.ELEVENLABS_DEMO_AGENT_ID = demoAgentEnv
+      else delete process.env.ELEVENLABS_DEMO_AGENT_ID
+
+      let archived: Record<string, unknown> | null = null
+      const touchedTables: string[] = []
+      let rpcCalled = false
+      const supabase = {
+        from(table: string) {
+          touchedTables.push(table)
+          if (table === 'phone_call_log') {
+            return demoCallLogQuery(demoLockRow('conv_demo_authoritative_123'), row => { archived = row })
+          }
+          throw new Error(`Persisted demo reservation touched ${table}`)
+        },
+        rpc() {
+          rpcCalled = true
+          throw new Error('Persisted demo reservation must not use an RPC')
+        },
+      }
+      const event = postCallBody()
+      event.data.agent_id = 'agent_demo_123'
+      event.data.conversation_id = 'conv_demo_authoritative_123'
+      event.data.conversation_initiation_client_data.dynamic_variables.pub_slug = 'test-pub'
+      event.data.transcript = [
+        { role: 'agent', message: "Hi, I'm Jane Person at 44 King Street." },
+        { role: 'user', message: 'Call zero four one two three four five six seven eight.' },
+      ]
+      event.data.analysis.transcript_summary = 'Jane Person at 44 King Street quoted nine dollars.'
+      const collection = event.data.analysis.data_collection_results as Record<string, { value: unknown }>
+      collection.price = { value: "9 Jane Person at 44 King Street" }
+      collection.beer_type = { value: 'Swan Draught Jane Person' }
+      collection.happy_hour = { value: 'Mon-Fri 4-6pm call zero four one two' }
+      collection.confidence = { value: 'high Jane Person' }
+
+      const response = await handlePostCall(jsonRequest(event), { supabase })
+      const body = await response.json()
+      const serialized = JSON.stringify(archived)
+
+      assert.equal(response.status, 200)
+      assert.deepEqual(body, { ok: true, sandbox: true, recorded: false })
+      assert.deepEqual([...new Set(touchedTables)], ['phone_call_log'])
+      assert.equal(rpcCalled, false)
+      assert.ok(archived)
+      assert.equal((archived as Record<string, unknown>).pub_id, null)
+      assert.equal((archived as Record<string, unknown>).call_sid, 'ai-demo-done-conv_demo_authoritative_123')
+      assert.equal((archived as Record<string, unknown>).transcript, '[Demo transcript withheld for privacy]')
+      assert.equal((archived as Record<string, unknown>).parsed_price, null)
+      assert.equal((archived as Record<string, unknown>).parsed_beer_type, null)
+      for (const unsafeValue of ['Jane Person', '44 King Street', 'zero four one two', 'test-pub']) {
+        assert.equal(serialized.includes(unsafeValue), false, `${unsafeValue} leaked into persisted demo log`)
+      }
+    }
+  })
+
   it('archives a demo initiation failure without storing the destination or raw provider metadata', async () => {
     process.env.ELEVENLABS_POST_CALL_WEBHOOK_SECRET = 'test-secret'
     process.env.ELEVENLABS_DEMO_AGENT_ID = 'agent_demo_123'
@@ -293,6 +352,7 @@ describe('post-call webhook', () => {
 
     const supabase = {
       from(table: string) {
+        if (table === 'phone_call_log') return emptyDemoReservationQuery()
         if (table === 'pubs') {
           return pubsQuery({
             pub: { id: 42, price: null, price_verified: false },
@@ -319,6 +379,7 @@ describe('post-call webhook', () => {
     let rpcCalled = false
     const supabase = {
       from(table: string) {
+        if (table === 'phone_call_log') return emptyDemoReservationQuery()
         assert.equal(table, 'pubs')
         return pubsQuery({
           pub: null,
@@ -343,6 +404,7 @@ describe('post-call webhook', () => {
     let rpcCallCount = 0
     const supabase = {
       from(table: string) {
+        if (table === 'phone_call_log') return emptyDemoReservationQuery()
         if (table === 'pubs') {
           return pubsQuery({
             pub: { id: 42, price: null, price_verified: false },
@@ -456,6 +518,15 @@ function insertQuery(onInsert: (row: Record<string, unknown>) => void) {
       onInsert(row)
       return Promise.resolve({ error: null })
     },
+  }
+}
+
+function emptyDemoReservationQuery() {
+  return {
+    select() { return this },
+    is() { return this },
+    order() { return this },
+    limit() { return Promise.resolve({ data: [], error: null }) },
   }
 }
 

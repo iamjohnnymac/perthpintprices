@@ -1,5 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { ANDREW_DEMO_RESERVED_SLUG } from '@/lib/andrewDemo'
+import {
+  parseAndrewDemoBeer,
+  parseAndrewDemoConfidence,
+  parseAndrewDemoHappyHour,
+  parseAndrewDemoPrice,
+  parseAndrewDemoUnit,
+} from '@/lib/andrewDemoFields'
 import { normalizePriceConfidence } from '@/lib/priceProvenance'
 import { normalizeVoicePintPrice, parseVoiceNumber } from '@/lib/voicePrice'
 
@@ -53,6 +60,28 @@ export async function handleRecordPrice(
     return NextResponse.json({ ok: false, error: 'bad json' }, { status: 400 })
   }
 
+  if (pubSlug === ANDREW_DEMO_RESERVED_SLUG) {
+    const pintPrice = parseAndrewDemoPrice(body.price, body.unit)
+    const beerType = parseAndrewDemoBeer(body.beer_type)
+    const happyHour = parseAndrewDemoHappyHour(body.happy_hour)
+    if (pintPrice == null && beerType == null && happyHour == null) {
+      return NextResponse.json({ ok: false, error: 'no valid demo data to preview' }, { status: 400 })
+    }
+
+    return NextResponse.json({
+      ok: true,
+      sandbox: true,
+      recorded: false,
+      proposed: {
+        pint_price: pintPrice,
+        unit: parseAndrewDemoUnit(body.unit),
+        beer_type: beerType,
+        happy_hour: happyHour,
+        confidence: parseAndrewDemoConfidence(body.confidence),
+      },
+    })
+  }
+
   // Price is optional now — sometimes the bartender only gives us the happy hour
   // (e.g. AI receptionist transferred before we got the price). Any data beats
   // none. We only refuse if the tool fires with literally nothing useful.
@@ -66,24 +95,6 @@ export async function handleRecordPrice(
 
   // Keep processing HH / brand even if price is implausible — discard the price only.
   const pintPrice = hasPrice ? normalizeVoicePintPrice(body.price, body.unit) : null
-
-  if (pubSlug === ANDREW_DEMO_RESERVED_SLUG) {
-    if (pintPrice == null && !hasHH && !hasBrand) {
-      return NextResponse.json({ ok: false, error: 'price out of range, no other data' }, { status: 400 })
-    }
-
-    return NextResponse.json({
-      ok: true,
-      sandbox: true,
-      recorded: false,
-      proposed: {
-        pint_price: pintPrice,
-        beer_type: hasBrand ? body.beer_type!.trim() : null,
-        happy_hour: hasHH ? body.happy_hour!.trim() : null,
-        confidence: normalizePriceConfidence(body.confidence),
-      },
-    })
-  }
 
   const supabase = deps.supabase ?? deps.getSupabase?.()
   if (!supabase) return NextResponse.json({ ok: false, error: 'server misconfigured' }, { status: 500 })
