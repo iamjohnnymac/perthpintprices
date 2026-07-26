@@ -249,23 +249,27 @@ async function findDemoReservation(
   supabase: { from(table: string): any },
   conversationId: string,
 ) {
-  const { data, error } = await supabase
-    .from('phone_call_log')
-    .select('call_sid, parsed_notes')
-    .is('pub_id', null)
-    .order('created_at', { ascending: false })
-    .limit(100)
-  if (error) return { matched: false, error }
-  const matched = (data || []).some((row: { call_sid?: string | null; parsed_notes?: string | null }) => {
-    const metadata = parseAndrewDemoMetadata(row.parsed_notes || null)
-    if (!metadata) return false
-    if (metadata.conversation_id) return metadata.conversation_id === conversationId
-    return row.call_sid === ANDREW_DEMO_ACTIVE_LOCK_ID
-  })
-  return {
-    matched,
-    error: null,
+  const callSids = [
+    ANDREW_DEMO_ACTIVE_LOCK_ID,
+    andrewDemoArchiveId(conversationId, 'done'),
+    andrewDemoArchiveId(conversationId, 'failed'),
+  ]
+
+  for (const callSid of callSids) {
+    const { data, error } = await supabase
+      .from('phone_call_log')
+      .select('call_sid, parsed_notes')
+      .eq('call_sid', callSid)
+      .maybeSingle()
+    if (error) return { matched: false, error }
+
+    const metadata = parseAndrewDemoMetadata(data?.parsed_notes || null)
+    if (metadata?.conversation_id === conversationId) {
+      return { matched: true, error: null }
+    }
   }
+
+  return { matched: false, error: null }
 }
 
 async function handleDemoCallTerminal(
