@@ -16,6 +16,8 @@ interface ToolBody {
   conversation_id?: string
 }
 
+export const AI_DEMO_RESERVED_SLUG = '__ai-demo-no-write__'
+
 const UNIT_TO_PINT: Record<string, number> = {
   pint: 1,
   schooner: 570 / 425,
@@ -77,6 +79,24 @@ export async function handleRecordPrice(
       // Keep processing HH / brand even if price is implausible — discard the price only.
       pintPrice = null
     }
+  }
+
+  if (pubSlug === AI_DEMO_RESERVED_SLUG) {
+    if (pintPrice == null && !hasHH && !hasBrand) {
+      return NextResponse.json({ ok: false, error: 'price out of range, no other data' }, { status: 400 })
+    }
+
+    return NextResponse.json({
+      ok: true,
+      sandbox: true,
+      recorded: false,
+      proposed: {
+        pint_price: pintPrice,
+        beer_type: hasBrand ? body.beer_type!.trim() : null,
+        happy_hour: hasHH ? body.happy_hour!.trim() : null,
+        confidence: normalizePriceConfidence(body.confidence),
+      },
+    })
   }
 
   const supabase = deps.supabase ?? deps.getSupabase?.()

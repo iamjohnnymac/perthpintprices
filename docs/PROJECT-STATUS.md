@@ -10,6 +10,12 @@ Stack, database, routes, components, and lib files are documented in `CLAUDE.md`
 
 ## What's done recently
 
+### Andrew owner-test controls ready for review (2026-07-26)
+- **Issue #250 / branch `codex/andrew-admin-demo`:** adds a finished, unlisted and `noindex` Andrew price-check presentation at `/ai-price-demo`, plus an authenticated Andrew admin tab with a masked fixed destination, explicit AI-call/transcription consent, live status, sanitized transcript and a proposed listing preview.
+- **No-write boundary:** the admin endpoint accepts consent only, reads the destination from `AI_DEMO_TEST_PHONE_E164`, requires a separate `ELEVENLABS_DEMO_AGENT_ID`, reserves one active call in `phone_call_log` and enforces a 15-minute cooldown. The fixed `__ai-demo-no-write__` tool slug returns a validated proposal without creating a Supabase client or touching `pubs` / `price_history`.
+- **Review state only:** the public sequence says captured, validated and ready for review. It does not claim independent evidence verification or a published listing. No test call was placed and no destination number is committed; live demo-agent configuration and retention decisions remain an owner setup step after review.
+- **Verification:** 382 unit tests, TypeScript, lint, production build and four desktop/mobile Playwright checks pass. Inspected before/after, ready/completed evidence is under `artifacts/issue-250/`. The humanizer skill was unavailable, so new copy was checked manually against `docs/brand-voice-brief.md`.
+
 ### Guide evidence follows the page header (2026-07-21)
 - **Commit `f62fe7a`:** moved the server-rendered Checked Picks panel below `SubPageNav` on Cosy Corners, Sunset Sippers, and Punt & Pints. The evidence remains in initial HTML while the brand, breadcrumb, and navigation now lead the page on desktop and mobile.
 - **Regression evidence:** the focused Playwright contract fails against the previous production order and passes for all three routes at 1280×800 and 375×812. Inspected before/after screenshots are committed in `artifacts/guide-evidence-placement/`.

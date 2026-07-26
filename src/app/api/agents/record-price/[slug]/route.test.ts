@@ -16,6 +16,61 @@ function jsonRequest(body: unknown) {
 }
 
 describe('record-price route', () => {
+  it('returns a sandbox proposal for the reserved slug without touching Supabase', async () => {
+    process.env.ELEVENLABS_RECORD_PRICE_TOOL_SECRET = 'test-secret'
+    let getSupabaseCalled = false
+
+    const response = await handleRecordPrice(
+      jsonRequest({
+        price: 9,
+        beer_type: 'Swan Draught',
+        happy_hour: 'Mon-Fri 4-6pm',
+        confidence: 'high',
+      }),
+      { params: { slug: '__ai-demo-no-write__' } },
+      {
+        getSupabase: () => {
+          getSupabaseCalled = true
+          throw new Error('sandbox must not create a Supabase client')
+        },
+      },
+    )
+    const body = await response.json()
+
+    assert.equal(response.status, 200)
+    assert.equal(getSupabaseCalled, false)
+    assert.deepEqual(body, {
+      ok: true,
+      sandbox: true,
+      recorded: false,
+      proposed: {
+        pint_price: 9,
+        beer_type: 'Swan Draught',
+        happy_hour: 'Mon-Fri 4-6pm',
+        confidence: 'high',
+      },
+    })
+  })
+
+  it('keeps validation active for an unusable reserved-slug capture without touching Supabase', async () => {
+    process.env.ELEVENLABS_RECORD_PRICE_TOOL_SECRET = 'test-secret'
+    let getSupabaseCalled = false
+
+    const response = await handleRecordPrice(
+      jsonRequest({ price: 99 }),
+      { params: { slug: '__ai-demo-no-write__' } },
+      {
+        getSupabase: () => {
+          getSupabaseCalled = true
+          throw new Error('sandbox must not create a Supabase client')
+        },
+      },
+    )
+
+    assert.equal(response.status, 400)
+    assert.equal(getSupabaseCalled, false)
+  })
+
   it('does not bump last_verified for happy-hour-only captures', async () => {
     process.env.ELEVENLABS_RECORD_PRICE_TOOL_SECRET = 'test-secret'
 
@@ -100,6 +155,35 @@ describe('record-price route', () => {
       verified_at: '2026-05-31T00:00:00.000Z',
       confidence: 'high',
     })
+  })
+
+  it('keeps the real-slug read and transaction path unchanged', async () => {
+    process.env.ELEVENLABS_RECORD_PRICE_TOOL_SECRET = 'test-secret'
+    const tables: string[] = []
+    const rpcs: string[] = []
+    const supabase = {
+      from(table: string) {
+        tables.push(table)
+        return pubsQuery({
+          pub: { id: 7, slug: 'real-pub', suburb: 'Perth', name: 'Real Pub', price: 12, price_verified: true },
+          onUpdate: () => {},
+        })
+      },
+      rpc(fn: string) {
+        rpcs.push(fn)
+        return Promise.resolve({ data: null, error: null })
+      },
+    }
+
+    const response = await handleRecordPrice(
+      jsonRequest({ price: 11, beer_type: 'Emu Export' }),
+      { params: { slug: 'real-pub' } },
+      { supabase },
+    )
+
+    assert.equal(response.status, 200)
+    assert.deepEqual(tables, ['pubs'])
+    assert.deepEqual(rpcs, ['record_agent_price'])
   })
 })
 
