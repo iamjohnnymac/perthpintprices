@@ -7,6 +7,16 @@
     "fixed_destination": "AI_DEMO_TEST_PHONE_E164",
     "phone_number_id": "ELEVENLABS_PHONE_NUMBER_ID"
   },
+  "conversation_config": {
+    "tts": {
+      "voice_id": "IRuDCTQL6MMy1qvcsue1",
+      "model_id": "eleven_v3_conversational",
+      "stability": 0.7,
+      "similarity_boost": 0.75,
+      "speed": 0.95,
+      "expressive_mode": true
+    }
+  },
   "agent": {
     "name": "Andrew — owner price-check test",
     "first_message": "Hi, Andrew here from Perth Pint Prices. This is the owner test call.",

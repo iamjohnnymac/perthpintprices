@@ -8,9 +8,14 @@ import {
   isAndrewDemoCall,
   parseAndrewDemoMetadata,
 } from '@/lib/andrewDemo'
+import {
+  parseAndrewDemoBeer,
+  parseAndrewDemoConfidence,
+  parseAndrewDemoHappyHour,
+  parseAndrewDemoPrice,
+} from '@/lib/andrewDemoFields'
 import { normalizePriceConfidence } from '@/lib/priceProvenance'
 import { normalizeVoicePintPrice, parseVoiceNumber, unwrapVoiceField } from '@/lib/voicePrice'
-import { sanitizeVendorText } from '@/lib/vendorText'
 
 // ElevenLabs post-call webhook. Fired once per call with a full transcript,
 // metadata, and cost. We log every call to phone_call_log for audit. If the
@@ -56,6 +61,7 @@ interface PubPhoneRow {
 }
 
 const WEBHOOK_TIMESTAMP_TOLERANCE_SECONDS = 30 * 60
+const DEMO_TRANSCRIPT_PLACEHOLDER = '[Demo transcript withheld for privacy]'
 
 function parseString(value: unknown): string | null {
   const unwrapped = unwrapVoiceField(value)
@@ -123,7 +129,14 @@ export async function handlePostCall(req: NextRequest, deps: PostCallDeps) {
 
   const d = body.data
   const pubSlug = d.conversation_initiation_client_data?.dynamic_variables?.pub_slug || null
-  const demoCall = isAndrewDemoCall(pubSlug, d.agent_id, process.env.ELEVENLABS_DEMO_AGENT_ID)
+  let demoCall = isAndrewDemoCall(pubSlug, d.agent_id, process.env.ELEVENLABS_DEMO_AGENT_ID)
+  if (!demoCall && (body.type === 'call_initiation_failure' || !pubSlug)) {
+    const reservation = await findDemoReservation(supabase, d.conversation_id)
+    if (reservation.error) {
+      return NextResponse.json({ ok: false, error: 'demo reservation lookup failed' }, { status: 500 })
+    }
+    demoCall = reservation.matched
+  }
 
   if (body.type === 'call_initiation_failure') {
     return demoCall
@@ -234,6 +247,29 @@ export async function handlePostCall(req: NextRequest, deps: PostCallDeps) {
   return NextResponse.json({ ok: true, fallback_wrote: fallbackWrote })
 }
 
+async function findDemoReservation(
+  supabase: { from(table: string): any },
+  conversationId: string,
+) {
+  const { data, error } = await supabase
+    .from('phone_call_log')
+    .select('call_sid, parsed_notes')
+    .is('pub_id', null)
+    .order('created_at', { ascending: false })
+    .limit(100)
+  if (error) return { matched: false, error }
+  const matched = (data || []).some((row: { call_sid?: string | null; parsed_notes?: string | null }) => {
+    const metadata = parseAndrewDemoMetadata(row.parsed_notes || null)
+    if (!metadata) return false
+    if (metadata.conversation_id) return metadata.conversation_id === conversationId
+    return row.call_sid === ANDREW_DEMO_ACTIVE_LOCK_ID
+  })
+  return {
+    matched,
+    error: null,
+  }
+}
+
 async function handleDemoCallTerminal(
   body: PostCallBody,
   supabase: { from(table: string): any },
@@ -273,30 +309,16 @@ async function handleDemoCallTerminal(
     status,
   }
   const collection = d.analysis?.data_collection_results || {}
-  const transcript = status === 'done'
-    ? (d.transcript || []).slice(0, 40).flatMap((line) => {
-      const role = line.role === 'agent' ? 'Andrew' : line.role === 'user' ? 'Owner' : null
-      const message = sanitizeVendorText(line.message, { maxLength: 700, redactStandaloneName: true })
-      return role && message ? [`${role}: ${message}`] : []
-    }).join('\n') || null
-    : null
-  const confidenceCandidate = sanitizeVendorText(collection.confidence, { maxLength: 20 })?.toLowerCase()
-  const confidence = confidenceCandidate === 'high' || confidenceCandidate === 'medium' || confidenceCandidate === 'low'
-    ? confidenceCandidate
-    : null
-  const parsedPrice = status === 'done' ? normalizeVoicePintPrice(collection.price, collection.unit) : null
-  const parsedBeerType = status === 'done'
-    ? sanitizeVendorText(collection.beer_type, { maxLength: 100 })
-    : null
-  const parsedHappyHour = status === 'done'
-    ? sanitizeVendorText(collection.happy_hour, { maxLength: 160 })
-    : null
+  const confidence = status === 'done' ? parseAndrewDemoConfidence(collection.confidence) : null
+  const parsedPrice = status === 'done' ? parseAndrewDemoPrice(collection.price, collection.unit) : null
+  const parsedBeerType = status === 'done' ? parseAndrewDemoBeer(collection.beer_type) : null
+  const parsedHappyHour = status === 'done' ? parseAndrewDemoHappyHour(collection.happy_hour) : null
   const archiveId = andrewDemoArchiveId(d.conversation_id, status)
   const safeMetadata = createAndrewDemoMetadata(identity, status, d.conversation_id)
   const safeLog = {
     pub_id: null,
     call_sid: archiveId,
-    transcript,
+    transcript: DEMO_TRANSCRIPT_PLACEHOLDER,
     recording_url: null,
     parsed_price: parsedPrice,
     parsed_beer_type: parsedBeerType,

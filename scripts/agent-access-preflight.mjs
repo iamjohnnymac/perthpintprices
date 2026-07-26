@@ -1,4 +1,5 @@
 import { ACCESS_BUNDLES, inspectAccessBundle, validateOnlineAccess } from './lib/agent-access.mjs'
+import { readAndrewDemoVoiceContract } from './lib/andrew-demo-config.mjs'
 
 const bundleName = process.argv[2]
 if (!bundleName) {
@@ -18,6 +19,15 @@ for (const check of checks) {
   console.log(`[access-preflight] ${check.name}: ${check.present ? 'present' : 'missing'}`)
 }
 if (checks.some(check => !check.present)) process.exit(1)
+if (bundleName === 'andrew-owner-demo') {
+  try {
+    readAndrewDemoVoiceContract()
+    console.log('[access-preflight] Andrew demo voice contract: matches production')
+  } catch (error) {
+    console.error(`[access-preflight] FAIL: ${error.message}`)
+    process.exit(1)
+  }
+}
 if (process.argv.includes('--online')) {
   try {
     const online = await validateOnlineAccess(bundleName)

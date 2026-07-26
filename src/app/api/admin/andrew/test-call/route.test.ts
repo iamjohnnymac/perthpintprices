@@ -364,7 +364,7 @@ describe('admin Andrew owner test call', () => {
     assert.equal(state.inserts[0]?.value.call_sid, '__ai-demo-active-call__')
   })
 
-  it('validates ownership and agent id before returning a narrow sanitized status', async () => {
+  it('returns static call events and strictly validated fields without raw vendor text', async () => {
     configureEnv()
     const { client, state } = fakeSupabase({
       recentRows: [{
@@ -383,12 +383,12 @@ describe('admin Andrew owner test call', () => {
       has_audio: true,
       audio_url: 'https://private.example/audio.mp3',
       transcript: [
-        { role: 'agent', message: `I have your number as ${DESTINATION}.` },
-        { role: 'user', message: 'Swan Draught is $9. Email me at owner@example.com.' },
+        { role: 'agent', message: `Hi, I'm Jane Person at 44 King Street. Ring ${DESTINATION}.` },
+        { role: 'user', message: 'This is Jane Person speaking. Call me Jane Person on zero four one two three four five six seven eight.' },
         {
           role: 'agent',
-          message: 'Thanks, I have captured that.',
-          tool_calls: [{ params_as_json: '{"raw_quote":"Contact Raw Person at raw@example.com"}' }],
+          message: 'Raw vendor message must never be returned.',
+          tool_calls: [{ params_as_json: '{"raw_quote":"Raw Person, 44 King Street, zero four one two"}' }],
           tool_results: [{
             tool_name: 'record_price',
             result_value: JSON.stringify({
@@ -396,10 +396,10 @@ describe('admin Andrew owner test call', () => {
               sandbox: true,
               recorded: false,
               proposed: {
-                pint_price: 9,
-                beer_type: 'Swan Draught; owner: Alice Person; alice@example.com',
-                happy_hour: 'Contact Bob Person on +61 488 777 666',
-                confidence: 'high',
+                pint_price: '9 call me Tool Person',
+                beer_type: 'Tool Person',
+                happy_hour: '44 King Street',
+                confidence: 'high Tool Person',
               },
             }),
           }],
@@ -408,9 +408,9 @@ describe('admin Andrew owner test call', () => {
       analysis: {
         data_collection_results: {
           price: { value: 9 },
-          beer_type: { value: 'Swan Draught; contact Jane Person at beer@example.com' },
+          beer_type: { value: 'Swan Draught' },
           unit: { value: 'pint' },
-          happy_hour: { value: 'Ask for John Smith on +61 477 888 999' },
+          happy_hour: { value: 'Mon-Fri 4-6pm' },
           confidence: { value: 'high' },
         },
       },
@@ -427,25 +427,80 @@ describe('admin Andrew owner test call', () => {
     assert.deepEqual(body.conversation, { id: CONVERSATION_ID, status: 'done', terminal: true })
     assert.deepEqual(body.proposedListing, {
       price: 9,
-      beerType: 'Swan Draught; [name redacted]; [email redacted]',
-      happyHour: '[name redacted] on [phone redacted]',
+      beerType: 'Swan Draught',
+      happyHour: 'Mon–Fri · 4–6pm',
       confidence: 'high',
     })
-    assert.match(body.transcript[0].message, /\[phone redacted\]/)
-    assert.match(body.transcript[1].message, /\[email redacted\]/)
+    assert.deepEqual(body.transcript, [
+      { role: 'Andrew', message: 'Asked for the current pint price, tap and happy hour.' },
+      { role: 'Owner', message: 'A venue response was captured and converted into review fields.' },
+    ])
     assert.equal(serialized.includes(DESTINATION), false)
     assert.equal(serialized.includes('CA-private'), false)
     assert.equal(serialized.includes('audio.mp3'), false)
     assert.equal(serialized.includes('cost_fiat'), false)
-    for (const pii of ['Jane Person', 'John Smith', 'Alice Person', 'Bob Person', 'Failure Person', 'Raw Person', '@example.com']) {
+    for (const pii of ['Jane Person', 'Tool Person', 'Failure Person', 'Raw Person', '44 King Street', 'zero four one two', '@example.com', 'Raw vendor message']) {
       assert.equal(serialized.includes(pii), false, `${pii} leaked from a vendor-controlled field`)
     }
     assert.deepEqual(Object.keys(body).sort(), [
-      'conversation', 'destination', 'ok', 'proposedListing', 'structured', 'toolResult', 'transcript',
+      'conversation', 'destination', 'ok', 'proposedListing', 'structured', 'transcript',
     ])
     assert.equal(state.updates.at(-1)?.value.parsed_confidence, 'ai_demo_done')
     assert.equal(state.updates.at(-1)?.value.call_sid, `ai-demo-done-${CONVERSATION_ID}`)
     assert.equal(state.updates.at(-1)?.value.recording_url, undefined)
+    assert.equal(JSON.stringify(state.updates.at(-1)?.value).includes('Jane Person'), false)
+  })
+
+  it('drops every structured field when it contains untrusted prose or personal data', async () => {
+    configureEnv()
+    const { client, state } = fakeSupabase({
+      recentRows: [{
+        call_sid: '__ai-demo-active-call__',
+        parsed_confidence: 'ai_demo_processing',
+        parsed_notes: demoNotes('processing', CONVERSATION_ID),
+        created_at: NOW.toISOString(),
+      }],
+    })
+    const adversarial = 'Hi, I\'m Jane Person at 44 King Street; call me on zero four one two three four five six seven eight'
+    const response = await handleAndrewTestCallGet(getRequest(CONVERSATION_ID), {
+      authenticate: allowedAuth(client),
+      fetchFn: async () => Response.json({
+        agent_id: AGENT_ID,
+        conversation_id: CONVERSATION_ID,
+        status: 'done',
+        failure_reason: adversarial,
+        transcript: [
+          { role: 'agent', message: adversarial },
+          { role: 'user', message: 'This is Jane Person speaking.' },
+          { role: 'user', message: 'Call me Jane Person.' },
+        ],
+        analysis: {
+          data_collection_results: {
+            price: { value: `9 ${adversarial}` },
+            beer_type: { value: `Swan Draught ${adversarial}` },
+            unit: { value: `pint ${adversarial}` },
+            happy_hour: { value: `Mon-Fri 4-6pm ${adversarial}` },
+            confidence: { value: `high ${adversarial}` },
+          },
+        },
+      }),
+    })
+    const body = await response.json()
+    const returned = JSON.stringify(body)
+    const persisted = JSON.stringify(state.updates.at(-1)?.value)
+
+    assert.equal(response.status, 200)
+    assert.deepEqual(body.proposedListing, {
+      price: null,
+      beerType: null,
+      happyHour: null,
+      confidence: null,
+    })
+    assert.equal(body.structured.unit, null)
+    for (const unsafe of ['Jane Person', '44 King Street', 'zero four one two', 'This is', 'Call me']) {
+      assert.equal(returned.includes(unsafe), false, `${unsafe} leaked to the admin response`)
+      assert.equal(persisted.includes(unsafe), false, `${unsafe} leaked to phone_call_log`)
+    }
   })
 
   it('does not call the vendor for a conversation that is not owned by the demo agent', async () => {

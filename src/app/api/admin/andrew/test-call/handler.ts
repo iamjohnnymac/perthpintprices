@@ -12,8 +12,13 @@ import {
   parseAndrewDemoMetadata,
   type AndrewDemoMetadata,
 } from '@/lib/andrewDemo'
-import { normalizeVoicePintPrice, normalizeVoiceUnit } from '@/lib/voicePrice'
-import { sanitizeVendorText } from '@/lib/vendorText'
+import {
+  parseAndrewDemoBeer,
+  parseAndrewDemoConfidence,
+  parseAndrewDemoHappyHour,
+  parseAndrewDemoPrice,
+  parseAndrewDemoUnit,
+} from '@/lib/andrewDemoFields'
 
 const ELEVENLABS_BASE_URL = 'https://api.elevenlabs.io/v1/convai'
 const COOLDOWN_MS = 15 * 60 * 1000
@@ -346,64 +351,29 @@ export async function handleAndrewTestCallPost(request: NextRequest, deps: Andre
   })
 }
 
-function confidenceValue(value: unknown, destination: string) {
-  const candidate = sanitizeVendorText(value, { destination, maxLength: 20 })?.toLowerCase()
-  return candidate === 'high' || candidate === 'medium' || candidate === 'low' ? candidate : null
-}
-
-function structuredCapture(vendorBody: Record<string, unknown>, destination: string) {
+function structuredCapture(vendorBody: Record<string, unknown>) {
   const analysis = isRecord(vendorBody.analysis) ? vendorBody.analysis : {}
   const collection = isRecord(analysis.data_collection_results) ? analysis.data_collection_results : {}
-  const unit = normalizeVoiceUnit(collection.unit)
 
   return {
-    price: normalizeVoicePintPrice(collection.price, collection.unit),
-    beerType: sanitizeVendorText(collection.beer_type, { destination, maxLength: 100 }),
-    unit,
-    happyHour: sanitizeVendorText(collection.happy_hour, { destination, maxLength: 160 }),
-    confidence: confidenceValue(collection.confidence, destination),
+    price: parseAndrewDemoPrice(collection.price, collection.unit),
+    beerType: parseAndrewDemoBeer(collection.beer_type),
+    unit: parseAndrewDemoUnit(collection.unit),
+    happyHour: parseAndrewDemoHappyHour(collection.happy_hour),
+    confidence: parseAndrewDemoConfidence(collection.confidence),
   }
 }
 
-function sanitizedTranscript(vendorBody: Record<string, unknown>, destination: string) {
+function privacySafeEvents(vendorBody: Record<string, unknown>) {
   const transcript = Array.isArray(vendorBody.transcript) ? vendorBody.transcript : []
-  return transcript.slice(0, 40).flatMap((entry) => {
+  const roles = new Set(transcript.flatMap((entry) => {
     if (!isRecord(entry)) return []
-    const role = entry.role === 'agent' ? 'Andrew' : entry.role === 'user' ? 'Owner' : null
-    const message = sanitizeVendorText(entry.message, {
-      destination,
-      maxLength: 700,
-      redactStandaloneName: true,
-    })
-    return role && message ? [{ role, message }] : []
-  })
-}
-
-function sanitizedToolResult(vendorBody: Record<string, unknown>, destination: string) {
-  const transcript = Array.isArray(vendorBody.transcript) ? vendorBody.transcript : []
-  for (const entry of transcript) {
-    if (!isRecord(entry) || !Array.isArray(entry.tool_results)) continue
-    for (const result of entry.tool_results) {
-      if (!isRecord(result)) continue
-      let value: unknown = result.result_value
-      if (typeof value === 'string') {
-        try { value = JSON.parse(value) } catch { continue }
-      }
-      if (!isRecord(value) || value.sandbox !== true) continue
-      const proposed = isRecord(value.proposed) ? value.proposed : {}
-      return {
-        sandbox: true,
-        recorded: false,
-        proposed: {
-          price: normalizeVoicePintPrice(proposed.pint_price, 'pint'),
-          beerType: sanitizeVendorText(proposed.beer_type, { destination, maxLength: 100 }),
-          happyHour: sanitizeVendorText(proposed.happy_hour, { destination, maxLength: 160 }),
-          confidence: confidenceValue(proposed.confidence, destination),
-        },
-      }
-    }
-  }
-  return null
+    return entry.role === 'agent' || entry.role === 'user' ? [entry.role] : []
+  }))
+  return [
+    ...(roles.has('agent') ? [{ role: 'Andrew' as const, message: 'Asked for the current pint price, tap and happy hour.' }] : []),
+    ...(roles.has('user') ? [{ role: 'Owner' as const, message: 'A venue response was captured and converted into review fields.' }] : []),
+  ]
 }
 
 function normalizedStatus(value: unknown) {
@@ -478,15 +448,14 @@ export async function handleAndrewTestCallGet(request: NextRequest, deps: Andrew
   }
 
   const status = normalizedStatus(vendorBody.status)
-  const transcript = sanitizedTranscript(vendorBody, config.destination)
-  const structured = structuredCapture(vendorBody, config.destination)
-  const toolResult = sanitizedToolResult(vendorBody, config.destination)
+  const transcript = privacySafeEvents(vendorBody)
+  const structured = structuredCapture(vendorBody)
   const terminal = status === 'done' || status === 'failed'
   const proposedListing = {
-    price: toolResult?.proposed.price ?? structured.price,
-    beerType: toolResult?.proposed.beerType ?? structured.beerType,
-    happyHour: toolResult?.proposed.happyHour ?? structured.happyHour,
-    confidence: toolResult?.proposed.confidence ?? structured.confidence,
+    price: structured.price,
+    beerType: structured.beerType,
+    happyHour: structured.happyHour,
+    confidence: structured.confidence,
   }
 
   const logStatus = `ai_demo_${status.replace('-', '_')}`
@@ -509,7 +478,6 @@ export async function handleAndrewTestCallGet(request: NextRequest, deps: Andrew
     conversation: { id: conversationId, status, terminal },
     transcript,
     structured,
-    toolResult,
     proposedListing,
   })
 }

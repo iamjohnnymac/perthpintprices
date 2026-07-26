@@ -204,7 +204,7 @@ export default function AndrewTestCall({ password }: { password: string }) {
               <div className="rounded-card border-2 border-ink bg-off-white p-3">
                 <Database size={16} className="text-amber" />
                 <p className="mt-2 font-mono text-[0.55rem] font-bold uppercase tracking-[0.08em] text-gray-mid">Call record</p>
-                <p className="mt-1 font-mono text-[0.72rem] font-extrabold text-ink">Sanitized fields only</p>
+                <p className="mt-1 font-mono text-[0.72rem] font-extrabold text-ink">Validated fields only</p>
               </div>
             </div>
           </div>
@@ -219,7 +219,7 @@ export default function AndrewTestCall({ password }: { password: string }) {
                 className="mt-0.5 h-4 w-4 accent-amber"
               />
               <span className="text-[0.78rem] leading-relaxed text-white/75">
-                I consent to receive this AI-generated call and understand it will be transcribed. The result stays a private test preview.
+                I consent to receive this AI-generated call. The provider transcribes it, but this preview withholds the raw conversation and keeps only validated fields.
               </span>
             </label>
 
@@ -276,9 +276,9 @@ export default function AndrewTestCall({ password }: { password: string }) {
           <div className="flex items-center justify-between border-b border-white/15 px-5 py-4">
             <div className="flex items-center gap-2">
               <AudioWaveform size={16} className="text-amber-light" />
-              <h3 className="font-mono text-[0.68rem] font-extrabold uppercase tracking-[0.07em]">Sanitized transcript</h3>
+              <h3 className="font-mono text-[0.68rem] font-extrabold uppercase tracking-[0.07em]">Private call events</h3>
             </div>
-            <span className="font-mono text-[0.55rem] uppercase tracking-[0.06em] text-white/40">AI-generated</span>
+            <span className="font-mono text-[0.55rem] uppercase tracking-[0.06em] text-white/40">Raw text withheld</span>
           </div>
           <div className="min-h-64 space-y-4 p-5" data-testid="andrew-transcript">
             {state?.transcript?.length ? state.transcript.map((line, index) => (
@@ -290,7 +290,7 @@ export default function AndrewTestCall({ password }: { password: string }) {
               <div className="grid min-h-52 place-items-center text-center">
                 <div>
                   <AudioWaveform size={24} className="mx-auto text-white/20" />
-                  <p className="mt-3 font-mono text-[0.62rem] font-bold uppercase tracking-[0.06em] text-white/35">Transcript appears after the call</p>
+                  <p className="mt-3 font-mono text-[0.62rem] font-bold uppercase tracking-[0.06em] text-white/35">Call events appear after the call</p>
                 </div>
               </div>
             )}

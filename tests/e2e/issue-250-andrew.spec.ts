@@ -48,9 +48,8 @@ const completedCall = {
   destination: { masked: '+61 ••• ••• 955' },
   conversation: { id: 'conv_demo_123456', status: 'done', terminal: true },
   transcript: [
-    { role: 'Andrew', message: 'Hi, Andrew from Perth Pint Prices. What is your cheapest pint?' },
-    { role: 'Owner', message: 'Swan Draught is $9 a pint. Happy hour is 4–6pm, Monday to Friday.' },
-    { role: 'Andrew', message: 'Thanks. I have captured the price and happy hour.' },
+    { role: 'Andrew', message: 'Asked for the current pint price, tap and happy hour.' },
+    { role: 'Owner', message: 'A venue response was captured and converted into review fields.' },
   ],
   proposedListing: {
     price: 9,
@@ -168,7 +167,9 @@ test('authenticated Andrew admin tab shows consent, masked target, and captured 
   await page.getByRole('button', { name: 'Call my test line' }).click()
   await expect(page.getByText('Capture ready for review').first()).toBeVisible({ timeout: 8000 })
   await expect(page.getByTestId('proposed-price')).toHaveText('$9')
-  await expect(page.getByTestId('andrew-transcript')).toContainText('Swan Draught is $9 a pint')
+  await expect(page.getByText('Private call events')).toBeVisible()
+  await expect(page.getByTestId('andrew-transcript')).toContainText('A venue response was captured')
+  await expect(page.getByTestId('andrew-transcript')).not.toContainText('Swan Draught is $9 a pint')
   await expect(page.getByText('Not published')).toBeVisible()
   await saveEvidence(page, testInfo, 'after', 'admin', 'completed')
 })

@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 
-import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
+import { mkdirSync, writeFileSync } from 'node:fs'
 import { dirname } from 'node:path'
 import { config } from 'dotenv'
+import { readAndrewDemoVoiceContract } from './lib/andrew-demo-config.mjs'
 
 config({ path: process.env.ELEVENLABS_ENV_FILE || '.env.local', quiet: true })
 
@@ -12,8 +13,7 @@ if (!apiKey) {
   process.exit(1)
 }
 
-const agent = JSON.parse(readFileSync('agents/andrew.json', 'utf8'))
-const tts = agent.conversation_config.tts
+const tts = readAndrewDemoVoiceContract()
 // Conversational AI uses a channel-specific v3 model ID; the equivalent
 // Text-to-Speech API model is `eleven_v3`.
 const modelId = tts.model_id === 'eleven_v3_conversational' ? 'eleven_v3' : tts.model_id

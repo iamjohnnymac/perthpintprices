@@ -153,14 +153,25 @@ describe('post-call webhook', () => {
     event.data.conversation_id = 'conv_demo_post_123'
     event.data.conversation_initiation_client_data.dynamic_variables.pub_slug = '__ai-demo-no-write__'
     event.data.transcript = [
-      { role: 'user', message: 'Jane Person' },
-      { role: 'user', message: 'Email jane@example.com or ring +61 455 111 222.' },
+      { role: 'agent', message: "Hi, I'm Jane Person at 44 King Street." },
+      { role: 'user', message: 'This is Jane Person speaking.' },
+      { role: 'user', message: 'Call me Jane Person on zero four one two three four five six seven eight.' },
     ]
-    event.data.analysis.data_collection_results.beer_type = {
-      value: 'Swan Draught; contact Jane Person at beer@example.com',
+    const adversarialCollection = event.data.analysis.data_collection_results as Record<string, { value: unknown }>
+    adversarialCollection.price = {
+      value: "9 Hi, I'm Jane Person at 44 King Street",
     }
-    event.data.analysis.data_collection_results.happy_hour = {
-      value: 'Ask for John Smith on +61 466 222 333',
+    adversarialCollection.beer_type = {
+      value: 'Swan Draught Jane Person zero four one two',
+    }
+    adversarialCollection.unit = {
+      value: 'pint Jane Person 44 King Street',
+    }
+    adversarialCollection.happy_hour = {
+      value: 'Mon-Fri 4-6pm call me Jane Person',
+    }
+    adversarialCollection.confidence = {
+      value: 'high Jane Person zero four one two',
     }
 
     const response = await handlePostCall(jsonRequest(event), { supabase })
@@ -174,8 +185,10 @@ describe('post-call webhook', () => {
     assert.ok(archived)
     assert.equal((archived as Record<string, unknown>).pub_id, null)
     assert.equal((archived as Record<string, unknown>).call_sid, 'ai-demo-done-conv_demo_post_123')
-    assert.match(String((archived as Record<string, unknown>).transcript), /\[name redacted\]/)
-    for (const pii of ['Jane Person', 'John Smith', 'jane@example.com', 'beer@example.com', '+61 455 111 222', '+61 466 222 333']) {
+    assert.equal((archived as Record<string, unknown>).transcript, '[Demo transcript withheld for privacy]')
+    assert.equal((archived as Record<string, unknown>).parsed_price, null)
+    assert.equal((archived as Record<string, unknown>).parsed_beer_type, null)
+    for (const pii of ['Jane Person', '44 King Street', 'zero four one two', "Hi, I'm", 'This is', 'Call me']) {
       assert.equal(serialized.includes(pii), false, `${pii} leaked into the demo call log`)
     }
   })
@@ -211,9 +224,68 @@ describe('post-call webhook', () => {
     assert.equal(pubsTouched, false)
     assert.ok(archived)
     assert.equal((archived as Record<string, unknown>).call_sid, 'ai-demo-failed-conv_failed_123')
+    assert.equal((archived as Record<string, unknown>).transcript, '[Demo transcript withheld for privacy]')
     for (const pii of ['+61400000003', 'CA123', 'Jane Person', 'jane@example.com', 'CallStatus', 'metadata']) {
       assert.equal(serialized.includes(pii), false, `${pii} leaked into the demo failure log`)
     }
+  })
+
+  it('uses the persisted reservation when the demo agent env is missing during failure callback', async () => {
+    process.env.ELEVENLABS_POST_CALL_WEBHOOK_SECRET = 'test-secret'
+    delete process.env.ELEVENLABS_DEMO_AGENT_ID
+    let archived: Record<string, unknown> | null = null
+    let pubsTouched = false
+    const supabase = {
+      from(table: string) {
+        if (table === 'pubs' || table === 'price_history') {
+          pubsTouched = true
+          throw new Error(`Persisted demo reservation touched ${table}`)
+        }
+        if (table === 'phone_call_log') {
+          return demoCallLogQuery(demoLockRow('conv_failed_123'), row => { archived = row })
+        }
+        throw new Error(`Unexpected table ${table}`)
+      },
+      rpc() { throw new Error('Persisted demo reservation must not use an RPC') },
+    }
+    const event = callInitiationFailureBody()
+    event.data.agent_id = 'agent_demo_123'
+
+    const response = await handlePostCall(jsonRequest(event), { supabase })
+
+    assert.equal(response.status, 200)
+    assert.equal(pubsTouched, false)
+    assert.equal((archived as Record<string, unknown> | null)?.call_sid, 'ai-demo-failed-conv_failed_123')
+    assert.equal((archived as Record<string, unknown> | null)?.transcript, '[Demo transcript withheld for privacy]')
+  })
+
+  it('uses the persisted reservation when the demo agent env changes during failure callback', async () => {
+    process.env.ELEVENLABS_POST_CALL_WEBHOOK_SECRET = 'test-secret'
+    process.env.ELEVENLABS_DEMO_AGENT_ID = 'agent_rotated_after_call_started'
+    let archived: Record<string, unknown> | null = null
+    let pubsTouched = false
+    const supabase = {
+      from(table: string) {
+        if (table === 'pubs' || table === 'price_history') {
+          pubsTouched = true
+          throw new Error(`Rotated demo reservation touched ${table}`)
+        }
+        if (table === 'phone_call_log') {
+          return demoCallLogQuery(demoLockRow('conv_failed_123'), row => { archived = row })
+        }
+        throw new Error(`Unexpected table ${table}`)
+      },
+      rpc() { throw new Error('Rotated demo reservation must not use an RPC') },
+    }
+    const event = callInitiationFailureBody()
+    event.data.agent_id = 'agent_demo_123'
+
+    const response = await handlePostCall(jsonRequest(event), { supabase })
+
+    assert.equal(response.status, 200)
+    assert.equal(pubsTouched, false)
+    assert.equal((archived as Record<string, unknown> | null)?.call_sid, 'ai-demo-failed-conv_failed_123')
+    assert.equal(JSON.stringify(archived).includes('+61400000003'), false)
   })
 
   it('returns a server error when call logging fails', async () => {
@@ -374,6 +446,12 @@ function pubsQuery(options: {
 
 function insertQuery(onInsert: (row: Record<string, unknown>) => void) {
   return {
+    select() { return this },
+    eq() { return this },
+    is() { return this },
+    order() { return this },
+    limit() { return Promise.resolve({ data: [], error: null }) },
+    maybeSingle() { return Promise.resolve({ data: null, error: null }) },
     insert(row: Record<string, unknown>) {
       onInsert(row)
       return Promise.resolve({ error: null })
@@ -413,6 +491,9 @@ function demoCallLogQuery(
   return {
     select() { return this },
     eq() { return this },
+    is() { return this },
+    order() { return this },
+    limit() { return Promise.resolve({ data: [lockRow], error: null }) },
     maybeSingle() { return Promise.resolve({ data: lockRow, error: null }) },
     update(row: Record<string, unknown>) {
       onUpdate(row)

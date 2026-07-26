@@ -44,6 +44,8 @@ Required env vars (see `.env.example` once you create it locally):
 | `OPENAI_API_KEY` | OpenAI | Menu scanner + post-call fallback extraction |
 | `UPSTASH_REDIS_REST_URL`/`_TOKEN` | Upstash | Rate limiting + crowd reports cache |
 
+Before an owner-only Andrew test, run `npm run access:preflight -- andrew-owner-demo --online`. The preflight checks required variables without printing the destination, rejects matching production/demo agent IDs or a malformed E.164 destination, and verifies that `agents/andrew-demo.json` retains the production Andrew TTS contract.
+
 ## Scripts
 
 ```bash

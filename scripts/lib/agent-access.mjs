@@ -8,6 +8,13 @@ export const ACCESS_BUNDLES = {
   'pintsweep-kickoff': ['PINTSWEEP_KICKOFF_SECRET', 'SUPABASE_SERVICE_ROLE_KEY'],
   'elevenlabs-webhook': ['ELEVENLABS_POST_CALL_WEBHOOK_SECRET'],
   'elevenlabs-admin': ['ELEVENLABS_API_KEY', 'ELEVENLABS_AGENT_ID', 'ELEVENLABS_PHONE_NUMBER_ID'],
+  'andrew-owner-demo': [
+    'ELEVENLABS_API_KEY',
+    'ELEVENLABS_AGENT_ID',
+    'ELEVENLABS_DEMO_AGENT_ID',
+    'ELEVENLABS_PHONE_NUMBER_ID',
+    'AI_DEMO_TEST_PHONE_E164',
+  ],
   'content-ai': ['OPENROUTER_API_KEY'],
   'content-ai-anthropic': ['ANTHROPIC_API_KEY'],
   'places-refresh': ['GOOGLE_PLACES_API_KEY', 'SUPABASE_SERVICE_ROLE_KEY'],
@@ -21,7 +28,16 @@ export const ACCESS_BUNDLES = {
 export function inspectAccessBundle(bundleName, env = process.env) {
   const variables = ACCESS_BUNDLES[bundleName]
   if (!variables) throw new Error(`Unknown access bundle: ${bundleName}`)
-  return variables.map(name => ({ name, present: typeof env[name] === 'string' && env[name].length > 0 }))
+  return variables.map(name => ({ name, present: accessVariableIsValid(bundleName, name, env) }))
+}
+
+function accessVariableIsValid(bundleName, name, env) {
+  const value = env[name]
+  if (typeof value !== 'string' || value.length === 0) return false
+  if (bundleName !== 'andrew-owner-demo') return true
+  if (name === 'ELEVENLABS_DEMO_AGENT_ID') return value !== env.ELEVENLABS_AGENT_ID
+  if (name === 'AI_DEMO_TEST_PHONE_E164') return /^\+[1-9]\d{7,14}$/.test(value)
+  return true
 }
 
 const ONLINE_CHECKS = {
@@ -34,6 +50,10 @@ const ONLINE_CHECKS = {
     headers: { apikey: env.SUPABASE_SERVICE_ROLE_KEY, authorization: `Bearer ${env.SUPABASE_SERVICE_ROLE_KEY}` },
   }),
   'elevenlabs-admin': env => ({
+    url: 'https://api.elevenlabs.io/v1/user',
+    headers: { 'xi-api-key': env.ELEVENLABS_API_KEY },
+  }),
+  'andrew-owner-demo': env => ({
     url: 'https://api.elevenlabs.io/v1/user',
     headers: { 'xi-api-key': env.ELEVENLABS_API_KEY },
   }),
