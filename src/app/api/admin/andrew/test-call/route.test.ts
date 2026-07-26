@@ -58,10 +58,11 @@ function demoNotes(status: string, conversationId?: string, agentId = AGENT_ID) 
 interface FakeOptions {
   recentRows?: Array<Record<string, unknown>>
   reservedPub?: Record<string, unknown> | null
-  ownershipRow?: Record<string, unknown> | null
+  activeLockRow?: Record<string, unknown> | null
   insertError?: Record<string, unknown> | null
   updateError?: Record<string, unknown> | null
   recentError?: Record<string, unknown> | null
+  atomicLock?: { held: boolean }
 }
 
 function fakeSupabase(options: FakeOptions = {}) {
@@ -108,10 +109,14 @@ function fakeSupabase(options: FakeOptions = {}) {
       if (this.table === 'pubs') {
         return Promise.resolve({ data: options.reservedPub || null, error: null })
       }
-      return Promise.resolve({ data: options.ownershipRow || null, error: null })
+      return Promise.resolve({ data: options.activeLockRow || null, error: null })
     }
 
     insert(value: Record<string, unknown>) {
+      if (this.table === 'phone_call_log' && value.call_sid === '__ai-demo-active-call__' && options.atomicLock) {
+        if (options.atomicLock.held) return Promise.resolve({ error: { code: '23505' } })
+        options.atomicLock.held = true
+      }
       state.inserts.push({ table: this.table, value })
       return Promise.resolve({ error: options.insertError || null })
     }
@@ -168,8 +173,13 @@ describe('admin Andrew owner test call', () => {
     process.env.ELEVENLABS_DEMO_AGENT_ID = process.env.ELEVENLABS_AGENT_ID
     const aliased = await handleAndrewTestCallGet(getRequest(), { authenticate: allowedAuth(client) })
 
+    configureEnv()
+    delete process.env.ELEVENLABS_AGENT_ID
+    const productionMissing = await handleAndrewTestCallGet(getRequest(), { authenticate: allowedAuth(client) })
+
     assert.equal(missing.status, 503)
     assert.equal(aliased.status, 503)
+    assert.equal(productionMissing.status, 503)
     assert.equal(vendorCalls, 0)
   })
 
@@ -239,7 +249,9 @@ describe('admin Andrew owner test call', () => {
     assert.equal(serialized.includes(DESTINATION), false)
     assert.equal(serialized.includes('CA-secret-vendor-id'), false)
     assert.equal(state.inserts.length, 1)
-    assert.equal(state.updates.at(-1)?.value.call_sid, CONVERSATION_ID)
+    assert.equal(state.inserts[0]?.value.call_sid, '__ai-demo-active-call__')
+    assert.equal(state.updates.at(-1)?.value.call_sid, undefined)
+    assert.match(String(state.updates.at(-1)?.value.parsed_notes), new RegExp(CONVERSATION_ID))
   })
 
   it('refuses to dial if the reserved no-write slug exists', async () => {
@@ -263,7 +275,7 @@ describe('admin Andrew owner test call', () => {
     configureEnv()
     const active = fakeSupabase({
       recentRows: [{
-        call_sid: CONVERSATION_ID,
+        call_sid: '__ai-demo-active-call__',
         parsed_confidence: 'ai_demo_in_progress',
         parsed_notes: demoNotes('in-progress', CONVERSATION_ID),
         created_at: '2026-07-26T03:55:00.000Z',
@@ -271,7 +283,7 @@ describe('admin Andrew owner test call', () => {
     })
     const cooling = fakeSupabase({
       recentRows: [{
-        call_sid: CONVERSATION_ID,
+        call_sid: `ai-demo-done-${CONVERSATION_ID}`,
         parsed_confidence: 'ai_demo_done',
         parsed_notes: demoNotes('done', CONVERSATION_ID),
         created_at: '2026-07-26T03:50:00.000Z',
@@ -297,20 +309,76 @@ describe('admin Andrew owner test call', () => {
     assert.equal(cooling.state.inserts.length, 0)
   })
 
+  it('atomically allows only one vendor dial across concurrent serverless requests', async () => {
+    configureEnv()
+    const atomicLock = { held: false }
+    const { client } = fakeSupabase({ atomicLock })
+    let vendorCalls = 0
+    const deps = {
+      authenticate: allowedAuth(client),
+      now: NOW,
+      fetchFn: async () => {
+        vendorCalls += 1
+        return Response.json({ success: true, conversation_id: CONVERSATION_ID })
+      },
+    }
+
+    const [first, second] = await Promise.all([
+      handleAndrewTestCallPost(postRequest({ consent: true }), deps),
+      handleAndrewTestCallPost(postRequest({ consent: true }), deps),
+    ])
+
+    assert.deepEqual([first.status, second.status].sort(), [200, 409])
+    assert.equal(vendorCalls, 1)
+    assert.equal(atomicLock.held, true, 'the unique sentinel remains held while the call is active')
+  })
+
+  it('releases only the matching expired sentinel before reserving a new call', async () => {
+    configureEnv()
+    const { client, state } = fakeSupabase({
+      activeLockRow: {
+        call_sid: '__ai-demo-active-call__',
+        parsed_confidence: 'ai_demo_initiated',
+        parsed_notes: demoNotes('initiated', 'conv_expired_123'),
+        created_at: '2026-07-26T03:30:00.000Z',
+      },
+    })
+    let vendorCalls = 0
+    const response = await handleAndrewTestCallPost(postRequest({ consent: true }), {
+      authenticate: allowedAuth(client),
+      now: NOW,
+      reservationId: 'replacement-123',
+      fetchFn: async () => {
+        vendorCalls += 1
+        return Response.json({ success: true, conversation_id: CONVERSATION_ID })
+      },
+    })
+
+    assert.equal(response.status, 200)
+    assert.equal(vendorCalls, 1)
+    assert.equal(state.updates[0]?.value.call_sid, 'ai-demo-stale-replacement-123')
+    assert.deepEqual(state.updates[0]?.filters, {
+      call_sid: '__ai-demo-active-call__',
+      created_at: '2026-07-26T03:30:00.000Z',
+    })
+    assert.equal(state.inserts[0]?.value.call_sid, '__ai-demo-active-call__')
+  })
+
   it('validates ownership and agent id before returning a narrow sanitized status', async () => {
     configureEnv()
     const { client, state } = fakeSupabase({
-      ownershipRow: {
-        call_sid: CONVERSATION_ID,
+      recentRows: [{
+        call_sid: '__ai-demo-active-call__',
         parsed_confidence: 'ai_demo_processing',
         parsed_notes: demoNotes('processing', CONVERSATION_ID),
         created_at: NOW.toISOString(),
-      },
+      }],
     })
     const vendorPayload = {
       agent_id: AGENT_ID,
       conversation_id: CONVERSATION_ID,
       status: 'done',
+      failure_reason: 'Contact Failure Person at failure@example.com',
       metadata: { cost_fiat: 4.2, call_sid: 'CA-private' },
       has_audio: true,
       audio_url: 'https://private.example/audio.mp3',
@@ -320,6 +388,7 @@ describe('admin Andrew owner test call', () => {
         {
           role: 'agent',
           message: 'Thanks, I have captured that.',
+          tool_calls: [{ params_as_json: '{"raw_quote":"Contact Raw Person at raw@example.com"}' }],
           tool_results: [{
             tool_name: 'record_price',
             result_value: JSON.stringify({
@@ -328,8 +397,8 @@ describe('admin Andrew owner test call', () => {
               recorded: false,
               proposed: {
                 pint_price: 9,
-                beer_type: 'Swan Draught',
-                happy_hour: 'Mon-Fri 4-6pm',
+                beer_type: 'Swan Draught; owner: Alice Person; alice@example.com',
+                happy_hour: 'Contact Bob Person on +61 488 777 666',
                 confidence: 'high',
               },
             }),
@@ -339,9 +408,9 @@ describe('admin Andrew owner test call', () => {
       analysis: {
         data_collection_results: {
           price: { value: 9 },
-          beer_type: { value: 'Swan Draught' },
+          beer_type: { value: 'Swan Draught; contact Jane Person at beer@example.com' },
           unit: { value: 'pint' },
-          happy_hour: { value: 'Mon-Fri 4-6pm' },
+          happy_hour: { value: 'Ask for John Smith on +61 477 888 999' },
           confidence: { value: 'high' },
         },
       },
@@ -358,8 +427,8 @@ describe('admin Andrew owner test call', () => {
     assert.deepEqual(body.conversation, { id: CONVERSATION_ID, status: 'done', terminal: true })
     assert.deepEqual(body.proposedListing, {
       price: 9,
-      beerType: 'Swan Draught',
-      happyHour: 'Mon-Fri 4-6pm',
+      beerType: 'Swan Draught; [name redacted]; [email redacted]',
+      happyHour: '[name redacted] on [phone redacted]',
       confidence: 'high',
     })
     assert.match(body.transcript[0].message, /\[phone redacted\]/)
@@ -368,22 +437,26 @@ describe('admin Andrew owner test call', () => {
     assert.equal(serialized.includes('CA-private'), false)
     assert.equal(serialized.includes('audio.mp3'), false)
     assert.equal(serialized.includes('cost_fiat'), false)
+    for (const pii of ['Jane Person', 'John Smith', 'Alice Person', 'Bob Person', 'Failure Person', 'Raw Person', '@example.com']) {
+      assert.equal(serialized.includes(pii), false, `${pii} leaked from a vendor-controlled field`)
+    }
     assert.deepEqual(Object.keys(body).sort(), [
       'conversation', 'destination', 'ok', 'proposedListing', 'structured', 'toolResult', 'transcript',
     ])
     assert.equal(state.updates.at(-1)?.value.parsed_confidence, 'ai_demo_done')
+    assert.equal(state.updates.at(-1)?.value.call_sid, `ai-demo-done-${CONVERSATION_ID}`)
     assert.equal(state.updates.at(-1)?.value.recording_url, undefined)
   })
 
   it('does not call the vendor for a conversation that is not owned by the demo agent', async () => {
     configureEnv()
     const { client } = fakeSupabase({
-      ownershipRow: {
-        call_sid: CONVERSATION_ID,
+      recentRows: [{
+        call_sid: '__ai-demo-active-call__',
         parsed_confidence: 'ai_demo_initiated',
         parsed_notes: demoNotes('initiated', CONVERSATION_ID, 'agent_someone_else'),
         created_at: NOW.toISOString(),
-      },
+      }],
     })
     let vendorCalls = 0
     const response = await handleAndrewTestCallGet(getRequest(CONVERSATION_ID), {

@@ -59,6 +59,11 @@ function cooldownLabel(seconds: number) {
   return `${minutes} min cooldown`
 }
 
+function formatProposedPrice(price: number | null | undefined) {
+  if (price == null) return '$—'
+  return Number.isInteger(price) ? `$${price}` : `$${price.toFixed(2)}`
+}
+
 export default function AndrewTestCall({ password }: { password: string }) {
   const [state, setState] = useState<TestCallState | null>(null)
   const [consented, setConsented] = useState(false)
@@ -304,7 +309,7 @@ export default function AndrewTestCall({ password }: { password: string }) {
           <div className="mt-6 rounded-card border-3 border-ink bg-white p-5">
             <p className="font-mono text-[0.55rem] font-bold uppercase tracking-[0.08em] text-gray-mid">Cheapest pint</p>
             <p className="mt-2 font-mono text-[2.8rem] font-extrabold leading-none tracking-[-0.06em] text-amber" data-testid="proposed-price">
-              {state?.proposedListing?.price != null ? `$${state.proposedListing.price.toFixed(2)}` : '$—'}
+              {formatProposedPrice(state?.proposedListing?.price)}
             </p>
 
             <div className="mt-5 space-y-3 border-t-3 border-ink pt-4">

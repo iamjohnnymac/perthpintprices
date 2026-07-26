@@ -1,0 +1,64 @@
+{
+  "status": "review_only_not_applied",
+  "purpose": "Owner-only Andrew call test. This file is a reviewable configuration contract and is not pushed to ElevenLabs automatically.",
+  "environment_bindings": {
+    "agent_id": "ELEVENLABS_DEMO_AGENT_ID",
+    "production_agent_id_must_differ": "ELEVENLABS_AGENT_ID",
+    "fixed_destination": "AI_DEMO_TEST_PHONE_E164",
+    "phone_number_id": "ELEVENLABS_PHONE_NUMBER_ID"
+  },
+  "agent": {
+    "name": "Andrew — owner price-check test",
+    "first_message": "Hi, Andrew here from Perth Pint Prices. This is the owner test call.",
+    "prompt": "Run one short illustrative pint-price check with the consenting project owner. Ask for a price, beer, serving unit and optional happy hour. Do not ask for or repeat a personal name, email address, street address or phone number. Call record_price only with the reserved no-write venue. Repeat the captured fields, explain that they are a private preview, then end the call.",
+    "max_duration_seconds": 90,
+    "dynamic_variables": {
+      "pub_slug": "__ai-demo-no-write__",
+      "pub_name": "Example Arms",
+      "suburb": "Perth",
+      "last_price": "",
+      "demo_mode": "owner_sandbox"
+    }
+  },
+  "privacy": {
+    "call_recording_enabled": false,
+    "audio_retention": "disabled",
+    "conversation_retention_days": 1,
+    "owner_gate": "Confirm these settings in ElevenLabs before setting ELEVENLABS_DEMO_AGENT_ID."
+  },
+  "outbound_call": {
+    "call_recording_enabled": false,
+    "ring_timeout_seconds": 25,
+    "one_active_call": true,
+    "cooldown_minutes": 15
+  },
+  "tools": [
+    {
+      "name": "record_price",
+      "method": "POST",
+      "url_template": "${APP_BASE_URL}/api/agents/record-price/__ai-demo-no-write__",
+      "headers": {
+        "x-agent-secret": "${ELEVENLABS_RECORD_PRICE_TOOL_SECRET}"
+      },
+      "request_body": {
+        "price": "number|string|null",
+        "beer_type": "string|null",
+        "unit": "pint|schooner|pot|null",
+        "happy_hour": "string|null",
+        "confidence": "high|medium|low",
+        "raw_quote": "string|null",
+        "conversation_id": "string"
+      },
+      "response_contract": {
+        "sandbox": true,
+        "recorded": false,
+        "proposed": {
+          "pint_price": "number|null",
+          "beer_type": "string|null",
+          "happy_hour": "string|null",
+          "confidence": "high|medium|low"
+        }
+      }
+    }
+  ]
+}

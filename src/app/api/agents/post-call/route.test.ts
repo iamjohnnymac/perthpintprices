@@ -126,6 +126,96 @@ describe('post-call webhook', () => {
     assert.equal((callLogInsert as Record<string, unknown>).parsed_confidence, 'call_initiation_failure')
   })
 
+  it('archives a reserved-slug transcription without reading or writing live pub data', async () => {
+    process.env.ELEVENLABS_POST_CALL_WEBHOOK_SECRET = 'test-secret'
+    process.env.ELEVENLABS_DEMO_AGENT_ID = 'agent_demo_123'
+    let archived: Record<string, unknown> | null = null
+    let pubsTouched = false
+    let rpcCalled = false
+    const supabase = {
+      from(table: string) {
+        if (table === 'pubs' || table === 'price_history') {
+          pubsTouched = true
+          throw new Error(`Demo call touched ${table}`)
+        }
+        if (table === 'phone_call_log') {
+          return demoCallLogQuery(demoLockRow('conv_demo_post_123'), row => { archived = row })
+        }
+        throw new Error(`Unexpected table ${table}`)
+      },
+      rpc() {
+        rpcCalled = true
+        throw new Error('Demo call must not use the live post-call RPC')
+      },
+    }
+    const event = postCallBody()
+    event.data.agent_id = 'agent_demo_123'
+    event.data.conversation_id = 'conv_demo_post_123'
+    event.data.conversation_initiation_client_data.dynamic_variables.pub_slug = '__ai-demo-no-write__'
+    event.data.transcript = [
+      { role: 'user', message: 'Jane Person' },
+      { role: 'user', message: 'Email jane@example.com or ring +61 455 111 222.' },
+    ]
+    event.data.analysis.data_collection_results.beer_type = {
+      value: 'Swan Draught; contact Jane Person at beer@example.com',
+    }
+    event.data.analysis.data_collection_results.happy_hour = {
+      value: 'Ask for John Smith on +61 466 222 333',
+    }
+
+    const response = await handlePostCall(jsonRequest(event), { supabase })
+    const body = await response.json()
+    const serialized = JSON.stringify(archived)
+
+    assert.equal(response.status, 200)
+    assert.deepEqual(body, { ok: true, sandbox: true, recorded: false })
+    assert.equal(pubsTouched, false)
+    assert.equal(rpcCalled, false)
+    assert.ok(archived)
+    assert.equal((archived as Record<string, unknown>).pub_id, null)
+    assert.equal((archived as Record<string, unknown>).call_sid, 'ai-demo-done-conv_demo_post_123')
+    assert.match(String((archived as Record<string, unknown>).transcript), /\[name redacted\]/)
+    for (const pii of ['Jane Person', 'John Smith', 'jane@example.com', 'beer@example.com', '+61 455 111 222', '+61 466 222 333']) {
+      assert.equal(serialized.includes(pii), false, `${pii} leaked into the demo call log`)
+    }
+  })
+
+  it('archives a demo initiation failure without storing the destination or raw provider metadata', async () => {
+    process.env.ELEVENLABS_POST_CALL_WEBHOOK_SECRET = 'test-secret'
+    process.env.ELEVENLABS_DEMO_AGENT_ID = 'agent_demo_123'
+    let archived: Record<string, unknown> | null = null
+    let pubsTouched = false
+    const supabase = {
+      from(table: string) {
+        if (table === 'pubs' || table === 'price_history') {
+          pubsTouched = true
+          throw new Error(`Demo failure touched ${table}`)
+        }
+        if (table === 'phone_call_log') {
+          return demoCallLogQuery(demoLockRow('conv_failed_123'), row => { archived = row })
+        }
+        throw new Error(`Unexpected table ${table}`)
+      },
+      rpc() {
+        throw new Error('Demo failure must not use an RPC')
+      },
+    }
+    const event = callInitiationFailureBody()
+    event.data.agent_id = 'agent_demo_123'
+    event.data.failure_reason = 'Contact Jane Person at jane@example.com'
+
+    const response = await handlePostCall(jsonRequest(event), { supabase })
+    const serialized = JSON.stringify(archived)
+
+    assert.equal(response.status, 200)
+    assert.equal(pubsTouched, false)
+    assert.ok(archived)
+    assert.equal((archived as Record<string, unknown>).call_sid, 'ai-demo-failed-conv_failed_123')
+    for (const pii of ['+61400000003', 'CA123', 'Jane Person', 'jane@example.com', 'CallStatus', 'metadata']) {
+      assert.equal(serialized.includes(pii), false, `${pii} leaked into the demo failure log`)
+    }
+  })
+
   it('returns a server error when call logging fails', async () => {
     process.env.ELEVENLABS_POST_CALL_WEBHOOK_SECRET = 'test-secret'
 
@@ -298,6 +388,35 @@ function pubPhoneQuery(rows: Array<{ id: number; phone: string | null }>) {
     },
     not() {
       return Promise.resolve({ data: rows, error: null })
+    },
+  }
+}
+
+function demoLockRow(conversationId: string) {
+  return {
+    call_sid: '__ai-demo-active-call__',
+    parsed_notes: JSON.stringify({
+      kind: 'ai_demo_test_call',
+      agent_id: 'agent_demo_123',
+      destination_mask: '+61 ••• ••• 955',
+      destination_hash: 'destination-hash',
+      conversation_id: conversationId,
+      status: 'initiated',
+    }),
+  }
+}
+
+function demoCallLogQuery(
+  lockRow: ReturnType<typeof demoLockRow>,
+  onUpdate: (row: Record<string, unknown>) => void,
+) {
+  return {
+    select() { return this },
+    eq() { return this },
+    maybeSingle() { return Promise.resolve({ data: lockRow, error: null }) },
+    update(row: Record<string, unknown>) {
+      onUpdate(row)
+      return this
     },
   }
 }

@@ -6,8 +6,8 @@ function viewportName(testInfo: TestInfo) {
   return testInfo.project.name.startsWith('mobile') ? 'mobile' : 'desktop'
 }
 
-async function saveEvidence(page: Page, testInfo: TestInfo, surface: string, state: string) {
-  const directory = path.join(process.cwd(), 'artifacts', 'issue-250', 'after', surface)
+async function saveEvidence(page: Page, testInfo: TestInfo, phase: 'before' | 'after', surface: string, state: string) {
+  const directory = path.join(process.cwd(), 'artifacts', 'issue-250', phase, surface)
   mkdirSync(directory, { recursive: true })
   await page.evaluate(() => window.scrollTo(0, 0))
   await page.waitForTimeout(100)
@@ -16,6 +16,8 @@ async function saveEvidence(page: Page, testInfo: TestInfo, surface: string, sta
     fullPage: true,
   })
 }
+
+const baselineURL = process.env.ISSUE_250_BASELINE_URL
 
 const dashboardData = {
   overview: {
@@ -59,22 +61,52 @@ const completedCall = {
 }
 
 test('Andrew price-check presentation surface has ready and completed states', async ({ page }, testInfo) => {
+  if (baselineURL) {
+    await page.goto(`${baselineURL}/ai-price-demo`)
+    await expect(page.getByText('404')).toBeVisible()
+    await saveEvidence(page, testInfo, 'before', 'ai-price-demo', 'route-absent')
+  }
+
   await page.goto('/ai-price-demo')
 
   await expect(page.getByRole('heading', { name: /one phone call/i })).toBeVisible()
-  await expect(page.getByRole('button', { name: 'See Andrew at work' })).toBeVisible()
-  await expect(page.getByText('Andrew · Price check')).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Run illustrative check' })).toBeVisible()
+  await expect(page.getByText('Illustrative price check', { exact: true })).toBeVisible()
+  await expect(page.getByText('Example Arms · fictional venue')).toBeVisible()
+  await expect(page.getByTestId('andrew-voice-sample')).toHaveAttribute('src', '/audio/andrew-price-check.mp3')
+  const audioResponse = await page.request.get('/audio/andrew-price-check.mp3')
+  expect(audioResponse.ok()).toBe(true)
+  expect(audioResponse.headers()['content-type']).toContain('audio/mpeg')
   const readyCopy = await page.locator('body').innerText()
-  expect(readyCopy).not.toMatch(/live concept|voice-agent demo|sandbox/i)
-  await saveEvidence(page, testInfo, 'ai-price-demo', 'ready')
+  expect(readyCopy).not.toMatch(/sandbox/i)
+  await saveEvidence(page, testInfo, 'after', 'ai-price-demo', 'ready')
 
-  await page.getByRole('button', { name: 'See Andrew at work' }).click()
+  await page.getByRole('button', { name: /Hear Andrew/ }).click()
+  await expect.poll(() => page.getByTestId('andrew-voice-sample').evaluate((element) => {
+    const audio = element as HTMLAudioElement
+    return !audio.paused && audio.currentTime > 0
+  })).toBe(true)
+  await page.getByTestId('andrew-voice-sample').evaluate(element => element.dispatchEvent(new Event('ended')))
+  await expect(page.getByRole('button', { name: /Replay Andrew/ })).toBeVisible()
+  await page.getByRole('button', { name: /Replay Andrew/ }).click()
+  await expect.poll(() => page.getByTestId('andrew-voice-sample').evaluate((element) => {
+    const audio = element as HTMLAudioElement
+    return !audio.paused
+  })).toBe(true)
+  await page.getByRole('button', { name: 'Reset' }).click()
+  await expect.poll(() => page.getByTestId('andrew-voice-sample').evaluate((element) => {
+    const audio = element as HTMLAudioElement
+    return audio.paused && audio.currentTime === 0
+  })).toBe(true)
+
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  await page.getByRole('button', { name: 'Run illustrative check' }).click()
   await expect(page.getByText('Update ready for review')).toBeVisible({ timeout: 8000 })
   await expect(page.getByText('Validated')).toBeVisible()
-  await expect(page.getByText('$9', { exact: true })).toBeVisible()
+  await expect(page.getByText('$9', { exact: true }).first()).toBeVisible()
   const completeCopy = await page.locator('body').innerText()
   expect(completeCopy).not.toMatch(/published|verified/i)
-  await saveEvidence(page, testInfo, 'ai-price-demo', 'completed')
+  await saveEvidence(page, testInfo, 'after', 'ai-price-demo', 'completed')
 })
 
 test('authenticated Andrew admin tab shows consent, masked target, and captured preview', async ({ page }, testInfo) => {
@@ -112,6 +144,15 @@ test('authenticated Andrew admin tab shows consent, masked target, and captured 
     })
   })
 
+  if (baselineURL) {
+    await page.goto(`${baselineURL}/admin`)
+    await page.locator('input[type="password"]').fill('review-password')
+    await page.getByRole('button', { name: 'Sign In' }).click()
+    await expect(page.getByText('Total Venues')).toBeVisible()
+    await expect(page.getByRole('button', { name: 'Andrew' })).toHaveCount(0)
+    await saveEvidence(page, testInfo, 'before', 'admin', 'authenticated')
+  }
+
   await page.goto('/admin')
   await page.locator('input[type="password"]').fill('review-password')
   await page.getByRole('button', { name: 'Sign In' }).click()
@@ -121,13 +162,13 @@ test('authenticated Andrew admin tab shows consent, masked target, and captured 
   await expect(page.getByTestId('masked-destination')).toHaveText('+61 ••• ••• 955')
   await expect(page.getByText('No live price writes')).toBeVisible()
   await expect(page.getByText(/AI-generated call/)).toBeVisible()
-  await saveEvidence(page, testInfo, 'admin', 'ready')
+  await saveEvidence(page, testInfo, 'after', 'admin', 'ready')
 
   await page.getByRole('checkbox').check()
   await page.getByRole('button', { name: 'Call my test line' }).click()
   await expect(page.getByText('Capture ready for review').first()).toBeVisible({ timeout: 8000 })
-  await expect(page.getByTestId('proposed-price')).toHaveText('$9.00')
+  await expect(page.getByTestId('proposed-price')).toHaveText('$9')
   await expect(page.getByTestId('andrew-transcript')).toContainText('Swan Draught is $9 a pint')
   await expect(page.getByText('Not published')).toBeVisible()
-  await saveEvidence(page, testInfo, 'admin', 'completed')
+  await saveEvidence(page, testInfo, 'after', 'admin', 'completed')
 })

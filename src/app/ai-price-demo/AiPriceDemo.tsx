@@ -13,6 +13,7 @@ import {
   Play,
   RotateCcw,
   ShieldCheck,
+  Volume2,
 } from 'lucide-react'
 
 const STEPS = [
@@ -23,7 +24,7 @@ const STEPS = [
 ]
 
 const TRANSCRIPT = [
-  { speaker: 'Andrew', text: 'Hi, is this The Northbridge Hotel?' },
+  { speaker: 'Andrew', text: 'Hi, is this the Example Arms?' },
   { speaker: 'Venue', text: 'Yep, speaking.' },
   {
     speaker: 'Andrew',
@@ -31,25 +32,60 @@ const TRANSCRIPT = [
   },
   {
     speaker: 'Venue',
-    text: 'Swan Draught is nine dollars a pint. Happy hour is four to six, Monday to Friday.',
+    text: 'House Lager is nine dollars a pint. Happy hour is four to six, Monday to Friday.',
   },
 ]
 
 const DELAYS = [700, 2100, 3300]
+const REDUCED_MOTION_DELAYS = [0, 150, 300]
+const ANDREW_AUDIO_SRC = '/audio/andrew-price-check.mp3'
+
+type AudioState = 'idle' | 'loading' | 'playing' | 'ended' | 'error'
 
 export default function AiPriceDemo() {
   const [stage, setStage] = useState(0)
   const [running, setRunning] = useState(false)
+  const [audioState, setAudioState] = useState<AudioState>('idle')
   const timers = useRef<ReturnType<typeof setTimeout>[]>([])
+  const audioRef = useRef<HTMLAudioElement>(null)
 
-  useEffect(() => () => timers.current.forEach(clearTimeout), [])
+  useEffect(
+    () => () => {
+      timers.current.forEach(clearTimeout)
+      const audio = audioRef.current
+      if (audio) {
+        audio.pause()
+        audio.currentTime = 0
+      }
+    },
+    [],
+  )
+
+  const playAndrew = () => {
+    const audio = audioRef.current
+    if (!audio) {
+      setAudioState('error')
+      return
+    }
+
+    audio.pause()
+    audio.currentTime = 0
+    setAudioState('loading')
+    void audio.play().catch(() => setAudioState('error'))
+  }
 
   const runPriceCheck = () => {
     timers.current.forEach(clearTimeout)
+    timers.current = []
     setStage(0)
     setRunning(true)
+    playAndrew()
 
-    DELAYS.forEach((delay, index) => {
+    const delays = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      ? REDUCED_MOTION_DELAYS
+      : DELAYS
+
+    delays.forEach((delay, index) => {
       timers.current.push(
         setTimeout(() => {
           setStage(index + 1)
@@ -61,17 +97,44 @@ export default function AiPriceDemo() {
 
   const resetPriceCheck = () => {
     timers.current.forEach(clearTimeout)
+    timers.current = []
     setRunning(false)
     setStage(0)
+    const audio = audioRef.current
+    if (audio) {
+      audio.pause()
+      audio.currentTime = 0
+    }
+    setAudioState('idle')
   }
 
   const visibleTranscript = stage === 0 ? 1 : TRANSCRIPT.length
   const isCaptured = stage >= 1
   const isValidated = stage >= 2
   const isReady = stage >= 3
+  const isAudioActive = audioState === 'loading' || audioState === 'playing'
+  const audioButtonLabel =
+    audioState === 'playing'
+      ? 'Andrew speaking'
+      : audioState === 'loading'
+        ? 'Loading Andrew'
+        : audioState === 'ended'
+          ? 'Replay Andrew'
+          : audioState === 'error'
+            ? 'Try audio again'
+            : 'Hear Andrew'
 
   return (
     <main className="min-h-screen overflow-hidden bg-[#FDF8F0] text-ink">
+      <audio
+        ref={audioRef}
+        data-testid="andrew-voice-sample"
+        src={ANDREW_AUDIO_SRC}
+        preload="metadata"
+        onPlay={() => setAudioState('playing')}
+        onEnded={() => setAudioState('ended')}
+        onError={() => setAudioState('error')}
+      />
       <div aria-hidden="true" className="fixed inset-0 pointer-events-none opacity-[0.045] [background-image:linear-gradient(to_right,currentColor_1px,transparent_1px),linear-gradient(to_bottom,currentColor_1px,transparent_1px)] [background-size:32px_32px]" />
 
       <header className="relative max-w-container mx-auto px-6 pt-6">
@@ -83,7 +146,7 @@ export default function AiPriceDemo() {
             <span className="whitespace-nowrap font-mono text-[0.78rem] font-extrabold tracking-[-0.04em] sm:text-[0.92rem]">Perth Pint Prices</span>
           </Link>
           <span className="rounded-pill border-3 border-ink bg-white px-2 py-1 font-mono text-[0.52rem] font-bold uppercase tracking-[0.1em] sm:px-3 sm:text-[0.62rem] sm:tracking-[0.12em]">
-            Andrew · Price check
+            Illustrative price check
           </span>
         </div>
       </header>
@@ -92,14 +155,14 @@ export default function AiPriceDemo() {
         <div className="max-w-[690px]">
           <p className="type-eyebrow mb-4 flex items-center gap-2 text-amber">
             <span className="h-2 w-2 rounded-full bg-amber" />
-            AI in the real world
+            Andrew workflow · worked example
           </p>
           <h1 className="font-display text-[3.25rem] font-normal leading-[0.92] tracking-[-0.035em] sm:text-[5.5rem]">
             One phone call.
             <span className="block italic text-amber">One fresher price.</span>
           </h1>
           <p className="mt-6 max-w-[590px] text-[1rem] font-medium leading-relaxed text-ink/70 sm:text-[1.12rem]">
-            Andrew rings the pub, understands the answer, checks the price and glass size, then prepares a clean listing update for review.
+            A fictional venue shows the production flow: Andrew calls, structures the answer, checks the price and glass size, then prepares fields for review.
           </p>
         </div>
 
@@ -107,11 +170,10 @@ export default function AiPriceDemo() {
           <button
             type="button"
             onClick={runPriceCheck}
-            disabled={running}
-            className="inline-flex items-center justify-center gap-2 rounded-pill border-3 border-ink bg-amber px-6 py-3 font-mono text-[0.78rem] font-extrabold uppercase tracking-[0.05em] text-white shadow-hard-sm transition-all hover:translate-x-[1.5px] hover:translate-y-[1.5px] hover:shadow-hard-hover disabled:cursor-wait disabled:opacity-70"
+            className="inline-flex items-center justify-center gap-2 rounded-pill border-3 border-ink bg-amber px-6 py-3 font-mono text-[0.78rem] font-extrabold uppercase tracking-[0.05em] text-white shadow-hard-sm transition-all hover:translate-x-[1.5px] hover:translate-y-[1.5px] hover:shadow-hard-hover motion-reduce:transition-none"
           >
-            {running ? <AudioWaveform size={17} className="animate-pulse" /> : <Play size={16} fill="currentColor" />}
-            {running ? 'Andrew is on the call' : 'See Andrew at work'}
+            {running || isAudioActive ? <AudioWaveform size={17} className="animate-pulse motion-reduce:animate-none" /> : <Play size={16} fill="currentColor" />}
+            {running || isAudioActive ? 'Restart illustrative check' : 'Run illustrative check'}
           </button>
           <button
             type="button"
@@ -142,20 +204,28 @@ export default function AiPriceDemo() {
           <div className="bg-ink p-5 text-white sm:p-7">
             <div className="flex items-center justify-between border-b border-white/15 pb-4">
               <div className="flex items-center gap-3">
-                <span className={`grid h-10 w-10 place-items-center rounded-full border-2 ${running ? 'border-amber-light bg-amber text-white' : 'border-white/20 bg-white/10 text-white'}`}>
+                <span className={`grid h-10 w-10 place-items-center rounded-full border-2 ${running || isAudioActive ? 'border-amber-light bg-amber text-white' : 'border-white/20 bg-white/10 text-white'}`}>
                   <PhoneCall size={19} />
                 </span>
                 <div>
                   <p className="font-mono text-[0.65rem] font-bold uppercase tracking-[0.1em] text-white/45">Outbound call</p>
-                  <p className="mt-0.5 text-sm font-bold">The Northbridge Hotel</p>
+                  <p className="mt-0.5 text-sm font-bold">Example Arms · fictional venue</p>
                 </div>
               </div>
-              <div className="text-right">
+              <div className="flex flex-col items-end text-right">
                 <div className="flex items-center gap-1.5 font-mono text-[0.62rem] font-bold uppercase tracking-[0.08em] text-amber-light">
-                  <span className={`h-2 w-2 rounded-full bg-amber-light ${running ? 'animate-pulse' : ''}`} />
-                  {isReady ? 'Complete' : running ? 'Live' : 'Ready'}
+                  <span className={`h-2 w-2 rounded-full bg-amber-light ${running || isAudioActive ? 'animate-pulse motion-reduce:animate-none' : ''}`} />
+                  {isReady ? 'Example complete' : running || isAudioActive ? 'Playing sample' : 'Ready'}
                 </div>
-                <p className="mt-1 font-mono text-[0.62rem] text-white/40">00:{stage === 0 ? '03' : stage === 1 ? '24' : '31'}</p>
+                <button
+                  type="button"
+                  onClick={playAndrew}
+                  className="mt-2 inline-flex items-center gap-1.5 rounded-pill border border-white/25 bg-white/10 px-2.5 py-1.5 font-mono text-[0.55rem] font-bold uppercase tracking-[0.05em] text-white transition-colors hover:border-amber-light hover:text-amber-light motion-reduce:transition-none"
+                  aria-label={`${audioButtonLabel}. Andrew voice sample.`}
+                >
+                  <Volume2 size={13} className={isAudioActive ? 'animate-pulse motion-reduce:animate-none' : ''} />
+                  {audioButtonLabel}
+                </button>
               </div>
             </div>
 
@@ -177,8 +247,8 @@ export default function AiPriceDemo() {
               </div>
               <div className="grid grid-cols-3 gap-3">
                 {[
-                  ['Price', isCaptured ? '$9.00' : '—'],
-                  ['Tap', isCaptured ? 'Swan Draught' : '—'],
+                  ['Price', isCaptured ? '$9' : '—'],
+                  ['Tap', isCaptured ? 'House Lager' : '—'],
                   ['Happy hour', isCaptured ? 'Mon–Fri · 4–6' : '—'],
                 ].map(([label, value]) => (
                   <div key={label} className="min-w-0">
@@ -202,8 +272,8 @@ export default function AiPriceDemo() {
             <div className="my-7 flex-1 rounded-card border-3 border-ink bg-white p-5 shadow-hard-sm">
               <div className="flex items-start justify-between gap-3">
                 <div>
-                  <p className="font-mono text-[0.58rem] font-bold uppercase tracking-[0.1em] text-gray-mid">Northbridge</p>
-                  <h2 className="mt-1 font-display text-[1.8rem] font-normal leading-none">The Northbridge Hotel</h2>
+                  <p className="font-mono text-[0.58rem] font-bold uppercase tracking-[0.1em] text-gray-mid">Illustrative venue</p>
+                  <h2 className="mt-1 font-display text-[1.8rem] font-normal leading-none">Example Arms</h2>
                 </div>
                 <span className={`rounded-pill px-2.5 py-1 font-mono text-[0.55rem] font-bold uppercase tracking-[0.06em] ${isValidated ? 'bg-green-pale text-green' : 'bg-gray-light text-gray-mid'}`}>
                   {isValidated ? 'Validated' : 'Checking'}
@@ -218,7 +288,7 @@ export default function AiPriceDemo() {
                   </p>
                 </div>
                 <div className="pb-1 text-right">
-                  <p className="font-mono text-[0.68rem] font-bold">{isReady ? 'Swan Draught' : 'Awaiting capture'}</p>
+                  <p className="font-mono text-[0.68rem] font-bold">{isReady ? 'House Lager' : 'Awaiting capture'}</p>
                   <p className="mt-1 font-mono text-[0.55rem] uppercase tracking-[0.06em] text-gray-mid">570ml pint</p>
                 </div>
               </div>
@@ -240,7 +310,7 @@ export default function AiPriceDemo() {
               </span>
               <div>
                 <p className="font-mono text-[0.65rem] font-extrabold uppercase tracking-[0.05em]">{STEPS[stage].short}</p>
-                <p className="mt-0.5 text-[0.7rem] opacity-70">{isReady ? 'The captured fields are ready for a human review.' : 'Andrew keeps the source, quote, and time on record.'}</p>
+                <p className="mt-0.5 text-[0.7rem] opacity-70">{isReady ? 'These sample fields are ready for a human review.' : 'The voice is Andrew. The venue and price are illustrative.'}</p>
               </div>
             </div>
           </div>
@@ -251,7 +321,7 @@ export default function AiPriceDemo() {
         <div className="max-w-container mx-auto grid divide-y-3 divide-ink px-6 py-2 sm:grid-cols-3 sm:divide-x-3 sm:divide-y-0 sm:px-0">
           {[
             { icon: PhoneCall, number: '01', title: 'Sounds local', copy: 'A short, natural call that respects the person answering.' },
-            { icon: ShieldCheck, number: '02', title: 'Keeps the record', copy: 'The transcript, confidence, timestamp, and source stay attached.' },
+            { icon: ShieldCheck, number: '02', title: 'Keeps the record', copy: 'A live capture can keep its transcript, confidence, timestamp, and source attached.' },
             { icon: Database, number: '03', title: 'Prepares the update', copy: 'Range and glass-size checks turn the answer into fields ready for review.' },
           ].map(({ icon: Icon, number, title, copy }) => (
             <article key={number} className="py-6 sm:px-6">
@@ -269,9 +339,9 @@ export default function AiPriceDemo() {
       <section className="relative max-w-container mx-auto px-6 py-12 sm:py-16">
         <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <p className="type-eyebrow text-amber">The useful bit</p>
+            <p className="type-eyebrow text-amber">From voice to review</p>
             <h2 className="mt-3 max-w-[520px] font-display text-[2.4rem] font-normal leading-[1.02] sm:text-[3.4rem]">
-              The AI does not make up the price. It goes and gets it.
+              One short call becomes fields a person can check.
             </h2>
           </div>
           <Link href="/" className="inline-flex items-center gap-2 self-start font-mono text-[0.7rem] font-bold uppercase tracking-[0.06em] text-ink underline decoration-2 underline-offset-4 sm:self-auto">
