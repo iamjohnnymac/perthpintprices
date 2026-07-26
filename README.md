@@ -36,11 +36,15 @@ Required env vars (see `.env.example` once you create it locally):
 | `SUPABASE_SERVICE_ROLE_KEY` | Supabase project | Server writes (admin, agent webhooks) |
 | `ELEVENLABS_API_KEY` | ElevenLabs | Convai + TTS for the voice agent |
 | `ELEVENLABS_AGENT_ID` | ElevenLabs | Andrew's agent id |
+| `ELEVENLABS_DEMO_AGENT_ID` | ElevenLabs | Separate Andrew owner-test agent id |
 | `ELEVENLABS_PHONE_NUMBER_ID` | ElevenLabs | Andrew's Twilio number id |
+| `AI_DEMO_TEST_PHONE_E164` | Project owner | Fixed owner-test destination; server-only E.164 value |
 | `AGENT_WEBHOOK_SECRET` | shared secret | Andrew's `record_price` callback auth |
 | `GOOGLE_PLACES_API_KEY` | Google Cloud | Pub-discovery + open-now filter |
 | `OPENAI_API_KEY` | OpenAI | Menu scanner + post-call fallback extraction |
 | `UPSTASH_REDIS_REST_URL`/`_TOKEN` | Upstash | Rate limiting + crowd reports cache |
+
+Before an owner-only Andrew test, run `npm run access:preflight -- andrew-owner-demo --online`. The preflight checks required variables without printing the destination, rejects matching production/demo agent IDs or a malformed E.164 destination, and verifies that `agents/andrew-demo.json` retains the production Andrew TTS contract.
 
 ## Scripts
 

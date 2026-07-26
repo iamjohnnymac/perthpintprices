@@ -23,6 +23,7 @@
     "test:headers": "node scripts/security-headers.test.mjs",
     "test:access": "node scripts/agent-access-preflight.test.mjs",
     "access:preflight": "node scripts/agent-access-preflight.mjs",
+    "check:andrew-demo-config": "node scripts/check-andrew-demo-config.mjs",
     "check:fingerprints": "tsx scripts/check-pub-fingerprints.mjs",
     "check:payload": "node scripts/check-homepage-payload.mjs",
     "test:e2e": "playwright test",

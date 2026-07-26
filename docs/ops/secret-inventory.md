@@ -4,7 +4,7 @@ Perth Pint Prices follows the HeyBlip access pattern: agents receive the smalles
 
 Infisical is the canonical store for every password, key, token, and webhook secret under `/external/perth-pint-prices/*`. Vercel, ElevenLabs, GitHub Actions, and local operator processes receive only the scoped runtime copy they need; references to those services below describe runtime mirrors, not the source of truth.
 
-Run `npm run access:preflight -- <bundle>` before a task that needs external access. Output is metadata only: variable name and `present` or `missing`. Add `--online` for `supabase-read`, `supabase-admin`, `elevenlabs-admin`, `vercel-deploy`, or `sentry-read` to verify the credential against a read-only identity or one-row endpoint. Online checks print only the HTTP result.
+Run `npm run access:preflight -- <bundle>` before a task that needs external access. Output is metadata only: variable name and `present` or `missing`. Add `--online` for `supabase-read`, `supabase-admin`, `elevenlabs-admin`, `andrew-owner-demo`, `vercel-deploy`, or `sentry-read` to verify the credential against a read-only identity or one-row endpoint. Online checks print only the HTTP result.
 
 | Bundle | Variables | Purpose | Runtime mirror / owner | Rotation and verification |
 | --- | --- | --- | --- | --- |
@@ -17,6 +17,7 @@ Run `npm run access:preflight -- <bundle>` before a task that needs external acc
 | `pintsweep-kickoff` | `PINTSWEEP_KICKOFF_SECRET`, `SUPABASE_SERVICE_ROLE_KEY` | Batch kickoff only | Vercel encrypted environment / project owner | Header-only; never place this secret in a URL |
 | `elevenlabs-webhook` | `ELEVENLABS_POST_CALL_WEBHOOK_SECRET` | Verify post-call webhook bodies only | ElevenLabs webhook settings and Vercel encrypted environment / project owner | Verify before webhook deployment; rotate independently of agent tools |
 | `elevenlabs-admin` | `ELEVENLABS_API_KEY`, `ELEVENLABS_AGENT_ID`, `ELEVENLABS_PHONE_NUMBER_ID` | Agent configuration and batch-call administration | Operator secret store / project owner | Verify before admin work; rotate API access on access changes |
+| `andrew-owner-demo` | ElevenLabs admin variables, `ELEVENLABS_DEMO_AGENT_ID`, `AI_DEMO_TEST_PHONE_E164` | One owner-only no-write Andrew test call | Operator secret store and Vercel encrypted environment / project owner | Fails if either agent ID is missing or equal, the destination is not E.164, or the checked-in demo TTS differs from production; output never includes the destination value |
 | `content-ai` | `OPENROUTER_API_KEY` | Menu and content analysis through OpenRouter | Vercel encrypted environment / project owner | Verify before content automation runs |
 | `content-ai-anthropic` | `ANTHROPIC_API_KEY` | Direct Anthropic content tooling | Operator secret store / project owner | Grant only to tasks that use the direct provider |
 | `places-refresh` | `GOOGLE_PLACES_API_KEY`, `SUPABASE_SERVICE_ROLE_KEY` | Monthly Places enrichment | GitHub Actions and operator secret stores / project owner | Quota-check and verify before sweeps |
@@ -27,6 +28,8 @@ Run `npm run access:preflight -- <bundle>` before a task that needs external acc
 | `sentry-read` | `SENTRY_READ_TOKEN` | Read-only agent investigation | Operator secret store / project owner | Read-only scope; review quarterly |
 
 Runtime, CI, deploy, and human operator identities remain separate. A missing required bundle fails closed; unrelated tasks continue without it. Never place service-role, ElevenLabs, Vercel, or Sentry tokens in `NEXT_PUBLIC_*` variables, logs, screenshots, commits, or task transcripts.
+
+Before any owner demo, run `npm run access:preflight -- andrew-owner-demo --online`. This checks presence and shape only, verifies the provider identity without using the destination, and compares `agents/andrew-demo.json` with the production Andrew TTS contract. It does not place a call or apply agent configuration.
 
 Release verification completed on 2026-07-21:
 

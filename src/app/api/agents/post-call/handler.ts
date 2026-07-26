@@ -1,6 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server'
 import crypto from 'node:crypto'
+import {
+  ANDREW_DEMO_ACTIVE_LOCK_ID,
+  ANDREW_DEMO_RESERVED_SLUG,
+  andrewDemoArchiveId,
+  createAndrewDemoMetadata,
+  isAndrewDemoCall,
+  parseAndrewDemoMetadata,
+} from '@/lib/andrewDemo'
+import {
+  parseAndrewDemoBeer,
+  parseAndrewDemoConfidence,
+  parseAndrewDemoHappyHour,
+  parseAndrewDemoPrice,
+} from '@/lib/andrewDemoFields'
 import { normalizePriceConfidence } from '@/lib/priceProvenance'
+import { normalizeVoicePintPrice, parseVoiceNumber, unwrapVoiceField } from '@/lib/voicePrice'
 
 // ElevenLabs post-call webhook. Fired once per call with a full transcript,
 // metadata, and cost. We log every call to phone_call_log for audit. If the
@@ -34,13 +49,10 @@ interface PostCallBody {
         pub_name?: string
         suburb?: string
         last_price?: string
+        demo_mode?: string
       }
     }
   }
-}
-
-interface DataCollectionField {
-  value?: unknown
 }
 
 interface PubPhoneRow {
@@ -48,30 +60,13 @@ interface PubPhoneRow {
   phone: string | null
 }
 
-const UNIT_TO_PINT: Record<string, number> = {
-  pint: 1,
-  schooner: 570 / 425,
-  pot: 570 / 285,
-}
-
 const WEBHOOK_TIMESTAMP_TOLERANCE_SECONDS = 30 * 60
-
-function extractValue(field: unknown): unknown {
-  if (field && typeof field === 'object' && 'value' in (field as Record<string, unknown>)) {
-    return (field as DataCollectionField).value
-  }
-  return field
-}
-
-function parseNumber(value: unknown): number | null {
-  if (value == null) return null
-  const n = typeof value === 'number' ? value : parseFloat(String(value))
-  return Number.isFinite(n) ? n : null
-}
+const DEMO_TRANSCRIPT_PLACEHOLDER = '[Demo transcript withheld for privacy]'
 
 function parseString(value: unknown): string | null {
-  if (value == null) return null
-  const s = String(value).trim()
+  const unwrapped = unwrapVoiceField(value)
+  if (unwrapped == null) return null
+  const s = String(unwrapped).trim()
   if (!s || s.toLowerCase() === 'null' || s.toLowerCase() === 'none') return null
   return s
 }
@@ -132,16 +127,28 @@ export async function handlePostCall(req: NextRequest, deps: PostCallDeps) {
   const supabase = deps.supabase ?? deps.getSupabase?.()
   if (!supabase) return NextResponse.json({ ok: false, error: 'server misconfigured' }, { status: 500 })
 
+  const d = body.data
+  const pubSlug = d.conversation_initiation_client_data?.dynamic_variables?.pub_slug || null
+  const reservation = await findDemoReservation(supabase, d.conversation_id)
+  if (reservation.error) {
+    return NextResponse.json({ ok: false, error: 'demo reservation lookup failed' }, { status: 500 })
+  }
+  const demoCall = reservation.matched
+    || isAndrewDemoCall(pubSlug, d.agent_id, process.env.ELEVENLABS_DEMO_AGENT_ID)
+
   if (body.type === 'call_initiation_failure') {
-    return handleCallInitiationFailure(body, supabase)
+    return demoCall
+      ? handleDemoCallTerminal(body, supabase, 'failed')
+      : handleCallInitiationFailure(body, supabase)
   }
 
   if (body.type !== 'post_call_transcription') {
     return NextResponse.json({ ok: true, ignored: body.type })
   }
 
-  const d = body.data
-  const pubSlug = d.conversation_initiation_client_data?.dynamic_variables?.pub_slug || null
+  if (demoCall) {
+    return handleDemoCallTerminal(body, supabase, 'done')
+  }
 
   let pubId: number | null = null
   if (pubSlug) {
@@ -162,11 +169,10 @@ export async function handlePostCall(req: NextRequest, deps: PostCallDeps) {
     .join('\n')
 
   const collection = d.analysis?.data_collection_results || {}
-  const parsedPrice = parseNumber(extractValue(collection.price))
-  const parsedBeerType = parseString(extractValue(collection.beer_type))
-  const parsedUnit = parseString(extractValue(collection.unit))
-  const parsedHappyHour = parseString(extractValue(collection.happy_hour))
-  const parsedConfidence = parseString(extractValue(collection.confidence)) || d.analysis?.call_successful || null
+  const parsedPrice = parseVoiceNumber(collection.price)
+  const parsedBeerType = parseString(collection.beer_type)
+  const parsedHappyHour = parseString(collection.happy_hour)
+  const parsedConfidence = parseString(collection.confidence) || d.analysis?.call_successful || null
   const priceConfidence = normalizePriceConfidence(parsedConfidence)
 
   const callLog = {
@@ -188,9 +194,7 @@ export async function handlePostCall(req: NextRequest, deps: PostCallDeps) {
     const hasBrand = !!parsedBeerType
 
     if (hasPrice || hasHH || hasBrand) {
-      const unitMultiplier = UNIT_TO_PINT[(parsedUnit || 'pint').toLowerCase()] ?? 1
-      let pintPrice: number | null = hasPrice ? Number((parsedPrice! * unitMultiplier).toFixed(2)) : null
-      if (pintPrice != null && (pintPrice < 5 || pintPrice > 20)) pintPrice = null
+      const pintPrice = hasPrice ? normalizeVoicePintPrice(collection.price, collection.unit) : null
 
       const verifiedAt = (deps.now ?? new Date()).toISOString()
       if (pintPrice != null) {
@@ -239,6 +243,104 @@ export async function handlePostCall(req: NextRequest, deps: PostCallDeps) {
   )
 
   return NextResponse.json({ ok: true, fallback_wrote: fallbackWrote })
+}
+
+async function findDemoReservation(
+  supabase: { from(table: string): any },
+  conversationId: string,
+) {
+  const callSids = [
+    ANDREW_DEMO_ACTIVE_LOCK_ID,
+    andrewDemoArchiveId(conversationId, 'done'),
+    andrewDemoArchiveId(conversationId, 'failed'),
+  ]
+
+  for (const callSid of callSids) {
+    const { data, error } = await supabase
+      .from('phone_call_log')
+      .select('call_sid, parsed_notes')
+      .eq('call_sid', callSid)
+      .maybeSingle()
+    if (error) return { matched: false, error }
+
+    const metadata = parseAndrewDemoMetadata(data?.parsed_notes || null)
+    if (metadata?.conversation_id === conversationId) {
+      return { matched: true, error: null }
+    }
+  }
+
+  return { matched: false, error: null }
+}
+
+async function handleDemoCallTerminal(
+  body: PostCallBody,
+  supabase: { from(table: string): any },
+  status: 'done' | 'failed',
+) {
+  const d = body.data
+  if (!/^[A-Za-z0-9_-]{8,160}$/.test(d.conversation_id)) {
+    return NextResponse.json({ ok: false, error: 'invalid demo conversation' }, { status: 400 })
+  }
+
+  const { data: lockRow, error: lockError } = await supabase
+    .from('phone_call_log')
+    .select('call_sid, parsed_notes')
+    .eq('call_sid', ANDREW_DEMO_ACTIVE_LOCK_ID)
+    .maybeSingle()
+  if (lockError) {
+    return NextResponse.json({ ok: false, error: 'demo call lock lookup failed' }, { status: 500 })
+  }
+
+  const existingMetadata = parseAndrewDemoMetadata(lockRow?.parsed_notes || null)
+  if (
+    lockRow
+    && (
+      !existingMetadata
+      || existingMetadata.agent_id !== d.agent_id
+      || (existingMetadata.conversation_id && existingMetadata.conversation_id !== d.conversation_id)
+    )
+  ) {
+    return NextResponse.json({ ok: false, error: 'demo call lock mismatch' }, { status: 409 })
+  }
+
+  const identity = existingMetadata || {
+    kind: 'ai_demo_test_call' as const,
+    agent_id: d.agent_id,
+    destination_mask: 'not stored',
+    destination_hash: 'not stored',
+    status,
+  }
+  const collection = d.analysis?.data_collection_results || {}
+  const confidence = status === 'done' ? parseAndrewDemoConfidence(collection.confidence) : null
+  const parsedPrice = status === 'done' ? parseAndrewDemoPrice(collection.price, collection.unit) : null
+  const parsedBeerType = status === 'done' ? parseAndrewDemoBeer(collection.beer_type) : null
+  const parsedHappyHour = status === 'done' ? parseAndrewDemoHappyHour(collection.happy_hour) : null
+  const archiveId = andrewDemoArchiveId(d.conversation_id, status)
+  const safeMetadata = createAndrewDemoMetadata(identity, status, d.conversation_id)
+  const safeLog = {
+    pub_id: null,
+    call_sid: archiveId,
+    transcript: DEMO_TRANSCRIPT_PLACEHOLDER,
+    recording_url: null,
+    parsed_price: parsedPrice,
+    parsed_beer_type: parsedBeerType,
+    parsed_confidence: `ai_demo_${status}`,
+    parsed_notes: JSON.stringify(safeMetadata),
+  }
+
+  const result = lockRow
+    ? await supabase
+      .from('phone_call_log')
+      .update(safeLog)
+      .eq('call_sid', ANDREW_DEMO_ACTIVE_LOCK_ID)
+    : await supabase.from('phone_call_log').insert(safeLog)
+  if (result.error) {
+    if (result.error.code === '23505') return NextResponse.json({ ok: true, duplicate: true })
+    return NextResponse.json({ ok: false, error: 'demo call log failed' }, { status: 500 })
+  }
+
+  console.log(`[agent post-call] demo_terminal conv=${d.conversation_id} status=${status}`)
+  return NextResponse.json({ ok: true, sandbox: true, recorded: false })
 }
 
 async function handleCallInitiationFailure(

@@ -1,6 +1,6 @@
 # Perth Pint Prices Project Status
 
-Last updated: 2026-07-21
+Last updated: 2026-07-26
 
 ## What this is
 
@@ -9,6 +9,13 @@ Perth Pint Prices (perthpintprices.com) tracks pint prices across **857 Perth pu
 Stack, database, routes, components, and lib files are documented in `CLAUDE.md` (auto-loaded every session). This file covers history, recent work, and the backlog.
 
 ## What's done recently
+
+### Andrew owner-test controls ready for review (2026-07-26)
+- **Issue #250 / privacy hardening commits `300cb27`, `d160c5e` and `53226e9` / branch `codex/andrew-admin-demo`:** adds an unlisted, `noindex` Andrew price-check presentation at `/ai-price-demo`, plus an authenticated Andrew admin tab with a masked fixed destination, explicit AI-call consent, live status, privacy-safe call events and a proposed listing preview. The public worked example names an obviously fictitious venue and makes no publication or independent-verification claim.
+- **No-write and privacy boundary:** both production and demo agent IDs are required and must differ. The endpoint accepts consent only, reads the destination from `AI_DEMO_TEST_PHONE_E164`, holds a unique database sentinel for the call's lifetime, reclaims only an expired matching sentinel, and enforces a 15-minute cooldown. Every callback resolves persisted ownership through exact active, done-archive and failed-archive `call_sid` values covered by the existing unique index; it never relies on row recency, client-side scans or arbitrary result caps. A missing or rotated demo-agent environment and a malicious live-pub slug therefore cannot escape sandbox handling even with a large call log. Demo APIs never return or persist raw conversation/tool/failure text: the admin gets fixed role events plus exact allowlisted beer, weekday/time, serving-unit, confidence and numeric price fields, while `phone_call_log` stores a transcript-withheld marker. The reserved `record_price` tool drops raw quotes and rejects prose-contaminated fields instead of echoing them in provider response metadata. Demo callbacks cannot query or write live pub data.
+- **Reviewable demo assets and access:** `agents/andrew-demo.json` records the proposed separate-agent contract without applying it to ElevenLabs and pins its TTS block exactly to `agents/andrew.json`. The config checker, audio generator and `andrew-owner-demo` access preflight fail if that voice contract drifts; the access bundle also requires distinct agent IDs, a valid server-only E.164 destination and existing ElevenLabs key/phone variables without printing the destination. `public/audio/andrew-price-check.mp3` is exercised through play, replay, reset and reduced-motion flows.
+- **Owner gates remain:** no test call was placed and no live agent configuration was changed. Before a live owner test, create and review the separate demo agent, confirm recording is disabled and the one-day provider-retention policy is acceptable, verify the reserved-slug tool contract, then run `npm run access:preflight -- andrew-owner-demo --online` with owner-approved runtime credentials.
+- **Verification:** all 398 unit tests, the access/config contract tests, TypeScript, lint, the production build and four production-mode Playwright checks pass. The final API regressions cover exact active and archived demo ownership after more than 100 unrelated null-pub call rows, transcription callbacks with a malicious real-pub slug and missing/rotated agent configuration, plus names, addresses, spoken digits, raw quotes and conversation IDs in reserved tool inputs. Inspected evidence under `artifacts/issue-250/` compares the authenticated `origin/main` admin view and missing public route with this branch using identical Playwright viewports and device pixel ratios. The humanizer skill was unavailable, so new copy was checked manually against `docs/brand-voice-brief.md`.
 
 ### Guide evidence follows the page header (2026-07-21)
 - **Commit `f62fe7a`:** moved the server-rendered Checked Picks panel below `SubPageNav` on Cosy Corners, Sunset Sippers, and Punt & Pints. The evidence remains in initial HTML while the brand, breadcrumb, and navigation now lead the page on desktop and mobile.

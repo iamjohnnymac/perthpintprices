@@ -1,5 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { ANDREW_DEMO_RESERVED_SLUG } from '@/lib/andrewDemo'
+import {
+  parseAndrewDemoBeer,
+  parseAndrewDemoConfidence,
+  parseAndrewDemoHappyHour,
+  parseAndrewDemoPrice,
+  parseAndrewDemoUnit,
+} from '@/lib/andrewDemoFields'
 import { normalizePriceConfidence } from '@/lib/priceProvenance'
+import { normalizeVoicePintPrice, parseVoiceNumber } from '@/lib/voicePrice'
 
 // ElevenLabs "server tool" callback. The pub_slug arrives via URL path (filled
 // in by ElevenLabs from the conversation's {{pub_slug}} dynamic variable, NOT
@@ -14,12 +23,6 @@ interface ToolBody {
   unit?: 'pint' | 'schooner' | 'pot' | null
   happy_hour?: string | null
   conversation_id?: string
-}
-
-const UNIT_TO_PINT: Record<string, number> = {
-  pint: 1,
-  schooner: 570 / 425,
-  pot: 570 / 285,
 }
 
 interface RecordPriceDeps {
@@ -57,11 +60,32 @@ export async function handleRecordPrice(
     return NextResponse.json({ ok: false, error: 'bad json' }, { status: 400 })
   }
 
+  if (pubSlug === ANDREW_DEMO_RESERVED_SLUG) {
+    const pintPrice = parseAndrewDemoPrice(body.price, body.unit)
+    const beerType = parseAndrewDemoBeer(body.beer_type)
+    const happyHour = parseAndrewDemoHappyHour(body.happy_hour)
+    if (pintPrice == null && beerType == null && happyHour == null) {
+      return NextResponse.json({ ok: false, error: 'no valid demo data to preview' }, { status: 400 })
+    }
+
+    return NextResponse.json({
+      ok: true,
+      sandbox: true,
+      recorded: false,
+      proposed: {
+        pint_price: pintPrice,
+        unit: parseAndrewDemoUnit(body.unit),
+        beer_type: beerType,
+        happy_hour: happyHour,
+        confidence: parseAndrewDemoConfidence(body.confidence),
+      },
+    })
+  }
+
   // Price is optional now — sometimes the bartender only gives us the happy hour
   // (e.g. AI receptionist transferred before we got the price). Any data beats
   // none. We only refuse if the tool fires with literally nothing useful.
-  const priceNum = typeof body.price === 'string' ? parseFloat(body.price) : body.price
-  const hasPrice = priceNum != null && !isNaN(priceNum)
+  const hasPrice = parseVoiceNumber(body.price) != null
   const hasHH = !!(body.happy_hour && body.happy_hour.trim())
   const hasBrand = !!(body.beer_type && body.beer_type.trim())
 
@@ -69,15 +93,8 @@ export async function handleRecordPrice(
     return NextResponse.json({ ok: false, error: 'no data to record' }, { status: 400 })
   }
 
-  let pintPrice: number | null = null
-  if (hasPrice) {
-    const unitMultiplier = UNIT_TO_PINT[body.unit || 'pint'] ?? 1
-    pintPrice = Number((priceNum! * unitMultiplier).toFixed(2))
-    if (pintPrice < 5 || pintPrice > 20) {
-      // Keep processing HH / brand even if price is implausible — discard the price only.
-      pintPrice = null
-    }
-  }
+  // Keep processing HH / brand even if price is implausible — discard the price only.
+  const pintPrice = hasPrice ? normalizeVoicePintPrice(body.price, body.unit) : null
 
   const supabase = deps.supabase ?? deps.getSupabase?.()
   if (!supabase) return NextResponse.json({ ok: false, error: 'server misconfigured' }, { status: 500 })

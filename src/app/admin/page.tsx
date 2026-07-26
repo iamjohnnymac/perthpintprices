@@ -5,8 +5,9 @@ import {
   DollarSign, Bell, BarChart3, Activity, FileText, Heart,
   Beer, Sunset, Users, Trophy, MapPin, AlertTriangle, Shield,
   Clock, RefreshCw, LogOut, Check, X, ChevronDown, ChevronUp,
-  Eye, EyeOff, Loader2, Store
+  Eye, EyeOff, Loader2, Store, AudioWaveform
 } from 'lucide-react'
+import AndrewTestCall from './AndrewTestCall'
 
 /* ================================================================
    TYPES
@@ -264,12 +265,13 @@ function LoginScreen({ onLogin }: { onLogin: (pw: string) => void }) {
    TABS
    ================================================================ */
 
-type TabId = 'overview' | 'activity' | 'reports' | 'health'
+type TabId = 'overview' | 'activity' | 'reports' | 'andrew' | 'health'
 
 const TABS: { id: TabId; label: string; icon: React.ElementType }[] = [
   { id: 'overview', label: 'Overview', icon: BarChart3 },
   { id: 'activity', label: 'Activity', icon: Activity },
   { id: 'reports', label: 'Reports', icon: FileText },
+  { id: 'andrew', label: 'Andrew', icon: AudioWaveform },
   { id: 'health', label: 'Health', icon: Heart },
 ]
 
@@ -842,6 +844,7 @@ export default function AdminDashboard() {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
+                aria-label={tab.label}
                 className={`flex-1 flex items-center justify-center gap-1.5 px-3 py-2.5 font-mono text-[0.65rem] font-bold uppercase tracking-[0.05em] border-3 border-ink rounded-card transition-all relative ${
                   isActive
                     ? 'bg-amber text-white shadow-hard-sm'
@@ -876,6 +879,7 @@ export default function AdminDashboard() {
             {activeTab === 'overview' && <OverviewTab data={data} />}
             {activeTab === 'activity' && <ActivityTab data={data} />}
             {activeTab === 'reports' && <ReportsTab data={data} password={password} onRefresh={fetchData} />}
+            {activeTab === 'andrew' && <AndrewTestCall password={password} />}
             {activeTab === 'health' && <HealthTab data={data} />}
           </>
         )}
