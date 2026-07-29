@@ -10,7 +10,7 @@ Stack, database, routes, components, and lib files are documented in `CLAUDE.md`
 
 ## What's done recently
 
-### GSC recovery check blocked by sitemap regression (2026-07-29)
+### GSC recovery check blocked by sitemap regression (2026-07-29, evidence `9da8696`)
 
 - **Issue #237:** reopened and returned to In progress after an incorrect early closure. The available Search Console browser context was signed out, so the current report date, GSC sitemap status and exact submitted-sitemap cohorts could not be measured; no bulk indexing requests were made.
 - **Production validation:** the live sitemap index still listed 1,015 URLs (32 content, 150 suburbs, 833 pubs) with zero duplicates or prohibited entries, but the latest completed run found 766 sitemap routes returning 404/noindex (repeated runs were inconsistent, from 597 to 766). This fails the technical recovery gate and must be fixed without excluding legitimate pubs for missing, stale or unverified price data.
