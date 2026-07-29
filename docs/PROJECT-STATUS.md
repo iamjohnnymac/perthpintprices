@@ -1,6 +1,6 @@
 # Perth Pint Prices Project Status
 
-Last updated: 2026-07-26
+Last updated: 2026-07-29
 
 ## What this is
 
@@ -9,6 +9,12 @@ Perth Pint Prices (perthpintprices.com) tracks pint prices across **857 Perth pu
 Stack, database, routes, components, and lib files are documented in `CLAUDE.md` (auto-loaded every session). This file covers history, recent work, and the backlog.
 
 ## What's done recently
+
+### GSC recovery check blocked by sitemap regression (2026-07-29)
+
+- **Issue #237:** reopened and returned to In progress after an incorrect early closure. The available Search Console browser context was signed out, so the current report date, GSC sitemap status and exact submitted-sitemap cohorts could not be measured; no bulk indexing requests were made.
+- **Production validation:** the live sitemap index still listed 1,015 URLs (32 content, 150 suburbs, 833 pubs) with zero duplicates or prohibited entries, but the latest completed run found 766 sitemap routes returning 404/noindex (repeated runs were inconsistent, from 597 to 766). This fails the technical recovery gate and must be fixed without excluding legitimate pubs for missing, stale or unverified price data.
+- **Sanitized evidence:** `artifacts/index-quality-237/weekly-2026-07-29.md` records only aggregate counts, baseline comparison limits and the follow-up conditions.
 
 ### Andrew owner-test controls ready for review (2026-07-26)
 - **Issue #250 / privacy hardening commits `300cb27`, `d160c5e` and `53226e9` / branch `codex/andrew-admin-demo`:** adds an unlisted, `noindex` Andrew price-check presentation at `/ai-price-demo`, plus an authenticated Andrew admin tab with a masked fixed destination, explicit AI-call consent, live status, privacy-safe call events and a proposed listing preview. The public worked example names an obviously fictitious venue and makes no publication or independent-verification claim.
