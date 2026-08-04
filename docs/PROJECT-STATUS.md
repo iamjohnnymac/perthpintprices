@@ -1,6 +1,6 @@
 # Perth Pint Prices Project Status
 
-Last updated: 2026-07-26
+Last updated: 2026-08-04
 
 ## What this is
 
@@ -9,6 +9,13 @@ Perth Pint Prices (perthpintprices.com) tracks pint prices across **857 Perth pu
 Stack, database, routes, components, and lib files are documented in `CLAUDE.md` (auto-loaded every session). This file covers history, recent work, and the backlog.
 
 ## What's done recently
+
+### Supabase build preflight retries transient failures (2026-08-04)
+- **Branch `fix/build-preflight-retry` / commit `03844a6`:** the `prebuild` data check made a single Supabase request behind a hard 15s timeout, so one dropped connection failed the whole deployment. Commits `92d6ba5` and `d094b0b` on `automation/gsc-recovery-2026-08-04` both died on `preflight timed out after 15000ms` with no code change between them and the passing build that followed — the branch carried docs-only commits.
+- **What changed:** `withBuildDataRetry()` in `src/lib/buildDataPreflight.ts` runs the fetch up to three times, each with its own 15s timeout and 1s/2s backoff, and logs every retry so a flaky build stays visible instead of being silently papered over. Worst case is ~48s before a build fails, up from 15s.
+- **Deliberate boundary:** `assertBuildData()` stays outside the retry, so a genuine data problem — pub count under the 800 floor, missing sentinel — still fails on the first attempt rather than burning three round trips. Only the fetch and its Supabase query errors are retried.
+- **Also covers CI:** `.github/workflows/ci.yml` runs `npm run build`, so the same preflight gates the GitHub Actions job, not just Vercel.
+- **Verification:** TypeScript, lint, 403 unit tests (5 new, covering transient recovery, timeout retry, attempt-budget exhaustion, backoff spacing and retry logging), the live preflight against production Supabase (849 pubs, sentinel present) and a full production build all pass. Local checks ran from a clone outside the OneDrive path — `npm ci` cannot run under `Notes & Projects` because the `&` truncates the path handed to postinstall shims.
 
 ### Andrew owner-test controls ready for review (2026-07-26)
 - **Issue #250 / privacy hardening commits `300cb27`, `d160c5e` and `53226e9` / branch `codex/andrew-admin-demo`:** adds an unlisted, `noindex` Andrew price-check presentation at `/ai-price-demo`, plus an authenticated Andrew admin tab with a masked fixed destination, explicit AI-call consent, live status, privacy-safe call events and a proposed listing preview. The public worked example names an obviously fictitious venue and makes no publication or independent-verification claim.
