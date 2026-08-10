@@ -17,6 +17,11 @@
       "statusCode": 301
     },
     {
+      "source": "/midland/7th-ave-bar-and-restaurant-loading-dock",
+      "destination": "/midland/7th-ave-bar-and-restaurant",
+      "statusCode": 301
+    },
+    {
       "source": "/northbridge/i-darts-nix-perth",
       "destination": "/northbridge/idartsnix",
       "statusCode": 301

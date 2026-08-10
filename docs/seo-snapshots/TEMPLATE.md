@@ -110,7 +110,7 @@ Tracked event names:
 - `article_internal_click`: article related-link clicks to non-pub site pages.
 - `article_pub_click`: article live-module clicks into pub pages.
 - `report_price_click`: report-price CTA clicks from article, home, and pub surfaces.
-- `report_price_open`: form auto-opens from `?submit=1`, useful for direct/shared article CTAs.
+- `report_price_open`: form auto-opens from a deep link, useful for direct/shared article CTAs. Two sources: `report_hash` for the `/#report` fragment every internal CTA now uses, and `submit_query_param` for the legacy `?submit=1` URLs still indexed and bookmarked.
 - `pub_nearby_click`: pub-page nearby-price clicks, including Tier-C nearest checked pub links.
 - `pub_external_click`: pub-page website and directions clicks.
 - `pub_internal_click`: pub-page clicks to non-pub site pages such as suburb pages.
