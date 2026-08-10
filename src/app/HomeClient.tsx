@@ -145,6 +145,11 @@ function HomeContent({ initialPubs }: { initialPubs: HomePub[] }) {
   useEffect(() => {
     const openFromHash = () => {
       if (window.location.hash !== '#report') return
+      // A hand-crafted /?submit=1#report hits both paths. Let the query-param
+      // effect above own that load: it opens the form and cleans the URL, and
+      // its router.replace drops the fragment too. Read the live URL rather
+      // than the searchParams hook so this stays a mount-only effect.
+      if (new URLSearchParams(window.location.search).get('submit') === '1') return
       trackSiteEvent('report_price_open', { source: 'report_hash' })
       setShowSubmitForm(true)
       // Drop the fragment without pushing a history entry
