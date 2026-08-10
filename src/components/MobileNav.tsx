@@ -102,7 +102,7 @@ export default function MobileNav({ onSubmitClick }: MobileNavProps) {
                 </button>
               ) : (
                 <Link
-                  href="/?submit=1"
+                  href="/#report"
                   onClick={() => setOpen(false)}
                   className="block w-full font-mono text-[0.82rem] font-bold uppercase tracking-[0.05em] text-white bg-amber border-3 border-ink rounded-pill py-3.5 shadow-hard-sm hover:translate-x-[1.5px] hover:translate-y-[1.5px] hover:shadow-hard-hover transition-all no-underline text-center"
                 >

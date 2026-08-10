@@ -338,7 +338,7 @@ export const articles: Article[] = [
     relatedLinks: [
       { href: '/insights/pint-index', label: 'Why we price every pint at 570ml' },
       { href: '/fremantle', label: 'Fremantle pint prices' },
-      { href: '/?submit=1', label: 'Report a price' },
+      { href: '/#report', label: 'Report a price' },
       { href: '/discover', label: 'See verified pint prices' },
     ],
   },

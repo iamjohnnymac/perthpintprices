@@ -22,7 +22,7 @@ function formatPrice(price: number | null | undefined): string {
 }
 
 function relatedLinkTracking(link: { href: string; label: string }) {
-  if (link.href === '/?submit=1') {
+  if (link.href === '/#report') {
     return {
       eventName: 'report_price_click',
       eventProperties: {
@@ -359,7 +359,7 @@ export function ArticleView({ article, pubs }: { article: Article; pubs: Pub[] }
 
           <div className="pt-2">
             <TrackedLink
-              href={articleUrl(article.slug) === '/articles/pints-under-10-perth' ? '/?submit=1' : '/articles'}
+              href={articleUrl(article.slug) === '/articles/pints-under-10-perth' ? '/#report' : '/articles'}
               eventName={articleUrl(article.slug) === '/articles/pints-under-10-perth' ? 'report_price_click' : 'article_hub_click'}
               eventProperties={{
                 source: 'article_detail_bottom_cta',

@@ -336,7 +336,7 @@ export default function DiscoverClient({
             <h2 className="type-section text-white mb-2">Know a price we&apos;re missing?</h2>
             <p className="text-white/60 text-sm mb-4">Help Perth drink cheaper.</p>
             <Link
-              href="/?submit=1"
+              href="/#report"
               className="inline-flex font-mono text-[0.85rem] font-bold uppercase tracking-[0.05em] text-ink bg-amber-light border-3 border-ink rounded-pill px-9 py-4 shadow-hard-sm hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-hard-hover transition-all no-underline"
             >
               Report a price

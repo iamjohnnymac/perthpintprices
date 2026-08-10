@@ -123,7 +123,9 @@ function HomeContent({ initialPubs }: { initialPubs: HomePub[] }) {
     setShowSubmitForm(true)
   }, [])
 
-  // Auto-open submit form when ?submit=1 is in URL (e.g. from suburb page links)
+  // Auto-open submit form when ?submit=1 is in URL. Kept for backward compatibility:
+  // the parameterised URL is indexed and bookmarked, so it must keep working even
+  // though internal links now use the /#report fragment instead.
   useEffect(() => {
     if (searchParams.get('submit') === '1') {
       trackSiteEvent('report_price_open', { source: 'submit_query_param' })
@@ -135,6 +137,23 @@ function HomeContent({ initialPubs }: { initialPubs: HomePub[] }) {
       router.replace(newUrl, { scroll: false })
     }
   }, [searchParams, router])
+
+  // Auto-open submit form for the /#report deep link, which is what every internal
+  // "Report a price" link points at. A fragment is not crawled as its own URL, so
+  // this deep link does not create a duplicate of the homepage the way ?submit=1 did.
+  // The hashchange listener covers the case where the hash changes without a remount.
+  useEffect(() => {
+    const openFromHash = () => {
+      if (window.location.hash !== '#report') return
+      trackSiteEvent('report_price_open', { source: 'report_hash' })
+      setShowSubmitForm(true)
+      // Drop the fragment without pushing a history entry
+      window.history.replaceState(null, '', `${window.location.pathname}${window.location.search}`)
+    }
+    openFromHash()
+    window.addEventListener('hashchange', openFromHash)
+    return () => window.removeEventListener('hashchange', openFromHash)
+  }, [])
 
   // P2a: New filter state
   const [vibeTagFilter, setVibeTagFilter] = useState(searchParams.get('vibe') || '')
@@ -326,7 +345,7 @@ function HomeContent({ initialPubs }: { initialPubs: HomePub[] }) {
           >
             Report a price
           </button>
-          <MobileNav />
+          <MobileNav onSubmitClick={() => openSubmitForm('home_mobile_nav')} />
         </div>
       </header>
 

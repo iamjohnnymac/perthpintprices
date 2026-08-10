@@ -108,7 +108,7 @@ export default function SubPageNav({ breadcrumbs, title, subtitle, showSubmit = 
 
         {showSubmit && (
           <Link
-            href="/?submit=1"
+            href="/#report"
             className="hidden sm:inline-flex font-mono text-[0.72rem] font-bold uppercase tracking-[0.05em] text-ink bg-white border-3 border-ink rounded-pill px-5 py-2.5 shadow-hard-sm hover:translate-x-[1.5px] hover:translate-y-[1.5px] hover:shadow-hard-hover transition-all no-underline flex-shrink-0"
           >
             Report a price

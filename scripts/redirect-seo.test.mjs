@@ -19,11 +19,13 @@ const legacySuburbRedirect = redirects.find(redirect => redirect.source === '/su
 assert.equal(legacySuburbRedirect?.destination, '/:slug')
 assert.equal(legacySuburbRedirect?.statusCode, 301, 'legacy suburb redirect must be an explicit 301')
 
-// GSC's dated 404 report included five previous pub slugs that still resolve to
+// GSC's dated 404 report included previous pub slugs that still resolve to
 // exactly one current pub. Keep those mappings explicit rather than relying on
 // a broad pattern that could send a removed venue to an irrelevant destination.
+// Only slugs with a live successor venue belong here — the rest stay 404.
 const renamedPubRedirects = {
   '/midland/the-7th-ave-bar-and-restaurant': '/midland/7th-ave-bar-and-restaurant',
+  '/midland/7th-ave-bar-and-restaurant-loading-dock': '/midland/7th-ave-bar-and-restaurant',
   '/northbridge/i-darts-nix-perth': '/northbridge/idartsnix',
   '/scarborough/sk-l': '/scarborough/skol',
   '/perth-cbd/helvetica-bar': '/perth/399-small-bar',
