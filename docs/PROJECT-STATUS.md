@@ -1,6 +1,6 @@
 # Perth Pint Prices Project Status
 
-Last updated: 2026-07-29
+Last updated: 2026-08-11
 
 ## What this is
 
@@ -9,6 +9,12 @@ Perth Pint Prices (perthpintprices.com) tracks pint prices across **857 Perth pu
 Stack, database, routes, components, and lib files are documented in `CLAUDE.md` (auto-loaded every session). This file covers history, recent work, and the backlog.
 
 ## What's done recently
+
+### GSC recovery check remains below closure gates (2026-08-11, evidence `04fbc4b`)
+
+- **Issue #237:** the authenticated Search Console report now has a 7 August update. The submitted sitemap shows 580 indexed and 429 not indexed pages, or 57.5% indexed. CNI is 165 and DNI is 27, versus the 10 July baseline of 99 and 18. The sitemap was last read on 10 August with `Success` and 1,009 discovered pages. No manual or bulk indexing requests were made.
+- **Production validation:** the historical validator stops at 827 pub URLs, six below the verified 833-URL baseline. The read-only aggregate continuation found 1 route/self-canonical failure and 1 robots-directive failure, down from 137 route/canonical failures on 4 August, with zero duplicate or prohibited URLs.
+- **Decision:** #237 stays open. Its 85% sitemap-indexation and fewer-than-50 CNI gates both fail. The new snapshot is `artifacts/index-quality-237/weekly-2026-08-11.md`; it records aggregate data only and keeps every legitimate pub eligible regardless of price freshness or verification.
 
 ### GSC recovery check blocked by sitemap regression (2026-07-29, evidence `9da8696`)
 
