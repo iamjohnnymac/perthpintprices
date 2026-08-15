@@ -130,13 +130,21 @@ function HomeContent({ initialPubs }: { initialPubs: HomePub[] }) {
     if (searchParams.get('submit') === '1') {
       trackSiteEvent('report_price_open', { source: 'submit_query_param' })
       setShowSubmitForm(true)
-      // Clean the param from URL
+      // Clean the param from the URL. router.replace() no-ops when dropping the
+      // last query param leaves the same pathname, which stranded /?submit=1
+      // (#258), so write history directly the way the hash path below does —
+      // Next patches history.replaceState, so router state stays in sync.
+      // Rebuilding from pathname also drops any fragment.
       const params = new URLSearchParams(searchParams.toString())
       params.delete('submit')
-      const newUrl = params.toString() ? `?${params.toString()}` : '/'
-      router.replace(newUrl, { scroll: false })
+      const query = params.toString()
+      window.history.replaceState(
+        null,
+        '',
+        query ? `${window.location.pathname}?${query}` : window.location.pathname,
+      )
     }
-  }, [searchParams, router])
+  }, [searchParams])
 
   // Auto-open submit form for the /#report deep link, which is what every internal
   // "Report a price" link points at. A fragment is not crawled as its own URL, so
@@ -146,8 +154,8 @@ function HomeContent({ initialPubs }: { initialPubs: HomePub[] }) {
     const openFromHash = () => {
       if (window.location.hash !== '#report') return
       // A hand-crafted /?submit=1#report hits both paths. Let the query-param
-      // effect above own that load: it opens the form and cleans the URL, and
-      // its router.replace drops the fragment too. Read the live URL rather
+      // effect above own that load: it opens the form and rewrites the URL from
+      // the pathname, which drops the fragment too. Read the live URL rather
       // than the searchParams hook so this stays a mount-only effect.
       if (new URLSearchParams(window.location.search).get('submit') === '1') return
       trackSiteEvent('report_price_open', { source: 'report_hash' })
