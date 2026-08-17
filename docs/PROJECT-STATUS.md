@@ -1,6 +1,6 @@
 # Perth Pint Prices Project Status
 
-Last updated: 2026-07-29
+Last updated: 2026-08-17
 
 ## What this is
 
@@ -9,6 +9,15 @@ Perth Pint Prices (perthpintprices.com) tracks pint prices across **857 Perth pu
 Stack, database, routes, components, and lib files are documented in `CLAUDE.md` (auto-loaded every session). This file covers history, recent work, and the backlog.
 
 ## What's done recently
+
+### Dependabot PRs no longer fail CI on withheld secrets (2026-08-17, commit `ebc8809`)
+
+- **Symptom:** the Actions tab read red although every push to `main` was green. The failures were all on Dependabot PR branches — four for four since 26 July (`31975464569`, `31338515528`, `30769335095`, `30187697202`), each dying at the same step.
+- **Cause:** GitHub deliberately withholds Actions secrets from Dependabot-triggered runs, so `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` resolved to empty and `prebuild` (`assertBuildCredentials`) aborted the build. The dependency bumps were never the problem: typecheck, lint, the 398 unit tests and all four contract tests passed in each of those runs before the build step ran.
+- **Fix:** a `Resolve Supabase build credentials` guard step resolves the secrets once and gates the Build and Playwright steps on the result. Credentials present builds as before; absent on a Dependabot run skips both with an explanatory notice while the credential-free gates still decide the PR; absent on any other run fails loudly, so a deleted or rotated repo secret cannot silently drop build coverage.
+- **Restoring full coverage (optional, owner action):** the guard keys off the resolved secrets, not the actor, so adding both values under Settings → Secrets and variables → **Dependabot** gives Dependabot PRs the complete pipeline with no further code change. Both are `NEXT_PUBLIC_*` values already shipped in the client bundle, so the Dependabot store exposes nothing that is not already public.
+- **Known trade-off until then:** a bump that breaks only the Next build or the e2e pass is not caught on the PR; it surfaces on the post-merge `main` run and the Vercel deploy.
+- **Verification:** `scripts/ci-workflow.test.mjs` (wired in as `npm run test:ci-workflow` and a CI step) asserts the guard fails closed, the Supabase-backed steps stay gated and the credential-free gates stay unconditional. The guard's shell logic was executed against all four credential/actor combinations. TypeScript, lint, 398 unit tests and the redirects/headers/access/ci-workflow contract tests pass locally; `test:gsc-baseline` fails in this container only because the Playwright browser build is absent, identically on unmodified `main`.
 
 ### GSC recovery check blocked by sitemap regression (2026-07-29, evidence `9da8696`)
 
