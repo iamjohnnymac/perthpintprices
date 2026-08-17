@@ -22,6 +22,7 @@
     "test:redirects": "node scripts/redirect-seo.test.mjs",
     "test:headers": "node scripts/security-headers.test.mjs",
     "test:access": "node scripts/agent-access-preflight.test.mjs",
+    "test:ci-workflow": "node scripts/ci-workflow.test.mjs",
     "access:preflight": "node scripts/agent-access-preflight.mjs",
     "check:andrew-demo-config": "node scripts/check-andrew-demo-config.mjs",
     "check:fingerprints": "tsx scripts/check-pub-fingerprints.mjs",
