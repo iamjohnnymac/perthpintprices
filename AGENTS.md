@@ -35,10 +35,10 @@ reports, issues, or git history—not in this always-loaded guide.
 | When the task involves | Read before acting |
 | --- | --- |
 | The Claude `/pm-loop` worker/reviewer workflow | `.claude/commands/pm-loop.md` and the active harness rules; keep each concurrent worker in an isolated branch and worktree |
-| Library, framework, SDK, API, CLI, or cloud-service behaviour | Resolve the exact package and version from `package.json` or lockfiles, then use Context7 to fetch current official documentation |
-| Prices, provenance, freshness, venue changes, menu extraction, or verification | `docs/price-verification-kit.md`, `src/lib/priceProvenance.ts`, `src/lib/freshness.ts`, and the relevant Supabase migrations |
+| Library, framework, SDK, API, CLI, or cloud-service behaviour | When applicable, resolve the exact package and version from `package.json` or lockfiles, then use Context7 to fetch current official documentation |
+| Prices, provenance, freshness, venue changes, menu extraction, or verification | `src/app/api/price-report/intake.ts`, `src/lib/priceProvenance.ts`, `src/lib/freshness.ts`, `docs/superpowers/specs/2026-06-01-price-intake-plumbing-design.md`, and the relevant Supabase migrations |
 | Supabase access, caching, RLS, or database writes | `src/lib/supabase.ts`, `src/lib/supabaseGateway.ts`, `src/lib/cachedPubs.ts`, and relevant files under `supabase/migrations/` |
-| SEO, metadata, canonicals, redirects, sitemap, robots, or indexability | `docs/SEO-MASTER.md`, relevant policy under `docs/seo/`, `src/lib/urls.ts`, `src/lib/sitemapData.ts`, `vercel.json`, and matching tests |
+| SEO, metadata, canonicals, redirects, sitemap, robots, or indexability | Relevant dated policy under `docs/seo/` (start with `docs/seo/suburb-indexability-policy-2026-07-21.md` for indexability), `src/lib/urls.ts`, `src/lib/sitemapData.ts`, `vercel.json`, route configuration, and matching tests; use `docs/SEO-MASTER.md` only for historical strategy and verify executable claims |
 | UI, styling, typography, responsive layout, or accessibility | `tailwind.config.ts`, `src/app/globals.css`, nearby components, and `tests/e2e/README.md` |
 | Product copy, articles, labels, titles, or descriptions | `docs/brand-voice-brief.md`; use the humanizer skill when available, then verify the result against the brief |
 | Andrew, phone calls, ElevenLabs, webhooks, or agent configuration | `agents/andrew.json`, `docs/andrew-voice-research.md`, the matching API handlers/tests, and the required access preflight |
@@ -111,8 +111,9 @@ CI also runs unit tests, configuration contracts, the build, and the Playwright 
 type-check alone is not equivalent.
 
 Any user-visible change needs before-and-after browser evidence at 1280x800 and 375x812. Use the
-Playwright projects and artifact conventions in `tests/e2e/README.md`; verify content, overflow,
-interaction, and console/runtime errors, not just screenshot creation.
+Playwright projects in `playwright.config.ts`, save the paired evidence in a task-specific artifact
+directory, and describe it in the handoff. `tests/e2e/README.md` owns the CI proof behavior. Verify
+content, overflow, interaction, and console/runtime errors, not just screenshot creation.
 
 Before handoff, inspect the full diff, confirm `git status`, list the exact checks run and their
 results, and call out any check skipped or dependent on external state. When an orchestration loop
@@ -134,8 +135,10 @@ is in scope, use a fresh independent reviewer after implementation.
 
 ### Supabase, RLS, and caching
 
-- Public/RLS-bound reads and writes use the anon client. Privileged authenticated server paths use
-  `serviceClient()` from `src/lib/supabaseGateway.ts`.
+- Public operations permitted directly by RLS use the anon client. Tables that intentionally deny
+  anonymous writes may be reached by a narrowly scoped server route using `serviceClient()` from
+  `src/lib/supabaseGateway.ts`; such brokers must validate input, enforce their authentication or
+  rate-limit boundary, expose only the minimum operation, and have focused tests.
 - Construct the service client inside the request path. It fails closed when the service-role key
   is missing; never replace that failure with an anon fallback.
 - Keep service-role credentials out of client modules, `NEXT_PUBLIC_*` variables, logs,
@@ -169,7 +172,7 @@ is in scope, use a fresh independent reviewer after implementation.
   palette or one-off component language.
 - Preserve responsive behaviour, keyboard access, readable contrast, reduced-motion behaviour,
   and stable layout. Use Lucide icons or a deliberate inline SVG for interface symbols; product
-  copy does not use decorative emoji unless the design explicitly requires it.
+  copy does not use decorative emoji.
 - Keep data-heavy list pulls and generated HTML within the existing cache and payload budgets.
 
 ### Voice and privacy
