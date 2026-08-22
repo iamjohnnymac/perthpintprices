@@ -12,7 +12,7 @@
     "postbuild": "npm run check:fingerprints && npm run check:payload",
     "start": "next start",
     "lint": "eslint . --max-warnings 50",
-    "test": "tsx --test \"src/**/*.test.ts\"",
+    "test": "tsx --test \"src/**/*.test.ts\" && node --test scripts/agent-guidance.test.mjs",
     "test:gsc-baseline": "node --test scripts/build-gsc-indexing-baseline.test.mjs",
     "crawl:official-menus": "tsx scripts/crawl-official-menus.mjs",
     "discover:official-menu-sources": "tsx scripts/discover-official-menu-sources.mjs",

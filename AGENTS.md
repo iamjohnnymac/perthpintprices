@@ -1,95 +1,195 @@
-# Perth Pint Prices
+# AGENTS.md
 
-## Project overview
-Perth Pint Prices (perthpintprices.com) tracks pint prices across 300+ Perth pubs. Users discover cheap pints, find happy hours, plan pub crawls, and report prices.
+This is the canonical repository guide for coding agents. Keep it focused on durable invariants
+and task routing. Read the smallest task-specific set of documents and source files that covers
+the work.
 
-- **Stack:** Next.js 14 (App Router), Tailwind CSS, TypeScript strict, Supabase
-- **Hosting:** Vercel (auto-deploys from `main`), dev server on port 3001
-- **Repo:** github.com/iamjohnnymac/perthpintprices
-- **Supabase:** project ref `ifxkoblvgttelzboenpi` (Sydney region)
+## Product direction
 
-## Database
-- `pubs` — venue info (name, slug, suburb, lat/lng, prices, happy hour, amenities) — currently 857 pubs, 663 missing regular prices
-- `price_reports` — user- and AI-submitted price reports (the `record_price` webhook + the public form both write here)
-- `price_history` — internal price-change log (audit trail of `pubs.price` updates)
-- `price_snapshots` — weekly aggregate snapshots for trend tracking
-- `crowd_reports` — live crowd level reports from users
-- `phone_call_log` — full transcript + cost log of every Andrew call (post-call webhook)
-- `push_subscriptions` — web push notification subscribers
+Perth Pint Prices helps people decide where and when to buy a pint in Perth. The product wins on:
 
-## Routes (23 pages)
-- **Core:** `/` homepage, `/discover`, `/happy-hour`, `/[suburb]/[pub]` (e.g. `/fremantle/the-norfolk-hotel`), `/[suburb]` (e.g. `/fremantle`), `/suburbs`
-- **Legacy redirect stubs:** `/pub/[slug]` and `/suburb/[slug]` return 308 redirects to the current URL structure
-- **Guides (5):** `/guides` index, `/guides/beer-weather`, `/guides/cozy-corners`, `/guides/dad-bar`, `/guides/punt-and-pints`, `/guides/sunset-sippers`
-- **Insights (5):** `/insights` index, `/insights/pint-index`, `/insights/pint-of-the-day`, `/insights/suburb-rankings`, `/insights/tonights-best-bets`, `/insights/venue-breakdown`
-- **Features:** `/pint-crawl`, `/pub-golf`, `/weekly-report`, `/leaderboard`
-- **Admin:** `/admin`
+1. **Trustworthy prices** — show the source and checked date, preserve provenance, and leave
+   unknown prices unknown.
+2. **Useful local decisions** — turn the data into clear comparisons, nearby options, and
+   time-specific happy-hour advice.
 
-## Components (34 in `src/components/`)
-BeerWeather, BreadcrumbJsonLd, CrowdReporter, DadBar, ErrorBoundary, FAQ, FeaturePageShell, FilterSection, Footer, HeroSection, HowItWorks, InstallPrompt, LucideIcon, Map, MiniMap, MobileNav, PintIndex, PintIndexBadge, PintOfTheDay, PriceHistory, PubCard, PubCardList, PubDetailMap, PuntNPints, RainyDay, ScrollReveal, SocialProof, SubPageNav, SubmitPubForm, SuburbLeague, SunsetSippers, TonightsMoves, VenueIntel, WatchlistButton
+When scope or copy is ambiguous, prefer the option that improves evidence or helps a punter make
+a decision. Read `docs/brand-voice-brief.md` for the full writing standard.
 
-**Key patterns:**
-- `FeaturePageShell` wraps guide/insight pages (loads pubs, crowd data, geolocation). Pass `title` prop for sr-only H1.
-- `SubPageNav` for breadcrumb navigation on sub-pages
-- `BreadcrumbJsonLd` for schema.org breadcrumb structured data (uses `url` property, not `item`)
+## Sources of truth
 
-## Lib files (12 in `src/lib/`)
-freshness, happyHour, happyHourLive, location, mapTheme, mapTile, priceColors, priceLabel, pushNotifications, sunPosition, supabase, utils
+- Code and configuration own executable facts: dependency versions, scripts, routes, redirects,
+  cron schedules, security headers, cache policy, schemas, and environment contracts.
+- Supabase and provider APIs own current venue, price, verification, and operational state.
+- Focused policy documents own editorial, SEO, data-verification, and security procedures.
+- `docs/PROJECT-STATUS.md` is a historical status log, not a substitute for inspecting the
+  current branch and live systems.
+- This file owns stable repository invariants and routes agents to deeper context.
 
-## API routes
-- **User-facing**: `/api/pubs`, `/api/price-report`, `/api/pub-submission`, `/api/menu-scan`, `/api/pint-of-the-day`
-- **Andrew (voice agent)**: `/api/agents/record-price/[slug]` (mid-call webhook), `/api/agents/post-call` (HMAC-signed post-call webhook), `/api/pintsweep/kickoff` (batch trigger via ElevenLabs Batch Calling)
-- **Admin**: `/api/admin/review`, `/api/admin/stats`
-- **Cron / scheduled**: `/api/cron/price-check`, `/api/cron/weekly-snapshot`, `/api/weekly-snapshot`, `/api/weekly-report`
-- **Other**: `/api/push/send`, `/api/push/subscribe`, `/api/race-meets`, `/api/weather`
+Read a cheap primary source instead of copying a value from prose. Point-in-time counts, route
+inventories, dependency versions, completed work, and incident details belong in code, dated
+reports, issues, or git history—not in this always-loaded guide.
 
-## Reference docs
-- `docs/PROJECT-STATUS.md` — detailed history, recent work log, and backlog (read first for "what's going on")
-- `docs/SEO-MASTER.md` — full SEO playbook (keyword targets, content strategy, link building, technical checklist)
-- `docs/seo-research-2026.md` — what's new in late-2026 SEO (AEO/GEO, Information Gain, MenuItem schema, AU local). Companion to SEO-MASTER.
-- `docs/seo-action-plan.md` — prioritised SEO punch list driven by real GSC + GA4 data; maps 1:1 to milestone #1 issues
-- `docs/andrew-voice-research.md` — voice models + TTS tuning research for the Andrew agent
-- `docs/price-verification-kit.md` — price verification process
-- `docs/handover-*.md` — nightly handover notes (most recent first)
-- Agent config: `agents/andrew.json` (version-controlled, PATCHed to ElevenLabs)
+## Task routing
 
-## Rules
-- **Always check Context7 first** — before writing any code, use the Context7 MCP tool (`mcp__plugin_context7_context7__resolve-library-id` then `mcp__plugin_context7_context7__query-docs`) to look up current documentation for any library or framework being used (Next.js, Tailwind, Lucide, Supabase, etc.)
-- **Always visually verify changes** — after any UI change, take Playwright screenshots at desktop (1280x800) and mobile (375x812) to confirm layout, spacing, and content look correct
-- **Always keep Playwright before/after evidence** — for UI work, capture desktop and mobile screenshots before changes and after changes, save them as artifacts, and reference them in the final handoff/PR
-- **Always follow the Design System below** — every UI change must use the correct tokens, components, and patterns defined in this file
-- **Always run humanizer** — run the humanizer skill on any new user-facing text to remove AI writing patterns
-- **Never use emojis** — use Lucide React icons or inline SVGs instead
-- **Check TypeScript compiles** — run `npx tsc --noEmit` after code changes
-- **Update docs after every push** — after pushing to remote, update `docs/PROJECT-STATUS.md` with what changed (new entry under "What's done recently" with date, bullet points, and commit hash)
-- **Keep tickets and PRs current** — when starting work on a GitHub issue, move it to "In Progress" on the project board. When the PR merges, close the linked issue and move the card to "Done". If work reveals scope that changes the issue, update the issue body. Never leave a card in "Todo" while actively working it, or "In Progress" after it ships.
-- **SEO on new pages** — every new page needs: title (<60 chars), description (<160 chars), canonical URL, OG tags, Twitter card. Check `docs/SEO-MASTER.md`
+| When the task involves | Read before acting |
+| --- | --- |
+| The Claude `/pm-loop` worker/reviewer workflow | `.claude/commands/pm-loop.md` and the active harness rules; keep each concurrent worker in an isolated branch and worktree |
+| Library, framework, SDK, API, CLI, or cloud-service behaviour | When applicable, resolve the exact package and version from `package.json` or lockfiles, then use Context7 to fetch current official documentation |
+| Prices, provenance, freshness, venue changes, menu extraction, or verification | `src/app/api/price-report/intake.ts`, `src/lib/priceProvenance.ts`, `src/lib/freshness.ts`, `docs/superpowers/specs/2026-06-01-price-intake-plumbing-design.md`, and the relevant Supabase migrations |
+| Supabase access, caching, RLS, or database writes | `src/lib/supabase.ts`, `src/lib/supabaseGateway.ts`, `src/lib/cachedPubs.ts`, and relevant files under `supabase/migrations/` |
+| SEO, metadata, canonicals, redirects, sitemap, robots, or indexability | Relevant dated policy under `docs/seo/` (start with `docs/seo/suburb-indexability-policy-2026-07-21.md` for indexability), `src/lib/urls.ts`, `src/lib/sitemapData.ts`, `vercel.json`, route configuration, and matching tests; use `docs/SEO-MASTER.md` only for historical strategy and verify executable claims |
+| UI, styling, typography, responsive layout, or accessibility | `tailwind.config.ts`, `src/app/globals.css`, nearby components, and `tests/e2e/README.md` |
+| Product copy, articles, labels, titles, or descriptions | `docs/brand-voice-brief.md`; use the humanizer skill when available, then verify the result against the brief |
+| Andrew, phone calls, ElevenLabs, webhooks, or agent configuration | `agents/andrew.json`, `docs/andrew-voice-research.md`, the matching API handlers/tests, and the required access preflight |
+| Authentication, secrets, privileged routes, CSP, Sentry, or privacy | `SECURITY.md`, `docs/ops/secret-inventory.md`, `src/lib/adminAuth.ts`, `src/lib/supabaseGateway.ts`, and the matching security/privacy tests |
+| Build failures, CI, Playwright, or visual evidence | `.github/workflows/ci.yml`, `package.json`, `playwright.config.ts`, and `tests/e2e/README.md` |
+| Current priorities or historical context | The relevant issue or PR, then the newest applicable entry in `docs/PROJECT-STATUS.md`; confirm every live claim independently |
 
-## Design System
+Use Context7 for current library-specific syntax, configuration, migrations, and debugging. Start
+with library resolution, query with the full task, and prefer the official version-matched result.
+It is unnecessary for repository-local business logic, code review, or general programming
+concepts.
 
-### Colors (always use Tailwind tokens, never hardcode hex)
-- `text-ink` / `bg-ink` — #171717
-- `text-gray-mid` — #8A8A85
-- `bg-off-white` — #F7F7F5
-- `bg-[#FDF8F0]` — page background
-- `text-amber` / `bg-amber` — #D4740A
-- `bg-amber-pale` — #FFF3E0
-- Never use `stone-*`, `orange-*`, or raw hex like `#1A1A1A`, `#888`, `#666`
+## Repository shape
 
-### Typography
-- `font-mono` (JetBrains Mono) — labels, nav, buttons, data
-- `font-display` (DM Serif) — decorative headings
-- `font-body` (Plus Jakarta Sans) — body text
+- `src/app` — Next.js App Router pages, route handlers, metadata, robots, and sitemap endpoints.
+- `src/components` — shared product and UI components; reusable primitives live under
+  `src/components/ui`.
+- `src/lib` — data access, caching, provenance, URLs, indexability, analytics, and domain logic.
+- `src/types` — shared application types.
+- `tests/e2e` — Playwright smoke paths and visual PR proof.
+- `scripts` — verification, access preflights, imports, crawlers, and one-off operational tools.
+- `supabase/migrations` — the database change history.
+- `agents` — version-controlled ElevenLabs agent configuration.
+- `docs` — task-specific policies, plans, research, and historical status.
 
-### Components
-- Borders: `border-3 border-ink`
-- Cards: `rounded-card` (12px)
-- Buttons/pills: `rounded-pill` (9999px) — never `rounded-2xl`
-- Shadows: `shadow-hard-sm` (3px) — never bare `shadow-hard` (4px)
-- Button pattern: `border-3 border-ink rounded-pill shadow-hard-sm`
+Read `package.json`, `package-lock.json`, `next.config.js`, `vercel.json`, and the active workflow
+before stating current versions, commands, redirects, schedules, or deployment behaviour. The
+`@/*` alias resolves to `src/*`.
 
-### Layout
-- Container: `max-w-container` (800px) with `px-6`
-- All pages must include `<Footer />`
-- Sub-pages use `<SubPageNav />` for header
-- Homepage header has 3 nav links: Discover, Happy Hours, Pint Report
+## Working safely
+
+Before editing, run `git status --short` and preserve unrelated work. Concurrent agents use one
+branch and one worktree each. Confirm the branch before committing, and keep every changed line
+traceable to the task.
+
+Use the smallest coherent change. Match the existing architecture and style; remove only the
+orphans your own change creates. Surface assumptions that materially affect behaviour, and turn
+the request into observable success criteria before implementation.
+
+External mutations need explicit scope. Database writes, migrations, provider configuration,
+phone calls, deployments, ticket changes, and secret rotation are separate actions from editing
+the repository. Use read-only checks until the task authorises the mutation.
+
+## Development and verification
+
+Install and run commands from the repository root:
+
+```bash
+npm ci
+npm run dev
+npx tsc --noEmit
+npm run lint
+npm test
+npm run test:gsc-baseline
+npm run test:redirects
+npm run test:headers
+npm run test:access
+npm run build
+npm run test:e2e
+```
+
+Treat `package.json` and `.github/workflows/ci.yml` as the exact command contract. Match checks to
+the change: run focused tests while iterating, then every relevant CI command before handoff.
+Do not claim a production build passed when Supabase credentials or live data made the build
+preflight unavailable; state that limitation precisely.
+
+The production build is intentionally data-aware. Its prebuild checks Supabase reachability and
+sentinel/data health, and its postbuild checks generated-page diversity and homepage payload.
+CI also runs unit tests, configuration contracts, the build, and the Playwright PR proof. A local
+type-check alone is not equivalent.
+
+Any user-visible change needs before-and-after browser evidence at 1280x800 and 375x812. Use the
+Playwright projects in `playwright.config.ts`, save the paired evidence in a task-specific artifact
+directory, and describe it in the handoff. `tests/e2e/README.md` owns the CI proof behavior. Verify
+content, overflow, interaction, and console/runtime errors, not just screenshot creation.
+
+Before handoff, inspect the full diff, confirm `git status`, list the exact checks run and their
+results, and call out any check skipped or dependent on external state. When an orchestration loop
+is in scope, use a fresh independent reviewer after implementation.
+
+## Application invariants
+
+### Price and venue data
+
+- A displayed price, happy-hour window, venue attribute, and freshness claim must come from real
+  data with the appropriate provenance. Truthful absence beats a guess.
+- Keep regular prices distinct from temporary happy-hour prices. Preserve the checked date,
+  source, confidence, and submission source through intake and review.
+- A report is evidence for review, not automatic permission to overwrite the canonical pub row.
+- User and provider input is untrusted. Validate at the boundary, preserve the original evidence
+  needed for review, and keep privileged writes server-side.
+- Data changes require targeted tests plus a read-back or rendered verification appropriate to
+  the changed surface. Never infer success from a row count alone.
+
+### Supabase, RLS, and caching
+
+- Public operations permitted directly by RLS use the anon client. Tables that intentionally deny
+  anonymous writes may be reached by a narrowly scoped server route using `serviceClient()` from
+  `src/lib/supabaseGateway.ts`; such brokers must validate input, enforce their authentication or
+  rate-limit boundary, expose only the minimum operation, and have focused tests.
+- Construct the service client inside the request path. It fails closed when the service-role key
+  is missing; never replace that failure with an anon fallback.
+- Keep service-role credentials out of client modules, `NEXT_PUBLIC_*` variables, logs,
+  screenshots, commits, and task transcripts.
+- Server list pages use the shared cached data seam in `src/lib/cachedPubs.ts`. It caches raw rows
+  so time-sensitive happy-hour state is derived at render time. Preserve its payload-size and
+  invalidation constraints when extending reads.
+- Add database changes as reviewable migrations under `supabase/migrations/`. Applying a
+  migration to a live project requires explicit owner approval and post-apply verification.
+
+### URLs, SEO, and indexability
+
+- `src/lib/urls.ts` owns the canonical origin, suburb slugging, and pub/suburb URL builders. Reuse
+  it across links, metadata, structured data, and sitemaps.
+- Preserve intentional redirects and retired-route responses in `vercel.json` and route handlers.
+  Update the redirect/SEO contract tests in the same change when URL behaviour changes.
+- Legitimate pub pages remain indexable when a price is missing, stale, or unverified; confirmed
+  permanent closures are excluded. Suburb pages are based on legitimate venue presence, not price
+  coverage. The relevant indexability modules and dated SEO policy own the exact predicates.
+- New public pages need unique decision-led content and the complete metadata/canonical/social/
+  structured-data treatment required by the SEO playbook. Add them to navigation and sitemap
+  policy deliberately; route existence alone is insufficient.
+- Robots directives guide crawlers and never replace authentication or authorisation.
+
+### Rendering and design
+
+- Prefer Server Components. Add a Client Component only at the smallest boundary that needs
+  browser state or interaction.
+- Reuse the Tailwind tokens and semantic typography roles defined in `tailwind.config.ts` and
+  `src/app/globals.css`. Extend the design system at its source rather than creating a parallel
+  palette or one-off component language.
+- Preserve responsive behaviour, keyboard access, readable contrast, reduced-motion behaviour,
+  and stable layout. Use Lucide icons or a deliberate inline SVG for interface symbols; product
+  copy does not use decorative emoji.
+- Keep data-heavy list pulls and generated HTML within the existing cache and payload budgets.
+
+### Voice and privacy
+
+- Write in Australian English with the evidence-first, dry Perth voice in
+  `docs/brand-voice-brief.md`. Lead with the decision, use specific local facts, and keep certainty
+  proportional to the source and checked date.
+- Avoid generic filler on templated pages. Specific data earns copy; sparse evidence earns a
+  shorter honest page.
+- Treat phone numbers, transcripts, precise location, IP-derived identifiers, reports, and
+  operational metadata as sensitive. Collect, log, expose, and send only what the feature needs.
+- Run the relevant privacy, webhook-authentication, rate-limit, CSP, and security-header tests
+  whenever those boundaries move.
+
+## Keeping this guide healthy
+
+Add a rule here only when every agent needs it and the environment cannot express it more
+reliably. Put branch-specific procedures behind a task-routing pointer. Put live counts, incident
+details, and completed work in dated documents, issues, or git history. When a change makes a
+sentence false, update or remove it in the same PR.
