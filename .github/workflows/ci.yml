@@ -56,9 +56,40 @@ jobs:
       - name: Agent access contract test
         run: npm run test:access
 
+      - name: CI workflow contract test
+        run: npm run test:ci-workflow
+
+      # GitHub deliberately withholds Actions secrets from Dependabot-triggered
+      # runs, so `secrets.*` resolves to empty there and the build's Supabase
+      # preflight fails. That is a credential gap, not a broken dependency bump,
+      # so Dependabot PRs skip the steps that need a live database and are still
+      # gated on typecheck, lint, tests and the config contract tests above.
+      # Mirroring both values into Settings > Secrets and variables > Dependabot
+      # restores full coverage with no change to this file — they are
+      # NEXT_PUBLIC_* values that already ship in the client bundle, so putting
+      # them in the Dependabot store exposes nothing that isn't already public.
+      # https://docs.github.com/en/code-security/dependabot/troubleshooting-dependabot/troubleshooting-dependabot-on-github-actions
+      - name: Resolve Supabase build credentials
+        id: supabase
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          FROM_DEPENDABOT: ${{ github.actor == 'dependabot[bot]' || github.event.pull_request.user.login == 'dependabot[bot]' }}
+        run: |
+          if [ -n "$NEXT_PUBLIC_SUPABASE_URL" ] && [ -n "$NEXT_PUBLIC_SUPABASE_ANON_KEY" ]; then
+            echo "available=true" >> "$GITHUB_OUTPUT"
+          elif [ "$FROM_DEPENDABOT" = "true" ]; then
+            echo "available=false" >> "$GITHUB_OUTPUT"
+            echo "::notice title=Build and Playwright skipped::Actions secrets are not exposed to Dependabot runs, so the Supabase-backed build cannot run. Typecheck, lint, tests and the contract tests still gate this PR. Add NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY as Dependabot secrets to restore full coverage."
+          else
+            echo "NEXT_PUBLIC_SUPABASE_URL / NEXT_PUBLIC_SUPABASE_ANON_KEY are missing from the Actions secrets for this run." >&2
+            exit 1
+          fi
+
       - name: Build
         # prebuild checks Supabase reachability/data volume; postbuild checks
         # that the generated pub pages have healthy content diversity.
+        if: ${{ steps.supabase.outputs.available == 'true' }}
         run: npm run build
         env:
           NEXT_TELEMETRY_DISABLED: "1"
@@ -67,6 +98,7 @@ jobs:
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
 
       - name: Playwright PR proof
+        if: ${{ steps.supabase.outputs.available == 'true' }}
         run: npm run test:e2e
         env:
           NEXT_TELEMETRY_DISABLED: "1"
@@ -74,7 +106,7 @@ jobs:
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
 
       - name: Upload Playwright proof
-        if: ${{ !cancelled() }}
+        if: ${{ !cancelled() && steps.supabase.outputs.available == 'true' }}
         uses: actions/upload-artifact@v7
         with:
           name: playwright-proof
