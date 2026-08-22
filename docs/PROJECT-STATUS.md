@@ -1,6 +1,6 @@
 # Perth Pint Prices Project Status
 
-Last updated: 2026-08-17
+Last updated: 2026-08-22
 
 ## What this is
 
@@ -9,6 +9,12 @@ Perth Pint Prices (perthpintprices.com) tracks pint prices across **857 Perth pu
 Stack, database, routes, components, and lib files are documented in `CLAUDE.md` (auto-loaded every session). This file covers history, recent work, and the backlog.
 
 ## What's done recently
+
+### Routine dependency refresh ready to merge (2026-08-22, commit `279ce6c`)
+
+- **Nine direct updates:** refreshed Sentry, Supabase, Lucide, Radix UI, Playwright, Leaflet types, Autoprefixer, PostCSS and tsx within their existing major versions.
+- **Runtime compatibility:** raised the declared Node.js floor from 20.17 to 22 because Supabase 2.112.3 and its packages now require Node 22. CI already runs Node 22.
+- **Verification:** clean install and dependency-tree validation pass. TypeScript, lint, 398 unit tests, the repository contract tests, the production build, 29 Playwright checks and the Vercel preview pass. The production dependency audit improves from six high-severity findings on `main` to four high and one moderate; the remaining findings are pre-existing Next.js and transitive-package advisories outside this grouped update.
 
 ### Dependabot PRs no longer fail CI on withheld secrets (2026-08-17, commit `ebc8809`)
 
