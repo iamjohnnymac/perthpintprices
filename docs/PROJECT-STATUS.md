@@ -1,6 +1,6 @@
 # Perth Pint Prices Project Status
 
-Last updated: 2026-08-22
+Last updated: 2026-08-23
 
 ## What this is
 
@@ -9,6 +9,11 @@ Perth Pint Prices (perthpintprices.com) tracks pint prices across **857 Perth pu
 Stack, database, routes, components, and lib files are documented in `CLAUDE.md` (auto-loaded every session). This file covers history, recent work, and the backlog.
 
 ## What's done recently
+
+### Built in Perth footer stamp (2026-08-23, commit `fa699a8`)
+
+- **Shared footer:** replaced the quiet "Made in Perth" line with a compact "Built in / Perth, WA" stamp styled with the site's existing design tokens. It appears on every page that uses the shared footer without adding client-side JavaScript.
+- **Verification:** TypeScript and lint pass against the latest `main`. Inspected Playwright before-and-after captures at 1280x800 and 375x812 are stored under `artifacts/playwright/built-in-perth/`.
 
 ### Routine dependency refresh ready to merge (2026-08-22, commit `279ce6c`)
 
