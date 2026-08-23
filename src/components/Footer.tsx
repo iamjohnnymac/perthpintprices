@@ -75,9 +75,15 @@ export default function Footer() {
           <p className="text-[0.75rem] text-white/55 leading-relaxed max-w-[400px]">
             Prices are community-submitted and may vary. Drink responsibly.
           </p>
-          <p className="font-display text-[1rem] italic text-white/60">
-            Made in Perth
-          </p>
+          <div className="inline-flex -rotate-2 items-center gap-2.5 rounded-card border-3 border-ink bg-amber-pale px-3 py-2 shadow-hard-sm">
+            <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" className="shrink-0 text-amber">
+              <path d="M12 2v20M2 12h20M4.93 4.93l14.14 14.14M19.07 4.93L4.93 19.07" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
+            </svg>
+            <span className="flex flex-col">
+              <span className="font-mono text-[0.55rem] font-extrabold uppercase leading-none tracking-[0.16em] text-amber-deep">Built in</span>
+              <span className="font-display text-[1.15rem] italic leading-tight text-ink">Perth, WA</span>
+            </span>
+          </div>
         </div>
       </div>
     </footer>
