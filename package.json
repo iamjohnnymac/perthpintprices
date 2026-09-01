@@ -19,6 +19,7 @@
     "build:official-menu-seeds": "tsx scripts/build-official-menu-seeds.mjs",
     "build:official-menu-review": "tsx scripts/build-official-menu-review.mjs",
     "import:official-menu-review": "tsx scripts/import-official-menu-review.mjs",
+    "admin:reset-password": "node scripts/reset-admin-password.mjs",
     "test:redirects": "node scripts/redirect-seo.test.mjs",
     "test:headers": "node scripts/security-headers.test.mjs",
     "test:access": "node scripts/agent-access-preflight.test.mjs",

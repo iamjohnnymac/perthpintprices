@@ -25,6 +25,22 @@ export interface PendingReminderInput {
   now?: Date
 }
 
+export interface NewPubSubmissionMessageInput {
+  pubName: string
+  suburb: string
+  address: string | null
+  price: number
+  beerType: string | null
+}
+
+function plainSlackText(value: string): string {
+  return value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/@/g, '@\u200b')
+}
+
 /** Instant ping for a freshly submitted price report. */
 export function formatNewReportMessage(input: NewReportMessageInput): string {
   const where = input.suburb ? `${input.pubName} (${input.suburb})` : input.pubName
@@ -36,6 +52,14 @@ export function formatNewReportMessage(input: NewReportMessageInput): string {
   const beer = input.beerType ? `${input.beerType} ` : ''
   const kind = input.reportType === 'happy_hour_report' ? 'happy hour price' : 'price report'
   return `New ${kind}: ${beer}$${input.reportedPrice.toFixed(2)} at ${where} — via ${input.submissionSource}, by ${input.reporterName}. Review: ${ADMIN_URL}`
+}
+
+/** Instant ping for a newly submitted pub. */
+export function formatNewPubSubmissionMessage(input: NewPubSubmissionMessageInput): string {
+  const beer = input.beerType ? ` ${plainSlackText(input.beerType)}` : ''
+  const address = input.address ? ` Address: ${plainSlackText(input.address)}.` : ''
+
+  return `New pub submission: ${plainSlackText(input.pubName)}. ${plainSlackText(input.suburb)}, $${input.price.toFixed(2)}${beer}.${address} Review: ${ADMIN_URL}`
 }
 
 /**

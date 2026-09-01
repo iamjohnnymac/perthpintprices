@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { anonClient } from '@/lib/supabaseGateway';
+import { formatNewPubSubmissionMessage, sendSlackMessage } from '@/lib/slackNotify';
 
 const supabase = anonClient();
 
@@ -48,6 +49,14 @@ export async function POST(req: NextRequest) {
       console.error('Error inserting pub submission:', error);
       return NextResponse.json({ error: 'Failed to submit' }, { status: 500 });
     }
+
+    await sendSlackMessage(formatNewPubSubmissionMessage({
+      pubName: pub_name,
+      suburb,
+      address: address || null,
+      price: parsedPrice,
+      beerType: beer_type || null,
+    }));
 
     return NextResponse.json({ success: true, message: 'Pub submitted. We\'ll review it shortly.' });
   } catch {

@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { revalidateTag } from 'next/cache'
+import { revalidatePath, revalidateTag } from 'next/cache'
 import type { SupabaseClient } from '@supabase/supabase-js'
 import { reviewPriceReport } from './priceReportReview'
+import { reviewPubSubmission } from './pubSubmissionReview'
 import { PUBS_CACHE_TAG } from '@/lib/cachedPubs'
 import { authenticateAdminRequest } from '@/lib/adminAuth'
 
@@ -17,7 +18,7 @@ export async function handleAdminReview(request: NextRequest, deps: AdminReviewD
   const supabase = auth.supabase
 
   const body = await request.json()
-  const { type, id, action, target_slug } = body
+  const { type, id, action, target_slug, place_id } = body
 
   if (!type || !id || !action) {
     return NextResponse.json({ error: 'Missing type, id, or action' }, { status: 400 })
@@ -34,68 +35,18 @@ export async function handleAdminReview(request: NextRequest, deps: AdminReviewD
       return NextResponse.json(result.body, { status: result.status })
 
     } else if (type === 'pub_submission') {
-      if (action === 'approve') {
-        const { data: sub, error: subErr } = await supabase
-          .from('pub_submissions')
-          .select('*')
-          .eq('id', id)
-          .single()
+      const result = await reviewPubSubmission(supabase, { id, action, place_id })
 
-        if (subErr || !sub) {
-          return NextResponse.json({ error: 'Submission not found' }, { status: 404 })
-        }
-
-        const slug = sub.pub_name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
-
-        const { data: existing } = await supabase
-          .from('pubs')
-          .select('slug')
-          .eq('slug', slug)
-          .single()
-
-        if (existing) {
-          return NextResponse.json({ error: 'A pub with this name already exists' }, { status: 409 })
-        }
-
-        const now = new Date().toISOString()
-
-        const { error: createErr } = await supabase
-          .from('pubs')
-          .insert({
-            slug,
-            name: sub.pub_name,
-            suburb: sub.suburb,
-            address: sub.address || null,
-            price: sub.price || null,
-            beer_type: sub.beer_type || null,
-            price_verified: sub.price ? true : false,
-            last_verified: sub.price ? now : null,
-            price_verified_at: sub.price ? now : null,
-            price_source: sub.price ? 'crowdsourced' : null,
-            price_confidence: sub.price ? 'medium' : null,
-            last_updated: now,
-          })
-
-        if (createErr) {
-          return NextResponse.json({ error: 'Failed to create pub: ' + createErr.message }, { status: 500 })
-        }
-
-        await supabase
-          .from('pub_submissions')
-          .update({ status: 'approved', reviewed_at: now })
-          .eq('id', id)
-
+      if (result.status === 200 && result.body.action === 'approved' && result.body.slug && result.body.suburbSlug) {
         revalidateTag(PUBS_CACHE_TAG, 'max')
-        return NextResponse.json({ success: true, action: 'approved', slug })
-
-      } else if (action === 'reject') {
-        await supabase
-          .from('pub_submissions')
-          .update({ status: 'rejected', reviewed_at: new Date().toISOString() })
-          .eq('id', id)
-
-        return NextResponse.json({ success: true, action: 'rejected' })
+        revalidateTag(`pub:${result.body.slug}`, 'max')
+        revalidatePath(`/${result.body.suburbSlug}/${result.body.slug}`)
+        revalidatePath(`/${result.body.suburbSlug}`)
+        revalidatePath('/sitemap-pubs.xml')
+        revalidatePath('/sitemap.xml')
       }
+
+      return NextResponse.json(result.body, { status: result.status })
     }
 
     return NextResponse.json({ error: 'Invalid action' }, { status: 400 })
