@@ -1,7 +1,12 @@
 import assert from 'node:assert/strict'
 import { describe, it } from 'node:test'
 
-import { formatNewReportMessage, formatPendingReminderMessage, sendSlackMessage } from './slackNotify'
+import {
+  formatNewPubSubmissionMessage,
+  formatNewReportMessage,
+  formatPendingReminderMessage,
+  sendSlackMessage,
+} from './slackNotify'
 
 describe('formatNewReportMessage', () => {
   it('formats a standard price report', () => {
@@ -52,6 +57,23 @@ describe('formatNewReportMessage', () => {
     assert.equal(
       message,
       'Stale price flagged at The Court (Perth) by Anonymous. Review: https://perthpintprices.com/admin'
+    )
+  })
+})
+
+describe('formatNewPubSubmissionMessage', () => {
+  it('includes the submitted details and admin review link', () => {
+    const message = formatNewPubSubmissionMessage({
+      pubName: 'Amberton bar and restaurant',
+      suburb: 'Eglinton',
+      address: '100 Ocean Drive',
+      price: 15,
+      beerType: 'Single Fin',
+    })
+
+    assert.equal(
+      message,
+      'New pub submission: Amberton bar and restaurant. Eglinton, $15.00 Single Fin. Address: 100 Ocean Drive. Review: https://perthpintprices.com/admin'
     )
   })
 })

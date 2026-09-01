@@ -5,9 +5,11 @@ import {
   DollarSign, Bell, BarChart3, Activity, FileText, Heart,
   Beer, Sunset, Users, Trophy, MapPin, AlertTriangle, Shield,
   Clock, RefreshCw, LogOut, Check, X, ChevronDown, ChevronUp,
-  Eye, EyeOff, Loader2, Store, AudioWaveform
+  Eye, EyeOff, Loader2, Store, AudioWaveform, Search, ExternalLink
 } from 'lucide-react'
 import AndrewTestCall from './AndrewTestCall'
+
+import type { GooglePlaceMatch } from '@/lib/googlePlaces'
 
 /* ================================================================
    TYPES
@@ -179,8 +181,9 @@ function SectionTitle({ children }: { children: React.ReactNode }) {
    LOGIN SCREEN
    ================================================================ */
 
-function LoginScreen({ onLogin }: { onLogin: (pw: string) => void }) {
+function LoginScreen({ onLogin }: { onLogin: (pw: string, remember: boolean) => void }) {
   const [password, setPassword] = useState('')
+  const [remember, setRemember] = useState(false)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
@@ -194,7 +197,7 @@ function LoginScreen({ onLogin }: { onLogin: (pw: string) => void }) {
         headers: { Authorization: `Bearer ${password}` },
       })
       if (res.ok) {
-        onLogin(password)
+        onLogin(password, remember)
       } else if (res.status === 429) {
         setError('Too many attempts. Try again later.')
       } else {
@@ -225,10 +228,12 @@ function LoginScreen({ onLogin }: { onLogin: (pw: string) => void }) {
             <div className="relative">
               <input
                 type={showPassword ? 'text' : 'password'}
+                name="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full px-4 py-3 bg-off-white border-3 border-ink rounded-card font-mono text-sm text-ink focus:outline-none focus:border-amber pr-10"
                 placeholder="Enter admin password"
+                autoComplete="current-password"
                 autoFocus
               />
               <button
@@ -240,6 +245,19 @@ function LoginScreen({ onLogin }: { onLogin: (pw: string) => void }) {
               </button>
             </div>
           </div>
+
+          <label className="flex items-start gap-3 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={remember}
+              onChange={(e) => setRemember(e.target.checked)}
+              className="mt-0.5 h-4 w-4 shrink-0 accent-amber"
+            />
+            <span>
+              <span className="block font-mono text-[0.7rem] font-bold text-ink">Remember me on this device</span>
+              <span className="block mt-0.5 font-mono text-[0.6rem] text-gray-mid">Only use this on your own device.</span>
+            </span>
+          </label>
 
           {error && (
             <div className="flex items-center gap-2 text-red font-mono text-[0.7rem] font-bold bg-red-pale border-2 border-red rounded-card px-3 py-2">
@@ -379,12 +397,156 @@ function ActivityTab({ data }: { data: DashboardData }) {
    TAB: REPORTS (with approve/reject)
    ================================================================ */
 
+function PlaceMatchPicker({
+  pubName,
+  suburb,
+  password,
+  selected,
+  onSelect,
+}: {
+  pubName: string
+  suburb: string
+  password: string
+  selected: GooglePlaceMatch | null
+  onSelect: (place: GooglePlaceMatch | null) => void
+}) {
+  const [query, setQuery] = useState(`${pubName} ${suburb} WA`)
+  const [results, setResults] = useState<GooglePlaceMatch[]>([])
+  const [searching, setSearching] = useState(false)
+  const [searchError, setSearchError] = useState<string | null>(null)
+  const [hasSearched, setHasSearched] = useState(false)
+
+  const searchPlaces = async () => {
+    const trimmedQuery = query.trim()
+    if (trimmedQuery.length < 3) return
+
+    setSearching(true)
+    setSearchError(null)
+    setHasSearched(true)
+
+    try {
+      const response = await fetch(`/api/admin/places?q=${encodeURIComponent(trimmedQuery)}`, {
+        headers: { Authorization: `Bearer ${password}` },
+      })
+      const result = await response.json()
+
+      if (!response.ok) {
+        setResults([])
+        setSearchError(result.error || 'Google Places search failed.')
+      } else {
+        setResults(result.places || [])
+      }
+    } catch {
+      setResults([])
+      setSearchError('Could not reach Google Places.')
+    } finally {
+      setSearching(false)
+    }
+  }
+
+  if (selected) {
+    return (
+      <div className="mt-3 bg-green-pale border-2 border-green rounded-card p-3">
+        <div className="flex items-start justify-between gap-3">
+          <div className="min-w-0">
+            <p className="font-mono text-[0.58rem] font-bold uppercase tracking-[0.08em] text-green">Official listing selected</p>
+            <p className="font-mono text-[0.75rem] font-bold text-ink mt-1">{selected.name}</p>
+            <p className="font-mono text-[0.6rem] text-gray-mid mt-1">{selected.address}</p>
+          </div>
+          <button
+            type="button"
+            onClick={() => onSelect(null)}
+            className="shrink-0 font-mono text-[0.58rem] font-bold text-gray-mid hover:text-ink transition-colors"
+          >
+            Change
+          </button>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div className="mt-3 bg-off-white border-2 border-ink/20 rounded-card p-3">
+      <p className="font-mono text-[0.58rem] font-bold uppercase tracking-[0.08em] text-ink">Official Google listing</p>
+      <form
+        className="flex flex-col sm:flex-row gap-2 mt-2"
+        onSubmit={(event) => {
+          event.preventDefault()
+          searchPlaces()
+        }}
+      >
+        <input
+          type="search"
+          value={query}
+          onChange={(event) => setQuery(event.target.value)}
+          placeholder="Pub name and suburb"
+          className="min-w-0 flex-1 bg-white border-2 border-ink rounded-card px-3 py-2 font-mono text-[0.7rem] text-ink placeholder:text-gray-mid focus:outline-none focus:border-amber"
+        />
+        <button
+          type="submit"
+          disabled={searching || query.trim().length < 3}
+          className="inline-flex items-center justify-center gap-1.5 bg-ink text-white border-3 border-ink rounded-pill shadow-hard-sm px-4 py-2 font-mono text-[0.62rem] font-bold uppercase tracking-[0.05em] hover:bg-amber disabled:opacity-50 transition-colors"
+        >
+          {searching ? <Loader2 size={12} className="animate-spin" /> : <Search size={12} />}
+          Find pub
+        </button>
+      </form>
+
+      {searchError && <p className="font-mono text-[0.6rem] text-red mt-2">{searchError}</p>}
+      {!searching && hasSearched && !searchError && results.length === 0 && (
+        <p className="font-mono text-[0.6rem] text-gray-mid mt-2">No matching Google listings found.</p>
+      )}
+
+      {results.length > 0 && (
+        <div className="space-y-2 mt-3">
+          {results.map((place) => (
+            <div key={place.placeId} className="bg-white border-2 border-ink rounded-card p-3">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+                <div className="min-w-0 flex-1">
+                  <p className="font-mono text-[0.72rem] font-bold text-ink">{place.name}</p>
+                  <p className="font-mono text-[0.58rem] text-gray-mid mt-1">{place.address}</p>
+                  {place.businessStatus && (
+                    <p className="font-mono text-[0.52rem] font-bold uppercase tracking-[0.05em] text-green mt-1.5">
+                      {place.businessStatus.replace(/_/g, ' ')}
+                    </p>
+                  )}
+                </div>
+                <div className="flex items-center gap-2 shrink-0">
+                  {place.googleMapsUri && (
+                    <a
+                      href={place.googleMapsUri}
+                      target="_blank"
+                      rel="noreferrer"
+                      aria-label={`Open ${place.name} in Google Maps`}
+                      className="inline-flex items-center justify-center size-9 border-2 border-ink rounded-pill text-ink hover:bg-amber-pale transition-colors"
+                    >
+                      <ExternalLink size={13} />
+                    </a>
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => onSelect(place)}
+                    className="inline-flex items-center justify-center gap-1.5 bg-amber text-white border-3 border-ink rounded-pill shadow-hard-sm px-4 py-2 font-mono text-[0.6rem] font-bold uppercase tracking-[0.05em] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-hard-hover transition-all"
+                  >
+                    <Check size={12} /> Select
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
 function ReportsTab({ data, password, onRefresh }: { data: DashboardData; password: string; onRefresh: () => void }) {
   const [actionLoading, setActionLoading] = useState<string | null>(null)
   const [actionError, setActionError] = useState<string | null>(null)
   const [showUnpriced, setShowUnpriced] = useState(false)
   const [pubOverrides, setPubOverrides] = useState<Record<string, string>>({})
   const [pubSearches, setPubSearches] = useState<Record<string, string>>({})
+  const [selectedPlaces, setSelectedPlaces] = useState<Record<string, GooglePlaceMatch>>({})
 
   const pubsList = data.pubsList || []
   const pubSlugs = new Set(pubsList.map(p => p.slug))
@@ -397,6 +559,9 @@ function ReportsTab({ data, password, onRefresh }: { data: DashboardData; passwo
       const payload: Record<string, unknown> = { type, id, action }
       if (type === 'price_report' && action === 'approve' && pubOverrides[String(id)]) {
         payload.target_slug = pubOverrides[String(id)]
+      }
+      if (type === 'pub_submission' && action === 'approve' && selectedPlaces[String(id)]) {
+        payload.place_id = selectedPlaces[String(id)].placeId
       }
       const res = await fetch('/api/admin/review', {
         method: 'POST',
@@ -605,6 +770,22 @@ function ReportsTab({ data, password, onRefresh }: { data: DashboardData; passwo
                       {s.submitterEmail && (
                         <p className="font-mono text-[0.6rem] text-gray-mid mt-1">{s.submitterEmail}</p>
                       )}
+                      {isPending && (
+                        <PlaceMatchPicker
+                          pubName={s.pubName}
+                          suburb={s.suburb}
+                          password={password}
+                          selected={selectedPlaces[String(s.id)] || null}
+                          onSelect={(place) => {
+                            setSelectedPlaces((previous) => {
+                              const next = { ...previous }
+                              if (place) next[String(s.id)] = place
+                              else delete next[String(s.id)]
+                              return next
+                            })
+                          }}
+                        />
+                      )}
                       <div className="flex items-center gap-2 mt-2">
                         <StatusBadge status={s.status} />
                         <span className="font-mono text-[0.6rem] text-gray-mid">{timeAgo(s.createdAt)}</span>
@@ -614,16 +795,17 @@ function ReportsTab({ data, password, onRefresh }: { data: DashboardData; passwo
                       <div className="grid grid-cols-2 gap-2 w-full sm:flex sm:items-center sm:w-auto shrink-0">
                         <button
                           onClick={() => handleReview('pub_submission', s.id, 'approve')}
-                          disabled={actionLoading !== null}
-                          className="flex items-center justify-center gap-1.5 px-3 sm:px-4 py-2 bg-green text-white font-mono text-[0.65rem] font-bold uppercase tracking-[0.05em] border-3 border-ink rounded-card shadow-hard-sm hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-hard-hover disabled:opacity-50 transition-all"
+                          disabled={actionLoading !== null || !selectedPlaces[String(s.id)]}
+                          title={!selectedPlaces[String(s.id)] ? 'Select the official Google listing first' : undefined}
+                          className="flex items-center justify-center gap-1.5 px-3 sm:px-4 py-2 bg-green text-white font-mono text-[0.65rem] font-bold uppercase tracking-[0.05em] border-3 border-ink rounded-pill shadow-hard-sm hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-hard-hover disabled:opacity-50 transition-all"
                         >
                           {actionLoading === approveKey ? <Loader2 size={12} className="animate-spin" /> : <Check size={12} />}
-                          Approve
+                          Create page
                         </button>
                         <button
                           onClick={() => handleReview('pub_submission', s.id, 'reject')}
                           disabled={actionLoading !== null}
-                          className="flex items-center justify-center gap-1.5 px-3 sm:px-4 py-2 bg-red text-white font-mono text-[0.65rem] font-bold uppercase tracking-[0.05em] border-3 border-ink rounded-card shadow-hard-sm hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-hard-hover disabled:opacity-50 transition-all"
+                          className="flex items-center justify-center gap-1.5 px-3 sm:px-4 py-2 bg-red text-white font-mono text-[0.65rem] font-bold uppercase tracking-[0.05em] border-3 border-ink rounded-pill shadow-hard-sm hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-hard-hover disabled:opacity-50 transition-all"
                         >
                           {actionLoading === rejectKey ? <Loader2 size={12} className="animate-spin" /> : <X size={12} />}
                           Reject
@@ -779,16 +961,22 @@ export default function AdminDashboard() {
     if (password) fetchData()
   }, [password, fetchData])
 
-  const handleLogin = (pw: string) => {
+  const handleLogin = (pw: string, remember: boolean) => {
     setPassword(pw)
     if (typeof window !== 'undefined') {
-      sessionStorage.setItem('arvo-admin', pw)
+      if (remember) {
+        localStorage.setItem('arvo-admin', pw)
+        sessionStorage.removeItem('arvo-admin')
+      } else {
+        sessionStorage.setItem('arvo-admin', pw)
+        localStorage.removeItem('arvo-admin')
+      }
     }
   }
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      const saved = sessionStorage.getItem('arvo-admin')
+      const saved = localStorage.getItem('arvo-admin') || sessionStorage.getItem('arvo-admin')
       if (saved) setPassword(saved)
     }
   }, [])
@@ -823,6 +1011,7 @@ export default function AdminDashboard() {
                 setPassword(null)
                 setData(null)
                 sessionStorage.removeItem('arvo-admin')
+                localStorage.removeItem('arvo-admin')
               }}
               className="flex items-center gap-1.5 px-3 py-2 text-gray-mid hover:text-ink transition-colors"
             >
