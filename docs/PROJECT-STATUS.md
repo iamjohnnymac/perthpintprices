@@ -1,6 +1,6 @@
 # Perth Pint Prices Project Status
 
-Last updated: 2026-08-23
+Last updated: 2026-09-01
 
 ## What this is
 
@@ -9,6 +9,14 @@ Perth Pint Prices (perthpintprices.com) tracks pint prices across **857 Perth pu
 Stack, database, routes, components, and lib files are documented in `CLAUDE.md` (auto-loaded every session). This file covers history, recent work, and the backlog.
 
 ## What's done recently
+
+### Official pub approvals and Slack alerts (2026-09-01, commit `09e366d`)
+
+- **Google-backed approval:** pending pub submissions now require an official Places API (New) match. Approval refetches Place Details on the server, rejects closed or duplicate listings, creates the full pub record, and refreshes the pub page, suburb page, shared pub cache, and sitemap routes.
+- **Slack coverage:** new pub submissions now use the existing Slack notification module and post to `#all-perth-pint-prices` without making a Slack outage block the submission. A live connectivity test returned `200 ok` and appeared in the channel.
+- **Secret ownership:** the dedicated server key is restricted to Places API (New). `GOOGLE_PLACES_API_KEY` and the recovered existing `SLACK_WEBHOOK_URL` are stored in the linked Infisical project for `dev`, `staging`, and `prod`, with runtime copies in all Vercel environments. The Google key is also updated in GitHub Actions.
+- **Admin recovery:** `npm run admin:reset-password` now stores each password rotation in Infisical before updating Vercel Production, Preview, and Development and rebuilding the current production deployment.
+- **Verification:** the live Amberton search resolves to The Amberton Beach Bar & Restaurant at 2 Idyllic View, Eglinton. All 406 unit tests and two repository-contract tests pass; TypeScript and lint are clean; the production build passes its data preflight, 244-page generation, fingerprint guard, and homepage payload budgets.
 
 ### Built in Perth footer stamp (2026-08-23, commit `fa699a8`)
 
