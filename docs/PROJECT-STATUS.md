@@ -10,6 +10,12 @@ Stack, database, routes, components, and lib files are documented in `CLAUDE.md`
 
 ## What's done recently
 
+### CARTO basemap authentication (2026-09-01, commit `9d532f9`)
+
+- **Root cause:** CARTO now requires a free API key on raster basemap requests; the site's interactive Leaflet maps and static card backgrounds were still using the previous anonymous tile URLs and displayed the `API KEY REQUIRED` watermark.
+- **Shared fix:** both tile paths now append the same `NEXT_PUBLIC_CARTO_BASEMAP_KEY` value using a single URL helper, without changing the existing map styles or attribution.
+- **Regression coverage:** focused tests require the key on interactive tile templates and static tile URLs. The complete suite passes with 408 tests, along with the repository-contract tests and TypeScript.
+
 ### Official pub approvals and Slack alerts (2026-09-01, commit `09e366d`)
 
 - **Google-backed approval:** pending pub submissions now require an official Places API (New) match. Approval refetches Place Details on the server, rejects closed or duplicate listings, creates the full pub record, and refreshes the pub page, suburb page, shared pub cache, and sitemap routes.
