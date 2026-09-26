@@ -7,6 +7,9 @@ const supabase = anonClient();
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
+    if (!body || typeof body !== 'object') {
+      return NextResponse.json({ error: 'Invalid request' }, { status: 400 });
+    }
     const { pub_name, suburb, address, price, beer_type, submitter_email } = body;
 
     if (!pub_name || !suburb || !price) {
