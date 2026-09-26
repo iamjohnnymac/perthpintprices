@@ -10,11 +10,18 @@ Stack, database, routes, components, and lib files are documented in `CLAUDE.md`
 
 ## What's done recently
 
-### CARTO basemap authentication (2026-09-01, commit `9d532f9`)
+### CARTO basemap authentication (2026-09-26)
 
-- **Root cause:** CARTO now requires a free API key on raster basemap requests; the site's interactive Leaflet maps and static card backgrounds were still using the previous anonymous tile URLs and displayed the `API KEY REQUIRED` watermark.
+- **Root cause:** since 23 September 2026 CARTO requires a free API key on basemap requests; the site's interactive Leaflet maps and static card backgrounds were still using the previous anonymous tile URLs and displayed the `API KEY REQUIRED` watermark.
 - **Shared fix:** both tile paths now append the same `NEXT_PUBLIC_CARTO_BASEMAP_KEY` value using a single URL helper, without changing the existing map styles or attribution.
 - **Regression coverage:** focused tests require the key on interactive tile templates and static tile URLs. The complete suite passes with 408 tests, along with the repository-contract tests and TypeScript.
+- **Key:** a non-commercial CARTO key (free up to 5M tile requests a month) is stored as `NEXT_PUBLIC_CARTO_BASEMAP_KEY` in Infisical `staging` and `prod` and in Vercel Production, Preview and Development. The Infisical `dev` copy still needs adding by the owner.
+
+### AFL Grand Final banner and hub (2026-09-26)
+
+- **Site-wide strip:** a slim banner under the amber top bar on every public page counts down to the 12:30pm AWST bounce of Fremantle v Brisbane, switches to "On now" during the game, and hides itself after Grand Final day in Perth time. It links to `/grand-final`.
+- **Hub page:** `/grand-final` lists free public screens and 35 venues that four research agents found advertising the 2026 game, grouped by area. Each entry carries its public source; tracked pubs link to their page and show our last verified pint price.
+- **Retirement:** remove the banner, page and data (`src/lib/grandFinal.ts`) after the day and redirect `/grand-final` home, as PR #226 did for the World Cup. The page is deliberately left out of the sitemap because it lives for one day.
 
 ### Official pub approvals and Slack alerts (2026-09-01, commit `09e366d`)
 
