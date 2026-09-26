@@ -7,6 +7,8 @@ import { Pub } from '@/types/pub'
 import { getDistanceKm, formatDistance } from '@/lib/location'
 import { Sun, Sunset, Moon, Beer } from 'lucide-react'
 import { pubUrl } from '@/lib/urls'
+import { perthToday } from '@/lib/perthClock'
+import { getPerthSunTimes, getSunPosition as getSolarPosition, parsePerthLocalTime } from '@/lib/sunPosition'
 
 const MiniMap = dynamic(() => import('./MiniMap'), {
   ssr: false,
@@ -18,42 +20,8 @@ interface SunsetSippersProps {
   userLocation?: { lat: number; lng: number } | null
 }
 
-// Perth coordinates
-const PERTH_LAT = -31.9505
-const PERTH_LNG = 115.8605
-
-// Calculate sunrise/sunset for Perth using simplified solar calculation
-function getSunTimes(date: Date): { sunrise: Date; sunset: Date; goldenHourStart: Date } {
-  const dayOfYear = Math.floor((date.getTime() - new Date(date.getFullYear(), 0, 0).getTime()) / 86400000)
-  const lat = PERTH_LAT * Math.PI / 180
-
-  // Solar declination
-  const declination = -23.45 * Math.cos((360/365) * (dayOfYear + 10) * Math.PI / 180) * Math.PI / 180
-
-  // Hour angle
-  const cosHourAngle = (Math.cos(90.833 * Math.PI / 180) - Math.sin(lat) * Math.sin(declination)) / (Math.cos(lat) * Math.cos(declination))
-  const hourAngle = Math.acos(Math.max(-1, Math.min(1, cosHourAngle))) * 180 / Math.PI
-
-  // Solar noon (Perth is UTC+8, longitude 115.86)
-  const solarNoon = 12 - (PERTH_LNG - 120) / 15 // 120 = UTC+8 reference meridian
-
-  const sunriseHour = solarNoon - hourAngle / 15
-  const sunsetHour = solarNoon + hourAngle / 15
-
-  const sunrise = new Date(date)
-  sunrise.setHours(Math.floor(sunriseHour), Math.round((sunriseHour % 1) * 60), 0, 0)
-
-  const sunset = new Date(date)
-  sunset.setHours(Math.floor(sunsetHour), Math.round((sunsetHour % 1) * 60), 0, 0)
-
-  // Golden hour starts ~1 hour before sunset
-  const goldenHourStart = new Date(sunset.getTime() - 60 * 60 * 1000)
-
-  return { sunrise, sunset, goldenHourStart }
-}
-
 function formatTime(date: Date): string {
-  return date.toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit', hour12: true })
+  return date.toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit', hour12: true, timeZone: 'Australia/Perth' })
 }
 
 function getTimeUntil(target: Date, now: Date): string {
@@ -74,31 +42,6 @@ function getSunPosition(now: Date, sunrise: Date, sunset: Date): number {
   return (elapsed / total) * 100
 }
 
-// Calculate sun azimuth (compass bearing in degrees, 0=North, 90=East, 180=South, 270=West)
-function getSunAzimuth(date: Date): number {
-  const dayOfYear = Math.floor((date.getTime() - new Date(date.getFullYear(), 0, 0).getTime()) / 86400000)
-  const lat = PERTH_LAT * Math.PI / 180
-  const declination = -23.45 * Math.cos((360/365) * (dayOfYear + 10) * Math.PI / 180) * Math.PI / 180
-
-  // Hour angle (negative = morning/east, positive = afternoon/west)
-  const solarNoon = 12 - (PERTH_LNG - 120) / 15
-  const hours = date.getHours() + date.getMinutes() / 60
-  const hourAngle = (hours - solarNoon) * 15 * Math.PI / 180
-
-  // Solar altitude
-  const sinAlt = Math.sin(lat) * Math.sin(declination) + Math.cos(lat) * Math.cos(declination) * Math.cos(hourAngle)
-  const altitude = Math.asin(sinAlt)
-
-  // Solar azimuth
-  const cosAz = (Math.sin(declination) - Math.sin(lat) * sinAlt) / (Math.cos(lat) * Math.cos(altitude))
-  let azimuth = Math.acos(Math.max(-1, Math.min(1, cosAz))) * 180 / Math.PI
-
-  // Afternoon = west side (azimuth > 180)
-  if (hourAngle > 0) azimuth = 360 - azimuth
-
-  return azimuth
-}
-
 // Convert azimuth to CSS gradient direction for sun shadow effect
 function getSunShadowGradient(azimuth: number, isGolden: boolean): string {
   const gradientAngle = (azimuth + 180) % 360
@@ -114,23 +57,20 @@ const arcCenterY = 52
 const arcRx = 100
 const arcRy = 46
 
-function getSunState(now: Date, apiSunriseHour: number | null, apiSunsetHour: number | null) {
-  const sunTimes = (() => {
-    if (apiSunriseHour !== null && apiSunsetHour !== null) {
-      const sunrise = new Date(now)
-      sunrise.setHours(Math.floor(apiSunriseHour), Math.round((apiSunriseHour % 1) * 60), 0, 0)
-      const sunset = new Date(now)
-      sunset.setHours(Math.floor(apiSunsetHour), Math.round((apiSunsetHour % 1) * 60), 0, 0)
-      return { sunrise, sunset, goldenHourStart: new Date(sunset.getTime() - 60 * 60 * 1000) }
-    }
-    return getSunTimes(now)
-  })()
+type SunTimes = { sunrise: Date; sunset: Date }
+
+// Every time here is an exact instant on Perth's calendar day, so visitors in
+// any timezone see Perth's sunset and the same countdown.
+function getSunState(now: Date, apiSunTimes: SunTimes | null) {
+  const sunTimes = apiSunTimes && perthToday(apiSunTimes.sunrise) === perthToday(now)
+    ? { ...apiSunTimes, goldenHourStart: new Date(apiSunTimes.sunset.getTime() - 60 * 60 * 1000) }
+    : getPerthSunTimes(now)
 
   const sunPosition = getSunPosition(now, sunTimes.sunrise, sunTimes.sunset)
   const isGoldenHour = now >= sunTimes.goldenHourStart && now <= sunTimes.sunset
   const isSunset = now >= new Date(sunTimes.sunset.getTime() - 15 * 60000) && now <= new Date(sunTimes.sunset.getTime() + 30 * 60000)
   const isNighttime = now > sunTimes.sunset || now < sunTimes.sunrise
-  const sunShadow = getSunShadowGradient(getSunAzimuth(now), isGoldenHour || isSunset)
+  const sunShadow = getSunShadowGradient(getSolarPosition(now).azimuth, isGoldenHour || isSunset)
 
   // Sun position along the ellipse: angle goes PI (left/sunrise) → 0 (right/sunset)
   const sunAngle = Math.PI - (sunPosition / 100) * Math.PI
@@ -272,9 +212,8 @@ export default function SunsetSippers({ pubs, userLocation }: SunsetSippersProps
   // every clock-dependent value is derived only after mount.
   const [now, setNow] = useState<Date | null>(null)
   const [showAllPubs, setShowAllPubs] = useState(false)
-  const [apiSunriseHour, setApiSunriseHour] = useState<number | null>(null)
-  const [apiSunsetHour, setApiSunsetHour] = useState<number | null>(null)
-  const dateKey = now?.toDateString() ?? null
+  const [apiSunTimes, setApiSunTimes] = useState<SunTimes | null>(null)
+  const dateKey = now ? perthToday(now) : null
 
   useEffect(() => {
     setNow(new Date())
@@ -288,19 +227,16 @@ export default function SunsetSippers({ pubs, userLocation }: SunsetSippersProps
     fetch('https://api.open-meteo.com/v1/forecast?latitude=-31.9505&longitude=115.8605&daily=sunrise,sunset&timezone=Australia%2FPerth&forecast_days=1')
       .then(r => r.json())
       .then(data => {
-        const sunriseISO: string = data.daily.sunrise[0]
-        const sunsetISO: string = data.daily.sunset[0]
-        const [, srTime] = sunriseISO.split('T')
-        const [, ssTime] = sunsetISO.split('T')
-        const [srH, srM] = srTime.split(':').map(Number)
-        const [ssH, ssM] = ssTime.split(':').map(Number)
-        setApiSunriseHour(srH + srM / 60)
-        setApiSunsetHour(ssH + ssM / 60)
+        // Open-Meteo returns Perth-local times such as "2026-09-26T18:15"
+        setApiSunTimes({
+          sunrise: parsePerthLocalTime(data.daily.sunrise[0]),
+          sunset: parsePerthLocalTime(data.daily.sunset[0]),
+        })
       })
       .catch(() => {}) // Fall back to calculation silently
   }, [dateKey])
 
-  const sun = now ? getSunState(now, apiSunriseHour, apiSunsetHour) : null
+  const sun = now ? getSunState(now, apiSunTimes) : null
 
   const sunsetPubs = useMemo(() =>
     pubs.filter(p => p.sunsetSpot && p.price !== null).sort((a, b) => {
