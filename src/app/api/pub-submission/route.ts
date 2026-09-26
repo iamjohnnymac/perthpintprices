@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { anonClient } from '@/lib/supabaseGateway';
+import { anonClient, serviceClient } from '@/lib/supabaseGateway';
 import { formatNewPubSubmissionMessage, sendSlackMessage } from '@/lib/slackNotify';
 
 const supabase = anonClient();
@@ -23,11 +23,20 @@ export async function POST(req: NextRequest) {
     const ip = forwarded?.split(',')[0]?.trim() || 'unknown';
     const ipHash = await hashString(ip);
 
-    const { data: recentSubmissions } = await supabase
+    // pub_submissions holds submitter emails and IP hashes, so the public key can
+    // only insert. The rate-limit lookup reads through the service role.
+    const service = serviceClient();
+    const { data: recentSubmissions, error: rateLimitError } = await service
       .from('pub_submissions')
       .select('id')
       .eq('ip_hash', ipHash)
       .gte('created_at', new Date(Date.now() - 86400000).toISOString());
+
+    // Fail closed: without the lookup we can't enforce the daily limit.
+    if (rateLimitError) {
+      console.error('Pub submission rate-limit lookup failed:', rateLimitError.message);
+      return NextResponse.json({ error: "We couldn't take that submission just now. Try again in a minute." }, { status: 503 });
+    }
 
     if (recentSubmissions && recentSubmissions.length >= 3) {
       return NextResponse.json({ error: 'You\'ve reached the daily submission limit. Try again tomorrow.' }, { status: 429 });
@@ -59,8 +68,13 @@ export async function POST(req: NextRequest) {
     }));
 
     return NextResponse.json({ success: true, message: 'Pub submitted. We\'ll review it shortly.' });
-  } catch {
-    return NextResponse.json({ error: 'Invalid request' }, { status: 400 });
+  } catch (err) {
+    if (err instanceof SyntaxError) {
+      return NextResponse.json({ error: 'Invalid request' }, { status: 400 });
+    }
+    // For example a missing service-role key: a server fault, not a bad request.
+    console.error('Pub submission failed:', err);
+    return NextResponse.json({ error: 'Failed to submit' }, { status: 500 });
   }
 }
 
