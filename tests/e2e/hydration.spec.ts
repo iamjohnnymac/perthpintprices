@@ -6,10 +6,6 @@ import { test, expect, type Page } from '@playwright/test'
 // four-digit Google review count, which is where locale grouping differs.
 const PUB_PATH = '/guildford/guildford-hotel'
 
-// Mirrors playwright.config.ts: without CI or an explicit target, the suite runs
-// against `next dev`, where react-leaflet 4 crashes pub pages under strict mode.
-const againstDevServer = !process.env.CI && !process.env.PLAYWRIGHT_BASE_URL && !process.env.PLAYWRIGHT_WEB_SERVER_COMMAND
-
 function collectHydrationErrors(page: Page): string[] {
   const errors: string[] = []
   const isHydration = (text: string) => /#418|#423|#425|hydrat/i.test(text)
@@ -26,7 +22,6 @@ for (const { locale, timezoneId } of [
 ]) {
   test.describe(`pub page in ${locale}, ${timezoneId}`, () => {
     test.use({ locale, timezoneId })
-    test.skip(againstDevServer, 'hydration is only meaningful against a production build')
 
     test('hydrates without a text mismatch', async ({ page }) => {
       const errors = collectHydrationErrors(page)
@@ -38,3 +33,19 @@ for (const { locale, timezoneId } of [
     })
   })
 }
+
+// The sunset guide derives the sun's position, status and overlays from the
+// clock. A browser clock hours away from the cached server render must still
+// hydrate cleanly, because those values only render after mount.
+test.describe('sunset sippers guide with a shifted client clock', () => {
+  test.use({ timezoneId: 'Australia/Perth' })
+
+  test('hydrates without a mismatch', async ({ page }) => {
+    const errors = collectHydrationErrors(page)
+    await page.clock.install({ time: new Date(Date.now() + 3 * 60 * 60 * 1000) })
+    await page.goto('/guides/sunset-sippers')
+    await expect(page.getByRole('heading', { name: /Today.s Sunset/i })).toBeVisible()
+    await page.waitForLoadState('networkidle')
+    expect(errors).toEqual([])
+  })
+})
