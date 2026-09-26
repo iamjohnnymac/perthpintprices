@@ -1,4 +1,5 @@
 import { getSunPosition } from './sunPosition'
+import { getCartoTileTemplate } from './mapTile'
 
 export type MapMode = 'day' | 'golden' | 'twilight' | 'night'
 
@@ -18,10 +19,10 @@ export function getMapMode(date?: Date): MapMode {
 }
 
 export const MAP_TILES: Record<MapMode, string> = {
-  day: 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
-  golden: 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
-  twilight: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
-  night: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
+  day: getCartoTileTemplate('light_all'),
+  golden: getCartoTileTemplate('rastertiles/voyager'),
+  twilight: getCartoTileTemplate('dark_all'),
+  night: getCartoTileTemplate('dark_all'),
 }
 
 /** CSS filter applied to map tile pane for atmospheric effect */
