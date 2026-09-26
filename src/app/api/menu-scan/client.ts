@@ -2,6 +2,7 @@ import OpenAI from 'openai'
 
 export const MENU_SCAN_TIMEOUT_MS = 12_000
 export const MENU_SCAN_MAX_RETRIES = 1
+export const MENU_SCAN_DEADLINE_MS = 25_000
 
 export function createMenuScanClient(apiKey: string, fetchImpl?: typeof fetch) {
   return new OpenAI({
@@ -13,7 +14,7 @@ export function createMenuScanClient(apiKey: string, fetchImpl?: typeof fetch) {
   })
 }
 
-export function createMenuScanCompletion(client: OpenAI, dataUrl: string) {
+export function createMenuScanCompletion(client: OpenAI, dataUrl: string, deadlineMs = MENU_SCAN_DEADLINE_MS) {
   return client.chat.completions.create({
     model: 'qwen/qwen3.5-flash-02-23',
     max_completion_tokens: 1024,
@@ -32,5 +33,5 @@ export function createMenuScanCompletion(client: OpenAI, dataUrl: string) {
         ],
       },
     ],
-  })
+  }, { signal: AbortSignal.timeout(deadlineMs) })
 }

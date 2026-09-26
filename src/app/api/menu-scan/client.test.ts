@@ -1,21 +1,41 @@
 import assert from 'node:assert/strict'
 import { describe, it } from 'node:test'
-import { APIConnectionTimeoutError } from 'openai'
+import { APIConnectionTimeoutError, APIUserAbortError } from 'openai'
 
 import {
   createMenuScanClient,
   createMenuScanCompletion,
+  MENU_SCAN_DEADLINE_MS,
   MENU_SCAN_MAX_RETRIES,
   MENU_SCAN_TIMEOUT_MS,
 } from './client'
 
 describe('menu-scan provider request', () => {
-  it('fits both attempts and the SDK retry backoff inside the route duration', () => {
-    // route.ts sets maxDuration = 30 seconds; SDK 7.23.0 backs off at most 500 ms for one retry.
+  it('bounds the provider call below the route duration', () => {
+    // route.ts sets maxDuration = 30 seconds. The SDK's 500 ms default backoff applies only without Retry-After; the deadline bounds Retry-After waits.
     const maxRetryBackoffMs = 500
     assert.equal(MENU_SCAN_MAX_RETRIES, 1)
+    assert.ok(MENU_SCAN_DEADLINE_MS < 30_000)
     assert.ok(MENU_SCAN_TIMEOUT_MS * (MENU_SCAN_MAX_RETRIES + 1) + maxRetryBackoffMs < 30_000)
     assert.equal(createMenuScanClient('test-key').timeout, MENU_SCAN_TIMEOUT_MS)
+  })
+
+  it('aborts during a Retry-After wait (isolation)', async () => {
+    let attempts = 0
+    const retryAfterFetch: typeof fetch = async () => {
+      attempts++
+      return new Response('{}', { status: 429, headers: { 'retry-after': '20' } })
+    }
+
+    const started = performance.now()
+    await assert.rejects(
+      createMenuScanCompletion(createMenuScanClient('test-key', retryAfterFetch), 'data:image/png;base64,AA==', 50),
+      APIUserAbortError,
+    )
+    const elapsed = performance.now() - started
+
+    assert.ok(elapsed < 2_000, `Elapsed ${elapsed} ms`)
+    assert.equal(attempts, 1)
   })
 
   it('times out an abort-aware stalled fetch after the configured attempts', async () => {
