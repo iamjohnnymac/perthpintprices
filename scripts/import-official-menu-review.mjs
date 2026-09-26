@@ -17,12 +17,8 @@ config({ path: '.env.local' })
 
 const IMPORTER_VERSION = 'official-menu-review-import-v1'
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://ifxkoblvgttelzboenpi.supabase.co'
-const SUPABASE_ANON_KEY =
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlmeGtvYmx2Z3R0ZWx6Ym9lbnBpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzExODUwNjgsImV4cCI6MjA4Njc2MTA2OH0.qLy6B-VeVnMh0QSOxHK3uQEJ6iZr6xNHmfKov_7B-fY'
 const args = process.argv.slice(2)
 const shouldWrite = args.includes('--write')
-const allowAnonWrite = args.includes('--allow-anon-write')
 const reviewFile = arg('--file') || 'scripts/official-menu-review.suggested.json'
 const output = arg('--output') || 'scripts/official-menu-import-plan.json'
 const decision = arg('--decision') || 'approve_suggested'
@@ -45,13 +41,13 @@ let writeKeyMode = 'none'
 
 if (shouldWrite) {
   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
-  const writeKey = serviceKey || (allowAnonWrite ? SUPABASE_ANON_KEY : null)
-  writeKeyMode = serviceKey ? 'service_role' : 'anon'
-  if (!writeKey) {
-    throw new Error('SUPABASE_SERVICE_ROLE_KEY is required when using --write, unless --allow-anon-write is provided')
+  // The duplicate check reads price_reports, which the anon key cannot do.
+  if (!serviceKey) {
+    throw new Error('SUPABASE_SERVICE_ROLE_KEY is required when using --write')
   }
+  writeKeyMode = 'service_role'
 
-  const supabase = createClient(SUPABASE_URL, writeKey, { auth: { persistSession: false } })
+  const supabase = createClient(SUPABASE_URL, serviceKey, { auth: { persistSession: false } })
   const { data: existing, error: existingErr } = await supabase
     .from('price_reports')
     .select('id, pub_slug, reported_price, source_url, evidence_text')

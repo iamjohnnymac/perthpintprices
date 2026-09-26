@@ -1,11 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { anonClient } from '@/lib/supabaseGateway'
+import { serviceClient } from '@/lib/supabaseGateway'
 import OpenAI from 'openai'
 import { countMenuScanReports } from './rateLimit'
 
 export const maxDuration = 30
-
-const supabase = anonClient()
 
 // Lazy-init to avoid module-scope crash when env var is missing at build time
 let _openai: OpenAI | null = null
@@ -55,11 +53,19 @@ export async function POST(req: NextRequest) {
     const ip = forwarded?.split(',')[0]?.trim() || 'unknown'
     const ipHash = await hashString(ip)
 
-    const { data: recentScans } = await supabase
+    // price_reports is not readable with the public key; see /api/price-report.
+    const service = serviceClient()
+    const { data: recentScans, error: rateLimitError } = await service
       .from('price_reports')
       .select('id, submission_source, notes')
       .eq('ip_hash', ipHash)
       .gte('created_at', new Date(Date.now() - 86400000).toISOString())
+
+    // Fail closed: without the lookup we can't enforce the daily limit.
+    if (rateLimitError) {
+      console.error('Menu scan rate-limit lookup failed:', rateLimitError.message)
+      return NextResponse.json({ error: "We couldn't scan that just now. Try again in a minute." }, { status: 503 })
+    }
 
     if (countMenuScanReports(recentScans) >= 3) {
       return NextResponse.json({ error: 'Scan limit reached. Try again tomorrow.' }, { status: 429 })

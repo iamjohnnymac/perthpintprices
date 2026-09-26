@@ -386,7 +386,7 @@
 
     <h3>7. Optional write command after explicit approval</h3>
     <pre><code>npm run import:official-menu-review -- --write</code></pre>
-    <p class="small">The write path uses <code>SUPABASE_SERVICE_ROLE_KEY</code> by default, checks existing <code>official_menu</code> reports before inserting, and only uses the anon public-insert path when <code>--allow-anon-write</code> is explicitly supplied.</p>
+    <p class="small">The write path requires <code>SUPABASE_SERVICE_ROLE_KEY</code> and checks existing <code>official_menu</code> reports before inserting.</p>
   </section>
 
   <section>
@@ -461,7 +461,7 @@
       <li>All crawler, review, and importer scripts default to local/dry-run behavior.</li>
       <li>No crawler/importer script updates canonical <code>pubs.price</code>; importer creates pending <code>price_reports</code> only after <code>--write</code>, and canonical price updates still go through the admin review path.</li>
       <li>Official-menu provenance is preserved with <code>submission_source</code>, <code>source_url</code>, <code>evidence_text</code>, <code>observed_at</code>, <code>raw_extraction</code>, and <code>extractor_version</code>.</li>
-      <li>The importer prefers <code>SUPABASE_SERVICE_ROLE_KEY</code> for writes, requires an explicit <code>--allow-anon-write</code> flag for the public insert policy, and checks existing official-menu reports to avoid duplicates.</li>
+      <li>The importer requires <code>SUPABASE_SERVICE_ROLE_KEY</code> for writes and checks existing official-menu reports to avoid duplicates.</li>
       <li>Generated artifacts are ignored by git so crawl output and OCR artifacts do not become source-controlled noise.</li>
       <li>Internet usage is limited to fetching public venue/menu URLs; parsing, OCR, review, and import planning run locally.</li>
     </ul>
