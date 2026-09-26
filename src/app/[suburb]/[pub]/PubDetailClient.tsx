@@ -37,6 +37,7 @@ function formatLastVerifiedDate(dateStr: string): string {
     day: 'numeric',
     month: 'short',
     year: 'numeric',
+    timeZone: 'Australia/Perth',
   })
 }
 

@@ -119,7 +119,7 @@ export default function PintReceipt({ data, onReport }: { data: PintReceiptData;
         )}
         {data.sourcePhrase && <Leader label="Source" value={data.sourcePhrase} valueClass="text-gray-mid" />}
         {data.googleRating != null && (
-          <Leader label="Google" value={<><Stars rating={data.googleRating} /> {data.googleRating.toFixed(1)} ({data.googleRatingCount?.toLocaleString()})</>} />
+          <Leader label="Google" value={<><Stars rating={data.googleRating} /> {data.googleRating.toFixed(1)} ({data.googleRatingCount?.toLocaleString('en-AU')})</>} />
         )}
       </div>
 

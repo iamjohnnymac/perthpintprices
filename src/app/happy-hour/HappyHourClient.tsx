@@ -114,7 +114,7 @@ function venueWriteUp(pub: Pub, isActive: boolean): string[] {
   if (feats.length) venueParts.push(`You'll find ${joinList(feats)}.`)
 
   if (pub.googleRating != null) {
-    venueParts.push(`It rates ${pub.googleRating.toFixed(1)} on Google${pub.googleRatingCount ? ` from ${pub.googleRatingCount.toLocaleString()} reviews` : ''}.`)
+    venueParts.push(`It rates ${pub.googleRating.toFixed(1)} on Google${pub.googleRatingCount ? ` from ${pub.googleRatingCount.toLocaleString('en-AU')} reviews` : ''}.`)
   }
   if (venueParts.length) paras.push(venueParts.join(' '))
 
