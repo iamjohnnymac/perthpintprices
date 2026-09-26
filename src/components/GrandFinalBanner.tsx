@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { ArrowRight } from 'lucide-react'
-import { GF_TEAM_STRIPE, grandFinalPhase, timeToBounce } from '@/lib/grandFinal'
+import { GF_FREO_PURPLE, grandFinalPhase, timeToBounce } from '@/lib/grandFinal'
 
 export default function GrandFinalBanner() {
   const pathname = usePathname()
@@ -27,7 +27,7 @@ export default function GrandFinalBanner() {
 
   const content = (
     <div className="max-w-container mx-auto flex flex-wrap items-center gap-x-3 gap-y-0.5 px-6 py-2">
-      <span className="font-mono text-[0.66rem] font-bold uppercase tracking-[0.08em] text-amber-light">
+      <span className="font-mono text-[0.66rem] font-bold uppercase tracking-[0.08em] text-white/75">
         AFL Grand Final · {status}
       </span>
       <span className="font-mono text-[0.78rem] font-bold text-white">
@@ -43,17 +43,12 @@ export default function GrandFinalBanner() {
   )
 
   return (
-    <aside aria-label="AFL Grand Final" className="bg-ink">
+    <aside aria-label="AFL Grand Final" style={{ backgroundColor: GF_FREO_PURPLE }}>
       {onHub ? content : (
         <Link href="/grand-final" className="group block no-underline">
           {content}
         </Link>
       )}
-      <div className="flex h-[3px]" aria-hidden="true">
-        {GF_TEAM_STRIPE.map(colour => (
-          <span key={colour} className="flex-1" style={{ backgroundColor: colour }} />
-        ))}
-      </div>
     </aside>
   )
 }

@@ -15,8 +15,8 @@ export const GF_DAY = '2026-09-26'
 /** Date the venue list was checked. */
 export const GF_CHECKED = '2026-09-26'
 
-/** Fremantle purple and white, Brisbane maroon and gold. */
-export const GF_TEAM_STRIPE = ['#2A0D54', '#FFFFFF', '#A30046', '#FDBE57']
+/** Fremantle purple, for the banner. */
+export const GF_FREO_PURPLE = '#2A0D54'
 
 const GAME_LENGTH_MS = 3 * 60 * 60 * 1000
 
