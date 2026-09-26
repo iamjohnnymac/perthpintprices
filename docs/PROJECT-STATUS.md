@@ -10,6 +10,10 @@ Stack, database, routes, components, and lib files are documented in `CLAUDE.md`
 
 ## What's done recently
 
+### Grand Final campaign retired (2026-09-27)
+
+- Removed the banner, page and data after the 2026 AFL Grand Final. `/grand-final` now 301s to the homepage, following the World Cup retirement pattern.
+
 ### CARTO basemap authentication (2026-09-26)
 
 - **Root cause:** since 23 September 2026 CARTO requires a free API key on basemap requests; the site's interactive Leaflet maps and static card backgrounds were still using the previous anonymous tile URLs and displayed the `API KEY REQUIRED` watermark.
