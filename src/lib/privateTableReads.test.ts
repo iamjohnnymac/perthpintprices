@@ -60,19 +60,25 @@ describe('private table read access', () => {
   })
 
   it('hides crowd_reports.ip_hash but keeps the columns the live crowd function reads', () => {
-    const migration = readFileSync(join(MIGRATIONS, '20260926020000_hide_crowd_report_ip_hash.sql'), 'utf8')
-      .split('\n').filter(line => !line.trim().startsWith('--')).join('\n')
+    const withoutComments = (sql: string) => sql.split('\n').filter(line => !line.trim().startsWith('--')).join('\n')
+    const migration = withoutComments(readFileSync(join(MIGRATIONS, '20260926020000_hide_crowd_report_ip_hash.sql'), 'utf8'))
     assert.match(migration, /revoke select on public\.crowd_reports from anon;/i)
+    assert.doesNotMatch(migration, /grant select on public\.crowd_reports to anon/i, 'no table-wide SELECT grant back to anon')
     const grant = migration.match(/grant select \(([^)]*)\) on public\.crowd_reports to anon;/i)
     assert.ok(grant, 'expected a column-level SELECT grant to anon')
     const granted = grant[1].split(',').map(column => column.trim())
     assert.ok(!granted.includes('ip_hash'), 'ip_hash must not be granted to anon')
 
-    // get_live_crowd_levels() runs with the caller's rights, so every column it
-    // reads must stay granted or the public busyness badges go blank.
-    const create = readFileSync(join(MIGRATIONS, '20260216061234_create_crowd_reports_table.sql'), 'utf8')
-    const fn = create.slice(create.indexOf('FUNCTION get_live_crowd_levels'))
+    // get_live_crowd_levels() runs with the caller's rights, so every column its
+    // latest definition reads must stay granted or the busyness badges go blank.
+    const definitions = readdirSync(MIGRATIONS).filter(name => name.endsWith('.sql')).sort()
+      .map(name => withoutComments(readFileSync(join(MIGRATIONS, name), 'utf8')))
+      .filter(sql => /FUNCTION\s+(?:public\.)?get_live_crowd_levels\b/i.test(sql))
+    assert.ok(definitions.length > 0, 'expected a migration that defines get_live_crowd_levels')
+    const latest = definitions.at(-1)!
+    const fn = latest.slice(latest.search(/FUNCTION\s+(?:public\.)?get_live_crowd_levels\b/i))
     const used = [...new Set([...fn.matchAll(/\bcr\.(\w+)/g)].map(match => match[1]))]
+    assert.ok(used.length > 0, 'expected to find the columns get_live_crowd_levels reads')
     assert.deepEqual(used.filter(column => !granted.includes(column)), [])
   })
 })

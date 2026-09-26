@@ -27,6 +27,13 @@ grant select (id, pub_id, crowd_level, reported_at) on public.crowd_reports to a
 
 commit;
 
+-- Verify in the SQL editor (expect false, false, and no rows):
+--   select has_table_privilege('anon', 'public.crowd_reports', 'select');
+--   select has_column_privilege('anon', 'public.crowd_reports', 'ip_hash', 'select');
+--   select * from pg_publication_tables where tablename = 'crowd_reports';
+-- A later blanket "grant ... on all tables in schema public to anon" would undo
+-- this; the column check above catches that.
+--
 -- Verify with the anon key:
 --   GET  /rest/v1/crowd_reports?select=ip_hash                       -> 401/403 permission denied
 --   GET  /rest/v1/crowd_reports?select=id,pub_id,crowd_level,reported_at -> 200
