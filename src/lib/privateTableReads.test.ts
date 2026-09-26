@@ -3,11 +3,14 @@ import { readdirSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { describe, it } from 'node:test'
 
-// price_reports holds reporter names, IP hashes and free-text notes. The public
-// anon key may insert reports but never read them back; server code reads
-// through the service role. These checks keep an anon read from creeping back.
+// These tables hold reporter names, submitter emails, IP hashes and free-text
+// notes. The public anon key may insert rows but never read them back; server
+// code reads through the service role. These checks keep an anon read from
+// creeping back.
+const PRIVATE_TABLES = ['price_reports', 'pub_submissions']
 
 const SRC = join(process.cwd(), 'src')
+const MIGRATIONS = join(process.cwd(), 'supabase/migrations')
 
 function sourceFiles(dir: string): string[] {
   return readdirSync(dir, { withFileTypes: true }).flatMap(entry => {
@@ -17,10 +20,10 @@ function sourceFiles(dir: string): string[] {
   })
 }
 
-describe('price_reports read access', () => {
-  it('never reads price_reports through an anon client', () => {
-    const readsPriceReports = (receiver: string) =>
-      new RegExp(`${receiver}\\s*\\.from\\(\\s*['"]price_reports['"]\\s*\\)\\s*\\.select\\(`)
+describe('private table read access', () => {
+  it('never reads a private table through an anon client', () => {
+    const reads = (receiver: string, table: string) =>
+      new RegExp(`${receiver}\\s*\\.from\\(\\s*['"]${table}['"]\\s*\\)\\s*\\.select\\(`)
     const offenders: string[] = []
     for (const file of sourceFiles(SRC)) {
       const source = readFileSync(file, 'utf8')
@@ -35,10 +38,12 @@ describe('price_reports read access', () => {
             .map(part => part.split(/\s+as\s+/).pop()!.trim())
         ),
       ]
-      for (const name of anonVars) {
-        if (readsPriceReports(`\\b${name}`).test(source)) offenders.push(`${label} (${name})`)
+      for (const table of PRIVATE_TABLES) {
+        for (const name of anonVars) {
+          if (reads(`\\b${name}`, table).test(source)) offenders.push(`${label} (${name} → ${table})`)
+        }
+        if (reads('anonClient\\(\\)', table).test(source)) offenders.push(`${label} (inline anonClient() → ${table})`)
       }
-      if (readsPriceReports('anonClient\\(\\)').test(source)) offenders.push(`${label} (inline anonClient())`)
     }
     assert.deepEqual(offenders, [])
   })
@@ -48,8 +53,9 @@ describe('price_reports read access', () => {
     assert.doesNotMatch(route, /export\s+async\s+function\s+GET\b/)
   })
 
-  it('drops the public read policy in a migration', () => {
-    const migration = readFileSync(join(process.cwd(), 'supabase/migrations/20260926000000_restrict_price_reports_reads.sql'), 'utf8')
-    assert.match(migration, /drop policy if exists "Anyone can read price reports" on public\.price_reports;/i)
+  it('drops the public read policies in migrations', () => {
+    const migration = (name: string) => readFileSync(join(MIGRATIONS, name), 'utf8')
+    assert.match(migration('20260926000000_restrict_price_reports_reads.sql'), /drop policy if exists "Anyone can read price reports" on public\.price_reports;/i)
+    assert.match(migration('20260926010000_restrict_pub_submissions_reads.sql'), /drop policy if exists "Allow anonymous select" on public\.pub_submissions;/i)
   })
 })

@@ -23,4 +23,32 @@ describe('pub submission validation', () => {
 
     assert.equal(response.status, 400)
   })
+
+  it('rejects malformed or non-object JSON as a bad request', async () => {
+    for (const body of ['not-json', 'null', '"a string"']) {
+      const response = await POST(new NextRequest('http://localhost/api/pub-submission', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body,
+      }))
+
+      assert.equal(response.status, 400, `body ${body}`)
+    }
+  })
+
+  it('treats a missing service-role key as a server error, not a bad request', async () => {
+    const original = process.env.SUPABASE_SERVICE_ROLE_KEY
+    delete process.env.SUPABASE_SERVICE_ROLE_KEY
+    try {
+      const response = await POST(new NextRequest('http://localhost/api/pub-submission', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ pub_name: 'Test Pub', suburb: 'Perth', price: '9' }),
+      }))
+
+      assert.equal(response.status, 500)
+    } finally {
+      if (original !== undefined) process.env.SUPABASE_SERVICE_ROLE_KEY = original
+    }
+  })
 })

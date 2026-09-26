@@ -1,6 +1,6 @@
 -- Migration: stop public reads of price_reports
--- Apply manually via the Supabase SQL editor after the app change that moves
--- the rate-limit lookups to the service role is live (see below).
+-- Applied: 2026-09-26 (run manually via the Supabase SQL editor after PR #283
+--          deployed; recorded here so the policy change is tracked in the repo).
 --
 -- Context
 -- -------
@@ -31,6 +31,10 @@ drop policy if exists "Anyone can read price reports" on public.price_reports;
 
 commit;
 
+-- End state (verified 2026-09-26): pg_policies lists only "Anyone can submit
+-- price reports" (INSERT); the anon key reads 0 rows from all three below
+-- (previously 45 reports, 3 leaderboard rows and 5 confirmation rows).
+--
 -- Verify with the anon key (expect zero rows from all three):
 --   GET /rest/v1/price_reports?select=id
 --   GET /rest/v1/price_reporter_leaderboard?select=*
