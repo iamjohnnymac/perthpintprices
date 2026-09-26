@@ -1,6 +1,6 @@
 -- Migration: stop public reads of pub_submissions
--- Apply manually via the Supabase SQL editor after the app change that moves
--- the rate-limit lookup to the service role is live (see below).
+-- Applied: 2026-09-26 (run manually via the Supabase SQL editor after PR #284
+--          deployed; recorded here so the policy change is tracked in the repo).
 --
 -- Context
 -- -------
@@ -28,5 +28,9 @@ drop policy if exists "Allow anonymous select" on public.pub_submissions;
 
 commit;
 
+-- End state (verified 2026-09-26): pg_policies lists only "Allow anonymous
+-- inserts" (INSERT, anon) with RLS enabled; the anon key reads 0 rows
+-- (previously 1).
+--
 -- Verify with the anon key (expect zero rows):
 --   GET /rest/v1/pub_submissions?select=id

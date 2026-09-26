@@ -58,4 +58,21 @@ describe('private table read access', () => {
     assert.match(migration('20260926000000_restrict_price_reports_reads.sql'), /drop policy if exists "Anyone can read price reports" on public\.price_reports;/i)
     assert.match(migration('20260926010000_restrict_pub_submissions_reads.sql'), /drop policy if exists "Allow anonymous select" on public\.pub_submissions;/i)
   })
+
+  it('hides crowd_reports.ip_hash but keeps the columns the live crowd function reads', () => {
+    const migration = readFileSync(join(MIGRATIONS, '20260926020000_hide_crowd_report_ip_hash.sql'), 'utf8')
+      .split('\n').filter(line => !line.trim().startsWith('--')).join('\n')
+    assert.match(migration, /revoke select on public\.crowd_reports from anon;/i)
+    const grant = migration.match(/grant select \(([^)]*)\) on public\.crowd_reports to anon;/i)
+    assert.ok(grant, 'expected a column-level SELECT grant to anon')
+    const granted = grant[1].split(',').map(column => column.trim())
+    assert.ok(!granted.includes('ip_hash'), 'ip_hash must not be granted to anon')
+
+    // get_live_crowd_levels() runs with the caller's rights, so every column it
+    // reads must stay granted or the public busyness badges go blank.
+    const create = readFileSync(join(MIGRATIONS, '20260216061234_create_crowd_reports_table.sql'), 'utf8')
+    const fn = create.slice(create.indexOf('FUNCTION get_live_crowd_levels'))
+    const used = [...new Set([...fn.matchAll(/\bcr\.(\w+)/g)].map(match => match[1]))]
+    assert.deepEqual(used.filter(column => !granted.includes(column)), [])
+  })
 })
