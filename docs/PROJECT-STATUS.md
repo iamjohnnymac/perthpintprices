@@ -15,7 +15,7 @@ Stack, database, routes, components, and lib files are documented in `CLAUDE.md`
 - **Root cause:** since 23 September 2026 CARTO requires a free API key on basemap requests; the site's interactive Leaflet maps and static card backgrounds were still using the previous anonymous tile URLs and displayed the `API KEY REQUIRED` watermark.
 - **Shared fix:** both tile paths now append the same `NEXT_PUBLIC_CARTO_BASEMAP_KEY` value using a single URL helper, without changing the existing map styles or attribution.
 - **Regression coverage:** focused tests require the key on interactive tile templates and static tile URLs. The complete suite passes with 408 tests, along with the repository-contract tests and TypeScript.
-- **Key:** a non-commercial CARTO key (free up to 5M tile requests a month) is stored as `NEXT_PUBLIC_CARTO_BASEMAP_KEY` in Infisical `staging` and `prod` and in Vercel Production, Preview and Development. The Infisical `dev` copy still needs adding by the owner.
+- **Key:** a non-commercial CARTO key (free up to 5M tile requests a month) is stored as `NEXT_PUBLIC_CARTO_BASEMAP_KEY` in Infisical `dev`, `staging` and `prod` and in Vercel Production, Preview and Development.
 
 ### AFL Grand Final banner and hub (2026-09-26)
 
