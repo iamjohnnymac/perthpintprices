@@ -106,35 +106,15 @@ function getSunShadowGradient(azimuth: number, isGolden: boolean): string {
   return `linear-gradient(${gradientAngle}deg, ${color}0.3) 0%, ${color}0.08) 40%, transparent 70%)`
 }
 
-export default function SunsetSippers({ pubs, userLocation }: SunsetSippersProps) {
-  const [now, setNow] = useState(new Date())
-  const [showAllPubs, setShowAllPubs] = useState(false)
-  const [apiSunriseHour, setApiSunriseHour] = useState<number | null>(null)
-  const [apiSunsetHour, setApiSunsetHour] = useState<number | null>(null)
-  const dateKey = now.toDateString()
+// Sun arc SVG dimensions
+const arcWidth = 240
+const arcHeight = 80
+const arcCenterX = arcWidth / 2
+const arcCenterY = 52
+const arcRx = 100
+const arcRy = 46
 
-  useEffect(() => {
-    const timer = setInterval(() => setNow(new Date()), 30000) // Update every 30s
-    return () => clearInterval(timer)
-  }, [])
-
-  // Fetch accurate sunrise/sunset from Open-Meteo
-  useEffect(() => {
-    fetch('https://api.open-meteo.com/v1/forecast?latitude=-31.9505&longitude=115.8605&daily=sunrise,sunset&timezone=Australia%2FPerth&forecast_days=1')
-      .then(r => r.json())
-      .then(data => {
-        const sunriseISO: string = data.daily.sunrise[0]
-        const sunsetISO: string = data.daily.sunset[0]
-        const [, srTime] = sunriseISO.split('T')
-        const [, ssTime] = sunsetISO.split('T')
-        const [srH, srM] = srTime.split(':').map(Number)
-        const [ssH, ssM] = ssTime.split(':').map(Number)
-        setApiSunriseHour(srH + srM / 60)
-        setApiSunsetHour(ssH + ssM / 60)
-      })
-      .catch(() => {}) // Fall back to calculation silently
-  }, [dateKey])
-
+function getSunState(now: Date, apiSunriseHour: number | null, apiSunsetHour: number | null) {
   const sunTimes = (() => {
     if (apiSunriseHour !== null && apiSunsetHour !== null) {
       const sunrise = new Date(now)
@@ -147,31 +127,10 @@ export default function SunsetSippers({ pubs, userLocation }: SunsetSippersProps
   })()
 
   const sunPosition = getSunPosition(now, sunTimes.sunrise, sunTimes.sunset)
-
-  const sunsetPubs = useMemo(() =>
-    pubs.filter(p => p.sunsetSpot && p.price !== null).sort((a, b) => {
-      if (userLocation) {
-        return getDistanceKm(userLocation.lat, userLocation.lng, a.lat, a.lng) - getDistanceKm(userLocation.lat, userLocation.lng, b.lat, b.lng)
-      }
-      return a.price! - b.price!
-    }),
-    [pubs, userLocation]
-  )
-
   const isGoldenHour = now >= sunTimes.goldenHourStart && now <= sunTimes.sunset
   const isSunset = now >= new Date(sunTimes.sunset.getTime() - 15 * 60000) && now <= new Date(sunTimes.sunset.getTime() + 30 * 60000)
   const isNighttime = now > sunTimes.sunset || now < sunTimes.sunrise
-  const sunAzimuth = getSunAzimuth(now)
-  const sunShadow = getSunShadowGradient(sunAzimuth, isGoldenHour || isSunset)
-  const cheapestSunset = sunsetPubs[0]
-
-  // Sun arc SVG dimensions
-  const arcWidth = 240
-  const arcHeight = 80
-  const arcCenterX = arcWidth / 2
-  const arcCenterY = 52
-  const arcRx = 100
-  const arcRy = 46
+  const sunShadow = getSunShadowGradient(getSunAzimuth(now), isGoldenHour || isSunset)
 
   // Sun position along the ellipse: angle goes PI (left/sunrise) → 0 (right/sunset)
   const sunAngle = Math.PI - (sunPosition / 100) * Math.PI
@@ -195,6 +154,166 @@ export default function SunsetSippers({ pubs, userLocation }: SunsetSippersProps
     StatusIcon = Sun
   }
 
+  return { sunTimes, sunPosition, isGoldenHour, isSunset, isNighttime, sunShadow, sunX, sunY, statusMessage, StatusIcon }
+}
+
+type SunState = ReturnType<typeof getSunState>
+
+function SunHero({ sun }: { sun: SunState }) {
+  const { sunTimes, sunPosition, isGoldenHour, isSunset, isNighttime, sunX, sunY, statusMessage, StatusIcon } = sun
+  return (
+    <>
+      {/* Status pill */}
+      <div className="flex items-center justify-center gap-2 mb-4">
+        <StatusIcon className="w-5 h-5 text-amber" />
+        {isGoldenHour && (
+          <span className="font-mono text-[0.6rem] font-bold uppercase tracking-[0.05em] px-2.5 py-1 rounded-pill border-2 border-amber bg-amber text-white">
+            Golden Hour
+          </span>
+        )}
+        {isSunset && (
+          <span className="font-mono text-[0.6rem] font-bold uppercase tracking-[0.05em] px-2.5 py-1 rounded-pill border-2 border-amber bg-amber text-white">
+            Sunset Now
+          </span>
+        )}
+        {isNighttime && (
+          <span className="font-mono text-[0.6rem] font-bold uppercase tracking-[0.05em] px-2.5 py-1 rounded-pill border-2 border-gray-light bg-off-white text-gray-mid">
+            After Dark
+          </span>
+        )}
+      </div>
+
+      {/* Large sunset time */}
+      <div className="font-mono text-[2.5rem] font-extrabold text-ink leading-none mb-1">
+        {formatTime(sunTimes.sunset)}
+      </div>
+      <p className="font-mono text-[0.85rem] text-gray-mid mb-5">
+        {statusMessage}
+      </p>
+
+      {/* Sun arc visualization */}
+      {!isNighttime && (
+        <div className="flex justify-center mb-3">
+          <svg width={arcWidth} height={arcHeight} viewBox={`0 0 ${arcWidth} ${arcHeight}`} className="opacity-90" overflow="hidden">
+            {/* Horizon line */}
+            <line x1="12" y1={arcCenterY} x2={arcWidth - 12} y2={arcCenterY} stroke="#8A8A85" strokeWidth="1" strokeDasharray="3,3" opacity="0.5" />
+            {/* Full arc (dashed guide) */}
+            <path
+              d={`M 16 ${arcCenterY} A ${arcRx} ${arcRy} 0 0 1 ${arcWidth - 16} ${arcCenterY}`}
+              fill="none"
+              stroke="#8A8A85"
+              strokeWidth="1.5"
+              strokeDasharray="3,3"
+              opacity="0.3"
+            />
+            {/* Traveled path */}
+            {sunPosition > 0 && sunPosition < 100 && (
+              <path
+                d={`M 16 ${arcCenterY} A ${arcRx} ${arcRy} 0 0 1 ${sunX} ${sunY}`}
+                fill="none"
+                stroke="#171717"
+                strokeWidth="2"
+                opacity="0.7"
+              />
+            )}
+            {/* Sun dot */}
+            {sunPosition > 0 && sunPosition < 100 && (
+              <>
+                <circle cx={sunX} cy={sunY} r="10" fill="#D4740A" opacity="0.12" />
+                <circle cx={sunX} cy={sunY} r="5" fill="#D4740A" opacity="0.5" />
+                <circle cx={sunX} cy={sunY} r="3" fill="#D4740A" />
+              </>
+            )}
+            {/* Labels */}
+            <text x="8" y={arcCenterY + 16} fontSize="10" fill="#8A8A85" fontFamily="var(--font-jetbrains-mono), monospace" fontWeight="600">
+              {formatTime(sunTimes.sunrise).replace(' ', '')}
+            </text>
+            <text x={arcWidth - 78} y={arcCenterY + 16} fontSize="10" fill="#D4740A" fontFamily="var(--font-jetbrains-mono), monospace" fontWeight="600">
+              {formatTime(sunTimes.sunset).replace(' ', '')}
+            </text>
+          </svg>
+        </div>
+      )}
+
+      {/* Nighttime arc placeholder */}
+      {isNighttime && (
+        <div className="flex justify-center mb-3">
+          <div className="bg-off-white rounded-card px-6 py-3">
+            <p className="font-mono text-[0.7rem] text-gray-mid">
+              Sunrise tomorrow at {formatTime(sunTimes.sunrise)}
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* Golden hour start note */}
+      {!isNighttime && !isGoldenHour && !isSunset && (
+        <p className="font-mono text-[0.65rem] text-gray-mid">
+          Golden hour starts at {formatTime(sunTimes.goldenHourStart)}
+        </p>
+      )}
+    </>
+  )
+}
+
+function SunHeroPlaceholder() {
+  return (
+    <div aria-hidden="true" className="flex min-h-[236px] flex-col items-center justify-center gap-3">
+      <div className="h-5 w-24 rounded-pill bg-off-white" />
+      <div className="h-10 w-40 rounded-card bg-off-white" />
+      <div className="h-4 w-48 rounded-card bg-off-white" />
+      <div className="h-20 w-60 rounded-card bg-off-white" />
+    </div>
+  )
+}
+
+export default function SunsetSippers({ pubs, userLocation }: SunsetSippersProps) {
+  // Starts null so the cached server render and the first client render agree;
+  // every clock-dependent value is derived only after mount.
+  const [now, setNow] = useState<Date | null>(null)
+  const [showAllPubs, setShowAllPubs] = useState(false)
+  const [apiSunriseHour, setApiSunriseHour] = useState<number | null>(null)
+  const [apiSunsetHour, setApiSunsetHour] = useState<number | null>(null)
+  const dateKey = now?.toDateString() ?? null
+
+  useEffect(() => {
+    setNow(new Date())
+    const timer = setInterval(() => setNow(new Date()), 30000) // Update every 30s
+    return () => clearInterval(timer)
+  }, [])
+
+  // Fetch accurate sunrise/sunset from Open-Meteo
+  useEffect(() => {
+    if (!dateKey) return
+    fetch('https://api.open-meteo.com/v1/forecast?latitude=-31.9505&longitude=115.8605&daily=sunrise,sunset&timezone=Australia%2FPerth&forecast_days=1')
+      .then(r => r.json())
+      .then(data => {
+        const sunriseISO: string = data.daily.sunrise[0]
+        const sunsetISO: string = data.daily.sunset[0]
+        const [, srTime] = sunriseISO.split('T')
+        const [, ssTime] = sunsetISO.split('T')
+        const [srH, srM] = srTime.split(':').map(Number)
+        const [ssH, ssM] = ssTime.split(':').map(Number)
+        setApiSunriseHour(srH + srM / 60)
+        setApiSunsetHour(ssH + ssM / 60)
+      })
+      .catch(() => {}) // Fall back to calculation silently
+  }, [dateKey])
+
+  const sun = now ? getSunState(now, apiSunriseHour, apiSunsetHour) : null
+
+  const sunsetPubs = useMemo(() =>
+    pubs.filter(p => p.sunsetSpot && p.price !== null).sort((a, b) => {
+      if (userLocation) {
+        return getDistanceKm(userLocation.lat, userLocation.lng, a.lat, a.lng) - getDistanceKm(userLocation.lat, userLocation.lng, b.lat, b.lng)
+      }
+      return a.price! - b.price!
+    }),
+    [pubs, userLocation]
+  )
+
+  const cheapestSunset = sunsetPubs[0]
+
   const displayPubs = showAllPubs ? sunsetPubs : sunsetPubs.slice(0, 10)
 
   return (
@@ -208,95 +327,7 @@ export default function SunsetSippers({ pubs, userLocation }: SunsetSippersProps
             </h2>
           </div>
           <div className="p-5 text-center">
-            {/* Status pill */}
-            <div className="flex items-center justify-center gap-2 mb-4">
-              <StatusIcon className="w-5 h-5 text-amber" />
-              {isGoldenHour && (
-                <span className="font-mono text-[0.6rem] font-bold uppercase tracking-[0.05em] px-2.5 py-1 rounded-pill border-2 border-amber bg-amber text-white">
-                  Golden Hour
-                </span>
-              )}
-              {isSunset && (
-                <span className="font-mono text-[0.6rem] font-bold uppercase tracking-[0.05em] px-2.5 py-1 rounded-pill border-2 border-amber bg-amber text-white">
-                  Sunset Now
-                </span>
-              )}
-              {isNighttime && (
-                <span className="font-mono text-[0.6rem] font-bold uppercase tracking-[0.05em] px-2.5 py-1 rounded-pill border-2 border-gray-light bg-off-white text-gray-mid">
-                  After Dark
-                </span>
-              )}
-            </div>
-
-            {/* Large sunset time */}
-            <div className="font-mono text-[2.5rem] font-extrabold text-ink leading-none mb-1">
-              {formatTime(sunTimes.sunset)}
-            </div>
-            <p className="font-mono text-[0.85rem] text-gray-mid mb-5">
-              {statusMessage}
-            </p>
-
-            {/* Sun arc visualization */}
-            {!isNighttime && (
-              <div className="flex justify-center mb-3">
-                <svg width={arcWidth} height={arcHeight} viewBox={`0 0 ${arcWidth} ${arcHeight}`} className="opacity-90" overflow="hidden">
-                  {/* Horizon line */}
-                  <line x1="12" y1={arcCenterY} x2={arcWidth - 12} y2={arcCenterY} stroke="#8A8A85" strokeWidth="1" strokeDasharray="3,3" opacity="0.5" />
-                  {/* Full arc (dashed guide) */}
-                  <path
-                    d={`M 16 ${arcCenterY} A ${arcRx} ${arcRy} 0 0 1 ${arcWidth - 16} ${arcCenterY}`}
-                    fill="none"
-                    stroke="#8A8A85"
-                    strokeWidth="1.5"
-                    strokeDasharray="3,3"
-                    opacity="0.3"
-                  />
-                  {/* Traveled path */}
-                  {sunPosition > 0 && sunPosition < 100 && (
-                    <path
-                      d={`M 16 ${arcCenterY} A ${arcRx} ${arcRy} 0 0 1 ${sunX} ${sunY}`}
-                      fill="none"
-                      stroke="#171717"
-                      strokeWidth="2"
-                      opacity="0.7"
-                    />
-                  )}
-                  {/* Sun dot */}
-                  {sunPosition > 0 && sunPosition < 100 && (
-                    <>
-                      <circle cx={sunX} cy={sunY} r="10" fill="#D4740A" opacity="0.12" />
-                      <circle cx={sunX} cy={sunY} r="5" fill="#D4740A" opacity="0.5" />
-                      <circle cx={sunX} cy={sunY} r="3" fill="#D4740A" />
-                    </>
-                  )}
-                  {/* Labels */}
-                  <text x="8" y={arcCenterY + 16} fontSize="10" fill="#8A8A85" fontFamily="var(--font-jetbrains-mono), monospace" fontWeight="600">
-                    {formatTime(sunTimes.sunrise).replace(' ', '')}
-                  </text>
-                  <text x={arcWidth - 78} y={arcCenterY + 16} fontSize="10" fill="#D4740A" fontFamily="var(--font-jetbrains-mono), monospace" fontWeight="600">
-                    {formatTime(sunTimes.sunset).replace(' ', '')}
-                  </text>
-                </svg>
-              </div>
-            )}
-
-            {/* Nighttime arc placeholder */}
-            {isNighttime && (
-              <div className="flex justify-center mb-3">
-                <div className="bg-off-white rounded-card px-6 py-3">
-                  <p className="font-mono text-[0.7rem] text-gray-mid">
-                    Sunrise tomorrow at {formatTime(sunTimes.sunrise)}
-                  </p>
-                </div>
-              </div>
-            )}
-
-            {/* Golden hour start note */}
-            {!isNighttime && !isGoldenHour && !isSunset && (
-              <p className="font-mono text-[0.65rem] text-gray-mid">
-                Golden hour starts at {formatTime(sunTimes.goldenHourStart)}
-              </p>
-            )}
+            {sun ? <SunHero sun={sun} /> : <SunHeroPlaceholder />}
           </div>
         </div>
       </section>
@@ -332,13 +363,13 @@ export default function SunsetSippers({ pubs, userLocation }: SunsetSippersProps
                 <div className="relative h-32 w-full">
                   <MiniMap lat={pub.lat} lng={pub.lng} name={pub.name} />
                   {/* Sun shadow overlay */}
-                  {!isNighttime && (
+                  {sun && !sun.isNighttime && (
                     <div
                       className="absolute inset-0 pointer-events-none z-[400]"
-                      style={{ background: sunShadow }}
+                      style={{ background: sun.sunShadow }}
                     />
                   )}
-                  {isNighttime && (
+                  {sun?.isNighttime && (
                     <div className="absolute inset-0 pointer-events-none z-[400] bg-ink/15" />
                   )}
                   {/* Price badge on map */}
@@ -393,24 +424,26 @@ export default function SunsetSippers({ pubs, userLocation }: SunsetSippersProps
       </section>
 
       {/* ═══ Footer Tip ═══ */}
-      <section>
-        <div className="bg-off-white rounded-card p-4 text-center">
-          <p className="font-mono text-[0.75rem] text-gray-mid flex items-center justify-center gap-2">
-            {isSunset && (
-              <><Sunset className="w-4 h-4 text-amber" /> Last of the light — grab a pint and face west</>
-            )}
-            {isGoldenHour && !isSunset && (
-              <><Sun className="w-4 h-4 text-amber" /> Golden hour lighting. Your pint has never looked better</>
-            )}
-            {!isGoldenHour && !isSunset && !isNighttime && (
-              <><Beer className="w-4 h-4 text-amber" /> Golden hour starts at {formatTime(sunTimes.goldenHourStart)}. Worth being set up by then</>
-            )}
-            {isNighttime && (
-              <><Moon className="w-4 h-4 text-gray-mid" /> The sun will rise again tomorrow. Rest up</>
-            )}
-          </p>
-        </div>
-      </section>
+      {sun && (
+        <section>
+          <div className="bg-off-white rounded-card p-4 text-center">
+            <p className="font-mono text-[0.75rem] text-gray-mid flex items-center justify-center gap-2">
+              {sun.isSunset && (
+                <><Sunset className="w-4 h-4 text-amber" /> Last of the light — grab a pint and face west</>
+              )}
+              {sun.isGoldenHour && !sun.isSunset && (
+                <><Sun className="w-4 h-4 text-amber" /> Golden hour lighting. Your pint has never looked better</>
+              )}
+              {!sun.isGoldenHour && !sun.isSunset && !sun.isNighttime && (
+                <><Beer className="w-4 h-4 text-amber" /> Golden hour starts at {formatTime(sun.sunTimes.goldenHourStart)}. Worth being set up by then</>
+              )}
+              {sun.isNighttime && (
+                <><Moon className="w-4 h-4 text-gray-mid" /> The sun will rise again tomorrow. Rest up</>
+              )}
+            </p>
+          </div>
+        </section>
+      )}
     </div>
   )
 }
