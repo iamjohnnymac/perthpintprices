@@ -49,3 +49,32 @@ test.describe('sunset sippers guide with a shifted client clock', () => {
     expect(errors).toEqual([])
   })
 })
+
+// Sun times belong to Perth, so a visitor anywhere sees Perth's sunset and the
+// same countdown. Open-Meteo is stubbed with a fixed Perth-local answer for the
+// test's Perth date so the comparison doesn't depend on the live API.
+test('sunset guide shows Perth times to visitors in any timezone', async ({ browser, baseURL }) => {
+  const at = new Date()
+  const perthDate = new Date(at.getTime() + 8 * 60 * 60 * 1000).toISOString().slice(0, 10)
+  const heroes: string[] = []
+
+  for (const timezoneId of ['Australia/Perth', 'America/Los_Angeles', 'Asia/Tokyo']) {
+    const context = await browser.newContext({ baseURL, timezoneId })
+    await context.route('https://api.open-meteo.com/**', route => route.fulfill({
+      json: { daily: { sunrise: [`${perthDate}T06:01`], sunset: [`${perthDate}T18:15`] } },
+    }))
+    const page = await context.newPage()
+    const errors = collectHydrationErrors(page)
+    await page.clock.setFixedTime(at)
+    await page.goto('/guides/sunset-sippers')
+    const hero = page.locator('section').filter({ has: page.getByRole('heading', { name: /Today.s Sunset/i }) }).first()
+    await expect(hero.getByText('06:15 pm').first()).toBeVisible()
+    await page.waitForLoadState('networkidle')
+    heroes.push(await hero.innerText())
+    expect(errors).toEqual([])
+    await context.close()
+  }
+
+  expect(heroes[1]).toBe(heroes[0])
+  expect(heroes[2]).toBe(heroes[0])
+})

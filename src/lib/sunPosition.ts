@@ -1,3 +1,5 @@
+import { perthToday } from './perthClock'
+
 /**
  * Solar position calculator for Perth, WA (-31.9505°, 115.8605°)
  * Returns azimuth (0=N, 90=E, 180=S, 270=W) and altitude (degrees above horizon)
@@ -56,4 +58,49 @@ export function sunToMapPosition(azimuth: number): { x: number; y: number } {
     x: 50 + Math.sin(rad) * 44,
     y: 50 - Math.cos(rad) * 44,
   }
+}
+
+const PERTH_LAT = -31.9505
+const PERTH_LNG = 115.8605
+
+/** Midnight at the start of a Perth calendar date (`YYYY-MM-DD`), as epoch ms. */
+function perthMidnight(ymd: string): number {
+  return Date.parse(`${ymd}T00:00:00+08:00`)
+}
+
+/**
+ * Sunrise, sunset and golden-hour start for the Perth calendar day containing
+ * `now`, as exact instants. Anchored on the Perth date so the result is the
+ * same on a UTC server and in a browser in any timezone.
+ */
+export function getPerthSunTimes(now: Date): { sunrise: Date; sunset: Date; goldenHourStart: Date } {
+  const ymd = perthToday(now)
+  const midnight = perthMidnight(ymd)
+  const dayOfYear = Math.round((midnight - perthMidnight(`${ymd.slice(0, 4)}-01-01`)) / 86400000) + 1
+  const lat = PERTH_LAT * Math.PI / 180
+
+  // Solar declination
+  const declination = -23.45 * Math.cos((360 / 365) * (dayOfYear + 10) * Math.PI / 180) * Math.PI / 180
+
+  // Hour angle
+  const cosHourAngle = (Math.cos(90.833 * Math.PI / 180) - Math.sin(lat) * Math.sin(declination)) / (Math.cos(lat) * Math.cos(declination))
+  const hourAngle = Math.acos(Math.max(-1, Math.min(1, cosHourAngle))) * 180 / Math.PI
+
+  // Solar noon in AWST (120° is the UTC+8 reference meridian)
+  const solarNoon = 12 - (PERTH_LNG - 120) / 15
+
+  const atPerthHour = (hour: number) =>
+    new Date(midnight + (Math.floor(hour) * 60 + Math.round((hour % 1) * 60)) * 60000)
+
+  const sunrise = atPerthHour(solarNoon - hourAngle / 15)
+  const sunset = atPerthHour(solarNoon + hourAngle / 15)
+  // Golden hour starts ~1 hour before sunset
+  const goldenHourStart = new Date(sunset.getTime() - 60 * 60 * 1000)
+
+  return { sunrise, sunset, goldenHourStart }
+}
+
+/** Reads a Perth-local `YYYY-MM-DDTHH:MM` time (as Open-Meteo returns it) as an exact instant. */
+export function parsePerthLocalTime(localTime: string): Date {
+  return new Date(`${localTime.length === 16 ? `${localTime}:00` : localTime}+08:00`)
 }
