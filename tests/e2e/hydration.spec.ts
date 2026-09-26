@@ -50,6 +50,24 @@ test.describe('sunset sippers guide with a shifted client clock', () => {
   })
 })
 
+test.describe('/discover with a shifted client clock', () => {
+  test.use({ timezoneId: 'Australia/Perth' })
+
+  for (const { label, offset } of [
+    { label: '+3 hours', offset: 3 * 60 * 60 * 1000 },
+    { label: '+1 day', offset: 24 * 60 * 60 * 1000 },
+  ]) {
+    test(`hydrates without a mismatch at ${label}`, async ({ page }) => {
+      const errors = collectHydrationErrors(page)
+      await page.clock.install({ time: new Date(Date.now() + offset) })
+      await page.goto('/discover')
+      await expect(page.locator('#best-buys')).toBeVisible()
+      await page.waitForLoadState('networkidle')
+      expect(errors).toEqual([])
+    })
+  }
+})
+
 // Sun times belong to Perth, so a visitor anywhere sees Perth's sunset and the
 // same countdown. Open-Meteo is stubbed with a fixed Perth-local answer for the
 // test's Perth date so the comparison doesn't depend on the live API.
