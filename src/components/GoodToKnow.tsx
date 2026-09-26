@@ -22,7 +22,7 @@ const CHIPS: ChipDef[] = [
 ]
 
 function formatDate(value: string): string {
-  return new Date(value).toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' })
+  return new Date(value).toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'Australia/Perth' })
 }
 
 export default function GoodToKnow({ pub, summaryOnly = false }: { pub: Pub; summaryOnly?: boolean }) {
