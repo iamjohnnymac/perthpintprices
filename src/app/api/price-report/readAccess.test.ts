@@ -25,10 +25,12 @@ describe('price_reports read access', () => {
     for (const file of sourceFiles(SRC)) {
       const source = readFileSync(file, 'utf8')
       const label = file.replace(`${process.cwd()}/`, '')
-      // Variables holding anonClient(), plus the anon singleton exported by @/lib/supabase.
+      // Variables holding anonClient(), plus the anon singleton that lib/supabase.ts
+      // declares and exports (imported as '@/lib/supabase' or a relative path).
       const anonVars = [
         ...[...source.matchAll(/(?:const|let)\s+(\w+)\s*=\s*anonClient\(\)/g)].map(match => match[1]),
-        ...[...source.matchAll(/import\s*\{([^}]*)\}\s*from\s*['"]@\/lib\/supabase['"]/g)].flatMap(match =>
+        ...(label === 'src/lib/supabase.ts' ? ['supabase'] : []),
+        ...[...source.matchAll(/import\s*\{([^}]*)\}\s*from\s*['"](?:@\/lib\/|(?:\.\.?\/)+(?:[\w-]+\/)*)supabase['"]/g)].flatMap(match =>
           match[1].split(',').map(part => part.trim()).filter(part => /^supabase\b/.test(part))
             .map(part => part.split(/\s+as\s+/).pop()!.trim())
         ),
