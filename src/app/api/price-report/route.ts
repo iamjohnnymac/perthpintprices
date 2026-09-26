@@ -24,6 +24,10 @@ async function revalidateReportedPub(pubSlug: string) {
 }
 
 export async function POST(req: NextRequest) {
+  // price_reports holds reporter names and IP hashes, so the public key can
+  // only insert. The rate-limit lookup reads through the service role, built
+  // outside the try so a missing key is a server error, not "Invalid request".
+  const service = serviceClient()
   try {
     const body = await req.json()
 
@@ -38,15 +42,18 @@ export async function POST(req: NextRequest) {
 
     const rateLimit = prepared.value.isMenuScan ? 15 : 1
 
-    // price_reports holds reporter names and IP hashes, so the public key can
-    // only insert. The rate-limit lookup reads through the service role.
-    const service = serviceClient()
-    const { data: recentReport } = await service
+    const { data: recentReport, error: rateLimitError } = await service
       .from('price_reports')
       .select('id')
       .eq('pub_slug', prepared.value.pubSlug)
       .eq('ip_hash', ipHash)
       .gte('created_at', new Date(Date.now() - 3600000).toISOString())
+
+    // Fail closed: without the lookup we can't enforce the limit.
+    if (rateLimitError) {
+      console.error('Price report rate-limit lookup failed:', rateLimitError.message)
+      return NextResponse.json({ error: "We couldn't take that report just now. Try again in a minute." }, { status: 503 })
+    }
 
     if (recentReport && recentReport.length >= rateLimit) {
       return NextResponse.json({ error: 'You already reported for this pub recently. Try again in an hour.' }, { status: 429 })

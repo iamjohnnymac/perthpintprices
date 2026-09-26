@@ -55,11 +55,17 @@ export async function POST(req: NextRequest) {
 
     // price_reports is not readable with the public key; see /api/price-report.
     const service = serviceClient()
-    const { data: recentScans } = await service
+    const { data: recentScans, error: rateLimitError } = await service
       .from('price_reports')
       .select('id, submission_source, notes')
       .eq('ip_hash', ipHash)
       .gte('created_at', new Date(Date.now() - 86400000).toISOString())
+
+    // Fail closed: without the lookup we can't enforce the daily limit.
+    if (rateLimitError) {
+      console.error('Menu scan rate-limit lookup failed:', rateLimitError.message)
+      return NextResponse.json({ error: "We couldn't scan that just now. Try again in a minute." }, { status: 503 })
+    }
 
     if (countMenuScanReports(recentScans) >= 3) {
       return NextResponse.json({ error: 'Scan limit reached. Try again tomorrow.' }, { status: 429 })

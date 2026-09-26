@@ -19,14 +19,24 @@ function sourceFiles(dir: string): string[] {
 
 describe('price_reports read access', () => {
   it('never reads price_reports through an anon client', () => {
+    const readsPriceReports = (receiver: string) =>
+      new RegExp(`${receiver}\\s*\\.from\\(\\s*['"]price_reports['"]\\s*\\)\\s*\\.select\\(`)
     const offenders: string[] = []
     for (const file of sourceFiles(SRC)) {
       const source = readFileSync(file, 'utf8')
-      const anonVars = [...source.matchAll(/(?:const|let)\s+(\w+)\s*=\s*anonClient\(\)/g)].map(match => match[1])
+      const label = file.replace(`${process.cwd()}/`, '')
+      // Variables holding anonClient(), plus the anon singleton exported by @/lib/supabase.
+      const anonVars = [
+        ...[...source.matchAll(/(?:const|let)\s+(\w+)\s*=\s*anonClient\(\)/g)].map(match => match[1]),
+        ...[...source.matchAll(/import\s*\{([^}]*)\}\s*from\s*['"]@\/lib\/supabase['"]/g)].flatMap(match =>
+          match[1].split(',').map(part => part.trim()).filter(part => /^supabase\b/.test(part))
+            .map(part => part.split(/\s+as\s+/).pop()!.trim())
+        ),
+      ]
       for (const name of anonVars) {
-        const read = new RegExp(`\\b${name}\\s*\\.from\\(\\s*['"]price_reports['"]\\s*\\)\\s*\\.select\\(`)
-        if (read.test(source)) offenders.push(`${file.replace(`${process.cwd()}/`, '')} (${name})`)
+        if (readsPriceReports(`\\b${name}`).test(source)) offenders.push(`${label} (${name})`)
       }
+      if (readsPriceReports('anonClient\\(\\)').test(source)) offenders.push(`${label} (inline anonClient())`)
     }
     assert.deepEqual(offenders, [])
   })
