@@ -53,6 +53,11 @@ const retiredWorldCupRedirect = redirects.find(redirect => redirect.source === '
 assert.equal(retiredWorldCupRedirect?.destination, '/')
 assert.equal(retiredWorldCupRedirect?.statusCode, 301, 'retired World Cup route must redirect home with an explicit 301')
 
+const retiredGrandFinalRedirect = redirects.find(redirect => redirect.source === '/grand-final')
+
+assert.equal(retiredGrandFinalRedirect?.destination, '/')
+assert.equal(retiredGrandFinalRedirect?.statusCode, 301, 'retired Grand Final route must redirect home with an explicit 301')
+
 const oldPubRoute = await readFile(new URL('../src/app/pub/[slug]/route.ts', import.meta.url), 'utf8')
 
 assert.match(oldPubRoute, /NextResponse\.redirect\([^,]+,\s*301\)/, 'legacy pub route must redirect with status 301')

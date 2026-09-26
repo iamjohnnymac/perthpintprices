@@ -55,6 +55,11 @@
       "source": "/world-cup",
       "destination": "/",
       "statusCode": 301
+    },
+    {
+      "source": "/grand-final",
+      "destination": "/",
+      "statusCode": 301
     }
   ],
   "crons": [
