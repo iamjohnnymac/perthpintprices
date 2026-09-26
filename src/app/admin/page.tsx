@@ -2,10 +2,10 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import {
-  DollarSign, Bell, BarChart3, Activity, FileText, Heart,
-  Beer, Sunset, Users, Trophy, MapPin, AlertTriangle, Shield,
+  DollarSign, Bell, ChartColumn, Activity, FileText, Heart,
+  Beer, Sunset, Users, Trophy, MapPin, TriangleAlert, Shield,
   Clock, RefreshCw, LogOut, Check, X, ChevronDown, ChevronUp,
-  Eye, EyeOff, Loader2, Store, AudioWaveform, Search, ExternalLink
+  Eye, EyeOff, LoaderCircle, Store, AudioWaveform, Search, ExternalLink
 } from 'lucide-react'
 import AndrewTestCall from './AndrewTestCall'
 
@@ -161,7 +161,7 @@ function StatusBadge({ status }: { status: string }) {
 function CategoryIcon({ category }: { category: string }) {
   const icons: Record<string, React.ElementType> = {
     scraper: RefreshCw,
-    deployment: BarChart3,
+    deployment: ChartColumn,
     'price-update': DollarSign,
     security: Shield,
     notification: Bell,
@@ -261,7 +261,7 @@ function LoginScreen({ onLogin }: { onLogin: (pw: string, remember: boolean) => 
 
           {error && (
             <div className="flex items-center gap-2 text-red font-mono text-[0.7rem] font-bold bg-red-pale border-2 border-red rounded-card px-3 py-2">
-              <AlertTriangle size={14} />
+              <TriangleAlert size={14} />
               {error}
             </div>
           )}
@@ -271,7 +271,7 @@ function LoginScreen({ onLogin }: { onLogin: (pw: string, remember: boolean) => 
             disabled={loading || !password}
             className="w-full py-3 bg-amber text-white font-mono text-[0.75rem] font-bold uppercase tracking-[0.05em] border-3 border-ink rounded-card shadow-hard-sm hover:translate-x-[1.5px] hover:translate-y-[1.5px] hover:shadow-hard-hover disabled:opacity-50 disabled:cursor-not-allowed transition-all"
           >
-            {loading ? <Loader2 size={16} className="animate-spin mx-auto" /> : 'Sign In'}
+            {loading ? <LoaderCircle size={16} className="animate-spin mx-auto" /> : 'Sign In'}
           </button>
         </form>
       </div>
@@ -286,7 +286,7 @@ function LoginScreen({ onLogin }: { onLogin: (pw: string, remember: boolean) => 
 type TabId = 'overview' | 'activity' | 'reports' | 'andrew' | 'health'
 
 const TABS: { id: TabId; label: string; icon: React.ElementType }[] = [
-  { id: 'overview', label: 'Overview', icon: BarChart3 },
+  { id: 'overview', label: 'Overview', icon: ChartColumn },
   { id: 'activity', label: 'Activity', icon: Activity },
   { id: 'reports', label: 'Reports', icon: FileText },
   { id: 'andrew', label: 'Andrew', icon: AudioWaveform },
@@ -487,7 +487,7 @@ function PlaceMatchPicker({
           disabled={searching || query.trim().length < 3}
           className="inline-flex items-center justify-center gap-1.5 bg-ink text-white border-3 border-ink rounded-pill shadow-hard-sm px-4 py-2 font-mono text-[0.62rem] font-bold uppercase tracking-[0.05em] hover:bg-amber disabled:opacity-50 transition-colors"
         >
-          {searching ? <Loader2 size={12} className="animate-spin" /> : <Search size={12} />}
+          {searching ? <LoaderCircle size={12} className="animate-spin" /> : <Search size={12} />}
           Find pub
         </button>
       </form>
@@ -587,7 +587,7 @@ function ReportsTab({ data, password, onRefresh }: { data: DashboardData; passwo
     <div className="space-y-8">
       {actionError && (
         <div className="flex items-center gap-2 text-red font-mono text-[0.7rem] font-bold bg-red-pale border-2 border-red rounded-card px-3 py-2">
-          <AlertTriangle size={14} />
+          <TriangleAlert size={14} />
           {actionError}
           <button onClick={() => setActionError(null)} className="ml-auto hover:text-ink transition-colors"><X size={14} /></button>
         </div>
@@ -618,7 +618,7 @@ function ReportsTab({ data, password, onRefresh }: { data: DashboardData; passwo
                       <p className="font-mono text-[0.85rem] font-bold text-ink">{r.pubSlug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}</p>
                       {isPending && !pubSlugs.has(r.pubSlug) && !pubOverrides[String(r.id)] && (
                         <p className="font-mono text-[0.6rem] font-bold text-red mt-1 flex items-center gap-1">
-                          <AlertTriangle size={10} /> Pub not found — select the correct pub below
+                          <TriangleAlert size={10} /> Pub not found — select the correct pub below
                         </p>
                       )}
                       {isPending && (
@@ -668,7 +668,7 @@ function ReportsTab({ data, password, onRefresh }: { data: DashboardData; passwo
                       <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1.5">
                         {r.reportType === 'outdated_flag' ? (
                           <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 bg-amber-pale text-ink border-2 border-amber rounded-pill font-mono text-[0.55rem] font-bold uppercase tracking-[0.05em]">
-                            <AlertTriangle size={9} />Stale flag
+                            <TriangleAlert size={9} />Stale flag
                           </span>
                         ) : (
                           <span className="font-mono text-[0.9rem] font-extrabold text-ink tabular-nums">${Number(r.reportedPrice).toFixed(2)}</span>
@@ -715,7 +715,7 @@ function ReportsTab({ data, password, onRefresh }: { data: DashboardData; passwo
                           disabled={actionLoading !== null}
                           className="flex items-center justify-center gap-1.5 px-3 sm:px-4 py-2 bg-green text-white font-mono text-[0.65rem] font-bold uppercase tracking-[0.05em] border-3 border-ink rounded-card shadow-hard-sm hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-hard-hover disabled:opacity-50 transition-all"
                         >
-                          {actionLoading === approveKey ? <Loader2 size={12} className="animate-spin" /> : <Check size={12} />}
+                          {actionLoading === approveKey ? <LoaderCircle size={12} className="animate-spin" /> : <Check size={12} />}
                           Approve
                         </button>
                         <button
@@ -723,7 +723,7 @@ function ReportsTab({ data, password, onRefresh }: { data: DashboardData; passwo
                           disabled={actionLoading !== null}
                           className="flex items-center justify-center gap-1.5 px-3 sm:px-4 py-2 bg-red text-white font-mono text-[0.65rem] font-bold uppercase tracking-[0.05em] border-3 border-ink rounded-card shadow-hard-sm hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-hard-hover disabled:opacity-50 transition-all"
                         >
-                          {actionLoading === rejectKey ? <Loader2 size={12} className="animate-spin" /> : <X size={12} />}
+                          {actionLoading === rejectKey ? <LoaderCircle size={12} className="animate-spin" /> : <X size={12} />}
                           Reject
                         </button>
                       </div>
@@ -799,7 +799,7 @@ function ReportsTab({ data, password, onRefresh }: { data: DashboardData; passwo
                           title={!selectedPlaces[String(s.id)] ? 'Select the official Google listing first' : undefined}
                           className="flex items-center justify-center gap-1.5 px-3 sm:px-4 py-2 bg-green text-white font-mono text-[0.65rem] font-bold uppercase tracking-[0.05em] border-3 border-ink rounded-pill shadow-hard-sm hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-hard-hover disabled:opacity-50 transition-all"
                         >
-                          {actionLoading === approveKey ? <Loader2 size={12} className="animate-spin" /> : <Check size={12} />}
+                          {actionLoading === approveKey ? <LoaderCircle size={12} className="animate-spin" /> : <Check size={12} />}
                           Create page
                         </button>
                         <button
@@ -807,7 +807,7 @@ function ReportsTab({ data, password, onRefresh }: { data: DashboardData; passwo
                           disabled={actionLoading !== null}
                           className="flex items-center justify-center gap-1.5 px-3 sm:px-4 py-2 bg-red text-white font-mono text-[0.65rem] font-bold uppercase tracking-[0.05em] border-3 border-ink rounded-pill shadow-hard-sm hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-hard-hover disabled:opacity-50 transition-all"
                         >
-                          {actionLoading === rejectKey ? <Loader2 size={12} className="animate-spin" /> : <X size={12} />}
+                          {actionLoading === rejectKey ? <LoaderCircle size={12} className="animate-spin" /> : <X size={12} />}
                           Reject
                         </button>
                       </div>
@@ -1052,14 +1052,14 @@ export default function AdminDashboard() {
 
         {error && (
           <div className="flex items-center gap-2 text-red font-mono text-[0.7rem] font-bold bg-red-pale border-2 border-red rounded-card px-3 py-2 mb-6">
-            <AlertTriangle size={14} />
+            <TriangleAlert size={14} />
             {error}
           </div>
         )}
 
         {loading && !data && (
           <div className="flex items-center justify-center py-20">
-            <Loader2 size={24} className="animate-spin text-amber" />
+            <LoaderCircle size={24} className="animate-spin text-amber" />
           </div>
         )}
 

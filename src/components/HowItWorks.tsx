@@ -1,6 +1,6 @@
 'use client'
 
-import { Users, Clock, CheckCircle } from 'lucide-react'
+import { Users, Clock, CircleCheckBig } from 'lucide-react'
 import { useInView } from '@/hooks/useInView'
 
 interface HowItWorksProps {
@@ -20,7 +20,7 @@ const features = [
     desc: 'Real-time tracking across Perth. See which pubs have cheap pints on right now.',
   },
   {
-    icon: CheckCircle,
+    icon: CircleCheckBig,
     heading: 'Dated, not guessed',
     desc: 'Every price shows when it was last checked. Stale data gets flagged so you know what\'s fresh.',
   },

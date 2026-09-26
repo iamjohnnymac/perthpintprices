@@ -8,7 +8,7 @@ import {
   Check,
   Clock3,
   Database,
-  FileCheck2,
+  FileCheckCorner,
   PhoneCall,
   Play,
   RotateCcw,
@@ -266,7 +266,7 @@ export default function AiPriceDemo() {
                 <p className="type-eyebrow">Listing update</p>
                 <p className="mt-1 font-mono text-[0.65rem] font-bold text-green">ready for review</p>
               </div>
-              <FileCheck2 size={22} className="text-gray-mid" />
+              <FileCheckCorner size={22} className="text-gray-mid" />
             </div>
 
             <div className="my-7 flex-1 rounded-card border-3 border-ink bg-white p-5 shadow-hard-sm">

@@ -1,6 +1,6 @@
 'use client'
 
-import { Beer, Zap, MapPin, Sunset, TrendingUp, PenLine, CircleCheck, Copy, Lightbulb, Medal, Bell, BellOff, Star, Waves, Baby, Flame, CloudRain, Sun, Umbrella, Users, Clock, Dices, Target, Flag, Trophy, DollarSign, BarChart3, Map as MapIcon, Share2, CirclePlay, CloudSun, CloudLightning, Snowflake, Cloud, Moon, Circle, CircleDot, Coffee, Building2, Landmark, Anchor } from 'lucide-react'
+import { Beer, Zap, MapPin, Sunset, TrendingUp, PenLine, CircleCheck, Copy, Lightbulb, Medal, Bell, BellOff, Star, Waves, Baby, Flame, CloudRain, Sun, Umbrella, Users, Clock, Dices, Target, Flag, Trophy, DollarSign, ChartColumn, Map as MapIcon, Share2, CirclePlay, CloudSun, CloudLightning, Snowflake, Cloud, Moon, Circle, CircleDot, Coffee, Building2, Landmark, Anchor } from 'lucide-react'
 
 const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   beer: Beer,
@@ -29,7 +29,7 @@ const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   flag: Flag,
   trophy: Trophy,
   'dollar-sign': DollarSign,
-  'bar-chart': BarChart3,
+  'bar-chart': ChartColumn,
   map: MapIcon,
   share: Share2,
   'circle-play': CirclePlay,
