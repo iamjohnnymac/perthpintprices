@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { serviceClient } from '@/lib/supabaseGateway'
-import OpenAI from 'openai'
+import type OpenAI from 'openai'
+import { createMenuScanClient, createMenuScanCompletion } from './client'
 import { countMenuScanReports } from './rateLimit'
 
 export const maxDuration = 30
@@ -9,10 +10,7 @@ export const maxDuration = 30
 let _openai: OpenAI | null = null
 function getOpenAI() {
   if (!_openai) {
-    _openai = new OpenAI({
-      baseURL: 'https://openrouter.ai/api/v1',
-      apiKey: process.env.OPENROUTER_API_KEY,
-    })
+    _openai = createMenuScanClient(process.env.OPENROUTER_API_KEY!)
   }
   return _openai
 }
@@ -77,25 +75,7 @@ export async function POST(req: NextRequest) {
     const dataUrl = `data:${image.type};base64,${base64}`
 
     // Call AI vision model via OpenRouter
-    const completion = await getOpenAI().chat.completions.create({
-      model: 'qwen/qwen3.5-flash-02-23',
-      max_tokens: 1024,
-      messages: [
-        {
-          role: 'user',
-          content: [
-            {
-              type: 'text',
-              text: `Extract beer and cider names with their pint prices from this menu photo. Return ONLY a valid JSON array with no other text. Each item should have: "beer_type" (string, the drink name), "price" (number, the pint price in dollars), "price_type" ("regular" or "happy_hour"). Only extract pint-sized drinks. If a section is labelled happy hour or similar, use "happy_hour" as price_type. If you cannot extract any prices, return an empty array []. Do not guess or make up prices.`,
-            },
-            {
-              type: 'image_url',
-              image_url: { url: dataUrl },
-            },
-          ],
-        },
-      ],
-    })
+    const completion = await createMenuScanCompletion(getOpenAI(), dataUrl)
 
     const rawText = completion.choices?.[0]?.message?.content || '[]'
 
