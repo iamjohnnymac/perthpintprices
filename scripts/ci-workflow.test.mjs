@@ -2,6 +2,7 @@ import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 
 const workflow = readFileSync(new URL('../.github/workflows/ci.yml', import.meta.url), 'utf8')
+const dependabot = readFileSync(new URL('../.github/dependabot.yml', import.meta.url), 'utf8')
 
 // Steps sit six spaces deep under `steps:`; splitting on the name key gives one block each.
 const steps = workflow
@@ -19,6 +20,14 @@ function step(name) {
 }
 
 const GATE = "steps.supabase.outputs.available == 'true'"
+
+assert.match(step('Set up Node 24').body, /^\s+node-version: "24"$/m)
+
+const npmUpdates = dependabot.split(/^  - package-ecosystem: github-actions$/m)[0]
+const ignore = npmUpdates.split(/^    ignore:$/m)[1]?.split(/^    [\w-]+:/m)[0]
+assert.ok(ignore, 'Dependabot npm updates must have an ignore block')
+assert.match(ignore, /^      - dependency-name: eslint\n        versions: \[">=10"\]$/m)
+assert.match(ignore, /^      - dependency-name: "@types\/node"\n        versions: \[">=25"\]$/m)
 
 // The guard decides whether the Supabase-backed steps can run at all.
 const guard = step('Resolve Supabase build credentials')

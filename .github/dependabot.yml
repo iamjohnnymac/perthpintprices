@@ -17,6 +17,13 @@ updates:
     commit-message:
       prefix: "deps"
       include: scope
+    ignore:
+      # eslint-config-next's react, jsx-a11y and import plugins support ESLint <=9 (PR #270).
+      - dependency-name: eslint
+        versions: [">=10"]
+      # Keep Node types aligned with the production Node 24.x runtime (PR #269).
+      - dependency-name: "@types/node"
+        versions: [">=25"]
     groups:
       # Group minor + patch updates so we don't get a flood of PRs
       minor-and-patch:
