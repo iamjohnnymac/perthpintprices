@@ -10,6 +10,12 @@ Stack, database, routes, components, and lib files are documented in `CLAUDE.md`
 
 ## What's done recently
 
+### AFL Grand Final banner and hub (2026-09-26)
+
+- **Site-wide strip:** a slim banner under the amber top bar on every public page counts down to the 12:30pm AWST bounce of Fremantle v Brisbane, switches to "On now" during the game, and hides itself after Grand Final day in Perth time. It links to `/grand-final`.
+- **Hub page:** `/grand-final` lists free public screens and 35 venues that four research agents found advertising the 2026 game, grouped by area. Each entry carries its public source; tracked pubs link to their page and show our last verified pint price.
+- **Retirement:** remove the banner, page and data (`src/lib/grandFinal.ts`) after the day and redirect `/grand-final` home, as PR #226 did for the World Cup. The page is deliberately left out of the sitemap because it lives for one day.
+
 ### Official pub approvals and Slack alerts (2026-09-01, commit `09e366d`)
 
 - **Google-backed approval:** pending pub submissions now require an official Places API (New) match. Approval refetches Place Details on the server, rejects closed or duplicate listings, creates the full pub record, and refreshes the pub page, suburb page, shared pub cache, and sitemap routes.

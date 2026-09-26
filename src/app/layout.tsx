@@ -3,6 +3,7 @@ import Script from 'next/script'
 import { Plus_Jakarta_Sans, DM_Serif_Display, JetBrains_Mono } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import Providers from './Providers'
+import GrandFinalBanner from '@/components/GrandFinalBanner'
 import JsonLdScript from '@/components/JsonLdScript'
 import { buildSiteJsonLdGraph } from '@/lib/siteJsonLd'
 import { getSiteStats } from '@/lib/supabase'
@@ -95,7 +96,7 @@ export default function RootLayout({
         <meta name="theme-color" content="#FDF8F0" />
         <JsonLdScript data={buildSiteJsonLdGraph()} />
       </head>
-      <body className={`${plusJakarta.variable} ${dmSerif.variable} ${jetbrainsMono.variable} ${plusJakarta.className}`}><div className="h-[5px] bg-amber w-full" /><Providers>{children}</Providers><Analytics /></body>
+      <body className={`${plusJakarta.variable} ${dmSerif.variable} ${jetbrainsMono.variable} ${plusJakarta.className}`}><div className="h-[5px] bg-amber w-full" /><GrandFinalBanner /><Providers>{children}</Providers><Analytics /></body>
     </html>
   )
 }
