@@ -1,9 +1,9 @@
 import Link from 'next/link'
-import { BarChart3, Building2, CalendarDays, Map, Moon } from 'lucide-react'
+import { ChartColumn, Building2, CalendarDays, Map, Moon } from 'lucide-react'
 import { DISCOVER_DATA_TOOL_LINKS } from '@/lib/internalLinks'
 
 const ICONS = {
-  chart: BarChart3,
+  chart: ChartColumn,
   calendar: CalendarDays,
   moon: Moon,
   map: Map,

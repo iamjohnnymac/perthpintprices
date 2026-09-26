@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { CheckCircle2, HelpCircle } from 'lucide-react'
+import { CircleCheck, CircleQuestionMark } from 'lucide-react'
 import { Pub } from '@/types/pub'
 import { SuburbInfo } from '@/lib/supabase'
 import { getFreshness, formatVerifiedDate, FreshnessLevel } from '@/lib/freshness'
@@ -18,8 +18,8 @@ interface SuburbClientProps {
 }
 
 const freshnessIcons: Record<FreshnessLevel, React.ReactNode> = {
-  verified: <CheckCircle2 className="w-3 h-3" />,
-  unknown: <HelpCircle className="w-3 h-3" />,
+  verified: <CircleCheck className="w-3 h-3" />,
+  unknown: <CircleQuestionMark className="w-3 h-3" />,
 }
 
 function formatPrice(value: number): string {

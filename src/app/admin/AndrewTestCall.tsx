@@ -3,14 +3,14 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
 import {
-  AlertTriangle,
+  TriangleAlert,
   ArrowUpRight,
   AudioWaveform,
   Check,
   Clock3,
   Database,
-  FileCheck2,
-  Loader2,
+  FileCheckCorner,
+  LoaderCircle,
   PhoneCall,
   ShieldCheck,
 } from 'lucide-react'
@@ -229,7 +229,7 @@ export default function AndrewTestCall({ password }: { password: string }) {
               disabled={!canCall}
               className="mt-4 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-pill border-3 border-ink bg-amber px-5 py-3 font-mono text-[0.72rem] font-extrabold uppercase tracking-[0.06em] text-white shadow-hard-sm transition-transform hover:translate-x-[1px] hover:translate-y-[1px] disabled:cursor-not-allowed disabled:opacity-45"
             >
-              {starting ? <Loader2 size={16} className="animate-spin" /> : <PhoneCall size={16} />}
+              {starting ? <LoaderCircle size={16} className="animate-spin" /> : <PhoneCall size={16} />}
               {starting ? 'Starting call' : 'Call my test line'}
             </button>
             <div className="mt-4 flex items-center gap-2 text-amber-light">
@@ -242,7 +242,7 @@ export default function AndrewTestCall({ password }: { password: string }) {
 
       {error && (
         <div className="flex items-start gap-2 rounded-card border-2 border-red bg-red-pale px-4 py-3 font-mono text-[0.68rem] font-bold text-red">
-          <AlertTriangle size={15} className="mt-0.5 flex-none" />
+          <TriangleAlert size={15} className="mt-0.5 flex-none" />
           <span>{error}</span>
         </div>
       )}
@@ -253,7 +253,7 @@ export default function AndrewTestCall({ password }: { password: string }) {
             <p className="font-mono text-[0.58rem] font-bold uppercase tracking-[0.1em] text-gray-mid">Call status</p>
             <h3 className="mt-1 font-mono text-[0.82rem] font-extrabold uppercase tracking-[0.02em] text-ink">{statusCopy}</h3>
           </div>
-          {loading ? <Loader2 size={19} className="animate-spin text-amber" /> : <Clock3 size={19} className="text-gray-mid" />}
+          {loading ? <LoaderCircle size={19} className="animate-spin text-amber" /> : <Clock3 size={19} className="text-gray-mid" />}
         </div>
 
         <div className="mt-5 grid grid-cols-5 gap-1.5 sm:gap-3" data-testid="call-status-flow">
@@ -327,7 +327,7 @@ export default function AndrewTestCall({ password }: { password: string }) {
           </div>
 
           <div className="mt-4 flex items-start gap-3 rounded-card border-2 border-green bg-green-pale p-3 text-green">
-            <FileCheck2 size={17} className="mt-0.5 flex-none" />
+            <FileCheckCorner size={17} className="mt-0.5 flex-none" />
             <div>
               <p className="font-mono text-[0.6rem] font-extrabold uppercase tracking-[0.05em]">Preview only</p>
               <p className="mt-1 text-[0.7rem] leading-relaxed opacity-75">The reserved test slug returns these fields without reading or updating the pubs table.</p>

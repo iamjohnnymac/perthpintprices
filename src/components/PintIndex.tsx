@@ -4,7 +4,7 @@ import { useEffect, useState, useRef } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { supabase } from '@/lib/supabase';
 import { fetchPriceSnapshots, type PriceSnapshot } from '@/lib/priceSnapshots';
-import { BarChart3 } from 'lucide-react';
+import { ChartColumn } from 'lucide-react';
 
 interface TooltipState {
   x: number;
@@ -308,7 +308,7 @@ export default function PintIndex({ live }: { live: PintIndexLive }) {
             </div>
 
             <p className="text-[10px] text-gray-mid mt-3 text-center flex items-center justify-center gap-1">
-              <BarChart3 className="w-3 h-3 inline" /> Tracking Perth beer prices weekly. Click to collapse.
+              <ChartColumn className="w-3 h-3 inline" /> Tracking Perth beer prices weekly. Click to collapse.
             </p>
           </div>
         )}

@@ -3,7 +3,7 @@
 import { useState, useMemo } from 'react'
 import Link from 'next/link'
 import { Pub } from '@/types/pub'
-import { BarChart3 } from 'lucide-react'
+import { ChartColumn } from 'lucide-react'
 import { suburbUrl } from '@/lib/urls'
 import { getSuburbStats, type SuburbStat } from '@/lib/suburbStats'
 
@@ -78,7 +78,7 @@ export default function SuburbLeague({ pubs }: { pubs: Pub[] }) {
       >
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 bg-off-white border-2 border-ink rounded-full flex items-center justify-center flex-shrink-0">
-            <BarChart3 className="w-5 h-5 text-ink" />
+            <ChartColumn className="w-5 h-5 text-ink" />
           </div>
           <div>
             <h3 className="type-card">Suburb Rankings</h3>

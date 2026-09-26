@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { useState, useMemo } from 'react'
 import { Pub } from '@/types/pub'
 import { getDistanceKm, formatDistance } from '@/lib/location'
-import { BarChart3, TrendingDown, TrendingUp } from 'lucide-react'
+import { ChartColumn, TrendingDown, TrendingUp } from 'lucide-react'
 import { pubUrl } from '@/lib/urls'
 import { getPintPriceStats, getVerifiedRegularPubs } from '@/lib/pintPriceStats'
 import { getSuburbStats } from '@/lib/suburbStats'
@@ -90,7 +90,7 @@ export default function VenueIntel({ pubs, userLocation }: VenueIntelProps) {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-off-white border-2 border-ink rounded-full flex items-center justify-center flex-shrink-0">
-              <BarChart3 className="w-5 h-5 text-ink" />
+              <ChartColumn className="w-5 h-5 text-ink" />
             </div>
             <div>
               <h3 className="type-card">Venue Breakdown</h3>
@@ -107,7 +107,7 @@ export default function VenueIntel({ pubs, userLocation }: VenueIntelProps) {
             {/* Price Distribution */}
             <div>
               <h4 className="type-eyebrow text-ink mb-2 flex items-center gap-1">
-                <BarChart3 className="w-3.5 h-3.5" /> Price Distribution
+                <ChartColumn className="w-3.5 h-3.5" /> Price Distribution
               </h4>
               <div className="p-3 rounded-card bg-off-white">
                 <div className="space-y-1.5">
