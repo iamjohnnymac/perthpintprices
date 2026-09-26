@@ -36,6 +36,7 @@ export default async function DiscoverPage() {
   // Server-fetch so the page content ships in the initial HTML instead of
   // spinning while the browser round-trips to Supabase.
   const initialPubs = prepareDiscoverPubs(await getCachedPubs())
+  const renderedAt = new Date().toISOString()
 
   return (
     <>
@@ -43,7 +44,7 @@ export default async function DiscoverPage() {
         { name: 'Home', url: 'https://perthpintprices.com' },
         { name: 'Discover' },
       ]} />
-      <DiscoverClient initialPubs={initialPubs} dataToolsRail={<DataToolsRail />} />
+      <DiscoverClient initialPubs={initialPubs} renderedAt={renderedAt} dataToolsRail={<DataToolsRail />} />
     </>
   )
 }

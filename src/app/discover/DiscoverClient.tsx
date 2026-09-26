@@ -31,9 +31,11 @@ function getPubHappyHourStatus(pub: Pub, now: Date): HappyHourStatus {
    ════════════════════════════════════════════════════════════ */
 export default function DiscoverClient({
   initialPubs,
+  renderedAt,
   dataToolsRail,
 }: {
   initialPubs?: Pub[]
+  renderedAt?: string
   dataToolsRail: ReactNode
 }) {
   const hasServerPubs = Boolean(initialPubs && initialPubs.length > 0)
@@ -41,7 +43,7 @@ export default function DiscoverClient({
   const [crowdReports, setCrowdReports] = useState<Record<string, CrowdReport>>({})
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null)
   const [isLoading, setIsLoading] = useState(!hasServerPubs)
-  const [clockInstant, setClockInstant] = useState(() => new Date())
+  const [clockInstant, setClockInstant] = useState(() => (renderedAt ? new Date(renderedAt) : new Date()))
   const [pintOfTheDay, setPintOfTheDay] = useState<{
     pub: { name: string; slug: string; suburb: string; price: number; effectivePrice: number; beerType: string; isHappyHourNow: boolean }
     reason: string
@@ -80,6 +82,7 @@ export default function DiscoverClient({
 
   // Perth time clock
   useEffect(() => {
+    setClockInstant(new Date())
     const interval = setInterval(() => setClockInstant(new Date()), 60000)
     return () => clearInterval(interval)
   }, [])
