@@ -36,13 +36,18 @@ for (const { locale, timezoneId } of [
 
 // The sunset guide derives the sun's position, status and overlays from the
 // clock. A browser clock hours away from the cached server render must still
-// hydrate cleanly, because those values only render after mount.
+// hydrate cleanly; Open-Meteo is stubbed so the test does not depend on its API.
 test.describe('sunset sippers guide with a shifted client clock', () => {
   test.use({ timezoneId: 'Australia/Perth' })
 
   test('hydrates without a mismatch', async ({ page }) => {
     const errors = collectHydrationErrors(page)
-    await page.clock.install({ time: new Date(Date.now() + 3 * 60 * 60 * 1000) })
+    const shiftedTime = new Date(Date.now() + 3 * 60 * 60 * 1000)
+    const perthDate = new Date(shiftedTime.getTime() + 8 * 60 * 60 * 1000).toISOString().slice(0, 10)
+    await page.clock.install({ time: shiftedTime })
+    await page.route('https://api.open-meteo.com/**', route => route.fulfill({
+      json: { daily: { sunrise: [`${perthDate}T06:01`], sunset: [`${perthDate}T18:15`] } },
+    }))
     await page.goto('/guides/sunset-sippers')
     await expect(page.getByRole('heading', { name: /Today.s Sunset/i })).toBeVisible()
     await page.waitForLoadState('networkidle')
