@@ -24,6 +24,11 @@
 
 <!-- Desktop (1280×800) + Mobile (375×812) before/after. Use scripts/test-responsive.mjs -->
 
+## Route and lessons
+
+<!-- Delivery route from AGENTS.md: Lean, Standard or Rigorous, with the reason. -->
+<!-- Lesson recorded in the guide that owns its surface, or "nothing new" with a reason. -->
+
 ## Checklist
 
 - [ ] `npx tsc --noEmit` passes

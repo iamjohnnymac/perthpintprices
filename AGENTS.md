@@ -82,6 +82,32 @@ External mutations need explicit scope. Database writes, migrations, provider co
 phone calls, deployments, ticket changes, and secret rotation are separate actions from editing
 the repository. Use read-only checks until the task authorises the mutation.
 
+### Delivery routes
+
+Classify each change by its concrete failure paths before choosing authorship and review. A
+short diff is not low risk by size alone, and staging production configuration counts as a
+production change.
+
+| Route | Eligible work | Authorship and review |
+| --- | --- | --- |
+| **Lean** | Small reversible docs, copy, style, test-only or config changes with obvious focused proof and no Standard or Rigorous trigger. | The author (the PM may author) reads the full diff; required CI is the review. |
+| **Standard** | New product behaviour, runtime or public-contract changes, dependency upgrades, or coupled changes without a sensitive failure path. | One writer and one independent review from the other model provider. |
+| **Rigorous** | Price or venue data writes, RLS, grants and migrations, auth and privileged routes, secrets, privacy boundaries (PII and IP-derived data), destructive operations, paid-provider calls and production configuration. | Two independent reviews, one focused on the sensitive boundary; the owner's explicit approval before any live apply; read-back verification afterwards. |
+
+Lean never waives required CI, browser evidence for user-visible changes, or approval for
+external mutations. A docs or config edit that changes a review, release, privacy or security
+safeguard follows Rigorous, whatever its file type.
+
+Reviewers report findings as CRITICAL or NIT. CRITICAL names a concrete input or path that fails,
+regresses, false-passes, leaks PII or secrets, shows wrong or invented data, breaks a contract, or
+misses required proof. Everything else is a NIT: style, naming, comments, extra tests, and
+hypothetical edge cases. Only CRITICAL blocks delivery or starts a correction round; the PM
+records a NIT as a follow-up or drops it. Allow one review and one focused confirmation. If the
+same fix fails twice, stop and run a root-cause review before patching again.
+
+Each lane has one PM, who owns dispatch, review, merge and delivery verification. Other agents
+act only when that PM asks, for example to operate a browser or hold a credential step.
+
 ## Development and verification
 
 Install and run commands from the repository root:
@@ -116,8 +142,8 @@ directory, and describe it in the handoff. `tests/e2e/README.md` owns the CI pro
 content, overflow, interaction, and console/runtime errors, not just screenshot creation.
 
 Before handoff, inspect the full diff, confirm `git status`, list the exact checks run and their
-results, and call out any check skipped or dependent on external state. When an orchestration loop
-is in scope, use a fresh independent reviewer after implementation.
+results, and call out any check skipped or dependent on external state. Review follows the
+delivery route above.
 
 ## Application invariants
 
@@ -193,3 +219,7 @@ Add a rule here only when every agent needs it and the environment cannot expres
 reliably. Put branch-specific procedures behind a task-routing pointer. Put live counts, incident
 details, and completed work in dated documents, issues, or git history. When a change makes a
 sentence false, update or remove it in the same PR.
+
+Record a durable lesson in the guide that owns its surface, in the PR that learned it: for
+example, a Playwright lesson goes in `tests/e2e/README.md`. Name the lesson in the PR body.
+Private agent memory is not a substitute, because the next agent may not share it.
