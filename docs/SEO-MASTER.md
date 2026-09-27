@@ -9,7 +9,7 @@ Historical SEO strategy, not current implementation guidance. Use `AGENTS.md`, `
 > - **Route structure:** pub/suburb detail pages are now `/[suburb]/[pub]` and `/[suburb]`. The old `/pub/[slug]` and `/suburb/[slug]` are 301 redirect stubs; `/guides` and `/insights` now 301-redirect to `/discover` in `vercel.json`.
 > - **Core Web Vitals:** FID was retired — the live metric is **INP < 200ms**.
 > - **Google Business Profile:** deprioritised — a service-area aggregator can't rank in the local 3-pack (`seo-research-2026.md §1`).
-> - **www → apex:** redirects with 301 in `vercel.json`; it is not the "critical" win the older action plan implied.
+> - **www → apex:** already redirects. The live response is a 308 from the Vercel domain setting, although `vercel.json` also declares a 301. Google treats both as permanent. It is not the "critical" win the older action plan implied.
 > - April 2026 research (AEO/GEO, MenuItem schema, Information Gain): see **`seo-research-2026.md`**. `PROJECT-STATUS.md` is a historical log.
 
 ---
