@@ -6,9 +6,9 @@ and the CRITICAL/NIT rule; this file owns the procedure. The commands below were
 
 ## Before dispatch
 
-- Create one worktree per writer from current main:
-  `git worktree add -b <branch> <path> origin/main`. Keep one writer and one heavy job (installs,
-  builds, full suites, dev servers) per host.
+- Create one worktree per writer from freshly fetched main:
+  `git fetch origin main && git worktree add -b <branch> <path> origin/main`. Keep one writer and
+  one heavy job (installs, builds, full suites, dev servers) per host.
 - Keep an evidence folder outside the repository, for example
   `~/Claude/ppp-lane-evidence/<date>-<task>/`. Its `contract.md` records the outcome and
   non-goals, acceptance, the riskiest assumption and its first proof, the route, the timebox, and
@@ -32,11 +32,13 @@ Writer:
 codex exec -m gpt-6-sol -c model_reasoning_effort=medium --sandbox workspace-write -C <worktree> - < <evidence>/brief.md > <evidence>/worker.log 2>&1
 ```
 
-Opus review. Check that `modelUsage` in the JSON names `claude-opus-5-5`. Pass the prompt on
-stdin, because `--add-dir` takes several values and swallows a trailing prompt.
+Opus review. `claude -p` reviews its working directory, so run it from the candidate worktree at
+the frozen head, and check that `git rev-parse HEAD` there matches the SHA in the prompt. Check
+that `modelUsage` in the JSON names `claude-opus-5-5`. Pass the prompt on stdin, because
+`--add-dir` takes several values and swallows a trailing prompt.
 
 ```bash
-claude -p --model claude-opus-5-5 --effort xhigh --output-format json --allowedTools "Read Grep Glob" --add-dir <evidence> < <evidence>/review-prompt.md > <evidence>/review.json
+cd <worktree> && claude -p --model claude-opus-5-5 --effort xhigh --output-format json --allowedTools "Read Grep Glob" --add-dir <evidence> < <evidence>/review-prompt.md > <evidence>/review.json
 ```
 
 GPT review, for Opus-authored work. Use `gpt-6-astra` for a Rigorous sensitive-boundary review.
@@ -87,8 +89,10 @@ only that delta.
 5. Production ships on merge. Confirm the production domain serves the merge commit
    (`vercel inspect perthpintprices.com`, `vercel ls perthpintprices -m githubCommitSha=<sha>`), then
    check the changed endpoint without paid calls.
-6. Record the SHAs, run IDs, deployment ID and results in the contract. Remove the task worktree
-   once its branch is merged and the tree is clean.
+6. Record the SHAs, run IDs, deployment ID and results in the contract. Remove a task worktree
+   with `git worktree remove <path>` (never `--force`) only when its branch is merged, the tree is
+   clean, and no session, server or process is still using it. Otherwise record it as retained,
+   with its owner and next action.
 
 ## Gotchas
 
