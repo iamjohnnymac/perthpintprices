@@ -34,7 +34,7 @@ reports, issues, or git history—not in this always-loaded guide.
 
 | When the task involves | Read before acting |
 | --- | --- |
-| The Claude `/pm-loop` worker/reviewer workflow | `.claude/commands/pm-loop.md` and the active harness rules; keep each concurrent worker in an isolated branch and worktree |
+| PM work: dispatching a writer, review, merge, or delivery verification | `docs/agents/pm-delivery.md` and the delivery routes below; keep each concurrent writer in its own branch and worktree |
 | Library, framework, SDK, API, CLI, or cloud-service behaviour | When applicable, resolve the exact package and version from `package.json` or lockfiles, then use Context7 to fetch current official documentation |
 | Prices, provenance, freshness, venue changes, menu extraction, or verification | `src/app/api/price-report/intake.ts`, `src/lib/priceProvenance.ts`, `src/lib/freshness.ts`, `docs/superpowers/specs/2026-06-01-price-intake-plumbing-design.md`, and the relevant Supabase migrations |
 | Supabase access, caching, RLS, or database writes | `src/lib/supabase.ts`, `src/lib/supabaseGateway.ts`, `src/lib/cachedPubs.ts`, and relevant files under `supabase/migrations/` |
@@ -104,8 +104,7 @@ misses required proof. Everything else is a NIT: style, naming, comments, extra 
 hypothetical edge cases. Only CRITICAL blocks delivery or starts a correction round; the PM
 records a NIT as a follow-up or drops it. Allow one review round and one focused confirmation. If
 the same fix fails twice, stop and run a root-cause review before patching again. These routes and
-this severity rule override different review defaults in any workflow command, including
-`.claude/commands/pm-loop.md`.
+this severity rule override different review defaults in any workflow command or skill.
 
 One PM runs all work in this repository at a time and owns dispatch, review, merge and delivery
 verification. Other agents act only when that PM asks, for example to operate a browser or hold
