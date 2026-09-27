@@ -11,7 +11,7 @@ test('AGENTS.md is the canonical project-specific guide', async () => {
   assert.match(agents, /canonical repository guide/i)
 
   const pointers = [
-    '.claude/commands/pm-loop.md',
+    'docs/agents/pm-delivery.md',
     'docs/brand-voice-brief.md',
     'docs/superpowers/specs/2026-06-01-price-intake-plumbing-design.md',
     'docs/ops/secret-inventory.md',
