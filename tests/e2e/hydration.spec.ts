@@ -36,7 +36,8 @@ for (const { locale, timezoneId } of [
 
 // The sunset guide derives the sun's position, status and overlays from the
 // clock. A browser clock hours away from the cached server render must still
-// hydrate cleanly; Open-Meteo is stubbed so the test does not depend on its API.
+// hydrate cleanly, because those values only render after mount. Open-Meteo is
+// stubbed so the test doesn't depend on the live API.
 test.describe('sunset sippers guide with a shifted client clock', () => {
   test.use({ timezoneId: 'Australia/Perth' })
 
