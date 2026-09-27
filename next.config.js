@@ -6,7 +6,7 @@ const contentSecurityPolicyReportOnly = [
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob: https://lh3.googleusercontent.com https://*.googleusercontent.com https://*.cartocdn.com",
   "font-src 'self' data:",
-  "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.open-meteo.com https://vitals.vercel-insights.com https://*.ingest.sentry.io https://www.google-analytics.com https://www.clarity.ms",
+  "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.open-meteo.com https://vitals.vercel-insights.com https://*.ingest.sentry.io https://*.ingest.us.sentry.io https://www.google-analytics.com https://www.clarity.ms",
   "frame-src 'self' https://www.google.com",
   "object-src 'none'",
   "base-uri 'self'",
