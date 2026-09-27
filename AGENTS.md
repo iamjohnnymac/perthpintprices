@@ -95,18 +95,21 @@ production change.
 | **Rigorous** | Price or venue data writes, RLS, grants and migrations, auth and privileged routes, secrets, privacy boundaries (PII and IP-derived data), destructive operations, paid-provider calls and production configuration. | Two independent reviews, one focused on the sensitive boundary; the owner's explicit approval before any live apply; read-back verification afterwards. |
 
 Lean never waives required CI, browser evidence for user-visible changes, or approval for
-external mutations. A docs or config edit that changes a review, release, privacy or security
-safeguard follows Rigorous, whatever its file type.
+external mutations. A docs or config edit that changes a review, release, data-integrity,
+provenance, privacy or security safeguard follows Rigorous, whatever its file type.
 
 Reviewers report findings as CRITICAL or NIT. CRITICAL names a concrete input or path that fails,
 regresses, false-passes, leaks PII or secrets, shows wrong or invented data, breaks a contract, or
 misses required proof. Everything else is a NIT: style, naming, comments, extra tests, and
 hypothetical edge cases. Only CRITICAL blocks delivery or starts a correction round; the PM
-records a NIT as a follow-up or drops it. Allow one review and one focused confirmation. If the
-same fix fails twice, stop and run a root-cause review before patching again.
+records a NIT as a follow-up or drops it. Allow one review round and one focused confirmation. If
+the same fix fails twice, stop and run a root-cause review before patching again. These routes and
+this severity rule override different review defaults in any workflow command, including
+`.claude/commands/pm-loop.md`.
 
-Each lane has one PM, who owns dispatch, review, merge and delivery verification. Other agents
-act only when that PM asks, for example to operate a browser or hold a credential step.
+One PM runs all work in this repository at a time and owns dispatch, review, merge and delivery
+verification. Other agents act only when that PM asks, for example to operate a browser or hold
+a credential step.
 
 ## Development and verification
 
