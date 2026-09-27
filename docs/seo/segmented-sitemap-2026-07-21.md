@@ -4,7 +4,7 @@ Issue [#232](https://github.com/iamjohnnymac/perthpintprices/issues/232) replace
 
 - `/sitemap-content.xml` contains canonical editorial, tool, article, transport-hub, and happy-hour URLs, including `/suburbs`.
 - `/sitemap-suburbs.xml` contains every suburb for which the shared `getSuburbIndexability({ legitimatePubCount })` predicate returns true. This is the #231 rule: one legitimate venue is sufficient; price state is never an input.
-- `/sitemap-pubs.xml` contains every legitimate pub URL. The reconciled current inventory is 833 URLs; the only exclusions are independently validated closures, duplicates, or invalid rows.
+- `/sitemap-pubs.xml` contains every legitimate pub URL. The 2026-07-21 snapshot counted 833 URLs; the only exclusions are independently validated closures, duplicates, or invalid rows.
 
 `/guides` and `/insights` are intentionally absent because they are redirects. So are admin, API, signal, legacy, 404, and World Cup routes. `robots.txt` keeps `/admin`, `/api/`, and `/signal/` out of crawl; the admin APIs retain request authentication, and signal pages publish `noindex, nofollow` metadata. Robots directives are crawl guidance, not an access-control mechanism.
 
@@ -16,4 +16,4 @@ Pub timestamps use that pub's `last_verified`, then `updated_at`, then `last_upd
 
 ## Release check
 
-After a production build, run `SITEMAP_VALIDATION_BASE_URL=http://127.0.0.1:3000 node scripts/validate-sitemap.mjs` against the local production server. It validates the XML index, the three child inventories, the 833 legitimate-pub total, duplicate/private/redirect exclusions, and the HTTP 200 self-canonical response for every emitted URL.
+After a production build, run `SITEMAP_VALIDATION_BASE_URL=http://127.0.0.1:3000 node scripts/validate-sitemap.mjs` against the local production server. It validates the XML index, the three child inventories, the legitimate-pub total (833 in the 2026-07-21 snapshot), duplicate/private/redirect exclusions, and the HTTP 200 self-canonical response for every emitted URL.

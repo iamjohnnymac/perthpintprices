@@ -1,6 +1,6 @@
 # SEO Research 2026 — What's New Since SEO-MASTER
 
-Compiled: 2026-04-27. Companion to `docs/SEO-MASTER.md` — read that first for the existing playbook. This file captures only what's changed since the playbook was written (2026-03-08) and tactics specific to a 300-pub programmatic data site that the existing doc misses.
+Compiled: 2026-04-27. Dated research and recommendations, not current implementation guidance. Read `AGENTS.md` for current policy sources and `docs/SEO-MASTER.md` as historical strategy. This file captured changes since the March 2026 playbook for the site's then 300-pub inventory.
 
 ---
 
@@ -134,7 +134,7 @@ SERP is dominated by `eatdrinkcheap.com.au` (live but shallow), `perthundergroun
 | `/pubs-near-[transport-hub]` (4 pages) | "pubs near perth station", "pubs near optus stadium" | Low | Geo-filtered list | High commercial intent; near-zero competition |
 | `/student-pints-perth` | "cheap pubs UWA", "cheap pints curtin" | Low | Filtered for sub-$10 near campuses | Backlink magnet for student media |
 
-**On the homepage FAQ**: existing doc has FAQPage schema as a TODO. Push that — it's the single highest-impact-per-hour technical change available. [3]
+**On the homepage FAQ (April 2026 recommendation):** FAQPage schema was a TODO at the time; it is now present in `src/app/page.tsx`. [3]
 
 ---
 
@@ -156,7 +156,7 @@ SERP is dominated by `eatdrinkcheap.com.au` (live but shallow), `perthundergroun
 INP < 200ms is the 2026 bar. Top INP killers in Next.js App Router apps: [10][26]
 
 - Heavy client components on initial paint — audit which interactive components could be `'use server'` or React Server Components.
-- Map tile loading on suburb/pub pages — confirmed not yet on `next/image`. Migration is in existing TODO list; bump priority.
+- Map tile loading on suburb/pub pages was flagged in April 2026. `next/image` is now used elsewhere in the site; verify any remaining image work against current source.
 - Filter handlers on `/discover` and `/happy-hour` — wrap in `useDeferredValue` or `useTransition`.
 - Third-party scripts (GA, push notifications) — load with `next/script` `strategy="lazyOnload"`.
 

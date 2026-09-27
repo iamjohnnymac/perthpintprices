@@ -24,7 +24,7 @@ Read the [Quick start in `README.md`](./README.md#quick-start). You'll need acce
 - **Run the humanizer skill on any user-facing text** to remove AI writing patterns — see the rule in [`CLAUDE.md`](./CLAUDE.md).
 - **No emojis in code or copy** unless the design explicitly calls for them. Use Lucide React icons or inline SVGs.
 - **SEO checklist on new pages** — every new page needs: title (<60 chars), description (<160 chars), canonical URL, OG tags, Twitter card, JSON-LD where applicable. Reference [`docs/SEO-MASTER.md`](./docs/SEO-MASTER.md).
-- **Update `docs/PROJECT-STATUS.md` after every push** — what changed, with a date and the commit hash.
+- **Record notable changes** with a dated entry in `docs/PROJECT-STATUS.md`. It is a historical log, not the source of truth for current behaviour.
 
 ## Branch + PR conventions
 
@@ -34,12 +34,12 @@ Read the [Quick start in `README.md`](./README.md#quick-start). You'll need acce
   - good: *"Fix Ahrefs site audit issues: orphan pages, meta descriptions"*
   - good: *"Tune Andrew's voice config: v3 conversational + higher stability"*
 - One concept per PR. Long-running rebrand/refactor PRs are fine if they're genuinely one concept.
-- PRs must pass CI (typecheck, lint, build). See [`.github/workflows/ci.yml`](./.github/workflows/ci.yml).
+- PRs must pass CI: typecheck, lint, unit and configuration contract tests, plus the Supabase-backed build and Playwright proof when credentials are available. See [`.github/workflows/ci.yml`](./.github/workflows/ci.yml).
 - Use the [PR template](./.github/pull_request_template.md) — it's pre-filled when you open one.
 
 ## Visual review
 
-Any UI change should include before/after Playwright screenshots at desktop (1280×800) and mobile (375×812) — even just a sanity pair. The repo has [`scripts/test-responsive.mjs`](./scripts/test-responsive.mjs) for this.
+Any UI change needs before/after Playwright evidence at desktop (1280×800) and mobile (375×812). Follow [`tests/e2e/README.md`](./tests/e2e/README.md) and [`AGENTS.md`](./AGENTS.md).
 
 ## Code style
 

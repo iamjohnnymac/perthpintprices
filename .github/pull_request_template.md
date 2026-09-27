@@ -22,7 +22,7 @@
 
 ## Screenshots (UI changes only)
 
-<!-- Desktop (1280×800) + Mobile (375×812) before/after. Use scripts/test-responsive.mjs -->
+<!-- Desktop (1280×800) + mobile (375×812) before/after. Follow tests/e2e/README.md and AGENTS.md. -->
 
 ## Route and lessons
 

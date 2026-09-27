@@ -6,7 +6,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        For SEO improvements, audits, schema additions, content changes for ranking. Reference [`docs/SEO-MASTER.md`](https://github.com/iamjohnnymac/perthpintprices/blob/main/docs/SEO-MASTER.md) and [`docs/seo-action-plan.md`](https://github.com/iamjohnnymac/perthpintprices/blob/main/docs/seo-action-plan.md).
+        For SEO improvements, audits, schema additions, content changes for ranking. Reference [`AGENTS.md`](https://github.com/iamjohnnymac/perthpintprices/blob/main/AGENTS.md) for current policy and [`docs/SEO-MASTER.md`](https://github.com/iamjohnnymac/perthpintprices/blob/main/docs/SEO-MASTER.md) or [`docs/archive/seo-action-plan.md`](https://github.com/iamjohnnymac/perthpintprices/blob/main/docs/archive/seo-action-plan.md) for historical context.
   - type: textarea
     id: action
     attributes:

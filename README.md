@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/iamjohnnymac/perthpintprices/actions/workflows/ci.yml/badge.svg)](https://github.com/iamjohnnymac/perthpintprices/actions/workflows/ci.yml)
 [![Live site](https://img.shields.io/badge/live-perthpintprices.com-D4740A)](https://perthpintprices.com)
-[![Next.js 14](https://img.shields.io/badge/Next.js-14-000)](https://nextjs.org)
+[![Next.js 16](https://img.shields.io/badge/Next.js-16-000)](https://nextjs.org)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-CSS-38bdf8)](https://tailwindcss.com)
 [![Supabase](https://img.shields.io/badge/Supabase-postgres-3ecf8e)](https://supabase.com)
 
@@ -12,7 +12,7 @@ Perth's pint prices, sorted. A community-data site tracking pint prices across *
 
 ## What's in here
 
-- **Next.js 14 App Router** site (TypeScript strict, Tailwind, Lucide icons)
+- **Next.js 16 App Router** site (TypeScript strict, Tailwind, Lucide icons)
 - **Supabase** for venue data, user-submitted price reports, weekly snapshots, push subscriptions
 - **ElevenLabs Conversational AI** voice agent ("Andrew") that calls real pubs to crowdsource pint prices — see `agents/andrew.json` and `docs/andrew-voice-research.md`
 - **Vercel** hosting — auto-deploys from `main`
@@ -24,7 +24,7 @@ git clone https://github.com/iamjohnnymac/perthpintprices.git
 cd perthpintprices
 npm install
 cp .env.example .env.local      # then fill in the values
-npm run dev                     # http://localhost:3001
+npm run dev                     # http://localhost:3000 by default
 ```
 
 Required env vars (see `.env.example` once you create it locally):
@@ -49,27 +49,27 @@ Before an owner-only Andrew test, run `npm run access:preflight -- andrew-owner-
 ## Scripts
 
 ```bash
-npm run dev      # local dev on :3001
-npm run lint     # next lint (CI gate)
+npm run dev      # local dev on :3000 by default
+npm run lint     # eslint . --max-warnings 50 (CI gate)
 npm run build    # production build (CI gate)
 npm start        # serve the prod build
 ```
 
 ## Routes
 
-~17 content pages — the suburb / pub silo (`/[suburb]/[pub]`, `/[suburb]`), guides, and insights (incl. the Pint Index) — plus legacy `/pub/*` and `/suburb/*` redirects. Full route list lives in [`CLAUDE.md`](./CLAUDE.md).
+The site has pub and suburb pages (`/[suburb]/[pub]`, `/[suburb]`), `/discover`, and other content routes. `/guides` and `/insights` redirect to `/discover`; legacy `/pub/*` and `/suburb/*` routes also redirect. See [`AGENTS.md`](./AGENTS.md) for route guidance and [`src/app`](./src/app) for the current route tree.
 
 ## Reference docs
 
 | Doc | What |
 | --- | --- |
-| [`CLAUDE.md`](./CLAUDE.md) | Codebase overview, design system, conventions — load this first if you're an LLM |
-| [`docs/PROJECT-STATUS.md`](./docs/PROJECT-STATUS.md) | Recent shipped work + backlog |
-| [`docs/SEO-MASTER.md`](./docs/SEO-MASTER.md) | The SEO playbook |
-| [`docs/seo-research-2026.md`](./docs/seo-research-2026.md) | Late-2026 SEO landscape (AEO/GEO, programmatic, AU local) |
-| [`docs/seo-action-plan.md`](./docs/seo-action-plan.md) | Prioritised SEO punch list driven by GSC + GA4 data |
-| [`docs/andrew-voice-research.md`](./docs/andrew-voice-research.md) | Voice models + tuning research for Andrew |
-| [`docs/price-verification-kit.md`](./docs/price-verification-kit.md) | Price verification workflow |
+| [`AGENTS.md`](./AGENTS.md) | Current repository guidance and task routing; `CLAUDE.md` imports it |
+| [`docs/PROJECT-STATUS.md`](./docs/PROJECT-STATUS.md) | Historical status log and backlog |
+| [`docs/SEO-MASTER.md`](./docs/SEO-MASTER.md) | Historical SEO strategy; see its current-policy pointers |
+| [`docs/seo-research-2026.md`](./docs/seo-research-2026.md) | April 2026 SEO research (AEO/GEO, programmatic, AU local) |
+| [`docs/archive/seo-action-plan.md`](./docs/archive/seo-action-plan.md) | Archived GSC and GA4 SEO action list |
+| [`docs/andrew-voice-research.md`](./docs/andrew-voice-research.md) | Dated voice model and tuning research for Andrew |
+| [`docs/archive/price-verification-kit.md`](./docs/archive/price-verification-kit.md) | Archived price verification field kit |
 
 ## Contributing
 

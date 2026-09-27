@@ -2,25 +2,25 @@
 
 Last updated: 2026-03-08 · Reconciled 2026-05-31
 
-This is the SEO playbook for Perth Pint Prices. Reference this document before making any SEO-related changes. All best practices sourced from Backlinko (backlinko.com) unless noted otherwise.
+Historical SEO strategy, not current implementation guidance. Use `AGENTS.md`, `docs/seo/suburb-indexability-policy-2026-07-21.md`, the relevant dated policies under `docs/seo/`, and current code and configuration for live behaviour. This document's earlier best practices were sourced from Backlinko (backlinko.com) unless noted otherwise.
 
 > **Note — 2026-05-31 reconciliation.** This March-2026 playbook has been corrected inline, but read these deltas first:
 > - **Deleted features:** pub-golf, pint-crawl, leaderboard, and the weekly "Pint Report" page were removed (2026-05). Ignore any lingering reference to them.
-> - **Route structure:** pub/suburb detail pages are now `/[suburb]/[pub]` and `/[suburb]`. The old `/pub/[slug]` and `/suburb/[slug]` are 301 redirect stubs; `/guides` and `/insights` now 308-redirect to `/discover`.
+> - **Route structure:** pub/suburb detail pages are now `/[suburb]/[pub]` and `/[suburb]`. The old `/pub/[slug]` and `/suburb/[slug]` are 301 redirect stubs; `/guides` and `/insights` now 301-redirect to `/discover` in `vercel.json`.
 > - **Core Web Vitals:** FID was retired — the live metric is **INP < 200ms**.
 > - **Google Business Profile:** deprioritised — a service-area aggregator can't rank in the local 3-pack (`seo-research-2026.md §1`).
-> - **www → apex:** already redirects (308, which Google treats as equivalent to a 301); it is not the "critical" win the older action plan implied.
-> - Current late-2026 landscape (AEO/GEO, MenuItem schema, Information Gain): see **`seo-research-2026.md`**. Live status: **`PROJECT-STATUS.md`**.
+> - **www → apex:** redirects with 301 in `vercel.json`; it is not the "critical" win the older action plan implied.
+> - April 2026 research (AEO/GEO, MenuItem schema, Information Gain): see **`seo-research-2026.md`**. `PROJECT-STATUS.md` is a historical log.
 
 ---
 
-## 1. Current implementation
+## 1. Implementation snapshot (2026-07-21)
 
 ### Sitemaps (`src/app/sitemap*.xml/route.ts`, `src/lib/sitemapData.ts`)
 
 `/sitemap.xml` is an XML sitemap index with three observable feeds:
 
-| Feed | Current inventory | Policy |
+| Feed | 2026-07-21 inventory | Policy |
 |------|-------------------|--------|
 | `/sitemap-content.xml` | 32 | Canonical editorial, tool, article, transport-hub and happy-hour URLs, including `/suburbs` |
 | `/sitemap-suburbs.xml` | 150 | A suburb is included when it has at least one legitimate venue |
@@ -85,16 +85,16 @@ Set on every page via `alternates: { canonical: '...' }`. Format: `https://perth
 
 ---
 
-## 2. Audit findings
+## 2. Historical audit findings (2026-03-08)
 
 ### High priority
 
 | Issue | Impact | Fix |
 |-------|--------|-----|
 | No dynamic OG images | Social sharing shows generic image for every page. Kills click-through from Facebook, Reddit, Twitter | Build `opengraph-image.tsx` for `/pub/[slug]` and `/suburb/[slug]` showing pub name, price, suburb |
-| No `next/image` usage | No WebP conversion, no responsive sizing, no lazy loading. Hurts Core Web Vitals (LCP) | Migrate map tile images and any other images to `next/image` |
+| No `next/image` usage (March 2026 finding; now used in source) | Images lacked framework optimisation at the time | Verify remaining images against current source before planning more migration |
 | No content targeting informational keywords | We only rank for navigational queries. Missing all "cheapest pints perth", "perth happy hour" traffic | Create SEO landing pages (see keyword targets below) |
-| FAQ section missing FAQPage schema | Homepage FAQ exists but isn't marked up. Missing rich snippet opportunity in search results | Add `FAQPage` JSON-LD to homepage FAQ component |
+| FAQ section missing FAQPage schema (March 2026 finding; now present on homepage) | Homepage FAQ lacked schema at the time | Completed; see `src/app/page.tsx` |
 
 ### Medium priority
 
@@ -102,7 +102,7 @@ Set on every page via `alternates: { canonical: '...' }`. Format: `https://perth
 |-------|--------|-----|
 | Some page titles >60 chars | Get truncated in Google search results | Trim titles: "Perth Suburb Pint Price Rankings: Cheapest Suburbs for Beer \| Perth Pint Prices" is 67 chars |
 | No Google Business Profile | Missing from local search entirely | Deprioritised — a service-area aggregator can't rank in the local 3-pack (`seo-research-2026.md §1`) |
-| /guides and /insights redirect to /discover | — | Done: both use Next `permanentRedirect` (308; Google treats as equivalent to 301) |
+| /guides and /insights redirect to /discover | — | Done: both use 301 redirects in `vercel.json` |
 | No internal search logging | Don't know what users search for on the site | Log filter/search queries to understand demand |
 
 ### Low priority
@@ -278,15 +278,15 @@ Source: backlinko.com/link-building
 - [x] Mobile-responsive design
 - [x] Humanizer audit complete (AI text patterns removed from copy)
 
-### To do
+### Historical to-do list (verify against current source)
 
 - [ ] **Dynamic OG images** for pub and suburb pages
-- [ ] **next/image migration** for all images
-- [ ] **FAQPage schema** on homepage FAQ section
+- [ ] **next/image migration** for remaining images; `next/image` is already used in source
+- [x] **FAQPage schema** on homepage FAQ section
 - [ ] **Google Business Profile** setup
 - [ ] **Google Search Console** — submit sitemap, monitor indexation
 - [ ] **Core Web Vitals audit** — measure LCP, INP, CLS
-- [ ] **301 redirect verification** for /guides → /discover and /insights → /discover
+- [x] **301 redirect verification** for /guides → /discover and /insights → /discover (`vercel.json`)
 - [ ] **Title tag audit** — trim any over 60 characters
 - [ ] **Internal search logging** — capture user filter/search queries
 - [ ] **FAQ schema** on guide pages with Q&A content

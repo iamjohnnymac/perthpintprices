@@ -1,12 +1,12 @@
 # Perth Pint Prices Project Status
 
-Last updated: 2026-09-01
+Last updated: 2026-09-28
 
 ## What this is
 
 Perth Pint Prices (perthpintprices.com) tracks pint prices across **857 Perth pubs** (up from 423 in March). Users can discover cheap pints, find happy hours, and report prices. The site is live on Vercel.
 
-Stack, database, routes, components, and lib files are documented in `CLAUDE.md` (auto-loaded every session). This file covers history, recent work, and the backlog.
+`CLAUDE.md` imports `AGENTS.md`, which routes agents to current code, configuration and focused policies. This file covers history, recent work and the backlog.
 
 ## What's done recently
 

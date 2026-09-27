@@ -49,9 +49,9 @@ ranked list ready to feed the next refresh batch.
 
 ## Cadence
 
-- **Weekly:** run the queue query, take the top N (sized to the call/scan budget),
-  refresh them. The existing daily `price-check` cron is the natural host for the
-  query if this is later automated.
+- **Weekly (proposed):** run the queue query, take the top N (sized to the call/scan budget),
+  refresh them. The existing daily `price-check` cron could host the query if this
+  proposal is later automated; its current schedule does not establish that behaviour.
 - **Seasonal (quarterly):** a suburb-by-suburb audit sprint so no band of the long
   tail goes a full quarter without a look.
 - **Continuous:** the crowd loop — every approved public price report or stale
