@@ -1,5 +1,7 @@
 # Andrew voice research — late 2026
 
+Dated research (April 2026). Vendor pricing, models and performance may have changed; revalidate before relying on them.
+
 Goal: lift answer + completion rate on cold calls to Perth bartenders by fixing cadence drift, mid-sentence murmuring, and turn-to-turn volume swings.
 
 ---

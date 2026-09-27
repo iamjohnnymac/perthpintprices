@@ -22,6 +22,7 @@ Run `npm run access:preflight -- <bundle>` before a task that needs external acc
 | `content-ai-anthropic` | `ANTHROPIC_API_KEY` | Direct Anthropic content tooling | Operator secret store / project owner | Grant only to tasks that use the direct provider |
 | `places-refresh` | `GOOGLE_PLACES_API_KEY`, `SUPABASE_SERVICE_ROLE_KEY` | Monthly Places enrichment | GitHub Actions and operator secret stores / project owner | Quota-check and verify before sweeps |
 | `stock-images` | `PEXELS_API_KEY` | Editorial image discovery | Operator secret store / project owner | Read-only API scope |
+| Map basemap (no preflight bundle) | `NEXT_PUBLIC_CARTO_BASEMAP_KEY` | Optional CARTO tile requests in `src/lib/mapTile.ts` | Vercel environment / project owner | Public client key; verify provider configuration before use |
 | `slack-alerts` | `SLACK_WEBHOOK_URL` | Operational notifications | Vercel encrypted environment / project owner | Rotate if the webhook destination or audience changes |
 | `vercel-deploy` | `VERCEL_TOKEN` | Deployment administration when connector access is unavailable | Operator secret store / project owner | Prefer connector identity; verify before CLI deployment |
 | `sentry-release` | `NEXT_PUBLIC_SENTRY_DSN`, `SENTRY_AUTH_TOKEN`, `SENTRY_ORG`, `SENTRY_PROJECT` | Runtime event delivery and source-map upload | Sentry plus Vercel encrypted environment / project owner | Release token must be project-scoped; verify on each release pipeline change |

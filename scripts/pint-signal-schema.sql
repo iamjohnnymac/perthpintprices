@@ -1,4 +1,4 @@
--- Pint Signal — Phase 1 schema (see docs/pint-signal-plan.md)
+-- Pint Signal — Phase 1 schema (see docs/archive/pint-signal-plan.md)
 --
 -- Run this in the Supabase SQL editor (project ifxkoblvgttelzboenpi, Sydney).
 -- Safe to re-run: tables use IF NOT EXISTS and policies are dropped before

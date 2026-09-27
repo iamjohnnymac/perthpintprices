@@ -1,5 +1,7 @@
 # Changelog
 
+This changelog has not been maintained since April 2026; see git history and `docs/PROJECT-STATUS.md` for later changes.
+
 All notable changes to Perth Pint Prices are documented here. Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), versioning loosely follows [SemVer](https://semver.org/) (`MAJOR.MINOR.PATCH`).
 
 ## [Unreleased]
@@ -8,7 +10,7 @@ All notable changes to Perth Pint Prices are documented here. Format follows [Ke
 - Project governance: README, CONTRIBUTING, SECURITY, CODE_OF_CONDUCT, this CHANGELOG
 - GitHub issue + PR templates, CODEOWNERS, Dependabot config
 - CI workflow on every PR (typecheck, lint, build)
-- `docs/seo-action-plan.md` — prioritised SEO punch list from real GSC + GA4 data
+- `docs/archive/seo-action-plan.md` — prioritised SEO punch list from real GSC + GA4 data (archived)
 - `docs/seo-research-2026.md` — late-2026 SEO landscape research
 - `docs/andrew-voice-research.md` — voice model + TTS tuning research
 

@@ -1,5 +1,5 @@
 // Per-state voice strings for the pub-page modules, in the PPP dry register
-// (docs/brand-voice-brief.md + content-pack-v1.md §7). Pure builders: data in,
+// (docs/brand-voice-brief.md + docs/archive/content-pack-v1.md §7). Pure builders: data in,
 // rendered string out. Every builder returns a truthful-absence value (null, or
 // the verification stub) when the data isn't there — never an invented price,
 // window, or blurb. The pub-page MODULE structure/order is owned by
