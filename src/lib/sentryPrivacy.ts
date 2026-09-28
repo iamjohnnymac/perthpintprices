@@ -9,7 +9,7 @@ export const sentryDataCollection = {
     response: { deny: ['forwarded', '-ip', 'remote-', 'via', '-user'] },
   },
   httpBodies: [],
-  urlQueryParams: { deny: ['forwarded', '-ip', 'remote-', 'via', '-user'] },
+  urlQueryParams: false,
   genAI: { inputs: false, outputs: false },
   databaseQueryData: false,
   queues: false,
