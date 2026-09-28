@@ -28,6 +28,7 @@ const ignore = npmUpdates.split(/^    ignore:$/m)[1]?.split(/^    [\w-]+:/m)[0]
 assert.ok(ignore, 'Dependabot npm updates must have an ignore block')
 assert.match(ignore, /^      - dependency-name: eslint\n        versions: \[">=10"\]$/m)
 assert.match(ignore, /^      - dependency-name: "@types\/node"\n        versions: \[">=25"\]$/m)
+assert.match(ignore, /^      - dependency-name: typescript\n        versions: \[">=7"\]$/m)
 
 // The guard decides whether the Supabase-backed steps can run at all.
 const guard = step('Resolve Supabase build credentials')

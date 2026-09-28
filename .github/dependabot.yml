@@ -24,6 +24,9 @@ updates:
       # Keep Node types aligned with the production Node 24.x runtime (PR #269).
       - dependency-name: "@types/node"
         versions: [">=25"]
+      # typescript-eslint does not support TypeScript 7 yet; CI fails with that error (PR #288).
+      - dependency-name: typescript
+        versions: [">=7"]
     groups:
       # Group minor + patch updates so we don't get a flood of PRs
       minor-and-patch:
