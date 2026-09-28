@@ -105,3 +105,12 @@ only that delta.
   doesn't prove the cause.
 - Setting a production environment variable is a production change: it goes live on the next
   deploy, whichever PR triggers it.
+- In a branch clean-up, exclude the default branch by name. A stale local `main` counts as
+  "merged into origin/main", so a merged-branch list will include it.
+- For a squash-merged branch, `git branch -d` reports "not fully merged". Delete it only when its
+  tip equals the head of the merged PR (`gh pr view <n> --json headRefOid`).
+- `git stash push -u` can leave some untracked files behind. Check `git status` before switching
+  branches, and back up anything that blocks the switch rather than forcing it.
+- A major SDK upgrade can change privacy defaults. Sentry 11 replaced `sendDefaultPii` with a
+  `dataCollection` option whose defaults collect IPs, cookies, headers and bodies, so set it
+  explicitly (#290).
