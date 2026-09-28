@@ -1,4 +1,21 @@
+import type { DataCollection } from '@sentry/core'
 import type { ErrorEvent } from '@sentry/nextjs'
+
+export const sentryDataCollection = {
+  userInfo: false,
+  cookies: false,
+  httpHeaders: {
+    request: { deny: ['forwarded', '-ip', 'remote-', 'via', '-user'] },
+    response: { deny: ['forwarded', '-ip', 'remote-', 'via', '-user'] },
+  },
+  httpBodies: [],
+  urlQueryParams: false,
+  genAI: { inputs: false, outputs: false },
+  databaseQueryData: false,
+  queues: false,
+  graphQL: { document: false, variables: false },
+  stackFrameVariables: false,
+} satisfies DataCollection
 
 export function scrubSentryEvent(event: ErrorEvent): ErrorEvent {
   if (event.request?.headers) {

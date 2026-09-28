@@ -33,7 +33,7 @@
     "test:e2e:video": "PLAYWRIGHT_VIDEO=on playwright test"
   },
   "dependencies": {
-    "@sentry/nextjs": "^10.75.2",
+    "@sentry/nextjs": "^11.0.0",
     "@supabase/supabase-js": "^2.117.1",
     "@vercel/analytics": "^2.0.1",
     "class-variance-authority": "^0.7.1",
