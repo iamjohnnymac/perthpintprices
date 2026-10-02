@@ -128,8 +128,12 @@ npm run build
 npm run test:e2e
 ```
 
-Treat `package.json` and `.github/workflows/ci.yml` as the exact command contract. Match checks to
-the change: run focused tests while iterating, then every relevant CI command before handoff.
+Treat `package.json` and `.github/workflows/ci.yml` as the exact command contract. Run focused
+checks that establish the changed behaviour and affected invariants, plus any required local
+gate. Before delivery, require CI's terminal passing result on the exact candidate head SHA;
+record its run/check IDs, tested SHA and conclusions. Reuse valid evidence for unchanged work;
+rerun checks for changed work, real gaps or required gates. Focused local checks do not waive
+required CI, data-aware build proof or browser evidence.
 Do not claim a production build passed when Supabase credentials or live data made the build
 preflight unavailable; state that limitation precisely.
 
