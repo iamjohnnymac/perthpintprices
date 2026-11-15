@@ -1,4 +1,5 @@
 import { priceReportConfidence, priceReportSource, reportSubmissionSource } from '@/lib/priceProvenance'
+import { toSuburbSlug } from '@/lib/urls'
 
 interface ReviewPriceReportArgs {
   id: string | number
@@ -84,7 +85,7 @@ export async function reviewPriceReport(
     .from('pubs')
     .update(updatePayload)
     .eq('slug', slug)
-    .select('slug')
+    .select('slug, suburb')
 
   if (pubErr) {
     return { status: 500, body: { error: 'Failed to update pub: ' + pubErr.message } }
@@ -119,5 +120,9 @@ export async function reviewPriceReport(
     .update({ status: 'verified', verified_at: now, verified_by: 'admin' })
     .eq('id', id)
 
-  return { status: 200, body: { success: true, action: 'approved', pubSlug: slug } }
+  // The route uses the suburb to expire the pub's own page and suburb list.
+  const suburb = updatedPubs[0]?.suburb
+  const suburbSlug = typeof suburb === 'string' && suburb.trim() ? toSuburbSlug(suburb) : null
+
+  return { status: 200, body: { success: true, action: 'approved', pubSlug: slug, suburbSlug } }
 }
