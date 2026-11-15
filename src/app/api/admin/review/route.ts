@@ -10,12 +10,16 @@ export const dynamic = 'force-dynamic'
 
 interface AdminReviewDeps {
   getServiceClient?: () => SupabaseClient
+  revalidateTag?: (tag: string, profile: string) => void
+  revalidatePath?: (path: string) => void
 }
 
 export async function handleAdminReview(request: NextRequest, deps: AdminReviewDeps = {}) {
   const auth = await authenticateAdminRequest(request, deps)
   if (!auth.authenticated) return auth.response
   const supabase = auth.supabase
+  const expireTag = deps.revalidateTag ?? revalidateTag
+  const expirePath = deps.revalidatePath ?? revalidatePath
 
   const body = await request.json()
   const { type, id, action, target_slug, place_id } = body
@@ -27,10 +31,23 @@ export async function handleAdminReview(request: NextRequest, deps: AdminReviewD
   try {
     if (type === 'price_report') {
       const result = await reviewPriceReport(supabase, { id, action, target_slug })
-      if (result.status === 200 && result.body.action === 'approved') {
-        // Approved prices update the pubs table — expire the shared hourly
-        // cache so list pages pick the change up on their next render.
-        revalidateTag(PUBS_CACHE_TAG, 'max')
+      const pubWritten = (result.status === 200 && result.body.action === 'approved')
+        || result.body.pubUpdated === true
+      if (pubWritten) {
+        // The pubs table changed (also when a later step failed and the admin
+        // gets an error). The list pages read the shared `pubs` cache; the pub
+        // detail page reads its own `pub:<slug>` entry. Expire both, or the
+        // detail page shows the old price for up to an hour after the lists
+        // have moved on.
+        const { pubSlug, suburbSlug } = result.body
+        expireTag(PUBS_CACHE_TAG, 'max')
+        if (pubSlug) {
+          expireTag(`pub:${pubSlug}`, 'max')
+          if (suburbSlug) {
+            expirePath(`/${suburbSlug}/${pubSlug}`)
+            expirePath(`/${suburbSlug}`)
+          }
+        }
       }
       return NextResponse.json(result.body, { status: result.status })
 
@@ -38,12 +55,12 @@ export async function handleAdminReview(request: NextRequest, deps: AdminReviewD
       const result = await reviewPubSubmission(supabase, { id, action, place_id })
 
       if (result.status === 200 && result.body.action === 'approved' && result.body.slug && result.body.suburbSlug) {
-        revalidateTag(PUBS_CACHE_TAG, 'max')
-        revalidateTag(`pub:${result.body.slug}`, 'max')
-        revalidatePath(`/${result.body.suburbSlug}/${result.body.slug}`)
-        revalidatePath(`/${result.body.suburbSlug}`)
-        revalidatePath('/sitemap-pubs.xml')
-        revalidatePath('/sitemap.xml')
+        expireTag(PUBS_CACHE_TAG, 'max')
+        expireTag(`pub:${result.body.slug}`, 'max')
+        expirePath(`/${result.body.suburbSlug}/${result.body.slug}`)
+        expirePath(`/${result.body.suburbSlug}`)
+        expirePath('/sitemap-pubs.xml')
+        expirePath('/sitemap.xml')
       }
 
       return NextResponse.json(result.body, { status: result.status })
