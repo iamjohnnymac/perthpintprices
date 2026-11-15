@@ -24,27 +24,43 @@ describe('admin review authentication', () => {
 })
 
 type ReportRow = Record<string, unknown>
+type PubRow = { slug: string; suburb: string | null }
+/** A write the double should fail, e.g. 'price_reports.update' or 'price_history.insert'. */
+type FailingWrite = 'price_reports.update' | 'price_history.insert'
 
 /**
  * Minimal service-client double: passes the admin limiter, serves one price
- * report, and answers the pubs update with the rows a real update would return.
+ * report, and answers the pubs update with the rows a real update would
+ * return, limited to the columns the caller selected.
  */
-function reviewClient(report: ReportRow, pubs: Array<{ slug: string; suburb: string | null }>) {
+function reviewClient(report: ReportRow, pubs: PubRow[], failing: FailingWrite[] = []) {
   const pubUpdates: Array<{ slug: unknown; payload: Record<string, unknown> }> = []
+  const reportUpdates: Array<Record<string, unknown>> = []
+  const fail = (write: string) => (failing as string[]).includes(write)
+    ? { message: `simulated ${write} failure` }
+    : null
 
   function query(table: string) {
     let updatePayload: Record<string, unknown> | null = null
     let slugFilter: unknown = null
+    let columns = '*'
+    const project = (row: Record<string, unknown>) => columns === '*'
+      ? row
+      : Object.fromEntries(columns.split(',').map(column => [column.trim(), row[column.trim()]]))
     const rows = () => {
-      if (table === 'price_reports') return [report]
-      if (table === 'pubs') return pubs.filter(pub => pub.slug === slugFilter).map(pub => ({ id: 1, ...pub }))
+      if (table === 'price_reports') return [report].map(project)
+      if (table === 'pubs') return pubs.filter(pub => pub.slug === slugFilter).map(pub => project({ id: 1, ...pub }))
       return []
     }
     const builder = {
-      select: () => builder,
-      insert: async () => ({ data: null, error: null }),
+      select(selected = '*') {
+        columns = selected
+        return builder
+      },
+      insert: async () => ({ data: null, error: fail(`${table}.insert`) }),
       update(payload: Record<string, unknown>) {
         updatePayload = payload
+        if (table === 'price_reports') reportUpdates.push(payload)
         return builder
       },
       eq(column: string, value: unknown) {
@@ -58,8 +74,9 @@ function reviewClient(report: ReportRow, pubs: Array<{ slug: string; suburb: str
         const [row] = rows()
         return row ? { data: row, error: null } : { data: null, error: { message: 'not found' } }
       },
-      then(resolve: (value: { data: unknown[]; error: null }) => unknown) {
-        return Promise.resolve({ data: rows(), error: null }).then(resolve)
+      then(resolve: (value: { data: unknown[] | null; error: { message: string } | null }) => unknown) {
+        const error = updatePayload ? fail(`${table}.update`) : null
+        return Promise.resolve(error ? { data: null, error } : { data: rows(), error: null }).then(resolve)
       },
     }
     return builder
@@ -67,6 +84,7 @@ function reviewClient(report: ReportRow, pubs: Array<{ slug: string; suburb: str
 
   return {
     pubUpdates,
+    reportUpdates,
     async rpc(name: string) {
       return name === 'reserve_admin_auth_attempt'
         ? { data: { allowed: true }, error: null }
@@ -78,11 +96,12 @@ function reviewClient(report: ReportRow, pubs: Array<{ slug: string; suburb: str
 
 async function reviewPrice(
   report: ReportRow,
-  pubs: Array<{ slug: string; suburb: string | null }>,
+  pubs: PubRow[],
   body: Record<string, unknown>,
+  failing: FailingWrite[] = [],
 ) {
   process.env.ADMIN_PASSWORD = 'correct-password'
-  const client = reviewClient(report, pubs)
+  const client = reviewClient(report, pubs, failing)
   const tags: string[] = []
   const paths: string[] = []
   const response = await handleAdminReview(new NextRequest('http://localhost/api/admin/review', {
@@ -94,7 +113,7 @@ async function reviewPrice(
     revalidateTag: tag => { tags.push(tag) },
     revalidatePath: path => { paths.push(path) },
   })
-  return { response, tags, paths, pubUpdates: client.pubUpdates }
+  return { response, tags, paths, pubUpdates: client.pubUpdates, reportUpdates: client.reportUpdates }
 }
 
 const haynes = { slug: 'haynes-bar-and-grill', suburb: 'Armadale' }
@@ -174,5 +193,58 @@ describe('admin price report cache invalidation', () => {
     const missingPub = await reviewPrice(regularReport, [], { action: 'approve' })
     assert.equal(missingPub.response.status, 404)
     assert.deepEqual([missingPub.tags, missingPub.paths], [[], []])
+  })
+})
+
+describe('admin price report write failures', () => {
+  const staleFlag = { ...regularReport, report_type: 'outdated_flag', submission_source: 'stale_flag' }
+
+  it('reports a stale flag that could not be marked reviewed', async () => {
+    // e.g. a status check constraint that does not allow 'reviewed'
+    const { response, reportUpdates, pubUpdates, tags } = await reviewPrice(
+      staleFlag, [haynes], { action: 'approve' }, ['price_reports.update'],
+    )
+    const body = await response.json()
+
+    assert.equal(response.status, 500)
+    assert.match(body.error, /Failed to mark flag reviewed: simulated/)
+    assert.equal(body.success, undefined)
+    assert.equal(reportUpdates[0].status, 'reviewed')
+    assert.deepEqual([pubUpdates, tags], [[], []])
+  })
+
+  it('reports a rejection that was not saved', async () => {
+    const { response } = await reviewPrice(
+      regularReport, [haynes], { action: 'reject' }, ['price_reports.update'],
+    )
+
+    assert.equal(response.status, 500)
+    assert.match((await response.json()).error, /Failed to reject report/)
+  })
+
+  it('says the price changed, and still expires the caches, when the report stays pending', async () => {
+    const { response, tags, paths, pubUpdates } = await reviewPrice(
+      regularReport, [haynes], { action: 'approve' }, ['price_reports.update'],
+    )
+    const body = await response.json()
+
+    assert.equal(response.status, 500)
+    assert.equal(pubUpdates[0].payload.price, 9)
+    assert.match(body.error, /pub price was updated.*report is still pending.*Do not approve this report again/)
+    assert.equal(body.pubUpdated, true)
+    assert.deepEqual(tags, ['pubs', 'pub:haynes-bar-and-grill'])
+    assert.deepEqual(paths, ['/armadale/haynes-bar-and-grill', '/armadale'])
+  })
+
+  it('reports a missing price history row after the price was written', async () => {
+    const { response, tags, reportUpdates } = await reviewPrice(
+      regularReport, [haynes], { action: 'approve' }, ['price_history.insert'],
+    )
+    const body = await response.json()
+
+    assert.equal(response.status, 500)
+    assert.match(body.error, /price history was not recorded/)
+    assert.equal(reportUpdates[0].status, 'verified')
+    assert.deepEqual(tags, ['pubs', 'pub:haynes-bar-and-grill'])
   })
 })

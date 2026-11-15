@@ -31,11 +31,14 @@ export async function handleAdminReview(request: NextRequest, deps: AdminReviewD
   try {
     if (type === 'price_report') {
       const result = await reviewPriceReport(supabase, { id, action, target_slug })
-      if (result.status === 200 && result.body.action === 'approved') {
-        // Approved prices update the pubs table. The list pages read the
-        // shared `pubs` cache; the pub detail page reads its own `pub:<slug>`
-        // entry. Expire both, or the detail page shows the old price for up
-        // to an hour after the lists have moved on.
+      const pubWritten = (result.status === 200 && result.body.action === 'approved')
+        || result.body.pubUpdated === true
+      if (pubWritten) {
+        // The pubs table changed (also when a later step failed and the admin
+        // gets an error). The list pages read the shared `pubs` cache; the pub
+        // detail page reads its own `pub:<slug>` entry. Expire both, or the
+        // detail page shows the old price for up to an hour after the lists
+        // have moved on.
         const { pubSlug, suburbSlug } = result.body
         expireTag(PUBS_CACHE_TAG, 'max')
         if (pubSlug) {

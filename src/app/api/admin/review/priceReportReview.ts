@@ -15,10 +15,14 @@ export async function reviewPriceReport(
   const now = nowDate.toISOString()
 
   if (action === 'reject') {
-    await supabase
+    const { error: rejectErr } = await supabase
       .from('price_reports')
       .update({ status: 'rejected', verified_at: now, verified_by: 'admin' })
       .eq('id', id)
+
+    if (rejectErr) {
+      return { status: 500, body: { error: 'Failed to reject report: ' + rejectErr.message } }
+    }
 
     return { status: 200, body: { success: true, action: 'rejected' } }
   }
@@ -51,10 +55,16 @@ export async function reviewPriceReport(
   }
 
   if (report.report_type === 'outdated_flag' || submissionSource === 'stale_flag') {
-    await supabase
+    const { error: reviewErr } = await supabase
       .from('price_reports')
       .update({ status: 'reviewed', verified_at: now, verified_by: 'admin' })
       .eq('id', id)
+
+    // Surface a failed write (for example a status constraint that does not
+    // allow 'reviewed') instead of telling the admin the flag was handled.
+    if (reviewErr) {
+      return { status: 500, body: { error: 'Failed to mark flag reviewed: ' + reviewErr.message } }
+    }
 
     return { status: 200, body: { success: true, action: 'reviewed', pubSlug: target_slug || report.pub_slug } }
   }
@@ -95,15 +105,23 @@ export async function reviewPriceReport(
     return { status: 404, body: { error: `No pub found with slug "${slug}"` } }
   }
 
+  // The pub row is written from here on. Later failures must still report the
+  // slug so the route expires the caches for the price that did change.
+  const suburb = updatedPubs[0]?.suburb
+  const suburbSlug = typeof suburb === 'string' && suburb.trim() ? toSuburbSlug(suburb) : null
+  const followUpErrors: string[] = []
+
   if (!isHappyHour) {
-    const { data: pub } = await supabase
+    const { data: pub, error: pubIdErr } = await supabase
       .from('pubs')
       .select('id')
       .eq('slug', slug)
       .single()
 
-    if (pub) {
-      await supabase.from('price_history').insert({
+    if (pubIdErr || !pub) {
+      followUpErrors.push('price history was not recorded')
+    } else {
+      const { error: historyErr } = await supabase.from('price_history').insert({
         pub_id: pub.id,
         price: report.reported_price,
         change_type: 'update',
@@ -112,17 +130,27 @@ export async function reviewPriceReport(
         verified_at: now,
         confidence: priceConfidence,
       })
+      if (historyErr) followUpErrors.push('price history was not recorded: ' + historyErr.message)
     }
   }
 
-  await supabase
+  const { error: verifyErr } = await supabase
     .from('price_reports')
     .update({ status: 'verified', verified_at: now, verified_by: 'admin' })
     .eq('id', id)
+  if (verifyErr) followUpErrors.push('the report is still pending: ' + verifyErr.message)
 
-  // The route uses the suburb to expire the pub's own page and suburb list.
-  const suburb = updatedPubs[0]?.suburb
-  const suburbSlug = typeof suburb === 'string' && suburb.trim() ? toSuburbSlug(suburb) : null
+  if (followUpErrors.length > 0) {
+    return {
+      status: 500,
+      body: {
+        error: `The pub price was updated, but ${followUpErrors.join('; ')}. Do not approve this report again.`,
+        pubUpdated: true,
+        pubSlug: slug,
+        suburbSlug,
+      },
+    }
+  }
 
   return { status: 200, body: { success: true, action: 'approved', pubSlug: slug, suburbSlug } }
 }
